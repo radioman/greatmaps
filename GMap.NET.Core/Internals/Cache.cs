@@ -7,7 +7,7 @@ namespace GMapNET.Internals
    public class Cache : Singleton<Cache>
    {
       string cache;
-      string tileCache;
+      string gtileCache;
       string routeCache;
       string geoCache;
       string placemarkCache;
@@ -22,7 +22,7 @@ namespace GMapNET.Internals
          set
          {
             cache = value;
-            tileCache = cache + "TileCache" + Path.DirectorySeparatorChar;
+            gtileCache = cache + "TileCache" + Path.DirectorySeparatorChar;
             openStreetMapTileCache = cache + "OpenStreetMapTileCache" + Path.DirectorySeparatorChar;
 
             routeCache = cache + "RouteCache" + Path.DirectorySeparatorChar;
@@ -49,7 +49,7 @@ namespace GMapNET.Internals
          {
             using(tile)
             {
-               string tCache = GMaps.Instance.Provider == MapsProvider.GoogleMaps ? tileCache : openStreetMapTileCache;
+               string tCache = type == GMapType.OpenStreetMap ? openStreetMapTileCache : gtileCache;
 
                StringBuilder dir = new StringBuilder(tCache);
                dir.AppendFormat("{0}{1}{2}{3}{4}{5}{6}{7}", zoom, Path.DirectorySeparatorChar, language, Path.DirectorySeparatorChar, pos.X, Path.DirectorySeparatorChar, pos.Y, Path.DirectorySeparatorChar);
@@ -96,7 +96,7 @@ namespace GMapNET.Internals
          PureImage ret = null;
          try
          {
-            string tCache = GMaps.Instance.Provider == MapsProvider.GoogleMaps ? tileCache : openStreetMapTileCache;
+            string tCache = type == GMapType.OpenStreetMap ? openStreetMapTileCache : gtileCache;
 
             StringBuilder dir = new StringBuilder(tCache);
             dir.AppendFormat("{0}{1}{2}{3}{4}{5}{6}{7}", zoom, Path.DirectorySeparatorChar, language, Path.DirectorySeparatorChar, pos.X, Path.DirectorySeparatorChar, pos.Y, Path.DirectorySeparatorChar);

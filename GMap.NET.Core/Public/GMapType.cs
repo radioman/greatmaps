@@ -6,10 +6,12 @@ namespace GMapNET
    /// </summary>
    public enum GMapType
    {
-      Map=1,
-      Satellite=4,
-      Labels=8,
+      GoogleMap=1,
+      GoogleSatellite=4,
+      GoogleLabels=8,
       //SatelliteAndLabels=Satellite|Labels,
-      Terrain=16,
+      GoogleTerrain=16,
+
+      OpenStreetMap=32,
    }
 }

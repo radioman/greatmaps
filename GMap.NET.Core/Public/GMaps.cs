@@ -23,11 +23,6 @@ namespace GMapNET
       public string SecWord = "Galileo";
 
       /// <summary>
-      /// provider of the maps
-      /// </summary>
-      public MapsProvider Provider = MapsProvider.GoogleMaps;
-
-      /// <summary>
       /// timeout for map connections
       /// </summary>
       public int Timeout = 10*1000;
@@ -311,30 +306,25 @@ namespace GMapNET
       /// <returns></returns>
       internal string MakeImageUrl(GMapType type, Point pos, int zoom, string language)
       {
-         if(Provider == MapsProvider.OpenStreetMap)
-         {
-            return string.Format("http://tile.openstreetmap.org/{0}/{1}/{2}.png", zoom.ToString(), pos.X.ToString(), pos.Y.ToString());
-         }
-         
          string server = string.Empty;
          string request = string.Empty;
          string version = string.Empty;
 
          switch(type)
          {
-            case GMapType.Map:
+            case GMapType.GoogleMap:
             server = "mt";
             request = "mt";
             version = VersionMap;
             break;
 
-            case GMapType.Satellite:
+            case GMapType.GoogleSatellite:
             server = "khm";
             request = "kh";
             version = VersionSatellite;
             break;
 
-            case GMapType.Labels:
+            case GMapType.GoogleLabels:
             server = "mt";
             request = "mt";
             version = VersionLabels;
@@ -349,11 +339,16 @@ namespace GMapNET
             break;
             */
 
-            case GMapType.Terrain:
+            case GMapType.GoogleTerrain:
             server = "mt";
             request = "mt";
             version = VersionTerrain;
             break;
+
+            case GMapType.OpenStreetMap:
+            {
+               return string.Format("http://tile.openstreetmap.org/{0}/{1}/{2}.png", zoom.ToString(), pos.X.ToString(), pos.Y.ToString());
+            }
          }
 
          int servernum = (pos.X + 2 * pos.Y) % 4;

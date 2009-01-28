@@ -20,7 +20,6 @@ namespace Demo.WindowsForms
          if(!DesignMode)
          {
             // config gmaps
-            GMaps.Instance.Provider = MapsProvider.GoogleMaps;
             GMaps.Instance.Language = "lt";
             GMaps.Instance.UseTileCache = true;
             GMaps.Instance.UseRouteCache = true;
@@ -34,7 +33,7 @@ namespace Demo.WindowsForms
 
             // config map             
             MainMap.RenderMode = RenderMode.GDI;
-            MainMap.MapType = GMapType.Map;
+            MainMap.MapType = GMapType.GoogleMap;
             MainMap.Zoom = 13;
             MainMap.CurrentMarkerEnabled = true;
             MainMap.CurrentMarkerStyle = CurrentMarkerType.GMap;

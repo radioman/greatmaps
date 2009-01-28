@@ -18,7 +18,6 @@ namespace Demo.WindowsPresentation
          this.Background = Brushes.AliceBlue;        
 
          // config gmaps
-         GMaps.Instance.Provider = MapsProvider.OpenStreetMap;
          GMaps.Instance.Language = "lt";
          GMaps.Instance.UseTileCache = true;
          GMaps.Instance.UseRouteCache = true;
@@ -31,7 +30,7 @@ namespace Demo.WindowsPresentation
          //GMaps.Instance.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
          // config map
-         MainMap.MapType = GMapType.Map;
+         MainMap.MapType = GMapType.OpenStreetMap;
          MainMap.Zoom = 13;
          MainMap.CurrentMarkerEnabled = true;
          MainMap.CurrentMarkerStyle = CurrentMarkerType.GMap;

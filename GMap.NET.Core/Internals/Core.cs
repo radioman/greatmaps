@@ -47,7 +47,8 @@ namespace GMapNET.Internals
       public readonly List<Route> routes = new List<Route>();
       public readonly List<Marker> markers = new List<Marker>();
 
-      public readonly string copyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas", DateTime.Today.Year);
+      public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas", DateTime.Today.Year);
+      public readonly string openStreetMapCopyright = string.Format("Map data ©{0} OpenStreetMap", DateTime.Today.Year);
       bool currentMarkerEnabled = true;
       bool mouseVisible = true;
       public bool IsMouseOverMarker;
@@ -184,7 +185,7 @@ namespace GMapNET.Internals
       /// <summary>
       /// type of map
       /// </summary>
-      public GMapType MapType = GMapType.Map;
+      public GMapType MapType = GMapType.GoogleMap;
 
       /// <summary>
       /// is routes enabled
