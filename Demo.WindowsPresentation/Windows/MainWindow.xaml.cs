@@ -15,7 +15,8 @@ namespace Demo.WindowsPresentation
          InitializeComponent();
 
          // config form and add map
-         this.Background = Brushes.AliceBlue;        
+         this.Background = Brushes.AliceBlue;
+         this.ClipToBounds = true;
 
          // config gmaps
          GMaps.Instance.Language = "lt";
