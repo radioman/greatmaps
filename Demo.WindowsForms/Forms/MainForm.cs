@@ -34,7 +34,7 @@ namespace Demo.WindowsForms
             // config map             
             MainMap.RenderMode = RenderMode.GDI;
             MainMap.MapType = GMapType.GoogleMap;
-            MainMap.Zoom = 13;
+            MainMap.Zoom = 12;
             MainMap.CurrentMarkerEnabled = true;
             MainMap.CurrentMarkerStyle = CurrentMarkerType.GMap;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
@@ -60,6 +60,7 @@ namespace Demo.WindowsForms
 
             // get zoom
             trackBar1.Maximum = GMaps.Instance.MaxZoom;
+            trackBar1.Value = MainMap.Zoom;
          }
       }
 

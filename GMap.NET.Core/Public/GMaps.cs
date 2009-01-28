@@ -16,11 +16,16 @@ namespace GMapNET
    public class GMaps : Singleton<GMaps>
    {
       // version strings
-      public string VersionMap = "w2.89";
-      public string VersionSatellite = "34";
-      public string VersionLabels = "w2t.88";
-      public string VersionTerrain = "w2p.87";
-      public string SecWord = "Galileo";
+      public string VersionGoogleMap = "w2.89";
+      public string VersionGoogleSatellite = "34";
+      public string VersionGoogleLabels = "w2t.88";
+      public string VersionGoogleTerrain = "w2p.87";
+      public string SecGoogleWord = "Galileo";
+
+      // Yahoo version strings
+      public string VersionYahooMap = "4.2";
+      public string VersionYahooSatellite = "1.9";
+      public string VersionYahooLabels = "4.2";
 
       /// <summary>
       /// timeout for map connections
@@ -315,19 +320,19 @@ namespace GMapNET
             case GMapType.GoogleMap:
             server = "mt";
             request = "mt";
-            version = VersionMap;
+            version = VersionGoogleMap;
             break;
 
             case GMapType.GoogleSatellite:
             server = "khm";
             request = "kh";
-            version = VersionSatellite;
+            version = VersionGoogleSatellite;
             break;
 
             case GMapType.GoogleLabels:
             server = "mt";
             request = "mt";
-            version = VersionLabels;
+            version = VersionGoogleLabels;
             break;
 
             /*
@@ -342,8 +347,23 @@ namespace GMapNET
             case GMapType.GoogleTerrain:
             server = "mt";
             request = "mt";
-            version = VersionTerrain;
+            version = VersionGoogleTerrain;
             break;
+
+            case GMapType.YahooMap:
+            {
+               return string.Format("http://us.maps2.yimg.com/us.png.maps.yimg.com/png?v={0}&x={1}&y={2}&z={3}&r=1", VersionYahooMap, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
+            }
+
+            case GMapType.YahooSatellite:
+            {
+               return string.Format("http://us.maps3.yimg.com/aerial.maps.yimg.com/png?v={0}&t=a&s=256&x={1}&y={2}&z={3}&r=1", VersionYahooSatellite, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
+            }
+
+            case GMapType.YahooLabels:
+            {
+               return string.Format("http://us.maps1.yimg.com/us.tile.maps.yimg.com/tl?v={0}&t=h&x={1}&y={2}&z={3}&r=1", VersionYahooLabels, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
+            }
 
             case GMapType.OpenStreetMap:
             {
@@ -355,7 +375,7 @@ namespace GMapNET
          string sec1 = ""; // after &x=...
          string sec2 = ""; // after &zoom=...
          int seclen = ((pos.X*3) + pos.Y) % 8;
-         sec2 = SecWord.Substring(0, seclen);
+         sec2 = SecGoogleWord.Substring(0, seclen);
          if(pos.Y >= 10000 && pos.Y < 100000)
          {
             sec1 = "&s=";

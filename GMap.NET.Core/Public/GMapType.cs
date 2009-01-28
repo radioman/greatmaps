@@ -13,5 +13,8 @@ namespace GMapNET
       GoogleTerrain=16,
 
       OpenStreetMap=32,
+      YahooMap=64,
+      YahooSatellite=128,
+      YahooLabels=256,
    }
 }
