@@ -15,7 +15,7 @@ namespace GMapNET
    /// </summary>
    public class GMaps : Singleton<GMaps>
    {
-      // version strings
+      // Google version strings
       public string VersionGoogleMap = "w2.89";
       public string VersionGoogleSatellite = "34";
       public string VersionGoogleLabels = "w2t.88";
@@ -334,15 +334,6 @@ namespace GMapNET
             request = "mt";
             version = VersionGoogleLabels;
             break;
-
-            /*
-            case GoogleMapType.SatelliteAndLabels:
-            server = "mt";
-            request = "mt";
-            version = VersionLabels;
-            return "don't work yet ;}";
-            break;
-            */
 
             case GMapType.GoogleTerrain:
             server = "mt";

@@ -48,7 +48,9 @@ namespace GMapNET.Internals
       public readonly List<Marker> markers = new List<Marker>();
 
       public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas", DateTime.Today.Year);
-      public readonly string openStreetMapCopyright = string.Format("Map data ©{0} OpenStreetMap", DateTime.Today.Year);
+      public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
+      public readonly string yahooMapCopyright = string.Format("© Yahoo! Inc. - Map data ©{0} NAVTEQ", DateTime.Today.Year);
+     
       bool currentMarkerEnabled = true;
       bool mouseVisible = true;
       public bool IsMouseOverMarker;

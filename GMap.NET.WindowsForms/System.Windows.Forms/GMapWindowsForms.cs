@@ -23,8 +23,6 @@ namespace System.Windows.Forms
       readonly int SourceCopy = (int) CopyPixelOperation.SourceCopy;
       readonly Font gFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
       StringFormat tooltipFormat = new StringFormat();
-      SizeF googleCopyrightSizeF = SizeF.Empty;
-      SizeF openStreetMapCopyrightSizeF = SizeF.Empty;
       IntPtr hdcTmp, hdcMemTmp;
 
       public GMap()
@@ -298,22 +296,33 @@ namespace System.Windows.Forms
          }
 
          #region -- copyright --
-         if(Core.MapType != GMapType.OpenStreetMap)
+
+         switch(Core.MapType)
          {
-            if(googleCopyrightSizeF == SizeF.Empty)
+            case GMapType.GoogleMap:
+            case GMapType.GoogleSatellite:
+            case GMapType.GoogleLabels:
+            case GMapType.GoogleTerrain:
             {
-               googleCopyrightSizeF = e.Graphics.MeasureString(Core.googleCopyright, gFont);
+               e.Graphics.DrawString(Core.googleCopyright, gFont, Brushes.Navy, 3, Height - gFont.Height - 5);
             }
-            e.Graphics.DrawString(Core.googleCopyright, gFont, Brushes.Navy, Width - googleCopyrightSizeF.Width + 3, Height - googleCopyrightSizeF.Height - 5);
-         }
-         else
-         {
-            if(openStreetMapCopyrightSizeF == SizeF.Empty)
+            break;
+
+            case GMapType.OpenStreetMap:
             {
-               openStreetMapCopyrightSizeF = e.Graphics.MeasureString(Core.openStreetMapCopyright, gFont);
+               e.Graphics.DrawString(Core.openStreetMapCopyright, gFont, Brushes.Navy, 3, Height - gFont.Height - 5);
             }
-            e.Graphics.DrawString(Core.openStreetMapCopyright, gFont, Brushes.Navy, Width - openStreetMapCopyrightSizeF.Width + 3, Height - openStreetMapCopyrightSizeF.Height - 5);
+            break;
+
+            case GMapType.YahooMap:
+            case GMapType.YahooSatellite:
+            case GMapType.YahooLabels:
+            {
+               e.Graphics.DrawString(Core.yahooMapCopyright, gFont, Brushes.Navy, 3, Height - gFont.Height - 5);
+            }
+            break;
          }
+
          #endregion
       }
 
