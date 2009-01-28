@@ -23,6 +23,11 @@ namespace GMapNET
       public string SecWord = "Galileo";
 
       /// <summary>
+      /// provider of the maps
+      /// </summary>
+      public MapsProvider Provider = MapsProvider.GoogleMaps;
+
+      /// <summary>
       /// timeout for map connections
       /// </summary>
       public int Timeout = 10*1000;
@@ -71,8 +76,8 @@ namespace GMapNET
       readonly List<double> Uu = new List<double>();
       readonly List<double> Vu = new List<double>();
       readonly List<double> Ru = new List<double>();
-      readonly List<double> Tu = new List<double>(); 
-      #endregion      
+      readonly List<double> Tu = new List<double>();
+      #endregion
 
       public GMaps()
       {
@@ -80,7 +85,7 @@ namespace GMapNET
          if(Instance != null)
          {
             throw (new Exception("You have tried to create a new singleton class where you should have instanced it. Replace your \"new class()\" with \"class.Instance\""));
-         } 
+         }
          #endregion
 
          #region precalculate constants
@@ -95,7 +100,7 @@ namespace GMapNET
             Tu.Add(c);
 
             c *= 2;
-         } 
+         }
          #endregion
       }
 
@@ -186,7 +191,7 @@ namespace GMapNET
       public Point FromTileXYToPixel(Point p)
       {
          return new Point((p.X*TileSize.Width), (p.Y*TileSize.Height));
-      } 
+      }
       #endregion
 
       #region -- Stuff --
@@ -275,7 +280,7 @@ namespace GMapNET
       public Placemark GetPlacemarkFromGeocoder(PointLatLng location)
       {
          return GetPlacemarkFromReverseGeocoderUrl(MakeReverseGeocoderUrl(location, Language), UsePlacemarkCache);
-      }   
+      }
       #endregion
 
       #region -- URL generation --
@@ -306,6 +311,11 @@ namespace GMapNET
       /// <returns></returns>
       internal string MakeImageUrl(GMapType type, Point pos, int zoom, string language)
       {
+         if(Provider == MapsProvider.OpenStreetMap)
+         {
+            return string.Format("http://tile.openstreetmap.org/{0}/{1}/{2}.png", zoom.ToString(), pos.X.ToString(), pos.Y.ToString());
+         }
+         
          string server = string.Empty;
          string request = string.Empty;
          string version = string.Empty;
@@ -354,7 +364,7 @@ namespace GMapNET
          if(pos.Y >= 10000 && pos.Y < 100000)
          {
             sec1 = "&s=";
-         }
+         }          
 
          return string.Format("http://{0}{1}.google.com/{2}?v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, servernum.ToString(), request, version, language, pos.X.ToString(), sec1, pos.Y.ToString(), zoom.ToString(), sec2);
       }
@@ -408,7 +418,7 @@ namespace GMapNET
          string highway = avoidHighways ? "&mra=ls&dirflg=h" : string.Empty;
 
          return string.Format("http://maps.google.com/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'));
-      } 
+      }
       #endregion
 
       #region -- Content download --
@@ -937,7 +947,7 @@ namespace GMapNET
          }
 
          return countOk;
-      } 
+      }
       #endregion
    }
 }

@@ -20,6 +20,7 @@ namespace Demo.WindowsForms
          if(!DesignMode)
          {
             // config gmaps
+            GMaps.Instance.Provider = MapsProvider.GoogleMaps;
             GMaps.Instance.Language = "lt";
             GMaps.Instance.UseTileCache = true;
             GMaps.Instance.UseRouteCache = true;
@@ -31,7 +32,7 @@ namespace Demo.WindowsForms
             //GMaps.Instance.Proxy = new WebProxy("10.2.0.100", 8080);
             //GMaps.Instance.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
-            // config map
+            // config map             
             MainMap.RenderMode = RenderMode.GDI;
             MainMap.MapType = GMapType.Map;
             MainMap.Zoom = 13;

@@ -11,6 +11,7 @@ namespace GMapNET.Internals
       string routeCache;
       string geoCache;
       string placemarkCache;
+      string openStreetMapTileCache;
 
       public string CacheLocation
       {
@@ -22,6 +23,8 @@ namespace GMapNET.Internals
          {
             cache = value;
             tileCache = cache + "TileCache" + Path.DirectorySeparatorChar;
+            openStreetMapTileCache = cache + "OpenStreetMapTileCache" + Path.DirectorySeparatorChar;
+
             routeCache = cache + "RouteCache" + Path.DirectorySeparatorChar;
             geoCache = cache + "GeocoderCache" + Path.DirectorySeparatorChar;
             placemarkCache = cache + "PlacemarkCache" + Path.DirectorySeparatorChar;
@@ -46,7 +49,9 @@ namespace GMapNET.Internals
          {
             using(tile)
             {
-               StringBuilder dir = new StringBuilder(tileCache);
+               string tCache = GMaps.Instance.Provider == MapsProvider.GoogleMaps ? tileCache : openStreetMapTileCache;
+
+               StringBuilder dir = new StringBuilder(tCache);
                dir.AppendFormat("{0}{1}{2}{3}{4}{5}{6}{7}", zoom, Path.DirectorySeparatorChar, language, Path.DirectorySeparatorChar, pos.X, Path.DirectorySeparatorChar, pos.Y, Path.DirectorySeparatorChar);
 
                string d = dir.ToString();
@@ -91,7 +96,9 @@ namespace GMapNET.Internals
          PureImage ret = null;
          try
          {
-            StringBuilder dir = new StringBuilder(tileCache);
+            string tCache = GMaps.Instance.Provider == MapsProvider.GoogleMaps ? tileCache : openStreetMapTileCache;
+
+            StringBuilder dir = new StringBuilder(tCache);
             dir.AppendFormat("{0}{1}{2}{3}{4}{5}{6}{7}", zoom, Path.DirectorySeparatorChar, language, Path.DirectorySeparatorChar, pos.X, Path.DirectorySeparatorChar, pos.Y, Path.DirectorySeparatorChar);
             {
                dir.AppendFormat("{0}.png", type.ToString());

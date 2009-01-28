@@ -18,6 +18,7 @@ namespace Demo.WindowsPresentation
          this.Background = Brushes.AliceBlue;        
 
          // config gmaps
+         GMaps.Instance.Provider = MapsProvider.OpenStreetMap;
          GMaps.Instance.Language = "lt";
          GMaps.Instance.UseTileCache = true;
          GMaps.Instance.UseRouteCache = true;
