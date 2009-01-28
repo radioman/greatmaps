@@ -1,0 +1,19 @@
+﻿<Window x:Class="GMapDemoWindowsPresentation.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="GMap.NET - Google Maps for Windows Presentation"
+    Height="591" Width="821"
+    WindowStartupLocation="CenterScreen" SnapsToDevicePixels="True"
+    WindowState="Maximized" Loaded="Window_Loaded"
+    xmlns:src="clr-namespace:System.Windows.Controls;assembly=GMap.NET.WindowsPresentation">
+    <Grid>
+        <GroupBox Header="gmap" Margin="12,7,134,12" ClipToBounds="True">
+            <src:GMap Name="MainMap" SnapsToDevicePixels="True" />
+        </GroupBox>
+        <GroupBox Header="menu" HorizontalAlignment="Right" Margin="0,7,12,12" Name="groupBox2" Width="116">
+            <Grid>
+                <Button Height="23" Margin="6,6,6,0" Name="button1" VerticalAlignment="Top" Click="button1_Click">Reload</Button>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>
