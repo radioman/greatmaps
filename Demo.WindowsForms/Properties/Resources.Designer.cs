@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GMapDemoWindowsForms.Properties
+namespace Demo.WindowsForms.Properties
 {
     using System;
     

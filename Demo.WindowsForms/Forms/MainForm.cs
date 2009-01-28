@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Forms;
 using System.Net;
-using GMapDemoWindowsForms.Properties; 
+using Demo.WindowsForms.Properties; 
 using GMapNET;
 
-namespace GMapDemoWindowsForms
+namespace Demo.WindowsForms
 {
    public partial class MainForm : Form
    {

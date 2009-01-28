@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GMap.NET")]
+[assembly: AssemblyTitle("GMap.NET.WindowsForms")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Universe")]
-[assembly: AssemblyProduct("GMap.NET")]
+[assembly: AssemblyProduct("GMap.NET.WindowsForms")]
 [assembly: AssemblyCopyright("Copyright © Universe 2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

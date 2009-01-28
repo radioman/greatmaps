@@ -8,7 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GMapDemoWindowsPresentation.Properties {
+namespace Demo.WindowsPresentation.Properties
+{
     using System;
     
     

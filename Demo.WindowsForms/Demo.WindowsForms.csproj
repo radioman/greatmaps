@@ -8,7 +8,7 @@
     <ProjectGuid>{A2E07A76-8B2C-41A2-B23E-EA31AE94D706}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GMapDemoWindowsForms</RootNamespace>
+    <RootNamespace>Demo.WindowsForms</RootNamespace>
     <AssemblyName>Demo.WindowsForms</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -24,7 +24,7 @@
     <WarningLevel>4</WarningLevel>
     <OutputType>WinExe</OutputType>
     <AssemblyName>Demo.WindowsForms</AssemblyName>
-    <RootNamespace>GMapDemoWindowsForms</RootNamespace>
+    <RootNamespace>Demo.WindowsForms</RootNamespace>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -39,7 +39,7 @@
     <OutputType>WinExe</OutputType>
     <AssemblyName>Demo.WindowsForms</AssemblyName>
     <DebugSymbols>false</DebugSymbols>
-    <RootNamespace>GMapDemoWindowsForms</RootNamespace>
+    <RootNamespace>Demo.WindowsForms</RootNamespace>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <UseVSHostingProcess>false</UseVSHostingProcess>

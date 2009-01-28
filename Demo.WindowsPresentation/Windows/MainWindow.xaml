@@ -1,14 +1,14 @@
-﻿<Window x:Class="GMapDemoWindowsPresentation.MainWindow"
+﻿<Window x:Class="Demo.WindowsPresentation.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="GMap.NET - Google Maps for Windows Presentation"
     Height="591" Width="821"
-    WindowStartupLocation="CenterScreen" SnapsToDevicePixels="True"
+    WindowStartupLocation="CenterScreen"
     WindowState="Maximized" Loaded="Window_Loaded"
     xmlns:src="clr-namespace:System.Windows.Controls;assembly=GMap.NET.WindowsPresentation">
     <Grid>
         <GroupBox Header="gmap" Margin="12,7,134,12" ClipToBounds="True">
-            <src:GMap Name="MainMap" SnapsToDevicePixels="True" />
+            <src:GMap Name="MainMap" />
         </GroupBox>
         <GroupBox Header="menu" HorizontalAlignment="Right" Margin="0,7,12,12" Name="groupBox2" Width="116">
             <Grid>

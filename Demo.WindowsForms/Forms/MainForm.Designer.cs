@@ -1,4 +1,4 @@
-﻿namespace GMapDemoWindowsForms
+﻿namespace Demo.WindowsForms
 {
    partial class MainForm
    {

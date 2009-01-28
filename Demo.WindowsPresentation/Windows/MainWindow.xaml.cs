@@ -6,12 +6,10 @@ using System.Net;
 
 using GMapNET;
 
-namespace GMapDemoWindowsPresentation
+namespace Demo.WindowsPresentation
 {
    public partial class MainWindow : Window
    {
-      //GMap MainMap = new GMap();
-
       public MainWindow()
       {
          InitializeComponent();
@@ -71,6 +69,7 @@ namespace GMapDemoWindowsPresentation
          //throw new NotImplementedException();
       }
 
+      // reload
       private void button1_Click(object sender, RoutedEventArgs e)
       {
          MainMap.ReloadMap();

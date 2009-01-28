@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace GMapDemoWindowsPresentation
+namespace Demo.WindowsPresentation
 {
    public partial class App : Application
    {
