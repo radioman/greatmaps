@@ -2,6 +2,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.ComponentModel;
+using System.Windows.Threading;
 using System.Net;
 using System.Globalization;
 
@@ -56,6 +58,10 @@ namespace Demo.WindowsPresentation
 
          // can drag map
          checkBoxDragMap.IsChecked = MainMap.CanDragMap;
+
+         // get zoom
+         sliderZoom.Maximum = GMaps.Instance.MaxZoom;
+         sliderZoom.Value = MainMap.Zoom;
       }
 
       // on form load
@@ -64,6 +70,7 @@ namespace Demo.WindowsPresentation
          MainMap.ReloadMap();
       }
 
+      // tile louading starts
       void MainMap_OnTileLoadStart(int loaderId)
       {
          switch(loaderId)
@@ -82,6 +89,7 @@ namespace Demo.WindowsPresentation
          }
       }
 
+      // tile loading stops
       void MainMap_OnTileLoadComplete(int loaderId)
       {
          switch(loaderId)
@@ -170,6 +178,17 @@ namespace Demo.WindowsPresentation
             {
                MainMap.GoToCurrentPosition();
             }
+         }
+      }
+
+      // zoom changed
+      private void sliderZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+      {
+         int zn = (int) e.NewValue;
+         if(zn != MainMap.Zoom)
+         {
+            MainMap.Zoom = zn;
+            MainMap.ReloadMap();
          }
       }       
    }

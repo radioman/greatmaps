@@ -71,8 +71,8 @@
          this.progressBar2 = new System.Windows.Forms.ProgressBar();
          this.progressBar1 = new System.Windows.Forms.ProgressBar();
          this.groupBox8 = new System.Windows.Forms.GroupBox();
-         this.checkBoxPlacemarkInfo = new System.Windows.Forms.CheckBox();
          this.button7 = new System.Windows.Forms.Button();
+         this.checkBoxPlacemarkInfo = new System.Windows.Forms.CheckBox();
          this.MainMap = new System.Windows.Forms.GMap();
          this.groupBox4.SuspendLayout();
          this.groupBox3.SuspendLayout();
@@ -562,6 +562,16 @@
          this.groupBox8.TabStop = false;
          this.groupBox8.Text = "markers";
          // 
+         // button7
+         // 
+         this.button7.Location = new System.Drawing.Point(6, 45);
+         this.button7.Name = "button7";
+         this.button7.Size = new System.Drawing.Size(82, 24);
+         this.button7.TabIndex = 15;
+         this.button7.Text = "Zoom Center";
+         this.button7.UseVisualStyleBackColor = true;
+         this.button7.Click += new System.EventHandler(this.button7_Click);
+         // 
          // checkBoxPlacemarkInfo
          // 
          this.checkBoxPlacemarkInfo.AutoSize = true;
@@ -575,26 +585,26 @@
          this.checkBoxPlacemarkInfo.Text = "place info";
          this.checkBoxPlacemarkInfo.UseVisualStyleBackColor = true;
          // 
-         // button7
-         // 
-         this.button7.Location = new System.Drawing.Point(6, 45);
-         this.button7.Name = "button7";
-         this.button7.Size = new System.Drawing.Size(82, 24);
-         this.button7.TabIndex = 15;
-         this.button7.Text = "Zoom Center";
-         this.button7.UseVisualStyleBackColor = true;
-         this.button7.Click += new System.EventHandler(this.button7_Click);
-         // 
          // MainMap
          // 
          this.MainMap.BackColor = System.Drawing.SystemColors.AppWorkspace;
          this.MainMap.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+         this.MainMap.CanDragMap = true;
+         this.MainMap.CurrentMarkerEnabled = true;
+         this.MainMap.CurrentMarkerStyle = GMapNET.CurrentMarkerType.GMap;
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
          this.MainMap.ForeColor = System.Drawing.SystemColors.ControlText;
          this.MainMap.Location = new System.Drawing.Point(3, 16);
+         this.MainMap.MapType = GMapNET.GMapType.GoogleMap;
+         this.MainMap.MarkersEnabled = true;
          this.MainMap.Name = "MainMap";
+         this.MainMap.RenderMode = GMapNET.RenderMode.GDI_PLUS;
+         this.MainMap.RoutesEnabled = true;
          this.MainMap.Size = new System.Drawing.Size(686, 617);
          this.MainMap.TabIndex = 0;
+         this.MainMap.TooltipFont = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+         this.MainMap.TooltipTextPadding = new System.Drawing.Size(10, 10);
+         this.MainMap.Zoom = 12;
          this.MainMap.Scroll += new System.Windows.Forms.ScrollEventHandler(this.MainMap_Scroll);
          this.MainMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainMap_MouseDown);
          // 

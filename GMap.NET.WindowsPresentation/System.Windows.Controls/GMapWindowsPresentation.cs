@@ -33,6 +33,7 @@ namespace System.Windows.Controls
          Purity.Instance.ImageProxy = new WindowsPresentationImageProxy();
          SnapsToDevicePixels = true;
          ClipToBounds = true;
+
          Core.RenderMode = GMapNET.RenderMode.WPF;
          Core.OnNeedInvalidation +=new NeedInvalidation(Core_OnNeedInvalidation);
          this.SizeChanged += new SizeChangedEventHandler(GMap_SizeChanged);
