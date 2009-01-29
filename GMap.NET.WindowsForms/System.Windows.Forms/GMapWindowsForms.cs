@@ -36,8 +36,6 @@ namespace System.Windows.Forms
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.Opaque, true);
 
-            this.Load += new EventHandler(GMap_Load);
-
             // to know when to invalidate
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
 
@@ -53,16 +51,6 @@ namespace System.Windows.Forms
             tooltipFormat.Alignment     = StringAlignment.Center;
             tooltipFormat.LineAlignment = StringAlignment.Center;
          }
-      }
-
-      /// <summary>
-      /// inits system
-      /// </summary>
-      /// <param name="sender"></param>
-      /// <param name="e"></param>
-      void GMap_Load(object sender, EventArgs e)
-      {
-         Core.StartSystem();
       }
 
       /// <summary>
@@ -260,6 +248,25 @@ namespace System.Windows.Forms
       }
 
       #region UserControl Events
+
+      protected new bool DesignMode
+      {
+         get
+         {
+            return (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+         }
+      }
+
+      protected override void OnLoad(EventArgs e)
+      {
+         base.OnLoad(e);
+
+         if(DesignMode)
+            return;
+
+         Core.StartSystem();     
+      }
+
       protected override void OnPaintBackground(PaintEventArgs e)
       {
          // ...
@@ -574,6 +581,7 @@ namespace System.Windows.Forms
          Core.ChangeCurrentPositionOnly(localPoint);
       }
 
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public int Zoom
       {
          get

@@ -182,7 +182,6 @@ namespace Demo.WindowsPresentation
          if(zn != MainMap.Zoom)
          {
             MainMap.Zoom = zn;
-            MainMap.ReloadMap();
          }
       }
    }

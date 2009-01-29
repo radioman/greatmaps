@@ -148,7 +148,6 @@ namespace Demo.WindowsForms
       private void trackBar1_ValueChanged(object sender, EventArgs e)
       {
          MainMap.Zoom = trackBar1.Value;
-         MainMap.ReloadMap();
       }
 
       // go to
@@ -339,6 +338,12 @@ namespace Demo.WindowsForms
          {
             trackBar1.Value = MainMap.Zoom;
          }
+      }
+
+      // on shown
+      private void MainForm_Shown(object sender, EventArgs e)
+      {
+         MainMap.ReloadMap();
       }
    }
 }

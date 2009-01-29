@@ -67,7 +67,7 @@ namespace GMapNET.Internals
             mouseVisible = value;
          }
       }
-      int zoom = 12;
+      int zoom;
       int Width;
       int Height;
 
@@ -121,6 +121,9 @@ namespace GMapNET.Internals
             sizeOfTiles = GMaps.Instance.GetTileMatrixSize(value);
             currentPositionPixel = GMaps.Instance.FromLatLngToPixel(currentPosition, value);
             currentPositionTile = GMaps.Instance.FromPixelToTileXY(currentPositionPixel);
+
+            ReloadMap();
+            GoToCurrentPosition();
          }
       }
 
@@ -250,6 +253,11 @@ namespace GMapNET.Internals
       /// </summary>
       public event NeedInvalidation OnNeedInvalidation;
 
+      public Core()
+      {
+         Zoom = 1;
+      }
+
       /// <summary>
       /// starts core system
       /// </summary>
@@ -277,9 +285,11 @@ namespace GMapNET.Internals
             boundsChecker.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
             boundsChecker.DoWork += new DoWorkEventHandler(boundsChecker_DoWork);
          
-            started = true;
+            started = true;            
          }
-         this.ReloadMap();
+
+         ReloadMap();
+         GoToCurrentPosition();
       }
 
       public void OnMapSizeChanged(int width, int height)
@@ -738,13 +748,13 @@ namespace GMapNET.Internals
             {
                Matrix.Clear();
 
-               OnNeedInvalidation();
+               if(OnNeedInvalidation != null)
+               {
+                  OnNeedInvalidation();
+               }
 
-               GC.Collect(GC.MaxGeneration);
-               GC.WaitForPendingFinalizers();
+               waitForBoundsChanged.Set(); 
             }
-
-            GoToCurrentPosition();
 
             // start loading
             RunAsyncTasks();
@@ -986,10 +996,10 @@ namespace GMapNET.Internals
                }
             }
 
-            GC.Collect(GC.MaxGeneration);
-            GC.WaitForPendingFinalizers();
-
             boundsChecker.ReportProgress(100);
+
+            GC.Collect(GC.MaxGeneration);
+            GC.WaitForPendingFinalizers();            
          }
       }
 

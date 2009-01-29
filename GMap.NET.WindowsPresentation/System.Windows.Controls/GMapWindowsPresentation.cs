@@ -292,6 +292,7 @@ namespace System.Windows.Controls
          Core.ChangeCurrentPositionOnly(localPoint);
       }
 
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public int Zoom
       {
          get
