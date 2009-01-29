@@ -31,12 +31,24 @@ namespace System.Windows.Controls
       public GMap()
       {
          Purity.Instance.ImageProxy = new WindowsPresentationImageProxy();
-         SnapsToDevicePixels = true;
-         ClipToBounds = true;
 
          Core.RenderMode = GMapNET.RenderMode.WPF;
-         Core.OnNeedInvalidation +=new NeedInvalidation(Core_OnNeedInvalidation);
-         this.SizeChanged += new SizeChangedEventHandler(GMap_SizeChanged);
+         Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
+
+         SnapsToDevicePixels = true;
+         ClipToBounds = true;
+         SizeChanged += new SizeChangedEventHandler(GMap_SizeChanged);
+         Loaded += new RoutedEventHandler(GMap_Loaded);
+      }
+
+      /// <summary>
+      /// inits core system
+      /// </summary>
+      /// <param name="sender"></param>
+      /// <param name="e"></param>
+      void GMap_Loaded(object sender, RoutedEventArgs e)
+      {
+         Core.StartSystem();
       }
 
       /// <summary>

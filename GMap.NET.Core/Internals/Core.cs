@@ -36,10 +36,10 @@ namespace GMapNET.Internals
       public Point tilePoint;
 
       public readonly TileMatrix Matrix = new TileMatrix();
-      public readonly BackgroundWorker boundsChecker = new BackgroundWorker();
-      public readonly BackgroundWorker loader = new BackgroundWorker();
-      public readonly BackgroundWorker loader2 = new BackgroundWorker();
-      public readonly BackgroundWorker loader3 = new BackgroundWorker();
+      BackgroundWorker boundsChecker = new BackgroundWorker();
+      BackgroundWorker loader = new BackgroundWorker();
+      BackgroundWorker loader2 = new BackgroundWorker();
+      BackgroundWorker loader3 = new BackgroundWorker();
       EventWaitHandle waitOnEmptyTasks = new AutoResetEvent(false);
       EventWaitHandle waitForBoundsChanged = new AutoResetEvent(true);
       public List<Point> tileDrawingList = new List<Point>();
@@ -50,10 +50,11 @@ namespace GMapNET.Internals
       public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas", DateTime.Today.Year);
       public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
       public readonly string yahooMapCopyright = string.Format("© Yahoo! Inc. - Map data ©{0} NAVTEQ", DateTime.Today.Year);
-     
+
       bool currentMarkerEnabled = true;
       bool mouseVisible = true;
-      public bool IsMouseOverMarker;
+      bool started = false;
+      public bool IsMouseOverMarker; 
 
       public bool MouseVisible
       {
@@ -249,27 +250,36 @@ namespace GMapNET.Internals
       /// </summary>
       public event NeedInvalidation OnNeedInvalidation;
 
-      public Core()
+      /// <summary>
+      /// starts core system
+      /// </summary>
+      public void StartSystem()
       {
-         loader.WorkerReportsProgress = true;
-         loader.WorkerSupportsCancellation = true;
-         loader.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
-         loader.DoWork += new DoWorkEventHandler(loader_DoWork);
+         if(!started)
+         {
+            loader.WorkerReportsProgress = true;
+            loader.WorkerSupportsCancellation = true;
+            loader.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
+            loader.DoWork += new DoWorkEventHandler(loader_DoWork);
 
-         loader2.WorkerReportsProgress = true;
-         loader2.WorkerSupportsCancellation = true;
-         loader2.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
-         loader2.DoWork += new DoWorkEventHandler(loader2_DoWork);
+            loader2.WorkerReportsProgress = true;
+            loader2.WorkerSupportsCancellation = true;
+            loader2.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
+            loader2.DoWork += new DoWorkEventHandler(loader2_DoWork);
 
-         loader3.WorkerReportsProgress = true;
-         loader3.WorkerSupportsCancellation = true;
-         loader3.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
-         loader3.DoWork += new DoWorkEventHandler(loader3_DoWork);
+            loader3.WorkerReportsProgress = true;
+            loader3.WorkerSupportsCancellation = true;
+            loader3.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
+            loader3.DoWork += new DoWorkEventHandler(loader3_DoWork);
 
-         boundsChecker.WorkerReportsProgress = true;
-         boundsChecker.WorkerSupportsCancellation = true;
-         boundsChecker.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
-         boundsChecker.DoWork += new DoWorkEventHandler(boundsChecker_DoWork);
+            boundsChecker.WorkerReportsProgress = true;
+            boundsChecker.WorkerSupportsCancellation = true;
+            boundsChecker.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
+            boundsChecker.DoWork += new DoWorkEventHandler(boundsChecker_DoWork);
+         
+            started = true;
+         }
+         this.ReloadMap();
       }
 
       public void OnMapSizeChanged(int width, int height)
@@ -719,24 +729,26 @@ namespace GMapNET.Internals
       /// </summary>
       public void ReloadMap()
       {
-         lock(tileLoadQueue)
          {
-            tileLoadQueue.Clear();
+            lock(tileLoadQueue)
+            {
+               tileLoadQueue.Clear();
+            }
+
+            {
+               Matrix.Clear();
+
+               OnNeedInvalidation();
+
+               GC.Collect(GC.MaxGeneration);
+               GC.WaitForPendingFinalizers();
+            }
+
+            GoToCurrentPosition();
+
+            // start loading
+            RunAsyncTasks();
          }
-
-         {
-            Matrix.Clear();
-
-            OnNeedInvalidation();
-
-            GC.Collect(GC.MaxGeneration);
-            GC.WaitForPendingFinalizers();
-         }
-
-         GoToCurrentPosition();
-
-         // start loading
-         RunAsyncTasks();
       }
 
       /// <summary>

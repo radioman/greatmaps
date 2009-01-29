@@ -52,7 +52,7 @@ namespace Demo.WindowsPresentation
          // get position
          textBoxLat.Text = MainMap.CurrentPosition.Lat.ToString(CultureInfo.InvariantCulture);
          textBoxLng.Text = MainMap.CurrentPosition.Lng.ToString(CultureInfo.InvariantCulture);
-     
+
          // get marker state
          checkBoxCurrentMarker.IsChecked = MainMap.CurrentMarkerEnabled;
 
@@ -64,27 +64,21 @@ namespace Demo.WindowsPresentation
          sliderZoom.Value = MainMap.Zoom;
       }
 
-      // on form load
-      private void Window_Loaded(object sender, RoutedEventArgs e)
-      {
-         MainMap.ReloadMap();
-      }
-
       // tile louading starts
       void MainMap_OnTileLoadStart(int loaderId)
       {
          switch(loaderId)
          {
             case 1:
-            progressBar1.IsIndeterminate = true;
+            progressBar1.Visibility = Visibility.Visible;
             break;
 
             case 2:
-            progressBar2.IsIndeterminate = true;
+            progressBar2.Visibility = Visibility.Visible;
             break;
 
             case 3:
-            progressBar3.IsIndeterminate = true;
+            progressBar3.Visibility = Visibility.Visible;
             break;
          }
       }
@@ -95,15 +89,15 @@ namespace Demo.WindowsPresentation
          switch(loaderId)
          {
             case 1:
-            progressBar1.IsIndeterminate = false;
+            progressBar1.Visibility = Visibility.Hidden;
             break;
 
             case 2:
-            progressBar2.IsIndeterminate = false;
+            progressBar2.Visibility = Visibility.Hidden;
             break;
 
             case 3:
-            progressBar3.IsIndeterminate = false;
+            progressBar3.Visibility = Visibility.Hidden;
             break;
          }
       }
@@ -127,7 +121,7 @@ namespace Demo.WindowsPresentation
       // map type changed
       private void comboBoxMapType_DropDownClosed(object sender, EventArgs e)
       {
-         MainMap.MapType = (GMapType)comboBoxMapType.SelectedItem;
+         MainMap.MapType = (GMapType) comboBoxMapType.SelectedItem;
          MainMap.ReloadMap();
       }
 
@@ -190,6 +184,6 @@ namespace Demo.WindowsPresentation
             MainMap.Zoom = zn;
             MainMap.ReloadMap();
          }
-      }       
+      }
    }
 }

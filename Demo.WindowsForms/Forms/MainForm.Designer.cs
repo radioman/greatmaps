@@ -629,7 +629,6 @@
          this.Text = "GMap.NET - Google Maps for Windows Forms";
          this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
          this.Scroll += new System.Windows.Forms.ScrollEventHandler(this.MainMap_Scroll);
-         this.Shown += new System.EventHandler(this.MainForm_Shown);
          this.groupBox4.ResumeLayout(false);
          this.groupBox3.ResumeLayout(false);
          this.groupBox3.PerformLayout();

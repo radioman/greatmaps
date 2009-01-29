@@ -192,12 +192,6 @@ namespace Demo.WindowsForms
          MainMap.ReloadMap();
       }
 
-      // load
-      private void MainForm_Shown(object sender, EventArgs e)
-      {
-         MainMap.ReloadMap();
-      }
-
       // cache config
       private void checkBoxUseCache_CheckedChanged(object sender, EventArgs e)
       {

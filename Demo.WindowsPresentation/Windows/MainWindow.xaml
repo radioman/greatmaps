@@ -4,8 +4,7 @@
     Title="GMap.NET - Google Maps for Windows Presentation"
     Height="523" Width="823"
     WindowStartupLocation="CenterScreen"
-    WindowState="Maximized" Loaded="Window_Loaded"
-    xmlns:src="clr-namespace:System.Windows.Controls;assembly=GMap.NET.WindowsPresentation"
+    WindowState="Maximized" xmlns:src="clr-namespace:System.Windows.Controls;assembly=GMap.NET.WindowsPresentation"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <Grid>
         <GroupBox Header="gmap" Margin="12,7,187,12" ClipToBounds="True">
