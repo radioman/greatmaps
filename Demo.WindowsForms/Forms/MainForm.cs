@@ -49,6 +49,10 @@ namespace Demo.WindowsForms
             comboBoxMapType.DataSource = Enum.GetValues(typeof(GMapType));
             comboBoxMapType.SelectedItem = MainMap.MapType;
 
+            // get position
+            textBoxLat.Text = MainMap.CurrentPosition.Lat.ToString(CultureInfo.InvariantCulture);
+            textBoxLng.Text = MainMap.CurrentPosition.Lng.ToString(CultureInfo.InvariantCulture);
+
             // get render type
             comboBoxRenderType.DataSource = Enum.GetValues(typeof(RenderMode));
             comboBoxRenderType.SelectedItem = MainMap.RenderMode;

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Net;
+using System.Globalization;
 
 using GMapNET;
 
@@ -41,6 +42,20 @@ namespace Demo.WindowsPresentation
          MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
          MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
          MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
+
+         // get map types
+         comboBoxMapType.ItemsSource = Enum.GetValues(typeof(GMapType));
+         comboBoxMapType.SelectedItem = MainMap.MapType;
+
+         // get position
+         textBoxLat.Text = MainMap.CurrentPosition.Lat.ToString(CultureInfo.InvariantCulture);
+         textBoxLng.Text = MainMap.CurrentPosition.Lng.ToString(CultureInfo.InvariantCulture);
+     
+         // get marker state
+         checkBoxCurrentMarker.IsChecked = MainMap.CurrentMarkerEnabled;
+
+         // can drag map
+         checkBoxDragMap.IsChecked = MainMap.CanDragMap;
       }
 
       // on form load
@@ -51,12 +66,38 @@ namespace Demo.WindowsPresentation
 
       void MainMap_OnTileLoadStart(int loaderId)
       {
-         //throw new NotImplementedException();
+         switch(loaderId)
+         {
+            case 1:
+            progressBar1.IsIndeterminate = true;
+            break;
+
+            case 2:
+            progressBar2.IsIndeterminate = true;
+            break;
+
+            case 3:
+            progressBar3.IsIndeterminate = true;
+            break;
+         }
       }
 
       void MainMap_OnTileLoadComplete(int loaderId)
       {
-         //throw new NotImplementedException();
+         switch(loaderId)
+         {
+            case 1:
+            progressBar1.IsIndeterminate = false;
+            break;
+
+            case 2:
+            progressBar2.IsIndeterminate = false;
+            break;
+
+            case 3:
+            progressBar3.IsIndeterminate = false;
+            break;
+         }
       }
 
       void MainMap_OnMarkerClick(Marker item)
@@ -73,6 +114,63 @@ namespace Demo.WindowsPresentation
       private void button1_Click(object sender, RoutedEventArgs e)
       {
          MainMap.ReloadMap();
+      }
+
+      // map type changed
+      private void comboBoxMapType_DropDownClosed(object sender, EventArgs e)
+      {
+         MainMap.MapType = (GMapType)comboBoxMapType.SelectedItem;
+         MainMap.ReloadMap();
+      }
+
+      // enable current marker
+      private void checkBoxCurrentMarker_Checked(object sender, RoutedEventArgs e)
+      {
+         MainMap.CurrentMarkerEnabled = true;
+      }
+
+      // disable current marker
+      private void checkBoxCurrentMarker_Unchecked(object sender, RoutedEventArgs e)
+      {
+         MainMap.CurrentMarkerEnabled = false;
+      }
+
+      // enable map dragging
+      private void checkBoxDragMap_Checked(object sender, RoutedEventArgs e)
+      {
+         MainMap.CanDragMap = true;
+      }
+
+      // disable map dragging
+      private void checkBoxDragMap_Unchecked(object sender, RoutedEventArgs e)
+      {
+         MainMap.CanDragMap = false;
+      }
+
+      // goto!
+      private void button2_Click(object sender, RoutedEventArgs e)
+      {
+         double lat = double.Parse(textBoxLat.Text, CultureInfo.InvariantCulture);
+         double lng = double.Parse(textBoxLng.Text, CultureInfo.InvariantCulture);
+
+         MainMap.CurrentPosition = new PointLatLng(lat, lng);
+         MainMap.GoToCurrentPosition();
+      }
+
+      // goto by geocoder
+      private void textBoxGeo_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+      {
+         if(e.Key == System.Windows.Input.Key.Enter)
+         {
+            if(!MainMap.SetCurrentPositionByKeywords(textBoxGeo.Text))
+            {
+               MessageBox.Show("Google Maps Geocoder can't find: " + textBoxGeo.Text, "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+            else
+            {
+               MainMap.GoToCurrentPosition();
+            }
+         }
       }       
    }
 }
