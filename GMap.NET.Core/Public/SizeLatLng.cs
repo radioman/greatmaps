@@ -49,7 +49,7 @@ namespace GMapNET
 
       public static explicit operator PointLatLng(SizeLatLng size)
       {
-         return new PointLatLng(size.WidthLng, size.HeightLat);
+         return new PointLatLng(size.HeightLat, size.WidthLng);
       }
 
 

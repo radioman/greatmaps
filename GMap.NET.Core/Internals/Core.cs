@@ -329,12 +329,10 @@ namespace GMapNET.Internals
                if(Zoom != maxZoom)
                {
                   Zoom = maxZoom;
-                  ReloadMap();
                }
-               else
-               {
-                  GoToCurrentPosition();
-               }
+
+               GoToCurrentPosition();
+
                return true;
             }
          }
@@ -366,15 +364,11 @@ namespace GMapNET.Internals
       {
          get
          {
-            RectLatLng ret = new RectLatLng();
+            PointLatLng p = GMaps.Instance.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y, Zoom);
+            double rlng = GMaps.Instance.FromPixelToLatLng(-renderOffset.X + Width, -renderOffset.Y, Zoom).Lng;
+            double blat = GMaps.Instance.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y + Height, Zoom).Lat;
 
-            ret.Location = GMaps.Instance.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y, Zoom);
-
-            double lng = GMaps.Instance.FromPixelToLatLng(-renderOffset.X + Width, -renderOffset.Y, Zoom).Lng - ret.Location.Lng;
-            double lat = GMaps.Instance.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y - Height, Zoom).Lat - ret.Location.Lat;
-            ret.Size = new SizeLatLng(lng, lat);
-
-            return ret;
+            return RectLatLng.FromLTRB(p.Lng, p.Lat, rlng, blat);
          }
       }
 
@@ -585,16 +579,27 @@ namespace GMapNET.Internals
       /// changes current position without changing current gtile
       /// </summary>
       /// <param name="localPoint"></param>
-      public void ChangeCurrentPositionOnly(Point localPoint)
+      public void SetCurrentPositionOnly(Point pixelPoint)
       {
-         currentPosition = GMaps.Instance.FromPixelToLatLng(localPoint, Zoom);
+         currentPosition = GMaps.Instance.FromPixelToLatLng(pixelPoint, Zoom);
          currentPositionPixel = GMaps.Instance.FromLatLngToPixel(currentPosition, Zoom);
 
          if(OnCurrentPositionChanged != null)
             OnCurrentPositionChanged(currentPosition);
       }
 
+      /// <summary>
+      /// changes current position without changing current gtile
+      /// </summary>
+      /// <param name="localPoint"></param>
+      public void SetCurrentPositionOnly(PointLatLng point)
+      {
+         currentPosition = point;
+         currentPositionPixel = GMaps.Instance.FromLatLngToPixel(currentPosition, Zoom);
 
+         if(OnCurrentPositionChanged != null)
+            OnCurrentPositionChanged(currentPosition);
+      }
 
       /// <summary>
       /// gets rectangle around marker

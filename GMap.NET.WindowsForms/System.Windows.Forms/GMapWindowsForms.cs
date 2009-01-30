@@ -277,9 +277,6 @@ namespace System.Windows.Forms
 
       protected override void OnPaint(PaintEventArgs e)
       {
-         if(DesignMode)
-            return;
-
          switch(RenderMode)
          {
             case RenderMode.GDI:
@@ -388,7 +385,7 @@ namespace System.Windows.Forms
          {
             if(CurrentMarkerEnabled && !IsMouseOverMarker)
             {
-               ChangeCurrentPositionOnly(new Point(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y));
+               SetCurrentPositionOnly(new Point(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y));
 
                if(Core.MouseVisible)
                {
@@ -457,7 +454,7 @@ namespace System.Windows.Forms
             {
                if(CurrentMarkerEnabled)
                {
-                  ChangeCurrentPositionOnly(new Point(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y));
+                  SetCurrentPositionOnly(new Point(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y));
                   Invalidate(false);
                }
             }
@@ -582,9 +579,14 @@ namespace System.Windows.Forms
          Core.ClearAllMarkers();
       }
 
-      public void ChangeCurrentPositionOnly(Point localPoint)
+      public void SetCurrentPositionOnly(Point pixelPoint)
       {
-         Core.ChangeCurrentPositionOnly(localPoint);
+         Core.SetCurrentPositionOnly(pixelPoint);
+      }
+
+      public void SetCurrentPositionOnly(PointLatLng point)
+      {
+         Core.SetCurrentPositionOnly(point);
       }
 
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]

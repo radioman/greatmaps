@@ -113,7 +113,7 @@
          this.groupBox4.Controls.Add(this.MainMap);
          this.groupBox4.Location = new System.Drawing.Point(12, 7);
          this.groupBox4.Name = "groupBox4";
-         this.groupBox4.Size = new System.Drawing.Size(696, 604);
+         this.groupBox4.Size = new System.Drawing.Size(700, 621);
          this.groupBox4.TabIndex = 27;
          this.groupBox4.TabStop = false;
          this.groupBox4.Text = "gmap";
@@ -133,7 +133,7 @@
          this.MainMap.Name = "MainMap";
          this.MainMap.RenderMode = GMapNET.RenderMode.GDI_PLUS;
          this.MainMap.RoutesEnabled = true;
-         this.MainMap.Size = new System.Drawing.Size(690, 585);
+         this.MainMap.Size = new System.Drawing.Size(694, 602);
          this.MainMap.TabIndex = 0;
          this.MainMap.TooltipFont = new System.Drawing.Font("Microsoft Sans Serif", 11F);
          this.MainMap.TooltipTextPadding = new System.Drawing.Size(10, 10);
@@ -150,7 +150,7 @@
          this.groupBox3.Controls.Add(this.label1);
          this.groupBox3.Controls.Add(this.textBoxLng);
          this.groupBox3.Controls.Add(this.textBoxLat);
-         this.groupBox3.Location = new System.Drawing.Point(768, 7);
+         this.groupBox3.Location = new System.Drawing.Point(772, 7);
          this.groupBox3.Name = "groupBox3";
          this.groupBox3.Size = new System.Drawing.Size(169, 128);
          this.groupBox3.TabIndex = 28;
@@ -260,7 +260,7 @@
          this.trackBar1.Minimum = 1;
          this.trackBar1.Name = "trackBar1";
          this.trackBar1.Orientation = System.Windows.Forms.Orientation.Vertical;
-         this.trackBar1.Size = new System.Drawing.Size(42, 585);
+         this.trackBar1.Size = new System.Drawing.Size(42, 602);
          this.trackBar1.TabIndex = 29;
          this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
          this.trackBar1.Value = 12;
@@ -271,9 +271,9 @@
          this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
          this.groupBox2.Controls.Add(this.trackBar1);
-         this.groupBox2.Location = new System.Drawing.Point(714, 7);
+         this.groupBox2.Location = new System.Drawing.Point(718, 7);
          this.groupBox2.Name = "groupBox2";
-         this.groupBox2.Size = new System.Drawing.Size(48, 604);
+         this.groupBox2.Size = new System.Drawing.Size(48, 621);
          this.groupBox2.TabIndex = 30;
          this.groupBox2.TabStop = false;
          this.groupBox2.Text = "zoom";
@@ -287,7 +287,7 @@
          this.groupBox5.Controls.Add(this.comboBoxRenderType);
          this.groupBox5.Controls.Add(this.label7);
          this.groupBox5.Controls.Add(this.comboBoxMapType);
-         this.groupBox5.Location = new System.Drawing.Point(768, 141);
+         this.groupBox5.Location = new System.Drawing.Point(772, 141);
          this.groupBox5.Name = "groupBox5";
          this.groupBox5.Size = new System.Drawing.Size(169, 116);
          this.groupBox5.TabIndex = 31;
@@ -380,7 +380,7 @@
          this.groupBox1.Controls.Add(this.checkBoxUseRouteCache);
          this.groupBox1.Controls.Add(this.button2);
          this.groupBox1.Controls.Add(this.checkBoxUseTileCache);
-         this.groupBox1.Location = new System.Drawing.Point(768, 492);
+         this.groupBox1.Location = new System.Drawing.Point(772, 509);
          this.groupBox1.Name = "groupBox1";
          this.groupBox1.Size = new System.Drawing.Size(169, 65);
          this.groupBox1.TabIndex = 32;
@@ -457,7 +457,7 @@
          this.groupBox6.Controls.Add(this.textBoxCurrLng);
          this.groupBox6.Controls.Add(this.label14);
          this.groupBox6.Controls.Add(this.label13);
-         this.groupBox6.Location = new System.Drawing.Point(768, 413);
+         this.groupBox6.Location = new System.Drawing.Point(772, 430);
          this.groupBox6.Name = "groupBox6";
          this.groupBox6.Size = new System.Drawing.Size(169, 73);
          this.groupBox6.TabIndex = 34;
@@ -473,7 +473,7 @@
          this.groupBox7.Controls.Add(this.label4);
          this.groupBox7.Controls.Add(this.button6);
          this.groupBox7.Controls.Add(this.button3);
-         this.groupBox7.Location = new System.Drawing.Point(768, 263);
+         this.groupBox7.Location = new System.Drawing.Point(772, 263);
          this.groupBox7.Name = "groupBox7";
          this.groupBox7.Size = new System.Drawing.Size(169, 84);
          this.groupBox7.TabIndex = 35;
@@ -535,7 +535,7 @@
          this.groupBoxLoading.Controls.Add(this.progressBar3);
          this.groupBoxLoading.Controls.Add(this.progressBar2);
          this.groupBoxLoading.Controls.Add(this.progressBar1);
-         this.groupBoxLoading.Location = new System.Drawing.Point(768, 563);
+         this.groupBoxLoading.Location = new System.Drawing.Point(772, 580);
          this.groupBoxLoading.Name = "groupBoxLoading";
          this.groupBoxLoading.Size = new System.Drawing.Size(169, 48);
          this.groupBoxLoading.TabIndex = 36;
@@ -576,7 +576,7 @@
          this.groupBox8.Controls.Add(this.checkBoxPlacemarkInfo);
          this.groupBox8.Controls.Add(this.button5);
          this.groupBox8.Controls.Add(this.button4);
-         this.groupBox8.Location = new System.Drawing.Point(768, 353);
+         this.groupBox8.Location = new System.Drawing.Point(772, 353);
          this.groupBox8.Name = "groupBox8";
          this.groupBox8.Size = new System.Drawing.Size(169, 74);
          this.groupBox8.TabIndex = 37;
@@ -611,7 +611,7 @@
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.BackColor = System.Drawing.Color.AliceBlue;
-         this.ClientSize = new System.Drawing.Size(951, 623);
+         this.ClientSize = new System.Drawing.Size(955, 640);
          this.Controls.Add(this.groupBox8);
          this.Controls.Add(this.groupBoxLoading);
          this.Controls.Add(this.groupBox7);

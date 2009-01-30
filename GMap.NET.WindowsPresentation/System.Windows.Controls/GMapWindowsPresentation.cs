@@ -146,7 +146,7 @@ namespace System.Windows.Controls
          {
             if(CurrentMarkerEnabled && !IsMouseOverMarker)
             {
-               ChangeCurrentPositionOnly(new System.Drawing.Point(Core.mouseDown.X - Core.renderOffset.X, Core.mouseDown.Y - Core.renderOffset.Y));
+               SetCurrentPositionOnly(new System.Drawing.Point(Core.mouseDown.X - Core.renderOffset.X, Core.mouseDown.Y - Core.renderOffset.Y));
 
                if(Core.MouseVisible)
                {
@@ -205,7 +205,7 @@ namespace System.Windows.Controls
             {
                if(CurrentMarkerEnabled)
                {
-                  ChangeCurrentPositionOnly(new System.Drawing.Point(Core.mouseDown.X - Core.renderOffset.X, Core.mouseDown.Y - Core.renderOffset.Y));
+                  SetCurrentPositionOnly(new System.Drawing.Point(Core.mouseDown.X - Core.renderOffset.X, Core.mouseDown.Y - Core.renderOffset.Y));
                   InvalidateVisual();
                }
             }
@@ -287,9 +287,14 @@ namespace System.Windows.Controls
          Core.ClearAllMarkers();
       }
 
-      public void ChangeCurrentPositionOnly(System.Drawing.Point localPoint)
+      public void SetCurrentPositionOnly(System.Drawing.Point pixelPoint)
       {
-         Core.ChangeCurrentPositionOnly(localPoint);
+         Core.SetCurrentPositionOnly(pixelPoint);
+      }
+
+      public void SetCurrentPositionOnly(PointLatLng point)
+      {
+         Core.SetCurrentPositionOnly(point);
       }
 
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]

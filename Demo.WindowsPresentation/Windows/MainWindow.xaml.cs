@@ -34,7 +34,7 @@ namespace Demo.WindowsPresentation
 
          // config map
          MainMap.MapType = GMapType.OpenStreetMap;
-         MainMap.Zoom = 13;
+         MainMap.Zoom = 12;
          MainMap.CurrentMarkerEnabled = true;
          MainMap.CurrentMarkerStyle = CurrentMarkerType.GMap;
          MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
