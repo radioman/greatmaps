@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace GMapNET.Internals
 {
-   public class Tile
+   internal class Tile
    {
       IntPtr ptrHbitmap;
       PureImage image;

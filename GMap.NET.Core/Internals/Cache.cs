@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GMapNET.Internals
 {
-   public class Cache : Singleton<Cache>
+   internal class Cache : Singleton<Cache>
    {
       string cache;
       string gtileCache;

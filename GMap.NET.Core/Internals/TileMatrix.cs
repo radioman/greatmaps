@@ -7,7 +7,7 @@ namespace GMapNET.Internals
    /// matrix for tiles
    /// </summary>
    /// <typeparam name="T"></typeparam>
-   public class TileMatrix
+   internal class TileMatrix
    {
       Dictionary<Point, Tile> matrix;
 

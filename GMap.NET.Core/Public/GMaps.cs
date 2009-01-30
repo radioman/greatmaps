@@ -11,7 +11,7 @@ using GMapNET.Internals;
 namespace GMapNET
 {
    /// <summary>
-   /// google maps manager
+   /// maps manager
    /// </summary>
    public class GMaps : Singleton<GMaps>
    {

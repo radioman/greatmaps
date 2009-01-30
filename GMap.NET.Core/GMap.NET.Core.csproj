@@ -40,7 +40,8 @@
   <ItemGroup>
     <Compile Include="Internals\PureImage.cs" />
     <Compile Include="Internals\Purity.cs" />
-    <Compile Include="Public\IGMapControl.cs" />
+    <Compile Include="Internals\IGControl.cs" />
+    <Compile Include="Public\Delegates.cs" />
     <Compile Include="Public\GMapType.cs" />
     <Compile Include="Public\Singleton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

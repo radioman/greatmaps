@@ -21,7 +21,7 @@ using GMapNET.Internals;
 
 namespace System.Windows.Controls
 {
-   public partial class GMap : UserControl, IGMapControl
+   public partial class GMap : UserControl, IGControl
    {
       readonly Core Core = new Core();
       delegate void MethodInvoker();

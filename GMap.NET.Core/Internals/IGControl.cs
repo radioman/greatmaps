@@ -1,25 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-
-using GMapNET;
-using GMapNET.Properties;
-using GMapNET.Internals;
+﻿using System.Drawing;
 
 namespace GMapNET
 {
-   public delegate void CurrentPositionChanged(PointLatLng point);
-   public delegate void NeedInvalidation();
-   public delegate void TileLoadComplete(int loaderId);
-   public delegate void TileLoadStart(int loaderId);
-   public delegate void MarkerClick(Marker item);
-   public delegate void MarkerEnter(Marker item);
-   public delegate void MarkerLeave(Marker item);
-   public delegate void MapSizeChanged(int width, int height);
-
-   public interface IGMapControl
+   internal interface IGControl
    {
       int Zoom
       {

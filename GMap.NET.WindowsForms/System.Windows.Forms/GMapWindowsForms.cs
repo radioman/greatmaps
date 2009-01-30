@@ -12,7 +12,7 @@ using GMapNET.Internals;
 
 namespace System.Windows.Forms
 {
-   public partial class GMap : UserControl, IGMapControl
+   public partial class GMap : UserControl, IGControl
    {
       // internal core
       readonly Core Core = new Core();

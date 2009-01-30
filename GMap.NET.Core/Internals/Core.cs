@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.IO;
 using System.Threading;
-using System.Runtime.CompilerServices;
 
 namespace GMapNET.Internals
 {
    /// <summary>
    /// for internal control purposes only
    /// </summary>
-   public class Core
+   internal class Core
    {
       public PointLatLng currentPosition;
       public Point currentPositionTile;
@@ -913,11 +910,9 @@ namespace GMapNET.Internals
             loader.ReportProgress(id, false);
 
             PureImage img = GMaps.Instance.GetImageFrom(MapType, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
+            Matrix[task] = new Tile(img, Zoom, task, RenderMode);
 
-            Tile x = new Tile(img, Zoom, task, RenderMode);
-            Matrix[task] = x;
-
-            loader.ReportProgress(id, x);
+            loader.ReportProgress(id);
          }
          else
          {
