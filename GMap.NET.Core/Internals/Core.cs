@@ -579,9 +579,9 @@ namespace GMapNET.Internals
       /// changes current position without changing current gtile
       /// </summary>
       /// <param name="localPoint"></param>
-      public void SetCurrentPositionOnly(Point pixelPoint)
+      public void SetCurrentPositionOnly(int x, int y)
       {
-         currentPosition = GMaps.Instance.FromPixelToLatLng(pixelPoint, Zoom);
+         currentPosition = GMaps.Instance.FromPixelToLatLng(x, y, Zoom);
          currentPositionPixel = GMaps.Instance.FromLatLngToPixel(currentPosition, Zoom);
 
          if(OnCurrentPositionChanged != null)
@@ -610,6 +610,8 @@ namespace GMapNET.Internals
       public Rectangle GetRectForMarker(Point e, Marker m)
       {
          Rectangle rc1 = new Rectangle();
+
+         /*
          rc1.Location = new Point(e.X - renderOffset.X, e.Y - renderOffset.Y);
          if(m.Type == MarkerType.Small)
          {
@@ -623,7 +625,7 @@ namespace GMapNET.Internals
          }
          else // custom
          {
-            rc1.Size = m.CustomMarker.Size;
+            //rc1.Size = m.CustomMarker.Size;
 
             switch(m.CustomMarkerAlign)
             {
@@ -640,6 +642,8 @@ namespace GMapNET.Internals
                break;
             }
          }
+         */
+
          return rc1;
       }
 

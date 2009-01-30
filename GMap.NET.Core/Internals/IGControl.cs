@@ -117,7 +117,7 @@ namespace GMapNET
       void GoToCurrentPosition();
       bool ZoomAndCenterMarkers();
 
-      void SetCurrentPositionOnly(Point pixelPoint);
+      void SetCurrentPositionOnly(int x, int y);
       void SetCurrentPositionOnly(PointLatLng point);
       bool SetCurrentPositionByKeywords(string keys);
       void SetCurrentMarkersVisibility(bool visible);

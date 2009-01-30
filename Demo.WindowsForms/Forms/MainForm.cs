@@ -236,11 +236,11 @@ namespace Demo.WindowsForms
             MainMap.AddRoute(r);
 
             // add route start/end marks
-            Marker m1 = new Marker(start, MarkerType.Medium, MarkerColor.Green);
+            Marker m1 = new Marker(start);
             m1.Text = "Start: " + start.ToString();
             m1.TooltipMode = MarkerTooltipMode.Always;
 
-            Marker m2 = new Marker(end, MarkerType.Medium, MarkerColor.Yellow);
+            Marker m2 = new Marker(end);
             m2.Text = "End: " + end.ToString();
             m2.TooltipMode = MarkerTooltipMode.Always;
 
@@ -259,7 +259,7 @@ namespace Demo.WindowsForms
       // add marker on current position
       private void button4_Click(object sender, EventArgs e)
       {
-         Marker m = new Marker(MainMap.CurrentPosition, RandomEnum<MarkerType>(), RandomEnum<MarkerColor>());
+         Marker m = new Marker(MainMap.CurrentPosition);
 
          Placemark p = null;
          if(checkBoxPlacemarkInfo.Checked)
@@ -274,18 +274,6 @@ namespace Demo.WindowsForms
          else
          {
             m.Text = MainMap.CurrentPosition.ToString();
-         }
-
-         if(m.Type == MarkerType.Custom)
-         {
-            m.CustomMarker = Properties.Resources.MapPointer;
-            m.CustomMarkerAlign = CustomMarkerAlign.MiddleMiddle;
-
-            // the same aligment can be that, because image is 40x40
-            // so you can set marker 'center' anywhere on your image
-            //
-            //m.CustomMarkerAlign = CustomMarkerAlign.Manual;
-            //m.CustomMarkerCenter = new System.Drawing.Point(20, 20);             
          }
 
          MainMap.AddMarker(m);

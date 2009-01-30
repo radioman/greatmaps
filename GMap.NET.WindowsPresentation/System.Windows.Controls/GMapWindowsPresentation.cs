@@ -12,7 +12,6 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
-using System.Drawing;
 using System.IO;
 
 using GMapNET;
@@ -25,16 +24,18 @@ namespace System.Windows.Controls
    {
       readonly Core Core = new Core();
       delegate void MethodInvoker();
-      Region Region = new Region();
+      System.Drawing.Region Region = new System.Drawing.Region();
       System.Windows.Media.Pen pen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Red, 2);
+
+      MarkerCross CurrentMarker = new MarkerCross();
 
       public GMap()
       {
          Purity.Instance.ImageProxy = new WindowsPresentationImageProxy();
-         
+
          Core.RenderMode = GMapNET.RenderMode.WPF;
          Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
-         
+
          SnapsToDevicePixels = true;
          ClipToBounds = true;
          SizeChanged += new SizeChangedEventHandler(GMap_SizeChanged);
@@ -87,7 +88,7 @@ namespace System.Windows.Controls
          Core.sizeOfMapArea.Height = Core.sizeOfMapArea.Height/2 + 2;
 
          // 50px outside control
-         this.Region = new Region(new System.Drawing.Rectangle(-50, -50, (int) e.NewSize.Width+100, (int) e.NewSize.Height+100));
+         this.Region = new System.Drawing.Region(new System.Drawing.Rectangle(-50, -50, (int) e.NewSize.Width+100, (int) e.NewSize.Height+100));
 
          Core.OnMapSizeChanged((int) e.NewSize.Width, (int) e.NewSize.Height);
          InvalidateVisual();
@@ -112,15 +113,16 @@ namespace System.Windows.Controls
                {
                   if(t.Image != null)
                   {
-                     Core.tileRect.Location = new System.Drawing.Point(Core.tilePoint.X*Core.tileRect.Width, Core.tilePoint.Y*Core.tileRect.Height);
+                     Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
+                     Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
                      Core.tileRect.Offset(Core.renderOffset);
 
                      if(this.Region.IsVisible(Core.tileRect))
                      {
                         WindowsPresentationImage img = t.Image as WindowsPresentationImage;
-                        if(img != null)
+                        if(img.Img != null)
                         {
-                           g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, 256, 256));
+                           g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
                         }
                      }
                   }
@@ -135,23 +137,34 @@ namespace System.Windows.Controls
          if(Core.RenderMode == GMapNET.RenderMode.WPF)
          {
             DrawMapWPF(drawingContext);
+
+            // draw current marker
+            if(CurrentMarkerEnabled)
+            {
+               CurrentMarker.Position = CurrentPosition;
+               CurrentMarker.LocalPosition.X = CurrentPositionGPixel.X;
+               CurrentMarker.LocalPosition.Y = CurrentPositionGPixel.Y;
+               CurrentMarker.LocalPosition.Offset(Core.renderOffset.X, Core.renderOffset.Y);
+               CurrentMarker.OnRender(drawingContext);
+            }
          }
       }
 
       protected override void OnMouseDown(MouseButtonEventArgs e)
       {
-         Core.mouseDown = new System.Drawing.Point((int) e.GetPosition(this).X, (int) e.GetPosition(this).Y);
+         Point p = e.GetPosition(this);
+         Core.mouseDown.X = (int) p.X;
+         Core.mouseDown.Y = (int) p.Y;
 
          if(e.LeftButton == MouseButtonState.Pressed)
          {
             if(CurrentMarkerEnabled && !IsMouseOverMarker)
             {
-               SetCurrentPositionOnly(new System.Drawing.Point(Core.mouseDown.X - Core.renderOffset.X, Core.mouseDown.Y - Core.renderOffset.Y));
+               SetCurrentPositionOnly(Core.mouseDown.X - Core.renderOffset.X, Core.mouseDown.Y - Core.renderOffset.Y);
 
                if(Core.MouseVisible)
                {
-                  //this.Cursor = System.Windows.Forms.Cursors.Default;
-                  //this.Cursor.Hide();
+                  Cursor = Cursors.None;
                   Core.MouseVisible = false;
                }
 
@@ -162,8 +175,7 @@ namespace System.Windows.Controls
          {
             if(CanDragMap)
             {
-               //this.Cursor = System.Windows.Forms.Cursors.SizeAll;
-
+               Cursor = Cursors.SizeAll;
                Core.BeginDrag(Core.mouseDown);
             }
          }
@@ -179,11 +191,10 @@ namespace System.Windows.Controls
          {
             Core.EndDrag();
 
-            //this.Cursor = System.Windows.Forms.Cursors.Default;
+            Cursor = Cursors.Arrow;
 
             if(!Core.MouseVisible)
             {
-               //Cursor.Show();
                Core.MouseVisible = true;
             }
          }
@@ -195,20 +206,22 @@ namespace System.Windows.Controls
       {
          if(Core.IsDragging)
          {
-            Core.mouseCurrent = new System.Drawing.Point((int) e.GetPosition(this).X, (int) e.GetPosition(this).Y);
+            Point p = e.GetPosition(this);
+            Core.mouseCurrent.X = (int) p.X;
+            Core.mouseCurrent.Y = (int) p.Y;            
 
             if(e.RightButton == MouseButtonState.Pressed)
             {
-               Core.Drag(Core.mouseCurrent);
-            }
+               Core.Drag(Core.mouseCurrent); 
+             }
             else if(e.LeftButton == MouseButtonState.Pressed)
             {
                if(CurrentMarkerEnabled)
                {
-                  SetCurrentPositionOnly(new System.Drawing.Point(Core.mouseDown.X - Core.renderOffset.X, Core.mouseDown.Y - Core.renderOffset.Y));
+                  SetCurrentPositionOnly(Core.mouseCurrent.X - Core.renderOffset.X, Core.mouseCurrent.Y - Core.renderOffset.Y);
                   InvalidateVisual();
                }
-            }
+            }            
          }
 
          base.OnMouseMove(e);
@@ -287,9 +300,9 @@ namespace System.Windows.Controls
          Core.ClearAllMarkers();
       }
 
-      public void SetCurrentPositionOnly(System.Drawing.Point pixelPoint)
+      public void SetCurrentPositionOnly(int x, int y)
       {
-         Core.SetCurrentPositionOnly(pixelPoint);
+         Core.SetCurrentPositionOnly(x, y); 
       }
 
       public void SetCurrentPositionOnly(PointLatLng point)
@@ -395,7 +408,7 @@ namespace System.Windows.Controls
          }
       }
 
-      public Font TooltipFont
+      public System.Drawing.Font TooltipFont
       {
          get
          {
@@ -489,7 +502,7 @@ namespace System.Windows.Controls
 
       #endregion
 
-      #region IGMapControl event Members
+      #region IGControl event Members
 
       public event CurrentPositionChanged OnCurrentPositionChanged
       {

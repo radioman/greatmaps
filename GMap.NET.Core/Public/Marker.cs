@@ -3,17 +3,13 @@
 namespace GMapNET
 {
    public class Marker
-   {
-      public MarkerType Type;
-      public PointLatLng Position;
-      public MarkerColor Color;
+   {  
+      public MapObject Type;
+      public PointLatLng Position;      
       public MarkerTooltipMode TooltipMode;  
       public Point ToolTipOffset;
-      public CustomMarkerAlign CustomMarkerAlign;
-      public Point CustomMarkerCenter;
       public string Text;
       public bool Visible;
-      public Image CustomMarker;
       public object Tag;
 
       private bool isMouseOver; 
@@ -23,39 +19,22 @@ namespace GMapNET
          {
             return isMouseOver;
          }
-         set
+         internal set
          {
             isMouseOver = value;
          }
       }        
 
-      public Marker(PointLatLng pos, MarkerType type, MarkerColor color)
+      public Marker(PointLatLng pos)
       {
          this.Position = pos;
-         this.Type = type;
-         this.Color = color;
          this.Text = string.Empty;
          this.TooltipMode = MarkerTooltipMode.OnMouseOver;
          this.Visible = true;
-         this.CustomMarkerAlign = CustomMarkerAlign.MiddleMiddle;
-         this.CustomMarkerCenter = Point.Empty;
 
          this.IsMouseOver = false;
          this.ToolTipOffset = new Point(14, -44);
       }
-   }
-
-   public enum MarkerType
-   {
-      Small,
-      Medium,
-      Custom,
-   }
-
-   public enum CustomMarkerAlign
-   {
-      MiddleMiddle,
-      Manual,
    }
 
    public enum CurrentMarkerType
@@ -63,14 +42,6 @@ namespace GMapNET
       GMap,
       Cross,
       Custom,
-   }
-
-   public enum MarkerColor
-   {
-      Red,
-      Green,
-      Yellow,
-      Blue,
    }
 
    public enum MarkerTooltipMode

@@ -147,7 +147,7 @@ namespace System.Windows.Forms
                      if(this.Region.IsVisible(Core.tileRect))
                      {
                         WindowsFormsImage img = t.Image as WindowsFormsImage;
-                        if(img != null)
+                        if(img.Img != null)
                         {
                            g.DrawImageUnscaled(img.Img, Core.tileRect.Location);
                         }
@@ -385,7 +385,7 @@ namespace System.Windows.Forms
          {
             if(CurrentMarkerEnabled && !IsMouseOverMarker)
             {
-               SetCurrentPositionOnly(new Point(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y));
+               SetCurrentPositionOnly(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y);
 
                if(Core.MouseVisible)
                {
@@ -454,7 +454,7 @@ namespace System.Windows.Forms
             {
                if(CurrentMarkerEnabled)
                {
-                  SetCurrentPositionOnly(new Point(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y));
+                  SetCurrentPositionOnly(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y);
                   Invalidate(false);
                }
             }
@@ -579,9 +579,9 @@ namespace System.Windows.Forms
          Core.ClearAllMarkers();
       }
 
-      public void SetCurrentPositionOnly(Point pixelPoint)
+      public void SetCurrentPositionOnly(int x, int y)
       {
-         Core.SetCurrentPositionOnly(pixelPoint);
+         Core.SetCurrentPositionOnly(x, y);
       }
 
       public void SetCurrentPositionOnly(PointLatLng point)
@@ -785,7 +785,7 @@ namespace System.Windows.Forms
 
       #endregion
 
-      #region IGMapControl event Members
+      #region IGControl event Members
 
       public event CurrentPositionChanged OnCurrentPositionChanged
       {
