@@ -239,6 +239,33 @@ namespace GMapNET
       }
 
       /// <summary>
+      /// get images from list and cache it
+      /// </summary>
+      /// <param name="list"></param>
+      /// <param name="type"></param>
+      /// <param name="zoom"></param>
+      /// <returns>successfully downloaded tile count</returns>
+      public int TryPrecacheTiles(List<Point> list, GMapType type, int zoom, int sleepDelay)
+      {
+         int countOk = 0;
+
+         Stuff.Shuffle<Point>(list);
+
+         foreach(Point p in list)
+         {
+            PureImage img = GetImageFrom(type, p, zoom, Language, true);
+            if(img != null)
+            {
+               countOk++;
+            }
+
+            System.Threading.Thread.Sleep(sleepDelay);
+         }
+
+         return countOk;
+      }
+
+      /// <summary>
       /// get route between two points
       /// </summary>
       /// <param name="start"></param>
@@ -925,35 +952,7 @@ namespace GMapNET
          }
 
          return ret;
-      }
-
-      /// <summary>
-      /// get images from list and cache it
-      /// </summary>
-      /// <param name="list"></param>
-      /// <param name="type"></param>
-      /// <param name="zoom"></param>
-      /// <param name="language"></param>
-      /// <returns>successfully downloaded tile count</returns>
-      internal int TryPrecacheTiles(List<Point> list, GMapType type, int zoom, string language, int sleepDelay)
-      {
-         int countOk = 0;
-
-         Stuff.Shuffle<Point>(list);
-
-         foreach(Point p in list)
-         {
-            PureImage img = GetImageFrom(type, p, zoom, language, true);
-            if(img != null)
-            {
-               countOk++;
-            }
-
-            System.Threading.Thread.Sleep(sleepDelay);
-         }
-
-         return countOk;
-      }
+      }      
       #endregion
    }
 }
