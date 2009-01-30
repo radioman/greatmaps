@@ -31,10 +31,10 @@ namespace System.Windows.Controls
       public GMap()
       {
          Purity.Instance.ImageProxy = new WindowsPresentationImageProxy();
-
+         
          Core.RenderMode = GMapNET.RenderMode.WPF;
          Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
-
+         
          SnapsToDevicePixels = true;
          ClipToBounds = true;
          SizeChanged += new SizeChangedEventHandler(GMap_SizeChanged);

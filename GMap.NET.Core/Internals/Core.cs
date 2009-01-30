@@ -9,7 +9,7 @@ using System.Threading;
 namespace GMapNET.Internals
 {
    /// <summary>
-   /// for internal control purposes only
+   /// internal map control core
    /// </summary>
    internal class Core
    {
