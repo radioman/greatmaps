@@ -40,7 +40,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Public\Sign.cs" />
     <Compile Include="Internals\PureImage.cs" />
     <Compile Include="Internals\Purity.cs" />
     <Compile Include="Internals\IGControl.cs" />
