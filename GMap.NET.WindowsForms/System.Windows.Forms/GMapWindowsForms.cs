@@ -27,7 +27,7 @@ namespace System.Windows.Forms
 
       public GMap()
       {
-         if(!DesignMode)
+         if(!DesignModeInConstruct)
          {
             Purity.Instance.ImageProxy = new WindowsFormsImageProxy();
 
@@ -249,7 +249,7 @@ namespace System.Windows.Forms
 
       #region UserControl Events
 
-      protected new bool DesignMode
+      protected bool DesignModeInConstruct
       {
          get
          {
@@ -261,15 +261,18 @@ namespace System.Windows.Forms
       {
          base.OnLoad(e);
 
-         if(DesignMode)
-            return;
-
          Core.StartSystem();     
       }
 
       protected override void OnPaintBackground(PaintEventArgs e)
       {
-         // ...
+         if(DesignMode)
+         {
+            e.Graphics.FillRectangle(Brushes.Gray, 0, 0, Width, Height);
+            Point p = new Point(Width/2, Height/2);
+            e.Graphics.DrawImageUnscaled(GMapNET.Properties.Resources.shadow50, p.X-10, p.Y-34);
+            e.Graphics.DrawImageUnscaled(GMapNET.Properties.Resources.marker, p.X-10, p.Y-34);
+         }
       }
 
       protected override void OnPaint(PaintEventArgs e)
@@ -357,6 +360,9 @@ namespace System.Windows.Forms
 
       protected override void OnSizeChanged(EventArgs e)
       {
+         if(DesignMode)
+            return;
+
          Core.sizeOfMapArea = Bounds.Size;
          Core.sizeOfMapArea.Height /= GMaps.Instance.TileSize.Height;
          Core.sizeOfMapArea.Width /= GMaps.Instance.TileSize.Width;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Forms;
 using System.Net;
+using System.ComponentModel;
 using Demo.WindowsForms.Properties; 
 using GMapNET;
 
@@ -17,7 +18,7 @@ namespace Demo.WindowsForms
       {
          InitializeComponent();
 
-         if(!DesignMode)
+         if(LicenseManager.UsageMode != LicenseUsageMode.Designtime)
          {
             // config gmaps
             GMaps.Instance.Language = "lt";
@@ -324,11 +325,6 @@ namespace Demo.WindowsForms
       private void buttonSetEnd_Click(object sender, EventArgs e)
       {
          end = MainMap.CurrentPosition;
-      }
-
-      private void MainMap_Scroll(object sender, ScrollEventArgs e)
-      {
-         System.Diagnostics.Trace.WriteLine(e.NewValue);
       }
 
       // zoom to max for markers
