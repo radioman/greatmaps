@@ -6,7 +6,7 @@ namespace GMapNET
    internal abstract class PureImageProxy
    {
       abstract public PureImage FromStream(Stream stream);
-      abstract public void Save(Stream stream, PureImage image);
+      abstract public bool Save(Stream stream, PureImage image);
    }
 
    internal abstract class PureImage : ICloneable, IDisposable

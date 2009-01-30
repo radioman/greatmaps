@@ -618,9 +618,12 @@ namespace System.Windows.Controls
          {
             try
             {
-               ret = new WindowsPresentationImage();
+               
                PngBitmapDecoder bitmapDecoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
-               ret.Img = bitmapDecoder.Frames[0];
+               ImageSource m = bitmapDecoder.Frames[0];
+
+               ret = new WindowsPresentationImage();
+               ret.Img = m;
             }
             catch
             {
@@ -630,15 +633,26 @@ namespace System.Windows.Controls
          return ret;
       }
 
-      public override void Save(Stream stream, PureImage image)
+      public override bool Save(Stream stream, PureImage image)
       {
          WindowsPresentationImage ret = (WindowsPresentationImage) image;
          if(ret.Img != null)
          {
-            PngBitmapEncoder e = new PngBitmapEncoder();
-            e.Frames.Add(BitmapFrame.Create(ret.Img as BitmapSource));
-            e.Save(stream);
+            try
+            {
+               PngBitmapEncoder e = new PngBitmapEncoder();
+               e.Frames.Add(BitmapFrame.Create(ret.Img as BitmapSource));
+               e.Save(stream);
+            }
+            catch
+            {
+               return false;
+            }
          }
+         else
+            return false;
+
+         return true;
       }
    }
    #endregion

@@ -904,16 +904,32 @@ namespace System.Windows.Forms
    {
       public override PureImage FromStream(Stream stream)
       {
-         WindowsFormsImage ret = new WindowsFormsImage();
-         ret.Img = Image.FromStream(stream, true, true);
-
+         WindowsFormsImage ret = null;
+         try
+         {
+            Image m = Image.FromStream(stream, true, true);
+            ret = new WindowsFormsImage();
+            ret.Img = m;
+         }
+         catch
+         {
+            ret = null;
+         }
          return ret;
       }
 
-      public override void Save(Stream stream, GMapNET.PureImage image)
+      public override bool Save(Stream stream, GMapNET.PureImage image)
       {
-         WindowsFormsImage ret = image as WindowsFormsImage;
-         ret.Img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+         try
+         {
+            WindowsFormsImage ret = image as WindowsFormsImage;
+            ret.Img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+         }
+         catch
+         {
+            return false;
+         }
+         return true;
       }
    }
    #endregion

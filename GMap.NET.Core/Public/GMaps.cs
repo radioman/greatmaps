@@ -891,7 +891,8 @@ namespace GMapNET
       {
          PureImage ret = null;
 
-         ret = Cache.Instance.GetImageFromCache(type, pos, zoom, language);
+         //ret = Cache.Instance.GetImageFromCache(type, pos, zoom, language);
+         ret = Cache.Instance.GetImageFromCacheDB(type, pos, zoom, language);
          if(ret != null)
          {
             return ret;
@@ -945,10 +946,17 @@ namespace GMapNET
             ret = null;
             Debug.WriteLine("GetImageFrom: " + ex.ToString());
          }
-
-         if(ret != null && useCache)
+         finally
          {
-            Cache.Instance.CacheImage(ret.Clone() as PureImage, type, pos, zoom, language);
+            if(ret != null && useCache)
+            {
+               using(MemoryStream m = new MemoryStream())
+               {
+                  Purity.Instance.ImageProxy.Save(m, ret);
+                  Cache.Instance.CacheImageDB(m.ToArray(), type, pos, zoom, language);
+               }
+               //Cache.Instance.CacheImage(ret.Clone() as PureImage, type, pos, zoom, language);
+            }
          }
 
          return ret;
