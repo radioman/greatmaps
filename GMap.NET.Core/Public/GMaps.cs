@@ -392,6 +392,12 @@ namespace GMapNET
                char letter = "abca"[servernum];
                return string.Format("http://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png", letter, zoom.ToString(), pos.X.ToString(), pos.Y.ToString());
             }
+
+            case GMapType.OpenStreetOsm:
+            {
+               char letter = "abca"[servernum];
+               return string.Format("http://{0}.tah.openstreetmap.org/Tiles/tile/{1}/{2}/{3}.png", letter, zoom.ToString(), pos.X.ToString(), pos.Y.ToString());
+            }
          }
 
          string sec1 = ""; // after &x=...
