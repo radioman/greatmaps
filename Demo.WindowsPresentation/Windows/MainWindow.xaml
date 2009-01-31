@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Demo.WindowsPresentation.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="GMap.NET - Google Maps for Windows Presentation"
+    Title="GMap.NET - Great Maps for Windows Presentation"
     Height="523" Width="823"
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized" xmlns:src="clr-namespace:System.Windows.Controls;assembly=GMap.NET.WindowsPresentation"

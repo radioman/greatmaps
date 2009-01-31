@@ -624,7 +624,7 @@
          this.MinimumSize = new System.Drawing.Size(334, 655);
          this.Name = "MainForm";
          this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-         this.Text = "GMap.NET - Google Maps for Windows Forms";
+         this.Text = "GMap.NET - Great Maps for Windows Forms";
          this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
          this.Shown += new System.EventHandler(this.MainForm_Shown);
          this.groupBox4.ResumeLayout(false);
