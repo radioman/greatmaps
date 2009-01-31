@@ -196,7 +196,7 @@ namespace GMapNET
 
       #region -- Stuff --
       /// <summary>
-      /// total item count in google tile matrix at custom zoom level
+      /// total item count in tile matrix at custom zoom level
       /// </summary>
       /// <param name="zoom"></param>
       /// <returns></returns>
@@ -206,7 +206,7 @@ namespace GMapNET
       }
 
       /// <summary>
-      /// google tile matrix size at custom zoom level
+      /// tile matrix size at custom zoom level
       /// </summary>
       /// <param name="zoom"></param>
       /// <returns></returns>
@@ -407,7 +407,7 @@ namespace GMapNET
          if(pos.Y >= 10000 && pos.Y < 100000)
          {
             sec1 = "&s=";
-         }          
+         }
 
          return string.Format("http://{0}{1}.google.com/{2}?v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, servernum.ToString(), request, version, language, pos.X.ToString(), sec1, pos.Y.ToString(), zoom.ToString(), sec2);
       }
@@ -889,7 +889,7 @@ namespace GMapNET
       }
 
       /// <summary>
-      /// gets image from google
+      /// gets image from tile server
       /// </summary>
       /// <param name="type"></param>
       /// <param name="pos"></param>
@@ -960,17 +960,12 @@ namespace GMapNET
          {
             if(ret != null && useCache)
             {
-               using(MemoryStream m = new MemoryStream())
-               {
-                  Purity.Instance.ImageProxy.Save(m, ret);
-                  Cache.Instance.CacheImageDB(m.ToArray(), type, pos, zoom, language);
-               }
-               //Cache.Instance.CacheImage(ret.Clone() as PureImage, type, pos, zoom, language);
+               Cache.Instance.CacheImageToDB(ret, type, pos, zoom, language);
             }
          }
 
          return ret;
-      }      
+      }
       #endregion
    }
 }

@@ -328,6 +328,7 @@ namespace System.Windows.Forms
             break;
 
             case GMapType.OpenStreetMap:
+            case GMapType.OpenStreetOsm:
             {
                e.Graphics.DrawString(Core.openStreetMapCopyright, gFont, Brushes.Navy, 3, Height - gFont.Height - 5);
             }

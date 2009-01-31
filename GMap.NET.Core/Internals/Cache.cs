@@ -42,8 +42,9 @@ namespace GMapNET.Internals
          CacheLocation = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
       }
 
-      public void CacheImageDB(byte[] tile, GMapType type, Point pos, int zoom, string language)
+      public bool CacheImageToDB(PureImage tile, GMapType type, Point pos, int zoom, string language)
       {
+         bool ret = true;
          try
          {
             StringBuilder dir = new StringBuilder(gtileCache);
@@ -66,7 +67,7 @@ namespace GMapNET.Internals
                {
                   using(SQLiteConnection cn = new SQLiteConnection())
                   {
-                     cn.ConnectionString = string.Format("Data Source=\"{0}\";Pooling=False;FailIfMissing=False;", db);
+                     cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=False;", db);
                      cn.Open();
                      if(cn.State == System.Data.ConnectionState.Open)
                      {
@@ -84,6 +85,7 @@ namespace GMapNET.Internals
                            catch
                            {
                               tr.Rollback();
+                              ret = false;
                            }
                         }
                         cn.Close();
@@ -91,50 +93,59 @@ namespace GMapNET.Internals
                   }
                }
 
-               using(SQLiteConnection cn = new SQLiteConnection())
+               if(ret)
                {
-                  cn.ConnectionString = string.Format("Data Source=\"{0}\"; Pooling=False;", db);
-                  cn.Open();
-                  if(cn.State == System.Data.ConnectionState.Open)
+                  using(SQLiteConnection cn = new SQLiteConnection())
                   {
-                     using(SQLiteTransaction tr = cn.BeginTransaction())
+                     cn.ConnectionString = string.Format("Data Source=\"{0}\";", db);
+                     cn.Open();
+                     if(cn.State == System.Data.ConnectionState.Open)
                      {
-                        try
+                        using(MemoryStream m = new MemoryStream())
                         {
-                           using(SQLiteCommand cmd = new SQLiteCommand(cn))
+                           ret = Purity.Instance.ImageProxy.Save(m, tile);
+                           if(ret)
                            {
-                              cmd.CommandText = "INSERT INTO Tiles(X, Y, Type) VALUES(@p1, @p2, @p3)";
-                              cmd.Parameters.AddWithValue("@p1", pos.X);
-                              cmd.Parameters.AddWithValue("@p2", pos.Y);
-                              cmd.Parameters.AddWithValue("@p3", (int) type);                              
+                              using(SQLiteTransaction tr = cn.BeginTransaction())
+                              {
+                                 try
+                                 {
+                                    using(SQLiteCommand cmd = new SQLiteCommand(cn))
+                                    {
+                                       cmd.CommandText = "INSERT INTO Tiles(X, Y, Type) VALUES(@p1, @p2, @p3)";
+                                       cmd.Parameters.AddWithValue("@p1", pos.X);
+                                       cmd.Parameters.AddWithValue("@p2", pos.Y);
+                                       cmd.Parameters.AddWithValue("@p3", (int) type);
 
-                              cmd.ExecuteNonQuery();
+                                       cmd.ExecuteNonQuery();
+                                    }
+
+                                    using(SQLiteCommand cmd = new SQLiteCommand(cn))
+                                    {
+                                       cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
+                                       cmd.Parameters.AddWithValue("@p1", m.ToArray());
+                                       cmd.ExecuteNonQuery();
+                                    }
+                                    tr.Commit();
+                                 }
+                                 catch
+                                 {
+                                    tr.Rollback();
+                                    ret = false;
+                                 }
+                              }
                            }
-
-                           using(SQLiteCommand cmd = new SQLiteCommand(cn))
-                           {
-                              cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
-                              cmd.Parameters.AddWithValue("@p1", tile);
-
-                              cmd.ExecuteNonQuery();
-                           }
-
-                           tr.Commit();
-                        }
-                        catch
-                        {
-                           tr.Rollback();
                         }
                      }
                   }
                }
             }
-            tile = null;
          }
-         catch(System.Exception ex)
+         catch
          {
-            System.Diagnostics.Debug.WriteLine(ex.ToString());
+            ret = false;
          }
+         return ret;
       }
 
       public PureImage GetImageFromCacheDB(GMapType type, Point pos, int zoom, string language)
@@ -143,18 +154,16 @@ namespace GMapNET.Internals
          try
          {
             StringBuilder dir = new StringBuilder(gtileCache);
-            dir.AppendFormat("{0}{1}", language, Path.DirectorySeparatorChar);
+            dir.AppendFormat("{0}{1}{2}.db3", language, Path.DirectorySeparatorChar, zoom);
 
             // get
             {
-               dir.AppendFormat("{0}.db3", zoom);
-
                string db = dir.ToString();
                if(File.Exists(db))
                {
                   using(SQLiteConnection cn = new SQLiteConnection())
                   {
-                     cn.ConnectionString = string.Format("Data Source=\"{0}\"; Pooling=False;", db);
+                     cn.ConnectionString = string.Format("Data Source=\"{0}\";", db);
                      cn.Open();
                      if(cn.State == System.Data.ConnectionState.Open)
                      {
