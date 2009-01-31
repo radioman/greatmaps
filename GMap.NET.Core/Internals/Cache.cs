@@ -23,7 +23,7 @@ namespace GMapNET.Internals
          set
          {
             cache = value;
-            gtileCache = cache + "TileDB" + Path.DirectorySeparatorChar;
+            gtileCache = cache + "TileDBv2" + Path.DirectorySeparatorChar;
             routeCache = cache + "RouteCache" + Path.DirectorySeparatorChar;
             geoCache = cache + "GeocoderCache" + Path.DirectorySeparatorChar;
             placemarkCache = cache + "PlacemarkCache" + Path.DirectorySeparatorChar;
@@ -72,14 +72,21 @@ namespace GMapNET.Internals
                      {
                         using(SQLiteTransaction tr = cn.BeginTransaction())
                         {
-                           using(SQLiteCommand cmd = new SQLiteCommand(cn))
+                           try
                            {
-                              cmd.CommandText = @"CREATE TABLE Tiles (id INTEGER PRIMARY KEY, X INTEGER, Y INTEGER, Type INTEGER, Tile BLOB NULL);
-                                               CREATE INDEX TilesIndex ON Tiles (X, Y, Type);";
-                              cmd.ExecuteNonQuery();
+                              using(SQLiteCommand cmd = new SQLiteCommand(cn))
+                              {
+                                 cmd.CommandText = Properties.Resources.CreateTileDb;
+                                 cmd.ExecuteNonQuery();
+                              }
+                              tr.Commit();
                            }
-                           tr.Commit();
+                           catch
+                           {
+                              tr.Rollback();
+                           }
                         }
+                        cn.Close();
                      }
                   }
                }
@@ -96,11 +103,18 @@ namespace GMapNET.Internals
                         {
                            using(SQLiteCommand cmd = new SQLiteCommand(cn))
                            {
-                              cmd.CommandText = "INSERT INTO Tiles(X, Y, Type, Tile) VALUES(@p1, @p2, @p3, @p4)";
+                              cmd.CommandText = "INSERT INTO Tiles(X, Y, Type) VALUES(@p1, @p2, @p3)";
                               cmd.Parameters.AddWithValue("@p1", pos.X);
                               cmd.Parameters.AddWithValue("@p2", pos.Y);
-                              cmd.Parameters.AddWithValue("@p3", (int) type);
-                              cmd.Parameters.AddWithValue("@p4", tile);
+                              cmd.Parameters.AddWithValue("@p3", (int) type);                              
+
+                              cmd.ExecuteNonQuery();
+                           }
+
+                           using(SQLiteCommand cmd = new SQLiteCommand(cn))
+                           {
+                              cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
+                              cmd.Parameters.AddWithValue("@p1", tile);
 
                               cmd.ExecuteNonQuery();
                            }
@@ -146,7 +160,7 @@ namespace GMapNET.Internals
                      {
                         using(SQLiteCommand com = new SQLiteCommand(cn))
                         {
-                           com.CommandText = string.Format("SELECT Tile FROM Tiles WHERE X={0} AND Y={1} AND Type={2};", pos.X, pos.Y, (int) type);
+                           com.CommandText = string.Format("SELECT Tile FROM TilesData WHERE id = (SELECT id FROM Tiles WHERE X={0} AND Y={1} AND Type={2});", pos.X, pos.Y, (int) type);
 
                            using(SQLiteDataReader rd = com.ExecuteReader())
                            {
