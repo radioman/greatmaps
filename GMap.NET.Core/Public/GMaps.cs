@@ -344,6 +344,7 @@ namespace GMapNET
          string server = string.Empty;
          string request = string.Empty;
          string version = string.Empty;
+         int servernum = (pos.X + 2 * pos.Y) % 4;
 
          switch(type)
          {
@@ -388,11 +389,11 @@ namespace GMapNET
 
             case GMapType.OpenStreetMap:
             {
-               return string.Format("http://tile.openstreetmap.org/{0}/{1}/{2}.png", zoom.ToString(), pos.X.ToString(), pos.Y.ToString());
+               char letter = "abca"[servernum];
+               return string.Format("http://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png", letter, zoom.ToString(), pos.X.ToString(), pos.Y.ToString());
             }
          }
 
-         int servernum = (pos.X + 2 * pos.Y) % 4;
          string sec1 = ""; // after &x=...
          string sec2 = ""; // after &zoom=...
          int seclen = ((pos.X*3) + pos.Y) % 8;
