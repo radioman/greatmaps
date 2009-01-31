@@ -257,6 +257,9 @@ namespace GMapNET
             if(img != null)
             {
                countOk++;
+
+               img.Dispose();
+               img = null;
             }
 
             System.Threading.Thread.Sleep(sleepDelay);

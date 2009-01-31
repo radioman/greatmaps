@@ -86,7 +86,7 @@ namespace GMapNET.Internals
 
                using(SQLiteConnection cn = new SQLiteConnection())
                {
-                  cn.ConnectionString = string.Format("Data Source=\"{0}\"; Pooling=False; FailIfMissing=False;", db);
+                  cn.ConnectionString = string.Format("Data Source=\"{0}\"; Pooling=False;", db);
                   cn.Open();
                   if(cn.State == System.Data.ConnectionState.Open)
                   {
@@ -140,7 +140,7 @@ namespace GMapNET.Internals
                {
                   using(SQLiteConnection cn = new SQLiteConnection())
                   {
-                     cn.ConnectionString = string.Format("Data Source=\"{0}\";Pooling=False;FailIfMissing=False;", db);
+                     cn.ConnectionString = string.Format("Data Source=\"{0}\"; Pooling=False;", db);
                      cn.Open();
                      if(cn.State == System.Data.ConnectionState.Open)
                      {
