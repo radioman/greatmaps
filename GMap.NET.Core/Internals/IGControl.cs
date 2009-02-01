@@ -133,5 +133,8 @@ namespace GMapNET
       void AddMarker(Marker item);
       void RemoveMarker(Marker item);
       void ClearAllMarkers();
+
+      bool ShowExportDialog();
+      bool ShowImportDialog();
    }
 }

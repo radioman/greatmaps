@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Text;
 
 using GMapNET.Internals;
 
@@ -311,6 +312,36 @@ namespace GMapNET
       {
          return GetPlacemarkFromReverseGeocoderUrl(MakeReverseGeocoderUrl(location, Language), UsePlacemarkCache);
       }
+
+      /// <summary>
+      /// exports current map cache to GMDB file
+      /// if file exsist only new records will be added
+      /// otherwise file will be created and all data expoted
+      /// </summary>
+      /// <param name="file"></param>
+      /// <returns></returns>
+      public bool ExportToGMDB(string file)
+      {
+         StringBuilder db = new StringBuilder(Cache.Instance.gtileCache);
+         db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.Language, Path.DirectorySeparatorChar);
+
+         return Cache.Instance.ExportMapDataToDB(db.ToString(), file);
+      }
+
+      /// <summary>
+      /// imports GMDB file to current map cache
+      /// only new records will be added
+      /// </summary>
+      /// <param name="file"></param>
+      /// <returns></returns>
+      public bool ImportFromGMDB(string file)
+      {
+         StringBuilder db = new StringBuilder(Cache.Instance.gtileCache);
+         db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.Language, Path.DirectorySeparatorChar);
+
+         return Cache.Instance.ExportMapDataToDB(file, db.ToString());
+      }
+
       #endregion
 
       #region -- URL generation --

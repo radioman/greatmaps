@@ -310,6 +310,16 @@ namespace System.Windows.Controls
          Core.SetCurrentPositionOnly(point);
       }
 
+      public bool ShowExportDialog()
+      {
+         return Core.ShowExportDialog();
+      }
+
+      public bool ShowImportDialog()
+      {
+         return Core.ShowImportDialog();
+      }
+
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public int Zoom
       {

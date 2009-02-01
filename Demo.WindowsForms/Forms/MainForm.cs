@@ -329,5 +329,17 @@ namespace Demo.WindowsForms
       {
          MainMap.ReloadMap();
       }
+
+      // expord map data
+      private void button9_Click(object sender, EventArgs e)
+      {
+         MainMap.ShowExportDialog();
+      }
+
+      // import map data
+      private void button10_Click(object sender, EventArgs e)
+      {
+         MainMap.ShowImportDialog();
+      }
    }
 }

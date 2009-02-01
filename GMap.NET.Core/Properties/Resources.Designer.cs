@@ -68,8 +68,8 @@ namespace GMapNET.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CREATE TABLE IF NOT EXISTS Tiles (id INTEGER NOT NULL PRIMARY KEY, X INTEGER NOT NULL, Y INTEGER NOT NULL, Type INTEGER NOT NULL);
-        ///CREATE INDEX IF NOT EXISTS IndexOfTiles ON Tiles (X, Y, Type);
+        ///   Looks up a localized string similar to CREATE TABLE IF NOT EXISTS Tiles (id INTEGER NOT NULL PRIMARY KEY, X INTEGER NOT NULL, Y INTEGER NOT NULL, Zoom INTEGER NOT NULL, Type INTEGER NOT NULL);
+        ///CREATE INDEX IF NOT EXISTS IndexOfTiles ON Tiles (X, Y, Zoom, Type);
         ///
         ///CREATE TABLE IF NOT EXISTS TilesData (id INTEGER NOT NULL PRIMARY KEY CONSTRAINT fk_Tiles_id REFERENCES Tiles(id) ON DELETE CASCADE, Tile BLOB NULL);
         ///
@@ -77,7 +77,7 @@ namespace GMapNET.Properties {
         ///CREATE TRIGGER fki_TilesData_id_Tiles_id
         ///BEFORE INSERT ON [TilesData]
         ///FOR EACH ROW BEGIN
-        ///  SELECT RAISE(ROLLBACK, &apos;insert on [rest of string was truncated]&quot;;.
+        ///  SELE [rest of string was truncated]&quot;;.
         /// </summary>
         public static string CreateTileDb {
             get {
