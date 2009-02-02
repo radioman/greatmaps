@@ -26,7 +26,6 @@ namespace Demo.WindowsForms
             GMaps.Instance.UseRouteCache = true;
             GMaps.Instance.UseGeocoderCache = true;
             GMaps.Instance.UsePlacemarkCache = true;
-            GMaps.Instance.Timeout = 10*1000;
 
             // set your proxy here if need
             //GMaps.Instance.Proxy = new WebProxy("10.2.0.100", 8080);
@@ -49,6 +48,10 @@ namespace Demo.WindowsForms
             // get map type
             comboBoxMapType.DataSource = Enum.GetValues(typeof(GMapType));
             comboBoxMapType.SelectedItem = MainMap.MapType;
+
+            // acccess mode
+            comboBoxMode.DataSource = Enum.GetValues(typeof(AccessMode));
+            comboBoxMode.SelectedItem = GMaps.Instance.Mode;
 
             // get position
             textBoxLat.Text = MainMap.CurrentPosition.Lat.ToString(CultureInfo.InvariantCulture);
@@ -142,6 +145,13 @@ namespace Demo.WindowsForms
       private void comboBoxMapType_DropDownClosed(object sender, EventArgs e)
       {
          MainMap.MapType = (GMapType) comboBoxMapType.SelectedValue;
+         MainMap.ReloadMap();
+      }
+
+      // change mdoe
+      private void comboBoxMode_DropDownClosed(object sender, EventArgs e)
+      {
+         GMaps.Instance.Mode = (AccessMode) comboBoxMode.SelectedValue;
          MainMap.ReloadMap();
       }
 

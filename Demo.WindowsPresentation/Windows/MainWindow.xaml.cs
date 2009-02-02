@@ -26,7 +26,7 @@ namespace Demo.WindowsPresentation
          GMaps.Instance.UseRouteCache = true;
          GMaps.Instance.UseGeocoderCache = true;
          GMaps.Instance.UsePlacemarkCache = true;
-         GMaps.Instance.Timeout = 10*1000;
+         GMaps.Instance.Mode = AccessMode.ServerAndCache;
 
          // set your proxy here if need
          //GMaps.Instance.Proxy = new WebProxy("10.2.0.100", 8080);
@@ -48,6 +48,10 @@ namespace Demo.WindowsPresentation
          // get map types
          comboBoxMapType.ItemsSource = Enum.GetValues(typeof(GMapType));
          comboBoxMapType.SelectedItem = MainMap.MapType;
+
+         // acccess mode
+         comboBoxMode.ItemsSource = Enum.GetValues(typeof(AccessMode));
+         comboBoxMode.SelectedItem = GMaps.Instance.Mode;
 
          // get position
          textBoxLat.Text = MainMap.CurrentPosition.Lat.ToString(CultureInfo.InvariantCulture);
@@ -107,9 +111,11 @@ namespace Demo.WindowsPresentation
          //throw new NotImplementedException();
       }
 
+      // current location changed
       void MainMap_OnCurrentPositionChanged(PointLatLng point)
       {
-         //throw new NotImplementedException();
+         textBoxCurrLat.Text = point.Lat.ToString(CultureInfo.InvariantCulture);
+         textBoxCurrLng.Text = point.Lng.ToString(CultureInfo.InvariantCulture);
       }
 
       // reload
@@ -212,6 +218,13 @@ namespace Demo.WindowsPresentation
 
             x.Clear();
          }
+      }
+
+      // access mode
+      private void comboBoxMode_DropDownClosed(object sender, EventArgs e)
+      {
+         GMaps.Instance.Mode = (AccessMode) comboBoxMode.SelectedItem;
+         MainMap.ReloadMap();
       }
    }
 }

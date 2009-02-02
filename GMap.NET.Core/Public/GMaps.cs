@@ -39,6 +39,11 @@ namespace GMapNET
       public WebProxy Proxy;
 
       /// <summary>
+      /// tile access mode
+      /// </summary>
+      public AccessMode Mode = AccessMode.ServerAndCache;
+
+      /// <summary>
       /// language for map
       /// </summary>
       public string Language = "en";
@@ -902,14 +907,14 @@ namespace GMapNET
       {
          PureImage ret = null;
 
-         //ret = Cache.Instance.GetImageFromCache(type, pos, zoom, language);
-         ret = Cache.Instance.GetImageFromCacheDB(type, pos, zoom, language);
-         if(ret != null)
+         if(Mode != AccessMode.ServerOnly)
          {
-            return ret;
+            ret = Cache.Instance.GetImageFromCacheDB(type, pos, zoom, language);
+            if(ret != null)
+            {
+               return ret;
+            }
          }
-
-         string url = MakeImageUrl(type, pos, zoom, language);
 
          //GET /kh?v=33&hl=en&x=20&y=18&z=6&s=Galile HTTP/1.1  
          //User-Agent: Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1  
@@ -928,26 +933,31 @@ namespace GMapNET
 
          try
          {
-            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-            request.ServicePoint.ConnectionLimit = 50;
-            request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
-
-            request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
-            request.Timeout = Timeout;
-            request.ReadWriteTimeout = Timeout*6;
-
-            request.Accept = "text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1";
-            request.Headers["Accept-Encoding"] = "deflate, gzip, x-gzip, identity, *;q=0";
-            request.Referer = "http://maps.google.com/";
-            request.KeepAlive = true;
-
-            using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+            if(Mode != AccessMode.CacheOnly)
             {
-               using(Stream responseStream = response.GetResponseStream())
+               string url = MakeImageUrl(type, pos, zoom, language);
+
+               HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+               request.ServicePoint.ConnectionLimit = 50;
+               request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
+
+               request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
+               request.Timeout = Timeout;
+               request.ReadWriteTimeout = Timeout*6;
+
+               request.Accept = "text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1";
+               request.Headers["Accept-Encoding"] = "deflate, gzip, x-gzip, identity, *;q=0";
+               request.Referer = "http://maps.google.com/";
+               request.KeepAlive = true;
+
+               using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                {
-                  if(Purity.Instance.ImageProxy != null)
+                  using(Stream responseStream = response.GetResponseStream())
                   {
-                     ret = Purity.Instance.ImageProxy.FromStream(responseStream);
+                     if(Purity.Instance.ImageProxy != null)
+                     {
+                        ret = Purity.Instance.ImageProxy.FromStream(responseStream);
+                     }
                   }
                }
             }
