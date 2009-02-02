@@ -200,7 +200,7 @@ namespace Demo.WindowsPresentation
             {
                int c = GMaps.Instance.TryPrecacheTiles(x, MainMap.MapType, i, 100);
 
-               MessageBox.Show("Done at Zoom = " + i + " ! Total => " + c);
+               MessageBox.Show("Done at Zoom = " + i + " ! Total => " + c + " of " + x.Count);
             }
             else if(res == MessageBoxResult.No)
             {
@@ -210,6 +210,8 @@ namespace Demo.WindowsPresentation
             {
                break;
             }
+
+            x.Clear();
          }
       }
    }

@@ -349,7 +349,7 @@ namespace Demo.WindowsForms
 
          for(int i = MainMap.Zoom; i <= GMaps.Instance.MaxZoom; i++)
          {
-            var x = GMaps.Instance.GetAreaTileList(area, i);
+            List<System.Drawing.Point> x = GMaps.Instance.GetAreaTileList(area, i);
 
             DialogResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButtons.YesNoCancel);
 
@@ -357,7 +357,7 @@ namespace Demo.WindowsForms
             {
                int c = GMaps.Instance.TryPrecacheTiles(x, MainMap.MapType, i, 100);
 
-               MessageBox.Show("Done at Zoom = " + i + " ! Total => " + c);
+               MessageBox.Show("Done at Zoom = " + i + " ! Total => " + c + " of " + x.Count);
             }
             else if(res == DialogResult.No)
             {
@@ -367,6 +367,8 @@ namespace Demo.WindowsForms
             {
                break;
             }
+
+            x.Clear();
          }
       }
    }
