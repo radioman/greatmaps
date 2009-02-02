@@ -31,7 +31,7 @@ namespace GMapNET
       /// <summary>
       /// timeout for map connections
       /// </summary>
-      public int Timeout = 10*1000;
+      public int Timeout = 30*1000;
 
       /// <summary>
       /// proxy for net access
