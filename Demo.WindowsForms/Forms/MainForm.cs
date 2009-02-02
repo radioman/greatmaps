@@ -341,5 +341,27 @@ namespace Demo.WindowsForms
       {
          MainMap.ShowImportDialog();
       }
+
+      // prefetch
+      private void button11_Click(object sender, EventArgs e)
+      {
+         RectLatLng area = MainMap.CurrentViewArea;
+
+         for(int i = MainMap.Zoom; i <= GMaps.Instance.MaxZoom; i++)
+         {
+            var x = GMaps.Instance.GetAreaTileList(area, i);
+
+            if(MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+               int c = GMaps.Instance.TryPrecacheTiles(x, MainMap.MapType, i, 100);
+
+               MessageBox.Show("Done at Zoom = " + i + " ! Total => " + c);
+            }
+            else
+            {
+               break;
+            }
+         }
+      }
    }
 }

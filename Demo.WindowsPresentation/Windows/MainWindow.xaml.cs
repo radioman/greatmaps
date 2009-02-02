@@ -184,5 +184,27 @@ namespace Demo.WindowsPresentation
             MainMap.Zoom = zn;
          }
       }
+
+      // prefetch
+      private void button3_Click(object sender, RoutedEventArgs e)
+      {
+         RectLatLng area = MainMap.CurrentViewArea;
+
+         for(int i = MainMap.Zoom; i <= GMaps.Instance.MaxZoom; i++)
+         {
+            var x = GMaps.Instance.GetAreaTileList(area, i);
+
+            if(MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+               int c = GMaps.Instance.TryPrecacheTiles(x, MainMap.MapType, i, 100);
+
+               MessageBox.Show("Done at Zoom = " + i + " ! Total => " + c);
+            }
+            else
+            {
+               break;
+            }
+         }
+      }
    }
 }

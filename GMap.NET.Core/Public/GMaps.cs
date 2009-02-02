@@ -225,7 +225,7 @@ namespace GMapNET
          List<Point> ret = new List<Point>();
 
          Point topLeft = FromPixelToTileXY(FromLatLngToPixel(rect.Location, zoom));
-         Point rightBottom = FromPixelToTileXY(FromLatLngToPixel(rect.Right, rect.Bottom, zoom));
+         Point rightBottom = FromPixelToTileXY(FromLatLngToPixel(rect.Bottom, rect.Right, zoom));
 
          for(int x = topLeft.X; x <= rightBottom.X; x++)
          {
