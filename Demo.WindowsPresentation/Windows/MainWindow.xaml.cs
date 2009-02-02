@@ -53,6 +53,11 @@ namespace Demo.WindowsPresentation
          comboBoxMode.ItemsSource = Enum.GetValues(typeof(AccessMode));
          comboBoxMode.SelectedItem = GMaps.Instance.Mode;
 
+         // get cache modes
+         checkBoxCacheMap.IsChecked = GMaps.Instance.UseTileCache;
+         checkBoxCacheRoute.IsChecked = GMaps.Instance.UseRouteCache;
+         checkBoxGeoCache.IsChecked = GMaps.Instance.UseGeocoderCache;
+
          // get position
          textBoxLat.Text = MainMap.CurrentPosition.Lat.ToString(CultureInfo.InvariantCulture);
          textBoxLng.Text = MainMap.CurrentPosition.Lng.ToString(CultureInfo.InvariantCulture);
@@ -225,6 +230,53 @@ namespace Demo.WindowsPresentation
       {
          GMaps.Instance.Mode = (AccessMode) comboBoxMode.SelectedItem;
          MainMap.ReloadMap();
+      }
+
+      // clear cache
+      private void button4_Click(object sender, RoutedEventArgs e)
+      {
+         if(MessageBox.Show("Are You sure?", "Clear GMap.NET cache?", MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.OK)
+         {
+            try
+            {
+               System.IO.Directory.Delete(MainMap.CacheLocation, true);
+            }
+            catch(Exception ex)
+            {
+               MessageBox.Show(ex.Message);
+            }
+         }
+      }
+
+      // export
+      private void button6_Click(object sender, RoutedEventArgs e)
+      {
+         MainMap.ShowExportDialog();
+      }
+
+      // import
+      private void button5_Click(object sender, RoutedEventArgs e)
+      {
+         MainMap.ShowImportDialog();
+      }
+
+      // use tile cache
+      private void checkBox_CacheChecked(object sender, RoutedEventArgs e)
+      {
+         GMaps.Instance.UseTileCache = checkBoxCacheMap.IsChecked.Value;
+      }
+
+      // use route cache
+      private void checkBoxCacheRoute_Checked(object sender, RoutedEventArgs e)
+      {
+         GMaps.Instance.UseRouteCache = checkBoxCacheRoute.IsChecked.Value;
+      }
+
+      // use geocoding cahce
+      private void checkBoxGeoCache_Checked(object sender, RoutedEventArgs e)
+      {
+         GMaps.Instance.UseGeocoderCache = checkBoxGeoCache.IsChecked.Value;
+         GMaps.Instance.UsePlacemarkCache = GMaps.Instance.UseGeocoderCache;
       }
    }
 }

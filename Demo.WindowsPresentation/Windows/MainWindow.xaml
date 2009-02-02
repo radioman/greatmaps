@@ -2,10 +2,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="GMap.NET - Great Maps for Windows Presentation"
-    Height="726" Width="825"
+    Height="602" Width="823"
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized" xmlns:src="clr-namespace:System.Windows.Controls;assembly=GMap.NET.WindowsPresentation"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    xmlns:sys="clr-namespace:System;assembly=mscorlib" MinHeight="600" MinWidth="300">
     <Grid>
         <GroupBox Header="gmap" Margin="12,7,187,12" ClipToBounds="True" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
             <src:GMap Name="MainMap">
@@ -34,23 +34,29 @@
                 <Label Height="23" HorizontalAlignment="Right" Margin="0,0,6,36" Name="label4" VerticalAlignment="Bottom" VerticalContentAlignment="Center" Width="33">geo</Label>
             </Grid>
         </GroupBox>
-        <GroupBox Header="loading" Height="61" HorizontalAlignment="Right" Margin="0,0,12,12" Name="groupBox3" VerticalAlignment="Bottom" Width="169">
+        <GroupBox Header="loading" Height="50" HorizontalAlignment="Right" Margin="0,0,12,12" Name="groupBox3" VerticalAlignment="Bottom" Width="169">
             <Grid>
-                <ProgressBar HorizontalAlignment="Left" Margin="6,6,0,6" Name="progressBar1" Width="45" IsIndeterminate="True" />
+                <ProgressBar HorizontalAlignment="Left" Margin="6,6,0,6" Name="progressBar1" Width="50" IsIndeterminate="True" />
                 <ProgressBar Margin="57,6,0,6" Name="progressBar2" HorizontalAlignment="Left" Width="45" IsIndeterminate="True" />
-                <ProgressBar HorizontalAlignment="Right" Margin="0,6,4,6" Name="progressBar3" Width="45" IsIndeterminate="True" />
+                <ProgressBar HorizontalAlignment="Right" Margin="0,6,4,6" Name="progressBar3" Width="50" IsIndeterminate="True" />
             </Grid>
         </GroupBox>
-        <GroupBox Header="Cache" Height="57" HorizontalAlignment="Right" Margin="0,0,12,79" Name="groupBox4" VerticalAlignment="Bottom" Width="169">
+        <GroupBox Header="Cache" Height="104" HorizontalAlignment="Right" Margin="0,0,12,68" Name="groupBox4" VerticalAlignment="Bottom" Width="169">
             <Grid>
-                <Button Margin="7,6,6,6" Name="button3" Click="button3_Click">Prefetch</Button>
+                <Button Margin="0,0,12,6" Name="button3" Click="button3_Click" Height="23" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="65">Prefetch</Button>
+                <Button Height="23" HorizontalAlignment="Left" Margin="6,0,0,6" Name="button4" VerticalAlignment="Bottom" Width="68" Click="button4_Click">Clear All</Button>
+                <Button HorizontalAlignment="Right" Margin="0,27,12,35" Name="button5" Width="65" Click="button5_Click">Import</Button>
+                <Button HorizontalAlignment="Left" Margin="7,27,0,35" Name="button6" Width="66" VerticalContentAlignment="Center" Click="button6_Click">Export</Button>
+                <CheckBox Height="15" Margin="6,6,0,0" Name="checkBoxCacheMap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="43" Checked="checkBox_CacheChecked" Unchecked="checkBox_CacheChecked">map</CheckBox>
+                <CheckBox Height="15" Margin="55,6,53,0" Name="checkBoxCacheRoute" VerticalAlignment="Top" Checked="checkBoxCacheRoute_Checked" Unchecked="checkBoxCacheRoute_Checked">routing</CheckBox>
+                <CheckBox Height="15" HorizontalAlignment="Right" Margin="0,6,4,0" Name="checkBoxGeoCache" VerticalAlignment="Top" Width="43" Checked="checkBoxGeoCache_Checked">geo</CheckBox>
             </Grid>
         </GroupBox>
-        <GroupBox Header="current location" Height="93" HorizontalAlignment="Right" Margin="0,0,12,142" Name="groupBox5" VerticalAlignment="Bottom" Width="169">
+        <GroupBox Header="current location" Height="81" HorizontalAlignment="Right" Margin="0,0,12,178" Name="groupBox5" VerticalAlignment="Bottom" Width="169">
             <Grid>
-                <TextBox Margin="7,9,35,33" Name="textBoxCurrLat" />
-                <TextBox Margin="7,0,35,5" Name="textBoxCurrLng" Height="22.04" VerticalAlignment="Bottom" />
-                <Label HorizontalAlignment="Right" Margin="0,7,11,0" Name="label6" VerticalContentAlignment="Center" Width="27" Height="28" VerticalAlignment="Top">lat</Label>
+                <TextBox Margin="7,6,35,0" Name="textBoxCurrLat" Height="23" VerticalAlignment="Top" IsReadOnly="True" />
+                <TextBox Margin="7,0,35,5" Name="textBoxCurrLng" Height="23" VerticalAlignment="Bottom" IsReadOnly="True" />
+                <Label HorizontalAlignment="Right" Margin="0,6,11,0" Name="label6" VerticalContentAlignment="Center" Width="27" VerticalAlignment="Top" Height="23.277">lat</Label>
                 <Label HorizontalAlignment="Right" Margin="0,0,11,6" Name="label7" VerticalContentAlignment="Center" Width="27" Height="23" VerticalAlignment="Bottom">lng</Label>
             </Grid>
         </GroupBox>

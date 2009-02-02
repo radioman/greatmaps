@@ -46,6 +46,8 @@
          this.trackBar1 = new System.Windows.Forms.TrackBar();
          this.groupBox2 = new System.Windows.Forms.GroupBox();
          this.groupBox5 = new System.Windows.Forms.GroupBox();
+         this.label8 = new System.Windows.Forms.Label();
+         this.comboBoxMode = new System.Windows.Forms.ComboBox();
          this.checkBoxCanDrag = new System.Windows.Forms.CheckBox();
          this.checkBoxCurrentMarker = new System.Windows.Forms.CheckBox();
          this.label3 = new System.Windows.Forms.Label();
@@ -77,8 +79,6 @@
          this.groupBox8 = new System.Windows.Forms.GroupBox();
          this.button7 = new System.Windows.Forms.Button();
          this.checkBoxPlacemarkInfo = new System.Windows.Forms.CheckBox();
-         this.label8 = new System.Windows.Forms.Label();
-         this.comboBoxMode = new System.Windows.Forms.ComboBox();
          this.groupBox4.SuspendLayout();
          this.groupBox3.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize) (this.trackBar1)).BeginInit();
@@ -118,7 +118,7 @@
          this.groupBox4.Controls.Add(this.MainMap);
          this.groupBox4.Location = new System.Drawing.Point(12, 7);
          this.groupBox4.Name = "groupBox4";
-         this.groupBox4.Size = new System.Drawing.Size(470, 680);
+         this.groupBox4.Size = new System.Drawing.Size(483, 685);
          this.groupBox4.TabIndex = 27;
          this.groupBox4.TabStop = false;
          this.groupBox4.Text = "gmap";
@@ -138,7 +138,7 @@
          this.MainMap.Name = "MainMap";
          this.MainMap.RenderMode = GMapNET.RenderMode.GDI_PLUS;
          this.MainMap.RoutesEnabled = true;
-         this.MainMap.Size = new System.Drawing.Size(464, 661);
+         this.MainMap.Size = new System.Drawing.Size(477, 666);
          this.MainMap.TabIndex = 0;
          this.MainMap.TooltipFont = new System.Drawing.Font("Microsoft Sans Serif", 11F);
          this.MainMap.TooltipTextPadding = new System.Drawing.Size(10, 10);
@@ -155,7 +155,7 @@
          this.groupBox3.Controls.Add(this.label1);
          this.groupBox3.Controls.Add(this.textBoxLng);
          this.groupBox3.Controls.Add(this.textBoxLat);
-         this.groupBox3.Location = new System.Drawing.Point(542, 7);
+         this.groupBox3.Location = new System.Drawing.Point(552, 7);
          this.groupBox3.Name = "groupBox3";
          this.groupBox3.Size = new System.Drawing.Size(169, 128);
          this.groupBox3.TabIndex = 28;
@@ -267,7 +267,7 @@
          this.trackBar1.Minimum = 1;
          this.trackBar1.Name = "trackBar1";
          this.trackBar1.Orientation = System.Windows.Forms.Orientation.Vertical;
-         this.trackBar1.Size = new System.Drawing.Size(42, 661);
+         this.trackBar1.Size = new System.Drawing.Size(42, 666);
          this.trackBar1.TabIndex = 29;
          this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
          this.trackBar1.Value = 12;
@@ -278,9 +278,9 @@
          this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
          this.groupBox2.Controls.Add(this.trackBar1);
-         this.groupBox2.Location = new System.Drawing.Point(488, 7);
+         this.groupBox2.Location = new System.Drawing.Point(498, 7);
          this.groupBox2.Name = "groupBox2";
-         this.groupBox2.Size = new System.Drawing.Size(48, 680);
+         this.groupBox2.Size = new System.Drawing.Size(48, 685);
          this.groupBox2.TabIndex = 30;
          this.groupBox2.TabStop = false;
          this.groupBox2.Text = "zoom";
@@ -296,12 +296,31 @@
          this.groupBox5.Controls.Add(this.comboBoxRenderType);
          this.groupBox5.Controls.Add(this.label7);
          this.groupBox5.Controls.Add(this.comboBoxMapType);
-         this.groupBox5.Location = new System.Drawing.Point(542, 141);
+         this.groupBox5.Location = new System.Drawing.Point(552, 141);
          this.groupBox5.Name = "groupBox5";
          this.groupBox5.Size = new System.Drawing.Size(169, 147);
          this.groupBox5.TabIndex = 31;
          this.groupBox5.TabStop = false;
          this.groupBox5.Text = "gmap";
+         // 
+         // label8
+         // 
+         this.label8.AutoSize = true;
+         this.label8.Location = new System.Drawing.Point(132, 76);
+         this.label8.Name = "label8";
+         this.label8.Size = new System.Drawing.Size(33, 13);
+         this.label8.TabIndex = 38;
+         this.label8.Text = "mode";
+         // 
+         // comboBoxMode
+         // 
+         this.comboBoxMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+         this.comboBoxMode.FormattingEnabled = true;
+         this.comboBoxMode.Location = new System.Drawing.Point(6, 73);
+         this.comboBoxMode.Name = "comboBoxMode";
+         this.comboBoxMode.Size = new System.Drawing.Size(125, 21);
+         this.comboBoxMode.TabIndex = 37;
+         this.comboBoxMode.DropDownClosed += new System.EventHandler(this.comboBoxMode_DropDownClosed);
          // 
          // checkBoxCanDrag
          // 
@@ -392,7 +411,7 @@
          this.groupBox1.Controls.Add(this.checkBoxUseRouteCache);
          this.groupBox1.Controls.Add(this.button2);
          this.groupBox1.Controls.Add(this.checkBoxUseTileCache);
-         this.groupBox1.Location = new System.Drawing.Point(542, 540);
+         this.groupBox1.Location = new System.Drawing.Point(552, 545);
          this.groupBox1.Name = "groupBox1";
          this.groupBox1.Size = new System.Drawing.Size(169, 93);
          this.groupBox1.TabIndex = 32;
@@ -500,7 +519,7 @@
          this.groupBox6.Controls.Add(this.textBoxCurrLng);
          this.groupBox6.Controls.Add(this.label14);
          this.groupBox6.Controls.Add(this.label13);
-         this.groupBox6.Location = new System.Drawing.Point(542, 461);
+         this.groupBox6.Location = new System.Drawing.Point(552, 466);
          this.groupBox6.Name = "groupBox6";
          this.groupBox6.Size = new System.Drawing.Size(169, 73);
          this.groupBox6.TabIndex = 34;
@@ -516,7 +535,7 @@
          this.groupBox7.Controls.Add(this.label4);
          this.groupBox7.Controls.Add(this.button6);
          this.groupBox7.Controls.Add(this.button3);
-         this.groupBox7.Location = new System.Drawing.Point(542, 294);
+         this.groupBox7.Location = new System.Drawing.Point(552, 294);
          this.groupBox7.Name = "groupBox7";
          this.groupBox7.Size = new System.Drawing.Size(169, 84);
          this.groupBox7.TabIndex = 35;
@@ -581,7 +600,7 @@
          this.groupBoxLoading.Controls.Add(this.progressBar3);
          this.groupBoxLoading.Controls.Add(this.progressBar2);
          this.groupBoxLoading.Controls.Add(this.progressBar1);
-         this.groupBoxLoading.Location = new System.Drawing.Point(542, 639);
+         this.groupBoxLoading.Location = new System.Drawing.Point(552, 644);
          this.groupBoxLoading.Name = "groupBoxLoading";
          this.groupBoxLoading.Size = new System.Drawing.Size(169, 48);
          this.groupBoxLoading.TabIndex = 36;
@@ -622,7 +641,7 @@
          this.groupBox8.Controls.Add(this.checkBoxPlacemarkInfo);
          this.groupBox8.Controls.Add(this.button5);
          this.groupBox8.Controls.Add(this.button4);
-         this.groupBox8.Location = new System.Drawing.Point(542, 384);
+         this.groupBox8.Location = new System.Drawing.Point(552, 384);
          this.groupBox8.Name = "groupBox8";
          this.groupBox8.Size = new System.Drawing.Size(169, 74);
          this.groupBox8.TabIndex = 37;
@@ -654,31 +673,12 @@
          this.checkBoxPlacemarkInfo.Text = "place info";
          this.checkBoxPlacemarkInfo.UseVisualStyleBackColor = true;
          // 
-         // label8
-         // 
-         this.label8.AutoSize = true;
-         this.label8.Location = new System.Drawing.Point(132, 76);
-         this.label8.Name = "label8";
-         this.label8.Size = new System.Drawing.Size(33, 13);
-         this.label8.TabIndex = 38;
-         this.label8.Text = "mode";
-         // 
-         // comboBoxMode
-         // 
-         this.comboBoxMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-         this.comboBoxMode.FormattingEnabled = true;
-         this.comboBoxMode.Location = new System.Drawing.Point(6, 73);
-         this.comboBoxMode.Name = "comboBoxMode";
-         this.comboBoxMode.Size = new System.Drawing.Size(125, 21);
-         this.comboBoxMode.TabIndex = 37;
-         this.comboBoxMode.DropDownClosed += new System.EventHandler(this.comboBoxMode_DropDownClosed);
-         // 
          // MainForm
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.BackColor = System.Drawing.Color.AliceBlue;
-         this.ClientSize = new System.Drawing.Size(725, 699);
+         this.ClientSize = new System.Drawing.Size(733, 704);
          this.Controls.Add(this.groupBox8);
          this.Controls.Add(this.groupBoxLoading);
          this.Controls.Add(this.groupBox7);
