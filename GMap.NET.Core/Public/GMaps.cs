@@ -252,9 +252,9 @@ namespace GMapNET
 
          Stuff.Shuffle<Point>(list);
 
-         foreach(Point p in list)
+         for(int i = 0; i < list.Count; i++)
          {
-            PureImage img = GetImageFrom(type, p, zoom, Language, true);
+            PureImage img = GetImageFrom(type, list[i], zoom, Language, true);
             if(img != null)
             {
                countOk++;
@@ -262,7 +262,12 @@ namespace GMapNET
                img.Dispose();
                img = null;
             }
-
+            else
+            {
+               i--;
+               System.Threading.Thread.Sleep(1000);
+               continue;
+            }
             System.Threading.Thread.Sleep(sleepDelay);
          }
 
