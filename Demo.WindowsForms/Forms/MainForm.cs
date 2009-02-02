@@ -351,13 +351,19 @@ namespace Demo.WindowsForms
          {
             var x = GMaps.Instance.GetAreaTileList(area, i);
 
-            if(MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            DialogResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButtons.YesNoCancel);
+
+            if(res == DialogResult.Yes)
             {
                int c = GMaps.Instance.TryPrecacheTiles(x, MainMap.MapType, i, 100);
 
                MessageBox.Show("Done at Zoom = " + i + " ! Total => " + c);
             }
-            else
+            else if(res == DialogResult.No)
+            {
+               continue;
+            }
+            else if(res == DialogResult.Cancel)
             {
                break;
             }
