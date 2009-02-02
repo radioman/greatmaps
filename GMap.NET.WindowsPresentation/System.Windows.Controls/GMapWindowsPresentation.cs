@@ -632,8 +632,11 @@ namespace System.Windows.Controls
                PngBitmapDecoder bitmapDecoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
                ImageSource m = bitmapDecoder.Frames[0];
 
-               ret = new WindowsPresentationImage();
-               ret.Img = m;
+               if(m != null)
+               {
+                  ret = new WindowsPresentationImage();
+                  ret.Img = m;
+               }
             }
             catch
             {

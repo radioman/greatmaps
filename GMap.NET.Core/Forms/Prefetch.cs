@@ -116,7 +116,15 @@ namespace GMapNET
          this.progressBar1.Value = e.ProgressPercentage;
       }
 
-      private void Prefetch_FormClosing(object sender, FormClosingEventArgs e)
+      private void Prefetch_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+      {
+         if(e.KeyCode == Keys.Escape)
+         {
+            this.Close();
+         }
+      }
+
+      private void Prefetch_FormClosed(object sender, FormClosedEventArgs e)
       {
          this.Stop();
       }

@@ -57,14 +57,20 @@
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.BackColor = System.Drawing.Color.AliceBlue;
          this.ClientSize = new System.Drawing.Size(466, 65);
+         this.ControlBox = false;
          this.Controls.Add(this.label1);
          this.Controls.Add(this.progressBar1);
-         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+         this.KeyPreview = true;
          this.MaximizeBox = false;
+         this.MinimizeBox = false;
          this.Name = "Prefetch";
+         this.ShowIcon = false;
+         this.ShowInTaskbar = false;
          this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-         this.Text = "Prefetch Tiles";
-         this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Prefetch_FormClosing);
+         this.Text = "GMap.NET";
+         this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Prefetch_FormClosed);
+         this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Prefetch_PreviewKeyDown);
          this.ResumeLayout(false);
          this.PerformLayout();
 
