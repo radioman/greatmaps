@@ -355,9 +355,8 @@ namespace Demo.WindowsForms
 
             if(res == DialogResult.Yes)
             {
-               int c = GMaps.Instance.TryPrecacheTiles(x, MainMap.MapType, i, 100);
-
-               MessageBox.Show("Done at Zoom = " + i + " ! Total => " + c + " of " + x.Count);
+               Prefetch obj = new Prefetch();
+               obj.Start(x, i, MainMap.MapType, 100);                 
             }
             else if(res == DialogResult.No)
             {

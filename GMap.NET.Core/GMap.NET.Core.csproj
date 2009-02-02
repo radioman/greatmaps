@@ -44,6 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\Prefetch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Prefetch.Designer.cs">
+      <DependentUpon>Prefetch.cs</DependentUpon>
+    </Compile>
     <Compile Include="Internals\PureImage.cs" />
     <Compile Include="Internals\Purity.cs" />
     <Compile Include="Internals\IGControl.cs" />
@@ -74,6 +80,9 @@
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\Prefetch.resx">
+      <DependentUpon>Prefetch.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

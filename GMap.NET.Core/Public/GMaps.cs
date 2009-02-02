@@ -240,41 +240,6 @@ namespace GMapNET
       }
 
       /// <summary>
-      /// get images from list and cache it
-      /// </summary>
-      /// <param name="list"></param>
-      /// <param name="type"></param>
-      /// <param name="zoom"></param>
-      /// <returns>successfully downloaded tile count</returns>
-      public int TryPrecacheTiles(List<Point> list, GMapType type, int zoom, int sleepDelay)
-      {
-         int countOk = 0;
-
-         Stuff.Shuffle<Point>(list);
-
-         for(int i = 0; i < list.Count; i++)
-         {
-            PureImage img = GetImageFrom(type, list[i], zoom, Language, true);
-            if(img != null)
-            {
-               countOk++;
-
-               img.Dispose();
-               img = null;
-            }
-            else
-            {
-               i--;
-               System.Threading.Thread.Sleep(1000);
-               continue;
-            }
-            System.Threading.Thread.Sleep(sleepDelay);
-         }
-
-         return countOk;
-      }
-
-      /// <summary>
       /// get route between two points
       /// </summary>
       /// <param name="start"></param>
