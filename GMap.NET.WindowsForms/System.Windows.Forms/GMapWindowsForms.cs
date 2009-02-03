@@ -931,16 +931,44 @@ namespace System.Windows.Forms
 
       public override bool Save(Stream stream, GMapNET.PureImage image)
       {
-         try
+         WindowsFormsImage ret = image as WindowsFormsImage;
+         bool ok = true;
+
+         if(ret.Img != null)
          {
-            WindowsFormsImage ret = image as WindowsFormsImage;
-            ret.Img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+            {
+               // try png
+               try
+               {
+                  ret.Img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+               }
+               catch
+               {
+                  ok = false;
+               }
+
+               // try jpeg
+               if(!ok)
+               {
+                  ok = true;
+                  try
+                  {
+                     stream.Seek(0, SeekOrigin.Begin);
+                     ret.Img.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg);
+                  }
+                  catch
+                  {
+                     ok = false;
+                  }
+               }
+            }
          }
-         catch
+         else
          {
-            return false;
+            ok = false;
          }
-         return true;
+
+         return ok;
       }
    }
    #endregion

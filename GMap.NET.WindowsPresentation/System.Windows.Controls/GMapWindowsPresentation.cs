@@ -208,12 +208,12 @@ namespace System.Windows.Controls
          {
             Point p = e.GetPosition(this);
             Core.mouseCurrent.X = (int) p.X;
-            Core.mouseCurrent.Y = (int) p.Y;            
+            Core.mouseCurrent.Y = (int) p.Y;
 
             if(e.RightButton == MouseButtonState.Pressed)
             {
-               Core.Drag(Core.mouseCurrent); 
-             }
+               Core.Drag(Core.mouseCurrent);
+            }
             else if(e.LeftButton == MouseButtonState.Pressed)
             {
                if(CurrentMarkerEnabled)
@@ -221,7 +221,7 @@ namespace System.Windows.Controls
                   SetCurrentPositionOnly(Core.mouseCurrent.X - Core.renderOffset.X, Core.mouseCurrent.Y - Core.renderOffset.Y);
                   InvalidateVisual();
                }
-            }            
+            }
          }
 
          base.OnMouseMove(e);
@@ -302,7 +302,7 @@ namespace System.Windows.Controls
 
       public void SetCurrentPositionOnly(int x, int y)
       {
-         Core.SetCurrentPositionOnly(x, y); 
+         Core.SetCurrentPositionOnly(x, y);
       }
 
       public void SetCurrentPositionOnly(PointLatLng point)
@@ -626,21 +626,45 @@ namespace System.Windows.Controls
          WindowsPresentationImage ret = null;
          if(stream != null)
          {
-            try
             {
-               
-               PngBitmapDecoder bitmapDecoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
-               ImageSource m = bitmapDecoder.Frames[0];
-
-               if(m != null)
+               // try png decoder
+               try
                {
-                  ret = new WindowsPresentationImage();
-                  ret.Img = m;
+                  PngBitmapDecoder bitmapDecoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+                  ImageSource m = bitmapDecoder.Frames[0];
+                   
+                  if(m != null)
+                  {
+                     ret = new WindowsPresentationImage();
+                     ret.Img = m;
+                  }
                }
-            }
-            catch
-            {
-               ret = null;
+               catch
+               {
+                  ret = null;
+               }
+
+               // try jpeg decoder
+               if(ret == null)
+               {
+                  try
+                  {
+                     stream.Seek(0, SeekOrigin.Begin);
+
+                     JpegBitmapDecoder bitmapDecoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+                     ImageSource m = bitmapDecoder.Frames[0];
+
+                     if(m != null)
+                     {
+                        ret = new WindowsPresentationImage();
+                        ret.Img = m;
+                     }
+                  }
+                  catch
+                  {
+                     ret = null;
+                  }
+               }
             }
          }
          return ret;
@@ -663,7 +687,9 @@ namespace System.Windows.Controls
             }
          }
          else
+         {
             return false;
+         }
 
          return true;
       }

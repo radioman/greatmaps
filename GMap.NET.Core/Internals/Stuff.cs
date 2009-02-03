@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace GMapNET.Internals
 {
@@ -17,6 +18,26 @@ namespace GMapNET.Internals
             deck[r] = deck[i];
             deck[i] = t;
          }
+      }
+
+      public static Stream CopyStream(Stream inputStream)
+      {
+         const int readSize = 256;
+         byte[] buffer = new byte[readSize];
+         MemoryStream ms = new MemoryStream();
+
+         using(inputStream)
+         {
+            int count = inputStream.Read(buffer, 0, readSize);
+            while(count > 0)
+            {
+               ms.Write(buffer, 0, count);
+               count = inputStream.Read(buffer, 0, readSize);
+            }
+         }
+
+         ms.Seek(0, SeekOrigin.Begin);
+         return ms;
       }
    }
 }

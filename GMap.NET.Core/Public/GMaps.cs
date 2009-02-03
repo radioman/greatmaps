@@ -18,7 +18,7 @@ namespace GMapNET
    {
       // Google version strings
       public string VersionGoogleMap = "w2.89";
-      public string VersionGoogleSatellite = "34";
+      public string VersionGoogleSatellite = "36";
       public string VersionGoogleLabels = "w2t.88";
       public string VersionGoogleTerrain = "w2p.87";
       public string SecGoogleWord = "Galileo";
@@ -892,7 +892,7 @@ namespace GMapNET
             Debug.WriteLine("GetRouteBetweenPointsUrl: " + ex.ToString());
          }
          return ret;
-      }
+      }        
 
       /// <summary>
       /// gets image from tile server
@@ -952,11 +952,15 @@ namespace GMapNET
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                {
-                  using(Stream responseStream = response.GetResponseStream())
+                  Stream responseStream = Stuff.CopyStream(response.GetResponseStream());
                   {
                      if(Purity.Instance.ImageProxy != null)
                      {
                         ret = Purity.Instance.ImageProxy.FromStream(responseStream);
+                     }
+                     else
+                     {
+                        responseStream.Dispose();
                      }
                   }
                }
