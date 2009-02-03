@@ -45,9 +45,9 @@ namespace GMapNET.Internals
       public readonly List<Route> routes = new List<Route>();
       public readonly List<Marker> markers = new List<Marker>();
 
-      public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas", DateTime.Today.Year);
-      public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
-      public readonly string yahooMapCopyright = string.Format("© Yahoo! Inc. - Map data ©{0} NAVTEQ", DateTime.Today.Year);
+      public readonly string googleCopyright = string.Format("©{0} Google - Imagery ©{0} TerraMetrics", DateTime.Today.Year);
+      public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Imagery ©{0} OpenStreetMap", DateTime.Today.Year);
+      public readonly string yahooMapCopyright = string.Format("© Yahoo! Inc. - Imagery ©{0} NAVTEQ", DateTime.Today.Year);
 
       bool currentMarkerEnabled = true;
       bool mouseVisible = true;
