@@ -226,7 +226,7 @@ namespace GMapNET.Internals
                                     using(SQLiteCommand cmd = new SQLiteCommand(cn))
                                     {
                                        cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
-                                       cmd.Parameters.AddWithValue("@p1", m.ToArray());
+                                       cmd.Parameters.AddWithValue("@p1", m.GetBuffer());
                                        cmd.ExecuteNonQuery();
                                     }
                                     tr.Commit();
