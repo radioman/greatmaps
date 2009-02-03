@@ -973,7 +973,7 @@ namespace GMapNET
          }
          finally
          {
-            if(ret != null && useCache)
+            if(ret != null && useCache && Mode != AccessMode.ServerOnly)
             {
                Cache.Instance.CacheImageToDB(ret, type, pos, zoom, language);
             }

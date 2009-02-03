@@ -35,7 +35,7 @@ namespace GMapNET.Internals
                count = inputStream.Read(buffer, 0, readSize);
             }
          }
-
+         buffer = null;
          ms.Seek(0, SeekOrigin.Begin);
          return ms;
       }
