@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.ComponentModel;
 using System.Windows.Threading;
 using System.Net;
@@ -277,6 +278,43 @@ namespace Demo.WindowsPresentation
       {
          GMaps.Instance.UseGeocoderCache = checkBoxGeoCache.IsChecked.Value;
          GMaps.Instance.UsePlacemarkCache = GMaps.Instance.UseGeocoderCache;
+      }
+
+      // save currnt view
+      private void button7_Click(object sender, RoutedEventArgs e)
+      {
+         try
+         {
+            ImageSource img = MainMap.ToImageSource();
+            PngBitmapEncoder en = new PngBitmapEncoder();
+            en.Frames.Add(BitmapFrame.Create(img as BitmapSource));
+
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.FileName = "GMapNET Image"; // Default file name
+            dlg.DefaultExt = ".png"; // Default file extension
+            dlg.Filter = "Image (.png)|*.png"; // Filter files by extension
+            dlg.AddExtension = true;
+            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+
+            // Show save file dialog box
+            bool? result = dlg.ShowDialog();
+
+            // Process save file dialog box results
+            if(result == true)
+            {
+               // Save document
+               string filename = dlg.FileName;
+
+               using(System.IO.Stream st = System.IO.File.OpenWrite(filename))
+               {
+                  en.Save(st);
+               }
+            }
+         }
+         catch(Exception ex)
+         {
+            MessageBox.Show(ex.Message);
+         }
       }
    }
 }
