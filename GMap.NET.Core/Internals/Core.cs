@@ -378,9 +378,21 @@ namespace GMapNET.Internals
       /// </summary>
       /// <param name="local"></param>
       /// <returns></returns>
-      public PointLatLng FromLocalToLatLng(Point local)
+      public PointLatLng FromLocalToLatLng(int x, int y)
       {
-         return GMaps.Instance.FromPixelToLatLng(new Point(local.X - renderOffset.X, local.Y - renderOffset.Y), Zoom);
+         return GMaps.Instance.FromPixelToLatLng(new Point(x - renderOffset.X, y - renderOffset.Y), Zoom);
+      }
+
+      /// <summary>
+      /// return local coordinates from lat/lng
+      /// </summary>
+      /// <param name="latlng"></param>
+      /// <returns></returns>
+      public Point FromLatLngToLocal(PointLatLng latlng)
+      {
+         Point pLocal = GMaps.Instance.FromLatLngToPixel(latlng, Zoom);
+         pLocal.Offset(renderOffset);
+         return pLocal;           
       }
 
       /// <summary>

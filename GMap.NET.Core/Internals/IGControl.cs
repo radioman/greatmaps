@@ -123,7 +123,9 @@ namespace GMapNET
       void SetCurrentMarkersVisibility(bool visible);
       void SetCurrentMarkersTooltipMode(MarkerTooltipMode mode);
 
-      PointLatLng FromLocalToLatLng(Point local);
+      PointLatLng FromLocalToLatLng(int x, int y);
+      Point FromLatLngToLocal(PointLatLng point);
+
       RectLatLng GetRectOfAllMarkers();
 
       void AddRoute(Route item);

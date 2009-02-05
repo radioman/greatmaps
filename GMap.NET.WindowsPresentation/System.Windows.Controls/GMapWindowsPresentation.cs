@@ -261,7 +261,7 @@ namespace System.Windows.Controls
       }
       #endregion
 
-      #region IGMapControl Members
+      #region IGControl Members
 
       public void ReloadMap()
       {
@@ -293,9 +293,14 @@ namespace System.Windows.Controls
          Core.SetCurrentMarkersTooltipMode(mode);
       }
 
-      public PointLatLng FromLocalToLatLng(System.Drawing.Point local)
+      public PointLatLng FromLocalToLatLng(int x, int y)
       {
-         return Core.FromLocalToLatLng(local);
+         return Core.FromLocalToLatLng(x, y);
+      }
+
+      public System.Drawing.Point FromLatLngToLocal(PointLatLng point)
+      {
+         return Core.FromLatLngToLocal(point);
       }
 
       public RectLatLng GetRectOfAllMarkers()
