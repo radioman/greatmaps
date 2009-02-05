@@ -92,7 +92,7 @@ namespace System.Windows.Forms
                   Core.tilePoint.Y += j;
 
                   Tile t = Core.Matrix[Core.tilePoint];
-                  if(t != null) // debug center tile add: && p != centerTileXYLocation
+                  if(t != null) // debug center tile add: && Core.tilePoint != Core.centerTileXYLocation
                   {
                      if(t.Hbitmap != null)
                      {
@@ -137,7 +137,7 @@ namespace System.Windows.Forms
                Core.tilePoint.Y += j;
 
                Tile t = Core.Matrix[Core.tilePoint];
-               if(t != null) // debug center tile add: && p != centerTileXYLocation
+               if(t != null) // debug center tile add: && Core.tilePoint != Core.centerTileXYLocation
                {
                   if(t.Image != null)
                   {
@@ -147,7 +147,6 @@ namespace System.Windows.Forms
                      if(this.Region.IsVisible(Core.tileRect))
                      {
                         WindowsFormsImage img = t.Image as WindowsFormsImage;
-                        if(img.Img != null)
                         {
                            g.DrawImageUnscaled(img.Img, Core.tileRect.Location);
                         }
@@ -261,7 +260,7 @@ namespace System.Windows.Forms
       {
          base.OnLoad(e);
 
-         Core.StartSystem();     
+         Core.StartSystem();
       }
 
       protected override void OnPaintBackground(PaintEventArgs e)

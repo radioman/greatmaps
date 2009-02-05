@@ -109,7 +109,7 @@ namespace System.Windows.Controls
                Core.tilePoint.Y += j;
 
                Tile t = Core.Matrix[Core.tilePoint];
-               if(t != null) // debug center tile add: && p != centerTileXYLocation
+               if(t != null) // debug center tile add:  && Core.tilePoint != Core.centerTileXYLocation
                {
                   if(t.Image != null)
                   {
@@ -120,7 +120,6 @@ namespace System.Windows.Controls
                      if(this.Region.IsVisible(Core.tileRect))
                      {
                         WindowsPresentationImage img = t.Image as WindowsPresentationImage;
-                        if(img.Img != null)
                         {
                            g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
                         }
@@ -172,7 +171,7 @@ namespace System.Windows.Controls
             DrawMapWPF(drawingContext);
 
             // draw current marker
-            if(CurrentMarkerEnabled)
+            if(CurrentMarkerEnabled && CurrentMarkerStyle == CurrentMarkerType.Cross)
             {
                CurrentMarker.Position = CurrentPosition;
                CurrentMarker.LocalPosition.X = CurrentPositionGPixel.X;
