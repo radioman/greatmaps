@@ -1,9 +1,7 @@
-﻿using System.Drawing;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Data.Common;
 
 namespace GMapNET.Internals
 {

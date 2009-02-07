@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-
+﻿
 namespace GMapNET
 {
    public class Marker

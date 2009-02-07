@@ -36,7 +36,7 @@ namespace Demo.WindowsForms
             MainMap.MapType = GMapType.GoogleMap;
             MainMap.Zoom = 12;
             MainMap.CurrentMarkerEnabled = true;
-            MainMap.CurrentMarkerStyle = CurrentMarkerType.GMap;
+            MainMap.CurrentMarkerStyle = CurrentMarkerType.Cross;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
 
             // map events
@@ -359,13 +359,13 @@ namespace Demo.WindowsForms
 
          for(int i = MainMap.Zoom; i <= GMaps.Instance.MaxZoom; i++)
          {
-            List<System.Drawing.Point> x = GMaps.Instance.GetAreaTileList(area, i);
+            List<Point> x = GMaps.Instance.GetAreaTileList(area, i);
 
             DialogResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButtons.YesNoCancel);
 
             if(res == DialogResult.Yes)
             {
-               Prefetch obj = new Prefetch();
+               TilePrefetcher obj = new TilePrefetcher();
                obj.Start(x, i, MainMap.MapType, 100);                 
             }
             else if(res == DialogResult.No)

@@ -210,7 +210,7 @@ namespace Demo.WindowsPresentation
 
             if(res == MessageBoxResult.Yes)
             {
-               Prefetch obj = new Prefetch();
+               TilePrefetcher obj = new TilePrefetcher();
                obj.Start(x, i, MainMap.MapType, 100);
             }
             else if(res == MessageBoxResult.No)

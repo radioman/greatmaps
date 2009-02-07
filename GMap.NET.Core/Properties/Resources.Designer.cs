@@ -60,13 +60,6 @@ namespace GMapNET.Properties {
             }
         }
         
-        public static System.Drawing.Bitmap blue_dot {
-            get {
-                object obj = ResourceManager.GetObject("blue_dot", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
         /// <summary>
         ///   Looks up a localized string similar to CREATE TABLE IF NOT EXISTS Tiles (id INTEGER NOT NULL PRIMARY KEY, X INTEGER NOT NULL, Y INTEGER NOT NULL, Zoom INTEGER NOT NULL, Type INTEGER NOT NULL);
         ///CREATE INDEX IF NOT EXISTS IndexOfTiles ON Tiles (X, Y, Zoom, Type);
@@ -82,83 +75,6 @@ namespace GMapNET.Properties {
         public static string CreateTileDb {
             get {
                 return ResourceManager.GetString("CreateTileDb", resourceCulture);
-            }
-        }
-        
-        public static System.Drawing.Bitmap drag_cross_67_16 {
-            get {
-                object obj = ResourceManager.GetObject("drag_cross_67_16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        public static System.Drawing.Bitmap green_dot {
-            get {
-                object obj = ResourceManager.GetObject("green_dot", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        public static System.Drawing.Bitmap marker {
-            get {
-                object obj = ResourceManager.GetObject("marker", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        public static System.Drawing.Bitmap mm_20_blue {
-            get {
-                object obj = ResourceManager.GetObject("mm_20_blue", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        public static System.Drawing.Bitmap mm_20_green {
-            get {
-                object obj = ResourceManager.GetObject("mm_20_green", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        public static System.Drawing.Bitmap mm_20_red {
-            get {
-                object obj = ResourceManager.GetObject("mm_20_red", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        public static System.Drawing.Bitmap mm_20_shadow {
-            get {
-                object obj = ResourceManager.GetObject("mm_20_shadow", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        public static System.Drawing.Bitmap mm_20_yellow {
-            get {
-                object obj = ResourceManager.GetObject("mm_20_yellow", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        public static System.Drawing.Bitmap red_dot {
-            get {
-                object obj = ResourceManager.GetObject("red_dot", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        public static System.Drawing.Bitmap shadow50 {
-            get {
-                object obj = ResourceManager.GetObject("shadow50", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        public static System.Drawing.Bitmap yellow_dot {
-            get {
-                object obj = ResourceManager.GetObject("yellow_dot", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

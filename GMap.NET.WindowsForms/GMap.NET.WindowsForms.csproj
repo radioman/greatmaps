@@ -51,6 +51,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\TilePrefetcher.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TilePrefetcher.Designer.cs">
+      <DependentUpon>TilePrefetcher.cs</DependentUpon>
+    </Compile>
     <Compile Include="System.Windows.Forms\GMapWindowsForms.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -64,6 +70,11 @@
       <Project>{D0C39D9D-BED0-418B-9A5E-713176CAF40C}</Project>
       <Name>GMap.NET.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\TilePrefetcher.resx">
+      <DependentUpon>TilePrefetcher.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

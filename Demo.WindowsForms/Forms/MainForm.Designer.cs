@@ -140,8 +140,6 @@
          this.MainMap.RoutesEnabled = true;
          this.MainMap.Size = new System.Drawing.Size(477, 666);
          this.MainMap.TabIndex = 0;
-         this.MainMap.TooltipFont = new System.Drawing.Font("Microsoft Sans Serif", 11F);
-         this.MainMap.TooltipTextPadding = new System.Drawing.Size(10, 10);
          this.MainMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainMap_MouseDown);
          // 
          // groupBox3

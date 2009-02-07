@@ -1,21 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.ComponentModel;
+using System.IO;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Runtime.InteropServices;
-using System.Windows.Interop;
-using System.IO;
-
 using GMapNET;
-using GMapNET.Properties;
 using GMapNET.Internals;
 
 namespace System.Windows.Controls
@@ -24,8 +13,8 @@ namespace System.Windows.Controls
    {
       readonly Core Core = new Core();
       delegate void MethodInvoker();
-      System.Drawing.Region Region = new System.Drawing.Region();
-      System.Windows.Media.Pen pen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Red, 2);
+      Pen pen = new Pen(Brushes.Red, 2);
+      GMapNET.Rectangle region;
 
       MarkerCross CurrentMarker = new MarkerCross();
 
@@ -78,7 +67,8 @@ namespace System.Windows.Controls
       /// <param name="e"></param>
       void GMap_SizeChanged(object sender, SizeChangedEventArgs e)
       {
-         Core.sizeOfMapArea = new System.Drawing.Size((int) e.NewSize.Width, (int) e.NewSize.Height);
+         Core.sizeOfMapArea.Width = (int) e.NewSize.Width;
+         Core.sizeOfMapArea.Height = (int) e.NewSize.Height;
          Core.sizeOfMapArea.Height /= GMaps.Instance.TileSize.Height;
          Core.sizeOfMapArea.Width /= GMaps.Instance.TileSize.Width;
          Core.sizeOfMapArea.Height += 1;
@@ -88,7 +78,7 @@ namespace System.Windows.Controls
          Core.sizeOfMapArea.Height = Core.sizeOfMapArea.Height/2 + 2;
 
          // 50px outside control
-         this.Region = new System.Drawing.Region(new System.Drawing.Rectangle(-50, -50, (int) e.NewSize.Width+100, (int) e.NewSize.Height+100));
+         region = new GMapNET.Rectangle(-50, -50, (int) e.NewSize.Width+100, (int) e.NewSize.Height+100);
 
          Core.OnMapSizeChanged((int) e.NewSize.Width, (int) e.NewSize.Height);
          InvalidateVisual();
@@ -117,7 +107,7 @@ namespace System.Windows.Controls
                      Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
                      Core.tileRect.Offset(Core.renderOffset);
 
-                     if(this.Region.IsVisible(Core.tileRect))
+                     if(region.IntersectsWith(Core.tileRect))
                      {
                         WindowsPresentationImage img = t.Image as WindowsPresentationImage;
                         {
@@ -297,7 +287,7 @@ namespace System.Windows.Controls
          return Core.FromLocalToLatLng(x, y);
       }
 
-      public System.Drawing.Point FromLatLngToLocal(PointLatLng point)
+      public GMapNET.Point FromLatLngToLocal(PointLatLng point)
       {
          return Core.FromLatLngToLocal(point);
       }
@@ -349,12 +339,70 @@ namespace System.Windows.Controls
 
       public bool ShowExportDialog()
       {
-         return Core.ShowExportDialog();
+         Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+         {
+            dlg.CheckPathExists = true;
+            dlg.CheckFileExists = false;
+            dlg.AddExtension = true;
+            dlg.DefaultExt = "gmdb";
+            dlg.ValidateNames = true;
+            dlg.Title = "GMap.NET: Export map to db, if file exsist only new data will be added";
+            dlg.FileName = "DataExp";
+            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
+            dlg.FilterIndex = 1;
+            dlg.RestoreDirectory = true;
+
+            if(dlg.ShowDialog() == true)
+            {
+               bool ok = GMaps.Instance.ExportToGMDB(dlg.FileName);
+               if(ok)
+               {
+                  MessageBox.Show("Complete!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Information);
+               }
+               else
+               {
+                  MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
+               }
+
+               return ok;
+            }
+         }
+         return false;
       }
 
       public bool ShowImportDialog()
       {
-         return Core.ShowImportDialog();
+         Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+         {
+            dlg.CheckPathExists = true;
+            dlg.CheckFileExists = false;
+            dlg.AddExtension = true;
+            dlg.DefaultExt = "gmdb";
+            dlg.ValidateNames = true;
+            dlg.Title = "GMap.NET: Import to db, only new data will be added";
+            dlg.FileName = "DataExp";
+            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
+            dlg.FilterIndex = 1;
+            dlg.RestoreDirectory = true;
+
+            if(dlg.ShowDialog() == true)
+            {
+               bool ok = GMaps.Instance.ImportFromGMDB(dlg.FileName);
+               if(ok)
+               {
+                  MessageBox.Show("Complete!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Information);
+               }
+               else
+               {
+                  MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
+               }
+
+               return ok;
+            }
+         }
+         return false;
       }
 
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -382,7 +430,7 @@ namespace System.Windows.Controls
          }
       }
 
-      public System.Drawing.Point CurrentPositionGPixel
+      public GMapNET.Point CurrentPositionGPixel
       {
          get
          {
@@ -390,7 +438,7 @@ namespace System.Windows.Controls
          }
       }
 
-      public System.Drawing.Point CurrentPositionGTile
+      public GMapNET.Point CurrentPositionGTile
       {
          get
          {
@@ -452,30 +500,6 @@ namespace System.Windows.Controls
          get
          {
             return Core.CurrentViewArea;
-         }
-      }
-
-      public System.Drawing.Font TooltipFont
-      {
-         get
-         {
-            return Core.TooltipFont;
-         }
-         set
-         {
-            Core.TooltipFont = value;
-         }
-      }
-
-      public System.Drawing.Size TooltipTextPadding
-      {
-         get
-         {
-            return Core.TooltipTextPadding;
-         }
-         set
-         {
-            Core.TooltipTextPadding = value;
          }
       }
 

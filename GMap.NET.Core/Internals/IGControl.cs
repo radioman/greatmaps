@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace GMapNET
+﻿namespace GMapNET
 {
    internal interface IGControl
    {
@@ -56,18 +54,6 @@ namespace GMapNET
       RectLatLng CurrentViewArea
       {
          get;
-      }
-
-      Font TooltipFont
-      {
-         get;
-         set;
-      }
-
-      Size TooltipTextPadding
-      {
-         get;
-         set;
       }
 
       GMapType MapType

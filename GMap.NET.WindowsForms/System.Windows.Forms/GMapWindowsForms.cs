@@ -1,13 +1,9 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
-using System.Threading;
 
 using GMapNET;
-using GMapNET.Properties;
 using GMapNET.Internals;
 
 namespace System.Windows.Forms
@@ -25,6 +21,8 @@ namespace System.Windows.Forms
       StringFormat tooltipFormat = new StringFormat();
       IntPtr hdcTmp, hdcMemTmp;
 
+      GMapNET.Rectangle region;
+
       public GMap()
       {
          if(!DesignModeInConstruct)
@@ -39,7 +37,7 @@ namespace System.Windows.Forms
             // to know when to invalidate
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
 
-            this.Region = new Region(new Rectangle(-50, -50, Size.Width+100, Size.Height+100));
+            region = new GMapNET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
 
             routePen.LineJoin = LineJoin.Round;
             routePen.Width = 5;
@@ -96,10 +94,11 @@ namespace System.Windows.Forms
                   {
                      if(t.Hbitmap != null)
                      {
-                        Core.tileRect.Location = new Point(Core.tilePoint.X*Core.tileRect.Width, Core.tilePoint.Y*Core.tileRect.Height);
+                        Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
+                        Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
                         Core.tileRect.Offset(Core.renderOffset);
 
-                        if(this.Region.IsVisible(Core.tileRect))
+                        if(region.IntersectsWith(Core.tileRect))
                         {
                            // Select our bitmap in to DC, recording what was there before
                            IntPtr oldObject = NativeMethods.SelectObject(hdcMemTmp, t.Hbitmap);
@@ -141,14 +140,15 @@ namespace System.Windows.Forms
                {
                   if(t.Image != null)
                   {
-                     Core.tileRect.Location = new Point(Core.tilePoint.X*Core.tileRect.Width, Core.tilePoint.Y*Core.tileRect.Height);
+                     Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
+                     Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
                      Core.tileRect.Offset(Core.renderOffset);
 
-                     if(this.Region.IsVisible(Core.tileRect))
+                     if(region.IntersectsWith(Core.tileRect))
                      {
                         WindowsFormsImage img = t.Image as WindowsFormsImage;
                         {
-                           g.DrawImageUnscaled(img.Img, Core.tileRect.Location);
+                           g.DrawImageUnscaled(img.Img, Core.tileRect.X, Core.tileRect.Y);
                         }
                      }
                   }
@@ -165,7 +165,7 @@ namespace System.Windows.Forms
       {
          // current marker
          {
-            Point p = CurrentPositionGPixel;
+            GMapNET.Point p = CurrentPositionGPixel;
             p.Offset(Core.renderOffset);
             {
                switch(CurrentMarkerStyle)
@@ -174,32 +174,32 @@ namespace System.Windows.Forms
                   {
                      if(!IsDragging)
                      {
-                        g.DrawImageUnscaled(GMapNET.Properties.Resources.shadow50, p.X-10, p.Y-34);
-                        g.DrawImageUnscaled(GMapNET.Properties.Resources.marker, p.X-10, p.Y-34);
+                        //g.DrawImageUnscaled(GMapNET.Properties.Resources.shadow50, p.X-10, p.Y-34);
+                        //g.DrawImageUnscaled(GMapNET.Properties.Resources.marker, p.X-10, p.Y-34);
                      }
                      else
                      {
-                        g.DrawImageUnscaled(GMapNET.Properties.Resources.shadow50, p.X-10, p.Y-40);
-                        g.DrawImageUnscaled(GMapNET.Properties.Resources.marker, p.X-10, p.Y-40);
-                        g.DrawImageUnscaled(GMapNET.Properties.Resources.drag_cross_67_16, p.X-8, p.Y-8);
+                        //g.DrawImageUnscaled(GMapNET.Properties.Resources.shadow50, p.X-10, p.Y-40);
+                        //g.DrawImageUnscaled(GMapNET.Properties.Resources.marker, p.X-10, p.Y-40);
+                        //g.DrawImageUnscaled(GMapNET.Properties.Resources.drag_cross_67_16, p.X-8, p.Y-8);
                      }
                   }
                   break;
 
                   case CurrentMarkerType.Cross:
                   {
-                     Point p1 = p;
+                     GMapNET.Point p1 = p;
                      p1.Offset(0, -10);
-                     Point p2 = p;
+                     GMapNET.Point p2 = p;
                      p2.Offset(0, 10);
 
-                     Point p3 = p;
+                     GMapNET.Point p3 = p;
                      p3.Offset(-10, 0);
-                     Point p4 = p;
+                     GMapNET.Point p4 = p;
                      p4.Offset(10, 0);
 
-                     g.DrawLine(Pens.Red, p1, p2);
-                     g.DrawLine(Pens.Red, p3, p4);
+                     g.DrawLine(Pens.Red, p1.X, p1.Y, p2.X, p2.Y);
+                     g.DrawLine(Pens.Red, p3.X, p3.Y, p4.X, p4.Y);
                   }
                   break;
 
@@ -223,14 +223,14 @@ namespace System.Windows.Forms
          GraphicsState s = g.Save();
          g.SmoothingMode = SmoothingMode.AntiAlias;
 
-         Size st = g.MeasureString(m.Text, TooltipFont).ToSize();
-         Rectangle rect = new Rectangle(x, y, st.Width+TooltipTextPadding.Width, st.Height+TooltipTextPadding.Height);
-         rect.Offset(m.ToolTipOffset);
+         //Size st = g.MeasureString(m.Text, TooltipFont).ToSize();
+         //Rectangle rect = new Rectangle(x, y, st.Width+TooltipTextPadding.Width, st.Height+TooltipTextPadding.Height);
+         //rect.Offset(m.ToolTipOffset);
 
-         g.DrawLine(tooltipPen, x, y, rect.X + rect.Width/2, rect.Y + rect.Height/2);
-         g.FillRectangle(Brushes.AliceBlue, rect);
-         g.DrawRectangle(tooltipPen, rect);
-         g.DrawString(m.Text, TooltipFont, Brushes.Navy, rect, tooltipFormat);
+         //g.DrawLine(tooltipPen, x, y, rect.X + rect.Width/2, rect.Y + rect.Height/2);
+         //g.FillRectangle(Brushes.AliceBlue, rect);
+         //g.DrawRectangle(tooltipPen, rect);
+         //g.DrawString(m.Text, TooltipFont, Brushes.Navy, rect, tooltipFormat);
 
          g.Restore(s);
       }
@@ -267,10 +267,10 @@ namespace System.Windows.Forms
       {
          if(DesignMode)
          {
-            e.Graphics.FillRectangle(Brushes.Gray, 0, 0, Width, Height);
-            Point p = new Point(Width/2, Height/2);
-            e.Graphics.DrawImageUnscaled(GMapNET.Properties.Resources.shadow50, p.X-10, p.Y-34);
-            e.Graphics.DrawImageUnscaled(GMapNET.Properties.Resources.marker, p.X-10, p.Y-34);
+            //e.Graphics.FillRectangle(Brushes.Gray, 0, 0, Width, Height);
+            //Point p = new Point(Width/2, Height/2);
+            //e.Graphics.DrawImageUnscaled(GMapNET.Properties.Resources.shadow50, p.X-10, p.Y-34);
+            //e.Graphics.DrawImageUnscaled(GMapNET.Properties.Resources.marker, p.X-10, p.Y-34);
          }
       }
 
@@ -360,7 +360,7 @@ namespace System.Windows.Forms
          if(DesignMode)
             return;
 
-         Core.sizeOfMapArea = Bounds.Size;
+         Core.sizeOfMapArea = new GMapNET.Size(Bounds.Width, Bounds.Height);
          Core.sizeOfMapArea.Height /= GMaps.Instance.TileSize.Height;
          Core.sizeOfMapArea.Width /= GMaps.Instance.TileSize.Width;
          Core.sizeOfMapArea.Height += 1;
@@ -370,7 +370,7 @@ namespace System.Windows.Forms
          Core.sizeOfMapArea.Height = Core.sizeOfMapArea.Height/2 + 2;
 
          // 50px outside control
-         this.Region = new Region(new Rectangle(-50, -50, Size.Width+100, Size.Height+100));
+         region = new GMapNET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
 
          Core.OnMapSizeChanged(Width, Height);
 
@@ -379,7 +379,8 @@ namespace System.Windows.Forms
 
       protected override void OnMouseDown(MouseEventArgs e)
       {
-         Core.mouseDown = e.Location;
+         Core.mouseDown.X = e.X;
+         Core.mouseDown.Y = e.Y;
 
          if(e.Button == MouseButtons.Left)
          {
@@ -434,7 +435,7 @@ namespace System.Windows.Forms
       {
          if(e.Button == MouseButtons.Left)
          {
-            Core.CheckIfClickOnMarker(e.Location);
+            Core.CheckIfClickOnMarker(new GMapNET.Point(e.X, e.Y));
          }
 
          base.OnMouseClick(e);
@@ -444,7 +445,8 @@ namespace System.Windows.Forms
       {
          if(Core.IsDragging)
          {
-            Core.mouseCurrent = e.Location;
+            Core.mouseCurrent.X = e.X;
+            Core.mouseCurrent.Y = e.Y;
 
             if(e.Button == MouseButtons.Right)
             {
@@ -544,7 +546,7 @@ namespace System.Windows.Forms
          return Core.FromLocalToLatLng(x, y);
       }
 
-      public System.Drawing.Point FromLatLngToLocal(PointLatLng point)
+      public GMapNET.Point FromLatLngToLocal(PointLatLng point)
       {
          return Core.FromLatLngToLocal(point);
       }
@@ -596,12 +598,70 @@ namespace System.Windows.Forms
 
       public bool ShowExportDialog()
       {
-         return Core.ShowExportDialog();
+         using(FileDialog dlg = new SaveFileDialog())
+         {
+            dlg.CheckPathExists = true;
+            dlg.CheckFileExists = false;
+            dlg.AddExtension = true;
+            dlg.DefaultExt = "gmdb";
+            dlg.ValidateNames = true;
+            dlg.Title = "GMap.NET: Export map to db, if file exsist only new data will be added";
+            dlg.FileName = "DataExp";
+            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
+            dlg.FilterIndex = 1;
+            dlg.RestoreDirectory = true;
+
+            if(dlg.ShowDialog() == DialogResult.OK)
+            {
+               bool ok = GMaps.Instance.ExportToGMDB(dlg.FileName);
+               if(ok)
+               {
+                  MessageBox.Show("Complete!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
+               }
+               else
+               {
+                  MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+               }
+
+               return ok;
+            }
+         }
+         return false;
       }
 
       public bool ShowImportDialog()
       {
-         return Core.ShowImportDialog();
+         using(FileDialog dlg = new OpenFileDialog())
+         {
+            dlg.CheckPathExists = true;
+            dlg.CheckFileExists = false;
+            dlg.AddExtension = true;
+            dlg.DefaultExt = "gmdb";
+            dlg.ValidateNames = true;
+            dlg.Title = "GMap.NET: Import to db, only new data will be added";
+            dlg.FileName = "DataExp";
+            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
+            dlg.FilterIndex = 1;
+            dlg.RestoreDirectory = true;
+
+            if(dlg.ShowDialog() == DialogResult.OK)
+            {
+               bool ok = GMaps.Instance.ImportFromGMDB(dlg.FileName);
+               if(ok)
+               {
+                  MessageBox.Show("Complete!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
+               }
+               else
+               {
+                  MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+               }
+
+               return ok;
+            }
+         }
+         return false;
       }
 
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -629,7 +689,7 @@ namespace System.Windows.Forms
          }
       }
 
-      public Point CurrentPositionGPixel
+      public GMapNET.Point CurrentPositionGPixel
       {
          get
          {
@@ -637,7 +697,7 @@ namespace System.Windows.Forms
          }
       }
 
-      public Point CurrentPositionGTile
+      public GMapNET.Point CurrentPositionGTile
       {
          get
          {
@@ -702,19 +762,19 @@ namespace System.Windows.Forms
          }
       }
 
-      public Font TooltipFont
-      {
-         get
-         {
-            return Core.TooltipFont;
-         }
-         set
-         {
-            Core.TooltipFont = value;
-         }
-      }
+      //public Font TooltipFont
+      //{
+      //   get
+      //   {
+      //      return Core.TooltipFont;
+      //   }
+      //   set
+      //   {
+      //      Core.TooltipFont = value;
+      //   }
+      //}
 
-      public Size TooltipTextPadding
+      public GMapNET.Size TooltipTextPadding
       {
          get
          {

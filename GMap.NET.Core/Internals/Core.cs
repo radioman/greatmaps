@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace GMapNET.Internals
 {
@@ -175,11 +172,6 @@ namespace GMapNET.Internals
                OnCurrentPositionChanged(currentPosition);
          }
       }
-
-      /// <summary>
-      /// font for tooltips
-      /// </summary>
-      public Font TooltipFont = new Font(FontFamily.GenericSansSerif, 11, FontStyle.Regular);
 
       /// <summary>
       /// for tooltip text padding
@@ -612,85 +604,7 @@ namespace GMapNET.Internals
 
          if(OnCurrentPositionChanged != null)
             OnCurrentPositionChanged(currentPosition);
-      }
-
-      /// <summary>
-      /// show current cache export dialog
-      /// </summary>
-      /// <returns></returns>
-      public bool ShowExportDialog()
-      {
-         using(FileDialog dlg = new SaveFileDialog())
-         {
-            dlg.CheckPathExists = true;
-            dlg.CheckFileExists = false;
-            dlg.AddExtension = true;
-            dlg.DefaultExt = "gmdb";
-            dlg.ValidateNames = true;
-            dlg.Title = "GMap.NET: Export map to db, if file exsist only new data will be added";
-            dlg.FileName = "DataExp";
-            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
-            dlg.FilterIndex = 1;
-            dlg.RestoreDirectory = true;
-
-            if(dlg.ShowDialog() == DialogResult.OK)
-            {
-               bool ok = GMaps.Instance.ExportToGMDB(dlg.FileName);
-               if(ok)
-               {
-                  MessageBox.Show("Complete!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
-               }
-               else
-               {
-                  MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-               }
-
-               return ok;
-            }
-
-            return false;
-         }
-      }
-
-      /// <summary>
-      /// show current cache import dialog
-      /// </summary>
-      /// <returns></returns>
-      public bool ShowImportDialog()
-      {
-         using(FileDialog dlg = new OpenFileDialog())
-         {
-            dlg.CheckPathExists = true;
-            dlg.CheckFileExists = false;
-            dlg.AddExtension = true;
-            dlg.DefaultExt = "gmdb";
-            dlg.ValidateNames = true;
-            dlg.Title = "GMap.NET: Import to db, only new data will be added";
-            dlg.FileName = "DataExp";
-            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
-            dlg.FilterIndex = 1;
-            dlg.RestoreDirectory = true;
-
-            if(dlg.ShowDialog() == DialogResult.OK)
-            {
-               bool ok = GMaps.Instance.ImportFromGMDB(dlg.FileName);
-               if(ok)
-               {
-                  MessageBox.Show("Complete!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
-               }
-               else
-               {
-                  MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-               }
-
-               return ok;
-            }
-
-            return false;
-         }
-      }
+      }       
 
       /// <summary>
       /// gets rectangle around marker
@@ -752,10 +666,8 @@ namespace GMapNET.Internals
                if(m.Visible)
                {
                   Rectangle rc1 = GetRectForMarker(e, m);
-
-                  using(Region rg = new Region(rc1))
                   {
-                     if(rg.IsVisible(GMaps.Instance.FromLatLngToPixel(m.Position, Zoom)))
+                     if(rc1.Contains(GMaps.Instance.FromLatLngToPixel(m.Position, Zoom)))
                      {
                         if(OnNeedInvalidation != null)
                         {
@@ -766,8 +678,6 @@ namespace GMapNET.Internals
                         {
                            if(!mouseVisible)
                            {
-                              //this.Cursor = System.Windows.Forms.Cursors.Default;
-                              //Cursor.Show();
                               mouseVisible = true;
                            }
 

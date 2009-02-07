@@ -60,12 +60,5 @@ namespace Demo.WindowsPresentation.Properties
                 resourceCulture = value;
             }
         }
-        
-        internal static System.Drawing.Bitmap MapPointer {
-            get {
-                object obj = ResourceManager.GetObject("MapPointer", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }

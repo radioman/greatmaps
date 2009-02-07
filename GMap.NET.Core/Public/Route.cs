@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace GMapNET
 {
@@ -10,7 +8,7 @@ namespace GMapNET
    {
       public readonly List<PointLatLng> Points;
       public string Name;
-      public Color Color;
+      //public Color Color;
 
       public PointLatLng ?From
       {
@@ -45,7 +43,7 @@ namespace GMapNET
 
          Name = name; 
          
-         Color = Color.FromArgb(140, Color.MidnightBlue);         
+         //Color = Color.FromArgb(140, Color.MidnightBlue);         
       }
    }
 }
