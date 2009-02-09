@@ -36,7 +36,7 @@ namespace Demo.WindowsForms
             MainMap.MapType = GMapType.GoogleMap;
             MainMap.Zoom = 12;
             MainMap.CurrentMarkerEnabled = true;
-            MainMap.CurrentMarkerStyle = CurrentMarkerType.Cross;
+            MainMap.CurrentMarkerStyle = CurrentMarkerType.GMap;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
 
             // map events

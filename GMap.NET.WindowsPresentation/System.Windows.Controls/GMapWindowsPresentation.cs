@@ -124,7 +124,7 @@ namespace System.Windows.Controls
       /// draws current cursor
       /// </summary>
       /// <param name="g"></param>
-      protected virtual void OnDrawCurrentCursor(DrawingContext g)
+      protected virtual void OnDrawCurrentMarker(DrawingContext g)
       {
          if(CurrentMarkerStyle == CurrentMarkerType.Cross)
          {
@@ -177,7 +177,7 @@ namespace System.Windows.Controls
             // draw current marker
             if(CurrentMarkerEnabled)
             {
-               OnDrawCurrentCursor(drawingContext);
+               OnDrawCurrentMarker(drawingContext);
             }
          }
       }

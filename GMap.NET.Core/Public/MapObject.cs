@@ -32,6 +32,10 @@ namespace GMapNET
          this.Position = position;
       }
 
+      /// <summary>
+      /// sets local position for rendering
+      /// </summary>
+      /// <param name="map"></param>
       public void SetLocalPosition(IGControl map)
       {
          LocalPosition = map.FromLatLngToLocal(Position);

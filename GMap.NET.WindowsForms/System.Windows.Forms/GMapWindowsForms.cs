@@ -20,8 +20,10 @@ namespace System.Windows.Forms
       readonly Font gFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
       StringFormat tooltipFormat = new StringFormat();
       IntPtr hdcTmp, hdcMemTmp;
-
       GMapNET.Rectangle region;
+
+      MarkerCross CurrentMarker = new MarkerCross();
+      MarkerGoogle GoogleMarker = new MarkerGoogle();
 
       public GMap()
       {
@@ -161,55 +163,20 @@ namespace System.Windows.Forms
       /// draw current marker
       /// </summary>
       /// <param name="g"></param>
-      void DrawCurrentMarker(Graphics g)
+      protected virtual void OnDrawCurrentMarker(Graphics g)
       {
-         // current marker
+         if(CurrentMarkerStyle == CurrentMarkerType.GMap)
          {
-            GMapNET.Point p = CurrentPositionGPixel;
-            p.Offset(Core.renderOffset);
-            {
-               switch(CurrentMarkerStyle)
-               {
-                  case CurrentMarkerType.GMap:
-                  {
-                     if(!IsDragging)
-                     {
-                        //g.DrawImageUnscaled(GMapNET.Properties.Resources.shadow50, p.X-10, p.Y-34);
-                        //g.DrawImageUnscaled(GMapNET.Properties.Resources.marker, p.X-10, p.Y-34);
-                     }
-                     else
-                     {
-                        //g.DrawImageUnscaled(GMapNET.Properties.Resources.shadow50, p.X-10, p.Y-40);
-                        //g.DrawImageUnscaled(GMapNET.Properties.Resources.marker, p.X-10, p.Y-40);
-                        //g.DrawImageUnscaled(GMapNET.Properties.Resources.drag_cross_67_16, p.X-8, p.Y-8);
-                     }
-                  }
-                  break;
-
-                  case CurrentMarkerType.Cross:
-                  {
-                     GMapNET.Point p1 = p;
-                     p1.Offset(0, -10);
-                     GMapNET.Point p2 = p;
-                     p2.Offset(0, 10);
-
-                     GMapNET.Point p3 = p;
-                     p3.Offset(-10, 0);
-                     GMapNET.Point p4 = p;
-                     p4.Offset(10, 0);
-
-                     g.DrawLine(Pens.Red, p1.X, p1.Y, p2.X, p2.Y);
-                     g.DrawLine(Pens.Red, p3.X, p3.Y, p4.X, p4.Y);
-                  }
-                  break;
-
-                  case CurrentMarkerType.Custom:
-                  {
-                     DrawCurrentMarker(g, p.X, p.Y);
-                  }
-                  break;
-               }
-            }
+            GoogleMarker.IsDragging = IsDragging;
+            GoogleMarker.Position = CurrentPosition;
+            GoogleMarker.SetLocalPosition(this);
+            GoogleMarker.OnRender(g);
+         }
+         else if(CurrentMarkerStyle == CurrentMarkerType.Cross)
+         {
+            CurrentMarker.Position = CurrentPosition;
+            CurrentMarker.SetLocalPosition(this);
+            CurrentMarker.OnRender(g);
          }
       }
 
@@ -233,17 +200,6 @@ namespace System.Windows.Forms
          //g.DrawString(m.Text, TooltipFont, Brushes.Navy, rect, tooltipFormat);
 
          g.Restore(s);
-      }
-
-      /// <summary>
-      /// override to draws custom current marker
-      /// </summary>
-      /// <param name="g"></param>
-      /// <param name="x"></param>
-      /// <param name="y"></param>
-      protected virtual void DrawCurrentMarker(Graphics g, int x, int y)
-      {
-
       }
 
       #region UserControl Events
@@ -310,7 +266,7 @@ namespace System.Windows.Forms
 
          if(CurrentMarkerEnabled)
          {
-            DrawCurrentMarker(e.Graphics);
+            OnDrawCurrentMarker(e.Graphics);
          }
 
          #region -- copyright --

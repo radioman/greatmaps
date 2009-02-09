@@ -1,8 +1,8 @@
-﻿using System.Windows.Controls;
-using System.Windows.Media;
+﻿using System.Drawing;
+using System.Windows.Forms;
 using GMapNET;
 
-namespace Demo.WindowsPresentation
+namespace Demo.WindowsForms
 {
    public class Map : GMap
    {
@@ -12,16 +12,16 @@ namespace Demo.WindowsPresentation
       /// any custom drawing here
       /// </summary>
       /// <param name="drawingContext"></param>
-      protected override void OnRender(DrawingContext drawingContext)
+      protected override void OnPaint(PaintEventArgs e)
       {
-         base.OnRender(drawingContext);
+         base.OnPaint(e);
       }
 
       /// <summary>
       /// drawing current marker
       /// </summary>
       /// <param name="g"></param>
-      protected override void OnDrawCurrentMarker(DrawingContext g)
+      protected override void OnDrawCurrentMarker(Graphics g)
       {
          if(CurrentMarkerStyle == CurrentMarkerType.Custom)
          {

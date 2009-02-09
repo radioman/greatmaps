@@ -31,7 +31,7 @@
          this.label7 = new System.Windows.Forms.Label();
          this.comboBoxMapType = new System.Windows.Forms.ComboBox();
          this.groupBox4 = new System.Windows.Forms.GroupBox();
-         this.MainMap = new System.Windows.Forms.GMap();
+         this.MainMap = new Map();
          this.groupBox3 = new System.Windows.Forms.GroupBox();
          this.label6 = new System.Windows.Forms.Label();
          this.textBoxGeo = new System.Windows.Forms.TextBox();
@@ -722,7 +722,7 @@
       private System.Windows.Forms.TextBox textBoxLng;
       private System.Windows.Forms.TextBox textBoxLat;
       private System.Windows.Forms.Button button8;
-      private System.Windows.Forms.GMap MainMap;
+      private Map MainMap;
       private System.Windows.Forms.ComboBox comboBoxMapType;
       private System.Windows.Forms.Label label7;
       private System.Windows.Forms.TrackBar trackBar1;

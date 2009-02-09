@@ -57,6 +57,13 @@
     <Compile Include="Forms\TilePrefetcher.Designer.cs">
       <DependentUpon>TilePrefetcher.cs</DependentUpon>
     </Compile>
+    <Compile Include="Markers\MarkerGoogle.cs" />
+    <Compile Include="Markers\MarkerCross.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="System.Windows.Forms\GMapWindowsForms.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -75,6 +82,19 @@
     <EmbeddedResource Include="Forms\TilePrefetcher.resx">
       <DependentUpon>TilePrefetcher.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shadow50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\marker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\drag_cross_67_16.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
