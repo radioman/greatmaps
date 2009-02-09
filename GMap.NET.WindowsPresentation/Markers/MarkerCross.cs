@@ -1,12 +1,10 @@
-﻿using System.Windows;
-using System.Windows.Media;   
+﻿using System.Windows.Media;   
 
 namespace GMapNET
 {
    public class MarkerCross : MapObject
    {
       public Pen Pen;
-      public Point LocalPosition;
 
       public MarkerCross()
       {

@@ -49,6 +49,7 @@
     <Reference Include="GMap.NET.WindowsMobile, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b85b9027b614afef, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\GMap.NET.WindowsMobile\bin\Debug\GMap.NET.WindowsMobile.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />

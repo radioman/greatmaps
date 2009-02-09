@@ -44,7 +44,7 @@
   <ItemGroup>
     <Compile Include="Internals\PureImage.cs" />
     <Compile Include="Internals\Purity.cs" />
-    <Compile Include="Internals\IGControl.cs" />
+    <Compile Include="Control\IGControl.cs" />
     <Compile Include="Public\AccessMode.cs" />
     <Compile Include="Public\Delegates.cs" />
     <Compile Include="Public\GMapType.cs" />

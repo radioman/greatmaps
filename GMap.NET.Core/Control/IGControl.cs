@@ -1,6 +1,6 @@
 ﻿namespace GMapNET
 {
-   internal interface IGControl
+   public interface IGControl
    {
       int Zoom
       {

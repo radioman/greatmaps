@@ -120,6 +120,20 @@ namespace System.Windows.Controls
          }
       }
 
+      /// <summary>
+      /// draws current cursor
+      /// </summary>
+      /// <param name="g"></param>
+      protected virtual void OnDrawCurrentCursor(DrawingContext g)
+      {
+         if(CurrentMarkerStyle == CurrentMarkerType.Cross)
+         {
+            CurrentMarker.Position = CurrentPosition;
+            CurrentMarker.SetLocalPosition(this);
+            CurrentMarker.OnRender(g);
+         }
+      }
+
       // gets image of the current view
       public ImageSource ToImageSource()
       {
@@ -161,13 +175,9 @@ namespace System.Windows.Controls
             DrawMapWPF(drawingContext);
 
             // draw current marker
-            if(CurrentMarkerEnabled && CurrentMarkerStyle == CurrentMarkerType.Cross)
+            if(CurrentMarkerEnabled)
             {
-               CurrentMarker.Position = CurrentPosition;
-               CurrentMarker.LocalPosition.X = CurrentPositionGPixel.X;
-               CurrentMarker.LocalPosition.Y = CurrentPositionGPixel.Y;
-               CurrentMarker.LocalPosition.Offset(Core.renderOffset.X, Core.renderOffset.Y);
-               CurrentMarker.OnRender(drawingContext);
+               OnDrawCurrentCursor(drawingContext);
             }
          }
       }
@@ -693,7 +703,7 @@ namespace System.Windows.Controls
                {
                   PngBitmapDecoder bitmapDecoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
                   ImageSource m = bitmapDecoder.Frames[0];
-                   
+
                   if(m != null)
                   {
                      ret = new WindowsPresentationImage();

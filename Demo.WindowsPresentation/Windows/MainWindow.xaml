@@ -4,13 +4,14 @@
     Title="GMap.NET - Great Maps for Windows Presentation"
     Height="694" Width="823"
     WindowStartupLocation="CenterScreen"
-    WindowState="Maximized" xmlns:src="clr-namespace:System.Windows.Controls;assembly=GMap.NET.WindowsPresentation"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib" MinHeight="600" MinWidth="300">
+    WindowState="Maximized"
+    xmlns:src="clr-namespace:Demo.WindowsPresentation"
+    MinHeight="600" MinWidth="300">
     <Grid>
         <GroupBox Header="gmap" Margin="12,7,187,12" ClipToBounds="True" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-            <src:GMap Name="MainMap">
+            <src:Map x:Name="MainMap">
                 <Slider Height="241" Name="sliderZoom" Width="24" Orientation="Vertical" VerticalAlignment="Top" HorizontalContentAlignment="Left" HorizontalAlignment="Left" Margin="10" Maximum="17" Minimum="1" ValueChanged="sliderZoom_ValueChanged" />
-            </src:GMap>
+            </src:Map>
         </GroupBox>
         <GroupBox Header="gmap" HorizontalAlignment="Right" Margin="0,158,12,0" Name="groupBox2" Width="169" VerticalAlignment="Top" Height="135">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

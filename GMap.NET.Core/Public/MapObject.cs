@@ -4,8 +4,21 @@ namespace GMapNET
    public abstract class MapObject
    {
       public PointLatLng Position;
+      private Point localPosition;      
       public int Width;
       public int Height;
+
+      public Point LocalPosition
+      {
+         get
+         {
+            return localPosition;
+         }
+         private set
+         {
+            localPosition = value;
+         }
+      }
 
       public MapObject()
       {
@@ -17,6 +30,11 @@ namespace GMapNET
       public MapObject(PointLatLng position)
       {
          this.Position = position;
+      }
+
+      public void SetLocalPosition(IGControl map)
+      {
+         LocalPosition = map.FromLatLngToLocal(Position);
       }
    }
 }
