@@ -19,7 +19,6 @@ namespace System.Windows.Forms
       //readonly int SourceCopy = (int) CopyPixelOperation.SourceCopy;
       readonly Font gFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
       StringFormat tooltipFormat = new StringFormat();
-      IntPtr hdcTmp, hdcMemTmp;
 
       GMapNET.Rectangle region;
 
@@ -90,15 +89,15 @@ namespace System.Windows.Forms
                Tile t = Core.Matrix[Core.tilePoint];
                if(t != null) // debug center tile add: && Core.tilePoint != Core.centerTileXYLocation
                {
-                  if(t.Image != null)
-                  {
-                     Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
-                     Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
-                     Core.tileRect.Offset(Core.renderOffset);
+                  Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
+                  Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
+                  Core.tileRect.Offset(Core.renderOffset);
 
-                     if(region.IntersectsWith(Core.tileRect))
+                  if(region.IntersectsWith(Core.tileRect))
+                  {
+                     foreach(WindowsFormsImage img in t.Overlays)
                      {
-                        WindowsFormsImage img = t.Image as WindowsFormsImage;
+                        if(img != null && img.Img != null)
                         {
                            g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y);
                         }

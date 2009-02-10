@@ -919,9 +919,29 @@ namespace GMapNET.Internals
             // report load start
             loader.ReportProgress(id, false);
 
-            PureImage img = GMaps.Instance.GetImageFrom(MapType, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
-            Matrix[task] = new Tile(img, Zoom, task, RenderMode);
-
+            Tile t = new Tile(Zoom, task, RenderMode);
+            {
+               if(MapType == GMapType.GoogleHybrid)
+               {
+                  PureImage img = GMaps.Instance.GetImageFrom(GMapType.GoogleSatellite, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
+                  PureImage img2 = GMaps.Instance.GetImageFrom(GMapType.GoogleLabels, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
+                  t.Overlays.Add(img);
+                  t.Overlays.Add(img2);
+               }
+               else if(MapType == GMapType.YahooHybrid)
+               {
+                  PureImage img = GMaps.Instance.GetImageFrom(GMapType.YahooSatellite, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
+                  PureImage img2 = GMaps.Instance.GetImageFrom(GMapType.YahooLabels, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
+                  t.Overlays.Add(img);
+                  t.Overlays.Add(img2);
+               }
+               else // single layer
+               {
+                  PureImage img = GMaps.Instance.GetImageFrom(MapType, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
+                  t.Overlays.Add(img);
+               }
+               Matrix[task] = t;
+            }
             loader.ReportProgress(id);
          }
          else

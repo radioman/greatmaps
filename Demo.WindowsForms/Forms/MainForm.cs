@@ -32,7 +32,6 @@ namespace Demo.WindowsForms
             //GMaps.Instance.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
             // config map             
-            MainMap.RenderMode = RenderMode.GDI;
             MainMap.MapType = GMapType.GoogleMap;
             MainMap.Zoom = 12;
             MainMap.CurrentMarkerEnabled = true;
@@ -56,10 +55,6 @@ namespace Demo.WindowsForms
             // get position
             textBoxLat.Text = MainMap.CurrentPosition.Lat.ToString(CultureInfo.InvariantCulture);
             textBoxLng.Text = MainMap.CurrentPosition.Lng.ToString(CultureInfo.InvariantCulture);
-
-            // get render type
-            comboBoxRenderType.DataSource = Enum.GetValues(typeof(RenderMode));
-            comboBoxRenderType.SelectedItem = MainMap.RenderMode;
 
             // get cache modes
             checkBoxUseTileCache.Checked = GMaps.Instance.UseTileCache;
@@ -127,20 +122,6 @@ namespace Demo.WindowsForms
          textBoxCurrLng.Text = point.Lng.ToString(CultureInfo.InvariantCulture);
       }
 
-      // change rendering mode
-      private void comboBoxRenderType_DropDownClosed(object sender, EventArgs e)
-      {
-         RenderMode mode =  (RenderMode) comboBoxMapType.SelectedValue;
-
-         if(mode != RenderMode.WPF)
-         {
-            MainMap.RenderMode = mode;
-            MainMap.ReloadMap();
-         }
-
-         comboBoxRenderType.SelectedItem = MainMap.RenderMode;
-      }
-
       // change map type
       private void comboBoxMapType_DropDownClosed(object sender, EventArgs e)
       {
@@ -184,15 +165,6 @@ namespace Demo.WindowsForms
             {
                MainMap.GoToCurrentPosition();
             }
-         }
-      }
-
-      // get draw mode sometimes...
-      private void MainMap_MouseDown(object sender, MouseEventArgs e)
-      {
-         if(e.Button == MouseButtons.Right)
-         {
-            comboBoxRenderType.SelectedItem = MainMap.RenderMode;
          }
       }
 

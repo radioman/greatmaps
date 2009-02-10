@@ -1,90 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GMapNET.Internals
 {
    internal class Tile
    {
-      IntPtr ptrHbitmap;
-      PureImage image;
       RenderMode mode;
       Point pos;
       int zoom;
+      public readonly List<PureImage> Overlays = new List<PureImage>(1);
 
-      public Tile(PureImage image, int zoom, Point pos, RenderMode mode)
+      public Tile(int zoom, Point pos, RenderMode mode)
       {
-         if(image != null)
-         {
-            this.mode = mode;
-            this.Zoom = zoom;
-            this.Pos = pos;
-
-            switch(mode)
-            {
-               case RenderMode.GDI:
-               {
-                  this.Hbitmap = image.GetHbitmap();
-               }
-               break;
-
-               case RenderMode.GDI_PLUS:
-               case RenderMode.WPF:
-               {
-                  this.Image = image;
-               }
-               break;
-            }
-         }
+         this.mode = mode;
+         this.Zoom = zoom;
+         this.Pos = pos;
       }
 
       public void Clear()
       {
-         switch(mode)
+         foreach(PureImage img in Overlays)
          {
-            case RenderMode.GDI:
+            if(img != null)
             {
-               if(Hbitmap != IntPtr.Zero)
-               {
-                  NativeMethods.DeleteObject(Hbitmap);
-                  Hbitmap = IntPtr.Zero;
-               }
+               img.Dispose();
             }
-            break;
-
-            case RenderMode.GDI_PLUS:
-            case RenderMode.WPF:
-            {
-               if(Image != null)
-               {
-                  Image.Dispose();
-                  Image = null;
-               }
-            }
-            break;
          }
-      }
-
-      public PureImage Image
-      {
-         get
-         {
-            return image;
-         }
-         private set
-         {
-            image = value;
-         }
-      }
-
-      public IntPtr Hbitmap
-      {
-         get
-         {
-            return ptrHbitmap;
-         }
-         private set
-         {
-            ptrHbitmap = value;
-         }
+         Overlays.Clear();
+         Overlays.TrimExcess();
       }
 
       public int Zoom

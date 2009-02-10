@@ -9,7 +9,7 @@ namespace GMapNET
       /// <summary>
       /// gdi mode for fast drawing, only for windows
       /// </summary>
-      GDI,
+      //GDI,
 
       /// <summary>
       /// gdi+ should work anywhere on Windows Forms

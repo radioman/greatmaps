@@ -10,7 +10,7 @@ namespace GMapNET
       GoogleSatellite=4,
       GoogleLabels=8,      
       GoogleTerrain=16,
-      //GoogleHybrid=20,
+      GoogleHybrid=20,
 
       OpenStreetMap=32,
       OpenStreetOsm=33,
@@ -18,6 +18,6 @@ namespace GMapNET
       YahooMap=64,
       YahooSatellite=128,
       YahooLabels=256,
-      //YahooHybrid=333,
+      YahooHybrid=333,
    }
 }

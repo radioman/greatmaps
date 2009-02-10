@@ -60,7 +60,6 @@
     </Compile>
     <Compile Include="Internals\Cache.cs" />
     <Compile Include="Internals\Core.cs" />
-    <Compile Include="Internals\NativeMethods.cs" />
     <Compile Include="Internals\Tile.cs" />
     <Compile Include="Internals\TileMatrix.cs" />
     <Compile Include="Public\GMaps.cs" />

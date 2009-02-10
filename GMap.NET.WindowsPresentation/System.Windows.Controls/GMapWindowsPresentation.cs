@@ -101,21 +101,21 @@ namespace System.Windows.Controls
                Tile t = Core.Matrix[Core.tilePoint];
                if(t != null) // debug center tile add:  && Core.tilePoint != Core.centerTileXYLocation
                {
-                  if(t.Image != null)
-                  {
                      Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
                      Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
                      Core.tileRect.Offset(Core.renderOffset);
 
                      if(region.IntersectsWith(Core.tileRect))
                      {
-                        WindowsPresentationImage img = t.Image as WindowsPresentationImage;
+                        foreach(WindowsPresentationImage img in t.Overlays)
                         {
-                           g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                           if(img != null && img.Img != null)
+                           {
+                              g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                           }
                         }
                      }
-                  }
-               }
+                }
             }
          }
       }

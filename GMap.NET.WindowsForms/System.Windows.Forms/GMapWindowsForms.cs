@@ -16,10 +16,8 @@ namespace System.Windows.Forms
       readonly Pen routePen = new Pen(Color.MidnightBlue);
       readonly Pen tooltipPen = new Pen(Color.FromArgb(140, Color.MidnightBlue));
       readonly Color tooltipBg = Color.FromArgb(140, Color.AliceBlue);
-      readonly int SourceCopy = (int) CopyPixelOperation.SourceCopy;
       readonly Font gFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
       StringFormat tooltipFormat = new StringFormat();
-      IntPtr hdcTmp, hdcMemTmp;
       GMapNET.Rectangle region;
 
       MarkerCross CurrentMarker = new MarkerCross();
@@ -35,6 +33,8 @@ namespace System.Windows.Forms
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.Opaque, true);
+
+            RenderMode = RenderMode.GDI_PLUS;
 
             // to know when to invalidate
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
@@ -73,57 +73,6 @@ namespace System.Windows.Forms
       }
 
       /// <summary>
-      /// render map in GDI
-      /// </summary>
-      /// <param name="g"></param>
-      void DrawMapGDI(Graphics g)
-      {
-         try
-         {
-            hdcTmp = g.GetHdc();
-            hdcMemTmp = NativeMethods.CreateCompatibleDC(hdcTmp);
-
-            for(int i = -(Core.sizeOfMapArea.Width + Core.centerTileXYOffset.X); i < (Core.sizeOfMapArea.Width - Core.centerTileXYOffset.X); i++)
-            {
-               for(int j = -(Core.sizeOfMapArea.Height + Core.centerTileXYOffset.Y); j < (Core.sizeOfMapArea.Height - Core.centerTileXYOffset.Y); j++)
-               {
-                  Core.tilePoint = CurrentPositionGTile;
-                  Core.tilePoint.X += i;
-                  Core.tilePoint.Y += j;
-
-                  Tile t = Core.Matrix[Core.tilePoint];
-                  if(t != null) // debug center tile add: && Core.tilePoint != Core.centerTileXYLocation
-                  {
-                     if(t.Hbitmap != null)
-                     {
-                        Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
-                        Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
-                        Core.tileRect.Offset(Core.renderOffset);
-
-                        if(region.IntersectsWith(Core.tileRect))
-                        {
-                           // Select our bitmap in to DC, recording what was there before
-                           IntPtr oldObject = NativeMethods.SelectObject(hdcMemTmp, t.Hbitmap);
-
-                           // Perform blt
-                           NativeMethods.BitBlt(hdcTmp, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height, hdcMemTmp, 0, 0, SourceCopy);
-
-                           // Select our bitmap object back out of the DC
-                           NativeMethods.SelectObject(hdcMemTmp, oldObject);
-                        }
-                     }
-                  }
-               }
-            }
-         }
-         finally
-         {
-            NativeMethods.DeleteDC(hdcMemTmp);
-            g.ReleaseHdc(hdcTmp);
-         }
-      }
-
-      /// <summary>
       /// render map in GDI+
       /// </summary>
       /// <param name="g"></param>
@@ -140,15 +89,15 @@ namespace System.Windows.Forms
                Tile t = Core.Matrix[Core.tilePoint];
                if(t != null) // debug center tile add: && Core.tilePoint != Core.centerTileXYLocation
                {
-                  if(t.Image != null)
-                  {
-                     Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
-                     Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
-                     Core.tileRect.Offset(Core.renderOffset);
+                  Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
+                  Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
+                  Core.tileRect.Offset(Core.renderOffset);
 
-                     if(region.IntersectsWith(Core.tileRect))
+                  if(region.IntersectsWith(Core.tileRect))
+                  {
+                     foreach(WindowsFormsImage img in t.Overlays)
                      {
-                        WindowsFormsImage img = t.Image as WindowsFormsImage;
+                        if(img != null && img.Img != null)
                         {
                            g.DrawImageUnscaled(img.Img, Core.tileRect.X, Core.tileRect.Y);
                         }
@@ -223,10 +172,7 @@ namespace System.Windows.Forms
       {
          if(DesignMode)
          {
-            //e.Graphics.FillRectangle(Brushes.Gray, 0, 0, Width, Height);
-            //Point p = new Point(Width/2, Height/2);
-            //e.Graphics.DrawImageUnscaled(GMapNET.Properties.Resources.shadow50, p.X-10, p.Y-34);
-            //e.Graphics.DrawImageUnscaled(GMapNET.Properties.Resources.marker, p.X-10, p.Y-34);
+            e.Graphics.FillRectangle(Brushes.Gray, 0, 0, Width, Height);
          }
       }
 
@@ -234,19 +180,6 @@ namespace System.Windows.Forms
       {
          switch(RenderMode)
          {
-            case RenderMode.GDI:
-            {
-               try
-               {
-                  DrawMapGDI(e.Graphics);
-               }
-               catch // drop to gdi+ redering if smth
-               {
-                  RenderMode = RenderMode.GDI_PLUS;
-               }
-            }
-            break;
-
             case RenderMode.GDI_PLUS:
             {
                DrawMapGDIplus(e.Graphics);
@@ -808,7 +741,7 @@ namespace System.Windows.Forms
          {
             return Core.RenderMode;
          }
-         set
+         internal set
          {
             Core.RenderMode = value;
          }
