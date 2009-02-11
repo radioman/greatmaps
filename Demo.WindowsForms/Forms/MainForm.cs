@@ -62,7 +62,7 @@ namespace Demo.WindowsForms
             checkBoxUseGeoCache.Checked = GMaps.Instance.UseGeocoderCache;
 
             // get zoom
-            trackBar1.Maximum = GMaps.Instance.MaxZoom;
+            trackBar1.Maximum = 17;
             trackBar1.Value = MainMap.Zoom;
          }
       }

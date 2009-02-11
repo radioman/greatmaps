@@ -68,9 +68,9 @@ namespace GMapNET
       public bool UsePlacemarkCache = true;
 
       /// <summary>
-      /// max zoom for maps
+      /// max zoom for maps, 17 is max fo many maps
       /// </summary>
-      public readonly int MaxZoom = 17;
+      public readonly int MaxZoom = 19;
 
       /// <summary>
       /// size of one map tile

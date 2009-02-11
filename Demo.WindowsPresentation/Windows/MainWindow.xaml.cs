@@ -70,7 +70,7 @@ namespace Demo.WindowsPresentation
          checkBoxDragMap.IsChecked = MainMap.CanDragMap;
 
          // get zoom
-         sliderZoom.Maximum = GMaps.Instance.MaxZoom;
+         sliderZoom.Maximum = 17;
          sliderZoom.Value = MainMap.Zoom;
       }
 
