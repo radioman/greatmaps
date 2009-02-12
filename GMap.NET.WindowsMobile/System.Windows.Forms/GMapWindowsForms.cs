@@ -745,6 +745,18 @@ namespace System.Windows.Forms
          }
       }
 
+      public event MapDrag OnMapDrag
+      {
+         add
+         {
+            Core.OnMapDrag += value;
+         }
+         remove
+         {
+            Core.OnMapDrag -= value;
+         }
+      }
+
       #endregion
    }
 

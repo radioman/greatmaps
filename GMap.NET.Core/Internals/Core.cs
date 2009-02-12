@@ -236,12 +236,17 @@ namespace GMapNET.Internals
       /// <summary>
       /// occurs on mouse leaves marker area
       /// </summary>
-      public event MarkerLeave OnMarkerLeave;
+      public event MarkerLeave OnMarkerLeave; 
 
       /// <summary>
       /// occurs on tile loaded
       /// </summary>
       public event NeedInvalidation OnNeedInvalidation;
+
+      /// <summary>
+      /// occurs on map drag
+      /// </summary>
+      public event MapDrag OnMapDrag;
 
       public Core()
       {
@@ -807,6 +812,11 @@ namespace GMapNET.Internals
          if(OnNeedInvalidation != null)
          {
             OnNeedInvalidation();
+         }
+
+         if(OnMapDrag != null)
+         {
+            OnMapDrag();
          }
       }
 

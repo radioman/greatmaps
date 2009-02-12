@@ -683,6 +683,18 @@ namespace System.Windows.Controls
          }
       }
 
+      public event MapDrag OnMapDrag
+      {
+         add
+         {
+            Core.OnMapDrag += value;
+         }
+         remove
+         {
+            Core.OnMapDrag -= value;
+         }
+      }
+
       #endregion
    }
 

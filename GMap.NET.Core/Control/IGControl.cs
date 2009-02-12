@@ -98,6 +98,7 @@
       event MarkerClick OnMarkerClick;
       event MarkerEnter OnMarkerEnter;
       event MarkerLeave OnMarkerLeave;
+      event MapDrag OnMapDrag;
 
       void ReloadMap();
       void GoToCurrentPosition();
