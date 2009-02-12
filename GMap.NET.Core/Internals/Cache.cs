@@ -47,6 +47,12 @@ namespace GMapNET.Internals
 
          try
          {
+            string dir = Path.GetDirectoryName(file);
+            if(!Directory.Exists(dir))
+            {
+               Directory.CreateDirectory(dir);
+            }
+
             using(SQLiteConnection cn = new SQLiteConnection())
             {
                cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=False;", file);

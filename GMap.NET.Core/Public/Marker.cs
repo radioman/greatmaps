@@ -1,10 +1,8 @@
 ﻿
 namespace GMapNET
 {
-   public class Marker
-   {  
-      public MapObject Type;
-      public PointLatLng Position;      
+   public class Marker : MapObject
+   {     
       public MarkerTooltipMode TooltipMode;  
       public Point ToolTipOffset;
       public string Text;

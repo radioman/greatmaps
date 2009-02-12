@@ -134,6 +134,15 @@ namespace System.Windows.Controls
          }
       }
 
+      /// <summary>
+      /// draws marker
+      /// </summary>
+      /// <param name="g"></param>
+      protected virtual void OnDrawMarker(DrawingContext g, Marker marker)
+      {
+         // ...            
+      }
+
       // gets image of the current view
       public ImageSource ToImageSource()
       {
@@ -173,6 +182,18 @@ namespace System.Windows.Controls
          if(Core.RenderMode == GMapNET.RenderMode.WPF)
          {
             DrawMapWPF(drawingContext);
+
+            // draw markers
+            if(MarkersEnabled)
+            {
+               lock(Core.markers)
+               {
+                  foreach(Marker m in Core.markers)
+                  {
+                     OnDrawMarker(drawingContext, m);
+                  }
+               }
+            }
 
             // draw current marker
             if(CurrentMarkerEnabled)
@@ -383,7 +404,7 @@ namespace System.Windows.Controls
 
       public bool ShowImportDialog()
       {
-         Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+         Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
          {
             dlg.CheckPathExists = true;
             dlg.CheckFileExists = false;
@@ -391,7 +412,7 @@ namespace System.Windows.Controls
             dlg.DefaultExt = "gmdb";
             dlg.ValidateNames = true;
             dlg.Title = "GMap.NET: Import to db, only new data will be added";
-            dlg.FileName = "DataExp";
+            dlg.FileName = "DataImport";
             dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
             dlg.FilterIndex = 1;
@@ -399,15 +420,20 @@ namespace System.Windows.Controls
 
             if(dlg.ShowDialog() == true)
             {
+               Cursor = Cursors.Wait;
+
                bool ok = GMaps.Instance.ImportFromGMDB(dlg.FileName);
                if(ok)
                {
                   MessageBox.Show("Complete!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Information);
+                  ReloadMap();
                }
                else
                {
                   MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
                }
+
+               Cursor = Cursors.Arrow;
 
                return ok;
             }
