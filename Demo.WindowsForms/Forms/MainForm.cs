@@ -338,6 +338,7 @@ namespace Demo.WindowsForms
             if(res == DialogResult.Yes)
             {
                TilePrefetcher obj = new TilePrefetcher();
+               obj.ShowCompleteMessage = true;
                obj.Start(x, i, MainMap.MapType, 100);                 
             }
             else if(res == DialogResult.No)

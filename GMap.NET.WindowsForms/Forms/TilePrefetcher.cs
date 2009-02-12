@@ -17,6 +17,7 @@ namespace GMapNET
       GMapType type;
       int sleep;
       int all;
+      public bool ShowCompleteMessage = false;
 
       public TilePrefetcher()
       {
@@ -60,13 +61,16 @@ namespace GMapNET
 
       void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
       {
-         if(!e.Cancelled)
+         if(ShowCompleteMessage)
          {
-            MessageBox.Show("Prefetch Complete! => " + ((int) e.Result).ToString() + " of " + all);
-         }
-         else
-         {
-            MessageBox.Show("Prefetch Canceled! => " + ((int)e.Result).ToString() + " of " + all);
+            if(!e.Cancelled)
+            {
+               MessageBox.Show("Prefetch Complete! => " + ((int) e.Result).ToString() + " of " + all);
+            }
+            else
+            {
+               MessageBox.Show("Prefetch Canceled! => " + ((int) e.Result).ToString() + " of " + all);
+            }
          }
 
          list.Clear();
