@@ -27,6 +27,9 @@ namespace GMapNET
       public string VersionYahooSatellite = "1.9";
       public string VersionYahooLabels = "4.2";
 
+      // Virtual Earth
+      public string VersionVirtualEarth = "244";
+
       /// <summary>
       /// timeout for map connections
       /// </summary>
@@ -403,6 +406,24 @@ namespace GMapNET
                char letter = "abca"[servernum];
                return string.Format("http://{0}.tah.openstreetmap.org/Tiles/tile/{1}/{2}/{3}.png", letter, zoom.ToString(), pos.X.ToString(), pos.Y.ToString());
             }
+
+            case GMapType.VirtualEarthMap:
+            {
+               string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
+               return string.Format("http://r{0}.ortho.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
+            }
+
+            case GMapType.VirtualEarthSatellite:
+            {
+               string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
+               return string.Format("http://a{0}.ortho.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
+            }
+
+            case GMapType.VirtualEarthHybrid:
+            {
+               string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
+               return string.Format("http://h{0}.ortho.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
+            }
          }
 
          string sec1 = ""; // after &x=...
@@ -415,6 +436,35 @@ namespace GMapNET
          }
 
          return string.Format("http://{0}{1}.google.com/{2}?v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, servernum.ToString(), request, version, language, pos.X.ToString(), sec1, pos.Y.ToString(), zoom.ToString(), sec2);
+      }
+
+      /// <summary>
+      /// Converts tile XY coordinates into a QuadKey at a specified level of detail.
+      /// </summary>
+      /// <param name="tileX">Tile X coordinate.</param>
+      /// <param name="tileY">Tile Y coordinate.</param>
+      /// <param name="levelOfDetail">Level of detail, from 1 (lowest detail)
+      /// to 23 (highest detail).</param>
+      /// <returns>A string containing the QuadKey.</returns>
+      internal string TileXYToQuadKey(int tileX, int tileY, int levelOfDetail)
+      {
+         StringBuilder quadKey = new StringBuilder();
+         for(int i = levelOfDetail; i > 0; i--)
+         {
+            char digit = '0';
+            int mask = 1 << (i - 1);
+            if((tileX & mask) != 0)
+            {
+               digit++;
+            }
+            if((tileY & mask) != 0)
+            {
+               digit++;
+               digit++;
+            }
+            quadKey.Append(digit);
+         }
+         return quadKey.ToString();
       }
 
       /// <summary>
@@ -891,7 +941,7 @@ namespace GMapNET
             Debug.WriteLine("GetRouteBetweenPointsUrl: " + ex.ToString());
          }
          return ret;
-      }        
+      }
 
       /// <summary>
       /// gets image from tile server

@@ -19,5 +19,9 @@ namespace GMapNET
       YahooSatellite=128,
       YahooLabels=256,
       YahooHybrid=333,
+
+      VirtualEarthMap=444,
+      VirtualEarthSatellite=555,
+      VirtualEarthHybrid=666,
    }
 }
