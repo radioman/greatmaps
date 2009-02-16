@@ -70,8 +70,8 @@ namespace Demo.WindowsPresentation
          checkBoxDragMap.IsChecked = MainMap.CanDragMap;
 
          // get zoom
-         sliderZoom.Maximum = 17;
-         sliderZoom.Value = MainMap.Zoom;
+         //sliderZoom.Maximum = 17;
+         //sliderZoom.Value = MainMap.Zoom;
       }
 
       // tile louading starts

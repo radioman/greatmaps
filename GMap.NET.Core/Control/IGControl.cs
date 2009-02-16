@@ -119,8 +119,8 @@
       void RemoveRoute(Route item);
       void ClearAllRoutes();
 
-      void AddMarker(Marker item);
-      void RemoveMarker(Marker item);
+      void AddMarker(MapObject item);
+      void RemoveMarker(MapObject item);
       void ClearAllMarkers();
 
       bool ShowExportDialog();

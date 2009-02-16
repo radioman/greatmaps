@@ -6,7 +6,10 @@ namespace Demo.WindowsPresentation
 {
    public class Map : GMap
    {
-      MarkerDot CurrentMarker = new MarkerDot();
+      public Map()
+      {
+         // ...
+      }
 
       /// <summary>
       /// any custom drawing here
@@ -15,24 +18,6 @@ namespace Demo.WindowsPresentation
       protected override void OnRender(DrawingContext drawingContext)
       {
          base.OnRender(drawingContext);
-      }
-
-      /// <summary>
-      /// drawing current marker
-      /// </summary>
-      /// <param name="g"></param>
-      protected override void OnDrawCurrentMarker(DrawingContext g)
-      {
-         if(CurrentMarkerStyle == CurrentMarkerType.Custom)
-         {
-            CurrentMarker.Position = CurrentPosition;
-            CurrentMarker.SetLocalPosition(this);
-            CurrentMarker.OnRender(g);
-         }
-         else
-         {
-            base.OnDrawCurrentMarker(g);
-         }
       }
    }
 }

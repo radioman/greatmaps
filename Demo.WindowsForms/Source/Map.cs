@@ -25,9 +25,9 @@ namespace Demo.WindowsForms
       {
          if(CurrentMarkerStyle == CurrentMarkerType.Custom)
          {
-            CurrentMarker.Position = CurrentPosition;
-            CurrentMarker.SetLocalPosition(this);
-            CurrentMarker.OnRender(g);
+            //CurrentMarker.Position = CurrentPosition;
+            //CurrentMarker.SetLocalPosition(this);
+            //CurrentMarker.OnRender(g);
          }
          else
          {

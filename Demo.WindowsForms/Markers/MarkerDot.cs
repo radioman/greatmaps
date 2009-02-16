@@ -16,8 +16,8 @@ namespace Demo.WindowsForms
 
       public void OnRender(Graphics g)
       {
-         System.Drawing.Point p = new System.Drawing.Point(LocalPosition.X, LocalPosition.Y);
-         g.DrawEllipse(Pen, p.X, p.Y, Radius, Radius);
+         //System.Drawing.Point p = new System.Drawing.Point(LocalPosition.X, LocalPosition.Y);
+         //g.DrawEllipse(Pen, p.X, p.Y, Radius, Radius);
       }
    }
 }

@@ -118,13 +118,13 @@ namespace System.Windows.Forms
          {
             GoogleMarker.IsDragging = IsDragging;
             GoogleMarker.Position = CurrentPosition;
-            GoogleMarker.SetLocalPosition(this);
+            //GoogleMarker.SetLocalPosition(this);
             GoogleMarker.OnRender(g);
          }
          else if(CurrentMarkerStyle == CurrentMarkerType.Cross)
          {
             CurrentMarker.Position = CurrentPosition;
-            CurrentMarker.SetLocalPosition(this);
+            //CurrentMarker.SetLocalPosition(this);
             CurrentMarker.OnRender(g);
          }
       }
@@ -324,7 +324,7 @@ namespace System.Windows.Forms
       {
          if(e.Button == MouseButtons.Left)
          {
-            Core.CheckIfClickOnMarker(new GMapNET.Point(e.X, e.Y));
+            //Core.CheckIfClickOnMarker(new GMapNET.Point(e.X, e.Y));
          }
 
          base.OnMouseClick(e);
@@ -460,12 +460,12 @@ namespace System.Windows.Forms
          Core.ClearAllRoutes();
       }
 
-      public void AddMarker(Marker item)
+      public void AddMarker(MapObject item)
       {
          Core.AddMarker(item);
       }
 
-      public void RemoveMarker(Marker item)
+      public void RemoveMarker(MapObject item)
       {
          Core.RemoveMarker(item);
       }

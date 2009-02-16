@@ -40,7 +40,7 @@ namespace GMapNET.Internals
       public List<Point> tileDrawingList = new List<Point>();
       public readonly Queue<Point> tileLoadQueue = new Queue<Point>();
       public readonly List<Route> routes = new List<Route>();
-      public readonly List<Marker> markers = new List<Marker>();
+      public readonly List<MapObject> objects = new List<MapObject>();
 
       public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
@@ -400,16 +400,16 @@ namespace GMapNET.Internals
       {
          RectLatLng ret = RectLatLng.Empty;
 
-         lock(markers)
+         lock(objects)
          {
-            if(markers.Count > 0)
+            if(objects.Count > 0)
             {
                double left = double.MaxValue;
                double top = double.MinValue;
                double right = double.MinValue;
                double bottom = double.MaxValue;
 
-               foreach(Marker m in markers)
+               foreach(Marker m in objects)
                {
                   // left
                   if(m.Position.Lng < left)
@@ -498,11 +498,11 @@ namespace GMapNET.Internals
       /// adds marker
       /// </summary>
       /// <param name="item"></param>
-      public void AddMarker(Marker item)
+      public void AddMarker(MapObject item)
       {
-         lock(markers)
+         lock(objects)
          {
-            markers.Add(item);
+            objects.Add(item);
          }
 
          if(OnNeedInvalidation != null)
@@ -515,11 +515,11 @@ namespace GMapNET.Internals
       /// removes marker
       /// </summary>
       /// <param name="item"></param>
-      public void RemoveMarker(Marker item)
+      public void RemoveMarker(MapObject item)
       {
-         lock(markers)
+         lock(objects)
          {
-            markers.Remove(item);
+            objects.Remove(item);
          }
 
          if(OnNeedInvalidation != null)
@@ -534,9 +534,9 @@ namespace GMapNET.Internals
       /// <param name="item"></param>
       public void ClearAllMarkers()
       {
-         lock(markers)
+         lock(objects)
          {
-            markers.Clear();
+            objects.Clear();
          }
 
          if(OnNeedInvalidation != null)
@@ -551,9 +551,9 @@ namespace GMapNET.Internals
       /// <param name="visible"></param>
       public void SetCurrentMarkersVisibility(bool visible)
       {
-         lock(markers)
+         lock(objects)
          {
-            foreach(Marker m in markers)
+            foreach(Marker m in objects)
             {
                m.Visible = visible;
             }
@@ -571,9 +571,9 @@ namespace GMapNET.Internals
       /// <param name="mode"></param>
       public void SetCurrentMarkersTooltipMode(MarkerTooltipMode mode)
       {
-         lock(markers)
+         lock(objects)
          {
-            foreach(Marker m in markers)
+            foreach(Marker m in objects)
             {
                m.TooltipMode = mode;
             }
@@ -657,44 +657,44 @@ namespace GMapNET.Internals
          return rc1;
       }
 
-      /// <summary>
-      /// checks if some marker was clicked
-      /// </summary>
-      /// <param name="e"></param>
-      public void CheckIfClickOnMarker(Point e)
-      {
-         lock(markers)
-         {
-            for(int i = 0; i < markers.Count; i++)
-            {
-               Marker m = markers[i];
-               if(m.Visible)
-               {
-                  Rectangle rc1 = GetRectForMarker(e, m);
-                  {
-                     if(rc1.Contains(GMaps.Instance.FromLatLngToPixel(m.Position, Zoom)))
-                     {
-                        if(OnNeedInvalidation != null)
-                        {
-                           OnNeedInvalidation();
-                        }
+      ///// <summary>
+      ///// checks if some marker was clicked
+      ///// </summary>
+      ///// <param name="e"></param>
+      //public void CheckIfClickOnMarker(Point e)
+      //{
+      //   lock(markers)
+      //   {
+      //      for(int i = 0; i < markers.Count; i++)
+      //      {
+      //         Marker m = markers[i];
+      //         if(m.Visible)
+      //         {
+      //            Rectangle rc1 = GetRectForMarker(e, m);
+      //            {
+      //               if(rc1.Contains(GMaps.Instance.FromLatLngToPixel(m.Position, Zoom)))
+      //               {
+      //                  if(OnNeedInvalidation != null)
+      //                  {
+      //                     OnNeedInvalidation();
+      //                  }
 
-                        if(OnMarkerClick != null)
-                        {
-                           if(!mouseVisible)
-                           {
-                              mouseVisible = true;
-                           }
+      //                  if(OnMarkerClick != null)
+      //                  {
+      //                     if(!mouseVisible)
+      //                     {
+      //                        mouseVisible = true;
+      //                     }
 
-                           OnMarkerClick(m);
-                           break;
-                        }
-                     }
-                  }
-               }
-            }
-         }
-      }
+      //                     OnMarkerClick(m);
+      //                     break;
+      //                  }
+      //               }
+      //            }
+      //         }
+      //      }
+      //   }
+      //}
 
       /// <summary>
       /// gets max zoom level to fit rectangle

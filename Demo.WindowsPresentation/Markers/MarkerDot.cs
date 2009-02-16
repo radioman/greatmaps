@@ -17,8 +17,8 @@ namespace Demo.WindowsPresentation
 
       public void OnRender(DrawingContext g)
       {
-         System.Windows.Point p = new System.Windows.Point(LocalPosition.X, LocalPosition.Y);
-         g.DrawEllipse(Brushes.Red, Pen, p, Radius, Radius);
+         //System.Windows.Point p = new System.Windows.Point(LocalPosition.X, LocalPosition.Y);
+         //g.DrawEllipse(Brushes.Red, Pen, p, Radius, Radius);
       }
    }
 }

@@ -6,8 +6,7 @@ namespace GMapNET
       public MarkerTooltipMode TooltipMode;  
       public Point ToolTipOffset;
       public string Text;
-      public bool Visible;
-      public object Tag;
+      public bool Visible;       
 
       private bool isMouseOver; 
       public bool IsMouseOver

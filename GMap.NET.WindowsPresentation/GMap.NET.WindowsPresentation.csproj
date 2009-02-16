@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
     <Reference Include="UIAutomationProvider">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -51,11 +52,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Markers\MarkerCross.cs" />
+    <Compile Include="Markers\GMapMarkerCross.cs" />
+    <Compile Include="Markers\GMapMarkerTriangle.cs" />
+    <Compile Include="Markers\GMapMarkerRect.cs" />
+    <Compile Include="Markers\GMapMarkerCircle.cs" />
+    <Compile Include="Markers\GMapMarker.cs" />
     <Compile Include="System.Windows.Controls\GMapWindowsPresentation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Windows.Shapes\Cross.cs" />
+    <Compile Include="System.Windows.Shapes\Triangle.cs" />
     <Compile Include="Windows\TilePrefetcher.xaml.cs">
       <DependentUpon>TilePrefetcher.xaml</DependentUpon>
     </Compile>

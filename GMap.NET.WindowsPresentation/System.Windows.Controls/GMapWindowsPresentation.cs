@@ -1,34 +1,75 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using System.Windows.Threading;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Windows.Documents;
+using System.Globalization;
 using GMapNET;
 using GMapNET.Internals;
 
 namespace System.Windows.Controls
 {
+   delegate void MethodInvoker();
+
    public partial class GMap : UserControl, IGControl
    {
       readonly Core Core = new Core();
-      delegate void MethodInvoker();
-      Pen pen = new Pen(Brushes.Red, 2);
       GMapNET.Rectangle region;
-
-      MarkerCross CurrentMarker = new MarkerCross();
+      Canvas Canvas = new Canvas();
+      public GMapMarker CurrentMarker;
 
       public GMap()
       {
+         Content = Canvas;
+         ClipToBounds = true;
+         SnapsToDevicePixels = true;
+
          Purity.Instance.ImageProxy = new WindowsPresentationImageProxy();
 
          Core.RenderMode = GMapNET.RenderMode.WPF;
          Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
-
-         SnapsToDevicePixels = true;
-         ClipToBounds = true;
+         Core.OnCurrentPositionChanged += new CurrentPositionChanged(Core_OnCurrentPositionChanged);
+         Core.OnMapDrag += new MapDrag(UpdateMarkersLocalPositions);
          SizeChanged += new SizeChangedEventHandler(GMap_SizeChanged);
          Loaded += new RoutedEventHandler(GMap_Loaded);
+
+         //GMapMarkerCircle c = new GMapMarkerCircle(this);
+         //GMapMarkerRect c = new GMapMarkerRect(this);
+         //GMapMarkerTriangle c = new GMapMarkerTriangle(this);
+         GMapMarkerCross c = new GMapMarkerCross(this);
+         //c.Label.Content = "Maršrutas: 05\nMašina: 1245\nVairuotojas: Jonas P.\nLaikas: 2009.02.02 15:30:42";
+         //c.Text = "05";
+         CurrentMarker = c;
+         AddMarker(CurrentMarker);
+      }
+
+      /// <summary>
+      /// update markers location on map drag
+      /// </summary>
+      public void UpdateMarkersLocalPositions()
+      {
+         foreach(GMapMarker el in Core.objects)
+         {
+            el.UpdateLocalPosition(this);
+         }
+      }
+
+      /// <summary>
+      /// update current marker
+      /// </summary>
+      /// <param name="point"></param>
+      void Core_OnCurrentPositionChanged(PointLatLng point)
+      {
+         CurrentMarker.Label.Content = CurrentPosition.ToString();
+         CurrentMarker.Position = Core.CurrentPosition;
+         CurrentMarker.UpdateLocalPosition(this);
       }
 
       /// <summary>
@@ -101,46 +142,23 @@ namespace System.Windows.Controls
                Tile t = Core.Matrix[Core.tilePoint];
                if(t != null) // debug center tile add:  && Core.tilePoint != Core.centerTileXYLocation
                {
-                     Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
-                     Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
-                     Core.tileRect.Offset(Core.renderOffset);
+                  Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
+                  Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
+                  Core.tileRect.Offset(Core.renderOffset);
 
-                     if(region.IntersectsWith(Core.tileRect))
+                  if(region.IntersectsWith(Core.tileRect))
+                  {
+                     foreach(WindowsPresentationImage img in t.Overlays)
                      {
-                        foreach(WindowsPresentationImage img in t.Overlays)
+                        if(img != null && img.Img != null)
                         {
-                           if(img != null && img.Img != null)
-                           {
-                              g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
-                           }
+                           g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
                         }
                      }
-                }
+                  }
+               }
             }
          }
-      }
-
-      /// <summary>
-      /// draws current cursor
-      /// </summary>
-      /// <param name="g"></param>
-      protected virtual void OnDrawCurrentMarker(DrawingContext g)
-      {
-         if(CurrentMarkerStyle == CurrentMarkerType.Cross)
-         {
-            CurrentMarker.Position = CurrentPosition;
-            CurrentMarker.SetLocalPosition(this);
-            CurrentMarker.OnRender(g);
-         }
-      }
-
-      /// <summary>
-      /// draws marker
-      /// </summary>
-      /// <param name="g"></param>
-      protected virtual void OnDrawMarker(DrawingContext g, Marker marker)
-      {
-         // ...            
       }
 
       // gets image of the current view
@@ -179,26 +197,36 @@ namespace System.Windows.Controls
       #region UserControl Events
       protected override void OnRender(DrawingContext drawingContext)
       {
+         base.OnRender(drawingContext);
+
          if(Core.RenderMode == GMapNET.RenderMode.WPF)
          {
             DrawMapWPF(drawingContext);
+         }
+      }
 
-            // draw markers
-            if(MarkersEnabled)
+      protected override void OnMouseWheel(MouseWheelEventArgs e)
+      {
+         base.OnMouseWheel(e);
+
+         if(IsMouseDirectlyOver)
+         {
+            if(e.Delta > 0)
             {
-               lock(Core.markers)
+               int zm = Zoom + 1;
+               if(zm <= GMaps.Instance.MaxZoom)
                {
-                  foreach(Marker m in Core.markers)
-                  {
-                     OnDrawMarker(drawingContext, m);
-                  }
+                  Zoom = zm;
                }
             }
 
-            // draw current marker
-            if(CurrentMarkerEnabled)
+            if(e.Delta < 0)
             {
-               OnDrawCurrentMarker(drawingContext);
+               int zm = Zoom - 1;
+               if(zm >= 1)
+               {
+                  Zoom = zm;
+               }
             }
          }
       }
@@ -217,7 +245,7 @@ namespace System.Windows.Controls
 
                if(Core.MouseVisible)
                {
-                  Cursor = Cursors.None;
+                  //Cursor = Cursors.None;
                   Core.MouseVisible = false;
                }
 
@@ -343,18 +371,27 @@ namespace System.Windows.Controls
          Core.ClearAllRoutes();
       }
 
-      public void AddMarker(Marker item)
+      public void AddMarker(MapObject item)
       {
+         foreach(KeyValuePair<UIElement, Point> el in (item as GMapMarker).Objects)
+         {
+            Canvas.Children.Add(el.Key);
+         }
          Core.AddMarker(item);
       }
 
-      public void RemoveMarker(Marker item)
+      public void RemoveMarker(MapObject item)
       {
+         foreach(KeyValuePair<UIElement, Point> el in (item as GMapMarker).Objects)
+         {
+            Canvas.Children.Remove(el.Key);
+         }
          Core.RemoveMarker(item);
       }
 
       public void ClearAllMarkers()
       {
+         Canvas.Children.Clear();
          Core.ClearAllMarkers();
       }
 
@@ -527,6 +564,7 @@ namespace System.Windows.Controls
          }
          set
          {
+            CurrentMarker.Shape.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
             Core.CurrentMarkerEnabled = value;
          }
       }
