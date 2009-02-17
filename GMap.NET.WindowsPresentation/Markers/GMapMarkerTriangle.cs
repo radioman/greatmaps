@@ -39,12 +39,10 @@ namespace System.Windows.Controls
       void el_MouseLeave(object sender, MouseEventArgs e)
       {
          Shape.Stroke = Brushes.Blue;
-         Shape.Fill = Brushes.Yellow;
       }
 
       void el_MouseEnter(object sender, MouseEventArgs e)
       {
-         Shape.Fill = Brushes.Yellow; 
          Shape.Stroke = Brushes.Black;           
       }
 
@@ -59,7 +57,11 @@ namespace System.Windows.Controls
       public override void SetShapeCenter()
       {
          Objects[Shape] = new Point(el.Width/2, el.Height/2);
-         Objects[TextBlock] = new Point(-TextBlock.ActualWidth/2, -TextBlock.ActualHeight/5);
+
+         TextBlock.Measure(new Size(Double.MaxValue, Double.MaxValue));
+         double visualHeight = TextBlock.DesiredSize.Height;
+         double visualWidth = TextBlock.DesiredSize.Width;
+         Objects[TextBlock] = new Point(-visualWidth/2, -visualHeight/4);
       }
    }
 }

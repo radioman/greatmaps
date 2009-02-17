@@ -13,6 +13,7 @@ namespace System.Windows.Controls
       public readonly Popup Popup = new Popup();
       public readonly Label Label = new Label();
       public bool ShowTooltip = true;
+      int z;
 
       public string Text
       {
@@ -73,6 +74,7 @@ namespace System.Windows.Controls
          Shape.MouseEnter += new Input.MouseEventHandler(Shape_MouseEnter);
          Shape.MouseLeave += new MouseEventHandler(Shape_MouseLeave);
          Shape.MouseWheel += new MouseWheelEventHandler(Shape_MouseWheel);
+         
          SetShapeCenter();
       }
 
@@ -102,16 +104,24 @@ namespace System.Windows.Controls
          {
             Popup.IsOpen = false;
          }
+
+         Canvas.SetZIndex(Shape, z-10);
+         Canvas.SetZIndex(TextBlock, z-10);
       }
 
       void Shape_MouseEnter(object sender, MouseEventArgs e)
       {
+         z = Canvas.GetZIndex(Shape);
+
          Shape.Cursor = Cursors.Hand;
 
          if(ShowTooltip)
          {
             Popup.IsOpen = true;
          }
+
+         Canvas.SetZIndex(Shape, z+10);
+         Canvas.SetZIndex(TextBlock, z+10);
       }
 
       public abstract void SetShapeCenter();
@@ -124,11 +134,11 @@ namespace System.Windows.Controls
          foreach(KeyValuePair<UIElement, Point> e in Objects)
          {
             GMapNET.Point t = p;
-            t.Offset((int)e.Value.X, (int)e.Value.Y);
+            t.Offset((int) e.Value.X, (int) e.Value.Y);
 
             Canvas.SetTop(e.Key, t.Y);
             Canvas.SetLeft(e.Key, t.X);
-         }         
+         }
       }
    }
 }

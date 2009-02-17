@@ -24,6 +24,8 @@ namespace System.Windows.Controls
       GMapNET.Rectangle region;
       Canvas Canvas = new Canvas();
       public GMapMarker CurrentMarker;
+      public int MaxZoom = 19;
+      public int MinZoom = 1;
 
       public GMap()
       {
@@ -45,7 +47,7 @@ namespace System.Windows.Controls
          //GMapMarkerTriangle c = new GMapMarkerTriangle(this);
          GMapMarkerCross c = new GMapMarkerCross(this);
          //c.Label.Content = "Maršrutas: 05\nMašina: 1245\nVairuotojas: Jonas P.\nLaikas: 2009.02.02 15:30:42";
-         //c.Text = "05";
+         //c.Text = "R1";
          CurrentMarker = c;
          AddMarker(CurrentMarker);
       }
@@ -57,8 +59,9 @@ namespace System.Windows.Controls
       {
          foreach(GMapMarker el in Core.objects)
          {
-            el.UpdateLocalPosition(this);
+           el.UpdateLocalPosition(this);
          }
+         InvalidateVisual();
       }
 
       /// <summary>
@@ -214,7 +217,7 @@ namespace System.Windows.Controls
             if(e.Delta > 0)
             {
                int zm = Zoom + 1;
-               if(zm <= GMaps.Instance.MaxZoom)
+               if(zm <= MaxZoom)
                {
                   Zoom = zm;
                }
@@ -223,7 +226,7 @@ namespace System.Windows.Controls
             if(e.Delta < 0)
             {
                int zm = Zoom - 1;
-               if(zm >= 1)
+               if(zm >= MinZoom)
                {
                   Zoom = zm;
                }
