@@ -9,7 +9,7 @@ namespace System.Windows.Controls
 {
    public abstract class GMapMarker : MapObject
    {
-      protected TextBlock TextBlock = new TextBlock();
+      public TextBlock TextBlock = new TextBlock();
       public readonly Popup Popup = new Popup();
       public readonly Label Label = new Label();
       public bool ShowTooltip = true;
