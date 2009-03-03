@@ -119,6 +119,9 @@ namespace GMapNET.Internals
 
             ReloadMap();
             GoToCurrentPosition();
+
+            if(OnMapZoomChanged != null)
+               OnMapZoomChanged();
          }
       }
 
@@ -247,6 +250,11 @@ namespace GMapNET.Internals
       /// occurs on map drag
       /// </summary>
       public event MapDrag OnMapDrag;
+
+      /// <summary>
+      /// occurs on map zoom changed
+      /// </summary>
+      public event MapZoomChanged OnMapZoomChanged;
 
       public Core()
       {

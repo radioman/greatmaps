@@ -10,4 +10,5 @@ namespace GMapNET
    public delegate void MarkerEnter(Marker item);
    public delegate void MarkerLeave(Marker item);
    public delegate void MapSizeChanged(int width, int height);
+   public delegate void MapZoomChanged();
 }

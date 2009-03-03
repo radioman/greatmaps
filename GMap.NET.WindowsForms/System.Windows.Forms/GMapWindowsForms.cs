@@ -835,6 +835,18 @@ namespace System.Windows.Forms
          }
       }
 
+      public event MapZoomChanged OnMapZoomChanged
+      {
+         add
+         {
+            Core.OnMapZoomChanged += value;
+         }
+         remove
+         {
+            Core.OnMapZoomChanged -= value;
+         }
+      }
+
       #endregion
    }
 

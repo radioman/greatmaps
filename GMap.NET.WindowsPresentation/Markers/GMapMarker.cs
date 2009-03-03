@@ -98,30 +98,36 @@ namespace System.Windows.Controls
 
       void Shape_MouseLeave(object sender, MouseEventArgs e)
       {
-         Shape.Cursor = Cursors.Arrow;
-
-         if(ShowTooltip)
+         if(Shape != Map.CurrentMarker.Shape)
          {
-            Popup.IsOpen = false;
-         }
+            Shape.Cursor = Cursors.Arrow;
 
-         Canvas.SetZIndex(Shape, z-10);
-         Canvas.SetZIndex(TextBlock, z-10);
+            if(ShowTooltip)
+            {
+               Popup.IsOpen = false;
+            }
+
+            Canvas.SetZIndex(Shape, z-1000);
+            Canvas.SetZIndex(TextBlock, z-1000);
+         }
       }
 
       void Shape_MouseEnter(object sender, MouseEventArgs e)
       {
-         z = Canvas.GetZIndex(Shape);
-
-         Shape.Cursor = Cursors.Hand;
-
-         if(ShowTooltip)
+         if(Shape != Map.CurrentMarker.Shape)
          {
-            Popup.IsOpen = true;
-         }
+            z = Canvas.GetZIndex(Shape);
 
-         Canvas.SetZIndex(Shape, z+10);
-         Canvas.SetZIndex(TextBlock, z+10);
+            Shape.Cursor = Cursors.Hand;
+
+            if(ShowTooltip)
+            {
+               Popup.IsOpen = true;
+            }
+
+            Canvas.SetZIndex(Shape, z+1000);
+            Canvas.SetZIndex(TextBlock, z+1000);
+         }
       }
 
       public abstract void SetShapeCenter();

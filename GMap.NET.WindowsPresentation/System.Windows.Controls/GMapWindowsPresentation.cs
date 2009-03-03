@@ -210,8 +210,6 @@ namespace System.Windows.Controls
 
       protected override void OnMouseWheel(MouseWheelEventArgs e)
       {
-         base.OnMouseWheel(e);
-
          if(IsMouseDirectlyOver)
          {
             if(e.Delta > 0)
@@ -232,6 +230,8 @@ namespace System.Windows.Controls
                }
             }
          }
+
+         base.OnMouseWheel(e);
       }
 
       protected override void OnMouseDown(MouseButtonEventArgs e)
@@ -733,6 +733,18 @@ namespace System.Windows.Controls
          remove
          {
             Core.OnMapDrag -= value;
+         }
+      }
+
+      public event MapZoomChanged OnMapZoomChanged
+      {
+         add
+         {
+            Core.OnMapZoomChanged += value;
+         }
+         remove
+         {
+            Core.OnMapZoomChanged -= value;
          }
       }
 
