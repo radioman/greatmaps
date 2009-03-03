@@ -32,6 +32,7 @@ namespace GMapNET.Internals
       public void ClearPointsNotIn(ref List<Point> list)
       {
          List<Point> removals = new List<Point>();
+
          foreach(Point p in matrix.Keys)
          {
             if(!list.Contains(p))
@@ -51,7 +52,7 @@ namespace GMapNET.Internals
                   t = null;
 
                   matrix.Remove(p);
-               }                
+               }
             }
          }
          removals.Clear();

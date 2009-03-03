@@ -16,9 +16,9 @@ namespace GMapNET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "w2.89";
+      public string VersionGoogleMap = "w2.92";
       public string VersionGoogleSatellite = "36";
-      public string VersionGoogleLabels = "w2t.88";
+      public string VersionGoogleLabels = "w2t.92";
       public string VersionGoogleTerrain = "w2p.87";
       public string SecGoogleWord = "Galileo";
 
