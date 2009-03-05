@@ -33,11 +33,14 @@ namespace GMapNET.Internals
       {
          List<Point> removals = new List<Point>();
 
-         foreach(Point p in matrix.Keys)
+         lock(matrix)
          {
-            if(!list.Contains(p))
+            foreach(Point p in matrix.Keys)
             {
-               removals.Add(p);
+               if(!list.Contains(p))
+               {
+                  removals.Add(p);
+               }
             }
          }
 

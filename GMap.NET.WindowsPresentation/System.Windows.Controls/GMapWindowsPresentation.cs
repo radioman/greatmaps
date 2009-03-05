@@ -1,24 +1,96 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
-using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Documents;
-using System.Globalization;
 using GMapNET;
 using GMapNET.Internals;
 
 namespace System.Windows.Controls
 {
+   public class GMapItem
+   {
+      Point position;
+      public Point Position
+      {
+         get
+         {
+            return position;
+         }
+         set
+         {
+            position = value;
+         }
+      }
+
+      string name;
+      public string Name
+      {
+         get
+         {
+            return name;
+         }
+         set
+         {
+            name = value;
+         }
+      }
+
+      Brush background;
+      public Brush Background
+      {
+         get
+         {
+            return background;
+         }
+         set
+         {
+            background = value;
+         }
+      }
+
+      double width;
+      public double Width
+      {
+         get
+         {
+            return width;
+         }
+         set
+         {
+            width = value;
+         }
+      }
+
+      double height;
+      public double Height
+      {
+         get
+         {
+            return height;
+         }
+         set
+         {
+            height = value;
+         }
+      }
+
+      public GMapItem()
+      {
+         Position = new Point(10, 10);
+         Width = 50;
+         Height = 50;
+         Background = Brushes.Red;
+      }
+   }
+
    delegate void MethodInvoker();
 
-   public partial class GMap : UserControl, IGControl
+   public partial class GMap : ItemsControl, IGControl
    {
       readonly Core Core = new Core();
       GMapNET.Rectangle region;
@@ -27,9 +99,28 @@ namespace System.Windows.Controls
       public int MaxZoom = 19;
       public int MinZoom = 1;
 
+      ObservableCollectionThreadSafe<GMapItem> objects = new ObservableCollectionThreadSafe<GMapItem>();
+      BackgroundWorker worker = new BackgroundWorker();
+
       public GMap()
       {
-         Content = Canvas;
+         this.ItemsPanel = new ItemsPanelTemplate(new FrameworkElementFactory(typeof(Canvas)));
+         this.ItemTemplate = new DataTemplate(typeof(GMapItem));
+
+         FrameworkElementFactory panel = new FrameworkElementFactory(typeof(Canvas));
+         {
+            // canvas
+            panel.SetBinding(Canvas.BackgroundProperty, new Binding("Background"));
+            panel.SetBinding(Canvas.WidthProperty, new Binding("Width"));
+            panel.SetBinding(Canvas.HeightProperty, new Binding("Height"));
+
+            // textBlock
+            FrameworkElementFactory name = new FrameworkElementFactory(typeof(TextBlock));
+            name.SetBinding(TextBlock.TextProperty, new Binding("Name"));
+            panel.AppendChild(name);
+         }
+         this.ItemTemplate.VisualTree = panel;
+  
          ClipToBounds = true;
          SnapsToDevicePixels = true;
 
@@ -50,6 +141,32 @@ namespace System.Windows.Controls
          //c.Text = "R1";
          CurrentMarker = c;
          AddMarker(CurrentMarker);
+
+         worker.DoWork += new DoWorkEventHandler(worker_DoWork);         
+      }
+
+      int x = 50;
+      int y = 5;
+      void worker_DoWork(object sender, DoWorkEventArgs e)
+      {
+         for(int i = 0; i < 20; i++)
+         {
+            GMapItem it = new GMapItem();
+            it.Name = "Name: worker " + y.ToString();
+            it.Background = Brushes.Blue;
+            it.Position = new Point(x+=50, y+=40);
+            objects.Add(it);
+
+            System.Threading.Thread.Sleep(1000);
+         }
+      }
+
+      protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+      {
+         FrameworkElement contentitem = element as FrameworkElement;
+         contentitem.SetBinding(Canvas.LeftProperty, new Binding("Position.X"));
+         contentitem.SetBinding(Canvas.TopProperty, new Binding("Position.Y"));
+         base.PrepareContainerForItemOverride(element, item);
       }
 
       /// <summary>
@@ -59,7 +176,7 @@ namespace System.Windows.Controls
       {
          foreach(GMapMarker el in Core.objects)
          {
-           el.UpdateLocalPosition(this);
+            el.UpdateLocalPosition(this);
          }
          InvalidateVisual();
       }
@@ -83,6 +200,9 @@ namespace System.Windows.Controls
       void GMap_Loaded(object sender, RoutedEventArgs e)
       {
          Core.StartSystem();
+
+         this.ItemsSource = objects;
+         worker.RunWorkerAsync();
       }
 
       /// <summary>

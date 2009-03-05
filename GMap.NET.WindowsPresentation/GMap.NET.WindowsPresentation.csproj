@@ -57,6 +57,7 @@
     <Compile Include="Markers\GMapMarkerTriangle.cs" />
     <Compile Include="Markers\GMapMarkerCircle.cs" />
     <Compile Include="Markers\GMapMarker.cs" />
+    <Compile Include="System.Collections.ObjectModel\ObservableCollectionThreadSafe.cs" />
     <Compile Include="System.Windows.Controls\GMapWindowsPresentation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
