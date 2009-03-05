@@ -18,6 +18,7 @@ namespace System.Windows.Forms
       readonly Color tooltipBg = Color.FromArgb(140, Color.AliceBlue);
       readonly Font gFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
       StringFormat tooltipFormat = new StringFormat();
+
       GMapNET.Rectangle region;
 
       MarkerCross CurrentMarker = new MarkerCross();
