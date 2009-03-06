@@ -1,5 +1,5 @@
 ﻿using System.Collections.Specialized;
-using System.Threading;
+using System.Windows.Threading;
 
 namespace System.Collections.ObjectModel
 {
@@ -23,25 +23,22 @@ namespace System.Collections.ObjectModel
          // Be nice - use BlockReentrancy like MSDN said
          using(BlockReentrancy())
          {
-            if(collectionChanged != null)
+            Delegate[] delegates = collectionChanged.GetInvocationList();
+
+            // Walk thru invocation list
+            foreach(NotifyCollectionChangedEventHandler handler in delegates)
             {
-               Delegate[] delegates = collectionChanged.GetInvocationList();
+               DispatcherObject dispatcherObject = handler.Target as DispatcherObject;
 
-               // Walk thru invocation list
-               foreach(NotifyCollectionChangedEventHandler handler in delegates)
+               // If the subscriber is a DispatcherObject and different thread
+               if(dispatcherObject != null && dispatcherObject.CheckAccess() == false)
                {
-                  System.Windows.Forms.Control dispatcherObject = handler.Target as System.Windows.Forms.Control;
-
-                  // If the subscriber is a DispatcherObject and different thread
-                  if(dispatcherObject != null && dispatcherObject.InvokeRequired)
-                  {
-                     // Invoke handler in the target dispatcher's thread
-                     dispatcherObject.Invoke(handler, this, e);
-                  }
-                  else // Execute handler as is 
-                  {
-                     collectionChanged(this, e);
-                  }
+                  // Invoke handler in the target dispatcher's thread
+                  dispatcherObject.Dispatcher.Invoke(DispatcherPriority.DataBind, handler, this, e);
+               }
+               else // Execute handler as is ;}
+               {
+                  collectionChanged(this, e);
                }
             }
          }
