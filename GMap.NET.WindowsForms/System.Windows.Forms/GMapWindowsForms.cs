@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
+using System.Collections.ObjectModel;
 
 using GMapNET;
 using GMapNET.Internals;
@@ -23,6 +24,8 @@ namespace System.Windows.Forms
 
       MarkerCross CurrentMarker = new MarkerCross();
       MarkerGoogle GoogleMarker = new MarkerGoogle();
+
+      ObservableCollectionThreadSafe<GMapNET.MapObject> objects = new ObservableCollectionThreadSafe<GMapNET.MapObject>();
 
       public GMap()
       {
@@ -51,7 +54,16 @@ namespace System.Windows.Forms
 
             tooltipFormat.Alignment     = StringAlignment.Center;
             tooltipFormat.LineAlignment = StringAlignment.Center;
+
+            objects.CollectionChanged += new NotifyCollectionChangedEventHandler(objects_CollectionChanged);
+            objects.Add(null);
+            objects.Remove(null);
          }
+      }
+
+      void objects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+      {
+         //
       }
 
       /// <summary>
@@ -247,14 +259,11 @@ namespace System.Windows.Forms
 
       protected override void OnSizeChanged(EventArgs e)
       {
-         if(DesignMode)
-            return;
-
-         Core.sizeOfMapArea = new GMapNET.Size(Bounds.Width, Bounds.Height);
+         Core.sizeOfMapArea = new GMapNET.Size(Width, Height);
          Core.sizeOfMapArea.Height /= GMaps.Instance.TileSize.Height;
          Core.sizeOfMapArea.Width /= GMaps.Instance.TileSize.Width;
          Core.sizeOfMapArea.Height += 1;
-         Core.sizeOfMapArea.Width += 1;
+         Core.sizeOfMapArea.Width += 2;
 
          Core.sizeOfMapArea.Width = Core.sizeOfMapArea.Width/2 + 2;
          Core.sizeOfMapArea.Height = Core.sizeOfMapArea.Height/2 + 2;
@@ -263,6 +272,8 @@ namespace System.Windows.Forms
          region = new GMapNET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
 
          Core.OnMapSizeChanged(Width, Height);
+
+         Core.GoToCurrentPosition();
 
          base.OnSizeChanged(e);
       }

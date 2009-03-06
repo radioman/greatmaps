@@ -464,12 +464,12 @@ namespace System.Windows.Forms
          Core.ClearAllRoutes();
       }
 
-      public void AddMarker(Marker item)
+      public void AddMarker(MapObject item)
       {
          Core.AddMarker(item);
       }
 
-      public void RemoveMarker(Marker item)
+      public void RemoveMarker(MapObject item)
       {
          Core.RemoveMarker(item);
       }
@@ -754,6 +754,18 @@ namespace System.Windows.Forms
          remove
          {
             Core.OnMapDrag -= value;
+         }
+      }
+
+      public event MapZoomChanged OnMapZoomChanged
+      {
+         add
+         {
+            Core.OnMapZoomChanged += value;
+         }
+         remove
+         {
+            Core.OnMapZoomChanged -= value;
          }
       }
 

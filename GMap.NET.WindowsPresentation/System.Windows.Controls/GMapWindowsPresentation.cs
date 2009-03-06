@@ -245,7 +245,8 @@ namespace System.Windows.Controls
          region = new GMapNET.Rectangle(-50, -50, (int) e.NewSize.Width+100, (int) e.NewSize.Height+100);
 
          Core.OnMapSizeChanged((int) e.NewSize.Width, (int) e.NewSize.Height);
-         InvalidateVisual();
+
+         Core.GoToCurrentPosition();
       }
 
       /// <summary>

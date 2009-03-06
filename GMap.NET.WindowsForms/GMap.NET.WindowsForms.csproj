@@ -64,6 +64,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="System.Collections.ObjectModel\ObservableCollection.cs" />
+    <Compile Include="System.Collections.ObjectModel\ObservableCollectionThreadSafe.cs" />
     <Compile Include="System.Windows.Forms\GMapWindowsForms.cs">
       <SubType>UserControl</SubType>
     </Compile>
