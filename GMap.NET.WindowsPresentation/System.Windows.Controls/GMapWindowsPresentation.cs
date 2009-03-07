@@ -476,20 +476,20 @@ namespace System.Windows.Controls
          return Core.GetRectOfAllMarkers();
       }
 
-      public void AddRoute(Route item)
-      {
-         Core.AddRoute(item);
-      }
+      //public void AddRoute(Route item)
+      //{
+      //   Core.AddRoute(item);
+      //}
 
-      public void RemoveRoute(Route item)
-      {
-         Core.RemoveRoute(item);
-      }
+      //public void RemoveRoute(Route item)
+      //{
+      //   Core.RemoveRoute(item);
+      //}
 
-      public void ClearAllRoutes()
-      {
-         Core.ClearAllRoutes();
-      }
+      //public void ClearAllRoutes()
+      //{
+      //   Core.ClearAllRoutes();
+      //}
 
       public void AddMarker(MapObject item)
       {

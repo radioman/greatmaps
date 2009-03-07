@@ -23,6 +23,7 @@ namespace System.Windows.Forms
       /// list of markers, should be thread safe
       /// </summary>
       public readonly ObservableCollectionThreadSafe<GMapNET.MapObject> Markers = new ObservableCollectionThreadSafe<GMapNET.MapObject>();
+      public readonly ObservableCollectionThreadSafe<GMapNET.Route> Routes = new ObservableCollectionThreadSafe<GMapNET.Route>();
 
       public GMap()
       {
@@ -42,6 +43,7 @@ namespace System.Windows.Forms
             Core.OnMapDrag += new MapDrag(GMap_OnMapDrag);
 
             Markers.CollectionChanged += new NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
+            Routes.CollectionChanged += new NotifyCollectionChangedEventHandler(Routes_CollectionChanged);
 
             region = new GMapNET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
 
@@ -55,6 +57,11 @@ namespace System.Windows.Forms
             tooltipFormat.Alignment     = StringAlignment.Center;
             tooltipFormat.LineAlignment = StringAlignment.Center;            
          }
+      }
+
+      void Routes_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+      {
+         Core_OnNeedInvalidation();
       }
 
       void Markers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -166,6 +173,45 @@ namespace System.Windows.Forms
          g.Restore(s);
       }
 
+      /// <summary>
+      /// draw routes
+      /// </summary>
+      /// <param name="g"></param>
+      void DrawRoutes(Graphics g)
+      {
+         GraphicsState st = g.Save();
+         g.SmoothingMode = SmoothingMode.AntiAlias;
+
+         lock(Routes)
+         {
+            foreach(GMapRoute r in Routes)
+            {
+               routePen.Color = r.Color;
+               GMapNET.Point p1 = GMapNET.Point.Empty;
+
+               for(int i = 0; i < r.Points.Count; i++)
+               {
+                  GMapNET.Point p2 = GMaps.Instance.FromLatLngToPixel(r.Points[i], Zoom);
+                  p2.Offset(Core.renderOffset);
+
+                  if(i == 0)
+                  {
+                     p1 = p2;
+                  }
+
+                  {
+                     g.DrawLine(routePen, p1.X, p1.Y, p2.X, p2.Y);
+                  }
+
+                  p1 = p2;
+               }
+            }
+         }
+
+         g.Restore(st);
+      }
+
+
       #region UserControl Events
 
       protected bool DesignModeInConstruct
@@ -202,12 +248,12 @@ namespace System.Windows.Forms
             break;
          }
 
-         if(RoutesEnabled && (!IsDragging || Form.ModifierKeys == Keys.Control))
+         if(RoutesEnabled && !(Form.ModifierKeys == Keys.Control))
          {
-            //DrawRoutes(e.Graphics);
+            DrawRoutes(e.Graphics);
          }
 
-         //if(MarkersEnabled && (!IsDragging || Form.ModifierKeys == Keys.Control))
+         if(MarkersEnabled && !(Form.ModifierKeys == Keys.Control))
          {
             foreach(GMapMarker m in Markers)
             {
@@ -457,20 +503,20 @@ namespace System.Windows.Forms
          return Core.GetRectOfAllMarkers();
       }
 
-      public void AddRoute(Route item)
-      {
-         Core.AddRoute(item);
-      }
+      //public void AddRoute(Route item)
+      //{
+      //   Core.AddRoute(item);
+      //}
 
-      public void RemoveRoute(Route item)
-      {
-         Core.RemoveRoute(item);
-      }
+      //public void RemoveRoute(Route item)
+      //{
+      //   Core.RemoveRoute(item);
+      //}
 
-      public void ClearAllRoutes()
-      {
-         Core.ClearAllRoutes();
-      }
+      //public void ClearAllRoutes()
+      //{
+      //   Core.ClearAllRoutes();
+      //}
 
       public void SetCurrentPositionOnly(int x, int y)
       {

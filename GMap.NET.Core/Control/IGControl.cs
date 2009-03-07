@@ -110,9 +110,9 @@
 
       RectLatLng GetRectOfAllMarkers();
 
-      void AddRoute(Route item);
-      void RemoveRoute(Route item);
-      void ClearAllRoutes();
+      //void AddRoute(Route item);
+      //void RemoveRoute(Route item);
+      //void ClearAllRoutes();
 
       bool ShowExportDialog();
       bool ShowImportDialog();

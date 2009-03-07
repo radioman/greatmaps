@@ -6,47 +6,6 @@ namespace System.Windows.Forms.System.Windows.Forms
 {
    class tmp
    {
-      /// <summary>
-      /// draw routes
-      /// </summary>
-      /// <param name="g"></param>
-      void DrawRoutes(Graphics g)
-      {
-         GraphicsState st = g.Save();
-         g.SmoothingMode = SmoothingMode.AntiAlias;
-
-         lock(routes)
-         {
-            foreach(Route r in routes)
-            {
-               routePen.Color = r.Color;
-               Point p1 = Point.Empty;
-
-               for(int i = 0; i < r.Points.Count; i++)
-               {
-                  Point p2 = GMaps.Instance.FromLatLngToPixel(r.Points[i], Zoom);
-                  p2.Offset(renderOffset);
-
-                  if(i == 0)
-                  {
-                     p1 = p2;
-                  }
-
-                  {
-                     g.DrawLine(routePen, p1, p2);
-
-                     //RectangleF rect = new RectangleF(p2.X-1F, p2.Y-1F, 2F, 2F);
-                     //g.DrawEllipse(routePen, rect);
-                     //g.FillEllipse(Brushes.MidnightBlue, rect);
-                  }
-
-                  p1 = p2;
-               }
-            }
-         }
-
-         g.Restore(st);
-      }
 
       /// <summary>
       /// draw markers

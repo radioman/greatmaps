@@ -39,7 +39,7 @@ namespace GMapNET.Internals
       EventWaitHandle waitForBoundsChanged = new AutoResetEvent(true);
       public List<Point> tileDrawingList = new List<Point>();
       public readonly Queue<Point> tileLoadQueue = new Queue<Point>();
-      public readonly List<Route> routes = new List<Route>();
+      //public readonly List<Route> routes = new List<Route>();
       //public readonly List<MapObject> objects = new List<MapObject>();
 
       public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
@@ -455,52 +455,52 @@ namespace GMapNET.Internals
       /// adds route
       /// </summary>
       /// <param name="item"></param>
-      public void AddRoute(Route item)
-      {
-         lock(routes)
-         {
-            routes.Add(item);
-         }
+      //public void AddRoute(Route item)
+      //{
+      //   lock(routes)
+      //   {
+      //      routes.Add(item);
+      //   }
 
-         if(OnNeedInvalidation != null)
-         {
-            OnNeedInvalidation();
-         }
-      }
+      //   if(OnNeedInvalidation != null)
+      //   {
+      //      OnNeedInvalidation();
+      //   }
+      //}
 
       /// <summary>
       /// removes route
       /// </summary>
       /// <param name="item"></param>
-      public void RemoveRoute(Route item)
-      {
-         lock(routes)
-         {
-            routes.Remove(item);
-         }
+      //public void RemoveRoute(Route item)
+      //{
+      //   lock(routes)
+      //   {
+      //      routes.Remove(item);
+      //   }
 
-         if(OnNeedInvalidation != null)
-         {
-            OnNeedInvalidation();
-         }
-      }
+      //   if(OnNeedInvalidation != null)
+      //   {
+      //      OnNeedInvalidation();
+      //   }
+      //}
 
       /// <summary>
       /// clears all routes
       /// </summary>
       /// <param name="item"></param>
-      public void ClearAllRoutes()
-      {
-         lock(routes)
-         {
-            routes.Clear();
-         }
+      //public void ClearAllRoutes()
+      //{
+      //   lock(routes)
+      //   {
+      //      routes.Clear();
+      //   }
 
-         if(OnNeedInvalidation != null)
-         {
-            OnNeedInvalidation();
-         }
-      }
+      //   if(OnNeedInvalidation != null)
+      //   {
+      //      OnNeedInvalidation();
+      //   }
+      //}
 
       ///// <summary>
       ///// adds marker

@@ -221,8 +221,8 @@ namespace Demo.WindowsForms
          if(route != null)
          {
             // add route
-            Route r = new Route(route, "test");
-            MainMap.AddRoute(r);
+            Route r = new GMapRoute(route, "test");
+            MainMap.Routes.Add(r);
 
             // add route start/end marks
             GMapMarker m1 = new GMapMarkerGoogleRed(start);             
@@ -271,7 +271,7 @@ namespace Demo.WindowsForms
       // clear routes
       private void button6_Click(object sender, EventArgs e)
       {
-         MainMap.ClearAllRoutes();
+         MainMap.Routes.Clear();
       }
 
       // clear markers

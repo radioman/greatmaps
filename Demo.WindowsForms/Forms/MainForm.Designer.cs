@@ -512,7 +512,6 @@
          // button3
          // 
          this.button3.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button3.Enabled = false;
          this.button3.Location = new System.Drawing.Point(8, 66);
          this.button3.Margin = new System.Windows.Forms.Padding(4);
          this.button3.Name = "button3";
@@ -558,7 +557,6 @@
          // 
          // buttonSetEnd
          // 
-         this.buttonSetEnd.Enabled = false;
          this.buttonSetEnd.Location = new System.Drawing.Point(151, 23);
          this.buttonSetEnd.Margin = new System.Windows.Forms.Padding(4);
          this.buttonSetEnd.Name = "buttonSetEnd";
@@ -570,7 +568,6 @@
          // 
          // buttonSetStart
          // 
-         this.buttonSetStart.Enabled = false;
          this.buttonSetStart.Location = new System.Drawing.Point(45, 23);
          this.buttonSetStart.Margin = new System.Windows.Forms.Padding(4);
          this.buttonSetStart.Name = "buttonSetStart";
@@ -603,7 +600,6 @@
          // button6
          // 
          this.button6.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button6.Enabled = false;
          this.button6.Location = new System.Drawing.Point(113, 66);
          this.button6.Margin = new System.Windows.Forms.Padding(4);
          this.button6.Name = "button6";
