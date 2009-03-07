@@ -1,12 +1,26 @@
-﻿
+﻿using System.Drawing;
+
 namespace GMapNET
 {
-   public class Marker : MapObject
+   public class GMapMarker : MapObject
    {     
       public MarkerTooltipMode TooltipMode;  
       public Point ToolTipOffset;
-      public string Text;
-      public bool Visible;       
+      public string ToolTipText;
+      public bool Visible;
+
+      private bool isDragging;
+      public bool IsDragging
+      {
+         get
+         {
+            return isDragging;
+         }
+         internal set
+         {
+            isDragging = value;
+         }
+      }
 
       private bool isMouseOver; 
       public bool IsMouseOver
@@ -21,23 +35,22 @@ namespace GMapNET
          }
       }        
 
-      public Marker(PointLatLng pos)
+      public GMapMarker(PointLatLng pos)
       {
+         this.IsDragging = false;
          this.Position = pos;
-         this.Text = string.Empty;
+         this.ToolTipText = string.Empty;
          this.TooltipMode = MarkerTooltipMode.OnMouseOver;
          this.Visible = true;
 
          this.IsMouseOver = false;
          this.ToolTipOffset = new Point(14, -44);
       }
-   }
 
-   public enum CurrentMarkerType
-   {
-      GMap,
-      Cross,
-      Custom,
+      public virtual void OnRender(Graphics g)
+      {
+        //
+      }
    }
 
    public enum MarkerTooltipMode

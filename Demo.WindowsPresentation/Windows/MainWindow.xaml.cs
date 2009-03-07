@@ -37,12 +37,11 @@ namespace Demo.WindowsPresentation
          MainMap.MapType = GMapType.OpenStreetMap;
          MainMap.Zoom = 12;
          MainMap.CurrentMarkerEnabled = true;
-         MainMap.CurrentMarkerStyle = CurrentMarkerType.Cross;
          MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
 
          // map events
          MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
-         MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
+         //MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
          MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
          MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
 
@@ -112,10 +111,10 @@ namespace Demo.WindowsPresentation
          }
       }
 
-      void MainMap_OnMarkerClick(Marker item)
-      {
-         //throw new NotImplementedException();
-      }
+      //void MainMap_OnMarkerClick(Marker item)
+      //{
+      //   //throw new NotImplementedException();
+      //}
 
       // current location changed
       void MainMap_OnCurrentPositionChanged(PointLatLng point)

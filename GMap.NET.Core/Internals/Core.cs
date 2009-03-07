@@ -40,7 +40,7 @@ namespace GMapNET.Internals
       public List<Point> tileDrawingList = new List<Point>();
       public readonly Queue<Point> tileLoadQueue = new Queue<Point>();
       public readonly List<Route> routes = new List<Route>();
-      public readonly List<MapObject> objects = new List<MapObject>();
+      //public readonly List<MapObject> objects = new List<MapObject>();
 
       public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
@@ -204,7 +204,7 @@ namespace GMapNET.Internals
       /// <summary>
       /// style of the current marker
       /// </summary>
-      public CurrentMarkerType CurrentMarkerStyle = CurrentMarkerType.GMap;
+      //public CurrentMarkerType CurrentMarkerStyle = CurrentMarkerType.GMap;
 
       /// <summary>
       /// map render mode
@@ -229,17 +229,17 @@ namespace GMapNET.Internals
       /// <summary>
       /// occurs when clicked on marker
       /// </summary>
-      public event MarkerClick OnMarkerClick;
+      //public event MarkerClick OnMarkerClick;
 
       /// <summary>
       /// occurs on mouse enters marker area
       /// </summary>
-      public event MarkerEnter OnMarkerEnter;
+      //public event MarkerEnter OnMarkerEnter;
 
       /// <summary>
       /// occurs on mouse leaves marker area
       /// </summary>
-      public event MarkerLeave OnMarkerLeave; 
+      //public event MarkerLeave OnMarkerLeave; 
 
       /// <summary>
       /// occurs on tile loaded
@@ -401,52 +401,52 @@ namespace GMapNET.Internals
       }
 
       /// <summary>
-      /// gets rectangle with all markers inside
+      /// gets rectangle with all objects inside
       /// </summary>
       /// <returns></returns>
       public RectLatLng GetRectOfAllMarkers()
       {
          RectLatLng ret = RectLatLng.Empty;
 
-         lock(objects)
-         {
-            if(objects.Count > 0)
-            {
-               double left = double.MaxValue;
-               double top = double.MinValue;
-               double right = double.MinValue;
-               double bottom = double.MaxValue;
+         //lock(objects)
+         //{
+         //   if(objects.Count > 0)
+         //   {
+         //      double left = double.MaxValue;
+         //      double top = double.MinValue;
+         //      double right = double.MinValue;
+         //      double bottom = double.MaxValue;
 
-               foreach(Marker m in objects)
-               {
-                  // left
-                  if(m.Position.Lng < left)
-                  {
-                     left = m.Position.Lng;
-                  }
+         //      foreach(MapObject m in objects)
+         //      {
+         //         // left
+         //         if(m.Position.Lng < left)
+         //         {
+         //            left = m.Position.Lng;
+         //         }
 
-                  // top
-                  if(m.Position.Lat > top)
-                  {
-                     top = m.Position.Lat;
-                  }
+         //         // top
+         //         if(m.Position.Lat > top)
+         //         {
+         //            top = m.Position.Lat;
+         //         }
 
-                  // right
-                  if(m.Position.Lng > right)
-                  {
-                     right = m.Position.Lng;
-                  }
+         //         // right
+         //         if(m.Position.Lng > right)
+         //         {
+         //            right = m.Position.Lng;
+         //         }
 
-                  // bottom
-                  if(m.Position.Lat < bottom)
-                  {
-                     bottom = m.Position.Lat;
-                  }
-               }
+         //         // bottom
+         //         if(m.Position.Lat < bottom)
+         //         {
+         //            bottom = m.Position.Lat;
+         //         }
+         //      }
 
-               ret = RectLatLng.FromLTRB(left, top, right, bottom);
-            }
-         }
+         //      ret = RectLatLng.FromLTRB(left, top, right, bottom);
+         //   }
+         //}
 
          return ret;
       }
@@ -502,96 +502,79 @@ namespace GMapNET.Internals
          }
       }
 
-      /// <summary>
-      /// adds marker
-      /// </summary>
-      /// <param name="item"></param>
-      public void AddMarker(MapObject item)
-      {
-         lock(objects)
-         {
-            objects.Add(item);
-         }
+      ///// <summary>
+      ///// adds marker
+      ///// </summary>
+      ///// <param name="item"></param>
+      //public void AddMarker(MapObject item)
+      //{
+      //   lock(objects)
+      //   {
+      //      objects.Add(item);
+      //   }
 
-         if(OnNeedInvalidation != null)
-         {
-            OnNeedInvalidation();
-         }
-      }
+      //   if(OnNeedInvalidation != null)
+      //   {
+      //      OnNeedInvalidation();
+      //   }
+      //}
 
-      /// <summary>
-      /// removes marker
-      /// </summary>
-      /// <param name="item"></param>
-      public void RemoveMarker(MapObject item)
-      {
-         lock(objects)
-         {
-            objects.Remove(item);
-         }
+      ///// <summary>
+      ///// removes marker
+      ///// </summary>
+      ///// <param name="item"></param>
+      //public void RemoveMarker(MapObject item)
+      //{
+      //   lock(objects)
+      //   {
+      //      objects.Remove(item);
+      //   }
 
-         if(OnNeedInvalidation != null)
-         {
-            OnNeedInvalidation();
-         }
-      }
-
-      /// <summary>
-      /// clears all markers
-      /// </summary>
-      /// <param name="item"></param>
-      public void ClearAllMarkers()
-      {
-         lock(objects)
-         {
-            objects.Clear();
-         }
-
-         if(OnNeedInvalidation != null)
-         {
-            OnNeedInvalidation();
-         }
-      }
+      //   if(OnNeedInvalidation != null)
+      //   {
+      //      OnNeedInvalidation();
+      //   }
+      //}
 
       /// <summary>
       /// manages currently markers on map visibility
       /// </summary>
       /// <param name="visible"></param>
-      public void SetCurrentMarkersVisibility(bool visible)
-      {
-         lock(objects)
-         {
-            foreach(Marker m in objects)
-            {
-               m.Visible = visible;
-            }
-         }
+      //public void SetCurrentMarkersVisibility(bool visible)
+      //{
+      //   lock(objects)
+      //   {
+      //      foreach(Marker m in objects)
+      //      {
+      //         m.Visible = visible;
+      //      }
+      //   }
 
-         if(OnNeedInvalidation != null)
-         {
-            OnNeedInvalidation();
-         }
-      }
+      //   if(OnNeedInvalidation != null)
+      //   {
+      //      OnNeedInvalidation();
+      //   }
+      //}
 
       /// <summary>
       /// manages currently markers on map tooltip mode
       /// </summary>
       /// <param name="mode"></param>
-      public void SetCurrentMarkersTooltipMode(MarkerTooltipMode mode)
-      {
-         lock(objects)
-         {
-            foreach(Marker m in objects)
-            {
-               m.TooltipMode = mode;
-            }
-         }
+      //public void SetCurrentMarkersTooltipMode(MarkerTooltipMode mode)
+      //{
+      //   lock(objects)
+      //   {
+      //      foreach(Marker m in objects)
+      //      {
+      //         m.TooltipMode = mode;
+      //      }
+      //   }
 
-         if(OnNeedInvalidation != null)
-         {
-            OnNeedInvalidation();
-         }
-      }
+      //   if(OnNeedInvalidation != null)
+      //   {
+      //      OnNeedInvalidation();
+      //   }
+      //}
 
       /// <summary>
       /// changes current position without changing current gtile
@@ -625,45 +608,45 @@ namespace GMapNET.Internals
       /// <param name="e"></param>
       /// <param name="m"></param>
       /// <returns></returns>
-      public Rectangle GetRectForMarker(Point e, Marker m)
-      {
-         Rectangle rc1 = new Rectangle();
+      //public Rectangle GetRectForMarker(Point e, Marker m)
+      //{
+      //   Rectangle rc1 = new Rectangle();
 
-         /*
-         rc1.Location = new Point(e.X - renderOffset.X, e.Y - renderOffset.Y);
-         if(m.Type == MarkerType.Small)
-         {
-            rc1.Size = new Size(8, 10);
-            rc1.Offset(-rc1.Width/2, 10);
-         }
-         else if(m.Type == MarkerType.Medium)
-         {
-            rc1.Size = new Size(18, 22);
-            rc1.Offset(-rc1.Width/2, 10);
-         }
-         else // custom
-         {
-            //rc1.Size = m.CustomMarker.Size;
+      //   /*
+      //   rc1.Location = new Point(e.X - renderOffset.X, e.Y - renderOffset.Y);
+      //   if(m.Type == MarkerType.Small)
+      //   {
+      //      rc1.Size = new Size(8, 10);
+      //      rc1.Offset(-rc1.Width/2, 10);
+      //   }
+      //   else if(m.Type == MarkerType.Medium)
+      //   {
+      //      rc1.Size = new Size(18, 22);
+      //      rc1.Offset(-rc1.Width/2, 10);
+      //   }
+      //   else // custom
+      //   {
+      //      //rc1.Size = m.CustomMarker.Size;
 
-            switch(m.CustomMarkerAlign)
-            {
-               case CustomMarkerAlign.MiddleMiddle:
-               {
-                  rc1.Offset(-rc1.Width/2, -rc1.Height/2);
-               }
-               break;
+      //      switch(m.CustomMarkerAlign)
+      //      {
+      //         case CustomMarkerAlign.MiddleMiddle:
+      //         {
+      //            rc1.Offset(-rc1.Width/2, -rc1.Height/2);
+      //         }
+      //         break;
 
-               case CustomMarkerAlign.Manual:
-               {
-                  rc1.Offset(-rc1.Width+m.CustomMarkerCenter.X, -rc1.Height+m.CustomMarkerCenter.Y);
-               }
-               break;
-            }
-         }
-         */
+      //         case CustomMarkerAlign.Manual:
+      //         {
+      //            rc1.Offset(-rc1.Width+m.CustomMarkerCenter.X, -rc1.Height+m.CustomMarkerCenter.Y);
+      //         }
+      //         break;
+      //      }
+      //   }
+      //   */
 
-         return rc1;
-      }
+      //   return rc1;
+      //}
 
       ///// <summary>
       ///// checks if some marker was clicked

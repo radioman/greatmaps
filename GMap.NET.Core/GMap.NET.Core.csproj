@@ -63,7 +63,6 @@
     <Compile Include="Internals\Tile.cs" />
     <Compile Include="Internals\TileMatrix.cs" />
     <Compile Include="Public\GMaps.cs" />
-    <Compile Include="Public\Marker.cs" />
     <Compile Include="Public\Placemark.cs" />
     <Compile Include="Public\PointLatLng.cs" />
     <Compile Include="Public\RectLatLng.cs" />

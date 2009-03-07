@@ -80,12 +80,6 @@
          set;
       }
 
-      CurrentMarkerType CurrentMarkerStyle
-      {
-         get;
-         set;
-      }
-
       RenderMode RenderMode
       {
          get;
@@ -95,9 +89,9 @@
       event CurrentPositionChanged OnCurrentPositionChanged;
       event TileLoadComplete OnTileLoadComplete;
       event TileLoadStart OnTileLoadStart;
-      event MarkerClick OnMarkerClick;
-      event MarkerEnter OnMarkerEnter;
-      event MarkerLeave OnMarkerLeave;
+      //event MarkerClick OnMarkerClick;
+      //event MarkerEnter OnMarkerEnter;
+      //event MarkerLeave OnMarkerLeave;
       event MapDrag OnMapDrag;
       event MapZoomChanged OnMapZoomChanged;
 
@@ -108,8 +102,8 @@
       void SetCurrentPositionOnly(int x, int y);
       void SetCurrentPositionOnly(PointLatLng point);
       bool SetCurrentPositionByKeywords(string keys);
-      void SetCurrentMarkersVisibility(bool visible);
-      void SetCurrentMarkersTooltipMode(MarkerTooltipMode mode);
+      //void SetCurrentMarkersVisibility(bool visible);
+      //void SetCurrentMarkersTooltipMode(MarkerTooltipMode mode);
 
       PointLatLng FromLocalToLatLng(int x, int y);
       Point FromLatLngToLocal(PointLatLng point);
@@ -119,10 +113,6 @@
       void AddRoute(Route item);
       void RemoveRoute(Route item);
       void ClearAllRoutes();
-
-      void AddMarker(MapObject item);
-      void RemoveMarker(MapObject item);
-      void ClearAllMarkers();
 
       bool ShowExportDialog();
       bool ShowImportDialog();

@@ -99,7 +99,7 @@ namespace System.Windows.Controls
       public int MaxZoom = 19;
       public int MinZoom = 1;
 
-      ObservableCollectionThreadSafe<GMapItem> objects = new ObservableCollectionThreadSafe<GMapItem>();
+      public readonly ObservableCollectionThreadSafe<GMapItem> Objects = new ObservableCollectionThreadSafe<GMapItem>();
       BackgroundWorker worker = new BackgroundWorker();
 
       public GMap()
@@ -155,7 +155,7 @@ namespace System.Windows.Controls
             it.Name = "Name: worker " + y.ToString();
             it.Background = Brushes.Blue;
             it.Position = new Point(x+=50, y+=40);
-            objects.Add(it);
+            Objects.Add(it);
 
             System.Threading.Thread.Sleep(1000);
          }
@@ -174,11 +174,7 @@ namespace System.Windows.Controls
       /// </summary>
       public void UpdateMarkersLocalPositions()
       {
-         foreach(GMapMarker el in Core.objects)
-         {
-            el.UpdateLocalPosition(this);
-         }
-         InvalidateVisual();
+
       }
 
       /// <summary>
@@ -201,7 +197,7 @@ namespace System.Windows.Controls
       {
          Core.StartSystem();
 
-         this.ItemsSource = objects;
+         this.ItemsSource = Objects;
          worker.RunWorkerAsync();
       }
 
@@ -455,15 +451,15 @@ namespace System.Windows.Controls
          return Core.SetCurrentPositionByKeywords(keys);
       }
 
-      public void SetCurrentMarkersVisibility(bool visible)
-      {
-         Core.SetCurrentMarkersVisibility(visible);
-      }
+      //public void SetCurrentMarkersVisibility(bool visible)
+      //{
+      //   Core.SetCurrentMarkersVisibility(visible);
+      //}
 
-      public void SetCurrentMarkersTooltipMode(MarkerTooltipMode mode)
-      {
-         Core.SetCurrentMarkersTooltipMode(mode);
-      }
+      //public void SetCurrentMarkersTooltipMode(MarkerTooltipMode mode)
+      //{
+      //   Core.SetCurrentMarkersTooltipMode(mode);
+      //}
 
       public PointLatLng FromLocalToLatLng(int x, int y)
       {
@@ -501,7 +497,6 @@ namespace System.Windows.Controls
          {
             Canvas.Children.Add(el.Key);
          }
-         Core.AddMarker(item);
       }
 
       public void RemoveMarker(MapObject item)
@@ -510,13 +505,11 @@ namespace System.Windows.Controls
          {
             Canvas.Children.Remove(el.Key);
          }
-         Core.RemoveMarker(item);
       }
 
       public void ClearAllMarkers()
       {
          Canvas.Children.Clear();
-         Core.ClearAllMarkers();
       }
 
       public void SetCurrentPositionOnly(int x, int y)
@@ -749,17 +742,17 @@ namespace System.Windows.Controls
          }
       }
 
-      public CurrentMarkerType CurrentMarkerStyle
-      {
-         get
-         {
-            return Core.CurrentMarkerStyle;
-         }
-         set
-         {
-            Core.CurrentMarkerStyle = value;
-         }
-      }
+      //public CurrentMarkerType CurrentMarkerStyle
+      //{
+      //   get
+      //   {
+      //      return Core.CurrentMarkerStyle;
+      //   }
+      //   set
+      //   {
+      //      Core.CurrentMarkerStyle = value;
+      //   }
+      //}
 
       public GMapNET.RenderMode RenderMode
       {
@@ -809,41 +802,41 @@ namespace System.Windows.Controls
          }
       }
 
-      public event MarkerClick OnMarkerClick
-      {
-         add
-         {
-            Core.OnMarkerClick += value;
-         }
-         remove
-         {
-            Core.OnMarkerClick -= value;
-         }
-      }
+      //public event MarkerClick OnMarkerClick
+      //{
+      //   add
+      //   {
+      //      Core.OnMarkerClick += value;
+      //   }
+      //   remove
+      //   {
+      //      Core.OnMarkerClick -= value;
+      //   }
+      //}
 
-      public event MarkerEnter OnMarkerEnter
-      {
-         add
-         {
-            Core.OnMarkerEnter += value;
-         }
-         remove
-         {
-            Core.OnMarkerEnter -= value;
-         }
-      }
+      //public event MarkerEnter OnMarkerEnter
+      //{
+      //   add
+      //   {
+      //      Core.OnMarkerEnter += value;
+      //   }
+      //   remove
+      //   {
+      //      Core.OnMarkerEnter -= value;
+      //   }
+      //}
 
-      public event MarkerLeave OnMarkerLeave
-      {
-         add
-         {
-            Core.OnMarkerLeave += value;
-         }
-         remove
-         {
-            Core.OnMarkerLeave -= value;
-         }
-      }
+      //public event MarkerLeave OnMarkerLeave
+      //{
+      //   add
+      //   {
+      //      Core.OnMarkerLeave += value;
+      //   }
+      //   remove
+      //   {
+      //      Core.OnMarkerLeave -= value;
+      //   }
+      //}
 
       public event MapDrag OnMapDrag
       {

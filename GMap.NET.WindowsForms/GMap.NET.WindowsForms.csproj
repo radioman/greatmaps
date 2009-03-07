@@ -57,8 +57,10 @@
     <Compile Include="Forms\TilePrefetcher.Designer.cs">
       <DependentUpon>TilePrefetcher.cs</DependentUpon>
     </Compile>
-    <Compile Include="Markers\MarkerGoogle.cs" />
-    <Compile Include="Markers\MarkerCross.cs" />
+    <Compile Include="Markers\GMapMarkerGoogleGreen.cs" />
+    <Compile Include="Markers\GMapMarker.cs" />
+    <Compile Include="Markers\GMapMarkerGoogleRed.cs" />
+    <Compile Include="Markers\GMapMarkerCross.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -97,6 +99,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\drag_cross_67_16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bigMarkerGreen.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

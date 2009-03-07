@@ -5,15 +5,18 @@ namespace GMapNET
    {
       public PointLatLng Position;
       public object Tag;
+      internal Point LocalPosition;
 
       public MapObject()
       {
          Position = PointLatLng.Empty;
+         LocalPosition = Point.Empty;
       }
 
       public MapObject(PointLatLng position)
       {
-         this.Position = position;
+         Position = position;
+         LocalPosition = Point.Empty;
       }
    }
 }

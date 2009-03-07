@@ -11,21 +11,18 @@ namespace System.Windows.Forms
 {
    public partial class GMap : UserControl, IGControl
    {
-      // internal core
-      readonly Core Core = new Core();
-
+      readonly Core Core = new Core(); 
       readonly Pen routePen = new Pen(Color.MidnightBlue);
       readonly Pen tooltipPen = new Pen(Color.FromArgb(140, Color.MidnightBlue));
       readonly Color tooltipBg = Color.FromArgb(140, Color.AliceBlue);
       readonly Font gFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
-      StringFormat tooltipFormat = new StringFormat();
-
+      readonly StringFormat tooltipFormat = new StringFormat();
       GMapNET.Rectangle region;
 
-      MarkerCross CurrentMarker = new MarkerCross();
-      MarkerGoogle GoogleMarker = new MarkerGoogle();
-
-      ObservableCollectionThreadSafe<GMapNET.MapObject> objects = new ObservableCollectionThreadSafe<GMapNET.MapObject>();
+      /// <summary>
+      /// list of markers, should be thread safe
+      /// </summary>
+      public readonly ObservableCollectionThreadSafe<GMapNET.MapObject> Markers = new ObservableCollectionThreadSafe<GMapNET.MapObject>();
 
       public GMap()
       {
@@ -42,6 +39,9 @@ namespace System.Windows.Forms
 
             // to know when to invalidate
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
+            Core.OnMapDrag += new MapDrag(GMap_OnMapDrag);
+
+            Markers.CollectionChanged += new NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
 
             region = new GMapNET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
 
@@ -53,18 +53,41 @@ namespace System.Windows.Forms
             tooltipPen.StartCap = LineCap.RoundAnchor;
 
             tooltipFormat.Alignment     = StringAlignment.Center;
-            tooltipFormat.LineAlignment = StringAlignment.Center;
-
-            objects.CollectionChanged += new NotifyCollectionChangedEventHandler(objects_CollectionChanged);
-            objects.Add(null);
-            objects.Remove(null);
+            tooltipFormat.LineAlignment = StringAlignment.Center;            
          }
       }
 
-      void objects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+      void Markers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
       {
-         //
+         if(e.NewItems != null)
+         {
+            foreach(GMapMarker obj in e.NewItems)
+            {
+               UpdateMarkerLocalPosition(obj);
+            }
+         }
+
+         Core_OnNeedInvalidation();
       }
+
+      void GMap_OnMapDrag()
+      {
+         foreach(GMapMarker obj in Markers)
+         {
+            UpdateMarkerLocalPosition(obj);
+         }
+      }
+
+      /// <summary>
+      /// updates markers local position
+      /// </summary>
+      /// <param name="marker"></param>
+      public void UpdateMarkerLocalPosition(MapObject marker)
+      {
+         GMapNET.Point p = GMaps.Instance.FromLatLngToPixel(marker.Position, Core.Zoom);
+         p.Offset(Core.renderOffset);
+         marker.LocalPosition = p;          
+      }        
 
       /// <summary>
       /// on core needs invalidation
@@ -122,32 +145,11 @@ namespace System.Windows.Forms
       }
 
       /// <summary>
-      /// draw current marker
-      /// </summary>
-      /// <param name="g"></param>
-      protected virtual void OnDrawCurrentMarker(Graphics g)
-      {
-         if(CurrentMarkerStyle == CurrentMarkerType.GMap)
-         {
-            GoogleMarker.IsDragging = IsDragging;
-            GoogleMarker.Position = CurrentPosition;
-            //GoogleMarker.SetLocalPosition(this);
-            GoogleMarker.OnRender(g);
-         }
-         else if(CurrentMarkerStyle == CurrentMarkerType.Cross)
-         {
-            CurrentMarker.Position = CurrentPosition;
-            //CurrentMarker.SetLocalPosition(this);
-            CurrentMarker.OnRender(g);
-         }
-      }
-
-      /// <summary>
       /// draws tooltip, override to draw custom
       /// </summary>
       /// <param name="g"></param>
       /// <param name="pos"></param>
-      protected virtual void DrawToolTip(Graphics g, Marker m, int x, int y)
+      protected virtual void DrawToolTip(Graphics g, GMapMarker m, int x, int y)
       {
          GraphicsState s = g.Save();
          g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -205,14 +207,15 @@ namespace System.Windows.Forms
             //DrawRoutes(e.Graphics);
          }
 
-         if(MarkersEnabled && (!IsDragging || Form.ModifierKeys == Keys.Control))
+         //if(MarkersEnabled && (!IsDragging || Form.ModifierKeys == Keys.Control))
          {
-            //DrawMarkers(e.Graphics);
-         }
-
-         if(CurrentMarkerEnabled)
-         {
-            OnDrawCurrentMarker(e.Graphics);
+            foreach(GMapMarker m in Markers)
+            {
+               if(m.Visible)
+               {
+                  m.OnRender(e.Graphics);
+               }
+            }
          }
 
          #region -- copyright --
@@ -285,7 +288,7 @@ namespace System.Windows.Forms
 
          if(e.Button == MouseButtons.Left)
          {
-            if(CurrentMarkerEnabled && !IsMouseOverMarker)
+            if(!IsMouseOverMarker)
             {
                SetCurrentPositionOnly(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y);
 
@@ -319,14 +322,14 @@ namespace System.Windows.Forms
          if(Core.IsDragging)
          {
             Core.EndDrag();
+         }
 
-            this.Cursor = System.Windows.Forms.Cursors.Default;
+         this.Cursor = System.Windows.Forms.Cursors.Default;
 
-            if(!Core.MouseVisible)
-            {
-               Cursor.Show();
-               Core.MouseVisible = true;
-            }
+         if(!Core.MouseVisible)
+         {
+            Cursor.Show();
+            Core.MouseVisible = true;
          }
 
          base.OnMouseUp(e);
@@ -355,11 +358,8 @@ namespace System.Windows.Forms
             }
             else if(e.Button == MouseButtons.Left)
             {
-               if(CurrentMarkerEnabled)
-               {
                   SetCurrentPositionOnly(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y);
                   Invalidate(false);
-               }
             }
          }
          else
@@ -432,15 +432,15 @@ namespace System.Windows.Forms
          return Core.SetCurrentPositionByKeywords(keys);
       }
 
-      public void SetCurrentMarkersVisibility(bool visible)
-      {
-         Core.SetCurrentMarkersVisibility(visible);
-      }
+      //public void SetCurrentMarkersVisibility(bool visible)
+      //{
+      //   Core.SetCurrentMarkersVisibility(visible);
+      //}
 
-      public void SetCurrentMarkersTooltipMode(MarkerTooltipMode mode)
-      {
-         Core.SetCurrentMarkersTooltipMode(mode);
-      }
+      //public void SetCurrentMarkersTooltipMode(MarkerTooltipMode mode)
+      //{
+      //   Core.SetCurrentMarkersTooltipMode(mode);
+      //}
 
       public PointLatLng FromLocalToLatLng(int x, int y)
       {
@@ -470,21 +470,6 @@ namespace System.Windows.Forms
       public void ClearAllRoutes()
       {
          Core.ClearAllRoutes();
-      }
-
-      public void AddMarker(MapObject item)
-      {
-         Core.AddMarker(item);
-      }
-
-      public void RemoveMarker(MapObject item)
-      {
-         Core.RemoveMarker(item);
-      }
-
-      public void ClearAllMarkers()
-      {
-         Core.ClearAllMarkers();
       }
 
       public void SetCurrentPositionOnly(int x, int y)
@@ -735,17 +720,17 @@ namespace System.Windows.Forms
          }
       }
 
-      public CurrentMarkerType CurrentMarkerStyle
-      {
-         get
-         {
-            return Core.CurrentMarkerStyle;
-         }
-         set
-         {
-            Core.CurrentMarkerStyle = value;
-         }
-      }
+      //public CurrentMarkerType CurrentMarkerStyle
+      //{
+      //   get
+      //   {
+      //      return Core.CurrentMarkerStyle;
+      //   }
+      //   set
+      //   {
+      //      Core.CurrentMarkerStyle = value;
+      //   }
+      //}
 
       public RenderMode RenderMode
       {
@@ -799,41 +784,41 @@ namespace System.Windows.Forms
          }
       }
 
-      public event MarkerClick OnMarkerClick
-      {
-         add
-         {
-            Core.OnMarkerClick += value;
-         }
-         remove
-         {
-            Core.OnMarkerClick -= value;
-         }
-      }
+      //public event MarkerClick OnMarkerClick
+      //{
+      //   add
+      //   {
+      //      Core.OnMarkerClick += value;
+      //   }
+      //   remove
+      //   {
+      //      Core.OnMarkerClick -= value;
+      //   }
+      //}
 
-      public event MarkerEnter OnMarkerEnter
-      {
-         add
-         {
-            Core.OnMarkerEnter += value;
-         }
-         remove
-         {
-            Core.OnMarkerEnter -= value;
-         }
-      }
+      //public event MarkerEnter OnMarkerEnter
+      //{
+      //   add
+      //   {
+      //      Core.OnMarkerEnter += value;
+      //   }
+      //   remove
+      //   {
+      //      Core.OnMarkerEnter -= value;
+      //   }
+      //}
 
-      public event MarkerLeave OnMarkerLeave
-      {
-         add
-         {
-            Core.OnMarkerLeave += value;
-         }
-         remove
-         {
-            Core.OnMarkerLeave -= value;
-         }
-      }
+      //public event MarkerLeave OnMarkerLeave
+      //{
+      //   add
+      //   {
+      //      Core.OnMarkerLeave += value;
+      //   }
+      //   remove
+      //   {
+      //      Core.OnMarkerLeave -= value;
+      //   }
+      //}
 
       public event MapDrag OnMapDrag
       {

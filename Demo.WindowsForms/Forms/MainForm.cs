@@ -13,12 +13,13 @@ namespace Demo.WindowsForms
    {
       PointLatLng start;
       PointLatLng end;
+      GMapMarker currentMarker;
 
       public MainForm()
       {
          InitializeComponent();
 
-         if(LicenseManager.UsageMode != LicenseUsageMode.Designtime)
+         if(!DesignMode)
          {
             // config gmaps
             GMaps.Instance.Language = "lt";
@@ -35,14 +36,14 @@ namespace Demo.WindowsForms
             MainMap.MapType = GMapType.GoogleMap;
             MainMap.Zoom = 12;
             MainMap.CurrentMarkerEnabled = true;
-            MainMap.CurrentMarkerStyle = CurrentMarkerType.GMap;
+            //MainMap.CurrentMarkerStyle = CurrentMarkerType.GMap;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
 
             // map events
             MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
             MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
             MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
-            MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
+            //MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
 
             // get map type
             comboBoxMapType.DataSource = Enum.GetValues(typeof(GMapType));
@@ -64,11 +65,14 @@ namespace Demo.WindowsForms
             // get zoom
             trackBar1.Maximum = 17;
             trackBar1.Value = MainMap.Zoom;
+
+            currentMarker = new GMapMarkerGoogleRed(MainMap.CurrentPosition);
+            MainMap.Markers.Add(currentMarker);
          }
       }
 
       // click on some marker
-      void MainMap_OnMarkerClick(Marker item)
+      void MainMap_OnMarkerClick(GMapMarker item)
       {
          MessageBox.Show("OnMarkerClick: " + item.Position.ToString(), "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
       }
@@ -120,6 +124,9 @@ namespace Demo.WindowsForms
       {
          textBoxCurrLat.Text = point.Lat.ToString(CultureInfo.InvariantCulture);
          textBoxCurrLng.Text = point.Lng.ToString(CultureInfo.InvariantCulture);
+
+         currentMarker.Position = point;
+         MainMap.UpdateMarkerLocalPosition(currentMarker);
       }
 
       // change map type
@@ -218,16 +225,16 @@ namespace Demo.WindowsForms
             MainMap.AddRoute(r);
 
             // add route start/end marks
-            Marker m1 = new Marker(start);
-            m1.Text = "Start: " + start.ToString();
+            GMapMarker m1 = new GMapMarkerGoogleRed(start);             
+            m1.ToolTipText = "Start: " + start.ToString();
             m1.TooltipMode = MarkerTooltipMode.Always;
 
-            Marker m2 = new Marker(end);
-            m2.Text = "End: " + end.ToString();
+            GMapMarker m2 = new GMapMarkerGoogleGreen(end);
+            m2.ToolTipText = "End: " + end.ToString();
             m2.TooltipMode = MarkerTooltipMode.Always;
 
-            MainMap.AddMarker(m1);
-            MainMap.AddMarker(m2);          
+            MainMap.Markers.Add(m1);
+            MainMap.Markers.Add(m2);          
          }
       }
 
@@ -241,7 +248,7 @@ namespace Demo.WindowsForms
       // add marker on current position
       private void button4_Click(object sender, EventArgs e)
       {
-         Marker m = new Marker(MainMap.CurrentPosition);
+         GMapMarker m = new GMapMarkerGoogleGreen(MainMap.CurrentPosition);
 
          Placemark p = null;
          if(checkBoxPlacemarkInfo.Checked)
@@ -251,14 +258,14 @@ namespace Demo.WindowsForms
 
          if(p != null)
          {
-            m.Text = p.Address;
+            m.ToolTipText = p.Address;
          }
          else
          {
-            m.Text = MainMap.CurrentPosition.ToString();
+            m.ToolTipText = MainMap.CurrentPosition.ToString();
          }
 
-         MainMap.AddMarker(m);
+         MainMap.Markers.Add(m);
       }
 
       // clear routes
@@ -270,13 +277,25 @@ namespace Demo.WindowsForms
       // clear markers
       private void button5_Click(object sender, EventArgs e)
       {
-         MainMap.ClearAllMarkers();         
+         MainMap.Markers.Clear();
+
+         if(checkBoxCurrentMarker.Checked)
+         {
+            MainMap.Markers.Add(currentMarker);
+         }
       }
 
       // show current marker
       private void checkBoxCurrentMarker_CheckedChanged(object sender, EventArgs e)
       {
-         MainMap.CurrentMarkerEnabled = checkBoxCurrentMarker.Checked;
+         if(checkBoxCurrentMarker.Checked)
+         {
+            MainMap.Markers.Add(currentMarker);
+         }
+         else
+         {
+            MainMap.Markers.Remove(currentMarker);
+         }
       }
 
       // can drag
