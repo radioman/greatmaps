@@ -4,7 +4,7 @@ namespace GMapNET
    /// <summary>
    /// types of maps
    /// </summary>
-   public enum GMapType
+   public enum MapType
    {
       GoogleMap=1,
       GoogleSatellite=4,

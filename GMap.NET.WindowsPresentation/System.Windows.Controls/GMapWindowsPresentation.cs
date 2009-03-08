@@ -124,6 +124,9 @@ namespace System.Windows.Controls
          ClipToBounds = true;
          SnapsToDevicePixels = true;
 
+         // removes white lines between tiles!
+         SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+
          Purity.Instance.ImageProxy = new WindowsPresentationImageProxy();
 
          Core.RenderMode = GMapNET.RenderMode.WPF;
@@ -441,10 +444,10 @@ namespace System.Windows.Controls
          Core.GoToCurrentPosition();
       }
 
-      public bool ZoomAndCenterMarkers()
-      {
-         return Core.ZoomAndCenterMarkers();
-      }
+      //public bool ZoomAndCenterMarkers()
+      //{
+      //   return Core.ZoomAndCenterMarkers();
+      //}
 
       public bool SetCurrentPositionByKeywords(string keys)
       {
@@ -469,11 +472,6 @@ namespace System.Windows.Controls
       public GMapNET.Point FromLatLngToLocal(PointLatLng point)
       {
          return Core.FromLatLngToLocal(point);
-      }
-
-      public RectLatLng GetRectOfAllMarkers()
-      {
-         return Core.GetRectOfAllMarkers();
       }
 
       //public void AddRoute(Route item)
@@ -694,7 +692,7 @@ namespace System.Windows.Controls
          }
       }
 
-      public GMapType MapType
+      public MapType MapType
       {
          get
          {

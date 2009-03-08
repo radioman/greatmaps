@@ -47,8 +47,9 @@
     <Compile Include="Control\IGControl.cs" />
     <Compile Include="Public\AccessMode.cs" />
     <Compile Include="Public\Delegates.cs" />
-    <Compile Include="Public\GMapType.cs" />
     <Compile Include="Public\MapObject.cs" />
+    <Compile Include="Public\MapRoute.cs" />
+    <Compile Include="Public\MapType.cs" />
     <Compile Include="Public\Point.cs" />
     <Compile Include="Public\Rectangle.cs" />
     <Compile Include="Public\Singleton.cs" />
@@ -67,7 +68,6 @@
     <Compile Include="Public\PointLatLng.cs" />
     <Compile Include="Public\RectLatLng.cs" />
     <Compile Include="Public\RenderMode.cs" />
-    <Compile Include="Public\Route.cs" />
     <Compile Include="Public\Size.cs" />
     <Compile Include="Public\SizeLatLng.cs" />
     <Compile Include="Internals\Stuff.cs" />

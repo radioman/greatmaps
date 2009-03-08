@@ -173,7 +173,7 @@ namespace GMapNET.Internals
          return ret;
       }
 
-      public bool CacheImageToDB(PureImage tile, GMapType type, Point pos, int zoom, string language)
+      public bool CacheImageToDB(PureImage tile, MapType type, Point pos, int zoom, string language)
       {
          bool ret = true;
          try
@@ -255,7 +255,7 @@ namespace GMapNET.Internals
          return ret;
       }
 
-      public PureImage GetImageFromCacheDB(GMapType type, Point pos, int zoom, string language)
+      public PureImage GetImageFromCacheDB(MapType type, Point pos, int zoom, string language)
       {
          PureImage ret = null;
          try
@@ -311,7 +311,7 @@ namespace GMapNET.Internals
       }
 
       #region -- old tile file system --
-      public void CacheImage(PureImage tile, GMapType type, Point pos, int zoom, string language)
+      public void CacheImage(PureImage tile, MapType type, Point pos, int zoom, string language)
       {
          try
          {
@@ -357,7 +357,7 @@ namespace GMapNET.Internals
          }
       }
 
-      public PureImage GetImageFromCache(GMapType type, Point pos, int zoom, string language)
+      public PureImage GetImageFromCache(MapType type, Point pos, int zoom, string language)
       {
          PureImage ret = null;
          try

@@ -22,7 +22,7 @@ namespace GMapNET
       BackgroundWorker worker = new BackgroundWorker();
       List<Point> list = new List<Point>();
       int zoom;
-      GMapType type;
+      MapType type;
       int sleep;
       int all;
       public bool ShowCompleteMessage = false;
@@ -38,7 +38,7 @@ namespace GMapNET
          worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
       }
 
-      public void Start(List<Point> points, int zoom, GMapType type, int sleep)
+      public void Start(List<Point> points, int zoom, MapType type, int sleep)
       {
          if(!worker.IsBusy)
          {

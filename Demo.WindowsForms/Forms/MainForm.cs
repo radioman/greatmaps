@@ -33,7 +33,7 @@ namespace Demo.WindowsForms
             //GMaps.Instance.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
             // config map             
-            MainMap.MapType = GMapType.GoogleMap;
+            MainMap.MapType = MapType.GoogleMap;
             MainMap.Zoom = 12;
             MainMap.CurrentMarkerEnabled = true;
             //MainMap.CurrentMarkerStyle = CurrentMarkerType.GMap;
@@ -46,7 +46,7 @@ namespace Demo.WindowsForms
             //MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
 
             // get map type
-            comboBoxMapType.DataSource = Enum.GetValues(typeof(GMapType));
+            comboBoxMapType.DataSource = Enum.GetValues(typeof(MapType));
             comboBoxMapType.SelectedItem = MainMap.MapType;
 
             // acccess mode
@@ -132,7 +132,7 @@ namespace Demo.WindowsForms
       // change map type
       private void comboBoxMapType_DropDownClosed(object sender, EventArgs e)
       {
-         MainMap.MapType = (GMapType) comboBoxMapType.SelectedValue;
+         MainMap.MapType = (MapType) comboBoxMapType.SelectedValue;
          MainMap.ReloadMap();
       }
 
@@ -220,8 +220,14 @@ namespace Demo.WindowsForms
          List<PointLatLng> route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, MainMap.Zoom);
          if(route != null)
          {
+            if(route.Count > 1)
+            {
+               route.Insert(0, start);
+               route.Add(end);
+            }
+
             // add route
-            Route r = new GMapRoute(route, "test");
+            MapRoute r = new GMapRoute(route, "test");
             MainMap.Routes.Add(r);
 
             // add route start/end marks

@@ -34,7 +34,7 @@ namespace Demo.WindowsPresentation
          //GMaps.Instance.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
          // config map
-         MainMap.MapType = GMapType.OpenStreetMap;
+         MainMap.MapType = MapType.OpenStreetMap;
          MainMap.Zoom = 12;
          MainMap.CurrentMarkerEnabled = true;
          MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
@@ -46,7 +46,7 @@ namespace Demo.WindowsPresentation
          MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
 
          // get map types
-         comboBoxMapType.ItemsSource = Enum.GetValues(typeof(GMapType));
+         comboBoxMapType.ItemsSource = Enum.GetValues(typeof(MapType));
          comboBoxMapType.SelectedItem = MainMap.MapType;
 
          // acccess mode
@@ -132,7 +132,7 @@ namespace Demo.WindowsPresentation
       // map type changed
       private void comboBoxMapType_DropDownClosed(object sender, EventArgs e)
       {
-         MainMap.MapType = (GMapType) comboBoxMapType.SelectedItem;
+         MainMap.MapType = (MapType) comboBoxMapType.SelectedItem;
          MainMap.ReloadMap();
       }
 

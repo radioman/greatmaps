@@ -134,7 +134,7 @@
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
          this.MainMap.ForeColor = System.Drawing.SystemColors.ControlText;
          this.MainMap.Location = new System.Drawing.Point(4, 19);
-         this.MainMap.MapType = GMapNET.GMapType.GoogleMap;
+         this.MainMap.MapType = GMapNET.MapType.GoogleMap;
          this.MainMap.Margin = new System.Windows.Forms.Padding(4);
          this.MainMap.MarkersEnabled = true;
          this.MainMap.Name = "MainMap";
@@ -672,7 +672,6 @@
          // 
          // button7
          // 
-         this.button7.Enabled = false;
          this.button7.Location = new System.Drawing.Point(8, 55);
          this.button7.Margin = new System.Windows.Forms.Padding(4);
          this.button7.Name = "button7";

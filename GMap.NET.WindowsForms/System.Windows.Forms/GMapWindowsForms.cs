@@ -11,7 +11,7 @@ namespace System.Windows.Forms
 {
    public partial class GMap : UserControl, IGControl
    {
-      readonly Core Core = new Core(); 
+      readonly Core Core = new Core();
       readonly Pen routePen = new Pen(Color.MidnightBlue);
       readonly Pen tooltipPen = new Pen(Color.FromArgb(140, Color.MidnightBlue));
       readonly Color tooltipBg = Color.FromArgb(140, Color.AliceBlue);
@@ -23,7 +23,7 @@ namespace System.Windows.Forms
       /// list of markers, should be thread safe
       /// </summary>
       public readonly ObservableCollectionThreadSafe<GMapNET.MapObject> Markers = new ObservableCollectionThreadSafe<GMapNET.MapObject>();
-      public readonly ObservableCollectionThreadSafe<GMapNET.Route> Routes = new ObservableCollectionThreadSafe<GMapNET.Route>();
+      public readonly ObservableCollectionThreadSafe<GMapNET.MapRoute> Routes = new ObservableCollectionThreadSafe<GMapNET.MapRoute>();
 
       public GMap()
       {
@@ -55,12 +55,20 @@ namespace System.Windows.Forms
             tooltipPen.StartCap = LineCap.RoundAnchor;
 
             tooltipFormat.Alignment     = StringAlignment.Center;
-            tooltipFormat.LineAlignment = StringAlignment.Center;            
+            tooltipFormat.LineAlignment = StringAlignment.Center;
          }
       }
 
       void Routes_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
       {
+         if(e.NewItems != null)
+         {
+            foreach(MapRoute obj in e.NewItems)
+            {
+               UpdateRouteLocalPosition(obj);
+            }
+         }
+
          Core_OnNeedInvalidation();
       }
 
@@ -68,7 +76,7 @@ namespace System.Windows.Forms
       {
          if(e.NewItems != null)
          {
-            foreach(GMapMarker obj in e.NewItems)
+            foreach(MapObject obj in e.NewItems)
             {
                UpdateMarkerLocalPosition(obj);
             }
@@ -79,9 +87,14 @@ namespace System.Windows.Forms
 
       void GMap_OnMapDrag()
       {
-         foreach(GMapMarker obj in Markers)
+         foreach(MapObject obj in Markers)
          {
             UpdateMarkerLocalPosition(obj);
+         }
+
+         foreach(MapRoute obj in Routes)
+         {
+            UpdateRouteLocalPosition(obj);
          }
       }
 
@@ -93,8 +106,24 @@ namespace System.Windows.Forms
       {
          GMapNET.Point p = GMaps.Instance.FromLatLngToPixel(marker.Position, Core.Zoom);
          p.Offset(Core.renderOffset);
-         marker.LocalPosition = p;          
-      }        
+         marker.LocalPosition = p;
+      }
+
+      /// <summary>
+      /// updates route local position
+      /// </summary>
+      /// <param name="route"></param>
+      public void UpdateRouteLocalPosition(MapRoute route)
+      {
+         route.LocalPoints.Clear();
+
+         foreach(GMapNET.PointLatLng pg in route.Points)
+         {
+            GMapNET.Point p = GMaps.Instance.FromLatLngToPixel(pg, Core.Zoom);
+            p.Offset(Core.renderOffset);
+            route.LocalPoints.Add(p);
+         }
+      }
 
       /// <summary>
       /// on core needs invalidation
@@ -182,28 +211,30 @@ namespace System.Windows.Forms
          GraphicsState st = g.Save();
          g.SmoothingMode = SmoothingMode.AntiAlias;
 
-         lock(Routes)
+         foreach(GMapRoute r in Routes)
          {
-            foreach(GMapRoute r in Routes)
-            {
-               routePen.Color = r.Color;
-               GMapNET.Point p1 = GMapNET.Point.Empty;
+            routePen.Color = r.Color;
 
-               for(int i = 0; i < r.Points.Count; i++)
+            using(GraphicsPath rp = new GraphicsPath())
+            {
+               for(int i = 0; i < r.LocalPoints.Count; i++)
                {
-                  GMapNET.Point p2 = GMaps.Instance.FromLatLngToPixel(r.Points[i], Zoom);
-                  p2.Offset(Core.renderOffset);
+                  GMapNET.Point p2 = r.LocalPoints[i];
 
                   if(i == 0)
                   {
-                     p1 = p2;
+                     rp.AddLine(p2.X, p2.Y, p2.X, p2.Y);
                   }
-
+                  else
                   {
-                     g.DrawLine(routePen, p1.X, p1.Y, p2.X, p2.Y);
+                     System.Drawing.PointF p = rp.GetLastPoint();
+                     rp.AddLine(p.X, p.Y, p2.X, p2.Y);
                   }
+               }
 
-                  p1 = p2;
+               if(rp.PointCount > 0)
+               {
+                  g.DrawPath(routePen, rp);
                }
             }
          }
@@ -211,6 +242,83 @@ namespace System.Windows.Forms
          g.Restore(st);
       }
 
+      /// <summary>
+      /// sets to max zoom to fit all markers and centers them in map
+      /// </summary>
+      public bool ZoomAndCenterMarkers()
+      {
+         RectLatLng rect = GetRectOfAllMarkers();
+         if(rect != RectLatLng.Empty)
+         {
+            int maxZoom = Core.GetMaxZoomToFitRect(rect);
+            if(maxZoom > 0)
+            {
+               PointLatLng center = new PointLatLng(rect.Lat-(rect.HeightLat/2), rect.Lng+(rect.WidthLng/2));
+               CurrentPosition = center;
+
+               if(Zoom != maxZoom)
+               {
+                  Zoom = maxZoom;
+               }
+
+               GoToCurrentPosition();
+
+               return true;
+            }
+         }
+
+         return false;
+      }
+
+      /// <summary>
+      /// gets rectangle with all objects inside
+      /// </summary>
+      /// <returns></returns>
+      public RectLatLng GetRectOfAllMarkers()
+      {
+         RectLatLng ret = RectLatLng.Empty;
+
+         {
+            if(Markers.Count > 0)
+            {
+               double left = double.MaxValue;
+               double top = double.MinValue;
+               double right = double.MinValue;
+               double bottom = double.MaxValue;
+
+               foreach(MapObject m in Markers)
+               {
+                  // left
+                  if(m.Position.Lng < left)
+                  {
+                     left = m.Position.Lng;
+                  }
+
+                  // top
+                  if(m.Position.Lat > top)
+                  {
+                     top = m.Position.Lat;
+                  }
+
+                  // right
+                  if(m.Position.Lng > right)
+                  {
+                     right = m.Position.Lng;
+                  }
+
+                  // bottom
+                  if(m.Position.Lat < bottom)
+                  {
+                     bottom = m.Position.Lat;
+                  }
+               }
+
+               ret = RectLatLng.FromLTRB(left, top, right, bottom);
+            }
+         }
+
+         return ret;
+      }
 
       #region UserControl Events
 
@@ -257,7 +365,7 @@ namespace System.Windows.Forms
          {
             foreach(GMapMarker m in Markers)
             {
-               if(m.Visible)
+               if(m.Visible && region.Contains(m.LocalPosition.X, m.LocalPosition.Y))
                {
                   m.OnRender(e.Graphics);
                }
@@ -268,25 +376,25 @@ namespace System.Windows.Forms
 
          switch(Core.MapType)
          {
-            case GMapType.GoogleMap:
-            case GMapType.GoogleSatellite:
-            case GMapType.GoogleLabels:
-            case GMapType.GoogleTerrain:
+            case MapType.GoogleMap:
+            case MapType.GoogleSatellite:
+            case MapType.GoogleLabels:
+            case MapType.GoogleTerrain:
             {
                e.Graphics.DrawString(Core.googleCopyright, gFont, Brushes.Navy, 3, Height - gFont.Height - 5);
             }
             break;
 
-            case GMapType.OpenStreetMap:
-            case GMapType.OpenStreetOsm:
+            case MapType.OpenStreetMap:
+            case MapType.OpenStreetOsm:
             {
                e.Graphics.DrawString(Core.openStreetMapCopyright, gFont, Brushes.Navy, 3, Height - gFont.Height - 5);
             }
             break;
 
-            case GMapType.YahooMap:
-            case GMapType.YahooSatellite:
-            case GMapType.YahooLabels:
+            case MapType.YahooMap:
+            case MapType.YahooSatellite:
+            case MapType.YahooLabels:
             {
                e.Graphics.DrawString(Core.yahooMapCopyright, gFont, Brushes.Navy, 3, Height - gFont.Height - 5);
             }
@@ -338,7 +446,7 @@ namespace System.Windows.Forms
             {
                SetCurrentPositionOnly(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y);
 
-               if(Core.MouseVisible)
+               if(Core.MouseVisible & !CurrentMarkerEnabled)
                {
                   this.Cursor = System.Windows.Forms.Cursors.Default;
                   Cursor.Hide();
@@ -404,53 +512,47 @@ namespace System.Windows.Forms
             }
             else if(e.Button == MouseButtons.Left)
             {
-                  SetCurrentPositionOnly(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y);
-                  Invalidate(false);
+               SetCurrentPositionOnly(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y);
+               Invalidate(false);
             }
          }
          else
-         {
-            /*
-            lock(Core.markers)
-            {
-               for(int i = 0; i < Core.markers.Count; i++)
+         {    
+               foreach(GMapMarker m in Markers)
                {
-                  Marker m = Core.markers[i];
                   if(m.Visible)
                   {
-                     Rectangle rc1 = Core.GetRectForMarker(e.Location, m);
+                     //Rectangle rc1 = Core.GetRectForMarker(e.Location, m);
 
-                     using(Region rg = new Region(rc1))
+                     //using(Region rg = new Region(rc1))
                      {
-                        if(rg.IsVisible(GMaps.Instance.FromLatLngToPixel(m.Position, Zoom)))
-                        {
-                           this.Cursor = System.Windows.Forms.Cursors.Hand;
-                           m.IsMouseOver = true;
-                           Core.isMouseOverMarker = true;
-                           Invalidate(false);
+                        //if(rg.IsVisible(GMaps.Instance.FromLatLngToPixel(m.Position, Zoom)))
+                        //{
+                        //   this.Cursor = System.Windows.Forms.Cursors.Hand;
+                        //   m.IsMouseOver = true;
+                        //   //Core.isMouseOverMarker = true;
+                        //   Invalidate(false);
 
-                           if(Core.OnMarkerEnter != null)
-                           {
-                              Core.OnMarkerEnter(m);
-                           }
-                        }
-                        else if(m.IsMouseOver)
-                        {
-                           this.Cursor = System.Windows.Forms.Cursors.Default;
-                           m.IsMouseOver = false;
-                           Core.isMouseOverMarker = false;
-                           Invalidate(false);
+                        //   if(Core.OnMarkerEnter != null)
+                        //   {
+                        //      Core.OnMarkerEnter(m);
+                        //   }
+                        //}
+                        //else if(m.IsMouseOver)
+                        //{
+                        //   this.Cursor = System.Windows.Forms.Cursors.Default;
+                        //   m.IsMouseOver = false;
+                        //   //Core.isMouseOverMarker = false;
+                        //   Invalidate(false);
 
-                           if(Core.OnMarkerLeave != null)
-                           {
-                              Core.OnMarkerLeave(m);
-                           }
-                        }
+                        //   if(Core.OnMarkerLeave != null)
+                        //   {
+                        //      Core.OnMarkerLeave(m);
+                        //   }
+                        //}
                      }
                   }
                }
-            }
-             */
          }
          base.OnMouseMove(e);
       }
@@ -466,11 +568,6 @@ namespace System.Windows.Forms
       public void GoToCurrentPosition()
       {
          Core.GoToCurrentPosition();
-      }
-
-      public bool ZoomAndCenterMarkers()
-      {
-         return Core.ZoomAndCenterMarkers();
       }
 
       public bool SetCurrentPositionByKeywords(string keys)
@@ -496,11 +593,6 @@ namespace System.Windows.Forms
       public GMapNET.Point FromLatLngToLocal(PointLatLng point)
       {
          return Core.FromLatLngToLocal(point);
-      }
-
-      public RectLatLng GetRectOfAllMarkers()
-      {
-         return Core.GetRectOfAllMarkers();
       }
 
       //public void AddRoute(Route item)
@@ -718,7 +810,7 @@ namespace System.Windows.Forms
          }
       }
 
-      public GMapType MapType
+      public MapType MapType
       {
          get
          {

@@ -56,7 +56,7 @@
          get;
       }
 
-      GMapType MapType
+      MapType MapType
       {
          get;
          set;
@@ -97,22 +97,14 @@
 
       void ReloadMap();
       void GoToCurrentPosition();
-      bool ZoomAndCenterMarkers();
+      //bool ZoomAndCenterMarkers();
 
       void SetCurrentPositionOnly(int x, int y);
       void SetCurrentPositionOnly(PointLatLng point);
       bool SetCurrentPositionByKeywords(string keys);
-      //void SetCurrentMarkersVisibility(bool visible);
-      //void SetCurrentMarkersTooltipMode(MarkerTooltipMode mode);
 
       PointLatLng FromLocalToLatLng(int x, int y);
       Point FromLatLngToLocal(PointLatLng point);
-
-      RectLatLng GetRectOfAllMarkers();
-
-      //void AddRoute(Route item);
-      //void RemoveRoute(Route item);
-      //void ClearAllRoutes();
 
       bool ShowExportDialog();
       bool ShowImportDialog();

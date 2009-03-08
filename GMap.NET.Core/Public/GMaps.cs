@@ -331,7 +331,7 @@ namespace GMapNET
       /// <param name="zoom"></param>
       /// <param name="language"></param>
       /// <returns></returns>
-      internal string MakeImageUrl(GMapType type, double lat, double lng, int zoom, string language)
+      internal string MakeImageUrl(MapType type, double lat, double lng, int zoom, string language)
       {
          Point t = FromLatLngToPixel(lat, lng, zoom);
          Point p = FromPixelToTileXY(t);
@@ -347,7 +347,7 @@ namespace GMapNET
       /// <param name="zoom"></param>
       /// <param name="language"></param>
       /// <returns></returns>
-      internal string MakeImageUrl(GMapType type, Point pos, int zoom, string language)
+      internal string MakeImageUrl(MapType type, Point pos, int zoom, string language)
       {
          string server = string.Empty;
          string request = string.Empty;
@@ -356,70 +356,70 @@ namespace GMapNET
 
          switch(type)
          {
-            case GMapType.GoogleMap:
+            case MapType.GoogleMap:
             server = "mt";
             request = "mt";
             version = VersionGoogleMap;
             break;
 
-            case GMapType.GoogleSatellite:
+            case MapType.GoogleSatellite:
             server = "khm";
             request = "kh";
             version = VersionGoogleSatellite;
             break;
 
-            case GMapType.GoogleLabels:
+            case MapType.GoogleLabels:
             server = "mt";
             request = "mt";
             version = VersionGoogleLabels;
             break;
 
-            case GMapType.GoogleTerrain:
+            case MapType.GoogleTerrain:
             server = "mt";
             request = "mt";
             version = VersionGoogleTerrain;
             break;
 
-            case GMapType.YahooMap:
+            case MapType.YahooMap:
             {
                return string.Format("http://us.maps2.yimg.com/us.png.maps.yimg.com/png?v={0}&x={1}&y={2}&z={3}&r=1", VersionYahooMap, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
             }
 
-            case GMapType.YahooSatellite:
+            case MapType.YahooSatellite:
             {
                return string.Format("http://us.maps3.yimg.com/aerial.maps.yimg.com/png?v={0}&t=a&s=256&x={1}&y={2}&z={3}&r=1", VersionYahooSatellite, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
             }
 
-            case GMapType.YahooLabels:
+            case MapType.YahooLabels:
             {
                return string.Format("http://us.maps1.yimg.com/us.tile.maps.yimg.com/tl?v={0}&t=h&x={1}&y={2}&z={3}&r=1", VersionYahooLabels, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
             }
 
-            case GMapType.OpenStreetMap:
+            case MapType.OpenStreetMap:
             {
                char letter = "abca"[servernum];
                return string.Format("http://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png", letter, zoom.ToString(), pos.X.ToString(), pos.Y.ToString());
             }
 
-            case GMapType.OpenStreetOsm:
+            case MapType.OpenStreetOsm:
             {
                char letter = "abca"[servernum];
                return string.Format("http://{0}.tah.openstreetmap.org/Tiles/tile/{1}/{2}/{3}.png", letter, zoom.ToString(), pos.X.ToString(), pos.Y.ToString());
             }
 
-            case GMapType.VirtualEarthMap:
+            case MapType.VirtualEarthMap:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
                return string.Format("http://r{0}.ortho.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
             }
 
-            case GMapType.VirtualEarthSatellite:
+            case MapType.VirtualEarthSatellite:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
                return string.Format("http://a{0}.ortho.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
             }
 
-            case GMapType.VirtualEarthHybrid:
+            case MapType.VirtualEarthHybrid:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
                return string.Format("http://h{0}.ortho.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
@@ -952,7 +952,7 @@ namespace GMapNET
       /// <param name="language"></param>
       /// <param name="cache"></param>
       /// <returns></returns>
-      internal PureImage GetImageFrom(GMapType type, Point pos, int zoom, string language, bool useCache)
+      internal PureImage GetImageFrom(MapType type, Point pos, int zoom, string language, bool useCache)
       {
          PureImage ret = null;
 

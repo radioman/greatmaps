@@ -39,18 +39,19 @@ namespace GMapNET.Internals
       EventWaitHandle waitForBoundsChanged = new AutoResetEvent(true);
       public List<Point> tileDrawingList = new List<Point>();
       public readonly Queue<Point> tileLoadQueue = new Queue<Point>();
-      //public readonly List<Route> routes = new List<Route>();
-      //public readonly List<MapObject> objects = new List<MapObject>();
 
       public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
       public readonly string yahooMapCopyright = string.Format("© Yahoo! Inc. - Map data & Imagery ©{0} NAVTEQ", DateTime.Today.Year);
 
-      bool currentMarkerEnabled = true;
-      bool mouseVisible = true;
+      bool currentMarkerEnabled = true;        
       bool started = false;
-      public bool IsMouseOverMarker; 
+      public bool IsMouseOverMarker;       
+      int zoom;
+      int Width;
+      int Height;
 
+      bool mouseVisible = true;
       public bool MouseVisible
       {
          get
@@ -62,9 +63,6 @@ namespace GMapNET.Internals
             mouseVisible = value;
          }
       }
-      int zoom;
-      int Width;
-      int Height;
 
       /// <summary>
       /// is current marker enabled and visible
@@ -184,7 +182,7 @@ namespace GMapNET.Internals
       /// <summary>
       /// type of map
       /// </summary>
-      public GMapType MapType = GMapType.GoogleMap;
+      public MapType MapType = MapType.GoogleMap;
 
       /// <summary>
       /// is routes enabled
@@ -200,11 +198,6 @@ namespace GMapNET.Internals
       /// can user drag map
       /// </summary>
       public bool CanDragMap = true;
-
-      /// <summary>
-      /// style of the current marker
-      /// </summary>
-      //public CurrentMarkerType CurrentMarkerStyle = CurrentMarkerType.GMap;
 
       /// <summary>
       /// map render mode
@@ -316,35 +309,7 @@ namespace GMapNET.Internals
          }
 
          CancelAsyncTasks();
-      }
-
-      /// <summary>
-      /// sets to max zoom to fit all markers and centers them in map
-      /// </summary>
-      public bool ZoomAndCenterMarkers()
-      {
-         RectLatLng rect = GetRectOfAllMarkers();
-         if(rect != RectLatLng.Empty)
-         {
-            int maxZoom = GetMaxZoomToFitRect(rect);
-            if(maxZoom > 0)
-            {
-               PointLatLng center = new PointLatLng(rect.Lat-(rect.HeightLat/2), rect.Lng+(rect.WidthLng/2));
-               CurrentPosition = center;
-
-               if(Zoom != maxZoom)
-               {
-                  Zoom = maxZoom;
-               }
-
-               GoToCurrentPosition();
-
-               return true;
-            }
-         }
-
-         return false;
-      }
+      }         
 
       /// <summary>
       /// sets current position by geocoding
@@ -399,182 +364,6 @@ namespace GMapNET.Internals
          pLocal.Offset(renderOffset);
          return pLocal;           
       }
-
-      /// <summary>
-      /// gets rectangle with all objects inside
-      /// </summary>
-      /// <returns></returns>
-      public RectLatLng GetRectOfAllMarkers()
-      {
-         RectLatLng ret = RectLatLng.Empty;
-
-         //lock(objects)
-         //{
-         //   if(objects.Count > 0)
-         //   {
-         //      double left = double.MaxValue;
-         //      double top = double.MinValue;
-         //      double right = double.MinValue;
-         //      double bottom = double.MaxValue;
-
-         //      foreach(MapObject m in objects)
-         //      {
-         //         // left
-         //         if(m.Position.Lng < left)
-         //         {
-         //            left = m.Position.Lng;
-         //         }
-
-         //         // top
-         //         if(m.Position.Lat > top)
-         //         {
-         //            top = m.Position.Lat;
-         //         }
-
-         //         // right
-         //         if(m.Position.Lng > right)
-         //         {
-         //            right = m.Position.Lng;
-         //         }
-
-         //         // bottom
-         //         if(m.Position.Lat < bottom)
-         //         {
-         //            bottom = m.Position.Lat;
-         //         }
-         //      }
-
-         //      ret = RectLatLng.FromLTRB(left, top, right, bottom);
-         //   }
-         //}
-
-         return ret;
-      }
-
-      /// <summary>
-      /// adds route
-      /// </summary>
-      /// <param name="item"></param>
-      //public void AddRoute(Route item)
-      //{
-      //   lock(routes)
-      //   {
-      //      routes.Add(item);
-      //   }
-
-      //   if(OnNeedInvalidation != null)
-      //   {
-      //      OnNeedInvalidation();
-      //   }
-      //}
-
-      /// <summary>
-      /// removes route
-      /// </summary>
-      /// <param name="item"></param>
-      //public void RemoveRoute(Route item)
-      //{
-      //   lock(routes)
-      //   {
-      //      routes.Remove(item);
-      //   }
-
-      //   if(OnNeedInvalidation != null)
-      //   {
-      //      OnNeedInvalidation();
-      //   }
-      //}
-
-      /// <summary>
-      /// clears all routes
-      /// </summary>
-      /// <param name="item"></param>
-      //public void ClearAllRoutes()
-      //{
-      //   lock(routes)
-      //   {
-      //      routes.Clear();
-      //   }
-
-      //   if(OnNeedInvalidation != null)
-      //   {
-      //      OnNeedInvalidation();
-      //   }
-      //}
-
-      ///// <summary>
-      ///// adds marker
-      ///// </summary>
-      ///// <param name="item"></param>
-      //public void AddMarker(MapObject item)
-      //{
-      //   lock(objects)
-      //   {
-      //      objects.Add(item);
-      //   }
-
-      //   if(OnNeedInvalidation != null)
-      //   {
-      //      OnNeedInvalidation();
-      //   }
-      //}
-
-      ///// <summary>
-      ///// removes marker
-      ///// </summary>
-      ///// <param name="item"></param>
-      //public void RemoveMarker(MapObject item)
-      //{
-      //   lock(objects)
-      //   {
-      //      objects.Remove(item);
-      //   }
-
-      //   if(OnNeedInvalidation != null)
-      //   {
-      //      OnNeedInvalidation();
-      //   }
-      //}
-
-      /// <summary>
-      /// manages currently markers on map visibility
-      /// </summary>
-      /// <param name="visible"></param>
-      //public void SetCurrentMarkersVisibility(bool visible)
-      //{
-      //   lock(objects)
-      //   {
-      //      foreach(Marker m in objects)
-      //      {
-      //         m.Visible = visible;
-      //      }
-      //   }
-
-      //   if(OnNeedInvalidation != null)
-      //   {
-      //      OnNeedInvalidation();
-      //   }
-      //}
-
-      /// <summary>
-      /// manages currently markers on map tooltip mode
-      /// </summary>
-      /// <param name="mode"></param>
-      //public void SetCurrentMarkersTooltipMode(MarkerTooltipMode mode)
-      //{
-      //   lock(objects)
-      //   {
-      //      foreach(Marker m in objects)
-      //      {
-      //         m.TooltipMode = mode;
-      //      }
-      //   }
-
-      //   if(OnNeedInvalidation != null)
-      //   {
-      //      OnNeedInvalidation();
-      //   }
-      //}
 
       /// <summary>
       /// changes current position without changing current gtile
@@ -922,17 +711,17 @@ namespace GMapNET.Internals
 
             Tile t = new Tile(Zoom, task, RenderMode);
             {
-               if(MapType == GMapType.GoogleHybrid)
+               if(MapType == MapType.GoogleHybrid)
                {
-                  PureImage img = GMaps.Instance.GetImageFrom(GMapType.GoogleSatellite, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
-                  PureImage img2 = GMaps.Instance.GetImageFrom(GMapType.GoogleLabels, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
+                  PureImage img = GMaps.Instance.GetImageFrom(MapType.GoogleSatellite, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
+                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.GoogleLabels, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
                   t.Overlays.Add(img);
                   t.Overlays.Add(img2);
                }
-               else if(MapType == GMapType.YahooHybrid)
+               else if(MapType == MapType.YahooHybrid)
                {
-                  PureImage img = GMaps.Instance.GetImageFrom(GMapType.YahooSatellite, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
-                  PureImage img2 = GMaps.Instance.GetImageFrom(GMapType.YahooLabels, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
+                  PureImage img = GMaps.Instance.GetImageFrom(MapType.YahooSatellite, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
+                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.YahooLabels, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
                   t.Overlays.Add(img);
                   t.Overlays.Add(img2);
                }

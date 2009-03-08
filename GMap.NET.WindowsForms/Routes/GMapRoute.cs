@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.IO;
-using System.Collections.ObjectModel;
 
 namespace GMapNET
 {
-   public class GMapRoute : Route
+   public class GMapRoute : MapRoute
    {
       public Color Color;
 

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace GMapNET
 {
-   public class Route
+   public class MapRoute
    {
       public readonly List<PointLatLng> Points;
       public string Name;
-      //public Color Color;
+      public object Tag;
+
+      internal readonly List<Point> LocalPoints;
 
       public PointLatLng ?From
       {
@@ -36,14 +36,13 @@ namespace GMapNET
          }
       }
 
-      public Route(List<PointLatLng> points, string name)
+      public MapRoute(List<PointLatLng> points, string name)
       {
          Points = points;
          Points.TrimExcess();
+         LocalPoints = new List<Point>(Points.Count);
 
-         Name = name; 
-         
-         //Color = Color.FromArgb(140, Color.MidnightBlue);         
+         Name = name;       
       }
    }
 }

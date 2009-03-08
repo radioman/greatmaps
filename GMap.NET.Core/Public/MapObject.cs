@@ -5,6 +5,7 @@ namespace GMapNET
    {
       public PointLatLng Position;
       public object Tag;
+
       internal Point LocalPosition;
 
       public MapObject()
