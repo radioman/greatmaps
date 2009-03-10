@@ -68,6 +68,14 @@ namespace Demo.WindowsForms
 
             currentMarker = new GMapMarkerGoogleRed(MainMap.CurrentPosition);
             MainMap.Markers.Add(currentMarker);
+
+            // add my city location for demo
+            PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius");
+            if(pos != null)
+            {
+               GMapMarker myCity = new GMapMarkerGoogleGreen(pos.Value);
+               MainMap.Markers.Add(myCity);
+            }
          }
       }
 
