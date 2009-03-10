@@ -255,6 +255,7 @@ namespace Demo.WindowsForms
       private void button4_Click(object sender, EventArgs e)
       {
          GMapMarker m = new GMapMarkerGoogleGreen(MainMap.CurrentPosition);
+         GMapMarker mBorders = new GMapMarkerRect(MainMap.CurrentPosition);
 
          Placemark p = null;
          if(checkBoxPlacemarkInfo.Checked)
@@ -272,6 +273,7 @@ namespace Demo.WindowsForms
          }
 
          MainMap.Markers.Add(m);
+         MainMap.Markers.Add(mBorders);
       }
 
       // clear routes

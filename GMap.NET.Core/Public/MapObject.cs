@@ -6,7 +6,18 @@ namespace GMapNET
       public PointLatLng Position;
       public object Tag;
 
-      internal Point LocalPosition;
+      Point localPosition; 
+      public Point LocalPosition
+      {
+         get
+         {
+            return localPosition;
+         }
+         internal set
+         {
+            localPosition = value;
+         }
+      }
 
       public MapObject()
       {
