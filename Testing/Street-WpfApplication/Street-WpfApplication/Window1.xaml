@@ -3,5 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="StreetView, raw mode testing" Height="455" Width="938" Loaded="Window_Loaded">
     <StackPanel Name="sp" CanVerticallyScroll="True" CanHorizontallyScroll="True" Orientation="Vertical">
+
     </StackPanel>
 </Window>
