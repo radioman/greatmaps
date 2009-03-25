@@ -43,6 +43,9 @@ namespace Street_WpfApplication
             sp.Children.Add(p);
          }
 
+         // removes white lines between tiles!
+         SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+
          loader.DoWork += new DoWorkEventHandler(loader_DoWork);
          loader.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
          loader.WorkerReportsProgress = true;
