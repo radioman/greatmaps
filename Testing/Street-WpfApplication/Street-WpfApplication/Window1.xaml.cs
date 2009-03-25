@@ -34,7 +34,7 @@ namespace Street_WpfApplication
       {
          InitializeComponent();
 
-         for(int i = 0; i < 6; i++)
+         for(int i = 0; i < 20; i++)
          {
             StackPanel p = new StackPanel();
             p.Orientation = Orientation.Horizontal;
@@ -44,7 +44,7 @@ namespace Street_WpfApplication
          }
 
          // removes white lines between tiles!
-         SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+         //SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
 
          loader.DoWork += new DoWorkEventHandler(loader_DoWork);
          loader.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
@@ -71,24 +71,58 @@ namespace Street_WpfApplication
          string panoId = "4fe6hEN9GJC6thoQBcgv0Q";
          int zoom = 4;
 
-         for(int y = 0; y <= 5; y++)
-         {
-            for(int x = 0; x <= 12; x++)
-            {
-               ImageSource src = Get(string.Format("http://cbk{0}.google.com/cbk?output=tile&panoid={1}&zoom={2}&x={3}&y={4}&cb_client=maps_sv", (x + 2 * y) % 3, panoId, zoom, x, y));
+         //0, 1
+         //1, 2   
+         //2, 4
+         //3, 7   
+         //4, 13  
+         //5, 26  
 
-               Pass p = new Pass();
-               p.src = src;
+         for(int y = 0; y <= zoom; y++)
+         {
+            for(int x = 0; x < 13; x++)
+            {
+               Pass p = new Pass();                
                p.Y = y;
-               
+
+               string fl = "Tiles\\" + zoom + "\\img_" + x + "_" + y + ".jpg";
+               string dr = System.IO.Path.GetDirectoryName(fl);
+               if(!Directory.Exists(dr))
+               {
+                  Directory.CreateDirectory(dr);
+               }
+               if(!File.Exists(fl))
+               {
+                  ImageSource src = Get(string.Format("http://cbk{0}.google.com/cbk?output=tile&panoid={1}&zoom={2}&x={3}&y={4}&cb_client=maps_sv", (x + 2 * y) % 3, panoId, zoom, x, y));
+                  p.src = src;
+                  SaveImg(src, fl);
+               }
+               else
+               {
+                  using(Stream s = File.OpenRead(fl))
+                  {
+                     p.src = FromStream(s);
+                  }
+               }
+
                loader.ReportProgress(0, p);
             }
          }
       }
 
+      void SaveImg(ImageSource src, string file)
+      {
+         using(Stream s = File.OpenWrite(file))
+         {
+            JpegBitmapEncoder e = new JpegBitmapEncoder();
+            e.Frames.Add(BitmapFrame.Create(src as BitmapSource));
+            e.Save(s);
+         }
+      }
+
       private void Window_Loaded(object sender, RoutedEventArgs e)
       {
-         loader.RunWorkerAsync();         
+         loader.RunWorkerAsync();
       }
 
       public Stream CopyStream(Stream inputStream)
@@ -179,7 +213,7 @@ namespace Street_WpfApplication
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                {
-                  Stream responseStream = CopyStream(response.GetResponseStream());
+                  using(Stream responseStream = CopyStream(response.GetResponseStream()))
                   {
                      ret = FromStream(responseStream);
                   }
