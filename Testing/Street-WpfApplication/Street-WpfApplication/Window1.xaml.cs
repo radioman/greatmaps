@@ -41,8 +41,9 @@ namespace Street_WpfApplication
 
                BitmapImage src = new BitmapImage();
                src.BeginInit();
-               src.UriSource = new Uri(string.Format("http://cbk{0}.google.com/cbk?output=tile&panoid={1}&zoom={2}&x={3}&y={4}&cb_client=maps_sv", (x*y)%3, panoId, zoom, x, y), UriKind.Absolute);
+               src.UriSource = new Uri(string.Format("http://cbk{0}.google.com/cbk?output=tile&panoid={1}&zoom={2}&x={3}&y={4}&cb_client=maps_sv", (x + 2 * y) % 3, panoId, zoom, x, y), UriKind.Absolute);
                src.CacheOption = BitmapCacheOption.OnLoad;
+               System.Threading.Thread.Sleep(100);
                src.EndInit();
 
                i.Source = src;
