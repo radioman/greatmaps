@@ -78,7 +78,7 @@ namespace Street_WpfApplication
          //4, 13  
          //5, 26  
 
-         for(int y = 0; y <= zoom; y++)
+         for(int y = 0; y <= zoom+1; y++)
          {
             for(int x = 0; x < 13; x++)
             {
