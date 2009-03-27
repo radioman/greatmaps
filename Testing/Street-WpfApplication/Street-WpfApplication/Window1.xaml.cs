@@ -14,6 +14,8 @@ using System.Windows.Shapes;
 using System.Net;
 using System.IO;
 using System.ComponentModel;
+using System.Windows.Media.Media3D;
+using System.Diagnostics;
 
 namespace Street_WpfApplication
 {
@@ -21,6 +23,7 @@ namespace Street_WpfApplication
    {
       public ImageSource src;
       public int Y;
+      public int X;
    }
 
    /// <summary>
@@ -29,19 +32,11 @@ namespace Street_WpfApplication
    public partial class Window1 : Window
    {
       BackgroundWorker loader = new BackgroundWorker();
+      Model3DGroup _model3dGroup = new Model3DGroup();
 
       public Window1()
       {
          InitializeComponent();
-
-         for(int i = 0; i < 20; i++)
-         {
-            StackPanel p = new StackPanel();
-            p.Orientation = Orientation.Horizontal;
-            p.Height = 71;
-
-            sp.Children.Add(p);
-         }
 
          // removes white lines between tiles!
          //SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
@@ -49,6 +44,74 @@ namespace Street_WpfApplication
          loader.DoWork += new DoWorkEventHandler(loader_DoWork);
          loader.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
          loader.WorkerReportsProgress = true;
+
+         ModelVisual3D model3d = new ModelVisual3D();
+         {
+            model3d.Content = _model3dGroup;
+
+            AmbientLight light = new AmbientLight(Colors.White);
+            _model3dGroup.Children.Add(light);
+
+            view.Children.Add(model3d);
+         }
+      }
+
+      private void AddImage(ImageSource img, double zOffset, double xOffset, double yOffset)
+      {
+         try
+         {
+            MeshGeometry3D mesh3d = new MeshGeometry3D();
+            mesh3d.Positions.Add(new Point3D(-0.5, 0.5, 0));
+            mesh3d.Positions.Add(new Point3D(0.5, 0.5, 0));
+            mesh3d.Positions.Add(new Point3D(-0.5, -0.5, 0));
+            mesh3d.Positions.Add(new Point3D(0.5, -0.5, 0));
+
+            mesh3d.TriangleIndices.Add(0);
+            mesh3d.TriangleIndices.Add(2);
+            mesh3d.TriangleIndices.Add(1);
+            mesh3d.TriangleIndices.Add(1);
+            mesh3d.TriangleIndices.Add(2);
+            mesh3d.TriangleIndices.Add(3);
+
+            mesh3d.TextureCoordinates.Add(new Point(0, 0));
+            mesh3d.TextureCoordinates.Add(new Point(1, 0));
+            mesh3d.TextureCoordinates.Add(new Point(0, 1));
+            mesh3d.TextureCoordinates.Add(new Point(1, 1));
+
+            DiffuseMaterial side5Material = new DiffuseMaterial(new SolidColorBrush(Colors.DarkGray));
+            DiffuseMaterial imgBrush = new DiffuseMaterial(new ImageBrush(img));
+
+            GeometryModel3D gm3d = new GeometryModel3D();
+            gm3d.Geometry = mesh3d;
+            gm3d.Material = imgBrush;
+
+            Transform3DGroup transformGroup = new Transform3DGroup();
+            {
+               // gotta set where we want to rotate around. We don't want to rotate around the world axis, which would be the default ...
+               RotateTransform3D rotateTransform = new RotateTransform3D();
+               rotateTransform.CenterX = xOffset;
+               rotateTransform.CenterZ = zOffset;
+               rotateTransform.CenterY = yOffset;
+
+               // we'll need a default axis angle so that we can animate it later ...
+               rotateTransform.Rotation = new AxisAngleRotation3D(new Vector3D(0, 0, 0), 0);
+
+               // move the object into the proper location in 3d space ...
+               transformGroup.Children.Add(new TranslateTransform3D(xOffset, yOffset, zOffset));
+
+               // add the rotation 
+               transformGroup.Children.Add(rotateTransform);
+            }
+
+            // throw them together and put them into the group
+            gm3d.Transform = transformGroup;
+
+            _model3dGroup.Children.Add(gm3d);
+         }
+         catch(Exception ex)
+         {
+            Debug.WriteLine(ex);
+         }
       }
 
       void loader_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -61,8 +124,10 @@ namespace Street_WpfApplication
             i.Source = p.src;
             i.Stretch = Stretch.UniformToFill;
 
-            StackPanel pn = sp.Children[p.Y] as StackPanel;
-            pn.Children.Add(i);
+            // add to viewport
+            {
+               AddImage(p.src, -10, p.X-6, -p.Y+2);
+            }
          }
       }
 
@@ -84,6 +149,7 @@ namespace Street_WpfApplication
             {
                Pass p = new Pass();                
                p.Y = y;
+               p.X = x;
 
                string fl = "Tiles\\" + zoom + "\\img_" + x + "_" + y + ".jpg";
                string dr = System.IO.Path.GetDirectoryName(fl);
@@ -108,6 +174,8 @@ namespace Street_WpfApplication
                loader.ReportProgress(0, p);
             }
          }
+         GC.Collect();
+         GC.WaitForPendingFinalizers();
       }
 
       void SaveImg(ImageSource src, string file)
