@@ -291,17 +291,25 @@ namespace Street_WpfApplication
       Point lastPos;
       private void Window_MouseMove(object sender, MouseEventArgs e)
       {
-         Point p = Mouse.GetPosition(view);
-
-         if(lastPos.X != 0 && lastPos.Y != 0)
+         if(e.LeftButton == MouseButtonState.Pressed)
          {
-            Vector3D look = cam.LookDirection;
-            look.X -= (lastPos.X - p.X)/500.0;
-            look.Y += (lastPos.Y - p.Y)/500.0;
-            cam.LookDirection = look;
-         }
+            Point p = Mouse.GetPosition(view);
 
-         lastPos = p;
+            if(lastPos.X != 0 && lastPos.Y != 0)
+            {
+               Vector3D look = cam.LookDirection;
+               look.X -= (lastPos.X - p.X)/500.0;
+               look.Y += (lastPos.Y - p.Y)/500.0;
+               cam.LookDirection = look;
+            }
+
+            lastPos = p;
+         }
+      }
+
+      private void Window_MouseUp(object sender, MouseButtonEventArgs e)
+      {
+         lastPos = new Point();
       }
    }
 
