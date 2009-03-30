@@ -62,7 +62,7 @@ namespace Street_WpfApplication
 
          Canvas canvas = new Canvas();
          canvas.Children.Add(buff);
-         canvas.Width = 2560;
+         canvas.Width = 2130;
          canvas.Height = 1144;
 
          canvas.UpdateLayout();
