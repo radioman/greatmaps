@@ -1,17 +1,8 @@
 ﻿<Window x:Class="Street_WpfApplication.Window1"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ctrl="clr-namespace:Street_WpfApplication"
     Title="StreetView, raw mode testing" Height="475" Width="938" Loaded="Window_Loaded"
-    Background="Black" MouseMove="Window_MouseMove" MouseUp="Window_MouseUp">
-    <Viewport3D Name="view" ClipToBounds="True">
-        <Viewport3D.Camera>
-            <PerspectiveCamera x:Name="cam" 
-              FarPlaneDistance="45"
-              LookDirection="0,0,-1"
-              UpDirection="0,1,0"
-              NearPlaneDistance="1"
-              Position="0,0,10"
-              FieldOfView="45" />
-        </Viewport3D.Camera>
-    </Viewport3D>
+    Background="Black">
+    <ctrl:PanoramaViewer x:Name="Viewer" MouseLeftButtonDown="Viewer_MouseLeftButtonDown" MouseMove="Viewer_MouseMove" />
 </Window>

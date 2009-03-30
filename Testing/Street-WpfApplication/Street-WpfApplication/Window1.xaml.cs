@@ -25,103 +25,157 @@ namespace Street_WpfApplication
    public partial class Window1 : Window
    {
       BackgroundWorker loader = new BackgroundWorker();
-      Model3DGroup _model3dGroup = new Model3DGroup();
+      //Model3DGroup _model3dGroup = new Model3DGroup();
+
+      StackPanel buff = new StackPanel();
 
       public Window1()
       {
          InitializeComponent();
+         Viewer.MouseLeftButtonDown += new MouseButtonEventHandler(Viewer_MouseLeftButtonDown);
+         Viewer.MouseMove += new MouseEventHandler(Viewer_MouseMove);
+
+         buff.Orientation = Orientation.Vertical;
 
          // removes white lines between tiles!
-         //SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+         SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
 
          loader.DoWork += new DoWorkEventHandler(loader_DoWork);
          loader.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
+         loader.RunWorkerCompleted += new RunWorkerCompletedEventHandler(loader_RunWorkerCompleted);
          loader.WorkerReportsProgress = true;
 
-         ModelVisual3D model3d = new ModelVisual3D();
-         {
-            model3d.Content = _model3dGroup;
+         //ModelVisual3D model3d = new ModelVisual3D();
+         //{
+         //   model3d.Content = _model3dGroup;
 
-            AmbientLight light = new AmbientLight(Colors.White);
-            _model3dGroup.Children.Add(light);
+         //   AmbientLight light = new AmbientLight(Colors.White);
+         //   _model3dGroup.Children.Add(light);
 
-            view.Children.Add(model3d);
-         }
+         //   view.Children.Add(model3d);
+         //}
       }
 
-      private void AddImage(ImageSource img, double zOffset, double xOffset, double yOffset)
+      void loader_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
       {
-         try
-         {
-            MeshGeometry3D mesh3d = new MeshGeometry3D();
-            mesh3d.Positions.Add(new Point3D(-0.5, 0.5, 0));
-            mesh3d.Positions.Add(new Point3D(0.5, 0.5, 0));
-            mesh3d.Positions.Add(new Point3D(-0.5, -0.5, 0));
-            mesh3d.Positions.Add(new Point3D(0.5, -0.5, 0));
+         buff.UpdateLayout();
 
-            mesh3d.TriangleIndices.Add(0);
-            mesh3d.TriangleIndices.Add(2);
-            mesh3d.TriangleIndices.Add(1);
-            mesh3d.TriangleIndices.Add(1);
-            mesh3d.TriangleIndices.Add(2);
-            mesh3d.TriangleIndices.Add(3);
+         Canvas canvas = new Canvas();
+         canvas.Children.Add(buff);
+         canvas.Width = 2560;
+         canvas.Height = 1144;
 
-            mesh3d.TextureCoordinates.Add(new Point(0, 0));
-            mesh3d.TextureCoordinates.Add(new Point(1, 0));
-            mesh3d.TextureCoordinates.Add(new Point(0, 1));
-            mesh3d.TextureCoordinates.Add(new Point(1, 1));
+         canvas.UpdateLayout();
 
-            DiffuseMaterial side5Material = new DiffuseMaterial(new SolidColorBrush(Colors.DarkGray));
-            DiffuseMaterial imgBrush = new DiffuseMaterial(new ImageBrush(img));
+         canvas.Measure(new Size((int) canvas.Width, (int) canvas.Height));
+         canvas.Arrange(new Rect(new Size((int) canvas.Width, (int) canvas.Height)));
+         int Height = ((int) (canvas.ActualHeight));
+         int Width = ((int) (canvas.ActualWidth));
 
-            GeometryModel3D gm3d = new GeometryModel3D();
-            gm3d.Geometry = mesh3d;
-            gm3d.Material = imgBrush;
+         RenderTargetBitmap _RenderTargetBitmap = new RenderTargetBitmap(Width, Height, 96, 96, PixelFormats.Pbgra32);
+         _RenderTargetBitmap.Render(buff);
 
-            Transform3DGroup transformGroup = new Transform3DGroup();
-            {
-               // gotta set where we want to rotate around. We don't want to rotate around the world axis, which would be the default ...
-               RotateTransform3D rotateTransform = new RotateTransform3D();
-               rotateTransform.CenterX = xOffset;
-               rotateTransform.CenterZ = zOffset;
-               rotateTransform.CenterY = yOffset;
+         Image img = new Image();              
+         img.Source = _RenderTargetBitmap;
+         //this.Content = img;
 
-               // we'll need a default axis angle so that we can animate it later ...
-               rotateTransform.Rotation = new AxisAngleRotation3D(new Vector3D(0, 0, 0), 0);
-
-               // move the object into the proper location in 3d space ...
-               transformGroup.Children.Add(new TranslateTransform3D(xOffset, yOffset, zOffset));
-
-               // add the rotation 
-               transformGroup.Children.Add(rotateTransform);
-            }
-
-            // throw them together and put them into the group
-            gm3d.Transform = transformGroup;
-
-            _model3dGroup.Children.Add(gm3d);
-         }
-         catch(Exception ex)
-         {
-            Debug.WriteLine(ex);
-         }
+         Viewer.PanoramaImage = _RenderTargetBitmap;
       }
+
+      Vector RotationVector = new Vector();
+      Point DownPoint = new Point();
+      void Viewer_MouseMove(object sender, MouseEventArgs e)
+      {
+
+         if(e.LeftButton == MouseButtonState.Released)
+            return;
+         Vector Offset = Point.Subtract(e.GetPosition(Viewer), DownPoint) * 0.25;
+
+         Viewer.RotationY = RotationVector.Y + Offset.X;
+         Viewer.RotationX = RotationVector.X + Offset.Y;
+      }
+
+      void Viewer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+      {
+         DownPoint = e.GetPosition(Viewer);
+         RotationVector.X = Viewer.RotationX;
+         RotationVector.Y = Viewer.RotationY;
+      }
+
+      //private void AddImage(ImageSource img, double zOffset, double xOffset, double yOffset)
+      //{
+      //   try
+      //   {
+      //      MeshGeometry3D mesh3d = new MeshGeometry3D();
+      //      mesh3d.Positions.Add(new Point3D(-0.5, 0.5, 0));
+      //      mesh3d.Positions.Add(new Point3D(0.5, 0.5, 0));
+      //      mesh3d.Positions.Add(new Point3D(-0.5, -0.5, 0));
+      //      mesh3d.Positions.Add(new Point3D(0.5, -0.5, 0));
+
+      //      mesh3d.TriangleIndices.Add(0);
+      //      mesh3d.TriangleIndices.Add(2);
+      //      mesh3d.TriangleIndices.Add(1);
+      //      mesh3d.TriangleIndices.Add(1);
+      //      mesh3d.TriangleIndices.Add(2);
+      //      mesh3d.TriangleIndices.Add(3);
+
+      //      mesh3d.TextureCoordinates.Add(new Point(0, 0));
+      //      mesh3d.TextureCoordinates.Add(new Point(1, 0));
+      //      mesh3d.TextureCoordinates.Add(new Point(0, 1));
+      //      mesh3d.TextureCoordinates.Add(new Point(1, 1));
+
+      //      DiffuseMaterial side5Material = new DiffuseMaterial(new SolidColorBrush(Colors.DarkGray));
+      //      DiffuseMaterial imgBrush = new DiffuseMaterial(new ImageBrush(img));
+
+      //      GeometryModel3D gm3d = new GeometryModel3D();
+      //      gm3d.Geometry = mesh3d;
+      //      gm3d.Material = imgBrush;
+
+      //      Transform3DGroup transformGroup = new Transform3DGroup();
+      //      {
+      //         // gotta set where we want to rotate around. We don't want to rotate around the world axis, which would be the default ...
+      //         RotateTransform3D rotateTransform = new RotateTransform3D();
+      //         rotateTransform.CenterX = xOffset;
+      //         rotateTransform.CenterZ = zOffset;
+      //         rotateTransform.CenterY = yOffset;
+
+      //         // we'll need a default axis angle so that we can animate it later ...
+      //         rotateTransform.Rotation = new AxisAngleRotation3D(new Vector3D(0, 0, 0), 0);
+
+      //         // move the object into the proper location in 3d space ...
+      //         transformGroup.Children.Add(new TranslateTransform3D(xOffset, yOffset, zOffset));
+
+      //         // add the rotation 
+      //         transformGroup.Children.Add(rotateTransform);
+      //      }
+
+      //      // throw them together and put them into the group
+      //      gm3d.Transform = transformGroup;
+
+      //      _model3dGroup.Children.Add(gm3d);
+      //   }
+      //   catch(Exception ex)
+      //   {
+      //      Debug.WriteLine(ex);
+      //   }
+      //}
 
       void loader_ProgressChanged(object sender, ProgressChangedEventArgs e)
       {
-         if(e.ProgressPercentage == 0)
+         if(e.ProgressPercentage == 100)
          {
             Pass p = e.UserState as Pass;
 
             Image i = new Image();
             i.Source = p.src;
-            i.Stretch = Stretch.UniformToFill;
-
-            // add to viewport
-            {
-               AddImage(p.src, -10, p.X-6, -p.Y+2);
-            }
+            (buff.Children[buff.Children.Count-1] as StackPanel).Children.Add(i);            
          }
+         else if(e.ProgressPercentage == 0)
+         {
+            StackPanel ph = new StackPanel();
+            ph.Orientation = Orientation.Horizontal;
+            buff.Children.Add(ph);
+         }         
       }
 
       void loader_DoWork(object sender, DoWorkEventArgs e)
@@ -138,9 +192,11 @@ namespace Street_WpfApplication
 
          for(int y = 0; y <= zoom+1; y++)
          {
+            loader.ReportProgress(0);
+
             for(int x = 0; x < 13; x++)
             {
-               Pass p = new Pass();                
+               Pass p = new Pass();
                p.Y = y;
                p.X = x;
 
@@ -164,8 +220,8 @@ namespace Street_WpfApplication
                   }
                }
 
-               loader.ReportProgress(0, p);
-            }
+               loader.ReportProgress(100, p);
+            }            
          }
          GC.Collect();
          GC.WaitForPendingFinalizers();
@@ -286,30 +342,6 @@ namespace Street_WpfApplication
             ret = null;
          }
          return ret;
-      }
-
-      Point lastPos;
-      private void Window_MouseMove(object sender, MouseEventArgs e)
-      {
-         if(e.LeftButton == MouseButtonState.Pressed)
-         {
-            Point p = Mouse.GetPosition(view);
-
-            if(lastPos.X != 0 && lastPos.Y != 0)
-            {
-               Vector3D look = cam.LookDirection;
-               look.X -= (lastPos.X - p.X)/500.0;
-               look.Y += (lastPos.Y - p.Y)/500.0;
-               cam.LookDirection = look;
-            }
-
-            lastPos = p;
-         }
-      }
-
-      private void Window_MouseUp(object sender, MouseButtonEventArgs e)
-      {
-         lastPos = new Point();
       }
    }
 
