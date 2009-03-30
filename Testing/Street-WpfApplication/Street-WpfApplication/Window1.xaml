@@ -4,5 +4,5 @@
     xmlns:ctrl="clr-namespace:Street_WpfApplication"
     Title="StreetView, raw mode testing" Height="475" Width="938" Loaded="Window_Loaded"
     Background="Black">
-    <ctrl:PanoramaViewer x:Name="Viewer" MouseLeftButtonDown="Viewer_MouseLeftButtonDown" MouseMove="Viewer_MouseMove" />
+    <ctrl:PanoramaViewer x:Name="Viewer" MouseLeftButtonDown="Viewer_MouseLeftButtonDown" MouseLeftButtonUp="Viewer_MouseLeftButtonUp" MouseMove="Viewer_MouseMove" />
 </Window>

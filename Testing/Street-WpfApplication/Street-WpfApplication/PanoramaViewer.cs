@@ -168,12 +168,15 @@ namespace Street_WpfApplication
          PanoramaObject.Content = PanoramaGeometry;
 
          RotateTransform3D RotateTransform = new RotateTransform3D();
+
+         double x = 1.0;
          ScaleTransform3D ScaleTransform = new ScaleTransform3D()
          {
-            ScaleX = 1,
-            ScaleY = 1.65,
-            ScaleZ = 1
+            ScaleX = x*1,
+            ScaleY = x*1.65,
+            ScaleZ = x*1
          };
+
          Transform3DGroup Group = new Transform3DGroup();
          PanoramaRotation = new QuaternionRotation3D();
          Group.Children.Add(ScaleTransform);
