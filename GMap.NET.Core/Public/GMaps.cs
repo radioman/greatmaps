@@ -80,6 +80,11 @@ namespace GMapNET
       /// </summary>
       public readonly Size TileSize = new Size(256, 256);
 
+      /// <summary>
+      /// Radius of the Earth
+      /// </summary>
+      public double EarthRadiusKm = 6376.5;
+
       #region -- google maps constants --
       readonly List<double> Uu = new List<double>();
       readonly List<double> Vu = new List<double>();
@@ -319,6 +324,27 @@ namespace GMapNET
          return Cache.Instance.ExportMapDataToDB(file, db.ToString());
       }
 
+      /// <summary>
+      /// gets distance between twp coordinates
+      /// </summary>
+      /// <param name="lat1"></param>
+      /// <param name="lng1"></param>
+      /// <param name="lat2"></param>
+      /// <param name="lng2"></param>
+      /// <returns></returns>
+      public double GetDistance(double lat1, double lng1, double lat2, double lng2)
+      {
+         double dLat1InRad = lat1 * (Math.PI / 180);
+         double dLong1InRad = lng1 * (Math.PI / 180);
+         double dLat2InRad = lat2 * (Math.PI / 180);
+         double dLong2InRad = lng2 * (Math.PI / 180);
+         double dLongitude = dLong2InRad - dLong1InRad;
+         double dLatitude = dLat2InRad - dLat1InRad;
+         double a = Math.Pow(Math.Sin(dLatitude / 2), 2) + Math.Cos(dLat1InRad) * Math.Cos(dLat2InRad) * Math.Pow(Math.Sin(dLongitude / 2), 2);
+         double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+         double dDistance = EarthRadiusKm * c;
+         return dDistance;
+      } 
       #endregion
 
       #region -- URL generation --

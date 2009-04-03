@@ -34,7 +34,7 @@ namespace GMapNET
 
             return null;
          }
-      }
+      }   
 
       public MapRoute(List<PointLatLng> points, string name)
       {
@@ -43,6 +43,21 @@ namespace GMapNET
          LocalPoints = new List<Point>(Points.Count);
 
          Name = name;       
+      }
+
+      public double Distance
+      {
+         get
+         {
+            double distance = 0.0;
+
+            for(int i = 1; i < Points.Count; i++)
+            {
+               distance += GMaps.Instance.GetDistance(Points[i - 1].Lat, Points[i - 1].Lng, Points[i].Lat, Points[i].Lng);
+            }
+
+            return distance;
+         }
       }
    }
 }
