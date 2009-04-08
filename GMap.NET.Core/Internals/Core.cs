@@ -220,21 +220,6 @@ namespace GMapNET.Internals
       public event TileLoadStart OnTileLoadStart;
 
       /// <summary>
-      /// occurs when clicked on marker
-      /// </summary>
-      //public event MarkerClick OnMarkerClick;
-
-      /// <summary>
-      /// occurs on mouse enters marker area
-      /// </summary>
-      //public event MarkerEnter OnMarkerEnter;
-
-      /// <summary>
-      /// occurs on mouse leaves marker area
-      /// </summary>
-      //public event MarkerLeave OnMarkerLeave; 
-
-      /// <summary>
       /// occurs on tile loaded
       /// </summary>
       public event NeedInvalidation OnNeedInvalidation;
@@ -390,91 +375,6 @@ namespace GMapNET.Internals
          if(OnCurrentPositionChanged != null)
             OnCurrentPositionChanged(currentPosition);
       }       
-
-      /// <summary>
-      /// gets rectangle around marker
-      /// </summary>
-      /// <param name="e"></param>
-      /// <param name="m"></param>
-      /// <returns></returns>
-      //public Rectangle GetRectForMarker(Point e, Marker m)
-      //{
-      //   Rectangle rc1 = new Rectangle();
-
-      //   /*
-      //   rc1.Location = new Point(e.X - renderOffset.X, e.Y - renderOffset.Y);
-      //   if(m.Type == MarkerType.Small)
-      //   {
-      //      rc1.Size = new Size(8, 10);
-      //      rc1.Offset(-rc1.Width/2, 10);
-      //   }
-      //   else if(m.Type == MarkerType.Medium)
-      //   {
-      //      rc1.Size = new Size(18, 22);
-      //      rc1.Offset(-rc1.Width/2, 10);
-      //   }
-      //   else // custom
-      //   {
-      //      //rc1.Size = m.CustomMarker.Size;
-
-      //      switch(m.CustomMarkerAlign)
-      //      {
-      //         case CustomMarkerAlign.MiddleMiddle:
-      //         {
-      //            rc1.Offset(-rc1.Width/2, -rc1.Height/2);
-      //         }
-      //         break;
-
-      //         case CustomMarkerAlign.Manual:
-      //         {
-      //            rc1.Offset(-rc1.Width+m.CustomMarkerCenter.X, -rc1.Height+m.CustomMarkerCenter.Y);
-      //         }
-      //         break;
-      //      }
-      //   }
-      //   */
-
-      //   return rc1;
-      //}
-
-      ///// <summary>
-      ///// checks if some marker was clicked
-      ///// </summary>
-      ///// <param name="e"></param>
-      //public void CheckIfClickOnMarker(Point e)
-      //{
-      //   lock(markers)
-      //   {
-      //      for(int i = 0; i < markers.Count; i++)
-      //      {
-      //         Marker m = markers[i];
-      //         if(m.Visible)
-      //         {
-      //            Rectangle rc1 = GetRectForMarker(e, m);
-      //            {
-      //               if(rc1.Contains(GMaps.Instance.FromLatLngToPixel(m.Position, Zoom)))
-      //               {
-      //                  if(OnNeedInvalidation != null)
-      //                  {
-      //                     OnNeedInvalidation();
-      //                  }
-
-      //                  if(OnMarkerClick != null)
-      //                  {
-      //                     if(!mouseVisible)
-      //                     {
-      //                        mouseVisible = true;
-      //                     }
-
-      //                     OnMarkerClick(m);
-      //                     break;
-      //                  }
-      //               }
-      //            }
-      //         }
-      //      }
-      //   }
-      //}
 
       /// <summary>
       /// gets max zoom level to fit rectangle

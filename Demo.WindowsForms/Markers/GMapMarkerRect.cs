@@ -5,12 +5,10 @@ namespace GMapNET
    public class GMapMarkerRect : GMapMarker
    {
       public Pen Pen;
-      public Size Size;
 
       public GMapMarkerRect(PointLatLng p) : base(p)
       {
          Pen = new Pen(Brushes.Red, 5);
-         Size = new Size(100, 100);
       }
 
       public override void OnRender(Graphics g)

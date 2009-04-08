@@ -35,10 +35,9 @@ namespace GMapNET
          }
       }        
 
-      public GMapMarker(PointLatLng pos)
+      public GMapMarker(PointLatLng pos) : base(pos)
       {
          this.IsDragging = false;
-         this.Position = pos;
          this.ToolTipText = string.Empty;
          this.TooltipMode = MarkerTooltipMode.OnMouseOver;
          this.Visible = true;
