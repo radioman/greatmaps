@@ -6,14 +6,39 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 using GMapNET;
 using GMapNET.Internals;
 
 namespace System.Windows.Controls
 {
-   public class GMapItem
+   public class GMapItem : INotifyPropertyChanged
    {
+      public event PropertyChangedEventHandler PropertyChanged;
+      public void OnPropertyChanged(string name)
+      {
+         PropertyChangedEventHandler handler = PropertyChanged;
+         if(handler != null)
+         {
+            handler(this, new PropertyChangedEventArgs(name));
+         }
+      }
+
+      UIElement shape;
+      public UIElement Shape
+      {
+         get
+         {
+            return shape;
+         }
+         set
+         {
+            shape = value;
+            OnPropertyChanged("Shape");
+         }
+      }
+
       Point position;
       public Point Position
       {
@@ -24,67 +49,13 @@ namespace System.Windows.Controls
          set
          {
             position = value;
-         }
-      }
-
-      string name;
-      public string Name
-      {
-         get
-         {
-            return name;
-         }
-         set
-         {
-            name = value;
-         }
-      }
-
-      Brush background;
-      public Brush Background
-      {
-         get
-         {
-            return background;
-         }
-         set
-         {
-            background = value;
-         }
-      }
-
-      double width;
-      public double Width
-      {
-         get
-         {
-            return width;
-         }
-         set
-         {
-            width = value;
-         }
-      }
-
-      double height;
-      public double Height
-      {
-         get
-         {
-            return height;
-         }
-         set
-         {
-            height = value;
+            OnPropertyChanged("Position");
          }
       }
 
       public GMapItem()
       {
          Position = new Point(10, 10);
-         Width = 50;
-         Height = 50;
-         Background = Brushes.Red;
       }
    }
 
@@ -104,22 +75,51 @@ namespace System.Windows.Controls
 
       public GMap()
       {
-         this.ItemsPanel = new ItemsPanelTemplate(new FrameworkElementFactory(typeof(Canvas)));
-         this.ItemTemplate = new DataTemplate(typeof(GMapItem));
+         #region -- templates --
+         
+         #region -- xaml --
+         //  <ItemsControl Name="figures">
+         //    <ItemsControl.ItemTemplate>
+         //        <DataTemplate>
+         //            <ContentPresenter Content="{Binding Path=Shape}" />
+         //        </DataTemplate>
+         //    </ItemsControl.ItemTemplate>
+         //    <ItemsControl.ItemsPanel>
+         //        <ItemsPanelTemplate>
+         //            <Canvas />
+         //        </ItemsPanelTemplate>
+         //    </ItemsControl.ItemsPanel>
+         //    <ItemsControl.ItemContainerStyle>
+         //        <Style>
+         //            <Setter Property="Canvas.Left" Value="{Binding Path=Pos.X}"/>
+         //            <Setter Property="Canvas.Top" Value="{Binding Path=Pos.Y}"/>
+         //        </Style>
+         //    </ItemsControl.ItemContainerStyle>
+         //</ItemsControl> 
+         #endregion
 
-         FrameworkElementFactory panel = new FrameworkElementFactory(typeof(Canvas));
+         DataTemplate dt = new DataTemplate(typeof(GMapItem));
          {
-            // canvas
-            panel.SetBinding(Canvas.BackgroundProperty, new Binding("Background"));
-            panel.SetBinding(Canvas.WidthProperty, new Binding("Width"));
-            panel.SetBinding(Canvas.HeightProperty, new Binding("Height"));
-
-            // textBlock
-            FrameworkElementFactory name = new FrameworkElementFactory(typeof(TextBlock));
-            name.SetBinding(TextBlock.TextProperty, new Binding("Name"));
-            panel.AppendChild(name);
+            FrameworkElementFactory fef = new FrameworkElementFactory(typeof(ContentPresenter));
+            fef.SetBinding(ContentPresenter.ContentProperty, new Binding("Shape"));
+            dt.VisualTree = fef;
          }
-         this.ItemTemplate.VisualTree = panel;
+         ItemTemplate = dt;
+
+         FrameworkElementFactory factoryPanel = new FrameworkElementFactory(typeof(Canvas));
+         {
+            ItemsPanelTemplate template = new ItemsPanelTemplate();
+            template.VisualTree = factoryPanel;
+            ItemsPanel = template;
+         }
+
+         Style st = new Style();
+         {
+            st.Setters.Add(new Setter(Canvas.LeftProperty, new Binding("Position.X")));
+            st.Setters.Add(new Setter(Canvas.TopProperty, new Binding("Position.Y")));
+         }
+         ItemContainerStyle = st; 
+         #endregion
   
          ClipToBounds = true;
          SnapsToDevicePixels = true;
@@ -136,6 +136,8 @@ namespace System.Windows.Controls
          SizeChanged += new SizeChangedEventHandler(GMap_SizeChanged);
          Loaded += new RoutedEventHandler(GMap_Loaded);
 
+         this.ItemsSource = Objects;
+
          //GMapMarkerCircle c = new GMapMarkerCircle(this);
          //GMapMarkerRect c = new GMapMarkerRect(this);
          //GMapMarkerTriangle c = new GMapMarkerTriangle(this);
@@ -143,9 +145,13 @@ namespace System.Windows.Controls
          //c.Label.Content = "Maršrutas: 05\nMašina: 1245\nVairuotojas: Jonas P.\nLaikas: 2009.02.02 15:30:42";
          //c.Text = "R1";
          CurrentMarker = c;
-         AddMarker(CurrentMarker);
+         //AddMarker(CurrentMarker);
 
-         worker.DoWork += new DoWorkEventHandler(worker_DoWork);         
+         // test         
+         worker_DoWork(null, null);
+
+         // test using threading, any ideas how to create shapes there?
+         //worker.DoWork += new DoWorkEventHandler(worker_DoWork);
       }
 
       int x = 50;
@@ -155,21 +161,22 @@ namespace System.Windows.Controls
          for(int i = 0; i < 20; i++)
          {
             GMapItem it = new GMapItem();
-            it.Name = "Name: worker " + y.ToString();
-            it.Background = Brushes.Blue;
             it.Position = new Point(x+=50, y+=40);
+
+            Shape el = new Ellipse();
+            {
+               el.Width = 25;
+               el.Height = 25;
+               el.Stroke = Brushes.Blue;
+               el.Fill = Brushes.Yellow;
+               el.StrokeThickness = 2;
+            }
+            it.Shape = el;  
+
             Objects.Add(it);
 
-            System.Threading.Thread.Sleep(1000);
+            //System.Threading.Thread.Sleep(1000);
          }
-      }
-
-      protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
-      {
-         FrameworkElement contentitem = element as FrameworkElement;
-         contentitem.SetBinding(Canvas.LeftProperty, new Binding("Position.X"));
-         contentitem.SetBinding(Canvas.TopProperty, new Binding("Position.Y"));
-         base.PrepareContainerForItemOverride(element, item);
       }
 
       /// <summary>
@@ -200,7 +207,6 @@ namespace System.Windows.Controls
       {
          Core.StartSystem();
 
-         this.ItemsSource = Objects;
          worker.RunWorkerAsync();
       }
 
@@ -320,12 +326,12 @@ namespace System.Windows.Controls
       #region UserControl Events
       protected override void OnRender(DrawingContext drawingContext)
       {
-         base.OnRender(drawingContext);
-
          if(Core.RenderMode == GMapNET.RenderMode.WPF)
          {
             DrawMapWPF(drawingContext);
          }
+
+         base.OnRender(drawingContext);
       }
 
       protected override void OnMouseWheel(MouseWheelEventArgs e)
