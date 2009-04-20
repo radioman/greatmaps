@@ -477,8 +477,8 @@ namespace GMapNET.Internals
          renderOffset.X = pt.X - dragPoint.X;
          renderOffset.Y = pt.Y - dragPoint.Y;
 
-         centerTileXYLocation.X = ((renderOffset.X)/-GMaps.Instance.TileSize.Width) + 2;
-         centerTileXYLocation.Y = ((renderOffset.Y)/-GMaps.Instance.TileSize.Height) + 2;
+         centerTileXYLocation.X = ((renderOffset.X)/-GMaps.Instance.TileSize.Width) + (int)(sizeOfMapArea.Width/1.66);
+         centerTileXYLocation.Y = ((renderOffset.Y)/-GMaps.Instance.TileSize.Height) + sizeOfMapArea.Height/2;
 
          if(centerTileXYLocation != centerTileXYLocationLast)
          {
