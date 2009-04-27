@@ -391,12 +391,20 @@ namespace System.Windows.Forms
 
       if(MarkersEnabled && !(Form.ModifierKeys == Keys.Control))
       {
+        // markers
         foreach(GMapMarker m in Markers)
         {
           if(m.Visible && region.Contains(m.LocalPosition.X, m.LocalPosition.Y))
           {
             m.OnRender(e.Graphics);
+          }
+        }
 
+        // tooltips above
+        foreach(GMapMarker m in Markers)
+        {
+          if(m.Visible && region.Contains(m.LocalPosition.X, m.LocalPosition.Y))
+          {
             if(m.IsMouseOver && !string.IsNullOrEmpty(m.ToolTipText))
             {
               DrawToolTip(e.Graphics, m, m.LocalPosition.X, m.LocalPosition.Y);
