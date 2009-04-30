@@ -228,11 +228,11 @@ namespace Demo.WindowsForms
       List<PointLatLng> route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, MainMap.Zoom);
       if(route != null)
       {
-        if(route.Count > 1)
-        {
-          route.Insert(0, start);
-          route.Add(end);
-        }
+        //if(route.Count > 1)
+        //{
+        //  route.Insert(0, start);
+        //  route.Add(end);
+        //}
 
         // add route
         MapRoute r = new GMapRoute(route, "test");

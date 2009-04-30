@@ -825,7 +825,7 @@ namespace GMapNET
                         //
                         string encoded = route.Substring(x, l).Replace("\\\\", "\\");
                         {
-                           int len = encoded.Length-1;
+                           int len = encoded.Length;
                            int index = 0;
                            double dlat = 0;
                            double dlng = 0;
