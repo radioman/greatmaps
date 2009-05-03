@@ -36,7 +36,6 @@ namespace Demo.WindowsForms
         MainMap.MapType = MapType.GoogleMap;
         MainMap.Zoom = 12;
         MainMap.CurrentMarkerEnabled = true;
-        //MainMap.CurrentMarkerStyle = CurrentMarkerType.GMap;
         MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
 
         // map events
@@ -66,6 +65,10 @@ namespace Demo.WindowsForms
         trackBar1.Maximum = 17;
         trackBar1.Value = MainMap.Zoom;
 
+        // zoom control
+        MouseWheel += new System.Windows.Forms.MouseEventHandler(MainForm_MouseWheel);
+
+        // set current mrker
         currentMarker = new GMapMarkerGoogleRed(MainMap.CurrentPosition);
         MainMap.Markers.Add(currentMarker);
 
@@ -73,9 +76,28 @@ namespace Demo.WindowsForms
         PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius");
         if(pos != null)
         {
+          currentMarker.Position = pos.Value;
+
           GMapMarker myCity = new GMapMarkerGoogleGreen(pos.Value);
+          myCity.TooltipMode = MarkerTooltipMode.Always;
+          myCity.ToolTipText = "Welcome to Lithuania! ;}";
           MainMap.Markers.Add(myCity);
         }
+      }
+    }
+
+    // control zoom with wheel
+    void MainForm_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+    {
+      if(e.Delta > 0)
+      {
+        if(trackBar1.Value != trackBar1.Maximum)
+          trackBar1.Value++;
+      }
+      else if(e.Delta < 0)
+      {
+        if(trackBar1.Value > trackBar1.Minimum)
+          trackBar1.Value--;
       }
     }
 
@@ -217,23 +239,9 @@ namespace Demo.WindowsForms
     // add test route
     private void button3_Click(object sender, EventArgs e)
     {
-      // klaipeda - vilnius
-      //PointLatLng start = new PointLatLng(55.70466, 21.2261);
-      //PointLatLng end = new PointLatLng(54.654769, 25.224609);
-
-      // testing route
-      //PointLatLng start = new PointLatLng(54.7290810525512, 25.2708721160889);
-      //PointLatLng end = new PointLatLng(54.710441321148, 25.314474105835);
-
       List<PointLatLng> route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, MainMap.Zoom);
       if(route != null)
       {
-        //if(route.Count > 1)
-        //{
-        //  route.Insert(0, start);
-        //  route.Add(end);
-        //}
-
         // add route
         MapRoute r = new GMapRoute(route, "test");
         MainMap.Routes.Add(r);
@@ -250,13 +258,6 @@ namespace Demo.WindowsForms
         MainMap.Markers.Add(m1);
         MainMap.Markers.Add(m2);
       }
-    }
-
-    private Random rand = new Random();
-    public T RandomEnum<T>()
-    {
-      T[] values = (T[]) Enum.GetValues(typeof(T));
-      return values[rand.Next(0, values.Length)];
     }
 
     // add marker on current position
