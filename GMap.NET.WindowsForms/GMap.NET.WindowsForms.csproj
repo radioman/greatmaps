@@ -61,6 +61,7 @@
     <Compile Include="Markers\GMapMarker.cs" />
     <Compile Include="Markers\GMapMarkerGoogleRed.cs" />
     <Compile Include="Markers\GMapMarkerCross.cs" />
+    <Compile Include="Overlay\GMapOverlay.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

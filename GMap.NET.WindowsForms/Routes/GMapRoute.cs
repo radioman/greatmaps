@@ -3,6 +3,9 @@ using System.Drawing;
 
 namespace GMapNET
 {
+   /// <summary>
+   /// GMap.NET route
+   /// </summary>
    public class GMapRoute : MapRoute
    {
       public Color Color;

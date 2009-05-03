@@ -30,6 +30,8 @@ namespace GMapNET.Internals
       public Rectangle tileRect = new Rectangle(new Point(0, 0), GMaps.Instance.TileSize);
       public Point tilePoint;
 
+      public Rectangle CurrentRegion;
+
       public readonly TileMatrix Matrix = new TileMatrix();
       BackgroundWorker boundsChecker = new BackgroundWorker();
       BackgroundWorker loader = new BackgroundWorker();

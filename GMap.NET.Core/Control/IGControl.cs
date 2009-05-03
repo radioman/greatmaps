@@ -89,15 +89,11 @@
       event CurrentPositionChanged OnCurrentPositionChanged;
       event TileLoadComplete OnTileLoadComplete;
       event TileLoadStart OnTileLoadStart;
-      //event MarkerClick OnMarkerClick;
-      //event MarkerEnter OnMarkerEnter;
-      //event MarkerLeave OnMarkerLeave;
       event MapDrag OnMapDrag;
       event MapZoomChanged OnMapZoomChanged;
 
       void ReloadMap();
       void GoToCurrentPosition();
-      //bool ZoomAndCenterMarkers();
 
       void SetCurrentPositionOnly(int x, int y);
       void SetCurrentPositionOnly(PointLatLng point);

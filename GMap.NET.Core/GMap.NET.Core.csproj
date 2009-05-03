@@ -40,6 +40,7 @@
       <HintPath>..\References\System.Data.SQLite.DLL</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Internals\PureImage.cs" />

@@ -1,56 +1,59 @@
 ﻿
 namespace GMapNET
 {
-  public abstract class MapObject
-  {
-    public PointLatLng Position;
-    public object Tag;
+   /// <summary>
+   /// represents object on the map
+   /// </summary>
+   public abstract class MapObject
+   {
+      public PointLatLng Position;
+      public object Tag;
 
-    Rectangle area;
-    public Point LocalPosition
-    {
-      get
+      Rectangle area;
+      public Point LocalPosition
       {
-        return area.Location;
+         get
+         {
+            return area.Location;
+         }
+         internal set
+         {
+            area.Location = value;
+         }
       }
-      internal set
-      {
-        area.Location = value;
-      }
-    }       
 
-    public Size Size
-    {
-      get
+      public Size Size
       {
-        return area.Size;
+         get
+         {
+            return area.Size;
+         }
+         set
+         {
+            area.Size = value;
+         }
       }
-      set
+
+      internal Rectangle LocalArea
       {
-        area.Size = value;
+         get
+         {
+            Rectangle ret = area;
+            ret.Offset(-Size.Width/2, -Size.Height/2);
+            return ret;
+         }
       }
-    }
 
-    internal Rectangle LocalArea
-    {
-      get
+      public MapObject()
       {
-        Rectangle ret = area;
-        ret.Offset(-Size.Width/2, -Size.Height/2);
-        return ret;
+         Position = PointLatLng.Empty;
+         LocalPosition = Point.Empty;
       }
-    }
 
-    public MapObject()
-    {
-      Position = PointLatLng.Empty;
-      LocalPosition = Point.Empty;
-    }
-
-    public MapObject(PointLatLng position)
-    {
-      Position = position;
-      LocalPosition = Point.Empty;  
-    }
-  }
+      public MapObject(PointLatLng position)
+      {
+         Position = position;
+         LocalPosition = Point.Empty;
+      }
+   }
 }
