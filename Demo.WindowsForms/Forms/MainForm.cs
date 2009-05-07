@@ -52,6 +52,7 @@ namespace Demo.WindowsForms
             MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
             MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
             MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
+            MainMap.OnEmptyTileError += new EmptyTileError(MainMap_OnEmptyTileError);
 
             // get map type
             comboBoxMapType.DataSource = Enum.GetValues(typeof(MapType));
@@ -103,6 +104,12 @@ namespace Demo.WindowsForms
                ground.Markers.Add(myCity);
             }
          }
+      }
+
+      // empty tile displayed
+      void MainMap_OnEmptyTileError(int zoom, Point pos)
+      {
+         MessageBox.Show("OnEmptyTileError, Zoom: " + zoom + ", " + pos.ToString(), "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
 
       // on shown, do not forget this! ;}

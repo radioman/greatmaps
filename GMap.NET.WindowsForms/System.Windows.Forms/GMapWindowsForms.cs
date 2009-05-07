@@ -29,6 +29,11 @@ namespace System.Windows.Forms
       public event MarkerLeave OnMarkerLeave;
 
       /// <summary>
+      /// occurs on empty tile displayed
+      /// </summary>
+      public event EmptyTileError OnEmptyTileError;
+
+      /// <summary>
       /// list of overlays, should be thread safe
       /// </summary>
       public readonly ObservableCollectionThreadSafe<GMapOverlay> Overlays = new ObservableCollectionThreadSafe<GMapOverlay>();
@@ -48,6 +53,7 @@ namespace System.Windows.Forms
       internal readonly Font CopyrightFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
       internal readonly Font MissingDataFont = new Font(FontFamily.GenericSansSerif, 11, FontStyle.Bold);
       internal readonly StringFormat CenterFormat = new StringFormat();
+      bool RaiseEmptyTileError = false;
 
       /// <summary>
       /// construct
@@ -118,7 +124,7 @@ namespace System.Windows.Forms
          {
             Invalidate(false);
          }
-      }                
+      }
 
       /// <summary>
       /// render map in GDI+
@@ -162,6 +168,16 @@ namespace System.Windows.Forms
                      {
                         g.FillRectangle(Brushes.Navy, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
                         g.DrawString(EmptyTileText, MissingDataFont, Brushes.White, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+
+                        // raise error
+                        if(OnEmptyTileError != null)
+                        {
+                           if(!RaiseEmptyTileError)
+                           {
+                              RaiseEmptyTileError = true;
+                              OnEmptyTileError(t.Zoom, t.Pos);                               
+                           }
+                        }
                      }
                   }
                }
@@ -446,6 +462,8 @@ namespace System.Windows.Forms
             Cursor.Show();
             Core.MouseVisible = true;
          }
+
+         RaiseEmptyTileError = false;
 
          base.OnMouseUp(e);
       }
