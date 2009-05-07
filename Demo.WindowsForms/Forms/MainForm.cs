@@ -34,6 +34,7 @@ namespace Demo.WindowsForms
             GMaps.Instance.UseRouteCache = true;
             GMaps.Instance.UseGeocoderCache = true;
             GMaps.Instance.UsePlacemarkCache = true;
+            GMaps.Instance.Mode = AccessMode.ServerAndCache;
 
             // set your proxy here if need
             //GMaps.Instance.Proxy = new WebProxy("10.2.0.100", 8080);

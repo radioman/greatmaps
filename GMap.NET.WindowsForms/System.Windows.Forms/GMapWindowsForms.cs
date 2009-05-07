@@ -38,10 +38,17 @@ namespace System.Windows.Forms
       /// </summary>
       public int MaxZoom;
 
+      /// <summary>
+      /// text on empty tiles
+      /// </summary>
+      public string EmptyTileText = "We are sorry, but we don't\nhave imagery at this zoom\nlevel for this region.";
+
       // internal stuff
       internal readonly Core Core = new Core();
       internal readonly Font CopyrightFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
-      
+      internal readonly Font MissingDataFont = new Font(FontFamily.GenericSansSerif, 11, FontStyle.Bold);
+      internal readonly StringFormat CenterFormat = new StringFormat();
+
       /// <summary>
       /// construct
       /// </summary>
@@ -62,6 +69,9 @@ namespace System.Windows.Forms
 
             RenderMode = RenderMode.GDI_PLUS;
             Core.CurrentRegion = new GMapNET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
+
+            CenterFormat.Alignment = StringAlignment.Center;
+            CenterFormat.LineAlignment = StringAlignment.Center;
 
             // overlay testing
             GMapOverlay ov = new GMapOverlay(this, "base");
@@ -133,12 +143,25 @@ namespace System.Windows.Forms
 
                   if(Core.CurrentRegion.IntersectsWith(Core.tileRect))
                   {
+                     bool found = false;
+
+                     // render tile
                      foreach(WindowsFormsImage img in t.Overlays)
                      {
                         if(img != null && img.Img != null)
                         {
+                           if(!found)
+                              found = true;
+
                            g.DrawImageUnscaled(img.Img, Core.tileRect.X, Core.tileRect.Y);
                         }
+                     }
+
+                     // add text if tile is missing
+                     if(!found)
+                     {
+                        g.FillRectangle(Brushes.Navy, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                        g.DrawString(EmptyTileText, MissingDataFont, Brushes.White, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
                      }
                   }
                }
