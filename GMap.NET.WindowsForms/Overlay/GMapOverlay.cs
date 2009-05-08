@@ -23,7 +23,7 @@ namespace GMapNET
       /// <summary>
       /// list of markers, should be thread safe
       /// </summary>
-      public readonly ObservableCollectionThreadSafe<MapObject> Markers = new ObservableCollectionThreadSafe<MapObject>();
+      public readonly ObservableCollectionThreadSafe<GMapMarker> Markers = new ObservableCollectionThreadSafe<GMapMarker>();
 
       /// <summary>
       /// list of routes, should be thread safe
@@ -92,7 +92,7 @@ namespace GMapNET
       {
          if(e.NewItems != null)
          {
-            foreach(MapObject obj in e.NewItems)
+            foreach(GMapMarker obj in e.NewItems)
             {
                Control.UpdateMarkerLocalPosition(obj);
             }

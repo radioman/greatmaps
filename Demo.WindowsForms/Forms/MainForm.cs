@@ -43,8 +43,8 @@ namespace Demo.WindowsForms
             // config map             
             MainMap.MapType = MapType.GoogleMap;
             MainMap.MaxZoom = 17;
+            MainMap.MinZoom = 12;
             MainMap.Zoom = 12;
-            MainMap.CurrentMarkerEnabled = true;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
             
             // map events
@@ -134,7 +134,7 @@ namespace Demo.WindowsForms
       }
 
       // click on some marker
-      void MainMap_OnMarkerClick(MapObject item)
+      void MainMap_OnMarkerClick(GMapMarker item)
       {
          MessageBox.Show("OnMarkerClick: " + item.Position.ToString(), "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
       }

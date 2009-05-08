@@ -45,10 +45,8 @@ namespace GMapNET.Internals
       public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
       public readonly string yahooMapCopyright = string.Format("© Yahoo! Inc. - Map data & Imagery ©{0} NAVTEQ", DateTime.Today.Year);
-
-      bool currentMarkerEnabled = true;        
-      bool started = false;
-      public bool IsMouseOverMarker;       
+    
+      bool started = false;               
       int zoom;
       int Width;
       int Height;
@@ -63,25 +61,6 @@ namespace GMapNET.Internals
          set
          {
             mouseVisible = value;
-         }
-      }
-
-      /// <summary>
-      /// is current marker enabled and visible
-      /// </summary>
-      public bool CurrentMarkerEnabled
-      {
-         get
-         {
-            return currentMarkerEnabled;
-         }
-         set
-         {
-            currentMarkerEnabled = value;
-            if(OnNeedInvalidation != null)
-            {
-               OnNeedInvalidation();
-            }
          }
       }
 

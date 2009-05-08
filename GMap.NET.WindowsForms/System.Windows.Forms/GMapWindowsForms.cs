@@ -44,6 +44,11 @@ namespace System.Windows.Forms
       public int MaxZoom;
 
       /// <summary>
+      /// min zoom
+      /// </summary>
+      public int MinZoom;
+
+      /// <summary>
       /// text on empty tiles
       /// </summary>
       public string EmptyTileText = "We are sorry, but we don't\nhave imagery at this zoom\nlevel for this region.";
@@ -94,7 +99,7 @@ namespace System.Windows.Forms
          {
             if(o.IsVisibile)
             {
-               foreach(MapObject obj in o.Markers)
+               foreach(GMapMarker obj in o.Markers)
                {
                   UpdateMarkerLocalPosition(obj);
                }
@@ -189,7 +194,7 @@ namespace System.Windows.Forms
       /// updates markers local position
       /// </summary>
       /// <param name="marker"></param>
-      public void UpdateMarkerLocalPosition(MapObject marker)
+      public void UpdateMarkerLocalPosition(GMapMarker marker)
       {
          GMapNET.Point p = GMaps.Instance.FromLatLngToPixel(marker.Position, Core.Zoom);
          p.Offset(Core.renderOffset);
@@ -269,7 +274,7 @@ namespace System.Windows.Forms
             {
                if(o.IsVisibile && o.Markers.Count > 0)
                {
-                  foreach(MapObject m in o.Markers)
+                  foreach(GMapMarker m in o.Markers)
                   {
                      // left
                      if(m.Position.Lng < left)
@@ -423,7 +428,7 @@ namespace System.Windows.Forms
             {
                SetCurrentPositionOnly(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y);
 
-               if(Core.MouseVisible & !CurrentMarkerEnabled)
+               if(Core.MouseVisible)
                {
                   this.Cursor = System.Windows.Forms.Cursors.Default;
                   Cursor.Hide();
@@ -530,7 +535,7 @@ namespace System.Windows.Forms
                         {
                            this.Cursor = System.Windows.Forms.Cursors.Hand;
                            m.IsMouseOver = true;
-                           Core.IsMouseOverMarker = true;
+                           IsMouseOverMarker = true;
                            Invalidate(false);
 
                            if(OnMarkerEnter != null)
@@ -542,7 +547,7 @@ namespace System.Windows.Forms
                         {
                            this.Cursor = System.Windows.Forms.Cursors.Default;
                            m.IsMouseOver = false;
-                           Core.IsMouseOverMarker = false;
+                           IsMouseOverMarker = false;
                            Invalidate(false);
 
                            if(OnMarkerLeave != null)
@@ -717,7 +722,7 @@ namespace System.Windows.Forms
          }
          set
          {
-            if(value <= MaxZoom)
+            if(value <= MaxZoom && value >= MinZoom)
             {
                Core.Zoom = value;
             }
@@ -802,28 +807,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// is mouse over marker
       /// </summary>
-      public bool IsMouseOverMarker
-      {
-         get
-         {
-            return Core.IsMouseOverMarker;
-         }
-      }
-
-      /// <summary>
-      /// is current marker enabled and visible
-      /// </summary>
-      public bool CurrentMarkerEnabled
-      {
-         get
-         {
-            return Core.CurrentMarkerEnabled;
-         }
-         set
-         {
-            Core.CurrentMarkerEnabled = value;
-         }
-      }
+      public bool IsMouseOverMarker;
 
       /// <summary>
       /// gets current map view top/left coordinate, width in Lng, height in Lat

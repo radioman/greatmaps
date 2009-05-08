@@ -1,64 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using GMapNET;
 using GMapNET.Internals;
 
 namespace System.Windows.Controls
 {
-   public class GMapItem : INotifyPropertyChanged
-   {
-      public event PropertyChangedEventHandler PropertyChanged;
-      public void OnPropertyChanged(string name)
-      {
-         PropertyChangedEventHandler handler = PropertyChanged;
-         if(handler != null)
-         {
-            handler(this, new PropertyChangedEventArgs(name));
-         }
-      }
-
-      UIElement shape;
-      public UIElement Shape
-      {
-         get
-         {
-            return shape;
-         }
-         set
-         {
-            shape = value;
-            OnPropertyChanged("Shape");
-         }
-      }
-
-      Point position;
-      public Point Position
-      {
-         get
-         {
-            return position;
-         }
-         set
-         {
-            position = value;
-            OnPropertyChanged("Position");
-         }
-      }
-
-      public GMapItem()
-      {
-         Position = new Point(10, 10);
-      }
-   }
-
    delegate void MethodInvoker();
 
    public partial class GMap : ItemsControl, IGControl
@@ -66,12 +18,11 @@ namespace System.Windows.Controls
       readonly Core Core = new Core();
       GMapNET.Rectangle region;
       Canvas Canvas = new Canvas();
-      public GMapMarker CurrentMarker;
-      public int MaxZoom = 19;
-      public int MinZoom = 1;
-
-      public readonly ObservableCollectionThreadSafe<GMapItem> Objects = new ObservableCollectionThreadSafe<GMapItem>();
-      BackgroundWorker worker = new BackgroundWorker();
+      
+      /// <summary>
+      /// list of markers, wpf visual ememets CAN'T be thread safe!
+      /// </summary>
+      public readonly ObservableCollectionThreadSafe<GMapMarker> Markers = new ObservableCollectionThreadSafe<GMapMarker>();
 
       public GMap()
       {
@@ -98,7 +49,7 @@ namespace System.Windows.Controls
          //</ItemsControl> 
          #endregion
 
-         DataTemplate dt = new DataTemplate(typeof(GMapItem));
+         DataTemplate dt = new DataTemplate(typeof(GMapMarker));
          {
             FrameworkElementFactory fef = new FrameworkElementFactory(typeof(ContentPresenter));
             fef.SetBinding(ContentPresenter.ContentProperty, new Binding("Shape"));
@@ -115,8 +66,8 @@ namespace System.Windows.Controls
 
          Style st = new Style();
          {
-            st.Setters.Add(new Setter(Canvas.LeftProperty, new Binding("Position.X")));
-            st.Setters.Add(new Setter(Canvas.TopProperty, new Binding("Position.Y")));
+            st.Setters.Add(new Setter(Canvas.LeftProperty, new Binding("LocalPosition.X")));
+            st.Setters.Add(new Setter(Canvas.TopProperty, new Binding("LocalPosition.Y")));
          }
          ItemContainerStyle = st; 
          #endregion
@@ -131,71 +82,31 @@ namespace System.Windows.Controls
 
          Core.RenderMode = GMapNET.RenderMode.WPF;
          Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
-         Core.OnCurrentPositionChanged += new CurrentPositionChanged(Core_OnCurrentPositionChanged);
-         Core.OnMapDrag += new MapDrag(UpdateMarkersLocalPositions);
+         Core.OnMapDrag += new MapDrag(Core_OnMapDrag);
          SizeChanged += new SizeChangedEventHandler(GMap_SizeChanged);
          Loaded += new RoutedEventHandler(GMap_Loaded);
 
-         this.ItemsSource = Objects;
-
-         //GMapMarkerCircle c = new GMapMarkerCircle(this);
-         //GMapMarkerRect c = new GMapMarkerRect(this);
-         //GMapMarkerTriangle c = new GMapMarkerTriangle(this);
-         GMapMarkerCross c = new GMapMarkerCross(this);
-         //c.Label.Content = "Maršrutas: 05\nMašina: 1245\nVairuotojas: Jonas P.\nLaikas: 2009.02.02 15:30:42";
-         //c.Text = "R1";
-         CurrentMarker = c;
-         //AddMarker(CurrentMarker);
-
-         // test         
-         worker_DoWork(null, null);
-
-         // test using threading, any ideas how to create shapes there?
-         //worker.DoWork += new DoWorkEventHandler(worker_DoWork);
+         Markers.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Objects_CollectionChanged);
+         this.ItemsSource = Markers;      
       }
 
-      int x = 50;
-      int y = 5;
-      void worker_DoWork(object sender, DoWorkEventArgs e)
+      void Core_OnMapDrag()
       {
-         for(int i = 0; i < 20; i++)
+         foreach(GMapMarker obj in Markers)
          {
-            GMapItem it = new GMapItem();
-            it.Position = new Point(x+=50, y+=40);
-
-            Shape el = new Ellipse();
-            {
-               el.Width = 25;
-               el.Height = 25;
-               el.Stroke = Brushes.Blue;
-               el.Fill = Brushes.Yellow;
-               el.StrokeThickness = 2;
-            }
-            it.Shape = el;  
-
-            Objects.Add(it);
-
-            //System.Threading.Thread.Sleep(1000);
+            obj.Position = obj.Position;
          }
       }
 
-      /// <summary>
-      /// update markers location on map drag
-      /// </summary>
-      public void UpdateMarkersLocalPositions()
+      void Objects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
       {
-
-      }
-
-      /// <summary>
-      /// update current marker
-      /// </summary>
-      /// <param name="point"></param>
-      void Core_OnCurrentPositionChanged(PointLatLng point)
-      {
-         CurrentMarker.Label.Content = CurrentPosition.ToString();
-         CurrentMarker.Position = Core.CurrentPosition;
-         CurrentMarker.UpdateLocalPosition(this);
+         if(e.NewItems != null)
+         {
+            foreach(GMapMarker obj in e.NewItems)
+            {
+               obj.Position = obj.Position;
+            }
+         }
       }
 
       /// <summary>
@@ -206,8 +117,6 @@ namespace System.Windows.Controls
       void GMap_Loaded(object sender, RoutedEventArgs e)
       {
          Core.StartSystem();
-
-         worker.RunWorkerAsync();
       }
 
       /// <summary>
@@ -326,10 +235,7 @@ namespace System.Windows.Controls
       #region UserControl Events
       protected override void OnRender(DrawingContext drawingContext)
       {
-         if(Core.RenderMode == GMapNET.RenderMode.WPF)
-         {
-            DrawMapWPF(drawingContext);
-         }
+         DrawMapWPF(drawingContext);
 
          base.OnRender(drawingContext);
       }
@@ -368,7 +274,6 @@ namespace System.Windows.Controls
 
          if(e.LeftButton == MouseButtonState.Pressed)
          {
-            if(CurrentMarkerEnabled && !IsMouseOverMarker)
             {
                SetCurrentPositionOnly(Core.mouseDown.X - Core.renderOffset.X, Core.mouseDown.Y - Core.renderOffset.Y);
 
@@ -426,7 +331,6 @@ namespace System.Windows.Controls
             }
             else if(e.LeftButton == MouseButtonState.Pressed)
             {
-               if(CurrentMarkerEnabled)
                {
                   SetCurrentPositionOnly(Core.mouseCurrent.X - Core.renderOffset.X, Core.mouseCurrent.Y - Core.renderOffset.Y);
                   InvalidateVisual();
@@ -436,6 +340,17 @@ namespace System.Windows.Controls
 
          base.OnMouseMove(e);
       }
+
+      /// <summary>
+      /// max zoom
+      /// </summary>
+      public int MaxZoom;
+
+      /// <summary>
+      /// min zoom
+      /// </summary>
+      public int MinZoom;
+
       #endregion
 
       #region IGControl Members
@@ -460,16 +375,6 @@ namespace System.Windows.Controls
          return Core.SetCurrentPositionByKeywords(keys);
       }
 
-      //public void SetCurrentMarkersVisibility(bool visible)
-      //{
-      //   Core.SetCurrentMarkersVisibility(visible);
-      //}
-
-      //public void SetCurrentMarkersTooltipMode(MarkerTooltipMode mode)
-      //{
-      //   Core.SetCurrentMarkersTooltipMode(mode);
-      //}
-
       public PointLatLng FromLocalToLatLng(int x, int y)
       {
          return Core.FromLocalToLatLng(x, y);
@@ -478,42 +383,6 @@ namespace System.Windows.Controls
       public GMapNET.Point FromLatLngToLocal(PointLatLng point)
       {
          return Core.FromLatLngToLocal(point);
-      }
-
-      //public void AddRoute(Route item)
-      //{
-      //   Core.AddRoute(item);
-      //}
-
-      //public void RemoveRoute(Route item)
-      //{
-      //   Core.RemoveRoute(item);
-      //}
-
-      //public void ClearAllRoutes()
-      //{
-      //   Core.ClearAllRoutes();
-      //}
-
-      public void AddMarker(MapObject item)
-      {
-         foreach(KeyValuePair<UIElement, Point> el in (item as GMapMarker).Objects)
-         {
-            Canvas.Children.Add(el.Key);
-         }
-      }
-
-      public void RemoveMarker(MapObject item)
-      {
-         foreach(KeyValuePair<UIElement, Point> el in (item as GMapMarker).Objects)
-         {
-            Canvas.Children.Remove(el.Key);
-         }
-      }
-
-      public void ClearAllMarkers()
-      {
-         Canvas.Children.Clear();
       }
 
       public void SetCurrentPositionOnly(int x, int y)
@@ -608,7 +477,10 @@ namespace System.Windows.Controls
          }
          set
          {
-            Core.Zoom = value;
+            if(value <= MaxZoom && value >= MinZoom)
+            {
+               Core.Zoom = value;
+            }
          }
       }
 
@@ -669,27 +541,6 @@ namespace System.Windows.Controls
          }
       }
 
-      public bool IsMouseOverMarker
-      {
-         get
-         {
-            return Core.IsMouseOverMarker;
-         }
-      }
-
-      public bool CurrentMarkerEnabled
-      {
-         get
-         {
-            return Core.CurrentMarkerEnabled;
-         }
-         set
-         {
-            CurrentMarker.Shape.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
-            Core.CurrentMarkerEnabled = value;
-         }
-      }
-
       public RectLatLng CurrentViewArea
       {
          get
@@ -745,18 +596,6 @@ namespace System.Windows.Controls
             Core.CanDragMap = value;
          }
       }
-
-      //public CurrentMarkerType CurrentMarkerStyle
-      //{
-      //   get
-      //   {
-      //      return Core.CurrentMarkerStyle;
-      //   }
-      //   set
-      //   {
-      //      Core.CurrentMarkerStyle = value;
-      //   }
-      //}
 
       public GMapNET.RenderMode RenderMode
       {

@@ -126,7 +126,6 @@
          this.MainMap.BackColor = System.Drawing.SystemColors.AppWorkspace;
          this.MainMap.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
          this.MainMap.CanDragMap = true;
-         this.MainMap.CurrentMarkerEnabled = true;
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
          this.MainMap.ForeColor = System.Drawing.SystemColors.ControlText;
          this.MainMap.Location = new System.Drawing.Point(3, 16);

@@ -2,64 +2,106 @@
 
 namespace GMapNET
 {
-  /// <summary>
-  /// GMap.NET marker
-  /// </summary>
-  public class GMapMarker : MapObject
-  {
-    public MarkerTooltipMode TooltipMode;
-    public Point ToolTipOffset;
-    public string ToolTipText;
-    public bool Visible;
+   /// <summary>
+   /// GMap.NET marker
+   /// </summary>
+   public class GMapMarker
+   {
+      public PointLatLng Position;
+      public object Tag;
 
-    private bool isDragging;
-    public bool IsDragging
-    {
-      get
+      Rectangle area;
+      public Point LocalPosition
       {
-        return isDragging;
+         get
+         {
+            return area.Location;
+         }
+         internal set
+         {
+            area.Location = value;
+         }
       }
-      internal set
+
+      public Size Size
       {
-        isDragging = value;
+         get
+         {
+            return area.Size;
+         }
+         set
+         {
+            area.Size = value;
+         }
       }
-    }
 
-    private bool isMouseOver;
-    public bool IsMouseOver
-    {
-      get
+      internal Rectangle LocalArea
       {
-        return isMouseOver;
+         get
+         {
+            Rectangle ret = area;
+            ret.Offset(-Size.Width/2, -Size.Height/2);
+            return ret;
+         }
       }
-      internal set
+
+      public MarkerTooltipMode TooltipMode;
+      public Point ToolTipOffset;
+      public string ToolTipText;
+      public bool Visible;
+
+      private bool isDragging;
+      public bool IsDragging
       {
-        isMouseOver = value;
+         get
+         {
+            return isDragging;
+         }
+         internal set
+         {
+            isDragging = value;
+         }
       }
-    }
 
-    public GMapMarker(PointLatLng pos)
-      : base(pos)
-    {
-      this.IsDragging = false;
-      this.ToolTipText = string.Empty;
-      this.TooltipMode = MarkerTooltipMode.OnMouseOver;
-      this.Visible = true;
+      private bool isMouseOver;
+      public bool IsMouseOver
+      {
+         get
+         {
+            return isMouseOver;
+         }
+         internal set
+         {
+            isMouseOver = value;
+         }
+      }
 
-      this.IsMouseOver = false;
-      this.ToolTipOffset = new Point(14, -44);
-    }
+      public GMapMarker(PointLatLng pos)
+      {
+         this.Position = pos;
+         this.IsDragging = false;
+         this.ToolTipText = string.Empty;
+         this.TooltipMode = MarkerTooltipMode.OnMouseOver;
+         this.Visible = true;
 
-    public virtual void OnRender(Graphics g)
-    {
-      //
-    }
-  }
+         this.IsMouseOver = false;
+         this.ToolTipOffset = new Point(14, -44);
+      }
 
-  public enum MarkerTooltipMode
-  {
-    OnMouseOver,
-    Never,
-    Always,
-  }
+      public virtual void OnRender(Graphics g)
+      {
+         //
+      }
+   }
+
+   public delegate void MarkerClick(GMapMarker item);
+   public delegate void MarkerEnter(GMapMarker item);
+   public delegate void MarkerLeave(GMapMarker item);
+
+   public enum MarkerTooltipMode
+   {
+      OnMouseOver,
+      Never,
+      Always,
+   }
 }

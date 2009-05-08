@@ -7,13 +7,21 @@ using System.ComponentModel;
 using System.Windows.Threading;
 using System.Net;
 using System.Globalization;
-
+using System.Windows.Shapes;
+using System.Windows.Controls.Primitives;
 using GMapNET;
 
 namespace Demo.WindowsPresentation
 {
    public partial class MainWindow : Window
    {
+      // tooltip for markers
+      Popup Popup = new Popup();
+      Label Label = new Label();
+
+      // marker
+      GMapMarker currentMarker;
+
       public MainWindow()
       {
          InitializeComponent();
@@ -35,13 +43,13 @@ namespace Demo.WindowsPresentation
 
          // config map
          MainMap.MapType = MapType.OpenStreetMap;
+         MainMap.MaxZoom = 17;
+         MainMap.MinZoom = 12;
          MainMap.Zoom = 12;
-         MainMap.CurrentMarkerEnabled = true;
          MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
 
          // map events
          MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
-         //MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
          MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
          MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
 
@@ -63,14 +71,67 @@ namespace Demo.WindowsPresentation
          textBoxLng.Text = MainMap.CurrentPosition.Lng.ToString(CultureInfo.InvariantCulture);
 
          // get marker state
-         checkBoxCurrentMarker.IsChecked = MainMap.CurrentMarkerEnabled;
+         checkBoxCurrentMarker.IsChecked = true;
 
          // can drag map
          checkBoxDragMap.IsChecked = MainMap.CanDragMap;
 
-         // get zoom
-         //sliderZoom.Maximum = 17;
-         //sliderZoom.Value = MainMap.Zoom;
+         // set current marker
+         currentMarker = new GMapMarker(MainMap, MainMap.CurrentPosition);
+         {
+            Shape el = new Cross();
+            {
+               el.Width = 25;
+               el.Height = 25;
+               el.Stroke = Brushes.Blue;
+               el.Fill = Brushes.Yellow;
+               el.StrokeThickness = 2;
+            }
+            currentMarker.Shape = el;
+            MainMap.Markers.Add(currentMarker);
+         }
+
+         // popup conf
+         Label.Background = Brushes.Blue;
+         Label.Foreground = Brushes.White;
+         Label.BorderBrush = Brushes.WhiteSmoke;
+         Label.BorderThickness = new Thickness(2);
+         Label.Padding = new Thickness(5);
+         Label.FontSize = 22;
+         Label.Content = "Welcome to Lithuania! ;}";
+         Popup.Child = Label;
+         Popup.Placement = PlacementMode.Mouse;
+
+         // add my city location for demo
+         PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius");
+         if(pos != null)
+         {
+            GMapMarker it = new GMapMarker(MainMap, pos.Value);
+
+            Shape el = new Ellipse();
+            {
+               el.Width = 25;
+               el.Height = 25;
+               el.Stroke = Brushes.Blue;
+               el.Fill = Brushes.Yellow;
+               el.StrokeThickness = 2;
+            }
+            it.Shape = el;
+            it.Shape.MouseEnter += new System.Windows.Input.MouseEventHandler(Shape_MouseEnter);
+            it.Shape.MouseLeave += new System.Windows.Input.MouseEventHandler(Shape_MouseLeave);
+
+            MainMap.Markers.Add(it);
+         }
+      }
+
+      void Shape_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+      {
+         Popup.IsOpen = false;
+      }
+
+      void Shape_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+      {
+         Popup.IsOpen = true;
       }
 
       // tile louading starts
@@ -121,6 +182,8 @@ namespace Demo.WindowsPresentation
       {
          textBoxCurrLat.Text = point.Lat.ToString(CultureInfo.InvariantCulture);
          textBoxCurrLng.Text = point.Lng.ToString(CultureInfo.InvariantCulture);
+
+         currentMarker.Position = point;
       }
 
       // reload
@@ -139,13 +202,13 @@ namespace Demo.WindowsPresentation
       // enable current marker
       private void checkBoxCurrentMarker_Checked(object sender, RoutedEventArgs e)
       {
-         MainMap.CurrentMarkerEnabled = true;
+         
       }
 
       // disable current marker
       private void checkBoxCurrentMarker_Unchecked(object sender, RoutedEventArgs e)
       {
-         MainMap.CurrentMarkerEnabled = false;
+         
       }
 
       // enable map dragging

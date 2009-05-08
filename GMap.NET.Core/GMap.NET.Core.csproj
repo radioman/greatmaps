@@ -48,7 +48,6 @@
     <Compile Include="Control\IGControl.cs" />
     <Compile Include="Public\AccessMode.cs" />
     <Compile Include="Public\Delegates.cs" />
-    <Compile Include="Public\MapObject.cs" />
     <Compile Include="Public\MapRoute.cs" />
     <Compile Include="Public\MapType.cs" />
     <Compile Include="Public\Point.cs" />

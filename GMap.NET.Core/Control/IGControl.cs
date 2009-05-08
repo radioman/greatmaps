@@ -40,17 +40,6 @@
          get;
       }
 
-      bool IsMouseOverMarker
-      {
-         get;
-      }
-
-      bool CurrentMarkerEnabled
-      {
-         get;
-         set;
-      }
-
       RectLatLng CurrentViewArea
       {
          get;
