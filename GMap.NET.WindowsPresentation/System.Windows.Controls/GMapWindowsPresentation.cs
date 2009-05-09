@@ -20,9 +20,9 @@ namespace System.Windows.Controls
       Canvas Canvas = new Canvas();
       
       /// <summary>
-      /// list of markers, wpf visual ememets CAN'T be thread safe!
+      /// list of markers
       /// </summary>
-      public readonly ObservableCollectionThreadSafe<GMapMarker> Markers = new ObservableCollectionThreadSafe<GMapMarker>();
+      public readonly ObservableCollection<GMapMarker> Markers = new ObservableCollection<GMapMarker>();
 
       public GMap()
       {
@@ -68,6 +68,7 @@ namespace System.Windows.Controls
          {
             st.Setters.Add(new Setter(Canvas.LeftProperty, new Binding("LocalPosition.X")));
             st.Setters.Add(new Setter(Canvas.TopProperty, new Binding("LocalPosition.Y")));
+            st.Setters.Add(new Setter(Canvas.ZIndexProperty, new Binding("ZIndex")));
          }
          ItemContainerStyle = st; 
          #endregion
@@ -94,7 +95,10 @@ namespace System.Windows.Controls
       {
          foreach(GMapMarker obj in Markers)
          {
-            obj.Position = obj.Position;
+            if(obj != null)
+            {
+               obj.Position = obj.Position;
+            }
          }
       }
 
@@ -104,7 +108,10 @@ namespace System.Windows.Controls
          {
             foreach(GMapMarker obj in e.NewItems)
             {
-               obj.Position = obj.Position;
+               if(obj != null)
+               {
+                  obj.Position = obj.Position;
+               }
             }
          }
       }

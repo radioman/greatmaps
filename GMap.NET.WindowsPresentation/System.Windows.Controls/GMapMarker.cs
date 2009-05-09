@@ -41,11 +41,26 @@ namespace System.Windows.Controls
             position = value;
 
             GMapNET.Point p = Control.FromLatLngToLocal(value);
-            LocalPosition = new Point(p.X, p.Y);
+            Point pl = new Point(p.X, p.Y);
+            pl.Offset(Offset.X, Offset.Y);
+            LocalPosition = pl;
          }
       }
 
       public object Tag;
+
+      Point offset;
+      public Point Offset
+      {
+         get
+         {
+            return offset;
+         }
+         set
+         {
+            offset = value;
+         }
+      }
 
       Point localPosition;
       public Point LocalPosition
@@ -58,6 +73,19 @@ namespace System.Windows.Controls
          {
             localPosition = value;
             OnPropertyChanged("LocalPosition");
+         }
+      }
+
+      int zIndex;
+      public int ZIndex
+      {
+         get
+         {
+            return zIndex;
+         }
+         set
+         {
+            zIndex = value;
          }
       }
 

@@ -50,6 +50,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="CustomMarkers\CustomMarkerDemo.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -60,6 +64,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomMarkers\CustomMarkerDemo.xaml.cs">
+      <DependentUpon>CustomMarkerDemo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\App.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -87,10 +94,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\MapPointer.png" />
+    <None Include="Resources\ImageReady.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ImageReady.ico" />
+    <Resource Include="CustomMarkers\bigMarkerGreen.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -15,10 +15,6 @@ namespace Demo.WindowsPresentation
 {
    public partial class MainWindow : Window
    {
-      // tooltip for markers
-      Popup Popup = new Popup();
-      Label Label = new Label();
-
       // marker
       GMapMarker currentMarker;
 
@@ -88,50 +84,20 @@ namespace Demo.WindowsPresentation
                el.StrokeThickness = 2;
             }
             currentMarker.Shape = el;
+            currentMarker.ZIndex = int.MaxValue;
             MainMap.Markers.Add(currentMarker);
          }
-
-         // popup conf
-         Label.Background = Brushes.Blue;
-         Label.Foreground = Brushes.White;
-         Label.BorderBrush = Brushes.WhiteSmoke;
-         Label.BorderThickness = new Thickness(2);
-         Label.Padding = new Thickness(5);
-         Label.FontSize = 22;
-         Label.Content = "Welcome to Lithuania! ;}";
-         Popup.Child = Label;
-         Popup.Placement = PlacementMode.Mouse;
 
          // add my city location for demo
          PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius");
          if(pos != null)
          {
             GMapMarker it = new GMapMarker(MainMap, pos.Value);
-
-            Shape el = new Ellipse();
             {
-               el.Width = 25;
-               el.Height = 25;
-               el.Stroke = Brushes.Blue;
-               el.Fill = Brushes.Yellow;
-               el.StrokeThickness = 2;
+               it.Shape = new CustomMarkerDemo(it, "Welcome to Lithuania! ;}");
             }
-            it.Shape = el;
-            it.Shape.MouseEnter += new System.Windows.Input.MouseEventHandler(Shape_MouseEnter);
-            it.Shape.MouseLeave += new System.Windows.Input.MouseEventHandler(Shape_MouseLeave);
-
             MainMap.Markers.Add(it);
          }
-      }
-
-      void Shape_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-      {
-         Popup.IsOpen = false;
-      }
-
-      void Shape_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-      {
-         Popup.IsOpen = true;
       }
 
       // tile louading starts
@@ -172,11 +138,6 @@ namespace Demo.WindowsPresentation
          }
       }
 
-      //void MainMap_OnMarkerClick(Marker item)
-      //{
-      //   //throw new NotImplementedException();
-      //}
-
       // current location changed
       void MainMap_OnCurrentPositionChanged(PointLatLng point)
       {
@@ -202,13 +163,19 @@ namespace Demo.WindowsPresentation
       // enable current marker
       private void checkBoxCurrentMarker_Checked(object sender, RoutedEventArgs e)
       {
-         
+         if(!MainMap.Markers.Contains(currentMarker))
+         {
+            MainMap.Markers.Add(currentMarker);
+         }
       }
 
       // disable current marker
       private void checkBoxCurrentMarker_Unchecked(object sender, RoutedEventArgs e)
       {
-         
+         if(MainMap.Markers.Contains(currentMarker))
+         {
+            MainMap.Markers.Remove(currentMarker);
+         }
       }
 
       // enable map dragging
@@ -378,6 +345,42 @@ namespace Demo.WindowsPresentation
          {
             MessageBox.Show(ex.Message);
          }
+      }
+
+      // clear all markers
+      private void button10_Click(object sender, RoutedEventArgs e)
+      {
+         MainMap.Markers.Clear();
+         if(checkBoxCurrentMarker.IsChecked.Value)
+         {
+            MainMap.Markers.Add(currentMarker);
+         }
+      }
+
+      // add marker
+      private void button8_Click(object sender, RoutedEventArgs e)
+      {
+         GMapMarker m = new GMapMarker(MainMap, MainMap.CurrentPosition);
+
+         Placemark p = null;
+         if(checkBoxPlace.IsChecked.Value)
+         {
+            p = GMaps.Instance.GetPlacemarkFromGeocoder(MainMap.CurrentPosition);
+         }
+
+         string ToolTipText;
+         if(p != null)
+         {
+            ToolTipText = p.Address;
+         }
+         else
+         {
+            ToolTipText = MainMap.CurrentPosition.ToString();
+         }
+
+         m.Shape = new CustomMarkerDemo(m, ToolTipText);
+
+         MainMap.Markers.Add(m);         
       }
    }
 }
