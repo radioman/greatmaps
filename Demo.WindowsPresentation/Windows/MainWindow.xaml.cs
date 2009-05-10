@@ -62,6 +62,10 @@ namespace Demo.WindowsPresentation
          checkBoxCacheRoute.IsChecked = GMaps.Instance.UseRouteCache;
          checkBoxGeoCache.IsChecked = GMaps.Instance.UseGeocoderCache;
 
+         // setup zoom slider
+         sliderZoom.Maximum = MainMap.MaxZoom;
+         sliderZoom.Minimum = MainMap.MinZoom;
+
          // get position
          textBoxLat.Text = MainMap.CurrentPosition.Lat.ToString(CultureInfo.InvariantCulture);
          textBoxLng.Text = MainMap.CurrentPosition.Lng.ToString(CultureInfo.InvariantCulture);
@@ -222,8 +226,27 @@ namespace Demo.WindowsPresentation
          int zn = (int) e.NewValue;
          if(zn != MainMap.Zoom)
          {
-            MainMap.Zoom = zn;
+            MainMap.Zoom = zn;              
          }
+      }
+
+      protected override void OnMouseWheel(System.Windows.Input.MouseWheelEventArgs e)
+      {
+         base.OnMouseWheel(e);
+
+         sliderZoom.Value = MainMap.Zoom;
+      }
+
+      private void czuZoomUp_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+      {
+         MainMap.Zoom++;
+         sliderZoom.Value = MainMap.Zoom;
+      }
+
+      private void czuZoomDown_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+      {
+         MainMap.Zoom--;
+         sliderZoom.Value = MainMap.Zoom;
       }
 
       // prefetch
@@ -380,7 +403,7 @@ namespace Demo.WindowsPresentation
 
          m.Shape = new CustomMarkerDemo(m, ToolTipText);
 
-         MainMap.Markers.Add(m);         
+         MainMap.Markers.Add(m);
       }
    }
 }

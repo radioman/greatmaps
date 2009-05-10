@@ -2,16 +2,23 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="GMap.NET - Great Maps for Windows Presentation"
-    Height="755" Width="953"
+    Height="700" Width="921"
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     xmlns:src="clr-namespace:Demo.WindowsPresentation"
-    MinHeight="600" MinWidth="300">
+    MinHeight="700" MinWidth="400">
     <Grid>
-        <GroupBox Name="mapgroup"  Header="gmap" Margin="12,7,187,12" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-            <src:Map x:Name="MainMap" />
-        </GroupBox>
-        <GroupBox Header="gmap" HorizontalAlignment="Right" Margin="0,158,12,0" Name="groupBox2" Width="169" VerticalAlignment="Top" Height="135">
+      <GroupBox Name="mapgroup"  Header="gmap" Margin="12,7,241,12" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+         <src:Map x:Name="MainMap" />
+      </GroupBox>
+      <GroupBox HorizontalAlignment="Right" Margin="0,7,186,12" VerticalAlignment="Stretch" Header="Zoom">
+         <Grid>
+            <src:ControlZoomUp x:Name="czuZoomUp" HorizontalAlignment="Center" VerticalAlignment="Top" Width="23.5" Height="25.5" MouseLeftButtonDown="czuZoomUp_MouseLeftButtonDown"/>
+            <Slider Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Stretch" Maximum="17" Minimum="12" Value="13" TickPlacement="Both" Margin="0,35,0,35" SmallChange="1" x:Name="sliderZoom" ValueChanged="sliderZoom_ValueChanged" />
+            <src:ControlZoomDown x:Name="czuZoomDown" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="23" Height="25" RenderTransformOrigin="0.391,0.48" MouseLeftButtonDown="czuZoomDown_MouseLeftButtonDown"/>
+         </Grid>
+      </GroupBox>
+      <GroupBox Header="gmap" HorizontalAlignment="Right" Margin="0,158,12,0" Name="groupBox2" Width="169" VerticalAlignment="Top" Height="135">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <ComboBox DropDownClosed="comboBoxMapType_DropDownClosed" FontSize="12" Margin="6,6,45,0" Name="comboBoxMapType" Height="25.04" VerticalAlignment="Top" />
                 <Label HorizontalAlignment="Right" Margin="0,6,6,0" Name="label1" Width="33" Height="25.04" VerticalAlignment="Top">type</Label>
@@ -60,7 +67,7 @@
                 <Label HorizontalAlignment="Right" Margin="0,0,11,6" Name="label7" VerticalContentAlignment="Center" Width="27" Height="23" VerticalAlignment="Bottom">lng</Label>
             </Grid>
         </GroupBox>
-      <GroupBox Header="markers" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,299,12,333" Name="markers" Width="169" Height="82">
+      <GroupBox Header="markers" HorizontalAlignment="Right" Name="markers" Width="169" Margin="0,299,11,283" Height="80" VerticalAlignment="Top">
          <Grid>
             <Button Margin="7,6,77,0" Name="button8" Height="21.04" VerticalAlignment="Top" Click="button8_Click">Add Marker</Button>
             <Button Margin="7,0,77,6" Name="button10" Height="21.04" VerticalAlignment="Bottom" Click="button10_Click">Clear All</Button>

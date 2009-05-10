@@ -54,6 +54,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Windows\Zoom\ControlZoomDown.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Zoom\ControlZoomUp.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -77,6 +85,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Source\Map.cs" />
+    <Compile Include="Windows\Zoom\ControlZoomDown.xaml.cs">
+      <DependentUpon>ControlZoomDown.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Zoom\ControlZoomUp.xaml.cs">
+      <DependentUpon>ControlZoomUp.xaml</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -98,6 +112,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="CustomMarkers\bigMarkerGreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Windows\Zoom\zoom+.png" />
+    <Resource Include="Windows\Zoom\zoom-.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
