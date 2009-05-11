@@ -50,6 +50,7 @@
     <Compile Include="Public\Delegates.cs" />
     <Compile Include="Public\MapRoute.cs" />
     <Compile Include="Public\MapType.cs" />
+    <Compile Include="Public\MSSQLPureImageCache.cs" />
     <Compile Include="Public\Point.cs" />
     <Compile Include="Public\PureImageCache.cs" />
     <Compile Include="Public\Rectangle.cs" />

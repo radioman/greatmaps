@@ -30,7 +30,12 @@ namespace Demo.WindowsPresentation
          GMaps.Instance.UseRouteCache = true;
          GMaps.Instance.UseGeocoderCache = true;
          GMaps.Instance.UsePlacemarkCache = true;
-         GMaps.Instance.Mode = AccessMode.ServerAndCache;          
+         GMaps.Instance.Mode = AccessMode.ServerAndCache;
+
+         // add your custom map db provider
+         //MSSQLPureImageCache ch = new MSSQLPureImageCache();
+         //ch.ConnectionString = @"Data Source=RADIOMAN-PC\SQLEXPRESS;Initial Catalog=Test;Persist Security Info=False;User ID=aa;Password=aa;";
+         //GMaps.Instance.ImageCache = ch;
 
          // set your proxy here if need
          //GMaps.Instance.Proxy = new WebProxy("10.2.0.100", 8080);
