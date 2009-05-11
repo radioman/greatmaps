@@ -27,11 +27,10 @@ namespace Demo.WindowsPresentation
 
          // config gmaps
          GMaps.Instance.Language = "lt";
-         GMaps.Instance.UseTileCache = true;
          GMaps.Instance.UseRouteCache = true;
          GMaps.Instance.UseGeocoderCache = true;
          GMaps.Instance.UsePlacemarkCache = true;
-         GMaps.Instance.Mode = AccessMode.ServerAndCache;
+         GMaps.Instance.Mode = AccessMode.ServerAndCache;          
 
          // set your proxy here if need
          //GMaps.Instance.Proxy = new WebProxy("10.2.0.100", 8080);
@@ -58,7 +57,6 @@ namespace Demo.WindowsPresentation
          comboBoxMode.SelectedItem = GMaps.Instance.Mode;
 
          // get cache modes
-         checkBoxCacheMap.IsChecked = GMaps.Instance.UseTileCache;
          checkBoxCacheRoute.IsChecked = GMaps.Instance.UseRouteCache;
          checkBoxGeoCache.IsChecked = GMaps.Instance.UseGeocoderCache;
 
@@ -312,12 +310,6 @@ namespace Demo.WindowsPresentation
       private void button5_Click(object sender, RoutedEventArgs e)
       {
          MainMap.ShowImportDialog();
-      }
-
-      // use tile cache
-      private void checkBox_CacheChecked(object sender, RoutedEventArgs e)
-      {
-         GMaps.Instance.UseTileCache = checkBoxCacheMap.IsChecked.Value;
       }
 
       // use route cache

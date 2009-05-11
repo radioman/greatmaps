@@ -5,7 +5,7 @@ using System.Data.SQLite;
 
 namespace GMapNET.Internals
 {
-   internal class Cache : Singleton<Cache>
+   internal class Cache : Singleton<Cache>, PureImageCache
    {
       string cache;
       public string gtileCache;
@@ -13,6 +13,14 @@ namespace GMapNET.Internals
       string geoCache;
       string placemarkCache;
 
+      /// <summary>
+      /// abstract image cache
+      /// </summary>
+      public PureImageCache ImageCache;
+
+      /// <summary>
+      /// local cache location
+      /// </summary>
       public string CacheLocation
       {
          get
@@ -38,10 +46,11 @@ namespace GMapNET.Internals
          }
          #endregion
 
+         ImageCache = this;
          CacheLocation = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
       }
 
-      public bool CreateEmptyDB(string file)
+      bool CreateEmptyDB(string file)
       {
          bool ret = true;
 
@@ -170,143 +179,6 @@ namespace GMapNET.Internals
          {
             ret = false;
          }
-         return ret;
-      }
-
-      public bool CacheImageToDB(PureImage tile, MapType type, Point pos, int zoom, string language)
-      {
-         bool ret = true;
-         try
-         {
-            StringBuilder dir = new StringBuilder(gtileCache);
-            dir.AppendFormat("{0}{1}", language, Path.DirectorySeparatorChar);
-
-            string d = dir.ToString();
-
-            // precrete dir
-            if(!Directory.Exists(d))
-            {
-               Directory.CreateDirectory(d);
-            }
-
-            // save
-            {
-               dir.Append("Data.gmdb");
-
-               string db = dir.ToString();
-               if(!File.Exists(db))
-               {
-                  ret = CreateEmptyDB(db);
-               }
-
-               if(ret)
-               {
-                  using(SQLiteConnection cn = new SQLiteConnection())
-                  {
-                     cn.ConnectionString = string.Format("Data Source=\"{0}\";", db);
-                     cn.Open();
-                     if(cn.State == System.Data.ConnectionState.Open)
-                     {
-                        using(MemoryStream m = new MemoryStream())
-                        {
-                           ret = Purity.Instance.ImageProxy.Save(m, tile);
-                           if(ret)
-                           {
-                              using(SQLiteTransaction tr = cn.BeginTransaction())
-                              {
-                                 try
-                                 {
-                                    using(SQLiteCommand cmd = new SQLiteCommand(cn))
-                                    {
-                                       cmd.CommandText = "INSERT INTO Tiles(X, Y, Zoom, Type) VALUES(@p1, @p2, @p3, @p4)";
-                                       cmd.Parameters.AddWithValue("@p1", pos.X);
-                                       cmd.Parameters.AddWithValue("@p2", pos.Y);
-                                       cmd.Parameters.AddWithValue("@p3", zoom);
-                                       cmd.Parameters.AddWithValue("@p4", (int) type);
-
-                                       cmd.ExecuteNonQuery();
-                                    }
-
-                                    using(SQLiteCommand cmd = new SQLiteCommand(cn))
-                                    {
-                                       cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
-                                       cmd.Parameters.AddWithValue("@p1", m.GetBuffer());
-                                       cmd.ExecuteNonQuery();
-                                    }
-                                    tr.Commit();
-                                 }
-                                 catch
-                                 {
-                                    tr.Rollback();
-                                    ret = false;
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-         }
-         catch
-         {
-            ret = false;
-         }
-         return ret;
-      }
-
-      public PureImage GetImageFromCacheDB(MapType type, Point pos, int zoom, string language)
-      {
-         PureImage ret = null;
-         try
-         {
-            StringBuilder dir = new StringBuilder(gtileCache);
-            dir.AppendFormat("{0}{1}Data.gmdb", language, Path.DirectorySeparatorChar);
-
-            // get
-            {
-               string db = dir.ToString();
-               if(File.Exists(db))
-               {
-                  using(SQLiteConnection cn = new SQLiteConnection())
-                  {
-                     cn.ConnectionString = string.Format("Data Source=\"{0}\";", db);
-                     cn.Open();
-                     if(cn.State == System.Data.ConnectionState.Open)
-                     {
-                        using(SQLiteCommand com = new SQLiteCommand(cn))
-                        {
-                           com.CommandText = string.Format("SELECT Tile FROM TilesData WHERE id = (SELECT id FROM Tiles WHERE X={0} AND Y={1} AND Zoom={2} AND Type={3})", pos.X, pos.Y, zoom, (int) type);
-
-                           using(SQLiteDataReader rd = com.ExecuteReader())
-                           {
-                              if(rd.Read())
-                              {
-                                 long length = rd.GetBytes(0, 0, null, 0, 0);
-                                 byte[] tile = new byte[length];
-                                 rd.GetBytes(0, 0, tile, 0, tile.Length);
-
-                                 using(MemoryStream stm = new MemoryStream(tile))
-                                 {
-                                    if(Purity.Instance.ImageProxy != null)
-                                    {
-                                       ret = Purity.Instance.ImageProxy.FromStream(stm);
-                                    }
-                                 }
-                                 tile = null;
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-         }
-         catch
-         {
-            ret = null;
-         }
-
          return ret;
       }
 
@@ -523,5 +395,146 @@ namespace GMapNET.Internals
 
          return ret;
       }
+
+      #region PureImageCache Members
+
+      bool PureImageCache.PutImageToCache(PureImage tile, MapType type, Point pos, int zoom)
+      {
+         bool ret = true;
+         try
+         {
+            StringBuilder dir = new StringBuilder(gtileCache);
+            dir.AppendFormat("{0}{1}", GMaps.Instance.Language, Path.DirectorySeparatorChar);
+
+            string d = dir.ToString();
+
+            // precrete dir
+            if(!Directory.Exists(d))
+            {
+               Directory.CreateDirectory(d);
+            }
+
+            // save
+            {
+               dir.Append("Data.gmdb");
+
+               string db = dir.ToString();
+               if(!File.Exists(db))
+               {
+                  ret = CreateEmptyDB(db);
+               }
+
+               if(ret)
+               {
+                  using(SQLiteConnection cn = new SQLiteConnection())
+                  {
+                     cn.ConnectionString = string.Format("Data Source=\"{0}\";", db);
+                     cn.Open();
+                     if(cn.State == System.Data.ConnectionState.Open)
+                     {
+                        using(MemoryStream m = new MemoryStream())
+                        {
+                           ret = Purity.Instance.ImageProxy.Save(m, tile);
+                           if(ret)
+                           {
+                              using(SQLiteTransaction tr = cn.BeginTransaction())
+                              {
+                                 try
+                                 {
+                                    using(SQLiteCommand cmd = new SQLiteCommand(cn))
+                                    {
+                                       cmd.CommandText = "INSERT INTO Tiles(X, Y, Zoom, Type) VALUES(@p1, @p2, @p3, @p4)";
+                                       cmd.Parameters.AddWithValue("@p1", pos.X);
+                                       cmd.Parameters.AddWithValue("@p2", pos.Y);
+                                       cmd.Parameters.AddWithValue("@p3", zoom);
+                                       cmd.Parameters.AddWithValue("@p4", (int) type);
+
+                                       cmd.ExecuteNonQuery();
+                                    }
+
+                                    using(SQLiteCommand cmd = new SQLiteCommand(cn))
+                                    {
+                                       cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
+                                       cmd.Parameters.AddWithValue("@p1", m.GetBuffer());
+                                       cmd.ExecuteNonQuery();
+                                    }
+                                    tr.Commit();
+                                 }
+                                 catch
+                                 {
+                                    tr.Rollback();
+                                    ret = false;
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+         catch
+         {
+            ret = false;
+         }
+         return ret;
+      }
+
+      PureImage PureImageCache.GetImageFromCache(MapType type, Point pos, int zoom)
+      {
+         PureImage ret = null;
+         try
+         {
+            StringBuilder dir = new StringBuilder(gtileCache);
+            dir.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.Language, Path.DirectorySeparatorChar);
+
+            // get
+            {
+               string db = dir.ToString();
+               if(File.Exists(db))
+               {
+                  using(SQLiteConnection cn = new SQLiteConnection())
+                  {
+                     cn.ConnectionString = string.Format("Data Source=\"{0}\";", db);
+                     cn.Open();
+                     if(cn.State == System.Data.ConnectionState.Open)
+                     {
+                        using(SQLiteCommand com = new SQLiteCommand(cn))
+                        {
+                           com.CommandText = string.Format("SELECT Tile FROM TilesData WHERE id = (SELECT id FROM Tiles WHERE X={0} AND Y={1} AND Zoom={2} AND Type={3})", pos.X, pos.Y, zoom, (int) type);
+
+                           using(SQLiteDataReader rd = com.ExecuteReader())
+                           {
+                              if(rd.Read())
+                              {
+                                 long length = rd.GetBytes(0, 0, null, 0, 0);
+                                 byte[] tile = new byte[length];
+                                 rd.GetBytes(0, 0, tile, 0, tile.Length);
+
+                                 using(MemoryStream stm = new MemoryStream(tile))
+                                 {
+                                    if(Purity.Instance.ImageProxy != null)
+                                    {
+                                       ret = Purity.Instance.ImageProxy.FromStream(stm);
+                                    }
+                                 }
+                                 tile = null;
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+         catch
+         {
+            ret = null;
+         }
+
+         return ret;
+      }
+
+      #endregion
    }
 }

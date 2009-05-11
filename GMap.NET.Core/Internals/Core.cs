@@ -594,21 +594,21 @@ namespace GMapNET.Internals
             {
                if(MapType == MapType.GoogleHybrid)
                {
-                  PureImage img = GMaps.Instance.GetImageFrom(MapType.GoogleSatellite, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
-                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.GoogleLabels, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
+                  PureImage img = GMaps.Instance.GetImageFrom(MapType.GoogleSatellite, task, Zoom, GMaps.Instance.Language);
+                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.GoogleLabels, task, Zoom, GMaps.Instance.Language);
                   t.Overlays.Add(img);
                   t.Overlays.Add(img2);
                }
                else if(MapType == MapType.YahooHybrid)
                {
-                  PureImage img = GMaps.Instance.GetImageFrom(MapType.YahooSatellite, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
-                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.YahooLabels, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
+                  PureImage img = GMaps.Instance.GetImageFrom(MapType.YahooSatellite, task, Zoom, GMaps.Instance.Language);
+                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.YahooLabels, task, Zoom, GMaps.Instance.Language);
                   t.Overlays.Add(img);
                   t.Overlays.Add(img2);
                }
                else // single layer
                {
-                  PureImage img = GMaps.Instance.GetImageFrom(MapType, task, Zoom, GMaps.Instance.Language, GMaps.Instance.UseTileCache);
+                  PureImage img = GMaps.Instance.GetImageFrom(MapType, task, Zoom, GMaps.Instance.Language);
                   t.Overlays.Add(img);
                }
                Matrix[task] = t;

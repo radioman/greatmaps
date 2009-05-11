@@ -30,7 +30,6 @@ namespace Demo.WindowsForms
          {
             // config gmaps
             GMaps.Instance.Language = "lt";
-            GMaps.Instance.UseTileCache = true;
             GMaps.Instance.UseRouteCache = true;
             GMaps.Instance.UseGeocoderCache = true;
             GMaps.Instance.UsePlacemarkCache = true;
@@ -67,7 +66,6 @@ namespace Demo.WindowsForms
             textBoxLng.Text = MainMap.CurrentPosition.Lng.ToString(CultureInfo.InvariantCulture);
 
             // get cache modes
-            checkBoxUseTileCache.Checked = GMaps.Instance.UseTileCache;
             checkBoxUseRouteCache.Checked = GMaps.Instance.UseRouteCache;
             checkBoxUseGeoCache.Checked = GMaps.Instance.UseGeocoderCache;
 
@@ -246,7 +244,6 @@ namespace Demo.WindowsForms
       // cache config
       private void checkBoxUseCache_CheckedChanged(object sender, EventArgs e)
       {
-         GMaps.Instance.UseTileCache = checkBoxUseTileCache.Checked;
          GMaps.Instance.UseRouteCache = checkBoxUseRouteCache.Checked;
          GMaps.Instance.UseGeocoderCache = checkBoxUseGeoCache.Checked;
          GMaps.Instance.UsePlacemarkCache = GMaps.Instance.UseGeocoderCache;

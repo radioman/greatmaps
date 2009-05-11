@@ -99,7 +99,7 @@ namespace GMapNET
 
             Point p = list[i];
 
-            PureImage img = GMaps.Instance.GetImageFrom(type, p, zoom, GMaps.Instance.Language, true);
+            PureImage img = GMaps.Instance.GetImageFrom(type, p, zoom, GMaps.Instance.Language);
             if(img != null)
             {
                countOk++;

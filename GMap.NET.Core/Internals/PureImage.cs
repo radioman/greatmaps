@@ -3,13 +3,13 @@ using System.IO;
 
 namespace GMapNET
 {
-   internal abstract class PureImageProxy
+   public abstract class PureImageProxy
    {
       abstract public PureImage FromStream(Stream stream);
       abstract public bool Save(Stream stream, PureImage image);
    }
 
-   internal abstract class PureImage : ICloneable, IDisposable
+   public abstract class PureImage : ICloneable, IDisposable
    {
       abstract public IntPtr GetHbitmap();
 

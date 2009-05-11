@@ -51,6 +51,7 @@
     <Compile Include="Public\MapRoute.cs" />
     <Compile Include="Public\MapType.cs" />
     <Compile Include="Public\Point.cs" />
+    <Compile Include="Public\PureImageCache.cs" />
     <Compile Include="Public\Rectangle.cs" />
     <Compile Include="Public\Singleton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

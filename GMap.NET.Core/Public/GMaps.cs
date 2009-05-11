@@ -51,11 +51,6 @@ namespace GMapNET
       public string Language = "en";
 
       /// <summary>
-      /// is map ussing cache for tiles
-      /// </summary>
-      public bool UseTileCache = true;
-
-      /// <summary>
       /// is map ussing cache for routing
       /// </summary>
       public bool UseRouteCache = true;
@@ -84,6 +79,21 @@ namespace GMapNET
       /// Radius of the Earth
       /// </summary>
       public double EarthRadiusKm = 6376.5;
+
+      /// <summary>
+      /// pure image cache provider, by default: ultra fast SQLite!
+      /// </summary>
+      public PureImageCache ImageCache
+      {
+         get
+         {
+            return Cache.Instance.ImageCache;
+         }
+         set
+         {
+            Cache.Instance.ImageCache = value;
+         }
+      }
 
       #region -- google maps constants --
       readonly List<double> Uu = new List<double>();
@@ -978,13 +988,13 @@ namespace GMapNET
       /// <param name="language"></param>
       /// <param name="cache"></param>
       /// <returns></returns>
-      internal PureImage GetImageFrom(MapType type, Point pos, int zoom, string language, bool useCache)
+      internal PureImage GetImageFrom(MapType type, Point pos, int zoom, string language)
       {
          PureImage ret = null;
 
          if(Mode != AccessMode.ServerOnly)
          {
-            ret = Cache.Instance.GetImageFromCacheDB(type, pos, zoom, language);
+            ret = Cache.Instance.ImageCache.GetImageFromCache(type, pos, zoom);
             if(ret != null)
             {
                return ret;
@@ -1048,9 +1058,9 @@ namespace GMapNET
          }
          finally
          {
-            if(ret != null && useCache && Mode != AccessMode.ServerOnly)
+            if(ret != null && Mode != AccessMode.ServerOnly)
             {
-               Cache.Instance.CacheImageToDB(ret, type, pos, zoom, language);
+               Cache.Instance.ImageCache.PutImageToCache(ret, type, pos, zoom);
             }
          }
 
