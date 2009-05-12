@@ -443,6 +443,8 @@ namespace GMapNET.Internals
                                  {
                                     using(SQLiteCommand cmd = new SQLiteCommand(cn))
                                     {
+                                       cmd.Transaction = tr;
+
                                        cmd.CommandText = "INSERT INTO Tiles(X, Y, Zoom, Type) VALUES(@p1, @p2, @p3, @p4)";
                                        cmd.Parameters.AddWithValue("@p1", pos.X);
                                        cmd.Parameters.AddWithValue("@p2", pos.Y);
@@ -454,8 +456,11 @@ namespace GMapNET.Internals
 
                                     using(SQLiteCommand cmd = new SQLiteCommand(cn))
                                     {
+                                       cmd.Transaction = tr;
+
                                        cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
                                        cmd.Parameters.AddWithValue("@p1", m.GetBuffer());
+
                                        cmd.ExecuteNonQuery();
                                     }
                                     tr.Commit();
