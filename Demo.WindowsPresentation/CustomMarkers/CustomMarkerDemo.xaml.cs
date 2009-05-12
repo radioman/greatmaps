@@ -39,13 +39,13 @@ namespace System.Windows.Controls
 
       void MarkerControl_MouseLeave(object sender, MouseEventArgs e)
       {
-         Marker.ZIndex += 10000;
+         Marker.ZIndex -= 10000;
          Popup.IsOpen = false;
        }
 
       void MarkerControl_MouseEnter(object sender, MouseEventArgs e)
       {
-         Marker.ZIndex -= 10000;
+         Marker.ZIndex += 10000;
          Popup.IsOpen = true;
       }
    }

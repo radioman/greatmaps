@@ -86,6 +86,7 @@ namespace System.Windows.Controls
          set
          {
             zIndex = value;
+            OnPropertyChanged("ZIndex");
          }
       }
 
