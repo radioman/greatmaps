@@ -70,7 +70,7 @@ namespace GMapNET
 
             if(Overlay != null)
             {
-               Overlay.Control.Invalidate();
+               Overlay.Control.Core_OnNeedInvalidation();
             }
          }
       }
