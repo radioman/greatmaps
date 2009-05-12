@@ -53,6 +53,11 @@ namespace System.Windows.Forms
       /// </summary>
       public string EmptyTileText = "We are sorry, but we don't\nhave imagery at this zoom\nlevel for this region.";
 
+      /// <summary>
+      /// go to current position and center mouse OnMouseWheel
+      /// </summary>
+      bool CenterPositionOnMouseWheel = true;
+
       // internal stuff
       internal readonly Core Core = new Core();
       internal readonly Font CopyrightFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
@@ -501,6 +506,29 @@ namespace System.Windows.Forms
          }
 
          base.OnMouseClick(e);
+      }        
+
+      protected override void OnMouseWheel(MouseEventArgs e)
+      {
+         base.OnMouseWheel(e);          
+
+         if(CenterPositionOnMouseWheel)
+         {
+            PointLatLng pg = FromLocalToLatLng(e.X, e.Y);
+            SetCurrentPositionOnly(pg);
+
+            System.Drawing.Point p = PointToScreen(new System.Drawing.Point(Width/2, Height/2));
+            Stuff.SetCursorPos((int) p.X, (int) p.Y);
+         }
+
+         if(e.Delta > 0)
+         {
+            Zoom++;
+         }
+         else if(e.Delta < 0)
+         {
+            Zoom--;
+         }
       }
 
       protected override void OnMouseMove(MouseEventArgs e)

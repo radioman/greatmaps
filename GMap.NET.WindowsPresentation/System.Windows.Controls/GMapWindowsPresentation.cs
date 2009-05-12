@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+
 using GMapNET;
 using GMapNET.Internals;
 
@@ -18,6 +19,21 @@ namespace System.Windows.Controls
       readonly Core Core = new Core();
       GMapNET.Rectangle region;
       Canvas Canvas = new Canvas();
+
+      /// <summary>
+      /// go to current position and center mouse OnMouseWheel
+      /// </summary>
+      bool CenterPositionOnMouseWheel = true;
+
+      /// <summary>
+      /// max zoom
+      /// </summary>
+      public int MaxZoom;
+
+      /// <summary>
+      /// min zoom
+      /// </summary>
+      public int MinZoom;
       
       /// <summary>
       /// list of markers
@@ -245,28 +261,31 @@ namespace System.Windows.Controls
          DrawMapWPF(drawingContext);
 
          base.OnRender(drawingContext);
-      }
+      }        
 
       protected override void OnMouseWheel(MouseWheelEventArgs e)
       {
          if(IsMouseDirectlyOver)
          {
-            if(e.Delta > 0)
+            base.OnMouseWheel(e);
+
+            if(CenterPositionOnMouseWheel)
             {
-               int zm = Zoom + 1;
-               if(zm <= MaxZoom)
-               {
-                  Zoom = zm;
-               }
+               Point pl = e.GetPosition(this);
+               PointLatLng pg = FromLocalToLatLng((int)pl.X, (int)pl.Y);
+               SetCurrentPositionOnly(pg);
+
+               System.Windows.Point p = PointToScreen(new System.Windows.Point(ActualWidth/2, ActualHeight/2));
+               Stuff.SetCursorPos((int) p.X, (int) p.Y);
             }
 
-            if(e.Delta < 0)
+            if(e.Delta > 0)
             {
-               int zm = Zoom - 1;
-               if(zm >= MinZoom)
-               {
-                  Zoom = zm;
-               }
+               Zoom++;
+            }
+            else if(e.Delta < 0)
+            {
+               Zoom--;
             }
          }
 
@@ -286,7 +305,7 @@ namespace System.Windows.Controls
 
                if(Core.MouseVisible)
                {
-                  //Cursor = Cursors.None;
+                  Cursor = Cursors.None;
                   Core.MouseVisible = false;
                }
 
@@ -346,17 +365,7 @@ namespace System.Windows.Controls
          }
 
          base.OnMouseMove(e);
-      }
-
-      /// <summary>
-      /// max zoom
-      /// </summary>
-      public int MaxZoom;
-
-      /// <summary>
-      /// min zoom
-      /// </summary>
-      public int MinZoom;
+      }         
 
       #endregion
 

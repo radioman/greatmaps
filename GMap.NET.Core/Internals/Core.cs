@@ -91,16 +91,19 @@ namespace GMapNET.Internals
          }
          set
          {
-            zoom = value;
-            sizeOfTiles = GMaps.Instance.GetTileMatrixSize(value);
-            currentPositionPixel = GMaps.Instance.FromLatLngToPixel(currentPosition, value);
-            currentPositionTile = GMaps.Instance.FromPixelToTileXY(currentPositionPixel);
+            if(zoom != value)
+            {
+               zoom = value;
+               sizeOfTiles = GMaps.Instance.GetTileMatrixSize(value);
+               currentPositionPixel = GMaps.Instance.FromLatLngToPixel(currentPosition, value);
+               currentPositionTile = GMaps.Instance.FromPixelToTileXY(currentPositionPixel);
 
-            ReloadMap();
-            GoToCurrentPosition();
+               ReloadMap();
+               GoToCurrentPosition();
 
-            if(OnMapZoomChanged != null)
-               OnMapZoomChanged();
+               if(OnMapZoomChanged != null)
+                  OnMapZoomChanged();
+            }
          }
       }
 

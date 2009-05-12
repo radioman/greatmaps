@@ -6,6 +6,10 @@ namespace GMapNET.Internals
 {
    internal class Stuff
    {
+      [System.Runtime.InteropServices.DllImportAttribute("user32.dll", EntryPoint="SetCursorPos")]
+      [return: System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.Bool)]
+      public static extern bool SetCursorPos(int X, int Y);
+
       public static void Shuffle<T>(IList<T> deck)
       {
          Random random = new System.Random();

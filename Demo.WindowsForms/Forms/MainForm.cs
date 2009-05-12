@@ -57,7 +57,8 @@ namespace Demo.WindowsForms
             MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
             MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
             MainMap.OnEmptyTileError += new EmptyTileError(MainMap_OnEmptyTileError);
-
+            MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
+            
             // get map type
             comboBoxMapType.DataSource = Enum.GetValues(typeof(MapType));
             comboBoxMapType.SelectedItem = MainMap.MapType;
@@ -77,9 +78,6 @@ namespace Demo.WindowsForms
             // get zoom             
             trackBar1.Maximum = MainMap.MaxZoom;
             trackBar1.Value = MainMap.Zoom;              
-
-            // zoom control
-            MouseWheel += new System.Windows.Forms.MouseEventHandler(MainForm_MouseWheel);
 
             // set current marker and get ground layer
             currentMarker = new GMapMarkerGoogleRed(MainMap.CurrentPosition);
@@ -109,6 +107,12 @@ namespace Demo.WindowsForms
          }
       }
 
+      // MapZoomChanged
+      void MainMap_OnMapZoomChanged()
+      {
+         trackBar1.Value = MainMap.Zoom;
+      }
+
       // empty tile displayed
       void MainMap_OnEmptyTileError(int zoom, Point pos)
       {
@@ -119,21 +123,6 @@ namespace Demo.WindowsForms
       private void MainForm_Shown(object sender, EventArgs e)
       {
          MainMap.ReloadMap();
-      }
-
-      // control zoom with wheel
-      void MainForm_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
-      {
-         if(e.Delta > 0)
-         {
-            if(trackBar1.Value != trackBar1.Maximum)
-               trackBar1.Value++;
-         }
-         else if(e.Delta < 0)
-         {
-            if(trackBar1.Value > trackBar1.Minimum)
-               trackBar1.Value--;
-         }
       }
 
       // click on some marker

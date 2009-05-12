@@ -52,6 +52,7 @@ namespace Demo.WindowsPresentation
          MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
          MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
          MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
+         MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
 
          // get map types
          comboBoxMapType.ItemsSource = Enum.GetValues(typeof(MapType));
@@ -105,6 +106,12 @@ namespace Demo.WindowsPresentation
             }
             MainMap.Markers.Add(it);
          }
+      }
+
+      // MapZoomChanged
+      void MainMap_OnMapZoomChanged()
+      {
+         sliderZoom.Value = MainMap.Zoom;
       }
 
       // tile louading starts
@@ -227,17 +234,9 @@ namespace Demo.WindowsPresentation
       private void sliderZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
       {
          int zn = (int) e.NewValue;
-         if(zn != MainMap.Zoom)
          {
             MainMap.Zoom = zn;              
          }
-      }
-
-      protected override void OnMouseWheel(System.Windows.Input.MouseWheelEventArgs e)
-      {
-         base.OnMouseWheel(e);
-
-         sliderZoom.Value = MainMap.Zoom;
       }
 
       private void czuZoomUp_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
