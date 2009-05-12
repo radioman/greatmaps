@@ -260,6 +260,80 @@ namespace System.Windows.Forms
       }
 
       /// <summary>
+      /// zooms and centers all route
+      /// </summary>
+      /// <param name="overlayId">overlay id or null to check all</param>
+      /// <returns></returns>
+      public bool ZoomAndCenterRoutes(string overlayId)
+      {
+         RectLatLng? rect = GetRectOfAllRoutes(overlayId);
+         if(rect.HasValue)
+         {
+            int maxZoom = Core.GetMaxZoomToFitRect(rect.Value);
+            if(maxZoom > 0)
+            {
+               PointLatLng center = new PointLatLng(rect.Value.Lat-(rect.Value.HeightLat/2), rect.Value.Lng+(rect.Value.WidthLng/2));
+               CurrentPosition = center;
+
+               if(maxZoom > MaxZoom)
+               {
+                  maxZoom = MaxZoom;
+               }
+
+               if(Zoom != maxZoom)
+               {
+                  Zoom = maxZoom;
+               }
+               else
+               {
+                  GoToCurrentPosition();
+               }
+
+               return true;
+            }
+         }
+
+         return false;
+      }
+
+      /// <summary>
+      /// zooms and centers route 
+      /// </summary>
+      /// <param name="route"></param>
+      /// <returns></returns>
+      public bool ZoomAndCenterRoute(MapRoute route)
+      {
+         RectLatLng? rect = GetRectOfRoute(route);
+         if(rect.HasValue)
+         {
+            int maxZoom = Core.GetMaxZoomToFitRect(rect.Value);
+            if(maxZoom > 0)
+            {
+               PointLatLng center = new PointLatLng(rect.Value.Lat-(rect.Value.HeightLat/2), rect.Value.Lng+(rect.Value.WidthLng/2));
+               CurrentPosition = center;
+
+               if(maxZoom > MaxZoom)
+               {
+                  maxZoom = MaxZoom;
+               }
+
+               if(Zoom != maxZoom)
+               {
+                  Zoom = maxZoom;
+               }
+               else
+               {
+                  GoToCurrentPosition();
+               }
+
+               return true;
+            }
+         }
+
+         return false;
+      }
+
+      /// <summary>
       /// gets rectangle with all objects inside
       /// </summary>
       /// <param name="overlayId">overlay id or null to check all</param>
@@ -311,6 +385,114 @@ namespace System.Windows.Forms
             }
          }
 
+         return ret;
+      }
+
+      /// <summary>
+      /// gets rectangle with all objects inside
+      /// </summary>
+      /// <param name="overlayId">overlay id or null to check all</param>
+      /// <returns></returns>
+      public RectLatLng? GetRectOfAllRoutes(string overlayId)
+      {
+         RectLatLng? ret = null;
+
+         double left = double.MaxValue;
+         double top = double.MinValue;
+         double right = double.MinValue;
+         double bottom = double.MaxValue;
+
+         foreach(GMapOverlay o in Overlays)
+         {
+            if(overlayId == null || o.Id == overlayId)
+            {
+               if(o.IsVisibile && o.Routes.Count > 0)
+               {
+                  foreach(MapRoute route in o.Routes)
+                  {
+                     if(route.From.HasValue && route.To.HasValue)
+                     {
+                        foreach(PointLatLng p in route.Points)
+                        {
+                           // left
+                           if(p.Lng < left)
+                           {
+                              left = p.Lng;
+                           }
+
+                           // top
+                           if(p.Lat > top)
+                           {
+                              top = p.Lat;
+                           }
+
+                           // right
+                           if(p.Lng > right)
+                           {
+                              right = p.Lng;
+                           }
+
+                           // bottom
+                           if(p.Lat < bottom)
+                           {
+                              bottom = p.Lat;
+                           }
+                        }
+                     }
+                  }
+
+                  ret = RectLatLng.FromLTRB(left, top, right, bottom);
+               }
+            }
+         }
+
+         return ret;
+      }
+
+      /// <summary>
+      /// gets rect of route
+      /// </summary>
+      /// <param name="route"></param>
+      /// <returns></returns>
+      public RectLatLng? GetRectOfRoute(MapRoute route)
+      {
+         RectLatLng? ret = null;
+
+         double left = double.MaxValue;
+         double top = double.MinValue;
+         double right = double.MinValue;
+         double bottom = double.MaxValue;
+
+         if(route.From.HasValue && route.To.HasValue)
+         {
+            foreach(PointLatLng p in route.Points)
+            {
+               // left
+               if(p.Lng < left)
+               {
+                  left = p.Lng;
+               }
+
+               // top
+               if(p.Lat > top)
+               {
+                  top = p.Lat;
+               }
+
+               // right
+               if(p.Lng > right)
+               {
+                  right = p.Lng;
+               }
+
+               // bottom
+               if(p.Lat < bottom)
+               {
+                  bottom = p.Lat;
+               }
+            }
+            ret = RectLatLng.FromLTRB(left, top, right, bottom);
+         }
          return ret;
       }
 

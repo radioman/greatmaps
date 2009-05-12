@@ -280,6 +280,8 @@ namespace Demo.WindowsForms
 
             objects.Markers.Add(m1);
             objects.Markers.Add(m2);
+
+            MainMap.ZoomAndCenterRoute(r);
          }
       }
 
