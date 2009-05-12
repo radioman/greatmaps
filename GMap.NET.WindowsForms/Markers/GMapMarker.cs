@@ -1,14 +1,60 @@
 ﻿using System.Drawing;
+using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace GMapNET
 {
    /// <summary>
    /// GMap.NET marker
    /// </summary>
-   public class GMapMarker
+   public class GMapMarker : INotifyPropertyChanged
    {
-      public PointLatLng Position;
+      public event PropertyChangedEventHandler PropertyChanged;
+      public void OnPropertyChanged(string name)
+      {
+         PropertyChangedEventHandler handler = PropertyChanged;
+         if(handler != null)
+         {
+            handler(this, new PropertyChangedEventArgs(name));
+         }
+      }
+
+      internal GMapOverlay Overlay;
+
+      private PointLatLng position;
+      public PointLatLng Position
+      {
+         get
+         {
+            return position;
+         }
+         set
+         {
+            position = value;
+
+            if(Overlay != null)
+            {
+               GMapNET.Point p = Overlay.Control.FromLatLngToLocal(value);
+               Point pl = new Point(p.X, p.Y);
+               pl.Offset(Offset.X, Offset.Y);
+               LocalPosition = pl;
+            }
+         }
+      }
       public object Tag;
+
+      Point offset;
+      public Point Offset
+      {
+         get
+         {
+            return offset;
+         }
+         set
+         {
+            offset = value;
+         }
+      }
 
       Rectangle area;
       public Point LocalPosition
@@ -19,7 +65,13 @@ namespace GMapNET
          }
          internal set
          {
-            area.Location = value;
+            area.Location = value;    
+            OnPropertyChanged("LocalPosition");
+
+            if(Overlay != null)
+            {
+               Overlay.Control.Invalidate();
+            }
          }
       }
 

@@ -94,7 +94,11 @@ namespace GMapNET
          {
             foreach(GMapMarker obj in e.NewItems)
             {
-               Control.UpdateMarkerLocalPosition(obj);
+               if(obj != null)
+               {
+                  obj.Overlay = this;
+                  obj.Position = obj.Position;
+               }
             }
          }
 

@@ -106,7 +106,7 @@ namespace System.Windows.Forms
             {
                foreach(GMapMarker obj in o.Markers)
                {
-                  UpdateMarkerLocalPosition(obj);
+                  obj.Position = obj.Position;
                }
 
                foreach(MapRoute obj in o.Routes)
