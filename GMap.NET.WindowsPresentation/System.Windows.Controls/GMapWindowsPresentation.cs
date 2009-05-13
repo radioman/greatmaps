@@ -1,11 +1,14 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Collections.Generic;
+using System.Linq;
 
 using GMapNET;
 using GMapNET.Internals;
@@ -101,10 +104,23 @@ namespace System.Windows.Controls
          Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
          Core.OnMapDrag += new MapDrag(Core_OnMapDrag);
          SizeChanged += new SizeChangedEventHandler(GMap_SizeChanged);
+         Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
          Loaded += new RoutedEventHandler(GMap_Loaded);
 
          Markers.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Objects_CollectionChanged);
          this.ItemsSource = Markers;      
+      }
+
+      void Core_OnMapZoomChanged()
+      {
+         var routes = Markers.Where(p => p != null && p.Route.Count > 1);
+         if(routes != null)
+         {
+            foreach(var i in routes)
+            {
+               i.RegenerateRouteShape();
+            }
+         }
       }
 
       void Core_OnMapDrag()
@@ -253,6 +269,53 @@ namespace System.Windows.Controls
          obj.Margin = margin;
 
          return bmp;
+      }
+
+      /// <summary>
+      /// creates path from list of points
+      /// </summary>
+      /// <param name="pl"></param>
+      /// <returns></returns>
+      public Path CreateRoutePath(List<System.Windows.Point> localPath)
+      {
+         // Create a StreamGeometry to use to specify myPath.
+         StreamGeometry geometry = new StreamGeometry();
+
+         using(StreamGeometryContext ctx = geometry.Open())
+         {
+            ctx.BeginFigure(localPath[0], false, false);
+
+            // Draw a line to the next specified point.
+            ctx.PolyLineTo(localPath, true, true);
+         }
+
+         // Freeze the geometry (make it unmodifiable)
+         // for additional performance benefits.
+         geometry.Freeze();
+
+         // Create a path to draw a geometry with.
+         Path myPath = new Path();
+         {
+            // Specify the shape of the Path using the StreamGeometry.
+            myPath.Data = geometry;
+
+            BlurEffect ef = new BlurEffect();
+            {
+               ef.KernelType = KernelType.Gaussian;
+               ef.Radius = 3.0;
+               ef.RenderingBias = RenderingBias.Quality;
+            }
+
+            myPath.Effect = ef;
+
+            myPath.Stroke = Brushes.Navy;
+            myPath.StrokeThickness = 5;
+            myPath.StrokeLineJoin = PenLineJoin.Round;
+            myPath.StrokeStartLineCap = PenLineCap.Triangle;
+            myPath.StrokeEndLineCap = PenLineCap.Square;
+            myPath.Opacity = 0.6;
+         }
+         return myPath;
       }
 
       #region UserControl Events
@@ -756,7 +819,7 @@ namespace System.Windows.Controls
 
    internal class WindowsPresentationImageProxy : PureImageProxy
    {
-      public override PureImage FromStream(Stream stream)
+      public override PureImage FromStream(System.IO.Stream stream)
       {
          WindowsPresentationImage ret = null;
          if(stream != null)
@@ -784,7 +847,7 @@ namespace System.Windows.Controls
                {
                   try
                   {
-                     stream.Seek(0, SeekOrigin.Begin);
+                     stream.Seek(0, System.IO.SeekOrigin.Begin);
 
                      JpegBitmapDecoder bitmapDecoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
                      ImageSource m = bitmapDecoder.Frames[0];
@@ -805,7 +868,7 @@ namespace System.Windows.Controls
          return ret;
       }
 
-      public override bool Save(Stream stream, PureImage image)
+      public override bool Save(System.IO.Stream stream, PureImage image)
       {
          WindowsPresentationImage ret = (WindowsPresentationImage) image;
          if(ret.Img != null)

@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using GMapNET;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace System.Windows.Controls
 {
@@ -90,12 +92,35 @@ namespace System.Windows.Controls
          }
       }
 
-      internal GMap Control;
+      /// <summary>
+      /// if marker is a route that is a path of it's coordinates
+      /// </summary>
+      public readonly List<PointLatLng> Route = new List<PointLatLng>();
+
+      internal GMap Control;       
 
       public GMapMarker(GMap control, PointLatLng pos)
       {
          Control = control;
          Position = pos;
+      }
+
+      /// <summary>
+      /// regenerates shape of route
+      /// </summary>
+      public void RegenerateRouteShape()
+      {
+         if(Route.Count > 1)
+         {
+            var localPath = new List<System.Windows.Point>();
+            var offset = Control.FromLatLngToLocal(Route[0]);
+            foreach(var i in Route)
+            {
+               var p = Control.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
+               localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
+            }
+            this.Shape = Control.CreateRoutePath(localPath);
+         }
       }
    } 
 }

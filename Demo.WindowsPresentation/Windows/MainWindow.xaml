@@ -2,11 +2,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="GMap.NET - Great Maps for Windows Presentation"
-    Height="721" Width="929"
+    Height="770" Width="900"
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     xmlns:src="clr-namespace:Demo.WindowsPresentation"
-    MinHeight="700" MinWidth="400">
+    MinHeight="775" MinWidth="400">
     <Grid>
       <GroupBox Name="mapgroup"  Header="gmap" Margin="12,7,241,12" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
          <src:Map x:Name="MainMap" />
@@ -71,6 +71,13 @@
             <Button Margin="7,6,77,0" Name="button8" Height="21.04" VerticalAlignment="Top" Click="button8_Click">Add Marker</Button>
             <Button Margin="7,0,77,6" Name="button10" Height="21.04" VerticalAlignment="Bottom" Click="button10_Click">Clear All</Button>
             <CheckBox HorizontalAlignment="Right" Margin="0,9,0,0" Name="checkBoxPlace" Width="71" Height="16.04" VerticalAlignment="Top" IsChecked="True">place info</CheckBox>
+         </Grid>
+      </GroupBox>
+       <GroupBox Header="routes" HorizontalAlignment="Right" Name="routes" Width="169" Margin="0,385,11,283" Height="80" VerticalAlignment="Top">
+         <Grid>
+            <Button Margin="7,6,0,0" Name="button11" Height="21.04" VerticalAlignment="Top" HorizontalAlignment="Left" Width="65" Click="button11_Click">set start</Button>
+            <Button HorizontalAlignment="Right" Margin="0,6,5,0" Name="button9" Width="65" Height="21.04" VerticalAlignment="Top" Click="button9_Click">set end</Button>
+            <Button Margin="46,0,46,6" Name="button12" Height="21.04" VerticalAlignment="Bottom" Click="button12_Click">Add route</Button>
          </Grid>
       </GroupBox>
    </Grid>

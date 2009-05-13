@@ -10,11 +10,15 @@ using System.Globalization;
 using System.Windows.Shapes;
 using System.Windows.Controls.Primitives;
 using GMapNET;
+using System.Collections.Generic;
 
 namespace Demo.WindowsPresentation
 {
    public partial class MainWindow : Window
    {
+      PointLatLng start;
+      PointLatLng end;
+
       // marker
       GMapMarker currentMarker;
 
@@ -401,5 +405,42 @@ namespace Demo.WindowsPresentation
 
          MainMap.Markers.Add(m);
       }
+
+      // sets route start
+      private void button11_Click(object sender, RoutedEventArgs e)
+      {
+         start = MainMap.CurrentPosition;
+      }
+
+      // sets route end
+      private void button9_Click(object sender, RoutedEventArgs e)
+      {
+         end = MainMap.CurrentPosition;
+      }
+
+      // adds route
+      private void button12_Click(object sender, RoutedEventArgs e)
+      {
+         List<PointLatLng> route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, MainMap.Zoom);
+         if(route != null)
+         {
+            GMapMarker m1 = new GMapMarker(MainMap, start);
+            m1.Shape = new CustomMarkerDemo(m1, "Start: " + start.ToString());
+
+            GMapMarker m2 = new GMapMarker(MainMap, end);
+            m2.Shape = new CustomMarkerDemo(m2, "End: " + start.ToString());
+
+            GMapMarker mRoute = new GMapMarker(MainMap, start);
+            {
+               mRoute.Route.AddRange(route);
+               mRoute.RegenerateRouteShape();
+               mRoute.ZIndex = -1;
+            }
+
+            MainMap.Markers.Add(m1);
+            MainMap.Markers.Add(m2);
+            MainMap.Markers.Add(mRoute);
+         }
+      }         
    }
 }
