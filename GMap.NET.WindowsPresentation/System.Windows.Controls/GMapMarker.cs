@@ -61,6 +61,7 @@ namespace System.Windows.Controls
          set
          {
             offset = value;
+            Position = Position;
          }
       }
 
