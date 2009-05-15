@@ -703,14 +703,17 @@ namespace GMapNET.Internals
       }
 
       /// <summary>
-      /// enqueueens tile to loaad
+      /// enqueueens tile to load
       /// </summary>
       /// <param name="task"></param>
       void EnqueueLoadTask(Point task)
       {
          lock(tileLoadQueue)
          {
-            tileLoadQueue.Enqueue(task);
+            if(!tileLoadQueue.Contains(task))
+            {
+               tileLoadQueue.Enqueue(task);
+            }
          }
          waitOnEmptyTasks.Set();
       }
