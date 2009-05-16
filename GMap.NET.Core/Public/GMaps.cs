@@ -17,7 +17,7 @@ namespace GMapNET
    {
       // Google version strings
       public string VersionGoogleMap = "w2.92";
-      public string VersionGoogleSatellite = "38";
+      public string VersionGoogleSatellite = "39";
       public string VersionGoogleLabels = "w2t.92";
       public string VersionGoogleTerrain = "w2p.87";
       public string SecGoogleWord = "Galileo";
