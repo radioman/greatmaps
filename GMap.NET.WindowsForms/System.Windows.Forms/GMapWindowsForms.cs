@@ -692,24 +692,27 @@ namespace System.Windows.Forms
 
       protected override void OnMouseWheel(MouseEventArgs e)
       {
-         base.OnMouseWheel(e);          
+         base.OnMouseWheel(e);
 
-         if(CenterPositionOnMouseWheel)
+         if(!IsMouseOverMarker)
          {
-            PointLatLng pg = FromLocalToLatLng(e.X, e.Y);
-            SetCurrentPositionOnly(pg);
+            if(CenterPositionOnMouseWheel)
+            {
+               PointLatLng pg = FromLocalToLatLng(e.X, e.Y);
+               SetCurrentPositionOnly(pg);
 
-            System.Drawing.Point p = PointToScreen(new System.Drawing.Point(Width/2, Height/2));
-            Stuff.SetCursorPos((int) p.X, (int) p.Y);
-         }
+               System.Drawing.Point p = PointToScreen(new System.Drawing.Point(Width/2, Height/2));
+               Stuff.SetCursorPos((int) p.X, (int) p.Y);
+            }
 
-         if(e.Delta > 0)
-         {
-            Zoom++;
-         }
-         else if(e.Delta < 0)
-         {
-            Zoom--;
+            if(e.Delta > 0)
+            {
+               Zoom++;
+            }
+            else if(e.Delta < 0)
+            {
+               Zoom--;
+            }
          }
       }
 

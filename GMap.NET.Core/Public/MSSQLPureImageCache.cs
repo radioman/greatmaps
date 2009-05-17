@@ -24,12 +24,12 @@ namespace GMapNET
             if(connectionString != value)
             {
                connectionString = value;
-               
+
                if(Initialized)
                {
                   Dispose();
                   Initialize();
-               }               
+               }
             }
          }
       }
@@ -124,7 +124,7 @@ namespace GMapNET
                #endregion
             }
             return Initialized;
-         }          
+         }
       }
 
       #region IDisposable Members
@@ -155,35 +155,31 @@ namespace GMapNET
       #endregion
 
       #region PureImageCache Members
-      public bool PutImageToCache(PureImage tile, MapType type, Point pos, int zoom)
+      public bool PutImageToCache(MemoryStream tile, MapType type, Point pos, int zoom)
       {
-         bool ret = true;          
+         bool ret = true;
          {
             if(Initialize())
             {
                try
                {
-                  using(MemoryStream m = new MemoryStream())
+                  using(tile)
                   {
-                     ret = Purity.Instance.ImageProxy.Save(m, tile);
-                     if(ret)
+                     lock(cmdInsert)
                      {
-                        lock(cmdInsert)
+                        if(cmdInsert.Connection.State == System.Data.ConnectionState.Open)
                         {
-                           if(cmdInsert.Connection.State == System.Data.ConnectionState.Open)
-                           {
-                              cmdInsert.Parameters["@x"].Value = pos.X;
-                              cmdInsert.Parameters["@y"].Value = pos.Y;
-                              cmdInsert.Parameters["@zoom"].Value = zoom;
-                              cmdInsert.Parameters["@type"].Value = (int) type;
-                              cmdInsert.Parameters["@tile"].Value = m.GetBuffer();
-                              cmdInsert.ExecuteNonQuery();
-                           }
-                           else
-                           {
-                              ret = false;
-                              Dispose();
-                           }
+                           cmdInsert.Parameters["@x"].Value = pos.X;
+                           cmdInsert.Parameters["@y"].Value = pos.Y;
+                           cmdInsert.Parameters["@zoom"].Value = zoom;
+                           cmdInsert.Parameters["@type"].Value = (int) type;
+                           cmdInsert.Parameters["@tile"].Value = tile.GetBuffer();
+                           cmdInsert.ExecuteNonQuery();
+                        }
+                        else
+                        {
+                           ret = false;
+                           Dispose();
                         }
                      }
                   }

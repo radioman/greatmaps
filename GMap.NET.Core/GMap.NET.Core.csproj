@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Internals\CacheQueue.cs" />
     <Compile Include="Internals\PureImage.cs" />
     <Compile Include="Internals\Purity.cs" />
     <Compile Include="Control\IGControl.cs" />

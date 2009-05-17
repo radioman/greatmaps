@@ -5,6 +5,8 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.ComponentModel;
+using System.Threading;
 
 using GMapNET.Internals;
 
@@ -95,6 +97,17 @@ namespace GMapNET
          }
       }
 
+      /// <summary>
+      /// load tiles in random sequence
+      /// </summary>
+      public bool ShuffleTilesOnLoad = true;
+
+      /// <summary>
+      /// tile cache queue
+      /// </summary>
+      readonly Queue<CacheQueue> tileCacheQueue = new Queue<CacheQueue>();
+      BackgroundWorker cacher = new BackgroundWorker();
+
       #region -- google maps constants --
       readonly List<double> Uu = new List<double>();
       readonly List<double> Vu = new List<double>();
@@ -125,6 +138,46 @@ namespace GMapNET
             c *= 2;
          }
          #endregion
+
+         cacher.DoWork += new DoWorkEventHandler(cacher_DoWork);
+         cacher.WorkerSupportsCancellation = true;
+      }
+
+      void cacher_DoWork(object sender, DoWorkEventArgs e)
+      {
+         Thread.CurrentThread.IsBackground = false;
+
+         while(!cacher.CancellationPending)
+         {
+            bool process = true;
+            CacheQueue? task = null;
+
+            lock(tileCacheQueue)
+            {
+               if(tileCacheQueue.Count > 0)
+               {
+                  task = tileCacheQueue.Dequeue();
+               }
+               else
+               {
+                  process = false;
+               }
+            }
+
+            if(process && task.HasValue)
+            {
+               ImageCache.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
+            }
+            else
+            {
+               Debug.WriteLine("CacheTasks: complete");
+
+               Thread.Sleep(1000);
+               cacher.CancelAsync();
+            }
+
+            Thread.Sleep(10);
+         }
       }
 
       #region -- Coordinates --
@@ -354,7 +407,30 @@ namespace GMapNET
          double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
          double dDistance = EarthRadiusKm * c;
          return dDistance;
-      } 
+      }
+
+      /// <summary>
+      /// enqueueens tile to cache
+      /// </summary>
+      /// <param name="task"></param>
+      void EnqueueCacheTask(CacheQueue task)
+      {
+         lock(tileCacheQueue)
+         {
+            if(!tileCacheQueue.Contains(task))
+            {
+               Debug.WriteLine("EnqueueCacheTask: " + task.Pos.ToString());
+
+               tileCacheQueue.Enqueue(task);
+
+               if(!cacher.IsBusy)
+               {
+                  cacher.RunWorkerAsync();
+               }
+            }
+         }
+      }
+
       #endregion
 
       #region -- URL generation --
@@ -563,27 +639,6 @@ namespace GMapNET
       /// <returns></returns>
       internal PointLatLng? GetLatLngFromGeocoderUrl(string url, bool useCache)
       {
-         //GET /maps/geo?q=lietuva%20vilnius&output=csv HTTP/1.1  
-         //User-Agent: Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1 
-         //Host: maps.google.com  
-         //Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1
-         //Accept-Language: en,lt-LT;q=0.9,lt;q=0.8     
-         //Accept-Charset: iso-8859-1, utf-8, utf-16, *;q=0.1 
-         //Accept-Encoding: deflate, gzip, x-gzip, identity, *;q=0 
-         //Cookie: PREF=ID=dc739bf01aeeeaf6:LD=en:CR=2:TM=1226264028:LM=1227458503:S=nShNvvvFhVPickBv; NID=17=l4NuFqggqPCBRcQu4BLw5EkBfiTej5k3i8gPOWl16_wqWNaYA5tepmtdKpxBqxkqDWZV5NIn9DaQQcpbyL4T8mDDmkoMuIMh71nasewOVxAZFWFkzrRGU3kDu_QBTmDt
-         //Cookie2: $Version=1 
-         //Connection: Keep-Alive, TE   
-         //TE: deflate, gzip, chunked, identity, trailers
-
-         //HTTP/1.1 200 OK   
-         //Content-Type: text/plain; charset=UTF-8 
-         //Content-Encoding: gzip
-         //Date: Sat, 13 Dec 2008 12:30:38 GMT
-         //Server: mfe 
-         //Cache-Control: private, x-gzip-ok="" 
-         //Content-Length: 47
-         //..........320.1.15.3..4134.12.32..453...l5W....
-
          PointLatLng? ret = null;
          try
          {
@@ -606,10 +661,6 @@ namespace GMapNET
                request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
                request.Timeout = Timeout;
                request.ReadWriteTimeout = Timeout*6;
-
-               //request.Accept = "text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1";
-               //request.Headers["Accept-Charset"] = "utf-8, utf-16, iso-8859-1, *;q=0.1";
-               //request.Referer = "http://maps.google.com/";
                request.KeepAlive = true;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
@@ -684,10 +735,6 @@ namespace GMapNET
                request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
                request.Timeout = Timeout;
                request.ReadWriteTimeout = Timeout*6;
-
-               //request.Accept = "text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1";
-               //request.Headers["Accept-Charset"] = "utf-8, utf-16, iso-8859-1, *;q=0.1";
-               //request.Referer = "http://maps.google.com/";
                request.KeepAlive = true;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
@@ -755,10 +802,6 @@ namespace GMapNET
                request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
                request.Timeout = Timeout;
                request.ReadWriteTimeout = Timeout*6;
-
-               //request.Accept = "text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1";
-               //request.Headers["Accept-Charset"] = "utf-8, utf-16, iso-8859-1, *;q=0.1";
-               //request.Referer = "http://maps.google.com/";
                request.KeepAlive = true;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
@@ -1001,21 +1044,6 @@ namespace GMapNET
             }
          }
 
-         //GET /kh?v=33&hl=en&x=20&y=18&z=6&s=Galile HTTP/1.1  
-         //User-Agent: Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1  
-         //Host: khm0.google.com       
-         //Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1
-         //Accept-Language: en,lt-LT;q=0.9,lt;q=0.8         
-         //Accept-Charset: iso-8859-1, utf-8, utf-16, *;q=0.1
-         //Accept-Encoding: deflate, gzip, x-gzip, identity, *;q=0 
-         //Referer: http://maps.google.com/
-         //Cookie: khcookie=fzwq2mWJ_YJVI4fzYjsxbnq15MnbGcsjKO_M4A;
-         // PREF=ID=dc739bf01aeeeaf6:LD=en:CR=2:TM=1226264028:LM=1227458503:S=nShNvvvFhVPickBv;
-         // NID=17=T73hu_DJ4dxPaV7TkCQnz3so3aStJNqCEBb0oZjMLIIkRQ_Vrc8LjFRn_BwXxNg6JXblBVMRvdF_BG16dK-EsgE_Twn04E80qAilrSgorTZCleQR3UckVMgo30YrBA7e
-         //Cookie2: $Version=1
-         //Connection: Keep-Alive, TE  
-         //TE: deflate, gzip, chunked, identity, trailers 
-
          try
          {
             if(Mode != AccessMode.CacheOnly)
@@ -1029,19 +1057,22 @@ namespace GMapNET
                request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
                request.Timeout = Timeout;
                request.ReadWriteTimeout = Timeout*6;
-
-               request.Accept = "text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1";
-               request.Headers["Accept-Encoding"] = "deflate, gzip, x-gzip, identity, *;q=0";
                request.Referer = "http://maps.google.com/";
-               request.KeepAlive = true;
+               request.KeepAlive = false;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                {
-                  Stream responseStream = Stuff.CopyStream(response.GetResponseStream());
+                  MemoryStream responseStream = Stuff.CopyStream(response.GetResponseStream());
                   {
                      if(Purity.Instance.ImageProxy != null)
                      {
                         ret = Purity.Instance.ImageProxy.FromStream(responseStream);
+
+                        // Enqueue Cache
+                        if(ret != null && Mode != AccessMode.ServerOnly)
+                        {
+                           EnqueueCacheTask(new CacheQueue(type, pos, zoom, responseStream));
+                        }
                      }
                      else
                      {
@@ -1055,13 +1086,6 @@ namespace GMapNET
          {
             ret = null;
             Debug.WriteLine("GetImageFrom: " + ex.ToString());
-         }
-         finally
-         {
-            if(ret != null && Mode != AccessMode.ServerOnly)
-            {
-               Cache.Instance.ImageCache.PutImageToCache(ret, type, pos, zoom);
-            }
          }
 
          return ret;

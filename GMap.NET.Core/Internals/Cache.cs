@@ -150,7 +150,7 @@ namespace GMapNET.Internals
                                           }
                                        }
                                     }
-                                 }                                  
+                                 }
 
                                  foreach(long id in add)
                                  {
@@ -398,7 +398,7 @@ namespace GMapNET.Internals
 
       #region PureImageCache Members
 
-      bool PureImageCache.PutImageToCache(PureImage tile, MapType type, Point pos, int zoom)
+      bool PureImageCache.PutImageToCache(MemoryStream tile, MapType type, Point pos, int zoom)
       {
          bool ret = true;
          try
@@ -432,44 +432,40 @@ namespace GMapNET.Internals
                      cn.Open();
                      if(cn.State == System.Data.ConnectionState.Open)
                      {
-                        using(MemoryStream m = new MemoryStream())
+                        using(tile)
                         {
-                           ret = Purity.Instance.ImageProxy.Save(m, tile);
-                           if(ret)
+                           using(SQLiteTransaction tr = cn.BeginTransaction())
                            {
-                              using(SQLiteTransaction tr = cn.BeginTransaction())
+                              try
                               {
-                                 try
+                                 using(SQLiteCommand cmd = new SQLiteCommand(cn))
                                  {
-                                    using(SQLiteCommand cmd = new SQLiteCommand(cn))
-                                    {
-                                       cmd.Transaction = tr;
+                                    cmd.Transaction = tr;
 
-                                       cmd.CommandText = "INSERT INTO Tiles(X, Y, Zoom, Type) VALUES(@p1, @p2, @p3, @p4)";
-                                       cmd.Parameters.AddWithValue("@p1", pos.X);
-                                       cmd.Parameters.AddWithValue("@p2", pos.Y);
-                                       cmd.Parameters.AddWithValue("@p3", zoom);
-                                       cmd.Parameters.AddWithValue("@p4", (int) type);
+                                    cmd.CommandText = "INSERT INTO Tiles(X, Y, Zoom, Type) VALUES(@p1, @p2, @p3, @p4)";
+                                    cmd.Parameters.AddWithValue("@p1", pos.X);
+                                    cmd.Parameters.AddWithValue("@p2", pos.Y);
+                                    cmd.Parameters.AddWithValue("@p3", zoom);
+                                    cmd.Parameters.AddWithValue("@p4", (int) type);
 
-                                       cmd.ExecuteNonQuery();
-                                    }
-
-                                    using(SQLiteCommand cmd = new SQLiteCommand(cn))
-                                    {
-                                       cmd.Transaction = tr;
-
-                                       cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
-                                       cmd.Parameters.AddWithValue("@p1", m.GetBuffer());
-
-                                       cmd.ExecuteNonQuery();
-                                    }
-                                    tr.Commit();
+                                    cmd.ExecuteNonQuery();
                                  }
-                                 catch
+
+                                 using(SQLiteCommand cmd = new SQLiteCommand(cn))
                                  {
-                                    tr.Rollback();
-                                    ret = false;
+                                    cmd.Transaction = tr;
+
+                                    cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
+                                    cmd.Parameters.AddWithValue("@p1", tile.GetBuffer());
+
+                                    cmd.ExecuteNonQuery();
                                  }
+                                 tr.Commit();
+                              }
+                              catch
+                              {
+                                 tr.Rollback();
+                                 ret = false;
                               }
                            }
                         }

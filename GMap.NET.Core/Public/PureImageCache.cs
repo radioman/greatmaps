@@ -1,4 +1,5 @@
-﻿
+﻿using System.IO;
+
 namespace GMapNET
 {
    /// <summary>
@@ -14,7 +15,7 @@ namespace GMapNET
       /// <param name="pos"></param>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      bool PutImageToCache(PureImage tile, MapType type, Point pos, int zoom);
+      bool PutImageToCache(MemoryStream tile, MapType type, Point pos, int zoom);
 
       /// <summary>
       /// gets image from db

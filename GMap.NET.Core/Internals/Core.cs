@@ -45,8 +45,8 @@ namespace GMapNET.Internals
       public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
       public readonly string yahooMapCopyright = string.Format("© Yahoo! Inc. - Map data & Imagery ©{0} NAVTEQ", DateTime.Today.Year);
-    
-      bool started = false;               
+
+      bool started = false;
       int zoom;
       int Width;
       int Height;
@@ -249,8 +249,8 @@ namespace GMapNET.Internals
             boundsChecker.WorkerSupportsCancellation = true;
             boundsChecker.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
             boundsChecker.DoWork += new DoWorkEventHandler(boundsChecker_DoWork);
-         
-            started = true;            
+
+            started = true;
          }
 
          ReloadMap();
@@ -278,7 +278,7 @@ namespace GMapNET.Internals
          }
 
          CancelAsyncTasks();
-      }         
+      }
 
       /// <summary>
       /// sets current position by geocoding
@@ -331,7 +331,7 @@ namespace GMapNET.Internals
       {
          Point pLocal = GMaps.Instance.FromLatLngToPixel(latlng, Zoom);
          pLocal.Offset(renderOffset);
-         return pLocal;           
+         return pLocal;
       }
 
       /// <summary>
@@ -358,7 +358,7 @@ namespace GMapNET.Internals
 
          if(OnCurrentPositionChanged != null)
             OnCurrentPositionChanged(currentPosition);
-      }       
+      }
 
       /// <summary>
       /// gets max zoom level to fit rectangle
@@ -429,7 +429,7 @@ namespace GMapNET.Internals
                   OnNeedInvalidation();
                }
 
-               waitForBoundsChanged.Set(); 
+               waitForBoundsChanged.Set();
             }
 
             // start loading
@@ -461,7 +461,7 @@ namespace GMapNET.Internals
          renderOffset.X = pt.X - dragPoint.X;
          renderOffset.Y = pt.Y - dragPoint.Y;
 
-         centerTileXYLocation.X = ((renderOffset.X)/-GMaps.Instance.TileSize.Width) + (int)(sizeOfMapArea.Width/1.66);
+         centerTileXYLocation.X = ((renderOffset.X)/-GMaps.Instance.TileSize.Width) + (int) (sizeOfMapArea.Width/1.66);
          centerTileXYLocation.Y = ((renderOffset.Y)/-GMaps.Instance.TileSize.Height) + sizeOfMapArea.Height/2;
 
          if(centerTileXYLocation != centerTileXYLocationLast)
@@ -625,6 +625,9 @@ namespace GMapNET.Internals
             // report load complete
             loader.ReportProgress(id, true);
 
+            GC.Collect(GC.MaxGeneration);
+            GC.WaitForPendingFinalizers();
+
             waitOnEmptyTasks.WaitOne();  // No more tasks - wait for a signal
          }
       }
@@ -636,30 +639,28 @@ namespace GMapNET.Internals
       /// <param name="e"></param>
       void loader_ProgressChanged(object sender, ProgressChangedEventArgs e)
       {
+         if(OnNeedInvalidation != null)
          {
-            if(OnNeedInvalidation != null)
-            {
-               OnNeedInvalidation();
-            }
+            OnNeedInvalidation();
+         }
 
-            // some tile loader complete
-            if(e.UserState != null && e.UserState.GetType() == typeof(bool))
-            {
-               bool complete = (bool) e.UserState;
+         // some tile loader complete
+         if(e.UserState != null && e.UserState.GetType() == typeof(bool))
+         {
+            bool complete = (bool) e.UserState;
 
-               if(complete)
+            if(complete)
+            {
+               if(OnTileLoadComplete != null)
                {
-                  if(OnTileLoadComplete != null)
-                  {
-                     OnTileLoadComplete(e.ProgressPercentage);
-                  }
+                  OnTileLoadComplete(e.ProgressPercentage);
                }
-               else
+            }
+            else
+            {
+               if(OnTileLoadStart != null)
                {
-                  if(OnTileLoadStart != null)
-                  {
-                     OnTileLoadStart(e.ProgressPercentage);
-                  }
+                  OnTileLoadStart(e.ProgressPercentage);
                }
             }
          }
@@ -688,17 +689,12 @@ namespace GMapNET.Internals
                {
                   if(Matrix[p] == null)
                   {
-                     Debug.WriteLine("EnqueueLoadTask: " + p.ToString());
-
                      EnqueueLoadTask(p);
                   }
                }
             }
 
             boundsChecker.ReportProgress(100);
-
-            GC.Collect(GC.MaxGeneration);
-            GC.WaitForPendingFinalizers();            
          }
       }
 
@@ -712,6 +708,7 @@ namespace GMapNET.Internals
          {
             if(!tileLoadQueue.Contains(task))
             {
+               Debug.WriteLine("EnqueueLoadTask: " + task.ToString());
                tileLoadQueue.Enqueue(task);
             }
          }
@@ -742,7 +739,11 @@ namespace GMapNET.Internals
                }
             }
          }
-         Stuff.Shuffle<Point>(list);
+
+         if(GMaps.Instance.ShuffleTilesOnLoad)
+         {
+            Stuff.Shuffle<Point>(list);
+         }
       }
    }
 }
