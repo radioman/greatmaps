@@ -1125,6 +1125,7 @@ namespace GMapNET
                         responseStream.Dispose();
                      }
                   }
+                  response.Close();
                }
             }
          }
