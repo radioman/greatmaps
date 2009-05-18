@@ -26,7 +26,7 @@ namespace GMapNET.Internals
 
       public static MemoryStream CopyStream(Stream inputStream)
       {
-         const int readSize = 2*1024;
+         const int readSize = 4*1024;
          byte[] buffer = new byte[readSize];
          MemoryStream ms = new MemoryStream();
 
