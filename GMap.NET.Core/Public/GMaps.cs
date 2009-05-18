@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text;
-using System.ComponentModel;
 using System.Threading;
-
 using GMapNET.Internals;
 
 namespace GMapNET
@@ -85,7 +84,7 @@ namespace GMapNET
       /// <summary>
       /// pure image cache provider, by default: ultra fast SQLite!
       /// </summary>
-      public PureImageCache ImageCache
+      public PureImageCache ImageCacheLocal
       {
          get
          {
@@ -94,6 +93,21 @@ namespace GMapNET
          set
          {
             Cache.Instance.ImageCache = value;
+         }
+      }
+
+      /// <summary>
+      /// pure image cache second provider, by default: none
+      /// </summary>
+      public PureImageCache ImageCacheSecond
+      {
+         get
+         {
+            return Cache.Instance.ImageCacheSecond;
+         }
+         set
+         {
+            Cache.Instance.ImageCacheSecond = value;
          }
       }
 
@@ -166,7 +180,15 @@ namespace GMapNET
 
             if(process && task.HasValue)
             {
-               ImageCache.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
+               if((task.Value.CacheType & CacheUsage.First) == CacheUsage.First && ImageCacheLocal != null)
+               {
+                  ImageCacheLocal.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
+               }
+
+               if((task.Value.CacheType & CacheUsage.Second)== CacheUsage.Second && ImageCacheSecond != null)
+               {
+                  ImageCacheSecond.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
+               }
             }
             else
             {
@@ -1033,19 +1055,43 @@ namespace GMapNET
       /// <returns></returns>
       internal PureImage GetImageFrom(MapType type, Point pos, int zoom, string language)
       {
-         PureImage ret = null;
-
-         if(Mode != AccessMode.ServerOnly)
-         {
-            ret = Cache.Instance.ImageCache.GetImageFromCache(type, pos, zoom);
-            if(ret != null)
-            {
-               return ret;
-            }
-         }
+         PureImage ret = null;           
 
          try
          {
+            if(Mode != AccessMode.ServerOnly)
+            {
+               if(Cache.Instance.ImageCache != null)
+               {
+                  ret = Cache.Instance.ImageCache.GetImageFromCache(type, pos, zoom);
+                  if(ret != null)
+                  {
+                     return ret;
+                  }
+               }
+
+               if(Cache.Instance.ImageCacheSecond != null)
+               {
+                  ret = Cache.Instance.ImageCacheSecond.GetImageFromCache(type, pos, zoom);
+                  if(ret != null)
+                  {
+                     MemoryStream m = new MemoryStream();
+                     {
+                        if(Purity.Instance.ImageProxy.Save(m, ret))
+                        {
+                           EnqueueCacheTask(new CacheQueue(type, pos, zoom, m, CacheUsage.First));
+                        }
+                        else
+                        {
+                           m.Dispose();
+                        }
+                     }
+
+                     return ret;
+                  }
+               }
+            }
+
             if(Mode != AccessMode.CacheOnly)
             {
                string url = MakeImageUrl(type, pos, zoom, language);
@@ -1071,7 +1117,7 @@ namespace GMapNET
                         // Enqueue Cache
                         if(ret != null && Mode != AccessMode.ServerOnly)
                         {
-                           EnqueueCacheTask(new CacheQueue(type, pos, zoom, responseStream));
+                           EnqueueCacheTask(new CacheQueue(type, pos, zoom, responseStream, CacheUsage.Both));
                         }
                      }
                      else

@@ -19,6 +19,11 @@ namespace GMapNET.Internals
       public PureImageCache ImageCache;
 
       /// <summary>
+      /// second level abstract image cache
+      /// </summary>
+      public PureImageCache ImageCacheSecond;
+
+      /// <summary>
       /// local cache location
       /// </summary>
       public string CacheLocation
