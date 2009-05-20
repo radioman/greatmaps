@@ -223,6 +223,38 @@ namespace System.Windows.Forms
       }
 
       /// <summary>
+      /// sets zoom to max to fit rect
+      /// </summary>
+      /// <param name="rect"></param>
+      /// <returns></returns>
+      public bool SetZoomToFitRect(RectLatLng rect)
+      {
+         int maxZoom = Core.GetMaxZoomToFitRect(rect);
+         if(maxZoom > 0)
+         {
+            PointLatLng center = new PointLatLng(rect.Lat-(rect.HeightLat/2), rect.Lng+(rect.WidthLng/2));
+            CurrentPosition = center;
+
+            if(maxZoom > MaxZoom)
+            {
+               maxZoom = MaxZoom;
+            }
+
+            if(Zoom != maxZoom)
+            {
+               Zoom = maxZoom;
+            }
+            else
+            {
+               GoToCurrentPosition();
+            }
+
+            return true;
+         }
+         return false;
+      }
+
+      /// <summary>
       /// sets to max zoom to fit all markers and centers them in map
       /// </summary>
       /// <param name="overlayId">overlay id or null to check all</param>
@@ -232,28 +264,7 @@ namespace System.Windows.Forms
          RectLatLng? rect = GetRectOfAllMarkers(overlayId);
          if(rect.HasValue)
          {
-            int maxZoom = Core.GetMaxZoomToFitRect(rect.Value);
-            if(maxZoom > 0)
-            {
-               PointLatLng center = new PointLatLng(rect.Value.Lat-(rect.Value.HeightLat/2), rect.Value.Lng+(rect.Value.WidthLng/2));
-               CurrentPosition = center;
-
-               if(maxZoom > MaxZoom)
-               {
-                  maxZoom = MaxZoom;
-               }
-
-               if(Zoom != maxZoom)
-               {
-                  Zoom = maxZoom;
-               }
-               else
-               {
-                  GoToCurrentPosition();
-               }
-
-               return true;
-            }
+            return SetZoomToFitRect(rect.Value);
          }
 
          return false;
@@ -269,28 +280,7 @@ namespace System.Windows.Forms
          RectLatLng? rect = GetRectOfAllRoutes(overlayId);
          if(rect.HasValue)
          {
-            int maxZoom = Core.GetMaxZoomToFitRect(rect.Value);
-            if(maxZoom > 0)
-            {
-               PointLatLng center = new PointLatLng(rect.Value.Lat-(rect.Value.HeightLat/2), rect.Value.Lng+(rect.Value.WidthLng/2));
-               CurrentPosition = center;
-
-               if(maxZoom > MaxZoom)
-               {
-                  maxZoom = MaxZoom;
-               }
-
-               if(Zoom != maxZoom)
-               {
-                  Zoom = maxZoom;
-               }
-               else
-               {
-                  GoToCurrentPosition();
-               }
-
-               return true;
-            }
+            return SetZoomToFitRect(rect.Value);
          }
 
          return false;
@@ -306,28 +296,7 @@ namespace System.Windows.Forms
          RectLatLng? rect = GetRectOfRoute(route);
          if(rect.HasValue)
          {
-            int maxZoom = Core.GetMaxZoomToFitRect(rect.Value);
-            if(maxZoom > 0)
-            {
-               PointLatLng center = new PointLatLng(rect.Value.Lat-(rect.Value.HeightLat/2), rect.Value.Lng+(rect.Value.WidthLng/2));
-               CurrentPosition = center;
-
-               if(maxZoom > MaxZoom)
-               {
-                  maxZoom = MaxZoom;
-               }
-
-               if(Zoom != maxZoom)
-               {
-                  Zoom = maxZoom;
-               }
-               else
-               {
-                  GoToCurrentPosition();
-               }
-
-               return true;
-            }
+            return SetZoomToFitRect(rect.Value);
          }
 
          return false;
