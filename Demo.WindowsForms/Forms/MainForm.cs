@@ -38,7 +38,7 @@ namespace Demo.WindowsForms
             // add your custom map db provider
             //MSSQLPureImageCache ch = new MSSQLPureImageCache();
             //ch.ConnectionString = @"Data Source=RADIOMAN-PC\SQLEXPRESS;Initial Catalog=Test;Persist Security Info=False;User ID=aa;Password=aa;";
-            //GMaps.Instance.ImageCache = ch;
+            //GMaps.Instance.ImageCacheSecond = ch;
 
             // set your proxy here if need
             //GMaps.Instance.Proxy = new WebProxy("10.2.0.100", 8080);
@@ -50,7 +50,8 @@ namespace Demo.WindowsForms
             MainMap.MinZoom = 12;
             MainMap.Zoom = 12;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
-            
+            //MainMap.CurrentPosition = new PointLatLng(-40.913512576127573, 173.408203125);
+
             // map events
             MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
             MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
@@ -75,7 +76,8 @@ namespace Demo.WindowsForms
             checkBoxUseRouteCache.Checked = GMaps.Instance.UseRouteCache;
             checkBoxUseGeoCache.Checked = GMaps.Instance.UseGeocoderCache;
 
-            // get zoom             
+            // get zoom  
+            trackBar1.Minimum = MainMap.MinZoom;
             trackBar1.Maximum = MainMap.MaxZoom;
             trackBar1.Value = MainMap.Zoom;              
 

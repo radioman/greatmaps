@@ -37,9 +37,9 @@ namespace Demo.WindowsPresentation
          GMaps.Instance.Mode = AccessMode.ServerAndCache;
 
          // add your custom map db provider
-         MSSQLPureImageCache ch = new MSSQLPureImageCache();
-         ch.ConnectionString = @"Data Source=SQL2008\SQLSRV08;Initial Catalog=PFleet;Integrated Security=True";
-         GMaps.Instance.ImageCacheSecond = ch;
+         //MSSQLPureImageCache ch = new MSSQLPureImageCache();
+         //ch.ConnectionString = @"Data Source=SQL2008\SQLSRV08;Initial Catalog=PFleet;Integrated Security=True";
+         //GMaps.Instance.ImageCacheSecond = ch;
 
          // set your proxy here if need
          //GMaps.Instance.Proxy = new WebProxy("10.2.0.100", 8080);
@@ -73,6 +73,7 @@ namespace Demo.WindowsPresentation
          // setup zoom slider
          sliderZoom.Maximum = MainMap.MaxZoom;
          sliderZoom.Minimum = MainMap.MinZoom;
+         sliderZoom.Value = MainMap.Zoom;
 
          // get position
          textBoxLat.Text = MainMap.CurrentPosition.Lat.ToString(CultureInfo.InvariantCulture);

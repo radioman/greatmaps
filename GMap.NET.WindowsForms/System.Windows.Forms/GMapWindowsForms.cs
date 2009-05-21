@@ -492,14 +492,8 @@ namespace System.Windows.Forms
 
       protected override void OnPaint(PaintEventArgs e)
       {
-         switch(RenderMode)
-         {
-            case RenderMode.GDI_PLUS:
-            {
-               DrawMapGDIplus(e.Graphics);
-            }
-            break;
-         }
+         // render map
+         DrawMapGDIplus(e.Graphics);
 
          // render objects on each layer
          foreach(GMapOverlay o in Overlays)
