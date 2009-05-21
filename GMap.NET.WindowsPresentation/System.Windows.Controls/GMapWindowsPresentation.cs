@@ -328,10 +328,10 @@ namespace System.Windows.Controls
 
       protected override void OnMouseWheel(MouseWheelEventArgs e)
       {
-         if(IsMouseDirectlyOver)
-         {
-            base.OnMouseWheel(e);
+         base.OnMouseWheel(e);
 
+         if(IsMouseDirectlyOver && !IsDragging)
+         {
             if(CenterPositionOnMouseWheel)
             {
                Point pl = e.GetPosition(this);

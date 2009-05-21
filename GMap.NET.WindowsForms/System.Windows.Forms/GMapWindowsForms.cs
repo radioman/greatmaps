@@ -663,7 +663,7 @@ namespace System.Windows.Forms
       {
          base.OnMouseWheel(e);
 
-         if(!IsMouseOverMarker)
+         if(!IsMouseOverMarker && !IsDragging)
          {
             if(CenterPositionOnMouseWheel)
             {
