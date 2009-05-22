@@ -640,30 +640,6 @@ namespace System.Windows.Controls
          }
       }
 
-      public bool RoutesEnabled
-      {
-         get
-         {
-            return Core.RoutesEnabled;
-         }
-         set
-         {
-            Core.RoutesEnabled = value;
-         }
-      }
-
-      public bool MarkersEnabled
-      {
-         get
-         {
-            return Core.MarkersEnabled;
-         }
-         set
-         {
-            Core.MarkersEnabled = value;
-         }
-      }
-
       public bool CanDragMap
       {
          get
@@ -723,42 +699,6 @@ namespace System.Windows.Controls
             Core.OnTileLoadStart -= value;
          }
       }
-
-      //public event MarkerClick OnMarkerClick
-      //{
-      //   add
-      //   {
-      //      Core.OnMarkerClick += value;
-      //   }
-      //   remove
-      //   {
-      //      Core.OnMarkerClick -= value;
-      //   }
-      //}
-
-      //public event MarkerEnter OnMarkerEnter
-      //{
-      //   add
-      //   {
-      //      Core.OnMarkerEnter += value;
-      //   }
-      //   remove
-      //   {
-      //      Core.OnMarkerEnter -= value;
-      //   }
-      //}
-
-      //public event MarkerLeave OnMarkerLeave
-      //{
-      //   add
-      //   {
-      //      Core.OnMarkerLeave += value;
-      //   }
-      //   remove
-      //   {
-      //      Core.OnMarkerLeave -= value;
-      //   }
-      //}
 
       public event MapDrag OnMapDrag
       {

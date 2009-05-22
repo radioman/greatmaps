@@ -51,18 +51,6 @@
          set;
       }
 
-      bool RoutesEnabled
-      {
-         get;
-         set;
-      }
-
-      bool MarkersEnabled
-      {
-         get;
-         set;
-      }
-
       bool CanDragMap
       {
          get;
