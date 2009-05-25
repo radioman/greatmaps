@@ -29,7 +29,7 @@ namespace GMapNET
       public string VersionYahooLabels = "4.2";
 
       // Virtual Earth
-      public string VersionVirtualEarth = "244";
+      public string VersionVirtualEarth = "282";
 
       /// <summary>
       /// timeout for map connections
@@ -544,19 +544,19 @@ namespace GMapNET
             case MapType.VirtualEarthMap:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://r{0}.ortho.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
             }
 
             case MapType.VirtualEarthSatellite:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://a{0}.ortho.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
             }
 
             case MapType.VirtualEarthHybrid:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://h{0}.ortho.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
             }
          }
 
@@ -1103,7 +1103,26 @@ namespace GMapNET
                request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
                request.Timeout = Timeout;
                request.ReadWriteTimeout = Timeout*6;
-               request.Referer = "http://maps.google.com/";
+               switch(type)
+               {
+                  case MapType.GoogleMap:
+                  case MapType.GoogleSatellite:
+                  case MapType.GoogleLabels:
+                  case MapType.GoogleTerrain:
+                  case MapType.GoogleHybrid:
+                  {
+                     request.Referer = "http://maps.google.com/";
+                  }
+                  break;
+
+                  case MapType.VirtualEarthHybrid:
+                  case MapType.VirtualEarthMap:
+                  case MapType.VirtualEarthSatellite:
+                  {
+                     request.Referer = "http://maps.live.com/";
+                  }
+                  break;
+               }                
                request.KeepAlive = false;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)

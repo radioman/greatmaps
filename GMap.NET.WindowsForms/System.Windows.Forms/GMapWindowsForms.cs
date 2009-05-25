@@ -169,7 +169,7 @@ namespace System.Windows.Forms
                            if(!found)
                               found = true;
 
-                           g.DrawImageUnscaled(img.Img, Core.tileRect.X, Core.tileRect.Y);
+                           g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
                         }
                      }
 
@@ -185,7 +185,7 @@ namespace System.Windows.Forms
                            if(!RaiseEmptyTileError)
                            {
                               RaiseEmptyTileError = true;
-                              OnEmptyTileError(t.Zoom, t.Pos);                               
+                              OnEmptyTileError(t.Zoom, t.Pos);
                            }
                         }
                      }
@@ -651,7 +651,7 @@ namespace System.Windows.Forms
          }
 
          base.OnMouseClick(e);
-      }        
+      }
 
       protected override void OnMouseWheel(MouseEventArgs e)
       {
@@ -1173,18 +1173,6 @@ namespace System.Windows.Forms
    {
       public System.Drawing.Image Img;
 
-      public override IntPtr GetHbitmap()
-      {
-         if(Img != null)
-         {
-            using(Bitmap bitmap = new Bitmap(Img))
-            {
-               return bitmap.GetHbitmap();
-            }
-         }
-         return IntPtr.Zero;
-      }
-
       public override object Clone()
       {
          if(Img != null)
@@ -1214,8 +1202,11 @@ namespace System.Windows.Forms
          try
          {
             Image m = Image.FromStream(stream, true, true);
-            ret = new WindowsFormsImage();
-            ret.Img = m;
+            if(m != null)
+            {
+               ret = new WindowsFormsImage();
+               ret.Img = m;
+            }
          }
          catch
          {
@@ -1231,32 +1222,24 @@ namespace System.Windows.Forms
 
          if(ret.Img != null)
          {
+            // try png
+            try
             {
-               // try png
+               ret.Img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+            }
+            catch
+            {
+               // try jpeg
                try
                {
-                  ret.Img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                  stream.Seek(0, SeekOrigin.Begin);
+                  ret.Img.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg);
                }
                catch
                {
                   ok = false;
                }
-
-               // try jpeg
-               if(!ok)
-               {
-                  ok = true;
-                  try
-                  {
-                     stream.Seek(0, SeekOrigin.Begin);
-                     ret.Img.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg);
-                  }
-                  catch
-                  {
-                     ok = false;
-                  }
-               }
-            }
+            }             
          }
          else
          {

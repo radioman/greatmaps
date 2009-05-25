@@ -11,8 +11,6 @@ namespace GMapNET
 
    public abstract class PureImage : ICloneable, IDisposable
    {
-      abstract public IntPtr GetHbitmap();
-
       #region ICloneable Members
 
       abstract public object Clone();

@@ -37,7 +37,7 @@ namespace System.Windows.Controls
       /// min zoom
       /// </summary>
       public int MinZoom;
-      
+
       /// <summary>
       /// list of markers
       /// </summary>
@@ -46,7 +46,7 @@ namespace System.Windows.Controls
       public GMap()
       {
          #region -- templates --
-         
+
          #region -- xaml --
          //  <ItemsControl Name="figures">
          //    <ItemsControl.ItemTemplate>
@@ -89,9 +89,9 @@ namespace System.Windows.Controls
             st.Setters.Add(new Setter(Canvas.TopProperty, new Binding("LocalPosition.Y")));
             st.Setters.Add(new Setter(Canvas.ZIndexProperty, new Binding("ZIndex")));
          }
-         ItemContainerStyle = st; 
+         ItemContainerStyle = st;
          #endregion
-  
+
          ClipToBounds = true;
          SnapsToDevicePixels = true;
 
@@ -108,7 +108,7 @@ namespace System.Windows.Controls
          Loaded += new RoutedEventHandler(GMap_Loaded);
 
          Markers.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Objects_CollectionChanged);
-         this.ItemsSource = Markers;      
+         this.ItemsSource = Markers;
       }
 
       void Core_OnMapZoomChanged()
@@ -324,7 +324,7 @@ namespace System.Windows.Controls
          DrawMapWPF(drawingContext);
 
          base.OnRender(drawingContext);
-      }        
+      }
 
       protected override void OnMouseWheel(MouseWheelEventArgs e)
       {
@@ -335,7 +335,7 @@ namespace System.Windows.Controls
             if(CenterPositionOnMouseWheel)
             {
                Point pl = e.GetPosition(this);
-               PointLatLng pg = FromLocalToLatLng((int)pl.X, (int)pl.Y);
+               PointLatLng pg = FromLocalToLatLng((int) pl.X, (int) pl.Y);
                SetCurrentPositionOnly(pg);
 
                System.Windows.Point p = PointToScreen(new System.Windows.Point(ActualWidth/2, ActualHeight/2));
@@ -428,7 +428,7 @@ namespace System.Windows.Controls
          }
 
          base.OnMouseMove(e);
-      }         
+      }
 
       #endregion
 
@@ -732,11 +732,6 @@ namespace System.Windows.Controls
    {
       public ImageSource Img;
 
-      public override IntPtr GetHbitmap()
-      {
-         return IntPtr.Zero;
-      }
-
       public override object Clone()
       {
          if(Img != null)
@@ -764,11 +759,26 @@ namespace System.Windows.Controls
          WindowsPresentationImage ret = null;
          if(stream != null)
          {
+            // try png decoder
+            try
             {
-               // try png decoder
+               PngBitmapDecoder bitmapDecoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+               ImageSource m = bitmapDecoder.Frames[0];
+
+               if(m != null)
+               {
+                  ret = new WindowsPresentationImage();
+                  ret.Img = m;
+               }
+            }
+            catch
+            {
+               // try jpeg decoder
                try
                {
-                  PngBitmapDecoder bitmapDecoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+                  stream.Seek(0, System.IO.SeekOrigin.Begin);
+
+                  JpegBitmapDecoder bitmapDecoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
                   ImageSource m = bitmapDecoder.Frames[0];
 
                   if(m != null)
@@ -780,29 +790,7 @@ namespace System.Windows.Controls
                catch
                {
                   ret = null;
-               }
-
-               // try jpeg decoder
-               if(ret == null)
-               {
-                  try
-                  {
-                     stream.Seek(0, System.IO.SeekOrigin.Begin);
-
-                     JpegBitmapDecoder bitmapDecoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
-                     ImageSource m = bitmapDecoder.Frames[0];
-
-                     if(m != null)
-                     {
-                        ret = new WindowsPresentationImage();
-                        ret.Img = m;
-                     }
-                  }
-                  catch
-                  {
-                     ret = null;
-                  }
-               }
+               }   
             }
          }
          return ret;
