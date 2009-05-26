@@ -697,7 +697,7 @@ namespace GMapNET
                }
 
                // cache geocoding
-               if(useCache)
+               if(useCache && geo.StartsWith("200"))
                {
                   Cache.Instance.CacheGeocoder(urlEnd, geo);
                }
