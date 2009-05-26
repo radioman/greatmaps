@@ -324,28 +324,31 @@ namespace System.Windows.Forms
                {
                   foreach(GMapMarker m in o.Markers)
                   {
-                     // left
-                     if(m.Position.Lng < left)
+                     if(m.Visible)
                      {
-                        left = m.Position.Lng;
-                     }
+                        // left
+                        if(m.Position.Lng < left)
+                        {
+                           left = m.Position.Lng;
+                        }
 
-                     // top
-                     if(m.Position.Lat > top)
-                     {
-                        top = m.Position.Lat;
-                     }
+                        // top
+                        if(m.Position.Lat > top)
+                        {
+                           top = m.Position.Lat;
+                        }
 
-                     // right
-                     if(m.Position.Lng > right)
-                     {
-                        right = m.Position.Lng;
-                     }
+                        // right
+                        if(m.Position.Lng > right)
+                        {
+                           right = m.Position.Lng;
+                        }
 
-                     // bottom
-                     if(m.Position.Lat < bottom)
-                     {
-                        bottom = m.Position.Lat;
+                        // bottom
+                        if(m.Position.Lat < bottom)
+                        {
+                           bottom = m.Position.Lat;
+                        }
                      }
                   }
 
