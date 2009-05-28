@@ -1,16 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.ComponentModel;
-using System.Windows.Threading;
-using System.Net;
-using System.Globalization;
 using System.Windows.Shapes;
-using System.Windows.Controls.Primitives;
 using GMapNET;
-using System.Collections.Generic;
 
 namespace Demo.WindowsPresentation
 {

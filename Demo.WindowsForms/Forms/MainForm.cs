@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Forms;
-using System.Net;
-using System.ComponentModel;
-using Demo.WindowsForms.Properties;
 using GMapNET;
 
 namespace Demo.WindowsForms
