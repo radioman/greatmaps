@@ -15,13 +15,35 @@ using GMapNET.Internals;
 
 namespace System.Windows.Controls
 {
-   delegate void MethodInvoker();
+   public delegate void MethodInvoker();
 
    public partial class GMap : ItemsControl, IGControl
    {
       readonly Core Core = new Core();
       GMapNET.Rectangle region;
       Canvas Canvas = new Canvas();
+      bool RaiseEmptyTileError = false;
+
+      /// <summary>
+      /// pen for empty tile borders
+      /// </summary>
+      public Pen EmptyTileBorders = new Pen(Brushes.White, 1.0);
+
+      /// <summary>
+      /// /// <summary>
+      /// pen for empty tile background
+      /// </summary>
+      public Brush EmptytileBrush = Brushes.Navy;
+
+      /// <summary>
+      /// occurs on empty tile displayed
+      /// </summary>
+      public event EmptyTileError OnEmptyTileError;
+
+      /// <summary>
+      /// text on empty tiles
+      /// </summary>
+      public FormattedText EmptyTileText = new FormattedText("We are sorry, but we don't\nhave imagery at this zoom\n     level for this region.", System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("Arial"), 16, Brushes.White);
 
       /// <summary>
       /// go to current position and center mouse OnMouseWheel
@@ -225,11 +247,33 @@ namespace System.Windows.Controls
 
                   if(region.IntersectsWith(Core.tileRect))
                   {
+                     bool found = false;
+
                      foreach(WindowsPresentationImage img in t.Overlays)
                      {
                         if(img != null && img.Img != null)
                         {
+                           if(!found)
+                              found = true;
+
                            g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                        }
+                     }
+
+                     // add text if tile is missing
+                     if(!found)
+                     {
+                        g.DrawRectangle(EmptytileBrush, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                        g.DrawText(EmptyTileText, new Point(Core.tileRect.X + Core.tileRect.Width/2 - EmptyTileText.Width/2, Core.tileRect.Y + Core.tileRect.Height/2 - EmptyTileText.Height/2));
+
+                        // raise error
+                        if(OnEmptyTileError != null)
+                        {
+                           if(!RaiseEmptyTileError)
+                           {
+                              RaiseEmptyTileError = true;
+                              OnEmptyTileError(t.Zoom, t.Pos);
+                           }
                         }
                      }
                   }

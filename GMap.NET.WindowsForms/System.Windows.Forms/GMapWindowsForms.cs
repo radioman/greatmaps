@@ -54,6 +54,17 @@ namespace System.Windows.Forms
       public string EmptyTileText = "We are sorry, but we don't\nhave imagery at this zoom\nlevel for this region.";
 
       /// <summary>
+      /// pen for empty tile borders
+      /// </summary>
+      public Pen EmptyTileBorders = new Pen(Brushes.White, 1);
+
+      /// <summary>
+      /// /// <summary>
+      /// pen for empty tile background
+      /// </summary>
+      public Brush EmptytileBrush = Brushes.Navy;
+
+      /// <summary>
       /// go to current position and center mouse OnMouseWheel
       /// </summary>
       bool CenterPositionOnMouseWheel = true;
@@ -176,8 +187,9 @@ namespace System.Windows.Forms
                      // add text if tile is missing
                      if(!found)
                      {
-                        g.FillRectangle(Brushes.Navy, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                        g.FillRectangle(EmptytileBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
                         g.DrawString(EmptyTileText, MissingDataFont, Brushes.White, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                        g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
 
                         // raise error
                         if(OnEmptyTileError != null)

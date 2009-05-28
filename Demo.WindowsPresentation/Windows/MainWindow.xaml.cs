@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using GMapNET;
+using System.Windows.Threading;
 
 namespace Demo.WindowsPresentation
 {
@@ -45,13 +46,14 @@ namespace Demo.WindowsPresentation
          MainMap.MapType = MapType.OpenStreetMap;
          MainMap.MaxZoom = 17;
          MainMap.MinZoom = 12;
-         MainMap.Zoom = 12;
+         MainMap.Zoom = MainMap.MinZoom;
          MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
 
          // map events
          MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
          MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
          MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
+         MainMap.OnEmptyTileError += new EmptyTileError(MainMap_OnEmptyTileError);
          MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
 
          // get map types
@@ -107,6 +109,18 @@ namespace Demo.WindowsPresentation
             }
             MainMap.Markers.Add(it);
          }
+      }
+
+      // empty tile displayed
+      void MainMap_OnEmptyTileError(int zoom, GMapNET.Point pos)
+      {
+         // we get that exception:
+         // Dispatcher processing has been suspended,
+         // but messages are still being processed.
+
+         // any ideas? ;}
+
+         // MessageBox.Show("OnEmptyTileError, Zoom: " + zoom + ", " + pos.ToString(), "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
       }
 
       // MapZoomChanged
@@ -236,7 +250,7 @@ namespace Demo.WindowsPresentation
       {
          int zn = (int) e.NewValue;
          {
-            MainMap.Zoom = zn;              
+            MainMap.Zoom = zn;
          }
       }
 
@@ -438,6 +452,6 @@ namespace Demo.WindowsPresentation
             MainMap.Markers.Add(m2);
             MainMap.Markers.Add(mRoute);
          }
-      }         
+      }
    }
 }

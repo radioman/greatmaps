@@ -45,7 +45,7 @@ namespace Demo.WindowsForms
             MainMap.MapType = MapType.GoogleMap;
             MainMap.MaxZoom = 17;
             MainMap.MinZoom = 12;
-            MainMap.Zoom = 12;
+            MainMap.Zoom = MainMap.MinZoom;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
             //MainMap.CurrentPosition = new PointLatLng(-40.913512576127573, 173.408203125);
 
