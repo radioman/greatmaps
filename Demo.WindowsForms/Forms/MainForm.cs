@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Forms;
 using GMapNET;
+using System.Drawing;
 
 namespace Demo.WindowsForms
 {
@@ -113,7 +114,7 @@ namespace Demo.WindowsForms
       }
 
       // empty tile displayed
-      void MainMap_OnEmptyTileError(int zoom, Point pos)
+      void MainMap_OnEmptyTileError(int zoom, GMapNET.Point pos)
       {
          MessageBox.Show("OnEmptyTileError, Zoom: " + zoom + ", " + pos.ToString(), "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
@@ -265,7 +266,8 @@ namespace Demo.WindowsForms
          if(route != null)
          {
             // add route
-            MapRoute r = new GMapRoute(route, "test");
+            GMapRoute r = new GMapRoute(route, "test");
+            r.Color = Color.Blue;
             routes.Routes.Add(r);
 
             // add route start/end marks
@@ -289,7 +291,7 @@ namespace Demo.WindowsForms
       {
          GMapMarker m = new GMapMarkerGoogleGreen(MainMap.CurrentPosition);
          GMapMarkerRect mBorders = new GMapMarkerRect(MainMap.CurrentPosition);
-         mBorders.Size = new Size(100, 100);
+         mBorders.Size = new GMapNET.Size(100, 100);
 
          Placemark p = null;
          if(checkBoxPlacemarkInfo.Checked)
@@ -381,7 +383,7 @@ namespace Demo.WindowsForms
 
          for(int i = MainMap.Zoom; i <= GMaps.Instance.MaxZoom; i++)
          {
-            List<Point> x = GMaps.Instance.GetAreaTileList(area, i);
+            List<GMapNET.Point> x = GMaps.Instance.GetAreaTileList(area, i);
 
             DialogResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButtons.YesNoCancel);
 

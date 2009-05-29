@@ -36,11 +36,6 @@ namespace GMapNET
       public Font TooltipFont = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold, GraphicsUnit.Point);
 
       /// <summary>
-      /// route pen
-      /// </summary>
-      public Pen RoutePen = new Pen(Color.MidnightBlue);
-
-      /// <summary>
       /// tooltip pen
       /// </summary>
       public Pen TooltipPen = new Pen(Color.FromArgb(140, Color.MidnightBlue));
@@ -55,6 +50,7 @@ namespace GMapNET
       /// </summary>
       public StringFormat TooltipFormat = new StringFormat();
 
+      Pen RoutePen = new Pen(Color.MidnightBlue);
       internal GMap Control;            
 
       public GMapOverlay(GMap control, string id)
