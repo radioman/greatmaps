@@ -625,7 +625,7 @@ namespace GMapNET.Internals
             // report load complete
             loader.ReportProgress(id, true);
 
-            GC.Collect(GC.MaxGeneration);
+            GC.Collect();
             GC.WaitForPendingFinalizers();
 
             waitOnEmptyTasks.WaitOne();  // No more tasks - wait for a signal

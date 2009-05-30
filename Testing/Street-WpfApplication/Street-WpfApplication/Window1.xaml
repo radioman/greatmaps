@@ -2,7 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ctrl="clr-namespace:Street_WpfApplication"
-    Title="StreetView, raw mode testing" Height="475" Width="938" Loaded="Window_Loaded"
+    Title="StreetView, raw mode testing, please wait on first time loading" Height="605" Width="741" Loaded="Window_Loaded"
     Background="Black">
     <ctrl:PanoramaViewer x:Name="Viewer" MouseLeftButtonDown="Viewer_MouseLeftButtonDown" MouseLeftButtonUp="Viewer_MouseLeftButtonUp" MouseMove="Viewer_MouseMove" />
 </Window>
