@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using GMapNET.Internals;
+using System.Xml.Serialization;
 
 namespace GMapNET
 {
@@ -30,6 +31,11 @@ namespace GMapNET
 
       // Virtual Earth
       public string VersionVirtualEarth = "282";
+
+      /// <summary>
+      /// Gets or sets the value of the User-agent HTTP header.
+      /// </summary>
+      public string UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
 
       /// <summary>
       /// timeout for map connections
@@ -349,6 +355,32 @@ namespace GMapNET
       }
 
       /// <summary>
+      /// get route between two points, kml format
+      /// </summary>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="avoidHighways"></param>
+      /// <param name="Zoom"></param>
+      /// <returns></returns>
+      public KmlType GetRouteBetweenPointsKml(PointLatLng start, PointLatLng end, bool avoidHighways)
+      {
+         return GetRouteBetweenPointsKmlUrl(MakeRouteAndDirectionsKmlUrl(start, end, Language, avoidHighways));
+      }
+
+      /// <summary>
+      /// get route between two points, kml format
+      /// </summary>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="avoidHighways"></param>
+      /// <param name="Zoom"></param>
+      /// <returns></returns>
+      public KmlType GetRouteBetweenPointsKml(string start, string end, bool avoidHighways)
+      {
+         return GetRouteBetweenPointsKmlUrl(MakeRouteAndDirectionsKmlUrl(start, end, Language, avoidHighways));
+      }        
+
+      /// <summary>
       /// get route between two points
       /// </summary>
       /// <param name="start"></param>
@@ -651,9 +683,84 @@ namespace GMapNET
 
          return string.Format("http://maps.google.com/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'));
       }
+
+      /// <summary>
+      /// makes url for routing
+      /// </summary>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="language"></param>
+      /// <param name="avoidHighways"></param>
+      /// <returns></returns>
+      internal string MakeRouteAndDirectionsKmlUrl(PointLatLng start, PointLatLng end, string language, bool avoidHighways)
+      {
+         string highway = avoidHighways ? "&mra=ls&dirflg=h" : string.Empty;
+
+         return string.Format("http://maps.google.com/maps?f=q&output=kml&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, highway, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture));
+      }
+
+      /// <summary>
+      /// makes url for routing
+      /// </summary>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="language"></param>
+      /// <param name="avoidHighways"></param>
+      /// <returns></returns>
+      internal string MakeRouteAndDirectionsKmlUrl(string start, string end, string language, bool avoidHighways)
+      {
+         string highway = avoidHighways ? "&mra=ls&dirflg=h" : string.Empty;
+
+         return string.Format("http://maps.google.com/maps?f=q&output=kml&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'));
+      }
       #endregion
 
       #region -- Content download --
+
+      /// <summary>
+      /// get route between two points, kml format
+      /// </summary>
+      /// <param name="url"></param>
+      /// <returns></returns>
+      internal KmlType GetRouteBetweenPointsKmlUrl(string url)
+      {
+         KmlType ret = null;
+
+         try
+         {
+            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+            request.ServicePoint.ConnectionLimit = 50;
+            request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
+
+            request.UserAgent = UserAgent;
+            request.Timeout = Timeout;
+            request.ReadWriteTimeout = Timeout*6;
+
+            using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+            {
+               using(Stream responseStream = response.GetResponseStream())
+               {
+                  using(StreamReader read = new StreamReader(responseStream))
+                  {
+                     string kmls = read.ReadToEnd();
+
+                     XmlSerializer serializer = new XmlSerializer(typeof(KmlType));
+                     using(StringReader reader = new StringReader(kmls)) //Substring(kmls.IndexOf("<kml"))
+                     {
+                        ret = (KmlType) serializer.Deserialize(reader);
+                     }
+                  }
+               }
+            }
+         }
+         catch(Exception ex)
+         {
+            ret = null;
+            Debug.WriteLine("GetRouteBetweenPointsKmlUrl: " + ex.ToString());
+         }
+         return ret;
+      }
+
       /// <summary>
       /// gets lat & lng from geocoder url
       /// </summary>
@@ -680,10 +787,10 @@ namespace GMapNET
                request.ServicePoint.ConnectionLimit = 50;
                request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
 
-               request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
+               request.UserAgent = UserAgent;
                request.Timeout = Timeout;
                request.ReadWriteTimeout = Timeout*6;
-               request.KeepAlive = true;
+               request.KeepAlive = false;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                {
@@ -754,10 +861,10 @@ namespace GMapNET
                request.ServicePoint.ConnectionLimit = 50;
                request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
 
-               request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
+               request.UserAgent = UserAgent;
                request.Timeout = Timeout;
                request.ReadWriteTimeout = Timeout*6;
-               request.KeepAlive = true;
+               request.KeepAlive = false;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                {
@@ -821,10 +928,10 @@ namespace GMapNET
                request.ServicePoint.ConnectionLimit = 50;
                request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
 
-               request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
+               request.UserAgent = UserAgent;
                request.Timeout = Timeout;
                request.ReadWriteTimeout = Timeout*6;
-               request.KeepAlive = true;
+               request.KeepAlive = false;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                {
@@ -1055,7 +1162,7 @@ namespace GMapNET
       /// <returns></returns>
       internal PureImage GetImageFrom(MapType type, Point pos, int zoom, string language)
       {
-         PureImage ret = null;           
+         PureImage ret = null;
 
          try
          {
@@ -1100,7 +1207,7 @@ namespace GMapNET
                request.ServicePoint.ConnectionLimit = 50;
                request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
 
-               request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
+               request.UserAgent = UserAgent;
                request.Timeout = Timeout;
                request.ReadWriteTimeout = Timeout*6;
                switch(type)
@@ -1122,7 +1229,7 @@ namespace GMapNET
                      request.Referer = "http://maps.live.com/";
                   }
                   break;
-               }                
+               }
                request.KeepAlive = false;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)

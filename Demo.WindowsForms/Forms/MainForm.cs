@@ -269,7 +269,7 @@ namespace Demo.WindowsForms
             GMapRoute r = new GMapRoute(route, "test");
             r.Color = Color.Blue;
             routes.Routes.Add(r);
-
+               
             // add route start/end marks
             GMapMarker m1 = new GMapMarkerGoogleRed(start);
             m1.ToolTipText = "Start: " + start.ToString();
@@ -283,7 +283,13 @@ namespace Demo.WindowsForms
             objects.Markers.Add(m2);
 
             MainMap.ZoomAndCenterRoute(r);
-         }
+
+            KmlType info = GMaps.Instance.GetRouteBetweenPointsKml(start, end, false);
+            if(info != null)
+            {
+
+            } 
+         }             
       }
 
       // add marker on current position

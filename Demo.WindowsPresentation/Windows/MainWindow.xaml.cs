@@ -105,7 +105,7 @@ namespace Demo.WindowsPresentation
          {
             GMapMarker it = new GMapMarker(MainMap, pos.Value);
             {
-               it.Shape = new CustomMarkerDemo(it, "Welcome to Lithuania! ;}");
+               it.Shape = new CustomMarkerDemo(this, it, "Welcome to Lithuania! ;}");
             }
             MainMap.Markers.Add(it);
          }
@@ -412,7 +412,7 @@ namespace Demo.WindowsPresentation
             ToolTipText = MainMap.CurrentPosition.ToString();
          }
 
-         m.Shape = new CustomMarkerDemo(m, ToolTipText);
+         m.Shape = new CustomMarkerDemo(this, m, ToolTipText);
 
          MainMap.Markers.Add(m);
       }
@@ -436,10 +436,10 @@ namespace Demo.WindowsPresentation
          if(route != null)
          {
             GMapMarker m1 = new GMapMarker(MainMap, start);
-            m1.Shape = new CustomMarkerDemo(m1, "Start: " + start.ToString());
+            m1.Shape = new CustomMarkerDemo(this, m1, "Start: " + start.ToString());
 
             GMapMarker m2 = new GMapMarker(MainMap, end);
-            m2.Shape = new CustomMarkerDemo(m2, "End: " + start.ToString());
+            m2.Shape = new CustomMarkerDemo(this, m2, "End: " + start.ToString());
 
             GMapMarker mRoute = new GMapMarker(MainMap, start);
             {
