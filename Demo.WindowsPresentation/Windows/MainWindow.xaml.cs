@@ -8,6 +8,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using GMapNET;
 using System.Windows.Threading;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Demo.WindowsPresentation
 {
@@ -109,6 +111,72 @@ namespace Demo.WindowsPresentation
             }
             MainMap.Markers.Add(it);
          }
+
+         memoryLeakTestTimer.Tick += new EventHandler(memoryLeakTestTimer_Tick);
+         memoryLeakTestTimer.Interval = TimeSpan.FromMilliseconds(5);
+      }
+
+      DispatcherTimer memoryLeakTestTimer = new DispatcherTimer();
+
+      // real time testing
+      // Be hero, found where memmory is leaking! ;}
+      private void button13_Click(object sender, RoutedEventArgs e)
+      {
+         if(memoryLeakTestTimer.IsEnabled)
+         {
+            memoryLeakTestTimer.Stop();
+         }
+         else
+         {
+            memoryLeakTestTimer.Start();
+         }
+      }
+
+      int many = 444;
+      Random r = new Random(44);
+      bool manualClear = false;
+      void memoryLeakTestTimer_Tick(object sender, EventArgs e)
+      {
+         memoryLeakTestTimer.Stop();
+
+         if(MainMap.Markers.Count >= many)
+         {
+            if(manualClear)
+            {
+               while(MainMap.Markers.Count > 0)
+               {
+                  GMapMarker first = MainMap.Markers[0];
+                  MainMap.Markers.RemoveAt(0);
+                  if(first != null)
+                  {
+                     first.Clear();
+                     first = null;
+                  }
+               }
+            }
+            else // auto clear, shoud cause memmory leak if marker is using events
+            {
+               MainMap.Markers.Clear();
+            }
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            Debug.WriteLine("GC: " + GC.GetTotalMemory(true));
+         }
+         else // add
+         {
+            PointLatLng p = MainMap.FromLocalToLatLng(0, (int)MainMap.ActualHeight);
+            p.Lng += r.NextDouble()/3.0;
+            p.Lat += r.NextDouble()/4.0;
+
+            GMapMarker it = new GMapMarker(MainMap, p);
+            it.Shape = new Test(MainMap.Markers.Count.ToString());
+            MainMap.Markers.Add(it);
+         }
+
+         memoryLeakTestTimer.Start();
       }
 
       // empty tile displayed
@@ -395,25 +463,25 @@ namespace Demo.WindowsPresentation
       private void button8_Click(object sender, RoutedEventArgs e)
       {
          GMapMarker m = new GMapMarker(MainMap, MainMap.CurrentPosition);
-
-         Placemark p = null;
-         if(checkBoxPlace.IsChecked.Value)
          {
-            p = GMaps.Instance.GetPlacemarkFromGeocoder(MainMap.CurrentPosition);
-         }
+            Placemark p = null;
+            if(checkBoxPlace.IsChecked.Value)
+            {
+               p = GMaps.Instance.GetPlacemarkFromGeocoder(MainMap.CurrentPosition);
+            }
 
-         string ToolTipText;
-         if(p != null)
-         {
-            ToolTipText = p.Address;
-         }
-         else
-         {
-            ToolTipText = MainMap.CurrentPosition.ToString();
-         }
+            string ToolTipText;
+            if(p != null)
+            {
+               ToolTipText = p.Address;
+            }
+            else
+            {
+               ToolTipText = MainMap.CurrentPosition.ToString();
+            }
 
-         m.Shape = new CustomMarkerDemo(this, m, ToolTipText);
-
+            m.Shape = new CustomMarkerDemo(this, m, ToolTipText);
+         }
          MainMap.Markers.Add(m);
       }
 

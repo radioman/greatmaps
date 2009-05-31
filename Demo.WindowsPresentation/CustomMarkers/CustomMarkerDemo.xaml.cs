@@ -10,8 +10,8 @@ namespace System.Windows.Controls
    /// </summary>
    public partial class CustomMarkerDemo
    {
-      Popup Popup = new Popup();
-      Label Label = new Label();
+      Popup Popup;
+      Label Label;
       GMapMarker Marker;
       MainWindow MainWindow;
 
@@ -22,6 +22,11 @@ namespace System.Windows.Controls
          this.MainWindow = window;
          this.Marker = marker;
 
+         Popup = new Popup();
+         Label = new Label();
+
+         this.Unloaded += new RoutedEventHandler(CustomMarkerDemo_Unloaded);
+         this.Loaded += new RoutedEventHandler(CustomMarkerDemo_Loaded);
          this.SizeChanged += new SizeChangedEventHandler(CustomMarkerDemo_SizeChanged);
          this.MouseEnter += new MouseEventHandler(MarkerControl_MouseEnter);
          this.MouseLeave += new MouseEventHandler(MarkerControl_MouseLeave);
@@ -40,6 +45,32 @@ namespace System.Windows.Controls
             Label.Content = title;
          }
          Popup.Child = Label;
+      }
+
+      void CustomMarkerDemo_Loaded(object sender, RoutedEventArgs e)
+      {
+         if(icon.Source.CanFreeze)
+         {
+            icon.Source.Freeze();
+         }
+      }
+
+      void CustomMarkerDemo_Unloaded(object sender, RoutedEventArgs e)
+      {
+         this.Unloaded -= new RoutedEventHandler(CustomMarkerDemo_Unloaded);
+         this.Loaded -= new RoutedEventHandler(CustomMarkerDemo_Loaded);
+         this.SizeChanged-= new SizeChangedEventHandler(CustomMarkerDemo_SizeChanged);
+         this.MouseEnter -= new MouseEventHandler(MarkerControl_MouseEnter);
+         this.MouseLeave -= new MouseEventHandler(MarkerControl_MouseLeave);
+         this.MouseMove -= new MouseEventHandler(CustomMarkerDemo_MouseMove);
+         this.MouseLeftButtonUp -= new MouseButtonEventHandler(CustomMarkerDemo_MouseLeftButtonUp);
+         this.MouseLeftButtonDown -= new MouseButtonEventHandler(CustomMarkerDemo_MouseLeftButtonDown);
+
+         Marker.Shape = null;
+         icon.Source = null;
+         icon = null;
+         Popup = null;
+         Label = null;         
       }
 
       void CustomMarkerDemo_SizeChanged(object sender, SizeChangedEventArgs e)

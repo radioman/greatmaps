@@ -98,12 +98,25 @@ namespace System.Windows.Controls
       /// </summary>
       public readonly List<PointLatLng> Route = new List<PointLatLng>();
 
-      internal GMap Control;       
+      internal GMap Control;
 
       public GMapMarker(GMap control, PointLatLng pos)
       {
          Control = control;
          Position = pos;
+      }
+
+      /// <summary>
+      /// sets shape to null and clears route
+      /// </summary>
+      public void Clear()
+      {
+         if(PropertyChanged != null)
+         {
+            PropertyChanged = null;
+         }
+         Shape = null;
+         Route.Clear();            
       }
 
       /// <summary>
@@ -123,5 +136,5 @@ namespace System.Windows.Controls
             this.Shape = Control.CreateRoutePath(localPath);
          }
       }
-   } 
+   }
 }

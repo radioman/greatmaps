@@ -782,6 +782,10 @@ namespace System.Windows.Controls
          {
             WindowsPresentationImage ret = new WindowsPresentationImage();
             ret.Img = Img.CloneCurrentValue();
+            if(ret.Img.CanFreeze)
+            {
+               ret.Img.Freeze();
+            }
             return ret;
          }
          return null;
@@ -813,6 +817,10 @@ namespace System.Windows.Controls
                {
                   ret = new WindowsPresentationImage();
                   ret.Img = m;
+                  if(ret.Img.CanFreeze)
+                  {
+                     ret.Img.Freeze();
+                  }
                }
             }
             catch
@@ -824,11 +832,15 @@ namespace System.Windows.Controls
 
                   JpegBitmapDecoder bitmapDecoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
                   ImageSource m = bitmapDecoder.Frames[0];
-
+                           
                   if(m != null)
                   {
                      ret = new WindowsPresentationImage();
                      ret.Img = m;
+                     if(ret.Img.CanFreeze)
+                     {
+                        ret.Img.Freeze();
+                     }
                   }
                }
                catch
@@ -849,7 +861,7 @@ namespace System.Windows.Controls
             {
                PngBitmapEncoder e = new PngBitmapEncoder();
                e.Frames.Add(BitmapFrame.Create(ret.Img as BitmapSource));
-               e.Save(stream);
+               e.Save(stream);                 
             }
             catch
             {
