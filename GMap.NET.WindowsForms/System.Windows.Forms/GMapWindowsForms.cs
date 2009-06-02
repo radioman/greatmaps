@@ -516,6 +516,7 @@ namespace System.Windows.Forms
             case MapType.GoogleSatellite:
             case MapType.GoogleLabels:
             case MapType.GoogleTerrain:
+            case MapType.GoogleHybrid:
             {
                e.Graphics.DrawString(Core.googleCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
             }
@@ -531,8 +532,17 @@ namespace System.Windows.Forms
             case MapType.YahooMap:
             case MapType.YahooSatellite:
             case MapType.YahooLabels:
+            case MapType.YahooHybrid:
             {
                e.Graphics.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+            }
+            break;
+
+            case MapType.VirtualEarthHybrid:
+            case MapType.VirtualEarthMap:
+            case MapType.VirtualEarthSatellite:
+            {
+               e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
             }
             break;
          }

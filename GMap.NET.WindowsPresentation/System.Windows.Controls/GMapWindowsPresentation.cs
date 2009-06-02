@@ -12,6 +12,7 @@ using System.Linq;
 
 using GMapNET;
 using GMapNET.Internals;
+using System.Globalization;
 
 namespace System.Windows.Controls
 {
@@ -23,6 +24,11 @@ namespace System.Windows.Controls
       GMapNET.Rectangle region;
       Canvas Canvas = new Canvas();
       bool RaiseEmptyTileError = false;
+
+      FormattedText googleCopyright;
+      FormattedText yahooMapCopyright;
+      FormattedText virtualEarthCopyright;
+      FormattedText openStreetMapCopyright;
 
       /// <summary>
       /// pen for empty tile borders
@@ -131,6 +137,11 @@ namespace System.Windows.Controls
 
          Markers.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Objects_CollectionChanged);
          this.ItemsSource = Markers;
+
+         googleCopyright = new FormattedText(Core.googleCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+         yahooMapCopyright = new FormattedText(Core.yahooMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+         virtualEarthCopyright = new FormattedText(Core.virtualEarthCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+         openStreetMapCopyright = new FormattedText(Core.openStreetMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
       }
 
       void Core_OnMapZoomChanged()
@@ -366,6 +377,47 @@ namespace System.Windows.Controls
       protected override void OnRender(DrawingContext drawingContext)
       {
          DrawMapWPF(drawingContext);
+
+         #region -- copyright --
+
+         switch(Core.MapType)
+         {
+            case MapType.GoogleMap:
+            case MapType.GoogleSatellite:
+            case MapType.GoogleLabels:
+            case MapType.GoogleTerrain:
+            case MapType.GoogleHybrid:
+            {
+               drawingContext.DrawText(googleCopyright, new Point(5, ActualHeight - googleCopyright.Height - 5));
+            }
+            break;
+
+            case MapType.OpenStreetMap:
+            case MapType.OpenStreetOsm:
+            {
+               drawingContext.DrawText(openStreetMapCopyright, new Point(5, ActualHeight - openStreetMapCopyright.Height - 5));
+            }
+            break;
+
+            case MapType.YahooMap:
+            case MapType.YahooSatellite:
+            case MapType.YahooLabels:
+            case MapType.YahooHybrid:
+            {
+               drawingContext.DrawText(yahooMapCopyright, new Point(5, ActualHeight - yahooMapCopyright.Height - 5));
+            }
+            break;
+
+            case MapType.VirtualEarthHybrid:
+            case MapType.VirtualEarthMap:
+            case MapType.VirtualEarthSatellite:
+            {
+               drawingContext.DrawText(virtualEarthCopyright, new Point(5, ActualHeight - virtualEarthCopyright.Height - 5));
+            }
+            break;
+         }
+
+         #endregion
 
          base.OnRender(drawingContext);
       }

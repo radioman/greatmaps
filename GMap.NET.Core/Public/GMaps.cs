@@ -569,17 +569,17 @@ namespace GMapNET
 
             case MapType.YahooMap:
             {
-               return string.Format("http://us.maps2.yimg.com/us.png.maps.yimg.com/png?v={0}&x={1}&y={2}&z={3}&r=1", VersionYahooMap, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
+               return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&.intl={2}&x={3}&y={4}&z={5}&r=1", ((servernum % 2)+1),  VersionYahooMap, language, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
             }
 
             case MapType.YahooSatellite:
             {
-               return string.Format("http://us.maps3.yimg.com/aerial.maps.yimg.com/png?v={0}&t=a&s=256&x={1}&y={2}&z={3}&r=1", VersionYahooSatellite, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
+               return string.Format("http://maps{0}.yimg.com/ae/ximg?v={1}&t=a&s=256&.intl={2}&x={3}&y={4}&z={5}&r=1", 3, VersionYahooSatellite, language, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
             }
 
             case MapType.YahooLabels:
             {
-               return string.Format("http://us.maps1.yimg.com/us.tile.maps.yimg.com/tl?v={0}&t=h&x={1}&y={2}&z={3}&r=1", VersionYahooLabels, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
+               return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&t=h&.intl={2}&x={3}&y={4}&z={5}&r=1", 1, VersionYahooLabels, language, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
             }
 
             case MapType.OpenStreetMap:
@@ -1247,7 +1247,16 @@ namespace GMapNET
                   case MapType.VirtualEarthMap:
                   case MapType.VirtualEarthSatellite:
                   {
-                     request.Referer = "http://maps.live.com/";
+                     request.Referer = "http://www.bing.com/maps/";
+                  }
+                  break;
+
+                  case MapType.YahooHybrid:
+                  case MapType.YahooLabels:
+                  case MapType.YahooMap:
+                  case MapType.YahooSatellite:
+                  {
+                     request.Referer = "http://maps.yahoo.com/";
                   }
                   break;
                }
