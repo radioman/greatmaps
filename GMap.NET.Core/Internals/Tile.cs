@@ -19,15 +19,18 @@ namespace GMapNET.Internals
 
       public void Clear()
       {
-         foreach(PureImage img in Overlays)
+         lock(Overlays)
          {
-            if(img != null)
+            foreach(PureImage img in Overlays)
             {
-               img.Dispose();
+               if(img != null)
+               {
+                  img.Dispose();
+               }
             }
+            Overlays.Clear();
+            Overlays.TrimExcess();
          }
-         Overlays.Clear();
-         Overlays.TrimExcess();
       }
 
       public int Zoom

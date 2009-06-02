@@ -2,62 +2,68 @@
 
 namespace GMapNET
 {
-  /// <summary>
-  /// represents route of map
-  /// </summary>
-  public class MapRoute
-  {
-    public readonly List<PointLatLng> Points;
-    public string Name;
-    public object Tag;      
+   /// <summary>
+   /// represents route of map
+   /// </summary>
+   public class MapRoute
+   {
+      public readonly List<PointLatLng> Points;
+      public string Name;
+      public object Tag;
 
-    public PointLatLng? From
-    {
-      get
+      public PointLatLng? From
       {
-        if(Points.Count > 0)
-        {
-          return Points[0];
-        }
+         get
+         {
+            if(Points.Count > 0)
+            {
+               return Points[0];
+            }
 
-        return null;
+            return null;
+         }
       }
-    }
 
-    public PointLatLng? To
-    {
-      get
+      public PointLatLng? To
       {
-        if(Points.Count > 0)
-        {
-          return Points[Points.Count-1];
-        }
+         get
+         {
+            if(Points.Count > 1)
+            {
+               return Points[Points.Count-1];
+            }
 
-        return null;
+            return null;
+         }
       }
-    }
 
-    public MapRoute(List<PointLatLng> points, string name)
-    {
-      Points = points;
-      Points.TrimExcess();
-
-      Name = name;
-    }
-
-    public double Distance
-    {
-      get
+      public MapRoute(List<PointLatLng> points, string name)
       {
-        double distance = 0.0;
+         Points = points;
+         Points.TrimExcess();
 
-        for(int i = 1; i < Points.Count; i++)
-        {
-          distance += GMaps.Instance.GetDistance(Points[i - 1].Lat, Points[i - 1].Lng, Points[i].Lat, Points[i].Lng);
-        }
-
-        return distance;
+         Name = name;
       }
-    }
-  }
+
+      /// <summary>
+      /// distance (in km)
+      /// </summary>
+      public double Distance
+      {
+         get
+         {
+            double distance = 0.0;
+
+            if(From.HasValue && To.HasValue)
+            {
+               for(int i = 1; i < Points.Count; i++)
+               {
+                  distance += GMaps.Instance.GetDistance(Points[i - 1], Points[i]);
+               }
+            }
+
+            return distance;
+         }
+      }
+   }
 }

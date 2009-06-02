@@ -693,7 +693,7 @@
          this.Controls.Add(this.groupBox2);
          this.Controls.Add(this.groupBox4);
          this.Margin = new System.Windows.Forms.Padding(4);
-         this.MinimumSize = new System.Drawing.Size(794, 873);
+         this.MaximumSize = new System.Drawing.Size(1173, 876);
          this.Name = "MainForm";
          this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
          this.Text = "GMap.NET - Great Maps for Windows Forms";

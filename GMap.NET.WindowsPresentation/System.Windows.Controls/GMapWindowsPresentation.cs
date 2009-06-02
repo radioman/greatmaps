@@ -217,15 +217,8 @@ namespace System.Windows.Controls
       /// <param name="e"></param>
       void GMap_SizeChanged(object sender, SizeChangedEventArgs e)
       {
-         Core.sizeOfMapArea.Width = (int) e.NewSize.Width;
-         Core.sizeOfMapArea.Height = (int) e.NewSize.Height;
-         Core.sizeOfMapArea.Height /= GMaps.Instance.TileSize.Height;
-         Core.sizeOfMapArea.Width /= GMaps.Instance.TileSize.Width;
-         Core.sizeOfMapArea.Height += 1;
-         Core.sizeOfMapArea.Width += 1;
-
-         Core.sizeOfMapArea.Width = Core.sizeOfMapArea.Width/2 + 2;
-         Core.sizeOfMapArea.Height = Core.sizeOfMapArea.Height/2 + 2;
+         Core.sizeOfMapArea.Width = 1 + ((int)e.NewSize.Width/GMaps.Instance.TileSize.Width)/2;
+         Core.sizeOfMapArea.Height = 1 + ((int)e.NewSize.Height/GMaps.Instance.TileSize.Height)/2;
 
          // 50px outside control
          region = new GMapNET.Rectangle(-50, -50, (int) e.NewSize.Width+100, (int) e.NewSize.Height+100);
@@ -241,16 +234,18 @@ namespace System.Windows.Controls
       /// <param name="g"></param>
       void DrawMapWPF(DrawingContext g)
       {
-         for(int i = -(Core.sizeOfMapArea.Width + Core.centerTileXYOffset.X); i < (Core.sizeOfMapArea.Width - Core.centerTileXYOffset.X); i++)
+         double scaleFactor = 1.0;
+
+         for(int i = -Core.sizeOfMapArea.Width; i <= Core.sizeOfMapArea.Width; i++)
          {
-            for(int j = -(Core.sizeOfMapArea.Height + Core.centerTileXYOffset.Y); j < (Core.sizeOfMapArea.Height - Core.centerTileXYOffset.Y); j++)
+            for(int j = -Core.sizeOfMapArea.Height; j <= Core.sizeOfMapArea.Height; j++)
             {
-               Core.tilePoint = CurrentPositionGTile;
+               Core.tilePoint = Core.centerTileXYLocation;
                Core.tilePoint.X += i;
                Core.tilePoint.Y += j;
 
                Tile t = Core.Matrix[Core.tilePoint];
-               if(t != null) // debug center tile add:  && Core.tilePoint != Core.centerTileXYLocation
+               if(t != null)
                {
                   Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
                   Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
@@ -266,8 +261,8 @@ namespace System.Windows.Controls
                         {
                            if(!found)
                               found = true;
-
-                           g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                                    
+                           g.DrawImage(img.Img, new Rect(Core.tileRect.X*scaleFactor, Core.tileRect.Y*scaleFactor, Core.tileRect.Width*scaleFactor, Core.tileRect.Height*scaleFactor));
                         }
                      }
 

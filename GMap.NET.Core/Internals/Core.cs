@@ -18,7 +18,6 @@ namespace GMapNET.Internals
       public Point renderOffset;
       public Point centerTileXYLocation;
       public Point centerTileXYLocationLast;
-      public Point centerTileXYOffset;
       public Point dragPoint;
 
       public Point mouseDown;
@@ -258,10 +257,19 @@ namespace GMapNET.Internals
          GoToCurrentPosition();
       }
 
+      public void UpdateCenterTileXYLocation()
+      {
+         PointLatLng center = FromLocalToLatLng(Width/2, Height/2);
+         GMapNET.Point centerPixel = GMaps.Instance.FromLatLngToPixel(center, Zoom);
+         centerTileXYLocation = GMaps.Instance.FromPixelToTileXY(centerPixel);
+      }
+
       public void OnMapSizeChanged(int width, int height)
       {
          this.Width = width;
          this.Height = height;
+
+         UpdateCenterTileXYLocation();
       }
 
       public void OnMapClose()
@@ -445,7 +453,6 @@ namespace GMapNET.Internals
       {
          // reset stuff
          renderOffset = Point.Empty;
-         centerTileXYOffset = Point.Empty;
          centerTileXYLocationLast = Point.Empty;
          dragPoint = Point.Empty;
 
@@ -462,15 +469,11 @@ namespace GMapNET.Internals
          renderOffset.X = pt.X - dragPoint.X;
          renderOffset.Y = pt.Y - dragPoint.Y;
 
-         centerTileXYLocation.X = ((renderOffset.X)/-GMaps.Instance.TileSize.Width) + (int) (sizeOfMapArea.Width/1.66);
-         centerTileXYLocation.Y = ((renderOffset.Y)/-GMaps.Instance.TileSize.Height) + sizeOfMapArea.Height/2;
+         UpdateCenterTileXYLocation();
 
          if(centerTileXYLocation != centerTileXYLocationLast)
          {
-            centerTileXYOffset.X = CurrentPositionGTile.X - centerTileXYLocation.X;
-            centerTileXYOffset.Y = CurrentPositionGTile.Y - centerTileXYLocation.Y;
             centerTileXYLocationLast = centerTileXYLocation;
-
             waitForBoundsChanged.Set();
          }
 
@@ -600,15 +603,21 @@ namespace GMapNET.Internals
                {
                   PureImage img = GMaps.Instance.GetImageFrom(MapType.GoogleSatellite, task, Zoom, GMaps.Instance.Language);
                   PureImage img2 = GMaps.Instance.GetImageFrom(MapType.GoogleLabels, task, Zoom, GMaps.Instance.Language);
-                  t.Overlays.Add(img);
-                  t.Overlays.Add(img2);
+                  lock(t.Overlays)
+                  {
+                     t.Overlays.Add(img);
+                     t.Overlays.Add(img2);
+                  }
                }
                else if(MapType == MapType.YahooHybrid)
                {
                   PureImage img = GMaps.Instance.GetImageFrom(MapType.YahooSatellite, task, Zoom, GMaps.Instance.Language);
                   PureImage img2 = GMaps.Instance.GetImageFrom(MapType.YahooLabels, task, Zoom, GMaps.Instance.Language);
-                  t.Overlays.Add(img);
-                  t.Overlays.Add(img2);
+                  lock(t.Overlays)
+                  {
+                     t.Overlays.Add(img);
+                     t.Overlays.Add(img2);
+                  }
                }
                else // single layer
                {
@@ -723,9 +732,9 @@ namespace GMapNET.Internals
       void FindTilesAround(ref List<Point> list)
       {
          list.Clear();
-         for(int i = -sizeOfMapArea.Width; i < sizeOfMapArea.Width; i++)
+         for(int i = -sizeOfMapArea.Width; i <= sizeOfMapArea.Width; i++)
          {
-            for(int j = -sizeOfMapArea.Height; j < sizeOfMapArea.Height; j++)
+            for(int j = -sizeOfMapArea.Height; j <= sizeOfMapArea.Height; j++)
             {
                Point p = centerTileXYLocation;
                p.X += i;

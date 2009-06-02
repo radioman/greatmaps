@@ -86,7 +86,7 @@ namespace GMapNET
       /// <summary>
       /// Radius of the Earth
       /// </summary>
-      public double EarthRadiusKm = 6376.5;
+      public double EarthRadiusKm = 6378.137; // WGS-84
 
       /// <summary>
       /// pure image cache provider, by default: ultra fast SQLite!
@@ -130,10 +130,10 @@ namespace GMapNET
       BackgroundWorker cacher = new BackgroundWorker();
 
       #region -- google maps constants --
-      readonly List<double> Uu = new List<double>();
-      readonly List<double> Vu = new List<double>();
-      readonly List<double> Ru = new List<double>();
-      readonly List<double> Tu = new List<double>();
+      readonly List<double> ScalePixelX = new List<double>();
+      readonly List<double> ScalePixelY = new List<double>();
+      readonly List<double> CenterPixel = new List<double>();
+      readonly List<double> MapPixelXY = new List<double>();
       #endregion
 
       public GMaps()
@@ -151,10 +151,10 @@ namespace GMapNET
          {
             double e = c / 2.0;
 
-            Uu.Add(c/360.0);
-            Vu.Add(c/(2.0*Math.PI));
-            Ru.Add(e);
-            Tu.Add(c);
+            ScalePixelX.Add(c/360.0);
+            ScalePixelY.Add(c/(2.0*Math.PI));
+            CenterPixel.Add(e);
+            MapPixelXY.Add(c);
 
             c *= 2;
          }
@@ -223,13 +223,13 @@ namespace GMapNET
          if(zoom > MaxZoom || zoom < 1)
             return ret;
 
-         double d = Ru[zoom];
-         ret.X = (int) Math.Round(d + (lng * Uu[zoom]), MidpointRounding.AwayFromZero);
+         double centerPixel = CenterPixel[zoom];
+         ret.X = (int) Math.Round(centerPixel + (lng * ScalePixelX[zoom]), MidpointRounding.AwayFromZero);
 
-         double f = Math.Sin(lat * (Math.PI/180.0));
-         f = Math.Max(f, -0.9999);
-         f = Math.Min(f, 0.9999);
-         ret.Y = (int) Math.Round(d + (0.5 * Math.Log((1+f)/(1-f)) * (-Vu[zoom])), MidpointRounding.AwayFromZero);
+         double sinLatitude = Math.Sin(lat * (Math.PI/180.0));
+         sinLatitude = Math.Max(sinLatitude, -0.9999);
+         sinLatitude = Math.Min(sinLatitude, 0.9999);
+         ret.Y = (int) Math.Round(centerPixel + (0.5 * Math.Log((1+sinLatitude)/(1-sinLatitude)) * (-ScalePixelY[zoom])), MidpointRounding.AwayFromZero);
 
          return ret;
       }
@@ -247,10 +247,10 @@ namespace GMapNET
          if(zoom > MaxZoom || zoom < 1)
             return ret;
 
-         double e = Ru[zoom];
-         ret.Lng = (x - e) / Uu[zoom];
+         double centerPixel = CenterPixel[zoom];
+         ret.Lng = (x - centerPixel) / ScalePixelX[zoom];
 
-         double g = (y - e) / (-Vu[zoom]);
+         double g = (y - centerPixel) / (-ScalePixelY[zoom]);
          ret.Lat = (2.0 * Math.Atan(Math.Exp(g)) - (Math.PI/2.0)) / (Math.PI/180.0);
 
          return ret;
@@ -297,6 +297,45 @@ namespace GMapNET
       {
          return new Point((p.X*TileSize.Width), (p.Y*TileSize.Height));
       }
+
+      /// <summary>
+      /// distance (in km) between two points specified by latitude/longitude
+      /// The Haversine formula, http://www.movable-type.co.uk/scripts/latlong.html
+      /// </summary>
+      /// <param name="lat1"></param>
+      /// <param name="lng1"></param>
+      /// <param name="lat2"></param>
+      /// <param name="lng2"></param>
+      /// <returns></returns>
+      public double GetDistance(PointLatLng p1, PointLatLng p2)
+      {
+         double dLat1InRad = p1.Lat * (Math.PI / 180);
+         double dLong1InRad = p1.Lng * (Math.PI / 180);
+         double dLat2InRad = p2.Lat * (Math.PI / 180);
+         double dLong2InRad = p2.Lng * (Math.PI / 180);
+         double dLongitude = dLong2InRad - dLong1InRad;
+         double dLatitude = dLat2InRad - dLat1InRad;
+         double a = Math.Pow(Math.Sin(dLatitude / 2), 2) + Math.Cos(dLat1InRad) * Math.Cos(dLat2InRad) * Math.Pow(Math.Sin(dLongitude / 2), 2);
+         double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+         double dDistance = EarthRadiusKm * c;
+         return dDistance;
+      }
+
+      /// <summary>
+      /// The ground resolution indicates the distance (in meters) on the ground that’s represented by a single pixel in the map.
+      /// For example, at a ground resolution of 10 meters/pixel, each pixel represents a ground distance of 10 meters.
+      /// </summary>
+      /// <param name="zoom"></param>
+      /// <param name="latitude"></param>
+      /// <returns></returns>
+      public double GetGroundResolution(int zoom, double latitude)
+      {
+         if(zoom > MaxZoom || zoom < 1)
+            return 0;
+
+         return (Math.Cos(latitude * (Math.PI/180)) * 2 * Math.PI * EarthRadiusKm * 1000.0) / MapPixelXY[zoom];
+      }
+
       #endregion
 
       #region -- Stuff --
@@ -460,29 +499,7 @@ namespace GMapNET
          db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.Language, Path.DirectorySeparatorChar);
 
          return Cache.Instance.ExportMapDataToDB(file, db.ToString());
-      }
-
-      /// <summary>
-      /// gets distance between twp coordinates
-      /// </summary>
-      /// <param name="lat1"></param>
-      /// <param name="lng1"></param>
-      /// <param name="lat2"></param>
-      /// <param name="lng2"></param>
-      /// <returns></returns>
-      public double GetDistance(double lat1, double lng1, double lat2, double lng2)
-      {
-         double dLat1InRad = lat1 * (Math.PI / 180);
-         double dLong1InRad = lng1 * (Math.PI / 180);
-         double dLat2InRad = lat2 * (Math.PI / 180);
-         double dLong2InRad = lng2 * (Math.PI / 180);
-         double dLongitude = dLong2InRad - dLong1InRad;
-         double dLatitude = dLat2InRad - dLat1InRad;
-         double a = Math.Pow(Math.Sin(dLatitude / 2), 2) + Math.Cos(dLat1InRad) * Math.Cos(dLat2InRad) * Math.Pow(Math.Sin(dLongitude / 2), 2);
-         double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-         double dDistance = EarthRadiusKm * c;
-         return dDistance;
-      }
+      }         
 
       /// <summary>
       /// enqueueens tile to cache
@@ -1227,7 +1244,7 @@ namespace GMapNET
                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
                request.ServicePoint.ConnectionLimit = 50;
                request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
-
+               request.AutomaticDecompression = DecompressionMethods.GZip;  
                request.UserAgent = UserAgent;
                request.Timeout = Timeout;
                request.ReadWriteTimeout = Timeout*6;

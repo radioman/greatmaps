@@ -153,16 +153,16 @@ namespace System.Windows.Forms
       /// <param name="g"></param>
       void DrawMapGDIplus(Graphics g)
       {
-         for(int i = -(Core.sizeOfMapArea.Width + Core.centerTileXYOffset.X); i < (Core.sizeOfMapArea.Width - Core.centerTileXYOffset.X); i++)
+         for(int i = -Core.sizeOfMapArea.Width; i <= Core.sizeOfMapArea.Width; i++)
          {
-            for(int j = -(Core.sizeOfMapArea.Height + Core.centerTileXYOffset.Y); j < (Core.sizeOfMapArea.Height - Core.centerTileXYOffset.Y); j++)
+            for(int j = -Core.sizeOfMapArea.Height; j <= Core.sizeOfMapArea.Height; j++)
             {
-               Core.tilePoint = CurrentPositionGTile;
+               Core.tilePoint = Core.centerTileXYLocation;
                Core.tilePoint.X += i;
                Core.tilePoint.Y += j;
 
                Tile t = Core.Matrix[Core.tilePoint];
-               if(t != null) // debug center tile add: && Core.tilePoint != Core.centerTileXYLocation
+               if(t != null)
                {
                   Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
                   Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
@@ -173,14 +173,17 @@ namespace System.Windows.Forms
                      bool found = false;
 
                      // render tile
-                     foreach(WindowsFormsImage img in t.Overlays)
+                     lock(t.Overlays)
                      {
-                        if(img != null && img.Img != null)
+                        foreach(WindowsFormsImage img in t.Overlays)
                         {
-                           if(!found)
-                              found = true;
+                           if(img != null && img.Img != null)
+                           {
+                              if(!found)
+                                 found = true;
 
-                           g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+                              g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+                           }
                         }
                      }
 
@@ -202,6 +205,13 @@ namespace System.Windows.Forms
                         }
                      }
                   }
+
+                  //if(Core.tilePoint == Core.centerTileXYLocation)
+                  //{
+                  //   g.FillRectangle(EmptytileBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                  //   g.DrawString("CENTER TILE", MissingDataFont, Brushes.White, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                  //   g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+                  //}
                }
             }
          }
@@ -562,14 +572,8 @@ namespace System.Windows.Forms
 
       protected override void OnSizeChanged(EventArgs e)
       {
-         Core.sizeOfMapArea = new GMapNET.Size(Width, Height);
-         Core.sizeOfMapArea.Height /= GMaps.Instance.TileSize.Height;
-         Core.sizeOfMapArea.Width /= GMaps.Instance.TileSize.Width;
-         Core.sizeOfMapArea.Height += 1;
-         Core.sizeOfMapArea.Width += 2;
-
-         Core.sizeOfMapArea.Width = Core.sizeOfMapArea.Width/2 + 2;
-         Core.sizeOfMapArea.Height = Core.sizeOfMapArea.Height/2 + 2;
+         Core.sizeOfMapArea.Width = 1 + (Width/GMaps.Instance.TileSize.Width)/2;
+         Core.sizeOfMapArea.Height = 1 + (Height/GMaps.Instance.TileSize.Height)/2;
 
          // 50px outside control
          Core.CurrentRegion = new GMapNET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
