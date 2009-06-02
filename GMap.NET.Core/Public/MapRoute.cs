@@ -9,9 +9,7 @@ namespace GMapNET
   {
     public readonly List<PointLatLng> Points;
     public string Name;
-    public object Tag;
-
-    internal readonly List<Point> LocalPoints;
+    public object Tag;      
 
     public PointLatLng? From
     {
@@ -43,7 +41,6 @@ namespace GMapNET
     {
       Points = points;
       Points.TrimExcess();
-      LocalPoints = new List<Point>(Points.Count);
 
       Name = name;
     }

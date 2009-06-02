@@ -75,7 +75,7 @@ namespace GMapNET
       {
          if(e.NewItems != null)
          {
-            foreach(MapRoute obj in e.NewItems)
+            foreach(GMapRoute obj in e.NewItems)
             {
                Control.UpdateRouteLocalPosition(obj);
             }

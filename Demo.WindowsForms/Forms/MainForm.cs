@@ -180,7 +180,6 @@ namespace Demo.WindowsForms
          textBoxCurrLng.Text = point.Lng.ToString(CultureInfo.InvariantCulture);
 
          currentMarker.Position = point;
-         MainMap.UpdateMarkerLocalPosition(currentMarker);
       }
 
       // change map type
@@ -262,17 +261,17 @@ namespace Demo.WindowsForms
       // add test route
       private void button3_Click(object sender, EventArgs e)
       {
-         List<PointLatLng> route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, MainMap.Zoom);
+         MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, MainMap.Zoom);
          if(route != null)
          {
             // add route
-            GMapRoute r = new GMapRoute(route, "test");
+            GMapRoute r = new GMapRoute(route.Points, route.Name);
             r.Color = Color.Blue;
             routes.Routes.Add(r);
                
             // add route start/end marks
             GMapMarker m1 = new GMapMarkerGoogleRed(start);
-            m1.ToolTipText = "Start: " + start.ToString();
+            m1.ToolTipText = "Start: " + route.Name;
             m1.TooltipMode = MarkerTooltipMode.Always;
 
             GMapMarker m2 = new GMapMarkerGoogleGreen(end);
@@ -284,6 +283,7 @@ namespace Demo.WindowsForms
 
             MainMap.ZoomAndCenterRoute(r);
 
+            // testing kml support
             KmlType info = GMaps.Instance.GetRouteBetweenPointsKml(start, end, false);
             if(info != null)
             {

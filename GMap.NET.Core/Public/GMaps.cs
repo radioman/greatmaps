@@ -347,11 +347,21 @@ namespace GMapNET
       /// </summary>
       /// <param name="start"></param>
       /// <param name="end"></param>
-      /// <param name="language"></param>
+      /// <param name="avoidHighways"></param>
+      /// <param name="Zoom"></param>
       /// <returns></returns>
-      public List<PointLatLng> GetRouteBetweenPoints(PointLatLng start, PointLatLng end, bool avoidHighways, int Zoom)
+      public MapRoute GetRouteBetweenPoints(PointLatLng start, PointLatLng end, bool avoidHighways, int Zoom)
       {
-         return GetRouteBetweenPointsUrl(MakeRouteUrl(start, end, Language, avoidHighways), Zoom, UseRouteCache);
+         string tooltip;
+         int numLevels;
+         int zoomFactor;
+         MapRoute ret = null;
+         List<PointLatLng> points = GetRouteBetweenPointsUrl(MakeRouteUrl(start, end, Language, avoidHighways), Zoom, UseRouteCache, out tooltip, out numLevels, out zoomFactor);
+         if(points != null)
+         {
+            ret = new MapRoute(points, tooltip);
+         }
+         return ret;
       }
 
       /// <summary>
@@ -385,11 +395,21 @@ namespace GMapNET
       /// </summary>
       /// <param name="start"></param>
       /// <param name="end"></param>
-      /// <param name="language"></param>
+      /// <param name="avoidHighways"></param>
+      /// <param name="Zoom"></param>
       /// <returns></returns>
-      public List<PointLatLng> GetRouteBetweenPoints(string start, string end, bool useHighway, int Zoom)
+      public MapRoute GetRouteBetweenPoints(string start, string end, bool avoidHighways, int Zoom)
       {
-         return GetRouteBetweenPointsUrl(MakeRouteUrl(start, end, Language, useHighway), Zoom, UseRouteCache);
+         string tooltip;
+         int numLevels;
+         int zoomFactor;
+         MapRoute ret = null;
+         List<PointLatLng> points = GetRouteBetweenPointsUrl(MakeRouteUrl(start, end, Language, avoidHighways), Zoom, UseRouteCache, out tooltip, out numLevels, out zoomFactor);
+         if(points != null)
+         {
+            ret = new MapRoute(points, tooltip);
+         }
+         return ret;
       }
 
       /// <summary>
@@ -907,9 +927,12 @@ namespace GMapNET
       /// </summary>
       /// <param name="url"></param>
       /// <returns></returns>
-      internal List<PointLatLng> GetRouteBetweenPointsUrl(string url, int zoom, bool useCache)
+      internal List<PointLatLng> GetRouteBetweenPointsUrl(string url, int zoom, bool useCache, out string tooltipHtml, out int numLevel, out int zoomFactor)
       {
-         List<PointLatLng> ret = new List<PointLatLng>();
+         List<PointLatLng> points = new List<PointLatLng>();
+         tooltipHtml = string.Empty;
+         numLevel = -1;
+         zoomFactor = -1;
          try
          {
             string urlEnd = url.Substring(url.IndexOf("&hl="));
@@ -965,8 +988,7 @@ namespace GMapNET
             //}]
             //}
 
-            // title
-            string tooltipHtml;
+            // title              
             int tooltipEnd = 0;
             {
                int x = route.IndexOf("tooltipHtml:") + 13;
@@ -1043,7 +1065,7 @@ namespace GMapNET
 
                                  dlng += ((result & 1) == 1 ? ~(result >> 1) : (result >> 1));
 
-                                 ret.Add(new PointLatLng(dlat * 1e-5, dlng * 1e-5));
+                                 points.Add(new PointLatLng(dlat * 1e-5, dlng * 1e-5));
                               }
                            }
                         }
@@ -1071,8 +1093,7 @@ namespace GMapNET
                }
             }
 
-            // numLevel
-            int numLevel = -1;
+            // numLevel             
             int numLevelsEnd = 0;
             {
                int x = route.IndexOf("numLevels:", levelsEnd >= 0 ? levelsEnd:0) + 10;
@@ -1090,8 +1111,7 @@ namespace GMapNET
                }
             }
 
-            // zoomFactor
-            int zoomFactor = -1;
+            // zoomFactor             
             {
                int x = route.IndexOf("zoomFactor:", numLevelsEnd >= 0 ? numLevelsEnd:0) + 11;
                if(x > 0)
@@ -1111,9 +1131,9 @@ namespace GMapNET
             // finnal
             if(numLevel > 0 && !string.IsNullOrEmpty(levels))
             {
-               if(ret.Count - levels.Length > 0)
+               if(points.Count - levels.Length > 0)
                {
-                  ret.RemoveRange(levels.Length, ret.Count - levels.Length);
+                  points.RemoveRange(levels.Length, points.Count - levels.Length);
                }
 
                //http://facstaff.unca.edu/mcmcclur/GoogleMaps/EncodePolyline/description.html
@@ -1131,24 +1151,24 @@ namespace GMapNET
                for(int i = 0; i < levels.Length; i++)
                {
                   int zi = pLevels.IndexOf(levels[i]);
-                  if(zi > 0 && i < ret.Count)
+                  if(zi > 0 && i < points.Count)
                   {
                      if(zi*numLevel > zoom)
                      {
-                        ret.RemoveAt(i);
+                        points.RemoveAt(i);
                      }
                   }
                }
             }
 
-            ret.TrimExcess();
+            points.TrimExcess();
          }
          catch(Exception ex)
          {
-            ret = null;
+            points = null;
             Debug.WriteLine("GetRouteBetweenPointsUrl: " + ex.ToString());
          }
-         return ret;
+         return points;
       }
 
       /// <summary>

@@ -163,6 +163,8 @@ namespace Demo.WindowsPresentation
             GC.WaitForPendingFinalizers();
             GC.Collect();
 
+            //MessageBox.Show("Hold!");
+
             Debug.WriteLine("GC: " + GC.GetTotalMemory(true));
          }
          else // add
@@ -172,6 +174,7 @@ namespace Demo.WindowsPresentation
             p.Lat += r.NextDouble()/4.0;
 
             GMapMarker it = new GMapMarker(MainMap, p);
+            //it.Shape = new CustomMarkerDemo(this, it, null);
             it.Shape = new Test(MainMap.Markers.Count.ToString());
             MainMap.Markers.Add(it);
          }
@@ -500,18 +503,18 @@ namespace Demo.WindowsPresentation
       // adds route
       private void button12_Click(object sender, RoutedEventArgs e)
       {
-         List<PointLatLng> route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, MainMap.Zoom);
+         MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, MainMap.Zoom);
          if(route != null)
          {
             GMapMarker m1 = new GMapMarker(MainMap, start);
-            m1.Shape = new CustomMarkerDemo(this, m1, "Start: " + start.ToString());
+            m1.Shape = new CustomMarkerDemo(this, m1, "Start: " + route.Name);
 
             GMapMarker m2 = new GMapMarker(MainMap, end);
             m2.Shape = new CustomMarkerDemo(this, m2, "End: " + start.ToString());
 
             GMapMarker mRoute = new GMapMarker(MainMap, start);
             {
-               mRoute.Route.AddRange(route);
+               mRoute.Route.AddRange(route.Points);
                mRoute.RegenerateRouteShape();
                mRoute.ZIndex = -1;
             }

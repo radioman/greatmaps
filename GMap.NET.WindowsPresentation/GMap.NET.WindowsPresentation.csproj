@@ -70,7 +70,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="System.Collections.ObjectModel\ObservableCollectionThreadSafe.cs" />
     <Compile Include="System.Windows.Controls\GMapMarker.cs" />
     <Compile Include="System.Windows.Controls\GMapWindowsPresentation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

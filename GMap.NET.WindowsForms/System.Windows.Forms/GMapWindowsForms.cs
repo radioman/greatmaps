@@ -120,7 +120,7 @@ namespace System.Windows.Forms
                   obj.Position = obj.Position;
                }
 
-               foreach(MapRoute obj in o.Routes)
+               foreach(GMapRoute obj in o.Routes)
                {
                   UpdateRouteLocalPosition(obj);
                }
@@ -208,21 +208,10 @@ namespace System.Windows.Forms
       }
 
       /// <summary>
-      /// updates markers local position
-      /// </summary>
-      /// <param name="marker"></param>
-      public void UpdateMarkerLocalPosition(GMapMarker marker)
-      {
-         GMapNET.Point p = GMaps.Instance.FromLatLngToPixel(marker.Position, Core.Zoom);
-         p.Offset(Core.renderOffset);
-         marker.LocalPosition = p;
-      }
-
-      /// <summary>
       /// updates route local position
       /// </summary>
       /// <param name="route"></param>
-      public void UpdateRouteLocalPosition(MapRoute route)
+      public void UpdateRouteLocalPosition(GMapRoute route)
       {
          route.LocalPoints.Clear();
 
