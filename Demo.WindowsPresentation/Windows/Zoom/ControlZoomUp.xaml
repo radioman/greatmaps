@@ -1,0 +1,14 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	x:Class="Demo.WindowsPresentation.ControlZoomUp"
+	x:Name="UserControl"
+	d:DesignWidth="32" d:DesignHeight="32">
+
+	<Grid x:Name="LayoutRoot" MouseEnter="LayoutRoot_MouseEnter" MouseLeave="LayoutRoot_MouseLeave">
+		<Image Source="zoom+.png" Stretch="Fill"/>
+	</Grid>
+</UserControl>

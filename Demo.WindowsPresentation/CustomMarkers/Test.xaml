@@ -1,0 +1,9 @@
+﻿<UserControl x:Class="Demo.WindowsPresentation.CustomMarkers.Test"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Height="65" Width="61">
+    <Grid>
+      <Ellipse Fill="Red" Stroke="Blue" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Ellipse>
+      <TextBlock Name="text" Foreground="White" FontSize="22" VerticalAlignment="Center" HorizontalAlignment="Center">44</TextBlock>
+   </Grid>
+</UserControl>
