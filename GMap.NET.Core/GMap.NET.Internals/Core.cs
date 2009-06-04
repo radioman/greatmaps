@@ -33,14 +33,12 @@ namespace GMap.NET.Internals
       public Rectangle CurrentRegion;
 
       public readonly TileMatrix Matrix = new TileMatrix();
-      BackgroundWorker boundsChecker = new BackgroundWorker();
-      BackgroundWorker loader = new BackgroundWorker();
-      BackgroundWorker loader2 = new BackgroundWorker();
-      BackgroundWorker loader3 = new BackgroundWorker();
-      EventWaitHandle waitOnEmptyTasks = new AutoResetEvent(false);
-      EventWaitHandle waitForBoundsChanged = new AutoResetEvent(true);
+      readonly BackgroundWorker loader = new BackgroundWorker();
+      readonly BackgroundWorker loader2 = new BackgroundWorker();
+      readonly BackgroundWorker loader3 = new BackgroundWorker();
+      readonly EventWaitHandle waitOnEmptyTasks = new AutoResetEvent(false);
       public List<Point> tileDrawingList = new List<Point>();
-      public readonly Queue<Point> tileLoadQueue = new Queue<Point>();
+      public readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>();
 
       public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
@@ -51,19 +49,6 @@ namespace GMap.NET.Internals
       int zoom;
       int Width;
       int Height;
-
-      bool mouseVisible = true;
-      public bool MouseVisible
-      {
-         get
-         {
-            return mouseVisible;
-         }
-         set
-         {
-            mouseVisible = value;
-         }
-      }
 
       /// <summary>
       /// total count of google tiles at current zoom
@@ -96,14 +81,38 @@ namespace GMap.NET.Internals
             {
                zoom = value;
                sizeOfTiles = GMaps.Instance.GetTileMatrixSize(value);
-               currentPositionPixel = GMaps.Instance.FromLatLngToPixel(currentPosition, value);
-               currentPositionTile = GMaps.Instance.FromPixelToTileXY(currentPositionPixel);
+               CurrentPositionGPixel = GMaps.Instance.FromLatLngToPixel(CurrentPosition, value);
+               CurrentPositionGTile = GMaps.Instance.FromPixelToTileXY(CurrentPositionGPixel);
 
-               GoToCurrentPosition();
-               ReloadMap();                
+               lock(tileLoadQueue)
+               {
+                  tileLoadQueue.Clear();
+               }
+
+               Matrix.Clear();
+
+               GoToCurrentPositionOnZoom();                  
+
+               UpdateBaunds();
+
+               if(OnNeedInvalidation != null)
+               {
+                  OnNeedInvalidation();
+               }
+
+               // start loading
+               RunAsyncTasks();                                
+
+               if(OnMapDrag != null)
+               {
+                  OnMapDrag();
+               }
+
+               if(OnCurrentPositionChanged != null)
+                  OnCurrentPositionChanged(currentPosition);
 
                if(OnMapZoomChanged != null)
-                  OnMapZoomChanged();
+                  OnMapZoomChanged(); 
             }
          }
       }
@@ -248,11 +257,6 @@ namespace GMap.NET.Internals
             loader3.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
             loader3.DoWork += new DoWorkEventHandler(loader3_DoWork);
 
-            boundsChecker.WorkerReportsProgress = true;
-            boundsChecker.WorkerSupportsCancellation = true;
-            boundsChecker.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
-            boundsChecker.DoWork += new DoWorkEventHandler(boundsChecker_DoWork);
-
             started = true;
          }
 
@@ -277,16 +281,10 @@ namespace GMap.NET.Internals
 
       public void OnMapClose()
       {
-         if(waitForBoundsChanged != null)
-         {
-            waitForBoundsChanged.Set();
-            waitForBoundsChanged.Close();
-            waitForBoundsChanged = null;
-         }
-
          if(waitOnEmptyTasks != null)
          {
-            waitForBoundsChanged.Set();
+            waitOnEmptyTasks.Set();
+            waitOnEmptyTasks.Close();
          }
 
          CancelAsyncTasks();
@@ -348,33 +346,6 @@ namespace GMap.NET.Internals
       }
 
       /// <summary>
-      /// changes current position without changing current gtile
-      /// </summary>
-      /// <param name="x"></param>
-      /// <param name="y"></param>
-      public void SetCurrentPositionOnly(int x, int y)
-      {
-         currentPosition = GMaps.Instance.FromPixelToLatLng(x, y, Zoom);
-         currentPositionPixel = GMaps.Instance.FromLatLngToPixel(currentPosition, Zoom);
-
-         if(OnCurrentPositionChanged != null)
-            OnCurrentPositionChanged(currentPosition);
-      }
-
-      /// <summary>
-      /// changes current position without changing current gtile
-      /// </summary>
-      /// <param name="point"></param>
-      public void SetCurrentPositionOnly(PointLatLng point)
-      {
-         currentPosition = point;
-         currentPositionPixel = GMaps.Instance.FromLatLngToPixel(currentPosition, Zoom);
-
-         if(OnCurrentPositionChanged != null)
-            OnCurrentPositionChanged(currentPosition);
-      }
-
-      /// <summary>
       /// gets max zoom level to fit rectangle
       /// </summary>
       /// <param name="rect"></param>
@@ -429,26 +400,22 @@ namespace GMap.NET.Internals
       /// </summary>
       public void ReloadMap()
       {
+         lock(tileLoadQueue)
          {
-            lock(tileLoadQueue)
-            {
-               tileLoadQueue.Clear();
-            }
-
-            {
-               Matrix.Clear();
-
-               if(OnNeedInvalidation != null)
-               {
-                  OnNeedInvalidation();
-               }
-
-               waitForBoundsChanged.Set();
-            }
-
-            // start loading
-            RunAsyncTasks();
+            tileLoadQueue.Clear();
          }
+
+         Matrix.Clear();
+
+         if(OnNeedInvalidation != null)
+         {
+            OnNeedInvalidation();
+         }
+
+         UpdateBaunds();
+
+         // start loading
+         RunAsyncTasks();
       }
 
       /// <summary>
@@ -466,6 +433,24 @@ namespace GMap.NET.Internals
       }
 
       /// <summary>
+      /// moves current position into map center
+      /// </summary>
+      internal void GoToCurrentPositionOnZoom()
+      {
+         // reset stuff
+         renderOffset = Point.Empty;
+         centerTileXYLocationLast = Point.Empty;
+         dragPoint = Point.Empty;
+
+         // goto location
+         Point pt = new Point(-(CurrentPositionGPixel.X - Width/2), -(CurrentPositionGPixel.Y - Height/2));
+         renderOffset.X = pt.X - dragPoint.X;
+         renderOffset.Y = pt.Y - dragPoint.Y;
+
+         UpdateCenterTileXYLocation();  
+      }
+
+      /// <summary>
       /// drag map
       /// </summary>
       /// <param name="pt"></param>
@@ -479,7 +464,7 @@ namespace GMap.NET.Internals
          if(centerTileXYLocation != centerTileXYLocationLast)
          {
             centerTileXYLocationLast = centerTileXYLocation;
-            waitForBoundsChanged.Set();
+            UpdateBaunds();
          }
 
          if(OnNeedInvalidation != null)
@@ -498,11 +483,6 @@ namespace GMap.NET.Internals
       /// </summary>
       public void CancelAsyncTasks()
       {
-         if(boundsChecker.IsBusy)
-         {
-            boundsChecker.CancelAsync();
-         }
-
          if(loader.IsBusy)
          {
             loader.CancelAsync();
@@ -524,11 +504,6 @@ namespace GMap.NET.Internals
       /// </summary>
       void RunAsyncTasks()
       {
-         if(!boundsChecker.IsBusy)
-         {
-            boundsChecker.RunWorkerAsync();
-         }
-
          if(!loader.IsBusy)
          {
             loader.RunWorkerAsync();
@@ -543,8 +518,6 @@ namespace GMap.NET.Internals
          {
             loader3.RunWorkerAsync();
          }
-
-         waitForBoundsChanged.Set();
       }
 
       // loader1
@@ -581,7 +554,7 @@ namespace GMap.NET.Internals
       void LoaderWork(int id)
       {
          bool process = true;
-         Point task = new Point();
+         LoadTask task = new LoadTask();
 
          lock(tileLoadQueue)
          {
@@ -602,12 +575,12 @@ namespace GMap.NET.Internals
             // report load start
             loader.ReportProgress(id, false);
 
-            Tile t = new Tile(Zoom, task, RenderMode);
+            Tile t = new Tile(task.Zoom, task.Pos, RenderMode);
             {
                if(MapType == MapType.GoogleHybrid)
                {
-                  PureImage img = GMaps.Instance.GetImageFrom(MapType.GoogleSatellite, task, Zoom, GMaps.Instance.Language);
-                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.GoogleLabels, task, Zoom, GMaps.Instance.Language);
+                  PureImage img = GMaps.Instance.GetImageFrom(MapType.GoogleSatellite, task.Pos, task.Zoom, GMaps.Instance.Language);
+                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.GoogleLabels, task.Pos, task.Zoom, GMaps.Instance.Language);
                   lock(t.Overlays)
                   {
                      t.Overlays.Add(img);
@@ -616,8 +589,8 @@ namespace GMap.NET.Internals
                }
                else if(MapType == MapType.YahooHybrid)
                {
-                  PureImage img = GMaps.Instance.GetImageFrom(MapType.YahooSatellite, task, Zoom, GMaps.Instance.Language);
-                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.YahooLabels, task, Zoom, GMaps.Instance.Language);
+                  PureImage img = GMaps.Instance.GetImageFrom(MapType.YahooSatellite, task.Pos, task.Zoom, GMaps.Instance.Language);
+                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.YahooLabels, task.Pos, task.Zoom, GMaps.Instance.Language);
                   lock(t.Overlays)
                   {
                      t.Overlays.Add(img);
@@ -626,22 +599,25 @@ namespace GMap.NET.Internals
                }
                else // single layer
                {
-                  PureImage img = GMaps.Instance.GetImageFrom(MapType, task, Zoom, GMaps.Instance.Language);
+                  PureImage img = GMaps.Instance.GetImageFrom(MapType, task.Pos, task.Zoom, GMaps.Instance.Language);
                   t.Overlays.Add(img);
                }
-               Matrix[task] = t;
+               Matrix[task.Pos] = t;
             }
             loader.ReportProgress(id);
          }
-         else
+         else // empty now, creal things up
          {
             Debug.WriteLine("loader[" + id + "]: wait");
 
             // report load complete
             loader.ReportProgress(id, true);
 
+            Matrix.ClearPointsNotIn(ref tileDrawingList);
+
             GC.Collect();
             GC.WaitForPendingFinalizers();
+            GC.Collect();
 
             waitOnEmptyTasks.WaitOne();  // No more tasks - wait for a signal
          }
@@ -682,34 +658,23 @@ namespace GMap.NET.Internals
       }
 
       /// <summary>
-      /// bunds checker worker
+      /// updates map bounds
       /// </summary>
-      /// <param name="sender"></param>
-      /// <param name="e"></param>
-      void boundsChecker_DoWork(object sender, DoWorkEventArgs e)
+      void UpdateBaunds()
       {
-         while(!boundsChecker.CancellationPending)
+         lock(tileDrawingList)
          {
-            waitForBoundsChanged.WaitOne();
+            FindTilesAround(ref tileDrawingList);              
 
-            lock(tileDrawingList)
+            Debug.WriteLine("UpdateBaunds: total tiles => " + tileDrawingList.Count.ToString());
+
+            foreach(Point p in tileDrawingList)
             {
-               FindTilesAround(ref tileDrawingList);
-
-               Matrix.ClearPointsNotIn(ref tileDrawingList);
-
-               Debug.WriteLine("boundsChecker_DoWork: total tiles => " + tileDrawingList.Count.ToString());
-
-               foreach(Point p in tileDrawingList)
+               if(Matrix[p] == null)
                {
-                  if(Matrix[p] == null)
-                  {
-                     EnqueueLoadTask(p);
-                  }
+                  EnqueueLoadTask(new LoadTask(p, Zoom));
                }
             }
-
-            boundsChecker.ReportProgress(100);
          }
       }
 
@@ -717,7 +682,7 @@ namespace GMap.NET.Internals
       /// enqueueens tile to load
       /// </summary>
       /// <param name="task"></param>
-      void EnqueueLoadTask(Point task)
+      void EnqueueLoadTask(LoadTask task)
       {
          lock(tileLoadQueue)
          {

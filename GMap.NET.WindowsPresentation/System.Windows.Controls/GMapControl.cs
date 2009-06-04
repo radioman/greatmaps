@@ -146,9 +146,9 @@ namespace System.Windows.Controls
          Core.RenderMode = GMap.NET.RenderMode.WPF;
          Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
          Core.OnMapDrag += new MapDrag(Core_OnMapDrag);
-         SizeChanged += new SizeChangedEventHandler(GMap_SizeChanged);
          Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
-         Loaded += new RoutedEventHandler(GMap_Loaded);
+         Loaded += new RoutedEventHandler(GMapControl_Loaded);
+         SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
 
          this.ItemsSource = Markers;
 
@@ -156,6 +156,38 @@ namespace System.Windows.Controls
          yahooMapCopyright = new FormattedText(Core.yahooMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
          virtualEarthCopyright = new FormattedText(Core.virtualEarthCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
          openStreetMapCopyright = new FormattedText(Core.openStreetMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+      }
+
+      /// <summary>
+      /// inits core system
+      /// </summary>
+      /// <param name="sender"></param>
+      /// <param name="e"></param>
+      void GMapControl_Loaded(object sender, RoutedEventArgs e)
+      {
+         Core.StartSystem();
+      }
+
+      /// <summary>
+      /// recalculates size
+      /// </summary>
+      /// <param name="sender"></param>
+      /// <param name="e"></param>
+      void GMapControl_SizeChanged(object sender, SizeChangedEventArgs e)
+      {
+         Core.sizeOfMapArea.Width = 1 + ((int) e.NewSize.Width/GMaps.Instance.TileSize.Width)/2;
+         Core.sizeOfMapArea.Height = 1 + ((int) e.NewSize.Height/GMaps.Instance.TileSize.Height)/2;
+
+         // 50px outside control
+         region = new GMap.NET.Rectangle(-50, -50, (int) e.NewSize.Width+100, (int) e.NewSize.Height+100);
+
+         Core.OnMapSizeChanged((int) e.NewSize.Width, (int) e.NewSize.Height);
+
+         // keep center on same position
+         if(SizeChangedType == SizeChangedType.ViewCenter && this.IsLoaded)
+         {
+            CurrentPosition = FromLocalToLatLng((int) e.NewSize.Width/2, (int) e.NewSize.Height/2);
+         }
       }
 
       void Core_OnMapZoomChanged()
@@ -182,16 +214,6 @@ namespace System.Windows.Controls
       }
 
       /// <summary>
-      /// inits core system
-      /// </summary>
-      /// <param name="sender"></param>
-      /// <param name="e"></param>
-      void GMap_Loaded(object sender, RoutedEventArgs e)
-      {
-         Core.StartSystem();
-      }
-
-      /// <summary>
       /// on core needs invalidation
       /// </summary>
       void Core_OnNeedInvalidation()
@@ -207,28 +229,6 @@ namespace System.Windows.Controls
                this.InvalidateVisual();
             };
             this.Dispatcher.Invoke(DispatcherPriority.Render, m);
-         }
-      }
-
-      /// <summary>
-      /// on map size changed
-      /// </summary>
-      /// <param name="sender"></param>
-      /// <param name="e"></param>
-      void GMap_SizeChanged(object sender, SizeChangedEventArgs e)
-      {
-         Core.sizeOfMapArea.Width = 1 + ((int) e.NewSize.Width/GMaps.Instance.TileSize.Width)/2;
-         Core.sizeOfMapArea.Height = 1 + ((int) e.NewSize.Height/GMaps.Instance.TileSize.Height)/2;
-
-         // 50px outside control
-         region = new GMap.NET.Rectangle(-50, -50, (int) e.NewSize.Width+100, (int) e.NewSize.Height+100);
-
-         Core.OnMapSizeChanged((int) e.NewSize.Width, (int) e.NewSize.Height);
-
-         // keep center on same position
-         if(SizeChangedType == SizeChangedType.ViewCenter && this.IsLoaded)
-         {
-            CurrentPosition = FromLocalToLatLng((int) e.NewSize.Width/2, (int) e.NewSize.Height/2);
          }
       }
 
@@ -430,12 +430,11 @@ namespace System.Windows.Controls
             if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
             {
                System.Windows.Point pl = e.GetPosition(this);
-               SetCurrentPositionOnly(FromLocalToLatLng((int) pl.X, (int) pl.Y));                 
+               Core.currentPosition = FromLocalToLatLng((int) pl.X, (int) pl.Y);
             }
             else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
             {
-               PointLatLng pg = FromLocalToLatLng((int) ActualWidth/2, (int) ActualHeight/2);
-               SetCurrentPositionOnly(pg);
+               Core.currentPosition = FromLocalToLatLng((int) ActualWidth/2, (int) ActualHeight/2);
             }
 
             // set mouse position to map center
@@ -452,7 +451,7 @@ namespace System.Windows.Controls
             else if(e.Delta < 0)
             {
                Zoom--;
-            }
+            } 
          }
 
          base.OnMouseWheel(e);
@@ -466,17 +465,7 @@ namespace System.Windows.Controls
 
          if(e.LeftButton == MouseButtonState.Pressed)
          {
-            {
-               SetCurrentPositionOnly(Core.mouseDown.X - Core.renderOffset.X, Core.mouseDown.Y - Core.renderOffset.Y);
-
-               if(Core.MouseVisible)
-               {
-                  Cursor = Cursors.None;
-                  Core.MouseVisible = false;
-               }
-
-               Core.BeginDrag(Core.mouseDown);
-            }
+            Core.BeginDrag(Core.mouseDown);
          }
          else if(e.RightButton == MouseButtonState.Pressed)
          {
@@ -496,15 +485,11 @@ namespace System.Windows.Controls
       {
          if(Core.IsDragging)
          {
-            Core.EndDrag();
-
+            Core.EndDrag();   
             Cursor = Cursors.Arrow;
-
-            if(!Core.MouseVisible)
-            {
-               Core.MouseVisible = true;
-            }
          }
+
+         RaiseEmptyTileError = false;
 
          base.OnMouseUp(e);
       }
@@ -521,13 +506,6 @@ namespace System.Windows.Controls
             {
                Core.Drag(Core.mouseCurrent);
             }
-            else if(e.LeftButton == MouseButtonState.Pressed)
-            {
-               {
-                  SetCurrentPositionOnly(Core.mouseCurrent.X - Core.renderOffset.X, Core.mouseCurrent.Y - Core.renderOffset.Y);
-                  InvalidateVisual();
-               }
-            }
          }
 
          base.OnMouseMove(e);
@@ -542,11 +520,6 @@ namespace System.Windows.Controls
          Core.ReloadMap();
       }
 
-      //public bool ZoomAndCenterMarkers()
-      //{
-      //   return Core.ZoomAndCenterMarkers();
-      //}
-
       public bool SetCurrentPositionByKeywords(string keys)
       {
          return Core.SetCurrentPositionByKeywords(keys);
@@ -560,16 +533,6 @@ namespace System.Windows.Controls
       public GMap.NET.Point FromLatLngToLocal(PointLatLng point)
       {
          return Core.FromLatLngToLocal(point);
-      }
-
-      public void SetCurrentPositionOnly(int x, int y)
-      {
-         Core.SetCurrentPositionOnly(x, y);
-      }
-
-      public void SetCurrentPositionOnly(PointLatLng point)
-      {
-         Core.SetCurrentPositionOnly(point);
       }
 
       public bool ShowExportDialog()

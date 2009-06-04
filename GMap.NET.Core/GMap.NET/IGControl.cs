@@ -72,10 +72,6 @@ namespace GMap.NET
 
       void ReloadMap();
 
-      void SetCurrentPositionOnly(int x, int y);
-      void SetCurrentPositionOnly(PointLatLng point);
-      bool SetCurrentPositionByKeywords(string keys);
-
       PointLatLng FromLocalToLatLng(int x, int y);
       Point FromLatLngToLocal(PointLatLng point);
 

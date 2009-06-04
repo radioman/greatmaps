@@ -609,15 +609,6 @@ namespace System.Windows.Forms
          {
             if(!IsMouseOverMarker)
             {
-               SetCurrentPositionOnly(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y);
-
-               if(Core.MouseVisible)
-               {
-                  this.Cursor = System.Windows.Forms.Cursors.Default;
-                  Cursor.Hide();
-                  Core.MouseVisible = false;
-               }
-
                Core.BeginDrag(Core.mouseDown);
             }
          }
@@ -625,8 +616,7 @@ namespace System.Windows.Forms
          {
             if(CanDragMap)
             {
-               this.Cursor = System.Windows.Forms.Cursors.SizeAll;
-
+               this.Cursor = System.Windows.Forms.Cursors.SizeAll; 
                Core.BeginDrag(Core.mouseDown);
             }
          }
@@ -640,16 +630,9 @@ namespace System.Windows.Forms
       {
          if(Core.IsDragging)
          {
-            Core.EndDrag();
-         }
-
-         this.Cursor = System.Windows.Forms.Cursors.Default;
-
-         if(!Core.MouseVisible)
-         {
-            Cursor.Show();
-            Core.MouseVisible = true;
-         }
+            Core.EndDrag();  
+            this.Cursor = System.Windows.Forms.Cursors.Default;
+         }           
 
          RaiseEmptyTileError = false;
 
@@ -694,12 +677,11 @@ namespace System.Windows.Forms
          {
             if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
             {
-               SetCurrentPositionOnly(FromLocalToLatLng(e.X, e.Y));
+               Core.currentPosition = FromLocalToLatLng(e.X, e.Y);
             }
             else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
             {
-               PointLatLng pg = FromLocalToLatLng((int) Width/2, (int) Height/2);
-               SetCurrentPositionOnly(pg);
+               Core.currentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
             }
 
             // set mouse position to map center
@@ -730,11 +712,6 @@ namespace System.Windows.Forms
             if(e.Button == MouseButtons.Right)
             {
                Core.Drag(Core.mouseCurrent);
-            }
-            else if(e.Button == MouseButtons.Left)
-            {
-               SetCurrentPositionOnly(e.X - Core.renderOffset.X, e.Y - Core.renderOffset.Y);
-               Invalidate(false);
             }
          }
          else
@@ -821,26 +798,6 @@ namespace System.Windows.Forms
       public GMap.NET.Point FromLatLngToLocal(PointLatLng point)
       {
          return Core.FromLatLngToLocal(point);
-      }
-
-      /// <summary>
-      /// changes current position without changing current gtile
-      /// using pixel coordinates
-      /// </summary>
-      /// <param name="x"></param>
-      /// <param name="y"></param>
-      public void SetCurrentPositionOnly(int x, int y)
-      {
-         Core.SetCurrentPositionOnly(x, y);
-      }
-
-      /// <summary>
-      /// changes current position without changing current gtile
-      /// </summary>
-      /// <param name="point"></param>
-      public void SetCurrentPositionOnly(PointLatLng point)
-      {
-         Core.SetCurrentPositionOnly(point);
       }
 
       /// <summary>
