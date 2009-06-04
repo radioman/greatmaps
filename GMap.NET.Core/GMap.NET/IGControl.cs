@@ -71,7 +71,6 @@ namespace GMap.NET
       event MapZoomChanged OnMapZoomChanged;
 
       void ReloadMap();
-      void GoToCurrentPosition();
 
       void SetCurrentPositionOnly(int x, int y);
       void SetCurrentPositionOnly(PointLatLng point);

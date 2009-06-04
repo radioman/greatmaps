@@ -292,7 +292,6 @@ namespace Demo.WindowsPresentation
          double lng = double.Parse(textBoxLng.Text, CultureInfo.InvariantCulture);
 
          MainMap.CurrentPosition = new PointLatLng(lat, lng);
-         MainMap.GoToCurrentPosition();
       }
 
       // goto by geocoder
@@ -303,10 +302,6 @@ namespace Demo.WindowsPresentation
             if(!MainMap.SetCurrentPositionByKeywords(textBoxGeo.Text))
             {
                MessageBox.Show("Google Maps Geocoder can't find: " + textBoxGeo.Text, "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            }
-            else
-            {
-               MainMap.GoToCurrentPosition();
             }
          }
       }

@@ -121,12 +121,6 @@ namespace Demo.WindowsForms
          MessageBox.Show("OnEmptyTileError, Zoom: " + zoom + ", " + pos.ToString(), "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
 
-      // on shown, do not forget this! ;}
-      private void MainForm_Shown(object sender, EventArgs e)
-      {
-         MainMap.ReloadMap();
-      }
-
       // click on some marker
       void MainMap_OnMarkerClick(GMapMarker item)
       {
@@ -211,7 +205,6 @@ namespace Demo.WindowsForms
          double lng = double.Parse(textBoxLng.Text, CultureInfo.InvariantCulture);
 
          MainMap.CurrentPosition = new PointLatLng(lat, lng);
-         MainMap.GoToCurrentPosition();
       }
 
       // goto by geocoder
@@ -222,10 +215,6 @@ namespace Demo.WindowsForms
             if(!MainMap.SetCurrentPositionByKeywords(textBoxGeo.Text))
             {
                MessageBox.Show("Google Maps Geocoder can't find: " + textBoxGeo.Text, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-            else
-            {
-               MainMap.GoToCurrentPosition();
             }
          }
       }

@@ -56,11 +56,6 @@ namespace System.Windows.Controls
       public FormattedText EmptyTileText = new FormattedText("We are sorry, but we don't\nhave imagery at this zoom\n     level for this region.", System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("Arial"), 16, Brushes.White);
 
       /// <summary>
-      /// go to current position and center mouse OnMouseWheel
-      /// </summary>
-      bool CenterPositionOnMouseWheel = true;
-
-      /// <summary>
       /// max zoom
       /// </summary>
       public int MaxZoom;
@@ -69,6 +64,22 @@ namespace System.Windows.Controls
       /// min zoom
       /// </summary>
       public int MinZoom;
+
+      /// <summary>
+      /// map zooming type for mouse wheel
+      /// </summary>
+      MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePosition;
+
+      /// <summary>
+      /// NOT WORK YET
+      /// where to set current position if map size is changed
+      /// </summary>
+      SizeChangedType SizeChangedType = SizeChangedType.ViewCenter;
+
+      /// <summary>
+      /// center mouse OnMouseWheel
+      /// </summary>
+      bool CenterPositionOnMouseWheel = true;
 
       /// <summary>
       /// list of markers
@@ -139,7 +150,6 @@ namespace System.Windows.Controls
          Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
          Loaded += new RoutedEventHandler(GMap_Loaded);
 
-         Markers.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Objects_CollectionChanged);
          this.ItemsSource = Markers;
 
          googleCopyright = new FormattedText(Core.googleCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
@@ -166,21 +176,7 @@ namespace System.Windows.Controls
          {
             if(obj != null)
             {
-               obj.Position = obj.Position;
-            }
-         }
-      }
-
-      void Objects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-      {
-         if(e.NewItems != null)
-         {
-            foreach(GMapMarker obj in e.NewItems)
-            {
-               if(obj != null)
-               {
-                  obj.Position = obj.Position;
-               }
+               obj.UpdateLocalPosition();
             }
          }
       }
@@ -221,15 +217,19 @@ namespace System.Windows.Controls
       /// <param name="e"></param>
       void GMap_SizeChanged(object sender, SizeChangedEventArgs e)
       {
-         Core.sizeOfMapArea.Width = 1 + ((int)e.NewSize.Width/GMaps.Instance.TileSize.Width)/2;
-         Core.sizeOfMapArea.Height = 1 + ((int)e.NewSize.Height/GMaps.Instance.TileSize.Height)/2;
+         Core.sizeOfMapArea.Width = 1 + ((int) e.NewSize.Width/GMaps.Instance.TileSize.Width)/2;
+         Core.sizeOfMapArea.Height = 1 + ((int) e.NewSize.Height/GMaps.Instance.TileSize.Height)/2;
 
          // 50px outside control
          region = new GMap.NET.Rectangle(-50, -50, (int) e.NewSize.Width+100, (int) e.NewSize.Height+100);
 
          Core.OnMapSizeChanged((int) e.NewSize.Width, (int) e.NewSize.Height);
 
-         Core.GoToCurrentPosition();
+         // keep center on same position
+         if(SizeChangedType == SizeChangedType.ViewCenter && this.IsLoaded)
+         {
+            CurrentPosition = FromLocalToLatLng((int) e.NewSize.Width/2, (int) e.NewSize.Height/2);
+         }
       }
 
       /// <summary>
@@ -265,7 +265,7 @@ namespace System.Windows.Controls
                         {
                            if(!found)
                               found = true;
-                                    
+
                            g.DrawImage(img.Img, new Rect(Core.tileRect.X*scaleFactor, Core.tileRect.Y*scaleFactor, Core.tileRect.Width*scaleFactor, Core.tileRect.Height*scaleFactor));
                         }
                      }
@@ -427,12 +427,20 @@ namespace System.Windows.Controls
 
          if(IsMouseDirectlyOver && !IsDragging)
          {
-            if(CenterPositionOnMouseWheel)
+            if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
             {
                System.Windows.Point pl = e.GetPosition(this);
-               PointLatLng pg = FromLocalToLatLng((int) pl.X, (int) pl.Y);
+               SetCurrentPositionOnly(FromLocalToLatLng((int) pl.X, (int) pl.Y));                 
+            }
+            else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
+            {
+               PointLatLng pg = FromLocalToLatLng((int) ActualWidth/2, (int) ActualHeight/2);
                SetCurrentPositionOnly(pg);
+            }
 
+            // set mouse position to map center
+            if(CenterPositionOnMouseWheel)
+            {
                System.Windows.Point p = PointToScreen(new System.Windows.Point(ActualWidth/2, ActualHeight/2));
                Stuff.SetCursorPos((int) p.X, (int) p.Y);
             }
@@ -532,11 +540,6 @@ namespace System.Windows.Controls
       public void ReloadMap()
       {
          Core.ReloadMap();
-      }
-
-      public void GoToCurrentPosition()
-      {
-         Core.GoToCurrentPosition();
       }
 
       //public bool ZoomAndCenterMarkers()
@@ -883,7 +886,7 @@ namespace System.Windows.Controls
 
                   JpegBitmapDecoder bitmapDecoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
                   ImageSource m = bitmapDecoder.Frames[0];
-                           
+
                   if(m != null)
                   {
                      ret = new WindowsPresentationImage();
@@ -897,7 +900,7 @@ namespace System.Windows.Controls
                catch
                {
                   ret = null;
-               }   
+               }
             }
          }
          return ret;
@@ -912,7 +915,7 @@ namespace System.Windows.Controls
             {
                PngBitmapEncoder e = new PngBitmapEncoder();
                e.Frames.Add(BitmapFrame.Create(ret.Img as BitmapSource));
-               e.Save(stream);                 
+               e.Save(stream);
             }
             catch
             {

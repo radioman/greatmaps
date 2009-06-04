@@ -15,10 +15,9 @@ namespace GMap.NET.WindowsPresentation
       public event PropertyChangedEventHandler PropertyChanged;
       void OnPropertyChanged(string name)
       {
-         PropertyChangedEventHandler handler = PropertyChanged;
-         if(handler != null)
+         if(PropertyChanged != null)
          {
-            handler(this, new PropertyChangedEventArgs(name));
+            PropertyChanged(this, new PropertyChangedEventArgs(name));
          }
       }
 
@@ -35,8 +34,11 @@ namespace GMap.NET.WindowsPresentation
          }
          set
          {
-            shape = value;
-            OnPropertyChanged("Shape");
+            if(shape != value)
+            {
+               shape = value;
+               OnPropertyChanged("Shape");
+            }
          }
       }
 
@@ -53,10 +55,11 @@ namespace GMap.NET.WindowsPresentation
          }
          set
          {
-            position = value;
-
-            GMap.NET.Point p = Control.FromLatLngToLocal(value);
-            LocalPosition = new System.Windows.Point(p.X + Offset.X, p.Y + Offset.Y);
+            if(position != value)
+            {
+               position = value; 
+               UpdateLocalPosition();
+            }
          }
       }
 
@@ -77,8 +80,11 @@ namespace GMap.NET.WindowsPresentation
          }
          set
          {
-            offset = value;
-            Position = Position;
+            if(offset != value)
+            {
+               offset = value;
+               UpdateLocalPosition();
+            }
          }
       }
 
@@ -95,8 +101,11 @@ namespace GMap.NET.WindowsPresentation
          }
          internal set
          {
-            localPosition = value;
-            OnPropertyChanged("LocalPosition");
+            if(localPosition != value)
+            {
+               localPosition = value;
+               OnPropertyChanged("LocalPosition");
+            }
          }
       }
 
@@ -113,8 +122,11 @@ namespace GMap.NET.WindowsPresentation
          }
          set
          {
-            zIndex = value;
-            OnPropertyChanged("ZIndex");
+            if(zIndex != value)
+            {
+               zIndex = value;
+               OnPropertyChanged("ZIndex");
+            }
          }
       }
 
@@ -141,7 +153,16 @@ namespace GMap.NET.WindowsPresentation
             PropertyChanged = null;
          }
          Shape = null;
-         Route.Clear();            
+         Route.Clear();
+      }
+
+      /// <summary>
+      /// updates marker position, internal only
+      /// </summary>
+      internal void UpdateLocalPosition()
+      {
+         GMap.NET.Point p = Control.FromLatLngToLocal(Position);
+         LocalPosition = new System.Windows.Point(p.X + Offset.X, p.Y + Offset.Y);
       }
 
       /// <summary>

@@ -99,8 +99,8 @@ namespace GMap.NET.Internals
                currentPositionPixel = GMaps.Instance.FromLatLngToPixel(currentPosition, value);
                currentPositionTile = GMaps.Instance.FromPixelToTileXY(currentPositionPixel);
 
-               ReloadMap();
                GoToCurrentPosition();
+               ReloadMap();                
 
                if(OnMapZoomChanged != null)
                   OnMapZoomChanged();
@@ -153,6 +153,8 @@ namespace GMap.NET.Internals
             currentPosition = value;
             currentPositionPixel = GMaps.Instance.FromLatLngToPixel(value, Zoom);
             currentPositionTile = GMaps.Instance.FromPixelToTileXY(currentPositionPixel);
+
+            GoToCurrentPosition();
 
             if(OnCurrentPositionChanged != null)
                OnCurrentPositionChanged(currentPosition);

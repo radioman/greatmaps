@@ -698,7 +698,6 @@
          this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
          this.Text = "GMap.NET - Great Maps for Windows Forms";
          this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-         this.Shown += new System.EventHandler(this.MainForm_Shown);
          this.groupBox4.ResumeLayout(false);
          this.groupBox3.ResumeLayout(false);
          this.groupBox3.PerformLayout();

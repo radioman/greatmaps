@@ -50,6 +50,16 @@ namespace System.Windows.Forms
       public int MinZoom;
 
       /// <summary>
+      /// map zooming type for mouse wheel
+      /// </summary>
+      MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePosition;
+
+      /// <summary>
+      /// where to set current position if map size is changed
+      /// </summary>
+      SizeChangedType SizeChangedType = SizeChangedType.ViewCenter;
+
+      /// <summary>
       /// text on empty tiles
       /// </summary>
       public string EmptyTileText = "We are sorry, but we don't\nhave imagery at this zoom\nlevel for this region.";
@@ -66,7 +76,7 @@ namespace System.Windows.Forms
       public Brush EmptytileBrush = Brushes.Navy;
 
       /// <summary>
-      /// go to current position and center mouse OnMouseWheel
+      /// center mouse OnMouseWheel
       /// </summary>
       bool CenterPositionOnMouseWheel = true;
 
@@ -90,6 +100,7 @@ namespace System.Windows.Forms
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.Opaque, true);
+            ResizeRedraw = true;
 
             // to know when to invalidate
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
@@ -255,10 +266,6 @@ namespace System.Windows.Forms
             if(Zoom != maxZoom)
             {
                Zoom = maxZoom;
-            }
-            else
-            {
-               GoToCurrentPosition();
             }
 
             return true;
@@ -490,6 +497,19 @@ namespace System.Windows.Forms
          }
       }
 
+      // forces to load map
+      bool isLoaded = false;
+      protected override void OnMouseEnter(EventArgs e)
+      {
+         base.OnMouseEnter(e);
+
+         if(!isLoaded)
+         {
+            isLoaded = true;
+            Core.ReloadMap();
+         }
+      }
+
       protected override void OnLoad(EventArgs e)
       {
          base.OnLoad(e);
@@ -561,18 +581,10 @@ namespace System.Windows.Forms
          #endregion
       }
 
-      protected override void OnResize(EventArgs e)
-      {
-         base.OnResize(e);
-
-         if(this.Visible)
-         {
-            this.Invalidate(false);
-         }
-      }
-
       protected override void OnSizeChanged(EventArgs e)
       {
+         base.OnSizeChanged(e);
+
          Core.sizeOfMapArea.Width = 1 + (Width/GMaps.Instance.TileSize.Width)/2;
          Core.sizeOfMapArea.Height = 1 + (Height/GMaps.Instance.TileSize.Height)/2;
 
@@ -581,9 +593,11 @@ namespace System.Windows.Forms
 
          Core.OnMapSizeChanged(Width, Height);
 
-         Core.GoToCurrentPosition();
-
-         base.OnSizeChanged(e);
+         // keep center on same position
+         if(SizeChangedType == SizeChangedType.ViewCenter)
+         {
+            CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
+         }
       }
 
       protected override void OnMouseDown(MouseEventArgs e)
@@ -678,11 +692,19 @@ namespace System.Windows.Forms
 
          if(!IsMouseOverMarker && !IsDragging)
          {
+            if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
+            {
+               SetCurrentPositionOnly(FromLocalToLatLng(e.X, e.Y));
+            }
+            else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
+            {
+               PointLatLng pg = FromLocalToLatLng((int) Width/2, (int) Height/2);
+               SetCurrentPositionOnly(pg);
+            }
+
+            // set mouse position to map center
             if(CenterPositionOnMouseWheel)
             {
-               PointLatLng pg = FromLocalToLatLng(e.X, e.Y);
-               SetCurrentPositionOnly(pg);
-
                System.Drawing.Point p = PointToScreen(new System.Drawing.Point(Width/2, Height/2));
                Stuff.SetCursorPos((int) p.X, (int) p.Y);
             }
@@ -768,14 +790,6 @@ namespace System.Windows.Forms
       public void ReloadMap()
       {
          Core.ReloadMap();
-      }
-
-      /// <summary>
-      /// sets current position into the center
-      /// </summary>
-      public void GoToCurrentPosition()
-      {
-         Core.GoToCurrentPosition();
       }
 
       /// <summary>
@@ -925,7 +939,7 @@ namespace System.Windows.Forms
       }
 
       /// <summary>
-      /// current marker position
+      /// current map center position
       /// </summary>
       public PointLatLng CurrentPosition
       {

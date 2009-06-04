@@ -105,5 +105,4 @@ namespace GMap.NET
          Empty = new PointLatLng();
       }
    }
-
 }
