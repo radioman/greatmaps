@@ -97,8 +97,9 @@ namespace Demo.WindowsPresentation
          }
 
          // add my city location for demo
-         PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius");
-         if(pos != null)
+         GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
+         PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius", out status);
+         if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
          {
             GMapMarker it = new GMapMarker(MainMap, pos.Value);
             {
@@ -115,6 +116,7 @@ namespace Demo.WindowsPresentation
 
       // real time testing
       // Be hero, found where memmory is leaking! ;}
+      // p.s. only leaks if object position is allways the same
       private void button13_Click(object sender, RoutedEventArgs e)
       {
          if(memoryLeakTestTimer.IsEnabled)
@@ -299,9 +301,10 @@ namespace Demo.WindowsPresentation
       {
          if(e.Key == System.Windows.Input.Key.Enter)
          {
-            if(!MainMap.SetCurrentPositionByKeywords(textBoxGeo.Text))
+            GeoCoderStatusCode status = MainMap.SetCurrentPositionByKeywords(textBoxGeo.Text);
+            if(status != GeoCoderStatusCode.G_GEO_SUCCESS)
             {
-               MessageBox.Show("Google Maps Geocoder can't find: " + textBoxGeo.Text, "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+               MessageBox.Show("Google Maps Geocoder can't find: '" + textBoxGeo.Text + "', reason: " + status.ToString(), "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
          }
       }

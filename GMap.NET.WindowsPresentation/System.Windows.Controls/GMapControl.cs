@@ -17,6 +17,7 @@ namespace System.Windows.Controls
    using GMap.NET;
    using GMap.NET.Internals;
    using GMap.NET.WindowsPresentation;
+   using System.Diagnostics;
 
    /// <summary>
    /// GMap.NET control for Windows Presentation
@@ -149,7 +150,7 @@ namespace System.Windows.Controls
          Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
          Loaded += new RoutedEventHandler(GMapControl_Loaded);
          SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
-
+         
          this.ItemsSource = Markers;
 
          googleCopyright = new FormattedText(Core.googleCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
@@ -175,19 +176,41 @@ namespace System.Windows.Controls
       /// <param name="e"></param>
       void GMapControl_SizeChanged(object sender, SizeChangedEventArgs e)
       {
-         Core.sizeOfMapArea.Width = 1 + ((int) e.NewSize.Width/GMaps.Instance.TileSize.Width)/2;
-         Core.sizeOfMapArea.Height = 1 + ((int) e.NewSize.Height/GMaps.Instance.TileSize.Height)/2;
+         System.Windows.Size constraint = e.NewSize;
+
+         Core.sizeOfMapArea.Width = 1 + ((int) constraint.Width/GMaps.Instance.TileSize.Width)/2;
+         Core.sizeOfMapArea.Height = 1 + ((int) constraint.Height/GMaps.Instance.TileSize.Height)/2;
 
          // 50px outside control
-         region = new GMap.NET.Rectangle(-50, -50, (int) e.NewSize.Width+100, (int) e.NewSize.Height+100);
-
-         Core.OnMapSizeChanged((int) e.NewSize.Width, (int) e.NewSize.Height);
+         region = new GMap.NET.Rectangle(-50, -50, (int) constraint.Width+100, (int) constraint.Height+100);
 
          // keep center on same position
-         if(SizeChangedType == SizeChangedType.ViewCenter && this.IsLoaded)
+         if(IsLoaded)
          {
-            CurrentPosition = FromLocalToLatLng((int) e.NewSize.Width/2, (int) e.NewSize.Height/2);
+            if(SizeChangedType == SizeChangedType.CurrentPosition)
+            {
+               Core.renderOffset.Offset(((int) constraint.Width-Core.Width)/2, ((int) constraint.Height-Core.Height)/2);
+               Core.GoToCurrentPosition();
+            }
+            else if(SizeChangedType == SizeChangedType.ViewCenter)
+            {
+               // do not work as expected ;/
+
+               //CurrentPosition = FromLocalToLatLng((int) constraint.Width/2, (int) constraint.Height/2);
+               //Core.CurrentPositionGPixel = GMaps.Instance.FromLatLngToPixel(Core.currentPosition, Zoom);
+               //Core.CurrentPositionGTile = GMaps.Instance.FromPixelToTileXY(CurrentPositionGPixel);
+
+               //GoToCurrentPosition();
+
+
+               //Core.renderOffset.Offset(((int) e.NewSize.Width-Core.Width)/2, ((int) e.NewSize.Height-Core.Height)/2);
+               //Core.CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
+
+               //Core.GoToCurrentPosition();
+            }
          }
+
+         Core.OnMapSizeChanged((int) constraint.Width, (int) constraint.Height);
       }
 
       void Core_OnMapZoomChanged()
@@ -520,7 +543,7 @@ namespace System.Windows.Controls
          Core.ReloadMap();
       }
 
-      public bool SetCurrentPositionByKeywords(string keys)
+      public GeoCoderStatusCode SetCurrentPositionByKeywords(string keys)
       {
          return Core.SetCurrentPositionByKeywords(keys);
       }

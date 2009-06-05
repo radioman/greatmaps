@@ -591,13 +591,26 @@ namespace System.Windows.Forms
          // 50px outside control
          Core.CurrentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
 
-         Core.OnMapSizeChanged(Width, Height);
-
-         // keep center on same position
-         if(SizeChangedType == SizeChangedType.ViewCenter)
+         if(Visible && IsHandleCreated)
          {
-            CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
+            // keep center on same position
+            if(SizeChangedType == SizeChangedType.CurrentPosition)
+            {
+               Core.renderOffset.Offset((Width-Core.Width)/2, (Height-Core.Height)/2);
+               Core.GoToCurrentPosition();
+            }
+            else if(SizeChangedType == SizeChangedType.ViewCenter)
+            {
+               // do not work as expected ;/
+
+               //Core.renderOffset.Offset((Width-Core.Width)/2, (Height-Core.Height)/2);
+               //Core.CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
+
+               //Core.GoToCurrentPosition();
+            }
          }
+
+         Core.OnMapSizeChanged(Width, Height);
       }
 
       protected override void OnMouseDown(MouseEventArgs e)
@@ -774,7 +787,7 @@ namespace System.Windows.Forms
       /// </summary>
       /// <param name="keys"></param>
       /// <returns>true if successfull</returns>
-      public bool SetCurrentPositionByKeywords(string keys)
+      public GeoCoderStatusCode SetCurrentPositionByKeywords(string keys)
       {
          return Core.SetCurrentPositionByKeywords(keys);
       }

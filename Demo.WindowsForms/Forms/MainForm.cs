@@ -96,8 +96,9 @@ namespace Demo.WindowsForms
             }
 
             // add my city location for demo
-            PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius");
-            if(pos != null)
+            GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
+            PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius", out status);
+            if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
             {
                currentMarker.Position = pos.Value;
 
@@ -212,9 +213,10 @@ namespace Demo.WindowsForms
       {
          if((Keys) e.KeyChar == Keys.Enter)
          {
-            if(!MainMap.SetCurrentPositionByKeywords(textBoxGeo.Text))
+            GeoCoderStatusCode status = MainMap.SetCurrentPositionByKeywords(textBoxGeo.Text);
+            if(status != GeoCoderStatusCode.G_GEO_SUCCESS)
             {
-               MessageBox.Show("Google Maps Geocoder can't find: " + textBoxGeo.Text, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+               MessageBox.Show("Google Maps Geocoder can't find: '" + textBoxGeo.Text  + "', reason: " + status.ToString(), "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
          }
       }

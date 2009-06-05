@@ -414,10 +414,11 @@ namespace GMap.NET
       /// gets lat, lng from geocoder keys
       /// </summary>
       /// <param name="keywords"></param>
+      /// <param name="status"></param>
       /// <returns></returns>
-      public PointLatLng? GetLatLngFromGeocoder(string keywords)
+      public PointLatLng? GetLatLngFromGeocoder(string keywords, out GeoCoderStatusCode status)
       {
-         return GetLatLngFromGeocoderUrl(MakeGeocoderUrl(keywords), UseGeocoderCache);
+         return GetLatLngFromGeocoderUrl(MakeGeocoderUrl(keywords), UseGeocoderCache, out status);
       }
 
       /// <summary>
@@ -813,9 +814,11 @@ namespace GMap.NET
       /// </summary>
       /// <param name="url"></param>
       /// <param name="useCache"></param>
+      /// <param name="status"></param>
       /// <returns></returns>
-      internal PointLatLng? GetLatLngFromGeocoderUrl(string url, bool useCache)
+      internal PointLatLng? GetLatLngFromGeocoderUrl(string url, bool useCache, out GeoCoderStatusCode status)
       {
+         status = GeoCoderStatusCode.Unknow;
          PointLatLng? ret = null;
          try
          {
@@ -865,7 +868,8 @@ namespace GMap.NET
                string[] values = geo.Split(',');
                if(values.Length == 4)
                {
-                  if(values[0] == "200")
+                  status = (GeoCoderStatusCode) int.Parse(values[0]);
+                  if(status == GeoCoderStatusCode.G_GEO_SUCCESS)
                   {
                      double lat = double.Parse(values[2], CultureInfo.InvariantCulture);
                      double lng = double.Parse(values[3], CultureInfo.InvariantCulture);

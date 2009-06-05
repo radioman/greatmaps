@@ -47,8 +47,8 @@ namespace GMap.NET.Internals
 
       bool started = false;
       int zoom;
-      int Width;
-      int Height;
+      internal int Width;
+      internal int Height;
 
       /// <summary>
       /// total count of google tiles at current zoom
@@ -160,8 +160,8 @@ namespace GMap.NET.Internals
          set
          {
             currentPosition = value;
-            currentPositionPixel = GMaps.Instance.FromLatLngToPixel(value, Zoom);
-            currentPositionTile = GMaps.Instance.FromPixelToTileXY(currentPositionPixel);
+            CurrentPositionGPixel = GMaps.Instance.FromLatLngToPixel(value, Zoom);
+            CurrentPositionGTile = GMaps.Instance.FromPixelToTileXY(CurrentPositionGPixel);
 
             GoToCurrentPosition();
 
@@ -277,6 +277,8 @@ namespace GMap.NET.Internals
          this.Height = height;
 
          UpdateCenterTileXYLocation();
+
+         UpdateBaunds();
       }
 
       public void OnMapClose()
@@ -295,15 +297,16 @@ namespace GMap.NET.Internals
       /// </summary>
       /// <param name="keys"></param>
       /// <returns></returns>
-      public bool SetCurrentPositionByKeywords(string keys)
+      public GeoCoderStatusCode SetCurrentPositionByKeywords(string keys)
       {
-         PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder(keys);
-         if(pos.HasValue)
+         GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
+         PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder(keys, out status);
+         if(pos.HasValue && status == GeoCoderStatusCode.G_GEO_SUCCESS)
          {
             CurrentPosition = pos.Value;
          }
 
-         return pos.HasValue;
+         return status;
       }
 
       /// <summary>
