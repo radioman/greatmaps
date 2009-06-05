@@ -50,7 +50,6 @@ namespace Demo.WindowsForms
             MainMap.MinZoom = 12;
             MainMap.Zoom = MainMap.MinZoom;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
-            //MainMap.CurrentPosition = new PointLatLng(-40.913512576127573, 173.408203125);
 
             // map events
             MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
@@ -59,7 +58,11 @@ namespace Demo.WindowsForms
             MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
             MainMap.OnEmptyTileError += new EmptyTileError(MainMap_OnEmptyTileError);
             MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
-            
+
+            MainMap.MouseMove += new MouseEventHandler(MainMap_MouseMove);
+            MainMap.MouseDown += new MouseEventHandler(MainMap_MouseDown);
+            MainMap.MouseUp += new MouseEventHandler(MainMap_MouseUp);
+
             // get map type
             comboBoxMapType.DataSource = Enum.GetValues(typeof(MapType));
             comboBoxMapType.SelectedItem = MainMap.MapType;
@@ -79,7 +82,7 @@ namespace Demo.WindowsForms
             // get zoom  
             trackBar1.Minimum = MainMap.MinZoom;
             trackBar1.Maximum = MainMap.MaxZoom;
-            trackBar1.Value = MainMap.Zoom;              
+            trackBar1.Value = MainMap.Zoom;
 
             // set current marker and get ground layer
             currentMarker = new GMapMarkerGoogleRed(MainMap.CurrentPosition);
@@ -107,6 +110,33 @@ namespace Demo.WindowsForms
                myCity.ToolTipText = "Welcome to Lithuania! ;}";
                ground.Markers.Add(myCity);
             }
+         }
+      }
+
+      bool isMouseDown = false;
+      void MainMap_MouseUp(object sender, MouseEventArgs e)
+      {
+         if(e.Button == MouseButtons.Left)
+         {
+            isMouseDown = false;
+         }
+      }
+
+      void MainMap_MouseDown(object sender, MouseEventArgs e)
+      {
+         if(e.Button == MouseButtons.Left)
+         {
+            isMouseDown = true;
+            currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
+         }
+      }
+
+      // move current marker with left holding
+      void MainMap_MouseMove(object sender, MouseEventArgs e)
+      {
+         if(e.Button == MouseButtons.Left && isMouseDown)
+         {
+            currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
          }
       }
 
@@ -261,7 +291,7 @@ namespace Demo.WindowsForms
             GMapRoute r = new GMapRoute(route.Points, route.Name);
             r.Color = Color.Blue;
             routes.Routes.Add(r);
-               
+
             // add route start/end marks
             GMapMarker m1 = new GMapMarkerGoogleRed(start);
             m1.ToolTipText = "Start: " + route.Name;
@@ -281,8 +311,8 @@ namespace Demo.WindowsForms
             if(info != null)
             {
 
-            } 
-         }             
+            }
+         }
       }
 
       // add marker on current position

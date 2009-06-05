@@ -59,7 +59,8 @@ namespace Demo.WindowsPresentation
          MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
          MainMap.OnEmptyTileError += new EmptyTileError(MainMap_OnEmptyTileError);
          MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
-
+         MainMap.MouseMove += new System.Windows.Input.MouseEventHandler(MainMap_MouseMove);
+         MainMap.MouseLeftButtonDown += new System.Windows.Input.MouseButtonEventHandler(MainMap_MouseLeftButtonDown);
          // get map types
          comboBoxMapType.ItemsSource = Enum.GetValues(typeof(MapType));
          comboBoxMapType.SelectedItem = MainMap.MapType;
@@ -110,6 +111,22 @@ namespace Demo.WindowsPresentation
 
          memoryLeakTestTimer.Tick += new EventHandler(memoryLeakTestTimer_Tick);
          memoryLeakTestTimer.Interval = TimeSpan.FromMilliseconds(5);
+      }
+
+      void MainMap_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+      {
+         System.Windows.Point p = e.GetPosition(MainMap);
+         currentMarker.Position = MainMap.FromLocalToLatLng((int) p.X, (int) p.Y);
+      }
+
+      // move current marker with left holding
+      void MainMap_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+      {
+         if(e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+         {
+            System.Windows.Point p = e.GetPosition(MainMap);
+            currentMarker.Position = MainMap.FromLocalToLatLng((int) p.X, (int) p.Y);
+         }
       }
 
       DispatcherTimer memoryLeakTestTimer = new DispatcherTimer();
