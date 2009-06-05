@@ -53,6 +53,7 @@
     <Compile Include="GMap.NET.WindowsForms.Markers\GMapMarkerGoogleRed.cs" />
     <Compile Include="GMap.NET.WindowsForms.Markers\GMapMarkerCross.cs" />
     <Compile Include="GMap.NET.WindowsForms\GMapOverlay.cs" />
+    <Compile Include="GMap.NET.WindowsForms\WindowsFormsImage.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

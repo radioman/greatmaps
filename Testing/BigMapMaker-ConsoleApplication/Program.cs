@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GMap.NET;
-using GMap.NET.WindowsPresentation;
 using System.Diagnostics;
-using System.IO;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using GMap.NET;
 using GMap.NET.Internals;
-using System.Windows;
-using System.Windows.Media;
-using System.Collections;
 
 namespace BigMapMaker_ConsoleApplication
 {
@@ -20,11 +14,12 @@ namespace BigMapMaker_ConsoleApplication
       [STAThread]
       static void Main(string[] args)
       {
-         GMaps.Instance.Mode = AccessMode.ServerAndCache;
-         Purity.Instance.ImageProxy = new WindowsPresentationImageProxy();
+         GMaps.Instance.Language = "lt";
+         GMaps.Instance.Mode = AccessMode.CacheOnly;
+         Purity.Instance.ImageProxy = new WindowsFormsImageProxy();
 
-         MapType type = MapType.GoogleSatellite;
-         int zoom = 13;
+         MapType type = MapType.OpenStreetMap;
+         int zoom = 16;
          RectLatLng area = RectLatLng.FromLTRB(25.13, 54.745829666898324, 25.5, 54.55);
          List<GMap.NET.Point> tileArea = GMaps.Instance.GetAreaTileList(area, zoom);
          string bigImage = "vilnius.png";
@@ -41,92 +36,29 @@ namespace BigMapMaker_ConsoleApplication
 
          try
          {
-            //NB : You have to force the canvas to reload for it to
-            //re-render correctly when calling in from another source
-            Canvas canvas = new Canvas();
-            System.Windows.Size s = new System.Windows.Size((maxX - minX)*GMaps.Instance.TileSize.Width, (maxY - minY)*GMaps.Instance.TileSize.Height);
-            canvas.Measure(s);
-            canvas.Arrange(new Rect(s));
-            int Height = ((int) (canvas.ActualHeight));
-            int Width = ((int) (canvas.ActualWidth));
-
-            // get tiles & combine into one
-            foreach(var p in tileArea)
+            using(Bitmap bmpDestination = new Bitmap((maxX - minX)*GMaps.Instance.TileSize.Width, (maxY - minY)*GMaps.Instance.TileSize.Height))
             {
-               Console.WriteLine("Downloading[" + p + "]: " + tileArea.IndexOf(p) + " of " + tileArea.Count);
 
-               WindowsPresentationImage tile = GMaps.Instance.GetImageFrom(type, p, zoom) as WindowsPresentationImage;
-               if(tile != null)
+               // get tiles & combine into one
+               foreach(var p in tileArea)
                {
-                  Image img = new Image();
-                  img.Source = tile.Img;
+                  Console.WriteLine("Downloading[" + p + "]: " + tileArea.IndexOf(p) + " of " + tileArea.Count);
 
-                  Canvas.SetLeft(img, (p.X - minX)*GMaps.Instance.TileSize.Width);
-                  Canvas.SetTop(img, (p.Y - minY)*GMaps.Instance.TileSize.Width);
-                  canvas.Children.Add(img); 
-
-                  if(type == MapType.GoogleSatellite)
+                  WindowsFormsImage tile = GMaps.Instance.GetImageFrom(type, p, zoom) as WindowsFormsImage;
+                  if(tile != null)
                   {
-                     tile = GMaps.Instance.GetImageFrom(MapType.GoogleLabels, p, zoom) as WindowsPresentationImage;
-
-                     img = new Image();
-                     img.Source = tile.Img;
-
-                     Canvas.SetLeft(img, (p.X - minX)*GMaps.Instance.TileSize.Width);
-                     Canvas.SetTop(img, (p.Y - minY)*GMaps.Instance.TileSize.Width);
-                     canvas.Children.Add(img);
+                     using(tile)
+                     {
+                        using(Graphics gfx = Graphics.FromImage(bmpDestination))
+                        {
+                           gfx.DrawImage(tile.Img, (p.X - minX)*GMaps.Instance.TileSize.Width, (p.Y - minY)*GMaps.Instance.TileSize.Width);
+                        }
+                     }
                   }
                }
+
+               bmpDestination.Save(bigImage);
             }
-
-            TextBlock tb = new TextBlock();
-            {
-               tb.Width = (double) s.Width;
-               tb.Height = (double) 200;
-               tb.TextAlignment = TextAlignment.Left;
-               tb.Text = "Zoom: " + zoom + ", location: " + area.Location.ToString();
-               tb.Text += "\n\nGMap.NET - Great Maps for Windows Forms & Presentation, static: " + type;
-               tb.Text += "\n\nWPF & C# rocks! :}~";
-               tb.FontSize = (Double)30;
-               tb.FontWeight = FontWeights.UltraBold;
-               tb.Foreground = Brushes.White;
-            }
-            Canvas.SetLeft(tb, 55);
-            Canvas.SetTop(tb, 55);
-            canvas.Children.Add(tb);
-
-            canvas.UpdateLayout();
-
-            RenderTargetBitmap rtb = new RenderTargetBitmap(Width, Height, 96, 96, PixelFormats.Pbgra32);
-            rtb.Render(canvas);
-
-            JpegBitmapEncoder jpg = new JpegBitmapEncoder();
-            jpg.Frames.Add(BitmapFrame.Create(rtb));
-
-            using(FileStream ms = File.OpenWrite(bigImage))
-            {
-               jpg.Save(ms);
-               ms.Flush();
-               ms.Close();
-            }
-
-            ///NB : You need to clean up the thread manually  
-            ///as they will still reside in memory if they are not flagged    
-            ///for termination....Thread count will go through the roof on  
-            ///the server if you dont invoke the following calls. 
-            if(jpg.Dispatcher.Thread.IsAlive)
-            {
-               jpg.Dispatcher.InvokeShutdown();
-            }
-
-            if(rtb.Dispatcher.Thread.IsAlive)
-            {
-               rtb.Dispatcher.InvokeShutdown();
-            }
-
-            jpg = null;
-            rtb = null;
-            canvas = null;
 
             // ok, lets see what we get
             {
@@ -138,9 +70,9 @@ namespace BigMapMaker_ConsoleApplication
          catch(Exception ex)
          {
             Console.WriteLine("Error: " + ex.ToString());
-         }
 
-         Console.ReadLine();
+            Console.ReadLine();
+         }            
       }
    }
 }
