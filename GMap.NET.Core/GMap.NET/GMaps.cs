@@ -1215,9 +1215,8 @@ namespace GMap.NET
       /// <param name="type"></param>
       /// <param name="pos"></param>
       /// <param name="zoom"></param>
-      /// <param name="language"></param>
       /// <returns></returns>
-      internal PureImage GetImageFrom(MapType type, Point pos, int zoom, string language)
+      public PureImage GetImageFrom(MapType type, Point pos, int zoom)
       {
          PureImage ret = null;
 
@@ -1258,7 +1257,7 @@ namespace GMap.NET
 
             if(Mode != AccessMode.CacheOnly)
             {
-               string url = MakeImageUrl(type, pos, zoom, language);
+               string url = MakeImageUrl(type, pos, zoom, Language);
 
                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
                request.ServicePoint.ConnectionLimit = 50;

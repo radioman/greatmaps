@@ -6,7 +6,7 @@ namespace GMap.NET.Internals
    /// <summary>
    /// internal control abstraction layer
    /// </summary>
-   internal class Purity : Singleton<Purity>
+   public class Purity : Singleton<Purity>
    {
       public Purity()
       {

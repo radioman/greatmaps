@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Info", "Info", "{9EB13FA2-A
 		..\Info\License.txt = ..\Info\License.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigMapMaker-ConsoleApplication", "..\Testing\BigMapMaker-ConsoleApplication\BigMapMaker-ConsoleApplication.csproj", "{A6E9D42C-935B-44D0-9FB0-E2E0319627D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -51,8 +53,12 @@ Global
 		{A2E07A76-8B2C-41A2-B23E-EA31AE94D706}.Debug|x86.Build.0 = Debug|x86
 		{A2E07A76-8B2C-41A2-B23E-EA31AE94D706}.Release|x86.ActiveCfg = Release|x86
 		{A2E07A76-8B2C-41A2-B23E-EA31AE94D706}.Release|x86.Build.0 = Release|x86
-		{B6E411A2-DFD8-461E-8207-BDBA405264CA}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B6E411A2-DFD8-461E-8207-BDBA405264CA}.Release|x86.ActiveCfg = Release|Any CPU
+		{B6E411A2-DFD8-461E-8207-BDBA405264CA}.Debug|x86.ActiveCfg = Debug|x86
+		{B6E411A2-DFD8-461E-8207-BDBA405264CA}.Release|x86.ActiveCfg = Release|x86
+		{B6E411A2-DFD8-461E-8207-BDBA405264CA}.Release|x86.Build.0 = Release|x86
+		{A6E9D42C-935B-44D0-9FB0-E2E0319627D1}.Debug|x86.ActiveCfg = Debug|x86
+		{A6E9D42C-935B-44D0-9FB0-E2E0319627D1}.Release|x86.ActiveCfg = Release|x86
+		{A6E9D42C-935B-44D0-9FB0-E2E0319627D1}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,5 +70,6 @@ Global
 		{83195AEF-0071-471C-9E8B-E67211F5D028} = {4071E6E4-D401-4EF2-94B0-6F5257088116}
 		{A2E07A76-8B2C-41A2-B23E-EA31AE94D706} = {4071E6E4-D401-4EF2-94B0-6F5257088116}
 		{B6E411A2-DFD8-461E-8207-BDBA405264CA} = {A24009F2-84ED-4F0A-BC1C-8B05F474986A}
+		{A6E9D42C-935B-44D0-9FB0-E2E0319627D1} = {A24009F2-84ED-4F0A-BC1C-8B05F474986A}
 	EndGlobalSection
 EndGlobal
