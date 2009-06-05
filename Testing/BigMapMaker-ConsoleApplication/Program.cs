@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using GMap.NET;
 using GMap.NET.Internals;
+using GMap.NET.WindowsForms;
 
 namespace BigMapMaker_ConsoleApplication
 {
@@ -19,10 +20,10 @@ namespace BigMapMaker_ConsoleApplication
          Purity.Instance.ImageProxy = new WindowsFormsImageProxy();
 
          MapType type = MapType.OpenStreetMap;
-         int zoom = 16;
+         int zoom = 15;
          RectLatLng area = RectLatLng.FromLTRB(25.13, 54.745829666898324, 25.5, 54.55);
          List<GMap.NET.Point> tileArea = GMaps.Instance.GetAreaTileList(area, zoom);
-         string bigImage = "vilnius.png";
+         string bigImage = zoom + "-" + type + "-vilnius.png";
 
          Console.WriteLine("Preparing: " + bigImage);
          Console.WriteLine("Zoom: " + zoom);
