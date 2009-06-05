@@ -375,13 +375,13 @@ namespace Demo.WindowsForms
       // set route start
       private void buttonSetStart_Click(object sender, EventArgs e)
       {
-         start = MainMap.CurrentPosition;
+         start = currentMarker.Position;
       }
 
       // set route end
       private void buttonSetEnd_Click(object sender, EventArgs e)
       {
-         end = MainMap.CurrentPosition;
+         end = currentMarker.Position;
       }
 
       // zoom to max for markers

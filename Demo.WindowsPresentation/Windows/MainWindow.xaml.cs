@@ -501,13 +501,13 @@ namespace Demo.WindowsPresentation
       // sets route start
       private void button11_Click(object sender, RoutedEventArgs e)
       {
-         start = MainMap.CurrentPosition;
+         start = currentMarker.Position;
       }
 
       // sets route end
       private void button9_Click(object sender, RoutedEventArgs e)
       {
-         end = MainMap.CurrentPosition;
+         end = currentMarker.Position;
       }
 
       // adds route
