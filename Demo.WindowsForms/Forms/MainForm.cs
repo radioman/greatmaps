@@ -29,7 +29,6 @@ namespace Demo.WindowsForms
          if(!DesignMode)
          {
             // config gmaps
-            GMaps.Instance.Language = "lt";
             GMaps.Instance.UseRouteCache = true;
             GMaps.Instance.UseGeocoderCache = true;
             GMaps.Instance.UsePlacemarkCache = true;

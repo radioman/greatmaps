@@ -31,7 +31,6 @@ namespace Demo.WindowsPresentation
          this.Background = Brushes.AliceBlue;
 
          // config gmaps
-         GMaps.Instance.Language = "lt";
          GMaps.Instance.UseRouteCache = true;
          GMaps.Instance.UseGeocoderCache = true;
          GMaps.Instance.UsePlacemarkCache = true;
