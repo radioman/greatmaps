@@ -578,7 +578,7 @@ namespace System.Windows.Forms
             break;
          }
 
-         #endregion
+         #endregion             
       }
 
       protected override void OnSizeChanged(EventArgs e)

@@ -481,12 +481,12 @@ namespace Demo.WindowsPresentation
       // add marker
       private void button8_Click(object sender, RoutedEventArgs e)
       {
-         GMapMarker m = new GMapMarker(MainMap, MainMap.CurrentPosition);
+         GMapMarker m = new GMapMarker(MainMap, currentMarker.Position);
          {
             Placemark p = null;
             if(checkBoxPlace.IsChecked.Value)
             {
-               p = GMaps.Instance.GetPlacemarkFromGeocoder(MainMap.CurrentPosition);
+               p = GMaps.Instance.GetPlacemarkFromGeocoder(currentMarker.Position);
             }
 
             string ToolTipText;
@@ -496,7 +496,7 @@ namespace Demo.WindowsPresentation
             }
             else
             {
-               ToolTipText = MainMap.CurrentPosition.ToString();
+               ToolTipText = currentMarker.Position.ToString();
             }
 
             m.Shape = new CustomMarkerDemo(this, m, ToolTipText);

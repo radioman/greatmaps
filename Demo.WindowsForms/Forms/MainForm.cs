@@ -323,14 +323,14 @@ namespace Demo.WindowsForms
       // add marker on current position
       private void button4_Click(object sender, EventArgs e)
       {
-         GMapMarker m = new GMapMarkerGoogleGreen(MainMap.CurrentPosition);
-         GMapMarkerRect mBorders = new GMapMarkerRect(MainMap.CurrentPosition);
+         GMapMarker m = new GMapMarkerGoogleGreen(currentMarker.Position);
+         GMapMarkerRect mBorders = new GMapMarkerRect(currentMarker.Position);
          mBorders.Size = new System.Drawing.Size(100, 100);
 
          Placemark p = null;
          if(checkBoxPlacemarkInfo.Checked)
          {
-            p = GMaps.Instance.GetPlacemarkFromGeocoder(MainMap.CurrentPosition);
+            p = GMaps.Instance.GetPlacemarkFromGeocoder(currentMarker.Position);
          }
 
          if(p != null)
@@ -339,7 +339,7 @@ namespace Demo.WindowsForms
          }
          else
          {
-            mBorders.ToolTipText = MainMap.CurrentPosition.ToString();
+            mBorders.ToolTipText = currentMarker.Position.ToString();
          }
 
          objects.Markers.Add(m);
