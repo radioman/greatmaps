@@ -16,12 +16,12 @@ namespace BigMapMaker_ConsoleApplication
       static void Main(string[] args)
       {
          GMaps.Instance.Language = "lt";
-         GMaps.Instance.Mode = AccessMode.CacheOnly;
+         GMaps.Instance.Mode = AccessMode.ServerOnly;
          Purity.Instance.ImageProxy = new WindowsFormsImageProxy();
 
          MapType type = MapType.OpenStreetMap;
          int zoom = 15;
-         RectLatLng area = RectLatLng.FromLTRB(25.13, 54.745829666898324, 25.5, 54.55);
+         RectLatLng area = RectLatLng.FromLTRB(25.013809204101563, 54.832138557519563, 25.506134033203125, 54.615623046071839);
          List<GMap.NET.Point> tileArea = GMaps.Instance.GetAreaTileList(area, zoom);
          string bigImage = zoom + "-" + type + "-vilnius.png";
 

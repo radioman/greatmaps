@@ -117,6 +117,7 @@ namespace Demo.WindowsPresentation
       {
          System.Windows.Point p = e.GetPosition(MainMap);
          currentMarker.Position = MainMap.FromLocalToLatLng((int) p.X, (int) p.Y);
+         UpdateCurrentMarkerPositionText();
       }
 
       // move current marker with left holding
@@ -126,7 +127,14 @@ namespace Demo.WindowsPresentation
          {
             System.Windows.Point p = e.GetPosition(MainMap);
             currentMarker.Position = MainMap.FromLocalToLatLng((int) p.X, (int) p.Y);
+            UpdateCurrentMarkerPositionText();
          }
+      }
+
+      void UpdateCurrentMarkerPositionText()
+      {
+         textBoxCurrLat.Text = currentMarker.Position.Lat.ToString(CultureInfo.InvariantCulture);
+         textBoxCurrLng.Text = currentMarker.Position.Lng.ToString(CultureInfo.InvariantCulture);
       }
 
       DispatcherTimer memoryLeakTestTimer = new DispatcherTimer();
@@ -255,8 +263,7 @@ namespace Demo.WindowsPresentation
       // current location changed
       void MainMap_OnCurrentPositionChanged(PointLatLng point)
       {
-         textBoxCurrLat.Text = point.Lat.ToString(CultureInfo.InvariantCulture);
-         textBoxCurrLng.Text = point.Lng.ToString(CultureInfo.InvariantCulture);
+         UpdateCurrentMarkerPositionText();
 
          currentMarker.Position = point;
       }

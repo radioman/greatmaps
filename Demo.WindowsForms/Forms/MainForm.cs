@@ -122,12 +122,19 @@ namespace Demo.WindowsForms
          }
       }
 
+      void UpdateCurrentMarkerPositionText()
+      {
+         textBoxCurrLat.Text = currentMarker.Position.Lat.ToString(CultureInfo.InvariantCulture);
+         textBoxCurrLng.Text = currentMarker.Position.Lng.ToString(CultureInfo.InvariantCulture);
+      }
+
       void MainMap_MouseDown(object sender, MouseEventArgs e)
       {
          if(e.Button == MouseButtons.Left)
          {
             isMouseDown = true;
             currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
+            UpdateCurrentMarkerPositionText();
          }
       }
 
@@ -137,6 +144,7 @@ namespace Demo.WindowsForms
          if(e.Button == MouseButtons.Left && isMouseDown)
          {
             currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
+            UpdateCurrentMarkerPositionText();
          }
       }
 
@@ -203,10 +211,8 @@ namespace Demo.WindowsForms
       // current point changed
       void MainMap_OnCurrentPositionChanged(PointLatLng point)
       {
-         textBoxCurrLat.Text = point.Lat.ToString(CultureInfo.InvariantCulture);
-         textBoxCurrLng.Text = point.Lng.ToString(CultureInfo.InvariantCulture);
-
          currentMarker.Position = point;
+         UpdateCurrentMarkerPositionText();
       }
 
       // change map type

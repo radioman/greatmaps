@@ -11,7 +11,7 @@ namespace GMap.NET.WindowsForms
    public class GMapMarker : INotifyPropertyChanged
    {
       public event PropertyChangedEventHandler PropertyChanged;
-      public void OnPropertyChanged(string name)
+      void OnPropertyChanged(string name)
       {
          PropertyChangedEventHandler handler = PropertyChanged;
          if(handler != null)
