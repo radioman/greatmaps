@@ -215,9 +215,9 @@ namespace GMap.NET.Internals
 
                   using(FileStream s = File.Open(dir.ToString(), FileMode.Create, FileAccess.Write, FileShare.None))
                   {
-                     if(Purity.Instance.ImageProxy != null)
+                     if(GMaps.Instance.ImageProxy != null)
                      {
-                        Purity.Instance.ImageProxy.Save(s, tile);
+                        GMaps.Instance.ImageProxy.Save(s, tile);
                      }
 
                      s.Flush();
@@ -260,9 +260,9 @@ namespace GMap.NET.Internals
                {
                   using(FileStream s = f.Open(FileMode.Open, FileAccess.Read, FileShare.Read))
                   {
-                     if(Purity.Instance.ImageProxy != null)
+                     if(GMaps.Instance.ImageProxy != null)
                      {
-                        ret = Purity.Instance.ImageProxy.FromStream(s);
+                        ret = GMaps.Instance.ImageProxy.FromStream(s);
                      }
 
                      s.Close();
@@ -523,9 +523,9 @@ namespace GMap.NET.Internals
 
                                  using(MemoryStream stm = new MemoryStream(tile))
                                  {
-                                    if(Purity.Instance.ImageProxy != null)
+                                    if(GMaps.Instance.ImageProxy != null)
                                     {
-                                       ret = Purity.Instance.ImageProxy.FromStream(stm);
+                                       ret = GMaps.Instance.ImageProxy.FromStream(stm);
                                     }
                                  }
                                  tile = null;

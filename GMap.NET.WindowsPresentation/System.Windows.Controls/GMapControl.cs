@@ -142,7 +142,7 @@ namespace System.Windows.Controls
          // removes white lines between tiles!
          SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
 
-         Purity.Instance.ImageProxy = new WindowsPresentationImageProxy();
+         GMaps.Instance.ImageProxy = new WindowsPresentationImageProxy();
 
          Core.RenderMode = GMap.NET.RenderMode.WPF;
          Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);

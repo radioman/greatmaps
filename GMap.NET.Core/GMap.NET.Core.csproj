@@ -46,7 +46,6 @@
   <ItemGroup>
     <Compile Include="GMap.NET.Internals\CacheQueue.cs" />
     <Compile Include="GMap.NET.Internals\PureImage.cs" />
-    <Compile Include="GMap.NET.Internals\Purity.cs" />
     <Compile Include="GMap.NET.Internals\LoadTask.cs" />
     <Compile Include="GMap.NET\GeoCoderStatusCode.cs" />
     <Compile Include="GMap.NET\SizeChangedType.cs" />

@@ -16,7 +16,7 @@ namespace BigMapMaker_ConsoleApplication
       static void Main(string[] args)
       {
          GMaps.Instance.Mode = AccessMode.ServerAndCache;
-         Purity.Instance.ImageProxy = new WindowsFormsImageProxy();
+         GMaps.Instance.ImageProxy = new WindowsFormsImageProxy();
 
          MapType type = MapType.GoogleMap;
          int zoom = 12;

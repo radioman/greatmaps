@@ -232,9 +232,9 @@ namespace GMap.NET
                      {
                         using(MemoryStream stm = new MemoryStream(tile))
                         {
-                           if(Purity.Instance.ImageProxy != null)
+                           if(GMaps.Instance.ImageProxy != null)
                            {
-                              ret = Purity.Instance.ImageProxy.FromStream(stm);
+                              ret = GMaps.Instance.ImageProxy.FromStream(stm);
                            }
                         }
                      }

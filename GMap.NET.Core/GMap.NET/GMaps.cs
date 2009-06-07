@@ -120,6 +120,11 @@ namespace GMap.NET
       }
 
       /// <summary>
+      /// internal proxy for image managment
+      /// </summary>
+      public PureImageProxy ImageProxy;
+
+      /// <summary>
       /// load tiles in random sequence
       /// </summary>
       public bool ShuffleTilesOnLoad = true;
@@ -1240,7 +1245,7 @@ namespace GMap.NET
                   {
                      MemoryStream m = new MemoryStream();
                      {
-                        if(Purity.Instance.ImageProxy.Save(m, ret))
+                        if(GMaps.Instance.ImageProxy.Save(m, ret))
                         {
                            EnqueueCacheTask(new CacheQueue(type, pos, zoom, m, CacheUsage.First));
                         }
@@ -1301,9 +1306,9 @@ namespace GMap.NET
                {
                   MemoryStream responseStream = Stuff.CopyStream(response.GetResponseStream());
                   {
-                     if(Purity.Instance.ImageProxy != null)
+                     if(GMaps.Instance.ImageProxy != null)
                      {
-                        ret = Purity.Instance.ImageProxy.FromStream(responseStream);
+                        ret = GMaps.Instance.ImageProxy.FromStream(responseStream);
 
                         // Enqueue Cache
                         if(ret != null && Mode != AccessMode.ServerOnly)

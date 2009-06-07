@@ -105,7 +105,7 @@ namespace System.Windows.Forms
       {
          if(!DesignModeInConstruct)
          {
-            Purity.Instance.ImageProxy = new WindowsFormsImageProxy();
+            GMaps.Instance.ImageProxy = new WindowsFormsImageProxy();
 
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
