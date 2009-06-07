@@ -26,7 +26,6 @@ namespace System.Windows.Controls
    {
       readonly Core Core = new Core();
       GMap.NET.Rectangle region;
-      Canvas Canvas = new Canvas();
       bool RaiseEmptyTileError = false;
       delegate void MethodInvoker();
 
@@ -124,7 +123,7 @@ namespace System.Windows.Controls
          {
             ItemsPanelTemplate template = new ItemsPanelTemplate();
             template.VisualTree = factoryPanel;
-            ItemsPanel = template;
+            ItemsPanel = template;           
          }
 
          Style st = new Style();
