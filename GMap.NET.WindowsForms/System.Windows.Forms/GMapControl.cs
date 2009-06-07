@@ -70,6 +70,11 @@ namespace System.Windows.Forms
       public Pen EmptyTileBorders = new Pen(Brushes.White, 1);
 
       /// <summary>
+      /// pen for scale info
+      /// </summary>
+      public Pen ScalePen = new Pen(Brushes.Blue, 1);
+
+      /// <summary>
       /// /// <summary>
       /// pen for empty tile background
       /// </summary>
@@ -80,10 +85,16 @@ namespace System.Windows.Forms
       /// </summary>
       bool CenterPositionOnMouseWheel = true;
 
+      /// <summary>
+      /// show map scale info
+      /// </summary>
+      bool MapScaleInfoEnabled = true;
+
       // internal stuff
       internal readonly Core Core = new Core();
       internal readonly Font CopyrightFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
       internal readonly Font MissingDataFont = new Font(FontFamily.GenericSansSerif, 11, FontStyle.Bold);
+      Font ScaleFont = new Font(FontFamily.GenericSansSerif, 5, FontStyle.Italic);
       internal readonly StringFormat CenterFormat = new StringFormat();
       bool RaiseEmptyTileError = false;
 
@@ -523,7 +534,7 @@ namespace System.Windows.Forms
          {
             e.Graphics.FillRectangle(Brushes.Gray, 0, 0, Width, Height);
          }
-      }
+      }       
 
       protected override void OnPaint(PaintEventArgs e)
       {
@@ -578,7 +589,43 @@ namespace System.Windows.Forms
             break;
          }
 
-         #endregion             
+         #endregion
+
+         #region -- draw scale --
+         if(MapScaleInfoEnabled)
+         {
+            if(Width > Core.pxRes5000km)
+            {
+               e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes5000km, 10);
+               e.Graphics.DrawString("5000Km", ScaleFont, ScalePen.Brush, Core.pxRes5000km + 10, 11);
+            }
+            if(Width > Core.pxRes1000km)
+            {
+               e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes1000km, 10);
+               e.Graphics.DrawString("1000Km", ScaleFont, ScalePen.Brush, Core.pxRes1000km + 10, 11);
+            }
+            if(Width > Core.pxRes100km && Zoom > 2)
+            {
+               e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes100km, 10);
+               e.Graphics.DrawString("100Km", ScaleFont, ScalePen.Brush, Core.pxRes100km + 10, 11);
+            }
+            if(Width > Core.pxRes10km && Zoom > 5)
+            {
+               e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes10km, 10);
+               e.Graphics.DrawString("10Km", ScaleFont, ScalePen.Brush, Core.pxRes10km + 10, 11);
+            }
+            if(Width > Core.pxRes1000m && Zoom >= 10)
+            {
+               e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes1000m, 10);
+               e.Graphics.DrawString("1000m", ScaleFont, ScalePen.Brush, Core.pxRes1000m + 10, 11);
+            }
+            if(Width > Core.pxRes100m && Zoom > 11)
+            {
+               e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes100m, 10);
+               e.Graphics.DrawString("100m", ScaleFont, ScalePen.Brush, Core.pxRes100m + 9, 11);
+            }
+         } 
+         #endregion
       }
 
       protected override void OnSizeChanged(EventArgs e)
@@ -629,7 +676,7 @@ namespace System.Windows.Forms
          {
             if(CanDragMap)
             {
-               this.Cursor = System.Windows.Forms.Cursors.SizeAll; 
+               this.Cursor = System.Windows.Forms.Cursors.SizeAll;
                Core.BeginDrag(Core.mouseDown);
             }
          }
@@ -643,9 +690,9 @@ namespace System.Windows.Forms
       {
          if(Core.IsDragging)
          {
-            Core.EndDrag();  
+            Core.EndDrag();
             this.Cursor = System.Windows.Forms.Cursors.Default;
-         }           
+         }
 
          RaiseEmptyTileError = false;
 

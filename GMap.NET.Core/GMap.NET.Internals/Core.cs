@@ -50,6 +50,13 @@ namespace GMap.NET.Internals
       internal int Width;
       internal int Height;
 
+      internal int pxRes100m;  // 100 meters
+      internal int pxRes1000m;  // 1km  
+      internal int pxRes10km; // 10km
+      internal int pxRes100km; // 100km
+      internal int pxRes1000km; // 1000km
+      internal int pxRes5000km; // 5000km
+
       /// <summary>
       /// total count of google tiles at current zoom
       /// </summary>
@@ -112,7 +119,7 @@ namespace GMap.NET.Internals
                   OnCurrentPositionChanged(currentPosition);
 
                if(OnMapZoomChanged != null)
-                  OnMapZoomChanged(); 
+                  OnMapZoomChanged();                 
             }
          }
       }
@@ -679,6 +686,8 @@ namespace GMap.NET.Internals
                }
             }
          }
+
+         UpdateGroundResolution();
       }
 
       /// <summary>
@@ -727,6 +736,20 @@ namespace GMap.NET.Internals
          {
             Stuff.Shuffle<Point>(list);
          }
+      }
+
+      /// <summary>
+      /// updates ground resolution info
+      /// </summary>
+      void UpdateGroundResolution()
+      {
+         double rez = GMaps.Instance.GetGroundResolution(Zoom, CurrentPosition.Lat);
+         pxRes100m =   (int) (100.0 / rez); // 100 meters
+         pxRes1000m =  (int) (1000.0 / rez); // 1km  
+         pxRes10km =   (int) (10000.0 / rez); // 10km
+         pxRes100km =  (int) (100000.0 / rez); // 100km
+         pxRes1000km = (int) (1000000.0 / rez); // 1000km
+         pxRes5000km = (int) (5000000.0 / rez); // 5000km
       }
    }
 }
