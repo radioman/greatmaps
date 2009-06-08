@@ -148,10 +148,6 @@ namespace GMap.NET.WindowsPresentation
       /// </summary>
       public void Clear()
       {
-         if(PropertyChanged != null)
-         {
-            PropertyChanged = null;
-         }
          Shape = null;
          Route.Clear();
       }
