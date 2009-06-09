@@ -1,12 +1,11 @@
 ﻿
 namespace System.Windows.Forms
 {
-   using System.Collections.ObjectModel;
    using System.ComponentModel;
    using System.Drawing;
-   using System.IO;
    using GMap.NET;
    using GMap.NET.Internals;
+   using GMap.NET.ObjectModel;
    using GMap.NET.WindowsForms;
 
    /// <summary>

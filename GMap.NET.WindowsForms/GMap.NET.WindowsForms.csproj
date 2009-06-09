@@ -60,10 +60,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="GMap.NET.WindowsForms\GMapRoute.cs" />
-    <Compile Include="System.Collections.ObjectModel\ObservableCollection.cs">
+    <Compile Include="GMap.NET.ObjectModel\ObservableCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Collections.ObjectModel\ObservableCollectionThreadSafe.cs" />
+    <Compile Include="GMap.NET.ObjectModel\ObservableCollectionThreadSafe.cs" />
     <Compile Include="System.Windows.Forms\GMapControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

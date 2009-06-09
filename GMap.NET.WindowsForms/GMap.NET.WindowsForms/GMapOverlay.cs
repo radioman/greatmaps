@@ -1,10 +1,10 @@
 ﻿
 namespace GMap.NET.WindowsForms
 {
-   using System.Collections.ObjectModel;
    using System.Drawing;
    using System.Drawing.Drawing2D;
    using System.Windows.Forms;
+   using GMap.NET.ObjectModel;
 
    /// <summary>
    /// GMap.NET overlay
