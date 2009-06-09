@@ -128,8 +128,8 @@ namespace System.Windows.Controls
 
          Style st = new Style();
          {
-            st.Setters.Add(new Setter(Canvas.LeftProperty, new Binding("LocalPosition.X")));
-            st.Setters.Add(new Setter(Canvas.TopProperty, new Binding("LocalPosition.Y")));
+            st.Setters.Add(new Setter(Canvas.LeftProperty, new Binding("LocalPositionX")));
+            st.Setters.Add(new Setter(Canvas.TopProperty, new Binding("LocalPositionY")));
             st.Setters.Add(new Setter(Canvas.ZIndexProperty, new Binding("ZIndex")));
          }
          ItemContainerStyle = st;

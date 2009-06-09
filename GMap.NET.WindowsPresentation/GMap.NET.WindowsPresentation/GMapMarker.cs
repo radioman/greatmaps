@@ -88,23 +88,44 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
-      System.Windows.Point localPosition;
+      int localPositionX;
 
       /// <summary>
-      /// local position of marker
+      /// local X position of marker
       /// </summary>
-      public System.Windows.Point LocalPosition
+      public int LocalPositionX
       {
          get
          {
-            return localPosition;
+            return localPositionX;
          }
          internal set
          {
-            if(localPosition != value)
+            if(localPositionX != value)
             {
-               localPosition = value;
-               OnPropertyChanged("LocalPosition");
+               localPositionX = value;
+               OnPropertyChanged("LocalPositionX");
+            }
+         }
+      }
+
+      int localPositionY;
+
+      /// <summary>
+      /// local Y position of marker
+      /// </summary>
+      public int LocalPositionY
+      {
+         get
+         {
+            return localPositionY;
+         }
+         internal set
+         {
+            if(localPositionY != value)
+            {
+               localPositionY = value;
+               OnPropertyChanged("LocalPositionY");
             }
          }
       }
@@ -158,7 +179,9 @@ namespace GMap.NET.WindowsPresentation
       internal void UpdateLocalPosition()
       {
          GMap.NET.Point p = Control.FromLatLngToLocal(Position);
-         LocalPosition = new System.Windows.Point(p.X + Offset.X, p.Y + Offset.Y);
+
+         LocalPositionX = p.X + (int)Offset.X;
+         LocalPositionY = p.Y + (int)Offset.Y;
       }
 
       /// <summary>
