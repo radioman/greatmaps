@@ -82,6 +82,11 @@ namespace System.Windows.Controls
       bool CenterPositionOnMouseWheel = true;
 
       /// <summary>
+      /// map dragg button
+      /// </summary>
+      public MouseButton DragButton = MouseButton.Right;
+
+      /// <summary>
       /// list of markers
       /// </summary>
       public readonly ObservableCollection<GMapMarker> Markers = new ObservableCollection<GMapMarker>();
@@ -477,21 +482,15 @@ namespace System.Windows.Controls
          }
 
          base.OnMouseWheel(e);
-      }
+      }        
 
       protected override void OnMouseDown(MouseButtonEventArgs e)
       {
-         System.Windows.Point p = e.GetPosition(this);
-         Core.mouseDown.X = (int) p.X;
-         Core.mouseDown.Y = (int) p.Y;
-
-         if(e.LeftButton == MouseButtonState.Pressed)
+         if(CanDragMap && e.ChangedButton == DragButton && e.ButtonState == MouseButtonState.Pressed)
          {
-            Core.BeginDrag(Core.mouseDown);
-         }
-         else if(e.RightButton == MouseButtonState.Pressed)
-         {
-            if(CanDragMap)
+            System.Windows.Point p = e.GetPosition(this);
+            Core.mouseDown.X = (int) p.X;
+            Core.mouseDown.Y = (int) p.Y;
             {
                Cursor = Cursors.SizeAll;
                Core.BeginDrag(Core.mouseDown);
@@ -523,8 +522,6 @@ namespace System.Windows.Controls
             System.Windows.Point p = e.GetPosition(this);
             Core.mouseCurrent.X = (int) p.X;
             Core.mouseCurrent.Y = (int) p.Y;
-
-            if(e.RightButton == MouseButtonState.Pressed)
             {
                Core.Drag(Core.mouseCurrent);
             }

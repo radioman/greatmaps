@@ -89,6 +89,11 @@ namespace System.Windows.Forms
       /// </summary>
       bool MapScaleInfoEnabled = true;
 
+      /// <summary>
+      /// map dragg button
+      /// </summary>
+      public MouseButtons DragButton = MouseButtons.Right;
+
       // internal stuff
       internal readonly Core Core = new Core();
       internal readonly Font CopyrightFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
@@ -533,7 +538,7 @@ namespace System.Windows.Forms
          {
             e.Graphics.FillRectangle(Brushes.Gray, 0, 0, Width, Height);
          }
-      }       
+      }
 
       protected override void OnPaint(PaintEventArgs e)
       {
@@ -623,7 +628,7 @@ namespace System.Windows.Forms
                e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes100m, 10);
                e.Graphics.DrawString("100m", ScaleFont, ScalePen.Brush, Core.pxRes100m + 9, 11);
             }
-         } 
+         }
          #endregion
       }
 
@@ -657,30 +662,20 @@ namespace System.Windows.Forms
          }
 
          Core.OnMapSizeChanged(Width, Height);
-      }
+      }        
 
       protected override void OnMouseDown(MouseEventArgs e)
       {
-         Core.mouseDown.X = e.X;
-         Core.mouseDown.Y = e.Y;
-
-         if(e.Button == MouseButtons.Left)
+         if(e.Button == DragButton && CanDragMap)
          {
-            if(!IsMouseOverMarker)
-            {
-               Core.BeginDrag(Core.mouseDown);
-            }
-         }
-         else if(e.Button == MouseButtons.Right)
-         {
-            if(CanDragMap)
-            {
-               this.Cursor = System.Windows.Forms.Cursors.SizeAll;
-               Core.BeginDrag(Core.mouseDown);
-            }
-         }
+            Core.mouseDown.X = e.X;
+            Core.mouseDown.Y = e.Y;
 
-         this.Invalidate(false);
+            this.Cursor = System.Windows.Forms.Cursors.SizeAll;
+            Core.BeginDrag(Core.mouseDown);
+
+            this.Invalidate(false);
+         }          
 
          base.OnMouseDown(e);
       }
@@ -726,40 +721,7 @@ namespace System.Windows.Forms
          }
 
          base.OnMouseClick(e);
-      }
-
-      protected override void OnMouseWheel(MouseEventArgs e)
-      {
-         base.OnMouseWheel(e);
-
-         if(!IsMouseOverMarker && !IsDragging)
-         {
-            if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
-            {
-               Core.currentPosition = FromLocalToLatLng(e.X, e.Y);
-            }
-            else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
-            {
-               Core.currentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
-            }
-
-            // set mouse position to map center
-            if(CenterPositionOnMouseWheel)
-            {
-               System.Drawing.Point p = PointToScreen(new System.Drawing.Point(Width/2, Height/2));
-               Stuff.SetCursorPos((int) p.X, (int) p.Y);
-            }
-
-            if(e.Delta > 0)
-            {
-               Zoom++;
-            }
-            else if(e.Delta < 0)
-            {
-               Zoom--;
-            }
-         }
-      }
+      }         
 
       protected override void OnMouseMove(MouseEventArgs e)
       {
@@ -767,8 +729,6 @@ namespace System.Windows.Forms
          {
             Core.mouseCurrent.X = e.X;
             Core.mouseCurrent.Y = e.Y;
-
-            if(e.Button == MouseButtons.Right)
             {
                Core.Drag(Core.mouseCurrent);
             }
@@ -814,6 +774,39 @@ namespace System.Windows.Forms
             }
          }
          base.OnMouseMove(e);
+      }
+
+      protected override void OnMouseWheel(MouseEventArgs e)
+      {
+         base.OnMouseWheel(e);
+
+         if(!IsMouseOverMarker && !IsDragging)
+         {
+            if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
+            {
+               Core.currentPosition = FromLocalToLatLng(e.X, e.Y);
+            }
+            else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
+            {
+               Core.currentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
+            }
+
+            // set mouse position to map center
+            if(CenterPositionOnMouseWheel)
+            {
+               System.Drawing.Point p = PointToScreen(new System.Drawing.Point(Width/2, Height/2));
+               Stuff.SetCursorPos((int) p.X, (int) p.Y);
+            }
+
+            if(e.Delta > 0)
+            {
+               Zoom++;
+            }
+            else if(e.Delta < 0)
+            {
+               Zoom--;
+            }
+         }
       }
 
       #endregion
