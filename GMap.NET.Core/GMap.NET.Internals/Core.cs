@@ -84,7 +84,7 @@ namespace GMap.NET.Internals
          }
          set
          {
-            if(zoom != value)
+            if(zoom != value && !IsDragging)
             {
                zoom = value;
                sizeOfTiles = GMaps.Instance.GetTileMatrixSize(value);
@@ -166,14 +166,17 @@ namespace GMap.NET.Internals
          }
          set
          {
-            currentPosition = value;
-            CurrentPositionGPixel = GMaps.Instance.FromLatLngToPixel(value, Zoom);
-            CurrentPositionGTile = GMaps.Instance.FromPixelToTileXY(CurrentPositionGPixel);
+            if(currentPosition != value && !IsDragging)
+            {
+               currentPosition = value;
+               CurrentPositionGPixel = GMaps.Instance.FromLatLngToPixel(value, Zoom);
+               CurrentPositionGTile = GMaps.Instance.FromPixelToTileXY(CurrentPositionGPixel);
 
-            GoToCurrentPosition();
+               GoToCurrentPosition();
 
-            if(OnCurrentPositionChanged != null)
-               OnCurrentPositionChanged(currentPosition);
+               if(OnCurrentPositionChanged != null)
+                  OnCurrentPositionChanged(currentPosition);
+            }
          }
       }
 
