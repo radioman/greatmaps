@@ -13,6 +13,7 @@ namespace GMap.NET
 
       /// <summary>
       /// sets current position to current view center
+      /// Not work yet! ;{ ????
       /// </summary>
       ViewCenter,
    }

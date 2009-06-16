@@ -51,12 +51,12 @@ namespace System.Windows.Forms
       /// <summary>
       /// map zooming type for mouse wheel
       /// </summary>
-      MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePosition;
+      public MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePosition;
 
       /// <summary>
       /// where to set current position if map size is changed
       /// </summary>
-      SizeChangedType SizeChangedType = SizeChangedType.ViewCenter;
+      public SizeChangedType SizeChangedType = SizeChangedType.ViewCenter;
 
       /// <summary>
       /// text on empty tiles
@@ -74,7 +74,6 @@ namespace System.Windows.Forms
       public Pen ScalePen = new Pen(Brushes.Blue, 1);
 
       /// <summary>
-      /// /// <summary>
       /// pen for empty tile background
       /// </summary>
       public Brush EmptytileBrush = Brushes.Navy;
@@ -82,7 +81,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// center mouse OnMouseWheel
       /// </summary>
-      bool CenterPositionOnMouseWheel = true;
+      public bool CenterPositionOnMouseWheel = true;
 
       /// <summary>
       /// show map scale info
@@ -666,7 +665,7 @@ namespace System.Windows.Forms
 
       protected override void OnMouseDown(MouseEventArgs e)
       {
-         if(e.Button == DragButton && CanDragMap)
+         if(e.Button == DragButton && CanDragMap && !IsMouseOverMarker)
          {
             Core.mouseDown.X = e.X;
             Core.mouseDown.Y = e.Y;
@@ -682,15 +681,15 @@ namespace System.Windows.Forms
 
       protected override void OnMouseUp(MouseEventArgs e)
       {
+         base.OnMouseUp(e);
+
          if(Core.IsDragging)
          {
             Core.EndDrag();
             this.Cursor = System.Windows.Forms.Cursors.Default;
          }
 
-         RaiseEmptyTileError = false;
-
-         base.OnMouseUp(e);
+         RaiseEmptyTileError = false;          
       }
 
       protected override void OnMouseClick(MouseEventArgs e)

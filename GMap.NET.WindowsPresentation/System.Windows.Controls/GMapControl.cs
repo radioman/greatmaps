@@ -68,18 +68,18 @@ namespace System.Windows.Controls
       /// <summary>
       /// map zooming type for mouse wheel
       /// </summary>
-      MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePosition;
+      public MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePosition;
 
       /// <summary>
       /// NOT WORK YET
       /// where to set current position if map size is changed
       /// </summary>
-      SizeChangedType SizeChangedType = SizeChangedType.ViewCenter;
+      public SizeChangedType SizeChangedType = SizeChangedType.ViewCenter;
 
       /// <summary>
       /// center mouse OnMouseWheel
       /// </summary>
-      bool CenterPositionOnMouseWheel = true;
+      public bool CenterPositionOnMouseWheel = true;
 
       /// <summary>
       /// map dragg button
