@@ -86,7 +86,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// show map scale info
       /// </summary>
-      bool MapScaleInfoEnabled = true;
+      public bool MapScaleInfoEnabled = true;
 
       /// <summary>
       /// map dragg button
