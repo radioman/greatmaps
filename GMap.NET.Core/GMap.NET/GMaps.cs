@@ -650,7 +650,7 @@ namespace GMap.NET
 
                // http://khm0.google.cn/kh/v=40&x=26&y=11&z=5&s=G
 
-               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&x={5}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleSatelliteChina, pos.X, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos), request, VersionGoogleSatelliteChina, pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;
 
