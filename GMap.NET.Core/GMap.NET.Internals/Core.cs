@@ -166,7 +166,7 @@ namespace GMap.NET.Internals
          }
          set
          {
-            if(currentPosition != value && !IsDragging)
+            if(!IsDragging)
             {
                currentPosition = value;
                CurrentPositionGPixel = GMaps.Instance.FromLatLngToPixel(value, Zoom);
@@ -604,6 +604,16 @@ namespace GMap.NET.Internals
                {
                   PureImage img = GMaps.Instance.GetImageFrom(MapType.YahooSatellite, task.Pos, task.Zoom);
                   PureImage img2 = GMaps.Instance.GetImageFrom(MapType.YahooLabels, task.Pos, task.Zoom);
+                  lock(t.Overlays)
+                  {
+                     t.Overlays.Add(img);
+                     t.Overlays.Add(img2);
+                  }
+               }
+               else if(MapType == MapType.GoogleHybridChina)
+               {
+                  PureImage img = GMaps.Instance.GetImageFrom(MapType.GoogleSatelliteChina, task.Pos, task.Zoom);
+                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.GoogleLabelsChina, task.Pos, task.Zoom);
                   lock(t.Overlays)
                   {
                      t.Overlays.Add(img);

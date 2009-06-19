@@ -12,6 +12,12 @@ namespace GMap.NET
       GoogleTerrain=16,
       GoogleHybrid=20,
 
+      GoogleMapChina=22,
+      GoogleSatelliteChina=24,
+      GoogleLabelsChina=26,
+      GoogleTerrainChina=28,
+      GoogleHybridChina=29,
+
       OpenStreetMap=32,
       OpenStreetOsm=33,
 

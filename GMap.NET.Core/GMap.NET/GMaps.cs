@@ -20,10 +20,16 @@ namespace GMap.NET
    {
       // Google version strings
       public string VersionGoogleMap = "w2.97";
-      public string VersionGoogleSatellite = "39";
+      public string VersionGoogleSatellite = "40";
       public string VersionGoogleLabels = "w2t.97";
       public string VersionGoogleTerrain = "w2p.87";
       public string SecGoogleWord = "Galileo";
+
+      // Google (china) version strings
+      public string VersionGoogleMapChina = "cn1.11";
+      public string VersionGoogleSatelliteChina = "40";
+      public string VersionGoogleLabelsChina = "cn1t.11";
+      public string VersionGoogleTerrainChina = "cn1p.12";
 
       // Yahoo version strings
       public string VersionYahooMap = "4.2";
@@ -567,93 +573,197 @@ namespace GMap.NET
       /// <returns></returns>
       internal string MakeImageUrl(MapType type, Point pos, int zoom, string language)
       {
-         string server = string.Empty;
-         string request = string.Empty;
-         string version = string.Empty;
-         int servernum = (pos.X + 2 * pos.Y) % 4;
-
          switch(type)
          {
+            #region -- Google --
             case MapType.GoogleMap:
-            server = "mt";
-            request = "mt";
-            version = VersionGoogleMap;
+            {
+               string server = "mt";
+               string request = "vt";
+               string sec1 = ""; // after &x=...
+               string sec2 = ""; // after &zoom=...
+               GetSecGoogleWords(pos, out sec1, out sec2);
+
+               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleMap, language, pos.X, sec1, pos.Y, zoom, sec2);
+            }
             break;
 
             case MapType.GoogleSatellite:
-            server = "khm";
-            request = "kh";
-            version = VersionGoogleSatellite;
+            {
+               string server = "khm";
+               string request = "kh";
+               string sec1 = ""; // after &x=...
+               string sec2 = ""; // after &zoom=...
+               GetSecGoogleWords(pos, out sec1, out sec2);
+
+               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleSatellite, language, pos.X, sec1, pos.Y, zoom, sec2);
+            }
             break;
 
             case MapType.GoogleLabels:
-            server = "mt";
-            request = "mt";
-            version = VersionGoogleLabels;
+            {
+               string server = "mt";
+               string request = "vt";
+               string sec1 = ""; // after &x=...
+               string sec2 = ""; // after &zoom=...
+               GetSecGoogleWords(pos, out sec1, out sec2);
+
+               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleLabels, language, pos.X, sec1, pos.Y, zoom, sec2);
+            }
             break;
 
             case MapType.GoogleTerrain:
-            server = "mt";
-            request = "mt";
-            version = VersionGoogleTerrain;
+            {
+               string server = "mt";
+               string request = "mt";
+               string sec1 = ""; // after &x=...
+               string sec2 = ""; // after &zoom=...
+               GetSecGoogleWords(pos, out sec1, out sec2);
+
+               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleTerrain, language, pos.X, sec1, pos.Y, zoom, sec2);
+            }
+            break; 
+            #endregion
+
+            #region -- Google (China) version --
+            case MapType.GoogleMapChina:
+            {
+               string server = "mt";
+               string request = "mt";
+               string sec1 = ""; // after &x=...
+               string sec2 = ""; // after &zoom=...
+               GetSecGoogleWords(pos, out sec1, out sec2);
+
+               // http://mt0.google.cn/mt/v=cn1.11&hl=zh-CN&gl=cn&x=26&y=11&z=5&s=G
+
+               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleMapChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
+            }
             break;
 
+            case MapType.GoogleSatelliteChina:
+            {
+               string server = "khm";
+               string request = "kh";
+               string sec1 = ""; // after &x=...
+               string sec2 = ""; // after &zoom=...
+               GetSecGoogleWords(pos, out sec1, out sec2);
+
+               // http://khm0.google.cn/kh/v=40&x=26&y=11&z=5&s=G
+
+               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&x={5}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleSatelliteChina, pos.X, pos.Y, zoom, sec2);
+            }
+            break;
+
+            case MapType.GoogleLabelsChina:
+            {
+               string server = "mt";
+               string request = "mt";
+               string sec1 = ""; // after &x=...
+               string sec2 = ""; // after &zoom=...
+               GetSecGoogleWords(pos, out sec1, out sec2);
+
+               // http://mt0.google.cn/mt/v=cn1t.11&hl=zh-CN&gl=cn&x=26&y=11&z=5&s=G
+
+               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleLabelsChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
+            }
+            break;
+
+            case MapType.GoogleTerrainChina:
+            {
+               string server = "mt";
+               string request = "mt";
+               string sec1 = ""; // after &x=...
+               string sec2 = ""; // after &zoom=...
+               GetSecGoogleWords(pos, out sec1, out sec2);
+
+               // http://mt0.google.cn/mt/v=cn1p.12&hl=zh-CN&gl=cn&x=26&y=11&z=5&s=G
+
+               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
+            }
+            break; 
+            #endregion
+
+            #region -- Yahoo --
             case MapType.YahooMap:
             {
-               return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&.intl={2}&x={3}&y={4}&z={5}&r=1", ((servernum % 2)+1),  VersionYahooMap, language, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
+               return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&.intl={2}&x={3}&y={4}&z={5}&r=1", ((GetServerNum(pos) % 2)+1), VersionYahooMap, language, pos.X, (((1 << zoom) >> 1)-1-pos.Y), (zoom+1));
             }
 
             case MapType.YahooSatellite:
             {
-               return string.Format("http://maps{0}.yimg.com/ae/ximg?v={1}&t=a&s=256&.intl={2}&x={3}&y={4}&z={5}&r=1", 3, VersionYahooSatellite, language, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
+               return string.Format("http://maps{0}.yimg.com/ae/ximg?v={1}&t=a&s=256&.intl={2}&x={3}&y={4}&z={5}&r=1", 3, VersionYahooSatellite, language, pos.X, (((1 << zoom) >> 1)-1-pos.Y), (zoom+1));
             }
 
             case MapType.YahooLabels:
             {
-               return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&t=h&.intl={2}&x={3}&y={4}&z={5}&r=1", 1, VersionYahooLabels, language, pos.X.ToString(), (((1 << zoom) >> 1)-1-pos.Y).ToString(), (zoom+1).ToString());
-            }
+               return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&t=h&.intl={2}&x={3}&y={4}&z={5}&r=1", 1, VersionYahooLabels, language, pos.X, (((1 << zoom) >> 1)-1-pos.Y), (zoom+1));
+            } 
+            #endregion
 
+            #region -- OpenStreet --
             case MapType.OpenStreetMap:
             {
-               char letter = "abca"[servernum];
-               return string.Format("http://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png", letter, zoom.ToString(), pos.X.ToString(), pos.Y.ToString());
+               char letter = "abca"[GetServerNum(pos)];
+               return string.Format("http://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
             }
 
             case MapType.OpenStreetOsm:
             {
-               char letter = "abca"[servernum];
-               return string.Format("http://{0}.tah.openstreetmap.org/Tiles/tile/{1}/{2}/{3}.png", letter, zoom.ToString(), pos.X.ToString(), pos.Y.ToString());
-            }
+               char letter = "abca"[GetServerNum(pos)];
+               return string.Format("http://{0}.tah.openstreetmap.org/Tiles/tile/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
+            } 
+            #endregion
 
+            #region -- VirtualEarth --
             case MapType.VirtualEarthMap:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}", GetServerNum(pos), key, VersionVirtualEarth, language);
             }
 
             case MapType.VirtualEarthSatellite:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}", GetServerNum(pos), key, VersionVirtualEarth, language);
             }
 
             case MapType.VirtualEarthHybrid:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}", servernum, key, VersionVirtualEarth, language);
-            }
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}", GetServerNum(pos), key, VersionVirtualEarth, language);
+            } 
+            #endregion
          }
 
-         string sec1 = ""; // after &x=...
-         string sec2 = ""; // after &zoom=...
+         return null;
+      }
+
+      /// <summary>
+      /// gets secure google words based on position
+      /// </summary>
+      /// <param name="pos"></param>
+      /// <param name="sec1"></param>
+      /// <param name="sec2"></param>
+      internal void GetSecGoogleWords(Point pos, out string sec1, out string sec2)
+      {
+         sec1 = ""; // after &x=...
+         sec2 = ""; // after &zoom=...
          int seclen = ((pos.X*3) + pos.Y) % 8;
          sec2 = SecGoogleWord.Substring(0, seclen);
          if(pos.Y >= 10000 && pos.Y < 100000)
          {
             sec1 = "&s=";
          }
+      }
 
-         return string.Format("http://{0}{1}.google.com/{2}?v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, servernum.ToString(), request, version, language, pos.X.ToString(), sec1, pos.Y.ToString(), zoom.ToString(), sec2);
+      /// <summary>
+      /// gets server num based on position
+      /// </summary>
+      /// <param name="pos"></param>
+      /// <returns></returns>
+      internal int GetServerNum(Point pos)
+      {
+         return (pos.X + 2 * pos.Y) % 4;
       }
 
       /// <summary>
@@ -1280,6 +1390,16 @@ namespace GMap.NET
                   case MapType.GoogleHybrid:
                   {
                      request.Referer = "http://maps.google.com/";
+                  }
+                  break;
+
+                  case MapType.GoogleMapChina:
+                  case MapType.GoogleSatelliteChina:
+                  case MapType.GoogleLabelsChina:
+                  case MapType.GoogleTerrainChina:
+                  case MapType.GoogleHybridChina:
+                  {
+                     request.Referer = "http://ditu.google.cn/";
                   }
                   break;
 
