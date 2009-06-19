@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
+using System.IO;
 
 namespace Demo.WindowsForms
 {
@@ -437,6 +438,34 @@ namespace Demo.WindowsForms
             }
 
             x.Clear();
+         }
+      }        
+
+      // saves current map view 
+      private void button12_Click(object sender, EventArgs e)
+      {
+         try
+         {
+            using(SaveFileDialog sfd = new SaveFileDialog())
+            {
+               sfd.Filter = "PNG (*.png)|*.png";
+               sfd.FileName = "GMap.NET image";
+
+               Image tmpImage = MainMap.ToImage();
+               if(tmpImage != null)
+               {
+                  if(sfd.ShowDialog() == DialogResult.OK)
+                  {
+                     tmpImage.Save(sfd.FileName);
+
+                     MessageBox.Show("Image saved: " + sfd.FileName, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                  } 
+               } 
+            }             
+         }
+         catch(Exception ex)
+         {
+            MessageBox.Show("Image failed to save: " + ex.Message, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Error);
          }
       }
    }

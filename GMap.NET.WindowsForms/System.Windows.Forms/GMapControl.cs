@@ -7,6 +7,8 @@ namespace System.Windows.Forms
    using GMap.NET.Internals;
    using GMap.NET.ObjectModel;
    using GMap.NET.WindowsForms;
+   using System.IO;
+   using System.Drawing.Imaging;
 
    /// <summary>
    /// GMap.NET control for Windows Forms
@@ -497,6 +499,40 @@ namespace System.Windows.Forms
                }
             }
             ret = RectLatLng.FromLTRB(left, top, right, bottom);
+         }
+         return ret;
+      }
+
+      /// <summary>
+      /// gets image of the current view
+      /// </summary>
+      /// <returns></returns>
+      public Image ToImage()
+      {
+         Image ret = null;
+         try
+         {
+            using(Bitmap bitmap = new Bitmap(Width, Height))
+            {
+               using(Graphics g = Graphics.FromImage(bitmap))
+               {
+                  using(Graphics gg = this.CreateGraphics())
+                  {
+                     g.CopyFromScreen(PointToScreen(new System.Drawing.Point()).X, PointToScreen(new System.Drawing.Point()).Y, 0, 0, new System.Drawing.Size(Width, Height));
+                  }
+               }
+
+               //Convert the Image to a JPG
+               using(MemoryStream ms = new MemoryStream())
+               {
+                  bitmap.Save(ms, ImageFormat.Png);
+                  ret = Image.FromStream(ms);
+               }
+            }
+         }
+         catch
+         {
+            ret = null;
          }
          return ret;
       }

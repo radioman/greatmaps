@@ -319,7 +319,10 @@ namespace System.Windows.Controls
          }
       }
 
-      // gets image of the current view
+      /// <summary>
+      /// gets image of the current view
+      /// </summary>
+      /// <returns></returns>
       public ImageSource ToImageSource()
       {
          FrameworkElement obj = this;
