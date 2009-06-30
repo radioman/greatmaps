@@ -95,6 +95,24 @@ namespace System.Windows.Forms
       /// </summary>
       public MouseButtons DragButton = MouseButtons.Right;
 
+      private bool showTileGridLines = true;
+
+      /// <summary>
+      /// shows tile gridlines
+      /// </summary>
+      public bool ShowTileGridLines
+      {
+         get
+         {
+            return showTileGridLines;
+         }
+         set
+         {
+            showTileGridLines = value;
+            Invalidate();
+         }
+      }
+
       // internal stuff
       internal readonly Core Core = new Core();
       internal readonly Font CopyrightFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
@@ -131,6 +149,11 @@ namespace System.Windows.Forms
             // overlay testing
             GMapOverlay ov = new GMapOverlay(this, "base");
             Overlays.Add(ov);
+
+            if(!DesignMode)
+            {
+               MapType = MapType.GoogleMap;
+            }
          }
       }
 
@@ -211,6 +234,20 @@ namespace System.Windows.Forms
                                  found = true;
 
                               g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+
+                              if(ShowTileGridLines)
+                              {
+                                 g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+
+                                 if(Core.tilePoint == Core.centerTileXYLocation)
+                                 {
+                                    g.DrawString("CENTER TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                                 }
+                                 else
+                                 {
+                                    g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                                 }
+                              }
                            }
                         }
                      }
@@ -233,13 +270,6 @@ namespace System.Windows.Forms
                         }
                      }
                   }
-
-                  //if(Core.tilePoint == Core.centerTileXYLocation)
-                  //{
-                  //   g.FillRectangle(EmptytileBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
-                  //   g.DrawString("CENTER TILE", MissingDataFont, Brushes.White, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
-                  //   g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
-                  //}
                }
             }
          }
@@ -255,7 +285,7 @@ namespace System.Windows.Forms
 
          foreach(GMap.NET.PointLatLng pg in route.Points)
          {
-            GMap.NET.Point p = GMaps.Instance.FromLatLngToPixel(pg, Core.Zoom);
+            GMap.NET.Point p = Projection.FromLatLngToPixel(pg, Core.Zoom);
             p.Offset(Core.renderOffset);
             route.LocalPoints.Add(p);
          }
@@ -671,8 +701,7 @@ namespace System.Windows.Forms
       {
          base.OnSizeChanged(e);
 
-         Core.sizeOfMapArea.Width = 1 + (Width/GMaps.Instance.TileSize.Width)/2;
-         Core.sizeOfMapArea.Height = 1 + (Height/GMaps.Instance.TileSize.Height)/2;
+         Core.OnMapSizeChanged(Width, Height);
 
          // 50px outside control
          Core.CurrentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
@@ -695,9 +724,7 @@ namespace System.Windows.Forms
                //Core.GoToCurrentPosition();
             }
          }
-
-         Core.OnMapSizeChanged(Width, Height);
-      }        
+      }
 
       protected override void OnMouseDown(MouseEventArgs e)
       {
@@ -710,7 +737,7 @@ namespace System.Windows.Forms
             Core.BeginDrag(Core.mouseDown);
 
             this.Invalidate(false);
-         }          
+         }
 
          base.OnMouseDown(e);
       }
@@ -725,7 +752,7 @@ namespace System.Windows.Forms
             this.Cursor = System.Windows.Forms.Cursors.Default;
          }
 
-         RaiseEmptyTileError = false;          
+         RaiseEmptyTileError = false;
       }
 
       protected override void OnMouseClick(MouseEventArgs e)
@@ -756,7 +783,7 @@ namespace System.Windows.Forms
          }
 
          base.OnMouseClick(e);
-      }         
+      }
 
       protected override void OnMouseMove(MouseEventArgs e)
       {
@@ -1036,17 +1063,6 @@ namespace System.Windows.Forms
       }
 
       /// <summary>
-      /// total count of google tiles at current zoom
-      /// </summary>
-      public long TotalTiles
-      {
-         get
-         {
-            return Core.TotalTiles;
-         }
-      }
-
-      /// <summary>
       /// is user dragging map
       /// </summary>
       public bool IsDragging
@@ -1091,6 +1107,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// type of map
       /// </summary>
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public MapType MapType
       {
          get
@@ -1100,6 +1117,17 @@ namespace System.Windows.Forms
          set
          {
             Core.MapType = value;
+         }
+      }
+
+      /// <summary>
+      /// map projection
+      /// </summary>
+      public PureProjection Projection
+      {
+         get
+         {
+            return Core.Projection;
          }
       }
 

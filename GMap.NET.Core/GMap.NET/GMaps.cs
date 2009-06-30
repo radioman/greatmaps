@@ -37,7 +37,7 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.2";
 
       // Virtual Earth
-      public string VersionVirtualEarth = "297"; 
+      public string VersionVirtualEarth = "297";
 
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
@@ -83,11 +83,6 @@ namespace GMap.NET
       /// max zoom for maps, 17 is max fo many maps
       /// </summary>
       public readonly int MaxZoom = 19;
-
-      /// <summary>
-      /// size of one map tile
-      /// </summary>
-      public readonly Size TileSize = new Size(256, 256);
 
       /// <summary>
       /// Radius of the Earth
@@ -145,13 +140,6 @@ namespace GMap.NET
       /// </summary>
       BackgroundWorker cacher = new BackgroundWorker();
 
-      #region -- google maps constants --
-      readonly List<double> ScalePixelX = new List<double>();
-      readonly List<double> ScalePixelY = new List<double>();
-      readonly List<double> CenterPixel = new List<double>();
-      readonly List<double> MapPixelXY = new List<double>();
-      #endregion
-
       public GMaps()
       {
          #region singleton check
@@ -161,113 +149,11 @@ namespace GMap.NET
          }
          #endregion
 
-         #region precalculate constants
-         double c = TileSize.Height;
-         for(int i = 0; i <= MaxZoom; i++)
-         {
-            double e = c / 2.0;
-
-            ScalePixelX.Add(c/360.0);
-            ScalePixelY.Add(c/(2.0*Math.PI));
-            CenterPixel.Add(e);
-            MapPixelXY.Add(c);
-
-            c *= 2;
-         }
-         #endregion
-
          cacher.DoWork += new DoWorkEventHandler(cacher_DoWork);
          cacher.WorkerSupportsCancellation = true;
       }
 
-      #region -- Coordinates --
-      /// <summary>
-      /// get pixel coordinates from lat/lng
-      /// </summary>
-      /// <param name="lat"></param>
-      /// <param name="lng"></param>
-      /// <param name="zoom"></param>
-      /// <returns></returns>
-      public Point FromLatLngToPixel(double lat, double lng, int zoom)
-      {
-         Point ret = Point.Empty;
-         if(zoom > MaxZoom || zoom < 1)
-            return ret;
-
-         double centerPixel = CenterPixel[zoom];
-         ret.X = (int) Math.Round(centerPixel + (lng * ScalePixelX[zoom]), MidpointRounding.AwayFromZero);
-
-         double sinLatitude = Math.Sin(lat * (Math.PI/180.0));
-         sinLatitude = Math.Max(sinLatitude, -0.9999);
-         sinLatitude = Math.Min(sinLatitude, 0.9999);
-         ret.Y = (int) Math.Round(centerPixel + (0.5 * Math.Log((1+sinLatitude)/(1-sinLatitude)) * (-ScalePixelY[zoom])), MidpointRounding.AwayFromZero);
-
-         return ret;
-      }
-
-      /// <summary>
-      /// gets lat/lng coordinates from pixel coordinates
-      /// </summary>
-      /// <param name="x"></param>
-      /// <param name="y"></param>
-      /// <param name="zoom"></param>
-      /// <returns></returns>
-      public PointLatLng FromPixelToLatLng(int x, int y, int zoom)
-      {
-         PointLatLng ret = PointLatLng.Empty;
-         if(zoom > MaxZoom || zoom < 1)
-            return ret;
-
-         double centerPixel = CenterPixel[zoom];
-         ret.Lng = (x - centerPixel) / ScalePixelX[zoom];
-
-         double g = (y - centerPixel) / (-ScalePixelY[zoom]);
-         ret.Lat = (2.0 * Math.Atan(Math.Exp(g)) - (Math.PI/2.0)) / (Math.PI/180.0);
-
-         return ret;
-      }
-
-      /// <summary>
-      /// get pixel coordinates from lat/lng
-      /// </summary>
-      /// <param name="p"></param>
-      /// <param name="zoom"></param>
-      /// <returns></returns>
-      public Point FromLatLngToPixel(PointLatLng p, int zoom)
-      {
-         return FromLatLngToPixel(p.Lat, p.Lng, zoom);
-      }
-
-      /// <summary>
-      /// gets lat/lng coordinates from pixel coordinates
-      /// </summary>
-      /// <param name="p"></param>
-      /// <param name="zoom"></param>
-      /// <returns></returns>
-      public PointLatLng FromPixelToLatLng(Point p, int zoom)
-      {
-         return FromPixelToLatLng(p.X, p.Y, zoom);
-      }
-
-      /// <summary>
-      /// gets tile coorddinate from pixel coordinates
-      /// </summary>
-      /// <param name="p"></param>
-      /// <returns></returns>
-      public Point FromPixelToTileXY(Point p)
-      {
-         return new Point((int) (p.X/TileSize.Width), (int) (p.Y/TileSize.Height));
-      }
-
-      /// <summary>
-      /// gets pixel coordinate from tile coordinate
-      /// </summary>
-      /// <param name="p"></param>
-      /// <returns></returns>
-      public Point FromTileXYToPixel(Point p)
-      {
-         return new Point((p.X*TileSize.Width), (p.Y*TileSize.Height));
-      }
+      #region -- Stuff --
 
       /// <summary>
       /// distance (in km) between two points specified by latitude/longitude
@@ -288,67 +174,6 @@ namespace GMap.NET
          double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
          double dDistance = EarthRadiusKm * c;
          return dDistance;
-      }
-
-      /// <summary>
-      /// The ground resolution indicates the distance (in meters) on the ground that’s represented by a single pixel in the map.
-      /// For example, at a ground resolution of 10 meters/pixel, each pixel represents a ground distance of 10 meters.
-      /// </summary>
-      /// <param name="zoom"></param>
-      /// <param name="latitude"></param>
-      /// <returns></returns>
-      public double GetGroundResolution(int zoom, double latitude)
-      {
-         if(zoom > MaxZoom || zoom < 1)
-            return 0;
-
-         return (Math.Cos(latitude * (Math.PI/180)) * 2 * Math.PI * EarthRadiusKm * 1000.0) / MapPixelXY[zoom];
-      }
-
-      #endregion
-
-      #region -- Stuff --
-      /// <summary>
-      /// total item count in tile matrix at custom zoom level
-      /// </summary>
-      /// <param name="zoom"></param>
-      /// <returns></returns>
-      public long GetTileMatrixItemCount(int zoom)
-      {
-         return (long) Math.Pow(2.0, 2.0*zoom);
-      }
-
-      /// <summary>
-      /// tile matrix size at custom zoom level
-      /// </summary>
-      /// <param name="zoom"></param>
-      /// <returns></returns>
-      public Size GetTileMatrixSize(int zoom)
-      {
-         int xy = 1 << zoom;
-         return new Size(xy, xy);
-      }
-
-      /// <summary>
-      /// gets all tiles in rect at specific zoom
-      /// </summary>
-      public List<Point> GetAreaTileList(RectLatLng rect, int zoom)
-      {
-         List<Point> ret = new List<Point>();
-
-         Point topLeft = FromPixelToTileXY(FromLatLngToPixel(rect.Location, zoom));
-         Point rightBottom = FromPixelToTileXY(FromLatLngToPixel(rect.Bottom, rect.Right, zoom));
-
-         for(int x = topLeft.X; x <= rightBottom.X; x++)
-         {
-            for(int y = topLeft.Y; y <= rightBottom.Y; y++)
-            {
-               ret.Add(new Point(x, y));
-            }
-         }
-         ret.TrimExcess();
-
-         return ret;
       }
 
       /// <summary>
@@ -546,23 +371,7 @@ namespace GMap.NET
       #endregion
 
       #region -- URL generation --
-      /// <summary>
-      /// makes url for image
-      /// </summary>
-      /// <param name="type"></param>
-      /// <param name="lat"></param>
-      /// <param name="lng"></param>
-      /// <param name="zoom"></param>
-      /// <param name="language"></param>
-      /// <returns></returns>
-      internal string MakeImageUrl(MapType type, double lat, double lng, int zoom, string language)
-      {
-         Point t = FromLatLngToPixel(lat, lng, zoom);
-         Point p = FromPixelToTileXY(t);
-
-         return MakeImageUrl(type, p, zoom, language);
-      }
-
+      
       /// <summary>
       /// makes url for image
       /// </summary>
@@ -584,7 +393,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleMap, language, pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMap, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;
 
@@ -596,7 +405,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleSatellite, language, pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleSatellite, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;
 
@@ -608,7 +417,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleLabels, language, pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabels, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;
 
@@ -620,7 +429,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleTerrain, language, pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrain, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
             break; 
             #endregion
@@ -636,7 +445,7 @@ namespace GMap.NET
 
                // http://mt0.google.cn/mt/v=cn1.11&hl=zh-CN&gl=cn&x=26&y=11&z=5&s=G
 
-               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleMapChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;
 
@@ -650,7 +459,7 @@ namespace GMap.NET
 
                // http://khm0.google.cn/kh/v=40&x=26&y=11&z=5&s=G
 
-               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos), request, VersionGoogleSatelliteChina, pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteChina, pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;
 
@@ -664,7 +473,7 @@ namespace GMap.NET
 
                // http://mt0.google.cn/mt/v=cn1t.11&hl=zh-CN&gl=cn&x=26&y=11&z=5&s=G
 
-               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleLabelsChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;
 
@@ -678,7 +487,7 @@ namespace GMap.NET
 
                // http://mt0.google.cn/mt/v=cn1p.12&hl=zh-CN&gl=cn&x=26&y=11&z=5&s=G
 
-               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
             break; 
             #endregion
@@ -686,7 +495,7 @@ namespace GMap.NET
             #region -- Yahoo --
             case MapType.YahooMap:
             {
-               return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&.intl={2}&x={3}&y={4}&z={5}&r=1", ((GetServerNum(pos) % 2)+1), VersionYahooMap, language, pos.X, (((1 << zoom) >> 1)-1-pos.Y), (zoom+1));
+               return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&.intl={2}&x={3}&y={4}&z={5}&r=1", ((GetServerNum(pos, 2))+1), VersionYahooMap, language, pos.X, (((1 << zoom) >> 1)-1-pos.Y), (zoom+1));
             }
 
             case MapType.YahooSatellite:
@@ -703,13 +512,13 @@ namespace GMap.NET
             #region -- OpenStreet --
             case MapType.OpenStreetMap:
             {
-               char letter = "abca"[GetServerNum(pos)];
+               char letter = "abc"[GetServerNum(pos, 3)];
                return string.Format("http://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
             }
 
             case MapType.OpenStreetOsm:
             {
-               char letter = "abca"[GetServerNum(pos)];
+               char letter = "abc"[GetServerNum(pos, 3)];
                return string.Format("http://{0}.tah.openstreetmap.org/Tiles/tile/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
             } 
             #endregion
@@ -718,20 +527,29 @@ namespace GMap.NET
             case MapType.VirtualEarthMap:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}", GetServerNum(pos), key, VersionVirtualEarth, language);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}", GetServerNum(pos, 4), key, VersionVirtualEarth, language);
             }
 
             case MapType.VirtualEarthSatellite:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}", GetServerNum(pos), key, VersionVirtualEarth, language);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}", GetServerNum(pos, 4), key, VersionVirtualEarth, language);
             }
 
             case MapType.VirtualEarthHybrid:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}", GetServerNum(pos), key, VersionVirtualEarth, language);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}", GetServerNum(pos, 4), key, VersionVirtualEarth, language);
             } 
+            #endregion  
+
+            #region -- ArcGIS --
+            case MapType.ArcGIS_StreetMap:
+            {
+               // http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_StreetMap_World_2D/MapServer/tile/0/0/0.jpg
+
+               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_StreetMap_World_2D/MapServer/tile/{0}/{1}/{2}.jpg", zoom, pos.Y, pos.X);
+            }
             #endregion
          }
 
@@ -761,9 +579,9 @@ namespace GMap.NET
       /// </summary>
       /// <param name="pos"></param>
       /// <returns></returns>
-      internal int GetServerNum(Point pos)
+      internal int GetServerNum(Point pos, int max)
       {
-         return (pos.X + 2 * pos.Y) % 4;
+         return (pos.X + 2 * pos.Y) % max;
       }
 
       /// <summary>

@@ -29,5 +29,7 @@ namespace GMap.NET
       VirtualEarthMap=444,
       VirtualEarthSatellite=555,
       VirtualEarthHybrid=666,
+
+      ArcGIS_StreetMap = 777,
    }
 }

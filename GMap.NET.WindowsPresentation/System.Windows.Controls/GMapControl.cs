@@ -18,6 +18,7 @@ namespace System.Windows.Controls
    using GMap.NET.Internals;
    using GMap.NET.WindowsPresentation;
    using System.Diagnostics;
+   using System.Windows.Media.Animation;
 
    /// <summary>
    /// GMap.NET control for Windows Presentation
@@ -128,7 +129,7 @@ namespace System.Windows.Controls
          {
             ItemsPanelTemplate template = new ItemsPanelTemplate();
             template.VisualTree = factoryPanel;
-            ItemsPanel = template;           
+            ItemsPanel = template;  
          }
 
          Style st = new Style();
@@ -154,13 +155,104 @@ namespace System.Windows.Controls
          Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
          Loaded += new RoutedEventHandler(GMapControl_Loaded);
          SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
-         
+
          this.ItemsSource = Markers;
 
          googleCopyright = new FormattedText(Core.googleCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
          yahooMapCopyright = new FormattedText(Core.yahooMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
          virtualEarthCopyright = new FormattedText(Core.virtualEarthCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
          openStreetMapCopyright = new FormattedText(Core.openStreetMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+
+         MapType = MapType.GoogleMap;
+      }
+
+      // testing smooth zoom
+      Storyboard mapFadeStoryboard;
+      DoubleAnimation oMapFadeAnimation;
+      public Image FadeImage = new Image();
+
+      private void SetFadeStoryBoard(int duration)
+      {
+         mapFadeStoryboard = null;
+         oMapFadeAnimation = null;
+
+         mapFadeStoryboard = new Storyboard();
+         oMapFadeAnimation = new DoubleAnimation();
+
+         oMapFadeAnimation.From = 1;
+         oMapFadeAnimation.To = 0;
+         oMapFadeAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(duration));
+
+         mapFadeStoryboard.Children.Add(oMapFadeAnimation);
+         Storyboard.SetTarget(oMapFadeAnimation, FadeImage);
+         Storyboard.SetTargetProperty(oMapFadeAnimation, new PropertyPath(UIElement.OpacityProperty));
+      }
+
+      public void DisplayZoomInFadeImage()
+      {
+         ImageSource iSrc = ToImageSource();
+         FadeImage.Source = iSrc;
+
+         if(!CurrentPosition.IsEmpty)
+         {
+            GMap.NET.Point p = FromLatLngToLocal(CurrentPosition);
+            ScaleTransform scaleTransform = new ScaleTransform(2, 2, p.X, p.Y);
+            FadeImage.RenderTransform = scaleTransform;
+         }
+         mapFadeStoryboard.Begin(this);
+      }
+
+      public void DisplayZoomOutFadeImage()
+      {
+         ImageSource iSrc = ToImageSource();
+         FadeImage.Source = iSrc;
+         if(!CurrentPosition.IsEmpty)
+         {
+            GMap.NET.Point p = FromLatLngToLocal(CurrentPosition);
+            ScaleTransform scaleTransform = new ScaleTransform(0.5, 0.5, p.X, p.Y);
+            FadeImage.RenderTransform = scaleTransform;
+         }
+         mapFadeStoryboard.Begin(this);
+      }
+
+      Transform MapRenderTransform; 
+      double zoomReal;
+   public double Zoom
+      {
+         get
+         {
+            return zoomReal;
+         }
+         set
+         {
+            if(zoomReal != value)
+            {
+               zoomReal = value;
+
+               double remainder = (double) System.Decimal.Remainder((Decimal) value, (Decimal) 1);
+               if(remainder != 0)
+               {
+                  double scaleValue = remainder + 1;
+                  {
+                     MapRenderTransform = new ScaleTransform(scaleValue, scaleValue, ActualWidth/2, ActualHeight/2);
+                  }                   
+
+                  if(IsLoaded)
+                  {
+                     //DisplayZoomInFadeImage();
+                  }
+
+                  ZoomStep = Convert.ToInt32(value - remainder);
+                  InvalidateVisual();
+               }
+               else
+               {
+                  MapRenderTransform = null;
+                  ZoomStep = Convert.ToInt32(value);
+                  InvalidateVisual();
+               }
+            }
+         }
       }
 
       /// <summary>
@@ -171,6 +263,8 @@ namespace System.Windows.Controls
       void GMapControl_Loaded(object sender, RoutedEventArgs e)
       {
          Core.StartSystem();
+
+         SetFadeStoryBoard(500);
       }
 
       /// <summary>
@@ -182,11 +276,10 @@ namespace System.Windows.Controls
       {
          System.Windows.Size constraint = e.NewSize;
 
-         Core.sizeOfMapArea.Width = 1 + ((int) constraint.Width/GMaps.Instance.TileSize.Width)/2;
-         Core.sizeOfMapArea.Height = 1 + ((int) constraint.Height/GMaps.Instance.TileSize.Height)/2;
-
          // 50px outside control
          region = new GMap.NET.Rectangle(-50, -50, (int) constraint.Width+100, (int) constraint.Height+100);
+
+         Core.OnMapSizeChanged((int) constraint.Width, (int) constraint.Height);
 
          // keep center on same position
          if(IsLoaded)
@@ -212,9 +305,7 @@ namespace System.Windows.Controls
 
                //Core.GoToCurrentPosition();
             }
-         }
-
-         Core.OnMapSizeChanged((int) constraint.Width, (int) constraint.Height);
+         }          
       }
 
       void Core_OnMapZoomChanged()
@@ -265,8 +356,6 @@ namespace System.Windows.Controls
       /// <param name="g"></param>
       void DrawMapWPF(DrawingContext g)
       {
-         double scaleFactor = 1.0;
-
          for(int i = -Core.sizeOfMapArea.Width; i <= Core.sizeOfMapArea.Width; i++)
          {
             for(int j = -Core.sizeOfMapArea.Height; j <= Core.sizeOfMapArea.Height; j++)
@@ -293,7 +382,7 @@ namespace System.Windows.Controls
                            if(!found)
                               found = true;
 
-                           g.DrawImage(img.Img, new Rect(Core.tileRect.X*scaleFactor, Core.tileRect.Y*scaleFactor, Core.tileRect.Width*scaleFactor, Core.tileRect.Height*scaleFactor));
+                           g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
                         }
                      }
 
@@ -405,7 +494,18 @@ namespace System.Windows.Controls
       #region UserControl Events
       protected override void OnRender(DrawingContext drawingContext)
       {
-         DrawMapWPF(drawingContext);
+         if(MapRenderTransform != null)
+         {
+            drawingContext.PushTransform(MapRenderTransform);
+            {
+               DrawMapWPF(drawingContext);
+            }
+            drawingContext.Pop();
+         }
+         else
+         {
+            DrawMapWPF(drawingContext);
+         }         
 
          #region -- copyright --
 
@@ -476,16 +576,16 @@ namespace System.Windows.Controls
 
             if(e.Delta > 0)
             {
-               Zoom++;
+               Zoom += 0.1;
             }
             else if(e.Delta < 0)
             {
-               Zoom--;
-            } 
+               Zoom -= 0.1;
+            }
          }
 
          base.OnMouseWheel(e);
-      }        
+      }
 
       protected override void OnMouseDown(MouseButtonEventArgs e)
       {
@@ -509,7 +609,7 @@ namespace System.Windows.Controls
       {
          if(Core.IsDragging)
          {
-            Core.EndDrag();   
+            Core.EndDrag();
             Cursor = Cursors.Arrow;
          }
 
@@ -631,7 +731,7 @@ namespace System.Windows.Controls
       }
 
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-      public int Zoom
+      internal int ZoomStep
       {
          get
          {
@@ -687,14 +787,6 @@ namespace System.Windows.Controls
          }
       }
 
-      public long TotalTiles
-      {
-         get
-         {
-            return Core.TotalTiles;
-         }
-      }
-
       public bool IsDragging
       {
          get
@@ -720,6 +812,14 @@ namespace System.Windows.Controls
          set
          {
             Core.MapType = value;
+         }
+      }
+
+      public PureProjection Projection
+      {
+         get
+         {
+            return Core.Projection;
          }
       }
 

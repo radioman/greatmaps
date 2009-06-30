@@ -27,7 +27,7 @@ namespace GMap.NET.Internals
       public Size sizeOfMapArea;
       public Size sizeOfTiles;
 
-      public Rectangle tileRect = new Rectangle(new Point(0, 0), GMaps.Instance.TileSize);
+      public Rectangle tileRect;
       public Point tilePoint;
 
       public Rectangle CurrentRegion;
@@ -57,14 +57,21 @@ namespace GMap.NET.Internals
       internal int pxRes1000km; // 1000km
       internal int pxRes5000km; // 5000km
 
+      PureProjection projection;
+
       /// <summary>
-      /// total count of google tiles at current zoom
+      /// current peojection
       /// </summary>
-      public long TotalTiles
+      public PureProjection Projection
       {
          get
          {
-            return GMaps.Instance.GetTileMatrixItemCount(Zoom);
+            return projection;
+         }
+         set
+         {
+            projection = value;
+            tileRect = new Rectangle(new Point(0, 0), value.TileSize);
          }
       }
 
@@ -87,9 +94,10 @@ namespace GMap.NET.Internals
             if(zoom != value && !IsDragging)
             {
                zoom = value;
-               sizeOfTiles = GMaps.Instance.GetTileMatrixSize(value);
-               CurrentPositionGPixel = GMaps.Instance.FromLatLngToPixel(CurrentPosition, value);
-               CurrentPositionGTile = GMaps.Instance.FromPixelToTileXY(CurrentPositionGPixel);
+               sizeOfTiles = Projection.GetTileMatrixSizeXY(value);
+
+               CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, value);
+               CurrentPositionGTile = Projection.FromPixelToTileXY(CurrentPositionGPixel);
 
                lock(tileLoadQueue)
                {
@@ -169,8 +177,8 @@ namespace GMap.NET.Internals
             if(!IsDragging)
             {
                currentPosition = value;
-               CurrentPositionGPixel = GMaps.Instance.FromLatLngToPixel(value, Zoom);
-               CurrentPositionGTile = GMaps.Instance.FromPixelToTileXY(CurrentPositionGPixel);
+               CurrentPositionGPixel = Projection.FromLatLngToPixel(value, Zoom);
+               CurrentPositionGTile = Projection.FromPixelToTileXY(CurrentPositionGPixel);
 
                GoToCurrentPosition();
 
@@ -185,10 +193,39 @@ namespace GMap.NET.Internals
       /// </summary>
       public Size TooltipTextPadding = new Size(10, 10);
 
-      /// <summary>
-      /// type of map
-      /// </summary>
-      public MapType MapType = MapType.GoogleMap;
+      MapType mapType; 
+      public MapType MapType
+      {
+         get
+         {
+            return mapType;
+         }
+         set
+         {
+            if(value == MapType.ArcGIS_StreetMap)
+            {
+               Projection = new RobinsonProjection();
+            }
+            else // all other
+            {
+               Projection = new MercatorProjection();
+            }
+
+            if(value != MapType)
+            {
+               mapType = value;
+
+               sizeOfTiles = Projection.GetTileMatrixSizeXY(Zoom);
+               CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, Zoom);
+               CurrentPositionGTile = Projection.FromPixelToTileXY(CurrentPositionGPixel);
+
+               OnMapSizeChanged(Width, Height);
+               GoToCurrentPosition();
+
+               ReloadMap();
+            }
+         }
+      }
 
       /// <summary>
       /// is routes enabled
@@ -240,11 +277,6 @@ namespace GMap.NET.Internals
       /// </summary>
       public event MapZoomChanged OnMapZoomChanged;
 
-      public Core()
-      {
-         Zoom = 1;
-      }
-
       /// <summary>
       /// starts core system
       /// </summary>
@@ -277,14 +309,17 @@ namespace GMap.NET.Internals
       public void UpdateCenterTileXYLocation()
       {
          PointLatLng center = FromLocalToLatLng(Width/2, Height/2);
-         GMap.NET.Point centerPixel = GMaps.Instance.FromLatLngToPixel(center, Zoom);
-         centerTileXYLocation = GMaps.Instance.FromPixelToTileXY(centerPixel);
+         GMap.NET.Point centerPixel = Projection.FromLatLngToPixel(center, Zoom);
+         centerTileXYLocation = Projection.FromPixelToTileXY(centerPixel);
       }
 
       public void OnMapSizeChanged(int width, int height)
       {
          this.Width = width;
          this.Height = height;
+
+         sizeOfMapArea.Width = 1 + (Width/Projection.TileSize.Width)/2;
+         sizeOfMapArea.Height = 1 + (Height/Projection.TileSize.Height)/2;
 
          UpdateCenterTileXYLocation();
 
@@ -327,9 +362,9 @@ namespace GMap.NET.Internals
       {
          get
          {
-            PointLatLng p = GMaps.Instance.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y, Zoom);
-            double rlng = GMaps.Instance.FromPixelToLatLng(-renderOffset.X + Width, -renderOffset.Y, Zoom).Lng;
-            double blat = GMaps.Instance.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y + Height, Zoom).Lat;
+            PointLatLng p = Projection.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y, Zoom);
+            double rlng = Projection.FromPixelToLatLng(-renderOffset.X + Width, -renderOffset.Y, Zoom).Lng;
+            double blat = Projection.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y + Height, Zoom).Lat;
 
             return RectLatLng.FromLTRB(p.Lng, p.Lat, rlng, blat);
          }
@@ -343,7 +378,7 @@ namespace GMap.NET.Internals
       /// <returns></returns>
       public PointLatLng FromLocalToLatLng(int x, int y)
       {
-         return GMaps.Instance.FromPixelToLatLng(new Point(x - renderOffset.X, y - renderOffset.Y), Zoom);
+         return Projection.FromPixelToLatLng(new Point(x - renderOffset.X, y - renderOffset.Y), Zoom);
       }
 
       /// <summary>
@@ -353,7 +388,7 @@ namespace GMap.NET.Internals
       /// <returns></returns>
       public Point FromLatLngToLocal(PointLatLng latlng)
       {
-         Point pLocal = GMaps.Instance.FromLatLngToPixel(latlng, Zoom);
+         Point pLocal = Projection.FromLatLngToPixel(latlng, Zoom);
          pLocal.Offset(renderOffset);
          return pLocal;
       }
@@ -369,8 +404,8 @@ namespace GMap.NET.Internals
 
          for(int i = 1; i <= GMaps.Instance.MaxZoom; i++)
          {
-            Point p1 = GMaps.Instance.FromLatLngToPixel(rect.Location, i);
-            Point p2 = GMaps.Instance.FromLatLngToPixel(rect.Bottom, rect.Right, i);
+            Point p1 = Projection.FromLatLngToPixel(rect.Location, i);
+            Point p2 = Projection.FromLatLngToPixel(rect.Bottom, rect.Right, i);
 
             if(((p2.X - p1.X) <= Width+10) && (p2.Y - p1.Y) <= Height+10)
             {
@@ -756,7 +791,7 @@ namespace GMap.NET.Internals
       /// </summary>
       void UpdateGroundResolution()
       {
-         double rez = GMaps.Instance.GetGroundResolution(Zoom, CurrentPosition.Lat);
+         double rez = Projection.GetGroundResolution(Zoom, CurrentPosition.Lat);
          pxRes100m =   (int) (100.0 / rez); // 100 meters
          pxRes1000m =  (int) (1000.0 / rez); // 1km  
          pxRes10km =   (int) (10000.0 / rez); // 10km

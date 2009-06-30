@@ -218,7 +218,7 @@ namespace Demo.WindowsPresentation
       // MapZoomChanged
       void MainMap_OnMapZoomChanged()
       {
-         sliderZoom.Value = MainMap.Zoom;
+         //sliderZoom.Value = MainMap.ZoomReal;
       }
 
       // tile louading starts
@@ -277,7 +277,6 @@ namespace Demo.WindowsPresentation
       private void comboBoxMapType_DropDownClosed(object sender, EventArgs e)
       {
          MainMap.MapType = (MapType) comboBoxMapType.SelectedItem;
-         MainMap.ReloadMap();
       }
 
       // enable current marker
@@ -335,22 +334,19 @@ namespace Demo.WindowsPresentation
       // zoom changed
       private void sliderZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
       {
-         int zn = (int) e.NewValue;
-         {
-            MainMap.Zoom = zn;
-         }
+        MainMap.Zoom = e.NewValue;
       }
 
+      // zoom up
       private void czuZoomUp_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
       {
-         MainMap.Zoom++;
-         sliderZoom.Value = MainMap.Zoom;
+         sliderZoom.Value = ((int)MainMap.Zoom) + 1;
       }
 
+      // zoom down
       private void czuZoomDown_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
       {
-         MainMap.Zoom--;
-         sliderZoom.Value = MainMap.Zoom;
+         sliderZoom.Value = ((int) (MainMap.Zoom + 0.99)) - 1;
       }
 
       // prefetch
@@ -358,9 +354,9 @@ namespace Demo.WindowsPresentation
       {
          RectLatLng area = MainMap.CurrentViewArea;
 
-         for(int i = MainMap.Zoom; i <= GMaps.Instance.MaxZoom; i++)
+         for(int i = (int) MainMap.Zoom; i <= MainMap.MaxZoom; i++)
          {
-            var x = GMaps.Instance.GetAreaTileList(area, i);
+            var x = MainMap.Projection.GetAreaTileList(area, i);
 
             MessageBoxResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButton.YesNoCancel);
 
@@ -519,7 +515,7 @@ namespace Demo.WindowsPresentation
       // adds route
       private void button12_Click(object sender, RoutedEventArgs e)
       {
-         MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, MainMap.Zoom);
+         MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, (int)MainMap.Zoom);
          if(route != null)
          {
             GMapMarker m1 = new GMapMarker(MainMap, start);

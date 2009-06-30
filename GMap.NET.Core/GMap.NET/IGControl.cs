@@ -3,12 +3,6 @@ namespace GMap.NET
 {
    public interface IGControl
    {
-      int Zoom
-      {
-         get;
-         set;
-      }
-
       PointLatLng CurrentPosition
       {
          get;
@@ -31,11 +25,6 @@ namespace GMap.NET
          set;
       }
 
-      long TotalTiles
-      {
-         get;
-      }
-
       bool IsDragging
       {
          get;
@@ -50,6 +39,11 @@ namespace GMap.NET
       {
          get;
          set;
+      }
+
+      PureProjection Projection
+      {
+         get;
       }
 
       bool CanDragMap

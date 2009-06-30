@@ -45,9 +45,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GMap.NET.Internals\CacheQueue.cs" />
+    <Compile Include="GMap.NET.Internals\RobinsonProjection.cs" />
     <Compile Include="GMap.NET.Internals\PureImage.cs" />
     <Compile Include="GMap.NET.Internals\LoadTask.cs" />
     <Compile Include="GMap.NET\GeoCoderStatusCode.cs" />
+    <Compile Include="GMap.NET.Internals\MercatorProjection.cs" />
+    <Compile Include="GMap.NET\PureProjection.cs" />
     <Compile Include="GMap.NET\SizeChangedType.cs" />
     <Compile Include="GMap.NET\IGControl.cs" />
     <Compile Include="GMap.NET\AccessMode.cs" />

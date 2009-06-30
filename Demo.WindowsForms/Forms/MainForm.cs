@@ -44,13 +44,14 @@ namespace Demo.WindowsForms
             //GMaps.Instance.Proxy = new WebProxy("10.2.0.100", 8080);
             //GMaps.Instance.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
-            // config map             
-            MainMap.MapType = MapType.GoogleMap;
-            MainMap.MaxZoom = 17;
-            MainMap.MinZoom = 12;
+            // config map 
+            MainMap.MapType = MapType.ArcGIS_StreetMap;
+            MainMap.MaxZoom = 13;
+            MainMap.MinZoom = 1;
             MainMap.Zoom = MainMap.MinZoom;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
-
+            //MainMap.CurrentPosition = new PointLatLng(29.8741410626414, 121.563806533813); // china test
+            
             // map events
             MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
             MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
@@ -219,7 +220,6 @@ namespace Demo.WindowsForms
       private void comboBoxMapType_DropDownClosed(object sender, EventArgs e)
       {
          MainMap.MapType = (MapType) comboBoxMapType.SelectedValue;
-         MainMap.ReloadMap();
       }
 
       // change mdoe
@@ -416,9 +416,9 @@ namespace Demo.WindowsForms
       {
          RectLatLng area = MainMap.CurrentViewArea;
 
-         for(int i = MainMap.Zoom; i <= GMaps.Instance.MaxZoom; i++)
+         for(int i = MainMap.Zoom; i <= MainMap.MaxZoom; i++)
          {
-            List<GMap.NET.Point> x = GMaps.Instance.GetAreaTileList(area, i);
+            List<GMap.NET.Point> x = MainMap.Projection.GetAreaTileList(area, i);
 
             DialogResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButtons.YesNoCancel);
 
@@ -467,6 +467,12 @@ namespace Demo.WindowsForms
          {
             MessageBox.Show("Image failed to save: " + ex.Message, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Error);
          }
+      }
+
+      // debug
+      private void checkBoxDebug_CheckedChanged(object sender, EventArgs e)
+      {
+         MainMap.ShowTileGridLines = checkBoxDebug.Checked;
       }
    }
 }
