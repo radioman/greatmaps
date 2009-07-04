@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GMap.NET.Internals\CacheQueue.cs" />
-    <Compile Include="GMap.NET.Internals\RobinsonProjection.cs" />
+    <Compile Include="GMap.NET.Internals\PlateCarreeProjection.cs" />
     <Compile Include="GMap.NET.Internals\PureImage.cs" />
     <Compile Include="GMap.NET.Internals\LoadTask.cs" />
     <Compile Include="GMap.NET\GeoCoderStatusCode.cs" />

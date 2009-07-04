@@ -18,9 +18,17 @@ namespace GMap.NET
       }
 
       /// <summary>
-      /// Radius of the Earth in km
+      /// Semi-major axis of ellipsoid, in meters
       /// </summary>
-      public abstract double EarthRadiusKm
+      public abstract double Axis
+      {
+         get;
+      }
+
+      /// <summary>
+      /// Flattening of ellipsoid
+      /// </summary>
+      public abstract double Flattening
       {
          get;
       }
@@ -131,7 +139,53 @@ namespace GMap.NET
       /// <returns></returns>
       public double GetGroundResolution(int zoom, double latitude)
       {
-         return (Math.Cos(latitude * (Math.PI/180)) * 2 * Math.PI * EarthRadiusKm * 1000.0) / GetTileMatrixSizePixel(zoom).Width;
+         return (Math.Cos(latitude * (Math.PI/180)) * 2 * Math.PI * Axis) / GetTileMatrixSizePixel(zoom).Width;
+      }
+
+      /// <summary>
+      /// Conversion from cartesian earth-sentered coordinates to geodetic coordinates in the given datum
+      /// </summary>
+      /// <param name="Lat"></param>
+      /// <param name="Lon"></param>
+      /// <param name="Height">Height above ellipsoid [m]</param>
+      /// <param name="X"></param>
+      /// <param name="Y"></param>
+      /// <param name="Z"></param>
+      public void FromGeodeticToCartesian(double Lat, double Lng, double Height, out double X, out double Y, out double Z)
+      {
+         Lat = (Math.PI / 180) * Lat;
+         Lng = (Math.PI / 180) * Lng;
+
+         double B = Axis*(1.0-Flattening);
+         double ee = 1.0 - (B/Axis)*(B/Axis);
+         double N = (Axis / Math.Sqrt(1.0-ee*Math.Sin(Lat)*Math.Sin(Lat)));
+
+         X = (N+Height)*Math.Cos(Lat)*Math.Cos(Lng);
+         Y = (N+Height)*Math.Cos(Lat)*Math.Sin(Lng);
+         Z = (N*(B/Axis)*(B/Axis)+Height)*Math.Sin(Lat);
+      }
+
+      /// <summary>
+      /// Conversion from cartesian earth-sentered coordinates to geodetic coordinates in the given datum
+      /// </summary>
+      /// <param name="X"></param>
+      /// <param name="Y"></param>
+      /// <param name="Z"></param>
+      /// <param name="Lat"></param>
+      /// <param name="Lon"></param>
+      public void FromCartesianTGeodetic(double X, double Y, double Z, out double Lat, out double Lng)
+      {
+         double E = Flattening*(2.0-Flattening);
+         Lng  = Math.Atan2(Y, X);
+
+         double P     = Math.Sqrt(X*X + Y*Y);
+         double Theta = Math.Atan2(Z, (P*(1.0-Flattening)));
+         double st    = Math.Sin(Theta);
+         double ct    = Math.Cos(Theta);
+         Lat  = Math.Atan2(Z+E/(1.0-Flattening)*Axis*st*st*st, P-E*Axis*ct*ct*ct);
+
+         Lat /= (Math.PI / 180);
+         Lng /= (Math.PI / 180);
       }
    }
 }

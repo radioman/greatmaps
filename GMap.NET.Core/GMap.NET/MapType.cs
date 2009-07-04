@@ -30,6 +30,13 @@ namespace GMap.NET
       VirtualEarthSatellite=555,
       VirtualEarthHybrid=666,
 
-      ArcGIS_StreetMap = 777,
+      ArcGIS_Map = 777,
+      ArcGIS_Satellite=788,
+      ArcGIS_ShadedRelief=799,
+
+      /// <summary>
+      /// not working corectly yet
+      /// </summary>
+      MapsLT_OrtoFoto=888,
    }
 }

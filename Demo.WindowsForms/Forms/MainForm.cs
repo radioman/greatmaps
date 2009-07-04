@@ -45,8 +45,8 @@ namespace Demo.WindowsForms
             //GMaps.Instance.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
             // config map 
-            MainMap.MapType = MapType.ArcGIS_StreetMap;
-            MainMap.MaxZoom = 13;
+            MainMap.MapType = MapType.ArcGIS_Satellite;
+            MainMap.MaxZoom = 15;
             MainMap.MinZoom = 1;
             MainMap.Zoom = MainMap.MinZoom;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);

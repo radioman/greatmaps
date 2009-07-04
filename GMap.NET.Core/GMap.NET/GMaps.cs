@@ -544,11 +544,34 @@ namespace GMap.NET
             #endregion  
 
             #region -- ArcGIS --
-            case MapType.ArcGIS_StreetMap:
+            case MapType.ArcGIS_Map:
             {
                // http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_StreetMap_World_2D/MapServer/tile/0/0/0.jpg
 
                return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_StreetMap_World_2D/MapServer/tile/{0}/{1}/{2}.jpg", zoom, pos.Y, pos.X);
+            }
+
+            case MapType.ArcGIS_Satellite:
+            {
+               // http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_Imagery_World_2D/MapServer/tile/1/0/1.jpg
+
+               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_Imagery_World_2D/MapServer/tile/{0}/{1}/{2}.jpg", zoom, pos.Y, pos.X);
+            }
+
+            case MapType.ArcGIS_ShadedRelief:
+            {
+               // http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_ShadedRelief_World_2D/MapServer/tile/1/0/1.jpg
+
+               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_ShadedRelief_World_2D/MapServer/tile/{0}/{1}/{2}.jpg", zoom, pos.Y, pos.X);
+            }
+            #endregion
+
+            #region -- MapsLT --
+            case MapType.MapsLT_OrtoFoto:
+            {
+               // http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L02/R0000001b/C00000028.jpg
+
+               return string.Format("http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
             }
             #endregion
          }
@@ -1235,6 +1258,12 @@ namespace GMap.NET
                   case MapType.YahooSatellite:
                   {
                      request.Referer = "http://maps.yahoo.com/";
+                  }
+                  break;
+
+                  case MapType.MapsLT_OrtoFoto:
+                  {
+                     request.Referer = "http://maps.lt/map/WebMapApp.aspx?lang=lt";
                   }
                   break;
                }

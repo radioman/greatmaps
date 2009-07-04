@@ -106,7 +106,7 @@ namespace GMap.NET.Internals
 
                Matrix.Clear();
 
-               GoToCurrentPositionOnZoom();                  
+               GoToCurrentPositionOnZoom();
 
                UpdateBaunds();
 
@@ -116,7 +116,7 @@ namespace GMap.NET.Internals
                }
 
                // start loading
-               RunAsyncTasks();                                
+               RunAsyncTasks();
 
                if(OnMapDrag != null)
                {
@@ -127,7 +127,7 @@ namespace GMap.NET.Internals
                   OnCurrentPositionChanged(currentPosition);
 
                if(OnMapZoomChanged != null)
-                  OnMapZoomChanged();                 
+                  OnMapZoomChanged();
             }
          }
       }
@@ -193,7 +193,7 @@ namespace GMap.NET.Internals
       /// </summary>
       public Size TooltipTextPadding = new Size(10, 10);
 
-      MapType mapType; 
+      MapType mapType;
       public MapType MapType
       {
          get
@@ -202,13 +202,22 @@ namespace GMap.NET.Internals
          }
          set
          {
-            if(value == MapType.ArcGIS_StreetMap)
+            switch(value)
             {
-               Projection = new RobinsonProjection();
-            }
-            else // all other
-            {
-               Projection = new MercatorProjection();
+               case MapType.ArcGIS_Map:
+               case MapType.ArcGIS_Satellite:
+               case MapType.ArcGIS_ShadedRelief:
+               case MapType.MapsLT_OrtoFoto:
+               {
+                  Projection = new PlateCarreeProjection();
+               }
+               break;
+
+               default:
+               {
+                  Projection = new MercatorProjection();
+               }
+               break;
             }
 
             if(value != MapType)
@@ -495,7 +504,7 @@ namespace GMap.NET.Internals
          renderOffset.X = pt.X - dragPoint.X;
          renderOffset.Y = pt.Y - dragPoint.Y;
 
-         UpdateCenterTileXYLocation();  
+         UpdateCenterTileXYLocation();
       }
 
       /// <summary>
@@ -722,7 +731,7 @@ namespace GMap.NET.Internals
       {
          lock(tileDrawingList)
          {
-            FindTilesAround(ref tileDrawingList);              
+            FindTilesAround(ref tileDrawingList);
 
             Debug.WriteLine("UpdateBaunds: total tiles => " + tileDrawingList.Count.ToString());
 
