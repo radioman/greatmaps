@@ -38,6 +38,6 @@ namespace GMap.NET
       /// <summary>
       /// not working corectly yet
       /// </summary>
-      MapsLT_OrtoFoto=888,
+      ArcGIS_MapsLT_OrtoFoto=888,
    }
 }

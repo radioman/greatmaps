@@ -208,7 +208,6 @@ namespace GMap.NET.Internals
                case MapType.ArcGIS_Satellite:
                case MapType.ArcGIS_ShadedRelief:
                case MapType.ArcGIS_Terrain:
-               case MapType.MapsLT_OrtoFoto:
                {
                   Projection = new PlateCarreeProjection();
                }
@@ -217,6 +216,12 @@ namespace GMap.NET.Internals
                default:
                {
                   Projection = new MercatorProjection();
+               }
+               break;
+
+               case MapType.ArcGIS_MapsLT_OrtoFoto:
+               {
+                  Projection = new LKS94Projection();
                }
                break;
             }

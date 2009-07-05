@@ -37,7 +37,7 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.2";
 
       // Virtual Earth
-      public string VersionVirtualEarth = "297";
+      public string VersionVirtualEarth = "300";
 
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
@@ -574,7 +574,7 @@ namespace GMap.NET
             #endregion
 
             #region -- MapsLT --
-            case MapType.MapsLT_OrtoFoto:
+            case MapType.ArcGIS_MapsLT_OrtoFoto:
             {
                // http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L02/R0000001b/C00000028.jpg
 
@@ -1268,7 +1268,7 @@ namespace GMap.NET
                   }
                   break;
 
-                  case MapType.MapsLT_OrtoFoto:
+                  case MapType.ArcGIS_MapsLT_OrtoFoto:
                   {
                      request.Referer = "http://maps.lt/map/WebMapApp.aspx?lang=lt";
                   }
