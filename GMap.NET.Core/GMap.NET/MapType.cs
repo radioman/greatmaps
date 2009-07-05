@@ -33,6 +33,7 @@ namespace GMap.NET
       ArcGIS_Map = 777,
       ArcGIS_Satellite=788,
       ArcGIS_ShadedRelief=799,
+      ArcGIS_Terrain=811,
 
       /// <summary>
       /// not working corectly yet

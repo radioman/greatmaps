@@ -207,6 +207,7 @@ namespace GMap.NET.Internals
                case MapType.ArcGIS_Map:
                case MapType.ArcGIS_Satellite:
                case MapType.ArcGIS_ShadedRelief:
+               case MapType.ArcGIS_Terrain:
                case MapType.MapsLT_OrtoFoto:
                {
                   Projection = new PlateCarreeProjection();
