@@ -1,13 +1,13 @@
 ﻿
-namespace GMap.NET.Internals
+namespace GMap.NET.Projections
 {
    using System;
 
    /// <summary>
-   /// maybe this??
-   /// PROJCS["LKS94 / Lithuania TM",GEOGCS["LKS94",DATUM["D_Lithuania_1994",SPHEROID["GRS_1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",24],PARAMETER["scale_factor",0.9998],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["Meter",1]]
+   /// Plate Carrée (literally, “plane square”) projection
+   /// PROJCS["WGS 84 / World Equidistant Cylindrical",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],UNIT["Meter",1]]
    /// </summary>
-   internal class LKS94Projection : PureProjection
+   public class PlateCarreeProjection : PureProjection
    {
       const double MinLatitude = -85.05112878;
       const double MaxLatitude = 85.05112878;
@@ -35,7 +35,7 @@ namespace GMap.NET.Internals
       {
          get
          {
-            return (1.0 / 298.257222101);
+            return (1.0 / 298.257223563);
          }
       }
 

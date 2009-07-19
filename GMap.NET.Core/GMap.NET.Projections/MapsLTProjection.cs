@@ -1,20 +1,20 @@
 ﻿
-namespace GMap.NET.Internals
+namespace GMap.NET.Projections
 {
    using System;
 
    /// <summary>
-   /// The Mercator projection
-   /// PROJCS["World_Mercator",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Mercator"],PARAMETER["False_Easting",0],PARAMETER["False_Northing",0],PARAMETER["Central_Meridian",0],PARAMETER["standard_parallel_1",0],UNIT["Meter",1]]
+   /// maybe this??
+   /// PROJCS["LKS94 / Lithuania TM",GEOGCS["LKS94",DATUM["D_Lithuania_1994",SPHEROID["GRS_1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",24],PARAMETER["scale_factor",0.9998],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["Meter",1]]
    /// </summary>
-   internal class MercatorProjection : PureProjection
+   public class LKS94Projection : PureProjection
    {
       const double MinLatitude = -85.05112878;
       const double MaxLatitude = 85.05112878;
       const double MinLongitude = -180;
       const double MaxLongitude = 180;
 
-      Size tileSize = new Size(256, 256);
+      Size tileSize = new Size(512, 512);
       public override Size TileSize
       {
          get
@@ -35,7 +35,7 @@ namespace GMap.NET.Internals
       {
          get
          {
-            return (1.0 / 298.257223563);
+            return (1.0 / 298.257222101);
          }
       }
 
@@ -46,16 +46,14 @@ namespace GMap.NET.Internals
          lat = Clip(lat, MinLatitude, MaxLatitude);
          lng = Clip(lng, MinLongitude, MaxLongitude);
 
-         double x = (lng + 180) / 360;
-         double sinLatitude = Math.Sin(lat * Math.PI / 180);
-         double y = 0.5 - Math.Log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI);
-
          Size s = GetTileMatrixSizePixel(zoom);
-         int mapSizeX = s.Width;
-         int mapSizeY = s.Height;
+         double mapSizeX = s.Width;
+         double mapSizeY = s.Height;
 
-         ret.X = (int) Clip(x * mapSizeX + 0.5, 0, mapSizeX - 1);
-         ret.Y = (int) Clip(y * mapSizeY + 0.5, 0, mapSizeY - 1);
+         double scale = 360.0 / mapSizeX;
+
+         ret.Y = (int) ((90.0 - lat) / scale);
+         ret.X = (int) ((lng + 180.0) / scale);
 
          return ret;
       }
@@ -68,11 +66,10 @@ namespace GMap.NET.Internals
          double mapSizeX = s.Width;
          double mapSizeY = s.Height;
 
-         double xx = (Clip(x, 0, mapSizeX - 1) / mapSizeX) - 0.5;
-         double yy = 0.5 - (Clip(y, 0, mapSizeY - 1) / mapSizeY);
+         double scale = 360.0 / mapSizeX;
 
-         ret.Lat = 90 - 360 * Math.Atan(Math.Exp(-yy * 2 * Math.PI)) / Math.PI;
-         ret.Lng = 360 * xx;
+         ret.Lat = 90 - (y * scale);
+         ret.Lng = (x * scale) - 180;
 
          return ret;
       }
@@ -107,8 +104,8 @@ namespace GMap.NET.Internals
 
       public override Size GetTileMatrixSizeXY(int zoom)
       {
-         int xy = 1 << zoom;
-         return new Size(xy, xy);
+         int y = (int) Math.Pow(2, zoom);
+         return new Size(2*y, y);
       }
 
       public override Size GetTileMatrixSizePixel(int zoom)

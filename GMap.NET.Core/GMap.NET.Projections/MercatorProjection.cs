@@ -1,20 +1,20 @@
 ﻿
-namespace GMap.NET.Internals
+namespace GMap.NET.Projections
 {
    using System;
 
    /// <summary>
-   /// Plate Carrée (literally, “plane square”) projection
-   /// PROJCS["WGS 84 / World Equidistant Cylindrical",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],UNIT["Meter",1]]
+   /// The Mercator projection
+   /// PROJCS["World_Mercator",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Mercator"],PARAMETER["False_Easting",0],PARAMETER["False_Northing",0],PARAMETER["Central_Meridian",0],PARAMETER["standard_parallel_1",0],UNIT["Meter",1]]
    /// </summary>
-   internal class PlateCarreeProjection : PureProjection
+   public class MercatorProjection : PureProjection
    {
       const double MinLatitude = -85.05112878;
       const double MaxLatitude = 85.05112878;
       const double MinLongitude = -180;
       const double MaxLongitude = 180;
 
-      Size tileSize = new Size(512, 512);
+      Size tileSize = new Size(256, 256);
       public override Size TileSize
       {
          get
@@ -46,14 +46,16 @@ namespace GMap.NET.Internals
          lat = Clip(lat, MinLatitude, MaxLatitude);
          lng = Clip(lng, MinLongitude, MaxLongitude);
 
+         double x = (lng + 180) / 360;
+         double sinLatitude = Math.Sin(lat * Math.PI / 180);
+         double y = 0.5 - Math.Log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI);
+
          Size s = GetTileMatrixSizePixel(zoom);
-         double mapSizeX = s.Width;
-         double mapSizeY = s.Height;
+         int mapSizeX = s.Width;
+         int mapSizeY = s.Height;
 
-         double scale = 360.0 / mapSizeX;
-
-         ret.Y = (int) ((90.0 - lat) / scale);
-         ret.X = (int) ((lng + 180.0) / scale);
+         ret.X = (int) Clip(x * mapSizeX + 0.5, 0, mapSizeX - 1);
+         ret.Y = (int) Clip(y * mapSizeY + 0.5, 0, mapSizeY - 1);
 
          return ret;
       }
@@ -66,10 +68,11 @@ namespace GMap.NET.Internals
          double mapSizeX = s.Width;
          double mapSizeY = s.Height;
 
-         double scale = 360.0 / mapSizeX;
+         double xx = (Clip(x, 0, mapSizeX - 1) / mapSizeX) - 0.5;
+         double yy = 0.5 - (Clip(y, 0, mapSizeY - 1) / mapSizeY);
 
-         ret.Lat = 90 - (y * scale);
-         ret.Lng = (x * scale) - 180;
+         ret.Lat = 90 - 360 * Math.Atan(Math.Exp(-yy * 2 * Math.PI)) / Math.PI;
+         ret.Lng = 360 * xx;
 
          return ret;
       }
@@ -104,8 +107,8 @@ namespace GMap.NET.Internals
 
       public override Size GetTileMatrixSizeXY(int zoom)
       {
-         int y = (int) Math.Pow(2, zoom);
-         return new Size(2*y, y);
+         int xy = 1 << zoom;
+         return new Size(xy, xy);
       }
 
       public override Size GetTileMatrixSizePixel(int zoom)

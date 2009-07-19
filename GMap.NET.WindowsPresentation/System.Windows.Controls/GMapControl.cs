@@ -34,6 +34,7 @@ namespace System.Windows.Controls
       FormattedText yahooMapCopyright;
       FormattedText virtualEarthCopyright;
       FormattedText openStreetMapCopyright;
+      FormattedText arcGisMapCopyright;
 
       /// <summary>
       /// pen for empty tile borders
@@ -129,7 +130,7 @@ namespace System.Windows.Controls
          {
             ItemsPanelTemplate template = new ItemsPanelTemplate();
             template.VisualTree = factoryPanel;
-            ItemsPanel = template;  
+            ItemsPanel = template;
          }
 
          Style st = new Style();
@@ -162,6 +163,7 @@ namespace System.Windows.Controls
          yahooMapCopyright = new FormattedText(Core.yahooMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
          virtualEarthCopyright = new FormattedText(Core.virtualEarthCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
          openStreetMapCopyright = new FormattedText(Core.openStreetMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+         arcGisMapCopyright = new FormattedText(Core.arcGisCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
 
          MapType = MapType.GoogleMap;
       }
@@ -215,9 +217,9 @@ namespace System.Windows.Controls
          mapFadeStoryboard.Begin(this);
       }
 
-      Transform MapRenderTransform; 
+      Transform MapRenderTransform;
       double zoomReal;
-   public double Zoom
+      public double Zoom
       {
          get
          {
@@ -235,7 +237,7 @@ namespace System.Windows.Controls
                   double scaleValue = remainder + 1;
                   {
                      MapRenderTransform = new ScaleTransform(scaleValue, scaleValue, ActualWidth/2, ActualHeight/2);
-                  }                   
+                  }
 
                   if(IsLoaded)
                   {
@@ -305,7 +307,7 @@ namespace System.Windows.Controls
 
                //Core.GoToCurrentPosition();
             }
-         }          
+         }
       }
 
       void Core_OnMapZoomChanged()
@@ -505,7 +507,7 @@ namespace System.Windows.Controls
          else
          {
             DrawMapWPF(drawingContext);
-         }         
+         }
 
          #region -- copyright --
 
@@ -542,6 +544,16 @@ namespace System.Windows.Controls
             case MapType.VirtualEarthSatellite:
             {
                drawingContext.DrawText(virtualEarthCopyright, new System.Windows.Point(5, ActualHeight - virtualEarthCopyright.Height - 5));
+            }
+            break;
+
+            case MapType.ArcGIS_Map:
+            case MapType.ArcGIS_Satellite:
+            case MapType.ArcGIS_ShadedRelief:
+            case MapType.ArcGIS_Terrain:
+            case MapType.ArcGIS_MapsLT_OrtoFoto:
+            {
+               drawingContext.DrawText(arcGisMapCopyright, new System.Windows.Point(5, ActualHeight - virtualEarthCopyright.Height - 5));            
             }
             break;
          }

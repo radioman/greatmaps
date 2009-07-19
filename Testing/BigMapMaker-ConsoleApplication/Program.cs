@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 using GMap.NET;
-using GMap.NET.Internals;
+using GMap.NET.Projections;
 using GMap.NET.WindowsForms;
 
 namespace BigMapMaker_ConsoleApplication
@@ -19,9 +18,10 @@ namespace BigMapMaker_ConsoleApplication
          GMaps.Instance.ImageProxy = new WindowsFormsImageProxy();
 
          MapType type = MapType.GoogleMap;
+         PureProjection pr = new MercatorProjection(); 
          int zoom = 12;
          RectLatLng area = RectLatLng.FromLTRB(25.013809204101563, 54.832138557519563, 25.506134033203125, 54.615623046071839);
-         List<GMap.NET.Point> tileArea = GMaps.Instance.GetAreaTileList(area, zoom);
+         List<GMap.NET.Point> tileArea = pr.GetAreaTileList(area, zoom);
          string bigImage = zoom + "-" + type + "-vilnius.png";
 
          Console.WriteLine("Preparing: " + bigImage);
@@ -34,12 +34,12 @@ namespace BigMapMaker_ConsoleApplication
          int maxX = tileArea.Max(p => p.X);
          int maxY = tileArea.Max(p => p.Y);
 
-         GMap.NET.Point pxMin = GMaps.Instance.FromTileXYToPixel(new GMap.NET.Point(minX, minY));
-         GMap.NET.Point pxMax = GMaps.Instance.FromTileXYToPixel(new GMap.NET.Point(maxX+1, maxY+1));
+         GMap.NET.Point pxMin = pr.FromTileXYToPixel(new GMap.NET.Point(minX, minY));
+         GMap.NET.Point pxMax = pr.FromTileXYToPixel(new GMap.NET.Point(maxX+1, maxY+1));
          GMap.NET.Point pxDeltaA = new GMap.NET.Point(pxMax.X - pxMin.X, pxMax.Y - pxMin.Y);
 
-         GMap.NET.Point topLeftPx = GMaps.Instance.FromLatLngToPixel(area.Location, zoom);
-         GMap.NET.Point rightButtomPx = GMaps.Instance.FromLatLngToPixel(area.Bottom, area.Right, zoom);
+         GMap.NET.Point topLeftPx = pr.FromLatLngToPixel(area.Location, zoom);
+         GMap.NET.Point rightButtomPx = pr.FromLatLngToPixel(area.Bottom, area.Right, zoom);
          GMap.NET.Point pxDelta = new GMap.NET.Point(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
 
          try
@@ -58,7 +58,7 @@ namespace BigMapMaker_ConsoleApplication
                      {
                         using(Graphics gfx = Graphics.FromImage(bmpDestination))
                         {
-                           gfx.DrawImage(tile.Img, (p.X - minX)*GMaps.Instance.TileSize.Width, (p.Y - minY)*GMaps.Instance.TileSize.Width);
+                           gfx.DrawImage(tile.Img, (p.X - minX)*pr.TileSize.Width, (p.Y - minY)*pr.TileSize.Width);
                         }
                      }
                   }
@@ -94,7 +94,7 @@ namespace BigMapMaker_ConsoleApplication
                      // draw scale
                      using(Pen p = new Pen(Brushes.Blue, 1))
                      {
-                        double rez = GMaps.Instance.GetGroundResolution(zoom, area.Bottom);
+                        double rez = pr.GetGroundResolution(zoom, area.Bottom);
                         int px100 = (int) (100.0 / rez); // 100 meters
                         int px1000 = (int) (1000.0 / rez); // 1km  
                         int px10km = (int) (10000.0 / rez); // 10km   

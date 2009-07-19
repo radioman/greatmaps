@@ -6,6 +6,7 @@ namespace GMap.NET.Internals
    using System.ComponentModel;
    using System.Diagnostics;
    using System.Threading;
+   using GMap.NET.Projections;
 
    /// <summary>
    /// internal map control core
@@ -44,6 +45,7 @@ namespace GMap.NET.Internals
       public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
       public readonly string yahooMapCopyright = string.Format("© Yahoo! Inc. - Map data & Imagery ©{0} NAVTEQ", DateTime.Today.Year);
       public readonly string virtualEarthCopyright = string.Format("©{0} Microsoft Corporation, ©{0} NAVTEQ, ©{0} Image courtesy of NASA", DateTime.Today.Year);
+      public readonly string arcGisCopyright = string.Format("©{0} ESRI - Map data ©{0} ArcGIS", DateTime.Today.Year);
 
       bool started = false;
       int zoom;
@@ -209,19 +211,28 @@ namespace GMap.NET.Internals
                case MapType.ArcGIS_ShadedRelief:
                case MapType.ArcGIS_Terrain:
                {
-                  Projection = new PlateCarreeProjection();
+                  if(false == (Projection is PlateCarreeProjection))
+                  {
+                     Projection = new PlateCarreeProjection();
+                  }
                }
                break;
 
                default:
                {
-                  Projection = new MercatorProjection();
+                  if(false == (Projection is MercatorProjection))
+                  {
+                     Projection = new MercatorProjection();
+                  }
                }
                break;
 
                case MapType.ArcGIS_MapsLT_OrtoFoto:
                {
-                  Projection = new LKS94Projection();
+                  if(false == (Projection is LKS94Projection))
+                  {
+                     Projection = new LKS94Projection();
+                  }
                }
                break;
             }

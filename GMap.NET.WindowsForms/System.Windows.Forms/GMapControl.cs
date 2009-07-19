@@ -656,6 +656,16 @@ namespace System.Windows.Forms
                e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
             }
             break;
+
+            case MapType.ArcGIS_Map:
+            case MapType.ArcGIS_Satellite:
+            case MapType.ArcGIS_ShadedRelief:
+            case MapType.ArcGIS_Terrain:
+            case MapType.ArcGIS_MapsLT_OrtoFoto:
+            {
+               e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+            }
+            break;
          }
 
          #endregion
