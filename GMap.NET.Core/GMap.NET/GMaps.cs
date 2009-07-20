@@ -27,7 +27,7 @@ namespace GMap.NET
 
       // Google (china) version strings
       public string VersionGoogleMapChina = "cn1.11";
-      public string VersionGoogleSatelliteChina = "40";
+      public string VersionGoogleSatelliteChina = "41";
       public string VersionGoogleLabelsChina = "cn1t.11";
       public string VersionGoogleTerrainChina = "cn1p.12";
 
