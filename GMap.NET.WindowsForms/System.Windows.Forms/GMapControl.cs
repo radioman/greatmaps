@@ -592,7 +592,10 @@ namespace System.Windows.Forms
       {
          base.OnLoad(e);
 
-         Core.StartSystem();
+         if(!DesignMode)
+         {
+            Core.StartSystem();
+         }
       }
 
       protected override void OnPaintBackground(PaintEventArgs e)
@@ -605,131 +608,136 @@ namespace System.Windows.Forms
 
       protected override void OnPaint(PaintEventArgs e)
       {
-         // render map
-         DrawMapGDIplus(e.Graphics);
-
-         // render objects on each layer
-         foreach(GMapOverlay o in Overlays)
          {
-            if(o.IsVisibile)
+            // render map
+            DrawMapGDIplus(e.Graphics);
+
+            // render objects on each layer
+            foreach(GMapOverlay o in Overlays)
             {
-               o.Render(e.Graphics);
+               if(o.IsVisibile)
+               {
+                  o.Render(e.Graphics);
+               }
             }
+
+            #region -- copyright --
+
+            switch(Core.MapType)
+            {
+               case MapType.GoogleMap:
+               case MapType.GoogleSatellite:
+               case MapType.GoogleLabels:
+               case MapType.GoogleTerrain:
+               case MapType.GoogleHybrid:
+               {
+                  e.Graphics.DrawString(Core.googleCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+               }
+               break;
+
+               case MapType.OpenStreetMap:
+               case MapType.OpenStreetOsm:
+               {
+                  e.Graphics.DrawString(Core.openStreetMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+               }
+               break;
+
+               case MapType.YahooMap:
+               case MapType.YahooSatellite:
+               case MapType.YahooLabels:
+               case MapType.YahooHybrid:
+               {
+                  e.Graphics.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+               }
+               break;
+
+               case MapType.VirtualEarthHybrid:
+               case MapType.VirtualEarthMap:
+               case MapType.VirtualEarthSatellite:
+               {
+                  e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+               }
+               break;
+
+               case MapType.ArcGIS_Map:
+               case MapType.ArcGIS_Satellite:
+               case MapType.ArcGIS_ShadedRelief:
+               case MapType.ArcGIS_Terrain:
+               case MapType.ArcGIS_MapsLT_OrtoFoto:
+               {
+                  e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+               }
+               break;
+            }
+
+            #endregion
+
+            #region -- draw scale --
+            if(MapScaleInfoEnabled)
+            {
+               if(Width > Core.pxRes5000km)
+               {
+                  e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes5000km, 10);
+                  e.Graphics.DrawString("5000Km", ScaleFont, ScalePen.Brush, Core.pxRes5000km + 10, 11);
+               }
+               if(Width > Core.pxRes1000km)
+               {
+                  e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes1000km, 10);
+                  e.Graphics.DrawString("1000Km", ScaleFont, ScalePen.Brush, Core.pxRes1000km + 10, 11);
+               }
+               if(Width > Core.pxRes100km && Zoom > 2)
+               {
+                  e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes100km, 10);
+                  e.Graphics.DrawString("100Km", ScaleFont, ScalePen.Brush, Core.pxRes100km + 10, 11);
+               }
+               if(Width > Core.pxRes10km && Zoom > 5)
+               {
+                  e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes10km, 10);
+                  e.Graphics.DrawString("10Km", ScaleFont, ScalePen.Brush, Core.pxRes10km + 10, 11);
+               }
+               if(Width > Core.pxRes1000m && Zoom >= 10)
+               {
+                  e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes1000m, 10);
+                  e.Graphics.DrawString("1000m", ScaleFont, ScalePen.Brush, Core.pxRes1000m + 10, 11);
+               }
+               if(Width > Core.pxRes100m && Zoom > 11)
+               {
+                  e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes100m, 10);
+                  e.Graphics.DrawString("100m", ScaleFont, ScalePen.Brush, Core.pxRes100m + 9, 11);
+               }
+            }
+            #endregion
          }
-
-         #region -- copyright --
-
-         switch(Core.MapType)
-         {
-            case MapType.GoogleMap:
-            case MapType.GoogleSatellite:
-            case MapType.GoogleLabels:
-            case MapType.GoogleTerrain:
-            case MapType.GoogleHybrid:
-            {
-               e.Graphics.DrawString(Core.googleCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-            }
-            break;
-
-            case MapType.OpenStreetMap:
-            case MapType.OpenStreetOsm:
-            {
-               e.Graphics.DrawString(Core.openStreetMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-            }
-            break;
-
-            case MapType.YahooMap:
-            case MapType.YahooSatellite:
-            case MapType.YahooLabels:
-            case MapType.YahooHybrid:
-            {
-               e.Graphics.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-            }
-            break;
-
-            case MapType.VirtualEarthHybrid:
-            case MapType.VirtualEarthMap:
-            case MapType.VirtualEarthSatellite:
-            {
-               e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-            }
-            break;
-
-            case MapType.ArcGIS_Map:
-            case MapType.ArcGIS_Satellite:
-            case MapType.ArcGIS_ShadedRelief:
-            case MapType.ArcGIS_Terrain:
-            case MapType.ArcGIS_MapsLT_OrtoFoto:
-            {
-               e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-            }
-            break;
-         }
-
-         #endregion
-
-         #region -- draw scale --
-         if(MapScaleInfoEnabled)
-         {
-            if(Width > Core.pxRes5000km)
-            {
-               e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes5000km, 10);
-               e.Graphics.DrawString("5000Km", ScaleFont, ScalePen.Brush, Core.pxRes5000km + 10, 11);
-            }
-            if(Width > Core.pxRes1000km)
-            {
-               e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes1000km, 10);
-               e.Graphics.DrawString("1000Km", ScaleFont, ScalePen.Brush, Core.pxRes1000km + 10, 11);
-            }
-            if(Width > Core.pxRes100km && Zoom > 2)
-            {
-               e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes100km, 10);
-               e.Graphics.DrawString("100Km", ScaleFont, ScalePen.Brush, Core.pxRes100km + 10, 11);
-            }
-            if(Width > Core.pxRes10km && Zoom > 5)
-            {
-               e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes10km, 10);
-               e.Graphics.DrawString("10Km", ScaleFont, ScalePen.Brush, Core.pxRes10km + 10, 11);
-            }
-            if(Width > Core.pxRes1000m && Zoom >= 10)
-            {
-               e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes1000m, 10);
-               e.Graphics.DrawString("1000m", ScaleFont, ScalePen.Brush, Core.pxRes1000m + 10, 11);
-            }
-            if(Width > Core.pxRes100m && Zoom > 11)
-            {
-               e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes100m, 10);
-               e.Graphics.DrawString("100m", ScaleFont, ScalePen.Brush, Core.pxRes100m + 9, 11);
-            }
-         }
-         #endregion
       }
 
       protected override void OnSizeChanged(EventArgs e)
       {
          base.OnSizeChanged(e);
 
-         Core.OnMapSizeChanged(Width, Height);
-
-         // 50px outside control
-         Core.CurrentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
-
-         if(Visible && IsHandleCreated)
+         if(!DesignMode)
          {
-            // keep center on same position
-            if(SizeChangedType == SizeChangedType.CurrentPosition)
-            {
-               Core.renderOffset.Offset((Width-Core.Width)/2, (Height-Core.Height)/2);
-               Core.GoToCurrentPosition();
-            }
-            else if(SizeChangedType == SizeChangedType.ViewCenter)
-            {
-               // do not work as expected ;/
+            Core.OnMapSizeChanged(Width, Height);
 
-               //Core.renderOffset.Offset((Width-Core.Width)/2, (Height-Core.Height)/2);
-               //Core.CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
+            // 50px outside control
+            Core.CurrentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
 
-               //Core.GoToCurrentPosition();
+            if(Visible && IsHandleCreated)
+            {
+               // keep center on same position
+               if(SizeChangedType == SizeChangedType.CurrentPosition)
+               {
+                  Core.renderOffset.Offset((Width-Core.Width)/2, (Height-Core.Height)/2);
+                  Core.GoToCurrentPosition();
+               }
+               else if(SizeChangedType == SizeChangedType.ViewCenter)
+               {
+                  // do not work as expected ;/
+
+                  //Core.renderOffset.Offset((Width-Core.Width)/2, (Height-Core.Height)/2);
+                  //Core.CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
+
+                  //Core.GoToCurrentPosition();
+               }
             }
          }
       }
