@@ -138,7 +138,7 @@ namespace GMap.NET
       /// <summary>
       /// cache worker
       /// </summary>
-      BackgroundWorker cacher = new BackgroundWorker();
+      internal BackgroundWorker cacher = new BackgroundWorker();
 
       public GMaps()
       {
@@ -359,8 +359,6 @@ namespace GMap.NET
             else
             {
                Debug.WriteLine("CacheTasks: complete");
-
-               Thread.Sleep(1000);
                cacher.CancelAsync();
             }
 

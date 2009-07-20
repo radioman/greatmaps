@@ -126,7 +126,7 @@ namespace System.Windows.Forms
       /// </summary>
       public GMapControl()
       {
-         if(!DesignModeInConstruct)
+         if(!DesignModeInConstruct && !DesignMode)
          {
             GMaps.Instance.ImageProxy = new WindowsFormsImageProxy();
 
@@ -149,8 +149,6 @@ namespace System.Windows.Forms
             // overlay testing
             GMapOverlay ov = new GMapOverlay(this, "base");
             Overlays.Add(ov);
-
-            if(!DesignMode)
             {
                MapType = MapType.GoogleMap;
             }

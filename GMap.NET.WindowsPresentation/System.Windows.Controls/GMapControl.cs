@@ -89,83 +89,91 @@ namespace System.Windows.Controls
       public MouseButton DragButton = MouseButton.Right;
 
       /// <summary>
+      /// zoom increment on mouse wheel
+      /// </summary>
+      public double ZoomIncrement = 1.0;
+
+      /// <summary>
       /// list of markers
       /// </summary>
       public readonly ObservableCollection<GMapMarker> Markers = new ObservableCollection<GMapMarker>();
 
       public GMapControl()
       {
-         #region -- templates --
-
-         #region -- xaml --
-         //  <ItemsControl Name="figures">
-         //    <ItemsControl.ItemTemplate>
-         //        <DataTemplate>
-         //            <ContentPresenter Content="{Binding Path=Shape}" />
-         //        </DataTemplate>
-         //    </ItemsControl.ItemTemplate>
-         //    <ItemsControl.ItemsPanel>
-         //        <ItemsPanelTemplate>
-         //            <Canvas />
-         //        </ItemsPanelTemplate>
-         //    </ItemsControl.ItemsPanel>
-         //    <ItemsControl.ItemContainerStyle>
-         //        <Style>
-         //            <Setter Property="Canvas.Left" Value="{Binding Path=Pos.X}"/>
-         //            <Setter Property="Canvas.Top" Value="{Binding Path=Pos.Y}"/>
-         //        </Style>
-         //    </ItemsControl.ItemContainerStyle>
-         //</ItemsControl> 
-         #endregion
-
-         DataTemplate dt = new DataTemplate(typeof(GMapMarker));
+         if(!DesignModeInConstruct)
          {
-            FrameworkElementFactory fef = new FrameworkElementFactory(typeof(ContentPresenter));
-            fef.SetBinding(ContentPresenter.ContentProperty, new Binding("Shape"));
-            dt.VisualTree = fef;
+            #region -- templates --
+
+            #region -- xaml --
+            //  <ItemsControl Name="figures">
+            //    <ItemsControl.ItemTemplate>
+            //        <DataTemplate>
+            //            <ContentPresenter Content="{Binding Path=Shape}" />
+            //        </DataTemplate>
+            //    </ItemsControl.ItemTemplate>
+            //    <ItemsControl.ItemsPanel>
+            //        <ItemsPanelTemplate>
+            //            <Canvas />
+            //        </ItemsPanelTemplate>
+            //    </ItemsControl.ItemsPanel>
+            //    <ItemsControl.ItemContainerStyle>
+            //        <Style>
+            //            <Setter Property="Canvas.Left" Value="{Binding Path=Pos.X}"/>
+            //            <Setter Property="Canvas.Top" Value="{Binding Path=Pos.Y}"/>
+            //        </Style>
+            //    </ItemsControl.ItemContainerStyle>
+            //</ItemsControl> 
+            #endregion
+
+            DataTemplate dt = new DataTemplate(typeof(GMapMarker));
+            {
+               FrameworkElementFactory fef = new FrameworkElementFactory(typeof(ContentPresenter));
+               fef.SetBinding(ContentPresenter.ContentProperty, new Binding("Shape"));
+               dt.VisualTree = fef;
+            }
+            ItemTemplate = dt;
+
+            FrameworkElementFactory factoryPanel = new FrameworkElementFactory(typeof(Canvas));
+            {
+               ItemsPanelTemplate template = new ItemsPanelTemplate();
+               template.VisualTree = factoryPanel;
+               ItemsPanel = template;
+            }
+
+            Style st = new Style();
+            {
+               st.Setters.Add(new Setter(Canvas.LeftProperty, new Binding("LocalPositionX")));
+               st.Setters.Add(new Setter(Canvas.TopProperty, new Binding("LocalPositionY")));
+               st.Setters.Add(new Setter(Canvas.ZIndexProperty, new Binding("ZIndex")));
+            }
+            ItemContainerStyle = st;
+            #endregion
+
+            ClipToBounds = true;
+            SnapsToDevicePixels = true;
+
+            // removes white lines between tiles!
+            SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+
+            GMaps.Instance.ImageProxy = new WindowsPresentationImageProxy();
+
+            Core.RenderMode = GMap.NET.RenderMode.WPF;
+            Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
+            Core.OnMapDrag += new MapDrag(Core_OnMapDrag);
+            Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
+            Loaded += new RoutedEventHandler(GMapControl_Loaded);
+            SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
+
+            this.ItemsSource = Markers;
+
+            googleCopyright = new FormattedText(Core.googleCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+            yahooMapCopyright = new FormattedText(Core.yahooMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+            virtualEarthCopyright = new FormattedText(Core.virtualEarthCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+            openStreetMapCopyright = new FormattedText(Core.openStreetMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+            arcGisMapCopyright = new FormattedText(Core.arcGisCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+
+            MapType = MapType.GoogleMap;
          }
-         ItemTemplate = dt;
-
-         FrameworkElementFactory factoryPanel = new FrameworkElementFactory(typeof(Canvas));
-         {
-            ItemsPanelTemplate template = new ItemsPanelTemplate();
-            template.VisualTree = factoryPanel;
-            ItemsPanel = template;
-         }
-
-         Style st = new Style();
-         {
-            st.Setters.Add(new Setter(Canvas.LeftProperty, new Binding("LocalPositionX")));
-            st.Setters.Add(new Setter(Canvas.TopProperty, new Binding("LocalPositionY")));
-            st.Setters.Add(new Setter(Canvas.ZIndexProperty, new Binding("ZIndex")));
-         }
-         ItemContainerStyle = st;
-         #endregion
-
-         ClipToBounds = true;
-         SnapsToDevicePixels = true;
-
-         // removes white lines between tiles!
-         SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
-
-         GMaps.Instance.ImageProxy = new WindowsPresentationImageProxy();
-
-         Core.RenderMode = GMap.NET.RenderMode.WPF;
-         Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
-         Core.OnMapDrag += new MapDrag(Core_OnMapDrag);
-         Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
-         Loaded += new RoutedEventHandler(GMapControl_Loaded);
-         SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
-
-         this.ItemsSource = Markers;
-
-         googleCopyright = new FormattedText(Core.googleCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
-         yahooMapCopyright = new FormattedText(Core.yahooMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
-         virtualEarthCopyright = new FormattedText(Core.virtualEarthCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
-         openStreetMapCopyright = new FormattedText(Core.openStreetMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
-         arcGisMapCopyright = new FormattedText(Core.arcGisCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
-
-         MapType = MapType.GoogleMap;
       }
 
       // testing smooth zoom
@@ -257,6 +265,14 @@ namespace System.Windows.Controls
          }
       }
 
+      protected bool DesignModeInConstruct
+      {
+         get
+         {
+            return (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+         }
+      }
+
       /// <summary>
       /// inits core system
       /// </summary>
@@ -266,7 +282,7 @@ namespace System.Windows.Controls
       {
          Core.StartSystem();
 
-         SetFadeStoryBoard(500);
+         //SetFadeStoryBoard(500);
       }
 
       /// <summary>
@@ -588,11 +604,11 @@ namespace System.Windows.Controls
 
             if(e.Delta > 0)
             {
-               Zoom += 0.1;
+               Zoom += ZoomIncrement;
             }
             else if(e.Delta < 0)
             {
-               Zoom -= 0.1;
+               Zoom -= ZoomIncrement;
             }
          }
 
