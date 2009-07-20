@@ -37,7 +37,7 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.2";
 
       // Virtual Earth
-      public string VersionVirtualEarth = "300";
+      public string VersionVirtualEarth = "304";
 
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
