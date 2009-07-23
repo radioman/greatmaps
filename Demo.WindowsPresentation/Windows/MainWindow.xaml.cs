@@ -88,7 +88,7 @@ namespace Demo.WindowsPresentation
          checkBoxDragMap.IsChecked = MainMap.CanDragMap;
 
          // set current marker
-         currentMarker = new GMapMarker(MainMap, MainMap.CurrentPosition);
+         currentMarker = new GMapMarker(MainMap.CurrentPosition);
          {
             currentMarker.Shape = new Cross();
             currentMarker.Offset = new System.Windows.Point(-15, -15);
@@ -101,7 +101,7 @@ namespace Demo.WindowsPresentation
          PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius", out status);
          if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
          {
-            GMapMarker it = new GMapMarker(MainMap, pos.Value);
+            GMapMarker it = new GMapMarker(pos.Value);
             {
                it.Shape = new CustomMarkerDemo(this, it, "Welcome to Lithuania! ;}");
             }
@@ -139,8 +139,6 @@ namespace Demo.WindowsPresentation
       DispatcherTimer memoryLeakTestTimer = new DispatcherTimer();
 
       // real time testing
-      // Be hero, found where memmory is leaking! ;}
-      // p.s. only leaks if object position is allways the same
       private void button13_Click(object sender, RoutedEventArgs e)
       {
          if(memoryLeakTestTimer.IsEnabled)
@@ -194,10 +192,14 @@ namespace Demo.WindowsPresentation
             p.Lng += r.NextDouble()/3.0;
             p.Lat += r.NextDouble()/4.0;
 
-            GMapMarker it = new GMapMarker(MainMap, p);
+            GMapMarker it = new GMapMarker(p);
             //it.Shape = new CustomMarkerDemo(this, it, null);
             it.Shape = new Test(MainMap.Markers.Count.ToString());
             MainMap.Markers.Add(it);
+
+            // forcing to update local positions because Test marker
+            // do not use offset so don't update position automaticaly 
+            it.ForceUpdateLocalPosition(MainMap);
          }
 
          memoryLeakTestTimer.Start();
@@ -477,7 +479,7 @@ namespace Demo.WindowsPresentation
       // add marker
       private void button8_Click(object sender, RoutedEventArgs e)
       {
-         GMapMarker m = new GMapMarker(MainMap, currentMarker.Position);
+         GMapMarker m = new GMapMarker(currentMarker.Position);
          {
             Placemark p = null;
             if(checkBoxPlace.IsChecked.Value)
@@ -518,16 +520,16 @@ namespace Demo.WindowsPresentation
          MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, (int)MainMap.Zoom);
          if(route != null)
          {
-            GMapMarker m1 = new GMapMarker(MainMap, start);
+            GMapMarker m1 = new GMapMarker(start);
             m1.Shape = new CustomMarkerDemo(this, m1, "Start: " + route.Name);
 
-            GMapMarker m2 = new GMapMarker(MainMap, end);
+            GMapMarker m2 = new GMapMarker(end);
             m2.Shape = new CustomMarkerDemo(this, m2, "End: " + start.ToString());
 
-            GMapMarker mRoute = new GMapMarker(MainMap, start);
+            GMapMarker mRoute = new GMapMarker(start);
             {
                mRoute.Route.AddRange(route.Points);
-               mRoute.RegenerateRouteShape();
+               mRoute.RegenerateRouteShape(MainMap);
                mRoute.ZIndex = -1;
             }
 

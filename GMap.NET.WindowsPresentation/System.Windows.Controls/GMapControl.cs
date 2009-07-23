@@ -333,7 +333,7 @@ namespace System.Windows.Controls
          {
             foreach(var i in routes)
             {
-               i.RegenerateRouteShape();
+               i.RegenerateRouteShape(this);
             }
          }
       }

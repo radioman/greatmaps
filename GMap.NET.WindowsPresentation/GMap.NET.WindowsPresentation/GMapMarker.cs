@@ -6,6 +6,7 @@ namespace GMap.NET.WindowsPresentation
    using System.Windows;
    using System.Windows.Controls;
    using GMap.NET;
+   using System.Windows.Media;
 
    /// <summary>
    /// GMap.NET marker
@@ -38,6 +39,8 @@ namespace GMap.NET.WindowsPresentation
             {
                shape = value;
                OnPropertyChanged("Shape");
+
+               UpdateLocalPosition();
             }
          }
       }
@@ -58,8 +61,32 @@ namespace GMap.NET.WindowsPresentation
             if(position != value)
             {
                position = value; 
-               UpdateLocalPosition();
+               UpdateLocalPosition();                 
             }
+         }
+      }
+
+      GMapControl map;
+
+      /// <summary>
+      /// the map of this marker
+      /// </summary>
+      public GMapControl Map
+      {
+         get
+         {
+            if(Shape != null && map == null)
+            {
+               DependencyObject visual = Shape;
+               while(visual != null && !(visual is GMapControl))
+               {
+                  visual = VisualTreeHelper.GetParent(visual);
+               }
+
+               map = visual as GMapControl;
+            }
+
+            return map;
          }
       }
 
@@ -156,11 +183,8 @@ namespace GMap.NET.WindowsPresentation
       /// </summary>
       public readonly List<PointLatLng> Route = new List<PointLatLng>();
 
-      internal GMapControl Control;
-
-      public GMapMarker(GMapControl control, PointLatLng pos)
+      public GMapMarker(PointLatLng pos)
       {
-         Control = control;
          Position = pos;
       }
 
@@ -174,31 +198,49 @@ namespace GMap.NET.WindowsPresentation
       }
 
       /// <summary>
-      /// updates marker position, internal only
+      /// updates marker position, internal access usualy
       /// </summary>
       internal void UpdateLocalPosition()
       {
-         GMap.NET.Point p = Control.FromLatLngToLocal(Position);
+         if(Map != null)
+         {
+            GMap.NET.Point p = Map.FromLatLngToLocal(Position);
 
-         LocalPositionX = p.X + (int)Offset.X;
-         LocalPositionY = p.Y + (int)Offset.Y;
+            LocalPositionX = p.X + (int) Offset.X;
+            LocalPositionY = p.Y + (int) Offset.Y;
+         }
+      }
+
+      /// <summary>
+      /// forces to  update local marker  position
+      /// </summary>
+      /// <param name="m"></param>
+      public void ForceUpdateLocalPosition(GMapControl m)
+      {
+         if(m != null)
+         {
+            map = m;
+            UpdateLocalPosition();
+         }
       }
 
       /// <summary>
       /// regenerates shape of route
       /// </summary>
-      public void RegenerateRouteShape()
+      public void RegenerateRouteShape(GMapControl map)
       {
-         if(Route.Count > 1)
+         this.map = map;
+
+         if(map != null && Route.Count > 1)
          {
             var localPath = new List<System.Windows.Point>();
-            var offset = Control.FromLatLngToLocal(Route[0]);
+            var offset = Map.FromLatLngToLocal(Route[0]);
             foreach(var i in Route)
             {
-               var p = Control.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
+               var p = Map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
                localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
             }
-            this.Shape = Control.CreateRoutePath(localPath);
+            this.Shape = map.CreateRoutePath(localPath);
          }
       }
    }
