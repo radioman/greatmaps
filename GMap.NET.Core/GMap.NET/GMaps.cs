@@ -222,7 +222,7 @@ namespace GMap.NET
       public KmlType GetRouteBetweenPointsKml(string start, string end, bool avoidHighways)
       {
          return GetRouteBetweenPointsKmlUrl(MakeRouteAndDirectionsKmlUrl(start, end, Language, avoidHighways));
-      }        
+      }
 
       /// <summary>
       /// get route between two points
@@ -239,6 +239,48 @@ namespace GMap.NET
          int zoomFactor;
          MapRoute ret = null;
          List<PointLatLng> points = GetRouteBetweenPointsUrl(MakeRouteUrl(start, end, Language, avoidHighways), Zoom, UseRouteCache, out tooltip, out numLevels, out zoomFactor);
+         if(points != null)
+         {
+            ret = new MapRoute(points, tooltip);
+         }
+         return ret;
+      }
+
+      /// <summary>
+      /// Gets a walking route (if supported)
+      /// </summary>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="Zoom"></param>
+      /// <returns></returns>
+      public MapRoute GetWalkingRouteBetweenPoints(PointLatLng start, PointLatLng end, int Zoom)
+      {
+         string tooltip;
+         int numLevels;
+         int zoomFactor;
+         MapRoute ret = null;
+         List<PointLatLng> points = GetRouteBetweenPointsUrl(MakeWalkingRouteUrl(start, end, Language), Zoom, UseRouteCache, out tooltip, out numLevels, out zoomFactor);
+         if(points != null)
+         {
+            ret = new MapRoute(points, tooltip);
+         }
+         return ret;
+      }
+
+      /// <summary>
+      /// Gets a walking route (if supported)
+      /// </summary>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="Zoom"></param>
+      /// <returns></returns>
+      public MapRoute GetWalkingRouteBetweenPoints(string start, string end, int Zoom)
+      {
+         string tooltip;
+         int numLevels;
+         int zoomFactor;
+         MapRoute ret = null;
+         List<PointLatLng> points = GetRouteBetweenPointsUrl(MakeWalkingRouteUrl(start, end, Language), Zoom, UseRouteCache, out tooltip, out numLevels, out zoomFactor);
          if(points != null)
          {
             ret = new MapRoute(points, tooltip);
@@ -294,7 +336,7 @@ namespace GMap.NET
          db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.Language, Path.DirectorySeparatorChar);
 
          return Cache.Instance.ExportMapDataToDB(file, db.ToString());
-      }         
+      }
 
       /// <summary>
       /// enqueueens tile to cache
@@ -369,7 +411,7 @@ namespace GMap.NET
       #endregion
 
       #region -- URL generation --
-      
+
       /// <summary>
       /// makes url for image
       /// </summary>
@@ -429,7 +471,7 @@ namespace GMap.NET
 
                return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrain, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
-            break; 
+            break;
             #endregion
 
             #region -- Google (China) version --
@@ -487,7 +529,7 @@ namespace GMap.NET
 
                return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
-            break; 
+            break;
             #endregion
 
             #region -- Yahoo --
@@ -504,7 +546,7 @@ namespace GMap.NET
             case MapType.YahooLabels:
             {
                return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&t=h&.intl={2}&x={3}&y={4}&z={5}&r=1", 1, VersionYahooLabels, language, pos.X, (((1 << zoom) >> 1)-1-pos.Y), (zoom+1));
-            } 
+            }
             #endregion
 
             #region -- OpenStreet --
@@ -518,7 +560,7 @@ namespace GMap.NET
             {
                char letter = "abc"[GetServerNum(pos, 3)];
                return string.Format("http://{0}.tah.openstreetmap.org/Tiles/tile/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
-            } 
+            }
             #endregion
 
             #region -- VirtualEarth --
@@ -538,8 +580,8 @@ namespace GMap.NET
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
                return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}", GetServerNum(pos, 4), key, VersionVirtualEarth, language);
-            } 
-            #endregion  
+            }
+            #endregion
 
             #region -- ArcGIS --
             case MapType.ArcGIS_Map:
@@ -722,6 +764,34 @@ namespace GMap.NET
 
          return string.Format("http://maps.google.com/maps?f=q&output=kml&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'));
       }
+
+      /// <summary>
+      /// makes url for walking routing
+      /// </summary>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="language"></param>
+      /// <returns></returns>
+      internal string MakeWalkingRouteUrl(PointLatLng start, PointLatLng end, string language)
+      {
+         string directions = "&mra=ls&dirflg=w";
+
+         return string.Format("http://maps.google.com/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, directions, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture));
+      }
+
+      /// <summary>
+      /// makes url for walking routing
+      /// </summary>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="language"></param>
+      /// <returns></returns>
+      internal string MakeWalkingRouteUrl(string start, string end, string language)
+      {
+         string directions = "&mra=ls&dirflg=w";
+         return string.Format("http://maps.google.com/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, directions, start.Replace(' ', '+'), end.Replace(' ', '+'));
+      }
+
       #endregion
 
       #region -- Content download --
@@ -1223,7 +1293,7 @@ namespace GMap.NET
                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
                request.ServicePoint.ConnectionLimit = 50;
                request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
-               request.AutomaticDecompression = DecompressionMethods.GZip;  
+               request.AutomaticDecompression = DecompressionMethods.GZip;
                request.UserAgent = UserAgent;
                request.Timeout = Timeout;
                request.ReadWriteTimeout = Timeout*6;
