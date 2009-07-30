@@ -19,9 +19,9 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "w2.100";
+      public string VersionGoogleMap = "w2.101";
       public string VersionGoogleSatellite = "41";
-      public string VersionGoogleLabels = "w2t.100";
+      public string VersionGoogleLabels = "w2t.101";
       public string VersionGoogleTerrain = "w2p.87";
       public string SecGoogleWord = "Galileo";
 
