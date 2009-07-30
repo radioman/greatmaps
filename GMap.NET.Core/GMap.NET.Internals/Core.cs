@@ -218,7 +218,7 @@ namespace GMap.NET.Internals
                }
                break;                 
 
-               case MapType.ArcGIS_MapsLT_OrtoFoto:
+               case MapType.ArcGIS_MapsLT_OrtoFoto_Testing:
                {
                   if(false == (Projection is LKS94Projection))
                   {

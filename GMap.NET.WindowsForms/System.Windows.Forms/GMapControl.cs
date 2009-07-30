@@ -663,7 +663,7 @@ namespace System.Windows.Forms
                case MapType.ArcGIS_Satellite:
                case MapType.ArcGIS_ShadedRelief:
                case MapType.ArcGIS_Terrain:
-               case MapType.ArcGIS_MapsLT_OrtoFoto:
+               case MapType.ArcGIS_MapsLT_OrtoFoto_Testing:
                {
                   e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
                }

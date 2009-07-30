@@ -614,7 +614,7 @@ namespace GMap.NET
             #endregion
 
             #region -- MapsLT --
-            case MapType.ArcGIS_MapsLT_OrtoFoto:
+            case MapType.ArcGIS_MapsLT_OrtoFoto_Testing:
             {
                // http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L02/R0000001b/C00000028.jpg
 
@@ -1336,7 +1336,7 @@ namespace GMap.NET
                   }
                   break;
 
-                  case MapType.ArcGIS_MapsLT_OrtoFoto:
+                  case MapType.ArcGIS_MapsLT_OrtoFoto_Testing:
                   {
                      request.Referer = "http://maps.lt/map/WebMapApp.aspx?lang=lt";
                   }

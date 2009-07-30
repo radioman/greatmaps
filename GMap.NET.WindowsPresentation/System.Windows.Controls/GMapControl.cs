@@ -567,7 +567,7 @@ namespace System.Windows.Controls
             case MapType.ArcGIS_Satellite:
             case MapType.ArcGIS_ShadedRelief:
             case MapType.ArcGIS_Terrain:
-            case MapType.ArcGIS_MapsLT_OrtoFoto:
+            case MapType.ArcGIS_MapsLT_OrtoFoto_Testing:
             {
                drawingContext.DrawText(arcGisMapCopyright, new System.Windows.Point(5, ActualHeight - virtualEarthCopyright.Height - 5));            
             }
