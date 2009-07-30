@@ -715,7 +715,7 @@ namespace GMap.NET
       /// <returns></returns>
       internal string MakeRouteUrl(PointLatLng start, PointLatLng end, string language, bool avoidHighways)
       {
-         string highway = avoidHighways ? "&mra=ls&dirflg=h" : string.Empty;
+         string highway = avoidHighways ? "&mra=ls&dirflg=dh" : "&mra=ls&dirflg=d";
 
          return string.Format("http://maps.google.com/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, highway, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture));
       }
@@ -730,7 +730,7 @@ namespace GMap.NET
       /// <returns></returns>
       internal string MakeRouteUrl(string start, string end, string language, bool avoidHighways)
       {
-         string highway = avoidHighways ? "&mra=ls&dirflg=h" : string.Empty;
+         string highway = avoidHighways ? "&mra=ls&dirflg=dh" : "&mra=ls&dirflg=d";
 
          return string.Format("http://maps.google.com/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'));
       }
@@ -745,7 +745,7 @@ namespace GMap.NET
       /// <returns></returns>
       internal string MakeRouteAndDirectionsKmlUrl(PointLatLng start, PointLatLng end, string language, bool avoidHighways)
       {
-         string highway = avoidHighways ? "&mra=ls&dirflg=h" : string.Empty;
+         string highway = avoidHighways ? "&mra=ls&dirflg=dh" : "&mra=ls&dirflg=d";
 
          return string.Format("http://maps.google.com/maps?f=q&output=kml&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, highway, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture));
       }
@@ -760,7 +760,7 @@ namespace GMap.NET
       /// <returns></returns>
       internal string MakeRouteAndDirectionsKmlUrl(string start, string end, string language, bool avoidHighways)
       {
-         string highway = avoidHighways ? "&mra=ls&dirflg=h" : string.Empty;
+         string highway = avoidHighways ? "&mra=ls&dirflg=dh" : "&mra=ls&dirflg=d";
 
          return string.Format("http://maps.google.com/maps?f=q&output=kml&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'));
       }

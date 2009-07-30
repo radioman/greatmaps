@@ -216,6 +216,15 @@ namespace GMap.NET.Internals
                      Projection = new PlateCarreeProjection();
                   }
                }
+               break;                 
+
+               case MapType.ArcGIS_MapsLT_OrtoFoto:
+               {
+                  if(false == (Projection is LKS94Projection))
+                  {
+                     Projection = new LKS94Projection();
+                  }
+               }
                break;
 
                default:
@@ -223,15 +232,6 @@ namespace GMap.NET.Internals
                   if(false == (Projection is MercatorProjection))
                   {
                      Projection = new MercatorProjection();
-                  }
-               }
-               break;
-
-               case MapType.ArcGIS_MapsLT_OrtoFoto:
-               {
-                  if(false == (Projection is LKS94Projection))
-                  {
-                     Projection = new LKS94Projection();
                   }
                }
                break;

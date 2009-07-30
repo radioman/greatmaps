@@ -9,10 +9,10 @@ namespace GMap.NET.Projections
    /// </summary>
    public class LKS94Projection : PureProjection
    {
-      const double MinLatitude = -85.05112878;
-      const double MaxLatitude = 85.05112878;
-      const double MinLongitude = -180;
-      const double MaxLongitude = 180;
+      const double MinLatitude = 53.77;
+      const double MaxLatitude = 55.55;
+      const double MinLongitude = 20.55;
+      const double MaxLongitude = 27;
 
       Size tileSize = new Size(512, 512);
       public override Size TileSize
@@ -52,7 +52,7 @@ namespace GMap.NET.Projections
 
          double scale = 360.0 / mapSizeX;
 
-         ret.Y = (int) ((90.0 - lat) / scale);
+         ret.Y = (int) ((90.0 - lat + 24) / scale);
          ret.X = (int) ((lng + 180.0) / scale);
 
          return ret;
@@ -68,8 +68,8 @@ namespace GMap.NET.Projections
 
          double scale = 360.0 / mapSizeX;
 
-         ret.Lat = 90 - (y * scale);
-         ret.Lng = (x * scale) - 180;
+         ret.Lat = Clip(90 - (y * scale) - 24, MinLatitude, MaxLatitude);
+         ret.Lng = Clip((x * scale) - 180, MinLongitude, MaxLongitude);
 
          return ret;
       }
@@ -104,8 +104,92 @@ namespace GMap.NET.Projections
 
       public override Size GetTileMatrixSizeXY(int zoom)
       {
-         int y = (int) Math.Pow(2, zoom);
-         return new Size(2*y, y);
+         Size ret = Size.Empty;
+
+         switch(zoom)
+         {
+            #region -- sizes --
+            case 0:
+            {
+               ret = new Size(2, 1);
+            }
+            break;
+
+            case 1:
+            {
+               ret = new Size(3, 2);
+            }
+            break;
+
+            case 2:
+            {
+               ret = new Size(4, 3);
+            }
+            break;
+
+            case 3:
+            {
+               ret = new Size(7, 5);
+            }
+            break;
+
+            case 4:
+            {
+               ret = new Size(13, 10);
+            }
+            break;
+
+            case 5:
+            {
+               ret = new Size(25, 19);
+            }
+            break;
+
+            case 6:
+            {
+               ret = new Size(49, 37);
+            }
+            break;
+
+            case 7:
+            {
+               ret = new Size(96, 73);
+            }
+            break;
+
+            case 8:
+            {
+               ret = new Size(191, 145);
+            }
+            break;
+
+            case 9:
+            {
+               ret = new Size(304, 232);
+            }
+            break;
+
+            case 10:
+            {
+               ret = new Size(406, 309);
+            }
+            break;
+
+            case 11:
+            {
+               ret = new Size(607, 463);
+            }
+            break;
+
+            case 12:
+            {
+               ret = new Size(1518, 1156);
+            }
+            break; 
+            #endregion
+         }
+
+         return ret;
       }
 
       public override Size GetTileMatrixSizePixel(int zoom)
