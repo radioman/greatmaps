@@ -167,7 +167,7 @@ namespace GMap.NET
       /// <param name="zoom"></param>
       /// <param name="latitude"></param>
       /// <returns></returns>
-      public double GetGroundResolution(int zoom, double latitude)
+      public virtual double GetGroundResolution(int zoom, double latitude)
       {
          return (Math.Cos(latitude * (Math.PI/180)) * 2 * Math.PI * Axis) / GetTileMatrixSizePixel(zoom).Width;
       }

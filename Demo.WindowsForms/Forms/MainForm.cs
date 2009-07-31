@@ -51,6 +51,7 @@ namespace Demo.WindowsForms
             MainMap.Zoom = MainMap.MinZoom;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
             //MainMap.CurrentPosition = new PointLatLng(29.8741410626414, 121.563806533813); // china test
+            MainMap.CurrentPosition = new PointLatLng(55.0640680108344, 23.9762237921964); // lks sync
             
             // map events
             MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);

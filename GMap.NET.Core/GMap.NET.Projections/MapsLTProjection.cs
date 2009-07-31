@@ -20,8 +20,8 @@ namespace GMap.NET.Projections
       double semiMinor;
       double metersPerUnit;
 
-      const double MinLatitude = 53.77;
-      const double MaxLatitude = 55.55;
+      const double MinLatitude = 53.44;
+      const double MaxLatitude = 56.55;
       const double MinLongitude = 20.55;
       const double MaxLongitude = 27;
       const double orignX = 5122000;
@@ -44,26 +44,6 @@ namespace GMap.NET.Projections
          e3 = e3fn(es);
          ml0 = Axis * mlfn(e0, e1, e2, e3, lat_origin);
          esp = es / (1.0 - es);
-
-         // Origin: X: -5122000, Y: 10000100
-         // vilnius
-         // Resolution: 529,167725002117
-         // Scale: 2000000
-         // Tiles: 3 x 2, 1536px - 1024px 
-         // http://arcgis.maps.lt/ArcGIS/rest/services/mapslt/MapServer/tile/1/14/21
-         // X = 21
-         // Y = 14
-         // |
-         // lks = {Ym=6088299,20378922; Xm=583517,876422762} 
-                                                  
-         //PointLatLng lks = DegreesToMeters(new PointLatLng(54.6961334816182, 25.2985095977783));
-         //double res = 529.167725002117;
-         //int x = (int) Math.Floor((lks.Lng + orignX) / (res * TileSize.Width));
-         //int y = (int) Math.Floor((orignY - lks.Lat) / (res * TileSize.Height));
-
-         //PointLatLng p = new PointLatLng(54.6961334816182, 25.2985095977783);
-         //Point px = FromLatLngToPixel(p, 10);
-         //PointLatLng p2 = FromPixelToLatLng(px, 10);
       }
 
       Size tileSize = new Size(512, 512);
@@ -137,6 +117,7 @@ namespace GMap.NET.Projections
          double x =
 				scale_factor * n * al * (1.0 + als / 6.0 * (1.0 - t + c + als / 20.0 *
 				(5.0 - 18.0 * t + Math.Pow(t, 2) + 72.0 * c - 58.0 * esp))) + false_easting;
+
          double y = scale_factor * (ml - ml0 + n * tq * (als * (0.5 + als / 24.0 *
 				(5.0 - t + 9.0 * c + 4.0 * Math.Pow(c, 2) + als / 30.0 * (61.0 - 58.0 * t
 				+ Math.Pow(t, 2) + 600.0 * c - 330.0 * esp))))) + false_northing;
@@ -190,6 +171,7 @@ namespace GMap.NET.Projections
             double lat = phi - (n * tan_phi * ds / r) * (0.5 - ds / 24.0 * (5.0 + 3.0 * t +
 					10.0 * c - 4.0 * cs - 9.0 * esp - ds / 30.0 * (61.0 + 90.0 * t +
 					298.0 * c + 45.0 * ts - 252.0 * esp - 3.0 * cs)));
+
             double lon = adjust_lon(central_meridian + (d * (1.0 - ds / 6.0 * (1.0 + 2.0 * t +
 					c - ds / 20.0 * (5.0 - 2.0 * c + 28.0 * t - 3.0 * cs + 8.0 * esp +
 					24.0 * ts))) / cos_phi));
@@ -581,6 +563,7 @@ namespace GMap.NET.Projections
          PointLatLng ret = PointLatLng.Empty;
 
          double res = GetTileMatrixResolution(zoom);
+
          PointLatLng g = MetersToDegrees(new PointLatLng(-((y * res) - orignY), (x * res) - orignX));
 
          ret.Lat = Clip(g.Lat, MinLatitude, MaxLatitude);
@@ -699,6 +682,11 @@ namespace GMap.NET.Projections
          }
 
          return ret;
+      }
+
+      public override double GetGroundResolution(int zoom, double latitude)
+      {
+         return GetTileMatrixResolution(zoom);
       }
 
       public override Size GetTileMatrixMinSizeXY(int zoom)
