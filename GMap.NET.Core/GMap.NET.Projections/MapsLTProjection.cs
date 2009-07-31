@@ -746,7 +746,7 @@ namespace GMap.NET.Projections
 
             case 6:
             {
-               ret = new Size(623, 466);
+               ret = new Size(623, 430);
             }
             break;
 
