@@ -88,25 +88,55 @@ namespace GMap.NET
       public abstract Point FromTileXYToPixel(Point p);
 
       /// <summary>
-      /// total item count in tile matrix at custom zoom level
+      /// min. tile in tiles at custom zoom level
       /// </summary>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public abstract int GetTileMatrixItemCount(int zoom);
+      public abstract Size GetTileMatrixMinSizeXY(int zoom);
 
       /// <summary>
-      /// tile matrix size in tiles at custom zoom level
+      /// max. tile in tiles at custom zoom level
       /// </summary>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public abstract Size GetTileMatrixSizeXY(int zoom);
+      public abstract Size GetTileMatrixMaxSizeXY(int zoom);
+
+      /// <summary>
+      /// gets matrix size in tiles
+      /// </summary>
+      /// <param name="zoom"></param>
+      /// <returns></returns>
+      public virtual Size GetTileMatrixSizeXY(int zoom)
+      {
+         Size sMin = GetTileMatrixMinSizeXY(zoom);
+         Size sMax = GetTileMatrixMaxSizeXY(zoom);
+
+         Size ret = (sMax - sMin);
+
+         return ret;
+      }
 
       /// <summary>
       /// tile matrix size in pixels at custom zoom level
       /// </summary>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public abstract Size GetTileMatrixSizePixel(int zoom);
+      public int GetTileMatrixItemCount(int zoom)
+      {
+         Size s = GetTileMatrixSizeXY(zoom);
+         return (s.Width * s.Height);
+      }
+
+      /// <summary>
+      /// gets matrix size in pixels
+      /// </summary>
+      /// <param name="zoom"></param>
+      /// <returns></returns>
+      public virtual Size GetTileMatrixSizePixel(int zoom)
+      {
+         Size s = GetTileMatrixSizeXY(zoom);
+         return new Size(s.Width * TileSize.Width, s.Height * TileSize.Height);
+      }
 
       /// <summary>
       /// gets all tiles in rect at specific zoom

@@ -209,61 +209,62 @@ namespace System.Windows.Forms
                Core.tilePoint = Core.centerTileXYLocation;
                Core.tilePoint.X += i;
                Core.tilePoint.Y += j;
-
-               Tile t = Core.Matrix[Core.tilePoint];
-               if(t != null)
                {
-                  Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
-                  Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
-                  Core.tileRect.Offset(Core.renderOffset);
-
-                  if(Core.CurrentRegion.IntersectsWith(Core.tileRect))
+                  Tile t = Core.Matrix[Core.tilePoint];
+                  if(t != null)
                   {
-                     bool found = false;
+                     Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
+                     Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
+                     Core.tileRect.Offset(Core.renderOffset);
 
-                     // render tile
-                     lock(t.Overlays)
+                     if(Core.CurrentRegion.IntersectsWith(Core.tileRect))
                      {
-                        foreach(WindowsFormsImage img in t.Overlays)
+                        bool found = false;
+
+                        // render tile
+                        lock(t.Overlays)
                         {
-                           if(img != null && img.Img != null)
+                           foreach(WindowsFormsImage img in t.Overlays)
                            {
-                              if(!found)
-                                 found = true;
-
-                              g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
-
-                              if(ShowTileGridLines)
+                              if(img != null && img.Img != null)
                               {
-                                 g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+                                 if(!found)
+                                    found = true;
 
-                                 if(Core.tilePoint == Core.centerTileXYLocation)
+                                 g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+
+                                 if(ShowTileGridLines)
                                  {
-                                    g.DrawString("CENTER TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
-                                 }
-                                 else
-                                 {
-                                    g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                                    g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+
+                                    if(Core.tilePoint == Core.centerTileXYLocation)
+                                    {
+                                       g.DrawString("CENTER TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                                    }
+                                    else
+                                    {
+                                       g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                                    }
                                  }
                               }
                            }
                         }
-                     }
 
-                     // add text if tile is missing
-                     if(!found)
-                     {
-                        g.FillRectangle(EmptytileBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
-                        g.DrawString(EmptyTileText, MissingDataFont, Brushes.White, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
-                        g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
-
-                        // raise error
-                        if(OnEmptyTileError != null)
+                        // add text if tile is missing
+                        if(!found)
                         {
-                           if(!RaiseEmptyTileError)
+                           g.FillRectangle(EmptytileBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                           g.DrawString(EmptyTileText, MissingDataFont, Brushes.White, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                           g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+
+                           // raise error
+                           if(OnEmptyTileError != null)
                            {
-                              RaiseEmptyTileError = true;
-                              OnEmptyTileError(t.Zoom, t.Pos);
+                              if(!RaiseEmptyTileError)
+                              {
+                                 RaiseEmptyTileError = true;
+                                 OnEmptyTileError(t.Zoom, t.Pos);
+                              }
                            }
                         }
                      }
@@ -663,7 +664,10 @@ namespace System.Windows.Forms
                case MapType.ArcGIS_Satellite:
                case MapType.ArcGIS_ShadedRelief:
                case MapType.ArcGIS_Terrain:
-               case MapType.ArcGIS_MapsLT_OrtoFoto_Testing:
+               case MapType.ArcGIS_MapsLT_OrtoFoto:
+               case MapType.ArcGIS_MapsLT_Map:
+               case MapType.ArcGIS_MapsLT_Map_Hybrid:
+               case MapType.ArcGIS_MapsLT_Map_Labels:
                {
                   e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
                }

@@ -33,11 +33,11 @@ namespace GMap.NET
       ArcGIS_Map = 777,
       ArcGIS_Satellite=788,
       ArcGIS_ShadedRelief=799,
-      ArcGIS_Terrain=811,
-
-      /// <summary>
-      /// not working corectly yet
-      /// </summary>
-      ArcGIS_MapsLT_OrtoFoto_Testing=888,
+      ArcGIS_Terrain=811, 
+      
+      ArcGIS_MapsLT_Map=877,
+      ArcGIS_MapsLT_OrtoFoto=888,
+      ArcGIS_MapsLT_Map_Labels=890,
+      ArcGIS_MapsLT_Map_Hybrid=899,
    }
 }

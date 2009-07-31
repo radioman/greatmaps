@@ -614,12 +614,30 @@ namespace GMap.NET
             #endregion
 
             #region -- MapsLT --
-            case MapType.ArcGIS_MapsLT_OrtoFoto_Testing:
+            case MapType.ArcGIS_MapsLT_OrtoFoto:
             {
                // http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L02/R0000001b/C00000028.jpg
+               // http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto/MapServer/tile/0/9/13
+               //return string.Format("http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
 
-               return string.Format("http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
+               return string.Format("http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
             }
+
+            case MapType.ArcGIS_MapsLT_Map:
+            {
+               // http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L02/R0000001b/C00000028.jpg
+               // http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto/MapServer/tile/0/9/13
+               //return string.Format("http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
+
+               return string.Format("http://arcgis.maps.lt/ArcGIS/rest/services/mapslt/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
+            }
+
+            case MapType.ArcGIS_MapsLT_Map_Labels:
+            {
+               //http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto_overlay/MapServer/tile/0/9/13
+
+               return string.Format("http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto_overlay/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
+            }             
             #endregion
          }
 
@@ -1336,9 +1354,12 @@ namespace GMap.NET
                   }
                   break;
 
-                  case MapType.ArcGIS_MapsLT_OrtoFoto_Testing:
+                  case MapType.ArcGIS_MapsLT_Map_Labels:
+                  case MapType.ArcGIS_MapsLT_Map:
+                  case MapType.ArcGIS_MapsLT_OrtoFoto:
+                  case MapType.ArcGIS_MapsLT_Map_Hybrid:
                   {
-                     request.Referer = "http://maps.lt/map/WebMapApp.aspx?lang=lt";
+                     request.Referer = "Referer: http://arcgis.maps.lt/";
                   }
                   break;
                }

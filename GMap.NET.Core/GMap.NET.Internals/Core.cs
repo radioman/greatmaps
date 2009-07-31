@@ -26,7 +26,8 @@ namespace GMap.NET.Internals
       public Point mouseCurrent;
 
       public Size sizeOfMapArea;
-      public Size sizeOfTiles;
+      public Size minOfTiles;
+      public Size maxOfTiles;
 
       public Rectangle tileRect;
       public Point tilePoint;
@@ -96,7 +97,8 @@ namespace GMap.NET.Internals
             if(zoom != value && !IsDragging)
             {
                zoom = value;
-               sizeOfTiles = Projection.GetTileMatrixSizeXY(value);
+               minOfTiles = Projection.GetTileMatrixMinSizeXY(value);
+               maxOfTiles = Projection.GetTileMatrixMaxSizeXY(value);
 
                CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, value);
                CurrentPositionGTile = Projection.FromPixelToTileXY(CurrentPositionGPixel);
@@ -216,9 +218,12 @@ namespace GMap.NET.Internals
                      Projection = new PlateCarreeProjection();
                   }
                }
-               break;                 
+               break;
 
-               case MapType.ArcGIS_MapsLT_OrtoFoto_Testing:
+               case MapType.ArcGIS_MapsLT_Map_Hybrid:
+               case MapType.ArcGIS_MapsLT_Map_Labels:
+               case MapType.ArcGIS_MapsLT_Map:
+               case MapType.ArcGIS_MapsLT_OrtoFoto:
                {
                   if(false == (Projection is LKS94Projection))
                   {
@@ -241,7 +246,9 @@ namespace GMap.NET.Internals
             {
                mapType = value;
 
-               sizeOfTiles = Projection.GetTileMatrixSizeXY(Zoom);
+               minOfTiles = Projection.GetTileMatrixMinSizeXY(Zoom);
+               maxOfTiles = Projection.GetTileMatrixMaxSizeXY(Zoom);
+
                CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, Zoom);
                CurrentPositionGTile = Projection.FromPixelToTileXY(CurrentPositionGPixel);
 
@@ -681,6 +688,16 @@ namespace GMap.NET.Internals
                      t.Overlays.Add(img2);
                   }
                }
+               else if(MapType == MapType.ArcGIS_MapsLT_Map_Hybrid)
+               {
+                  PureImage img = GMaps.Instance.GetImageFrom(MapType.ArcGIS_MapsLT_OrtoFoto, task.Pos, task.Zoom);
+                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.ArcGIS_MapsLT_Map_Labels, task.Pos, task.Zoom);
+                  lock(t.Overlays)
+                  {
+                     t.Overlays.Add(img);
+                     t.Overlays.Add(img2);
+                  }
+               }
                else // single layer
                {
                   PureImage img = GMaps.Instance.GetImageFrom(MapType, task.Pos, task.Zoom);
@@ -796,12 +813,9 @@ namespace GMap.NET.Internals
                p.X += i;
                p.Y += j;
 
-               if(p.X < sizeOfTiles.Width && p.Y < sizeOfTiles.Height)
+               if(p.X >= minOfTiles.Width && p.Y >= minOfTiles.Height && p.X <= maxOfTiles.Width && p.Y <= maxOfTiles.Height)
                {
-                  if(p.X >= 0 && p.Y >= 0)
-                  {
-                     list.Add(p);
-                  }
+                  list.Add(p);
                }
             }
          }

@@ -99,24 +99,21 @@ namespace GMap.NET.Projections
          return new Point((p.X*TileSize.Width), (p.Y*TileSize.Height));
       }
 
-      public override int GetTileMatrixItemCount(int zoom)
+      public override Size GetTileMatrixMinSizeXY(int zoom)
       {
-         Size s = GetTileMatrixSizeXY(zoom);
-         return (s.Width * s.Height);
+         return new Size(0, 0);
       }
 
-      public override Size GetTileMatrixSizeXY(int zoom)
+      public override Size GetTileMatrixMaxSizeXY(int zoom)
       {
-         int xy = 1 << zoom;
-         return new Size(xy, xy);
+         int xy = (1 << zoom);
+         return new Size(xy - 1, xy - 1);
       }
 
       public override Size GetTileMatrixSizePixel(int zoom)
       {
          Size s = GetTileMatrixSizeXY(zoom);
-         s.Width *= TileSize.Width;
-         s.Height *= TileSize.Height;
-         return s;
+         return new Size((s.Width + 1) * TileSize.Width, (s.Height + 1) * TileSize.Height);
       }
    }
 }
