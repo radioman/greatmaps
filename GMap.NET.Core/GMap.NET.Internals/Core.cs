@@ -97,8 +97,8 @@ namespace GMap.NET.Internals
             if(zoom != value && !IsDragging)
             {
                zoom = value;
-               minOfTiles = Projection.GetTileMatrixMinSizeXY(value);
-               maxOfTiles = Projection.GetTileMatrixMaxSizeXY(value);
+               minOfTiles = Projection.GetTileMatrixMinXY(value);
+               maxOfTiles = Projection.GetTileMatrixMaxXY(value);
 
                CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, value);
                CurrentPositionGTile = Projection.FromPixelToTileXY(CurrentPositionGPixel);
@@ -246,8 +246,8 @@ namespace GMap.NET.Internals
             {
                mapType = value;
 
-               minOfTiles = Projection.GetTileMatrixMinSizeXY(Zoom);
-               maxOfTiles = Projection.GetTileMatrixMaxSizeXY(Zoom);
+               minOfTiles = Projection.GetTileMatrixMinXY(Zoom);
+               maxOfTiles = Projection.GetTileMatrixMaxXY(Zoom);
 
                CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, Zoom);
                CurrentPositionGTile = Projection.FromPixelToTileXY(CurrentPositionGPixel);
@@ -707,7 +707,7 @@ namespace GMap.NET.Internals
             }
             loader.ReportProgress(id);
          }
-         else // empty now, creal things up
+         else // empty now, clean things up
          {
             Debug.WriteLine("loader[" + id + "]: wait");
 

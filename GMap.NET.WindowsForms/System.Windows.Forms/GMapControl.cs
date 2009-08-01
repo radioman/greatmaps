@@ -119,6 +119,7 @@ namespace System.Windows.Forms
       internal readonly Font MissingDataFont = new Font(FontFamily.GenericSansSerif, 11, FontStyle.Bold);
       Font ScaleFont = new Font(FontFamily.GenericSansSerif, 5, FontStyle.Italic);
       internal readonly StringFormat CenterFormat = new StringFormat();
+      internal readonly StringFormat BottomFormat = new StringFormat();
       bool RaiseEmptyTileError = false;
 
       /// <summary>
@@ -145,6 +146,9 @@ namespace System.Windows.Forms
 
             CenterFormat.Alignment = StringAlignment.Center;
             CenterFormat.LineAlignment = StringAlignment.Center;
+
+            BottomFormat.Alignment = StringAlignment.Center;
+            BottomFormat.LineAlignment = StringAlignment.Far;
 
             // overlay testing
             GMapOverlay ov = new GMapOverlay(this, "base");
@@ -255,6 +259,12 @@ namespace System.Windows.Forms
                         {
                            g.FillRectangle(EmptytileBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
                            g.DrawString(EmptyTileText, MissingDataFont, Brushes.White, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+
+                           if(ShowTileGridLines)
+                           {
+                              g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
+                           }
+
                            g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
 
                            // raise error

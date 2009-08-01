@@ -23,6 +23,9 @@ namespace Demo.WindowsForms
       GMapOverlay objects;
       GMapOverlay routes;
 
+      // testing projection
+      GMap.NET.Projections.LKS94Projection prj = new GMap.NET.Projections.LKS94Projection();
+
       public MainForm()
       {
          InitializeComponent();
@@ -45,16 +48,13 @@ namespace Demo.WindowsForms
             //GMaps.Instance.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
             // config map 
-            MainMap.MapType = MapType.ArcGIS_MapsLT_Map;
+            MainMap.MapType = MapType.ArcGIS_MapsLT_Map_Hybrid;
             MainMap.MaxZoom = 12;
-            MainMap.MinZoom = 0;
+            MainMap.MinZoom = 2;
             MainMap.Zoom = MainMap.MinZoom;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
             //MainMap.CurrentPosition = new PointLatLng(29.8741410626414, 121.563806533813); // china test
-            //MainMap.CurrentPosition = new PointLatLng(55.0640680108344, 23.9762237921964); // lks sync, kedainiai
-            //MainMap.CurrentPosition = new PointLatLng(55.0722034448256, 20.9997112244473); // lks sync, neringa
-            
-            
+
             // map events
             MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
             MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
@@ -88,6 +88,10 @@ namespace Demo.WindowsForms
             trackBar1.Maximum = MainMap.MaxZoom;
             trackBar1.Value = MainMap.Zoom;
 
+#if !DEBUG
+            checkBoxDebug.Checked = false;
+#endif
+
             // set current marker and get ground layer
             currentMarker = new GMapMarkerGoogleRed(MainMap.CurrentPosition);
             ground = MainMap.Overlays[0] as GMapOverlay;
@@ -114,6 +118,81 @@ namespace Demo.WindowsForms
                myCity.ToolTipText = "Welcome to Lithuania! ;}";
                ground.Markers.Add(myCity);
             }
+
+            // add LKS test points
+            {
+               #region -- points --
+               {
+                  PointLatLng p = new PointLatLng(55.0722034448256, 20.9997112244473);
+                  GMapMarker m = new GMapMarkerGoogleGreen(p);
+                  GMapMarkerRect mBorders = new GMapMarkerRect(p);
+                  mBorders.Size = new System.Drawing.Size(100, 100);
+                  {
+                     mBorders.ToolTipText = "Neringa";
+                     mBorders.TooltipMode = MarkerTooltipMode.Always;
+                  }
+
+                  objects.Markers.Add(m);
+                  objects.Markers.Add(mBorders);
+               }
+
+               {
+                  PointLatLng p = new PointLatLng(55.0640680108344, 23.9762237921964);
+                  GMapMarker m = new GMapMarkerGoogleGreen(p);
+                  GMapMarkerRect mBorders = new GMapMarkerRect(p);
+                  mBorders.Size = new System.Drawing.Size(100, 100);
+                  {
+                     mBorders.ToolTipText = "Kedainiai";
+                     mBorders.TooltipMode = MarkerTooltipMode.Always;
+                  }
+
+                  objects.Markers.Add(m);
+                  objects.Markers.Add(mBorders);
+               }
+
+               {
+                  PointLatLng p = new PointLatLng(56.1726182979604, 24.7671879897117);
+                  GMapMarker m = new GMapMarkerGoogleGreen(p);
+                  GMapMarkerRect mBorders = new GMapMarkerRect(p);
+                  mBorders.Size = new System.Drawing.Size(100, 100);
+                  {
+                     mBorders.ToolTipText = "Nemunelio Radviliskis";
+                     mBorders.TooltipMode = MarkerTooltipMode.Always;
+                  }
+
+                  objects.Markers.Add(m);
+                  objects.Markers.Add(mBorders);
+               }
+
+               {
+                  PointLatLng p = new PointLatLng(53.8006441598412, 23.6582456185975);
+                  GMapMarker m = new GMapMarkerGoogleGreen(p);
+                  GMapMarkerRect mBorders = new GMapMarkerRect(p);
+                  mBorders.Size = new System.Drawing.Size(100, 100);
+                  {
+                     mBorders.ToolTipText = "Kapciamiestis";
+                     mBorders.TooltipMode = MarkerTooltipMode.Always;
+                  }
+
+                  objects.Markers.Add(m);
+                  objects.Markers.Add(mBorders);
+               }
+
+               {
+                  PointLatLng p = new PointLatLng(54.9375438183299, 26.5565284439148);
+                  GMapMarker m = new GMapMarkerGoogleGreen(p);
+                  GMapMarkerRect mBorders = new GMapMarkerRect(p);
+                  mBorders.Size = new System.Drawing.Size(100, 100);
+                  {
+                     mBorders.ToolTipText = "Adutiskis";
+                     mBorders.TooltipMode = MarkerTooltipMode.Always;
+                  }
+
+                  objects.Markers.Add(m);
+                  objects.Markers.Add(mBorders);
+               } 
+               #endregion
+            }
          }
       }
 
@@ -128,8 +207,18 @@ namespace Demo.WindowsForms
 
       void UpdateCurrentMarkerPositionText()
       {
-         textBoxCurrLat.Text = currentMarker.Position.Lat.ToString(CultureInfo.InvariantCulture);
-         textBoxCurrLng.Text = currentMarker.Position.Lng.ToString(CultureInfo.InvariantCulture);
+         if(MainMap.MapType == MapType.ArcGIS_MapsLT_Map_Hybrid)
+         {
+            PointLatLng p = prj.DegreesToMeters(currentMarker.Position);
+
+            textBoxCurrLat.Text = p.Lat.ToString("0.00000", CultureInfo.InvariantCulture) + " | " + currentMarker.Position.Lat.ToString("0.000000", CultureInfo.InvariantCulture);
+            textBoxCurrLng.Text = p.Lng.ToString("0.00000", CultureInfo.InvariantCulture) + " | " + currentMarker.Position.Lng.ToString("0.000000", CultureInfo.InvariantCulture);
+         }
+         else
+         {
+            textBoxCurrLat.Text = currentMarker.Position.Lat.ToString(CultureInfo.InvariantCulture);
+            textBoxCurrLng.Text = currentMarker.Position.Lng.ToString(CultureInfo.InvariantCulture);
+         }
       }
 
       void MainMap_MouseDown(object sender, MouseEventArgs e)
@@ -167,7 +256,8 @@ namespace Demo.WindowsForms
       // click on some marker
       void MainMap_OnMarkerClick(GMapMarker item)
       {
-         MessageBox.Show("OnMarkerClick: " + item.Position.ToString(), "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
+         MainMap.CurrentPosition = item.Position;
+         MainMap.Zoom = MainMap.MaxZoom;
       }
 
       // loader start loading tiles

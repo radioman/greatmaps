@@ -78,28 +78,34 @@ namespace GMap.NET
       /// </summary>
       /// <param name="p"></param>
       /// <returns></returns>
-      public abstract Point FromPixelToTileXY(Point p);
+      public virtual Point FromPixelToTileXY(Point p)
+      {
+         return new Point((int) (p.X/TileSize.Width), (int) (p.Y/TileSize.Height));
+      }
 
       /// <summary>
       /// gets pixel coordinate from tile coordinate
       /// </summary>
       /// <param name="p"></param>
       /// <returns></returns>
-      public abstract Point FromTileXYToPixel(Point p);
+      public virtual Point FromTileXYToPixel(Point p)
+      {
+         return new Point((p.X*TileSize.Width), (p.Y*TileSize.Height));
+      }
 
       /// <summary>
       /// min. tile in tiles at custom zoom level
       /// </summary>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public abstract Size GetTileMatrixMinSizeXY(int zoom);
+      public abstract Size GetTileMatrixMinXY(int zoom);
 
       /// <summary>
       /// max. tile in tiles at custom zoom level
       /// </summary>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public abstract Size GetTileMatrixMaxSizeXY(int zoom);
+      public abstract Size GetTileMatrixMaxXY(int zoom);
 
       /// <summary>
       /// gets matrix size in tiles
@@ -108,12 +114,10 @@ namespace GMap.NET
       /// <returns></returns>
       public virtual Size GetTileMatrixSizeXY(int zoom)
       {
-         Size sMin = GetTileMatrixMinSizeXY(zoom);
-         Size sMax = GetTileMatrixMaxSizeXY(zoom);
+         Size sMin = GetTileMatrixMinXY(zoom);
+         Size sMax = GetTileMatrixMaxXY(zoom);
 
-         Size ret = (sMax - sMin);
-
-         return ret;
+         return new Size(sMax.Width - sMin.Width + 1, sMax.Height - sMin.Height  + 1);
       }
 
       /// <summary>

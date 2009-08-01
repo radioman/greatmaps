@@ -20,10 +20,10 @@ namespace GMap.NET.Projections
       double semiMinor;
       double metersPerUnit;
 
-      const double MinLatitude = 53.44;
-      const double MaxLatitude = 56.55;
-      const double MinLongitude = 20.55;
-      const double MaxLongitude = 27;
+      const double MinLatitude = 53.33;
+      const double MaxLatitude = 56.33;
+      const double MinLongitude = 20.22;
+      const double MaxLongitude = 27.11;
       const double orignX = 5122000;
       const double orignY = 10000100;
 
@@ -91,7 +91,7 @@ namespace GMap.NET.Projections
       /// </summary>
       /// <param name="lonlat">The point in decimal degrees.</param>
       /// <returns>Point in projected meters</returns>
-      PointLatLng DegreesToMeters(PointLatLng p)
+      public PointLatLng DegreesToMeters(PointLatLng p)
       {
          double lon = Degrees2Radians(p.Lng);
          double lat = Degrees2Radians(p.Lat);
@@ -129,7 +129,7 @@ namespace GMap.NET.Projections
       /// </summary>
       /// <param name="p">Point in meters</param>
       /// <returns>Transformed point in decimal degrees</returns>
-      PointLatLng MetersToDegrees(PointLatLng p)
+      public PointLatLng MetersToDegrees(PointLatLng p)
       {
          double con, phi;		            // temporary angles				
          double delta_phi;	                // difference between longitudes	
@@ -539,6 +539,11 @@ namespace GMap.NET.Projections
 
       #endregion
 
+      int xmin = 214648;
+      int ymin = 5864081;
+      int xmax = 779799;
+      int ymax = 6344300;
+
       public override Point FromLatLngToPixel(double lat, double lng, int zoom)
       {
          Point ret = Point.Empty;
@@ -547,11 +552,12 @@ namespace GMap.NET.Projections
          lng = Clip(lng, MinLongitude, MaxLongitude);
 
          PointLatLng lks = DegreesToMeters(new PointLatLng(lat, lng));
+
          double res = GetTileMatrixResolution(zoom);
 
          ret.X = (int) Math.Floor((lks.Lng + orignX) / res);
          ret.Y = (int) Math.Floor((orignY - lks.Lat) / res);
-
+            
          return ret;
       }
 
@@ -561,7 +567,7 @@ namespace GMap.NET.Projections
 
          double res = GetTileMatrixResolution(zoom);
 
-         PointLatLng g = MetersToDegrees(new PointLatLng(-((y * res) - orignY), (x * res) - orignX));
+         PointLatLng g = MetersToDegrees(new PointLatLng(-(y*res) + orignY, (x*res) - orignX));
 
          ret.Lat = Clip(g.Lat, MinLatitude, MaxLatitude);
          ret.Lng = Clip(g.Lng, MinLongitude, MaxLongitude);
@@ -579,16 +585,6 @@ namespace GMap.NET.Projections
       double Clip(double n, double minValue, double maxValue)
       {
          return Math.Min(Math.Max(n, minValue), maxValue);
-      }
-
-      public override Point FromPixelToTileXY(Point p)
-      {
-         return new Point((int) (p.X/TileSize.Width), (int) (p.Y/TileSize.Height));
-      }
-
-      public override Point FromTileXYToPixel(Point p)
-      {
-         return new Point((p.X*TileSize.Width), (p.Y*TileSize.Height));
       }
 
       public double GetTileMatrixResolution(int zoom)
@@ -686,7 +682,7 @@ namespace GMap.NET.Projections
          return GetTileMatrixResolution(zoom);
       }
 
-      public override Size GetTileMatrixMinSizeXY(int zoom)
+      public override Size GetTileMatrixMinXY(int zoom)
       {
          Size ret = Size.Empty;
 
@@ -776,7 +772,7 @@ namespace GMap.NET.Projections
          return ret;
       }
 
-      public override Size GetTileMatrixMaxSizeXY(int zoom)
+      public override Size GetTileMatrixMaxXY(int zoom)
       {
          Size ret = Size.Empty;
 
@@ -862,16 +858,6 @@ namespace GMap.NET.Projections
             break;
             #endregion
          }
-
-         return ret;
-      }
-
-      public override Size GetTileMatrixSizeXY(int zoom)
-      {
-         Size sMin = GetTileMatrixMinSizeXY(zoom);
-         Size sMax = GetTileMatrixMaxSizeXY(zoom);
-
-         Size ret = (sMax - sMin);
 
          return ret;
       }

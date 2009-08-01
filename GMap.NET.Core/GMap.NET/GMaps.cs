@@ -368,6 +368,7 @@ namespace GMap.NET
       void cacher_DoWork(object sender, DoWorkEventArgs e)
       {
          Thread.CurrentThread.IsBackground = false;
+         int completed = 0;
 
          while(!cacher.CancellationPending)
          {
@@ -400,11 +401,19 @@ namespace GMap.NET
             }
             else
             {
-               Debug.WriteLine("CacheTasks: complete");
-               cacher.CancelAsync();
+               if(completed++ == 11)
+               {
+                  completed = 0;
+                  cacher.CancelAsync();
+                  Debug.WriteLine("CacheEngine: exit");                  
+               }
+               else
+               {
+                  Thread.Sleep(444);
+               }
             }
 
-            Thread.Sleep(10);
+            Thread.Sleep(44);
          }
       }
 
