@@ -45,13 +45,13 @@ namespace Demo.WindowsForms
             //GMaps.Instance.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
             // config map 
-            MainMap.MapType = MapType.ArcGIS_MapsLT_Map_Hybrid;
+            MainMap.MapType = MapType.ArcGIS_MapsLT_Map;
             MainMap.MaxZoom = 12;
-            MainMap.MinZoom = 2;
+            MainMap.MinZoom = 3;
             MainMap.Zoom = MainMap.MinZoom;
-            //MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
+            MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
             //MainMap.CurrentPosition = new PointLatLng(29.8741410626414, 121.563806533813); // china test
-            MainMap.CurrentPosition = new PointLatLng(55.0640680108344, 23.9762237921964); // lks sync, kedainiai
+            //MainMap.CurrentPosition = new PointLatLng(55.0640680108344, 23.9762237921964); // lks sync, kedainiai
             //MainMap.CurrentPosition = new PointLatLng(55.0722034448256, 20.9997112244473); // lks sync, neringa
             
             

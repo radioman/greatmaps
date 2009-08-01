@@ -114,8 +114,7 @@ namespace GMap.NET.Projections
          n = Axis / Math.Sqrt(con);
          ml = Axis * mlfn(e0, e1, e2, e3, lat);
 
-         double x =
-				scale_factor * n * al * (1.0 + als / 6.0 * (1.0 - t + c + als / 20.0 *
+         double x = scale_factor * n * al * (1.0 + als / 6.0 * (1.0 - t + c + als / 20.0 *
 				(5.0 - 18.0 * t + Math.Pow(t, 2) + 72.0 * c - 58.0 * esp))) + false_easting;
 
          double y = scale_factor * (ml - ml0 + n * tq * (als * (0.5 + als / 24.0 *
@@ -133,8 +132,7 @@ namespace GMap.NET.Projections
       PointLatLng MetersToDegrees(PointLatLng p)
       {
          double con, phi;		            // temporary angles				
-         double delta_phi;	                // difference between longitudes
-         long i;			                // counter variable				
+         double delta_phi;	                // difference between longitudes	
          double sin_phi, cos_phi, tan_phi;	// sin cos and tangent values	
          double c, cs, t, ts, n, r, d, ds;	// temporary variables		
          long max_iter = 6;			        // maximun number of iterations	
@@ -144,10 +142,9 @@ namespace GMap.NET.Projections
 
          con = (ml0 + y / scale_factor) / Axis;
          phi = con;
-         for(i=0; ; i++)
+         for(long i = 0; ; i++)
          {
-            delta_phi = ((con + e1 * Math.Sin(2.0*phi) - e2 * Math.Sin(4.0*phi) + e3 * Math.Sin(6.0*phi))
-					/ e0) - phi;
+            delta_phi = ((con + e1 * Math.Sin(2.0*phi) - e2 * Math.Sin(4.0*phi) + e3 * Math.Sin(6.0*phi)) / e0) - phi;
             phi += delta_phi;
             if(Math.Abs(delta_phi) <= EPSLN)
                break;

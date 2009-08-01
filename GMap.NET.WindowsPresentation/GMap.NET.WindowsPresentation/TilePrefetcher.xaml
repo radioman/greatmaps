@@ -1,9 +1,9 @@
 ﻿<Window x:Class="GMap.NET.WindowsPresentation.TilePrefetcher"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="GMap.NET" Height="106" Width="472" Background="AliceBlue" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow">
+    Title="GMap.NET - esc to cancel fetching" Height="104" Width="452" Background="AliceBlue" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" WindowStyle="SingleBorderWindow" Margin="5">
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <ProgressBar Height="22" Margin="10,0,9,8" Name="progressBar1" Value="0" VerticalAlignment="Bottom" />
-        <Label Margin="10,10,14,30" Name="label1">Label</Label>
+        <Label Name="label1" Height="28" VerticalAlignment="Top" Padding="0" Margin="10" VerticalContentAlignment="Center">Label</Label>
+        <ProgressBar Height="22" Name="progressBar1" Value="0" VerticalAlignment="Bottom" Margin="10" />
     </Grid>
 </Window>

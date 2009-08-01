@@ -1022,7 +1022,15 @@ namespace System.Windows.Forms
          }
          set
          {
-            if(value <= MaxZoom && value >= MinZoom)
+            if(value > MaxZoom)
+            {
+               Core.Zoom = MaxZoom;
+            }
+            else if(value < MinZoom)
+            {
+               Core.Zoom = MinZoom;
+            }
+            else
             {
                Core.Zoom = value;
             }

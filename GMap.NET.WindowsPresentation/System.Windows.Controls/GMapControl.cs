@@ -237,7 +237,18 @@ namespace System.Windows.Controls
          {
             if(zoomReal != value)
             {
-               zoomReal = value;
+               if(value > MaxZoom)
+               {
+                  zoomReal = MaxZoom;
+               }
+               else if(value < MinZoom)
+               {
+                  zoomReal = MinZoom;
+               }
+               else
+               {
+                  zoomReal = value;
+               }
 
                double remainder = (double) System.Decimal.Remainder((Decimal) value, (Decimal) 1);
                if(remainder != 0)
@@ -770,7 +781,15 @@ namespace System.Windows.Controls
          }
          set
          {
-            if(value <= MaxZoom && value >= MinZoom)
+            if(value > MaxZoom)
+            {
+               Core.Zoom = MaxZoom;
+            }
+            else if(value < MinZoom)
+            {
+               Core.Zoom = MinZoom;
+            }
+            else
             {
                Core.Zoom = value;
             }

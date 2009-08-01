@@ -81,11 +81,54 @@ namespace GMap.NET.WindowsPresentation
          this.Close();
       }
 
+      bool CacheTiles(ref List<MapType> types, int zoom, GMap.NET.Point p)
+      {
+         foreach(MapType type in types)
+         {
+            PureImage img = GMaps.Instance.GetImageFrom(type, p, zoom);
+            if(img != null)
+            {
+               img.Dispose();
+               img = null;
+            }
+            else
+            {
+               return false;
+            }
+         }
+         return true;
+      }
+
       void worker_DoWork(object sender, DoWorkEventArgs e)
       {
          int countOk = 0;
 
          Stuff.Shuffle<GMap.NET.Point>(list);
+
+         List<MapType> types = new List<MapType>();
+         {
+            if(type == MapType.GoogleHybrid)
+            {
+               types.Add(MapType.GoogleLabels);
+               types.Add(MapType.GoogleSatellite);
+            }
+            else if(type == MapType.YahooHybrid)
+            {
+               types.Add(MapType.YahooLabels);
+               types.Add(MapType.YahooSatellite);
+            }
+            else if(type == MapType.GoogleHybridChina)
+            {
+               types.Add(MapType.GoogleLabelsChina);
+               types.Add(MapType.GoogleSatelliteChina);
+            }
+            else if(type == MapType.ArcGIS_MapsLT_Map_Hybrid)
+            {
+               types.Add(MapType.ArcGIS_MapsLT_Map_Labels);
+               types.Add(MapType.ArcGIS_MapsLT_OrtoFoto);
+            }
+         }
+         types.TrimExcess();
 
          for(int i = 0; i < all; i++)
          {
@@ -93,20 +136,17 @@ namespace GMap.NET.WindowsPresentation
                break;
 
             GMap.NET.Point p = list[i];
-
-            PureImage img = GMaps.Instance.GetImageFrom(type, p, zoom);
-            if(img != null)
             {
-               countOk++;
-
-               img.Dispose();
-               img = null;
-            }
-            else
-            {
-               i--;
-               System.Threading.Thread.Sleep(1000);
-               continue;
+               if(CacheTiles(ref types, zoom, p))
+               {
+                  countOk++;
+               }
+               else
+               {
+                  i--;
+                  System.Threading.Thread.Sleep(1000);
+                  continue;
+               }
             }
 
             worker.ReportProgress((int) ((i+1)*100/all), i+1);
