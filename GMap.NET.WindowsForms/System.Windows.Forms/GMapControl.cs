@@ -599,17 +599,12 @@ namespace System.Windows.Forms
          }
       }
 
-      protected override void OnPaintBackground(PaintEventArgs e)
-      {
-         if(DesignMode)
-         {
-            e.Graphics.FillRectangle(Brushes.Gray, 0, 0, Width, Height);
-         }
-      }
-
       protected override void OnPaint(PaintEventArgs e)
       {
          {
+            // render white background
+            e.Graphics.Clear(Color.WhiteSmoke);
+
             // render map
             DrawMapGDIplus(e.Graphics);
 

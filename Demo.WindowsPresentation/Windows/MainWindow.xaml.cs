@@ -48,8 +48,8 @@ namespace Demo.WindowsPresentation
          // config map
          MainMap.MapType = MapType.OpenStreetMap;
          MainMap.MaxZoom = 17;
-         MainMap.MinZoom = 12;
-         MainMap.Zoom = MainMap.MinZoom;
+         MainMap.MinZoom = 5;
+         MainMap.Zoom = 12;
          MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
 
          // map events
