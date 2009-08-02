@@ -150,12 +150,7 @@ namespace System.Windows.Forms
             BottomFormat.Alignment = StringAlignment.Center;
             BottomFormat.LineAlignment = StringAlignment.Far;
 
-            // overlay testing
-            GMapOverlay ov = new GMapOverlay(this, "base");
-            Overlays.Add(ov);
-            {
-               MapType = MapType.GoogleMap;
-            }
+            MapType = MapType.GoogleMap;
          }
       }
 
