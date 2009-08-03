@@ -398,14 +398,14 @@ namespace GMap.NET
                {
                   ImageCacheSecond.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
                }
+               completed = 0;
             }
             else
             {
-               if(completed++ == 11)
+               if(completed++ == 44)
                {
-                  completed = 0;
-                  cacher.CancelAsync();
-                  Debug.WriteLine("CacheEngine: exit");                  
+                  Debug.WriteLine("CacheEngine: exit");
+                  break;
                }
                else
                {
