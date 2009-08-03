@@ -9,6 +9,7 @@ namespace System.Windows.Forms
    using GMap.NET.WindowsForms;
    using System.IO;
    using System.Drawing.Imaging;
+   using System.Diagnostics;
 
    /// <summary>
    /// GMap.NET control for Windows Forms
@@ -76,6 +77,11 @@ namespace System.Windows.Forms
       public Pen ScalePen = new Pen(Brushes.Blue, 1);
 
       /// <summary>
+      /// area selection pen
+      /// </summary>
+      public Pen SelectionPen = new Pen(Brushes.Blue, 4);
+
+      /// <summary>
       /// pen for empty tile background
       /// </summary>
       public Brush EmptytileBrush = Brushes.Navy;
@@ -110,6 +116,22 @@ namespace System.Windows.Forms
          {
             showTileGridLines = value;
             Invalidate();
+         }
+      }
+
+      /// <summary>
+      /// current selected area in map
+      /// </summary>
+      private RectLatLng selectedArea;
+      public RectLatLng SelectedArea
+      {
+         get
+         {
+            return selectedArea;
+         }
+         internal set
+         {
+            selectedArea = value;
          }
       }
 
@@ -604,6 +626,9 @@ namespace System.Windows.Forms
          }
       }
 
+      PointLatLng selectionStart;
+      PointLatLng selectionEnd;
+
       protected override void OnPaint(PaintEventArgs e)
       {
          {
@@ -620,6 +645,20 @@ namespace System.Windows.Forms
                {
                   o.Render(e.Graphics);
                }
+            }
+
+            // selection
+            if(!selectionEnd.IsEmpty && !selectionStart.IsEmpty)
+            {
+               GMap.NET.Point p1 = FromLatLngToLocal(selectionStart);
+               GMap.NET.Point p2 = FromLatLngToLocal(selectionEnd);
+
+               int x1 = Math.Min(p1.X, p2.X);
+               int y1 = Math.Min(p1.Y, p2.Y);
+               int x2 = Math.Max(p1.X, p2.X);
+               int y2 = Math.Max(p1.Y, p2.Y);
+
+               e.Graphics.DrawRectangle(SelectionPen, x1, y1, x2 - x1, y2 - y1);
             }
 
             #region -- copyright --
@@ -746,17 +785,28 @@ namespace System.Windows.Forms
          }
       }
 
+      bool isSelected = false;
       protected override void OnMouseDown(MouseEventArgs e)
       {
-         if(e.Button == DragButton && CanDragMap && !IsMouseOverMarker)
+         if(!IsMouseOverMarker)
          {
-            Core.mouseDown.X = e.X;
-            Core.mouseDown.Y = e.Y;
+            if(e.Button == DragButton && CanDragMap)
+            {
+               Core.mouseDown.X = e.X;
+               Core.mouseDown.Y = e.Y;
 
-            this.Cursor = System.Windows.Forms.Cursors.SizeAll;
-            Core.BeginDrag(Core.mouseDown);
+               this.Cursor = System.Windows.Forms.Cursors.SizeAll;
+               Core.BeginDrag(Core.mouseDown);
 
-            this.Invalidate(false);
+               this.Invalidate(false);
+            }
+            else if(!isSelected)
+            {
+               isSelected = true;
+               SelectedArea = RectLatLng.Empty;
+               selectionEnd = PointLatLng.Empty;
+               selectionStart = FromLocalToLatLng(e.X, e.Y);
+            }
          }
 
          base.OnMouseDown(e);
@@ -766,12 +816,39 @@ namespace System.Windows.Forms
       {
          base.OnMouseUp(e);
 
+         if(isSelected)
+         {
+            isSelected = false;
+         }
+
          if(Core.IsDragging)
          {
             Core.EndDrag();
             this.Cursor = System.Windows.Forms.Cursors.Default;
          }
+         else
+         {
+            if(SelectedArea.IsEmpty && !selectionEnd.IsEmpty && !selectionStart.IsEmpty)
+            {
+               if(Form.ModifierKeys == Keys.Shift || Form.ModifierKeys == Keys.Alt)
+               {
+                  GMap.NET.PointLatLng p1 = selectionStart;
+                  GMap.NET.PointLatLng p2 = selectionEnd;
 
+                  double x1 = Math.Min(p1.Lng, p2.Lng);
+                  double y1 = Math.Max(p1.Lat, p2.Lat);
+                  double x2 = Math.Max(p1.Lng, p2.Lng);
+                  double y2 = Math.Min(p1.Lat, p2.Lat);
+
+                  SelectedArea = new RectLatLng(y1, x1, x2 - x1, y1 - y2);
+               }
+
+               if(!SelectedArea.IsEmpty && Form.ModifierKeys == Keys.Shift)
+               {
+                  SetZoomToFitRect(SelectedArea);
+               }
+            }
+         }
          RaiseEmptyTileError = false;
       }
 
@@ -817,37 +894,44 @@ namespace System.Windows.Forms
          }
          else
          {
-            for(int i = Overlays.Count-1; i >= 0; i--)
+            if(isSelected && !selectionStart.IsEmpty && SelectedArea.IsEmpty && (Form.ModifierKeys == Keys.Alt || Form.ModifierKeys == Keys.Shift))
             {
-               GMapOverlay o = Overlays[i];
-               if(o != null && o.IsVisibile)
+               selectionEnd = FromLocalToLatLng(e.X, e.Y);
+            }
+            else
+            {
+               for(int i = Overlays.Count-1; i >= 0; i--)
                {
-                  foreach(GMapMarker m in o.Markers)
+                  GMapOverlay o = Overlays[i];
+                  if(o != null && o.IsVisibile)
                   {
-                     if(m.Visible)
+                     foreach(GMapMarker m in o.Markers)
                      {
-                        if(m.LocalArea.Contains(e.X, e.Y))
+                        if(m.Visible)
                         {
-                           this.Cursor = System.Windows.Forms.Cursors.Hand;
-                           m.IsMouseOver = true;
-                           IsMouseOverMarker = true;
-                           Invalidate(false);
-
-                           if(OnMarkerEnter != null)
+                           if(m.LocalArea.Contains(e.X, e.Y))
                            {
-                              OnMarkerEnter(m);
+                              this.Cursor = System.Windows.Forms.Cursors.Hand;
+                              m.IsMouseOver = true;
+                              IsMouseOverMarker = true;
+                              Invalidate(false);
+
+                              if(OnMarkerEnter != null)
+                              {
+                                 OnMarkerEnter(m);
+                              }
                            }
-                        }
-                        else if(m.IsMouseOver)
-                        {
-                           this.Cursor = System.Windows.Forms.Cursors.Default;
-                           m.IsMouseOver = false;
-                           IsMouseOverMarker = false;
-                           Invalidate(false);
-
-                           if(OnMarkerLeave != null)
+                           else if(m.IsMouseOver)
                            {
-                              OnMarkerLeave(m);
+                              this.Cursor = System.Windows.Forms.Cursors.Default;
+                              m.IsMouseOver = false;
+                              IsMouseOverMarker = false;
+                              Invalidate(false);
+
+                              if(OnMarkerLeave != null)
+                              {
+                                 OnMarkerLeave(m);
+                              }
                            }
                         }
                      }

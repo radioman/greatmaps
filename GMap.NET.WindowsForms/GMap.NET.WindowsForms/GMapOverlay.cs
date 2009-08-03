@@ -172,12 +172,12 @@ namespace GMap.NET.WindowsForms
       /// <param name="g"></param>
       internal void Render(Graphics g)
       {
-         if(Control.RoutesEnabled && !(Form.ModifierKeys == Keys.Control))
+         if(Control.RoutesEnabled)
          {
             DrawRoutes(g);
          }
 
-         if(Control.MarkersEnabled && !(Form.ModifierKeys == Keys.Control))
+         if(Control.MarkersEnabled)
          {
             // markers
             foreach(GMapMarker m in Markers)

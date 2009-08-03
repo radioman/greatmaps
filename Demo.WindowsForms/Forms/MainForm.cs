@@ -92,13 +92,13 @@ namespace Demo.WindowsForms
             checkBoxDebug.Checked = false;
 #endif
 
-            // add custom layers
+            // add custom layers  
             {
-               objects = new GMapOverlay(MainMap, "objects");
-               MainMap.Overlays.Add(objects);
-
                routes = new GMapOverlay(MainMap, "routes");
                MainMap.Overlays.Add(routes);
+
+               objects = new GMapOverlay(MainMap, "objects");
+               MainMap.Overlays.Add(objects);                 
 
                top = new GMapOverlay(MainMap, "top");
                MainMap.Overlays.Add(top);
@@ -550,6 +550,21 @@ namespace Demo.WindowsForms
       private void checkBoxDebug_CheckedChanged(object sender, EventArgs e)
       {
          MainMap.ShowTileGridLines = checkBoxDebug.Checked;
+      }
+
+      private void button13_Click(object sender, EventArgs e)
+      {
+         RectLatLng area = MainMap.SelectedArea;
+         if(!area.IsEmpty)
+         {
+            StaticImage st = new StaticImage(MainMap);
+            st.Owner = this;
+            st.Show();
+         }
+         else
+         {
+            MessageBox.Show("Select map holding ALT", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+         }
       }
    }
 }

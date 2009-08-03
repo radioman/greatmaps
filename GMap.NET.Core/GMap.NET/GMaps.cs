@@ -402,7 +402,7 @@ namespace GMap.NET
             }
             else
             {
-               if(completed++ == 44)
+               if(completed++ == 22)
                {
                   Debug.WriteLine("CacheEngine: exit");
                   break;
