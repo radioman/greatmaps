@@ -10,6 +10,7 @@ namespace System.Windows.Controls
    using System.Windows.Data;
    using System.Windows.Input;
    using System.Windows.Media;
+   using System.Windows.Media.Animation;
    using System.Windows.Media.Effects;
    using System.Windows.Media.Imaging;
    using System.Windows.Shapes;
@@ -17,8 +18,6 @@ namespace System.Windows.Controls
    using GMap.NET;
    using GMap.NET.Internals;
    using GMap.NET.WindowsPresentation;
-   using System.Diagnostics;
-   using System.Windows.Media.Animation;
 
    /// <summary>
    /// GMap.NET control for Windows Presentation
@@ -40,6 +39,11 @@ namespace System.Windows.Controls
       /// pen for empty tile borders
       /// </summary>
       public Pen EmptyTileBorders = new Pen(Brushes.White, 1.0);
+
+      /// <summary>
+      /// pen for Selection
+      /// </summary>
+      public Pen SelectionPen = new Pen(Brushes.Blue, 3.0);
 
       /// <summary>
       /// /// <summary>
@@ -92,6 +96,40 @@ namespace System.Windows.Controls
       /// zoom increment on mouse wheel
       /// </summary>
       public double ZoomIncrement = 1.0;
+
+      private bool showTileGridLines = false;
+
+      /// <summary>
+      /// shows tile gridlines
+      /// </summary>
+      public bool ShowTileGridLines
+      {
+         get
+         {
+            return showTileGridLines;
+         }
+         set
+         {
+            showTileGridLines = value;
+            InvalidateVisual();
+         }
+      }
+
+      /// <summary>
+      /// current selected area in map
+      /// </summary>
+      private RectLatLng selectedArea;
+      public RectLatLng SelectedArea
+      {
+         get
+         {
+            return selectedArea;
+         }
+         internal set
+         {
+            selectedArea = value;
+         }
+      }
 
       /// <summary>
       /// list of markers
@@ -379,6 +417,8 @@ namespace System.Windows.Controls
          }
       }
 
+      Typeface tileTypeface = new Typeface("Arial");
+
       /// <summary>
       /// render map in WPF
       /// </summary>
@@ -412,6 +452,22 @@ namespace System.Windows.Controls
                               found = true;
 
                            g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+
+                           if(ShowTileGridLines)
+                           {
+                              g.DrawRectangle(null, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+
+                              if(Core.tilePoint == Core.centerTileXYLocation)
+                              {
+                                 FormattedText TileText = new FormattedText("             CENTER\nTILE:" + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
+                                 g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width/2 - EmptyTileText.Width/2, Core.tileRect.Y + Core.tileRect.Height/2 - EmptyTileText.Height/2));
+                              }
+                              else
+                              {
+                                 FormattedText TileText = new FormattedText("TILE: " + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
+                                 g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width/2 - EmptyTileText.Width/2, Core.tileRect.Y + Core.tileRect.Height/2 - EmptyTileText.Height/2));
+                              }
+                           }
                         }
                      }
 
@@ -420,6 +476,15 @@ namespace System.Windows.Controls
                      {
                         g.DrawRectangle(EmptytileBrush, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
                         g.DrawText(EmptyTileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width/2 - EmptyTileText.Width/2, Core.tileRect.Y + Core.tileRect.Height/2 - EmptyTileText.Height/2));
+
+                        if(ShowTileGridLines)
+                        {
+                           g.DrawRectangle(null, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                           {
+                              FormattedText TileText = new FormattedText("TILE: " + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
+                              g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width/2 - EmptyTileText.Width/2, Core.tileRect.Y - EmptyTileText.Height/2));
+                           }
+                        }
 
                         // raise error
                         if(OnEmptyTileError != null)
@@ -520,6 +585,37 @@ namespace System.Windows.Controls
          return myPath;
       }
 
+      /// <summary>
+      /// sets zoom to max to fit rect
+      /// </summary>
+      /// <param name="rect"></param>
+      /// <returns></returns>
+      public bool SetZoomToFitRect(RectLatLng rect)
+      {
+         int maxZoom = Core.GetMaxZoomToFitRect(rect);
+         if(maxZoom > 0)
+         {
+            PointLatLng center = new PointLatLng(rect.Lat-(rect.HeightLat/2), rect.Lng+(rect.WidthLng/2));
+            CurrentPosition = center;
+
+            if(maxZoom > MaxZoom)
+            {
+               maxZoom = MaxZoom;
+            }
+
+            if(ZoomStep != maxZoom)
+            {
+               Zoom = maxZoom;
+            }             
+
+            return true;
+         }
+         return false;
+      }
+
+      PointLatLng selectionStart;
+      PointLatLng selectionEnd;
+
       #region UserControl Events
       protected override void OnRender(DrawingContext drawingContext)
       {
@@ -534,6 +630,20 @@ namespace System.Windows.Controls
          else
          {
             DrawMapWPF(drawingContext);
+         }
+
+         // selection
+         if(!selectionEnd.IsEmpty && !selectionStart.IsEmpty)
+         {
+            GMap.NET.Point p1 = FromLatLngToLocal(selectionStart);
+            GMap.NET.Point p2 = FromLatLngToLocal(selectionEnd);
+
+            int x1 = Math.Min(p1.X, p2.X);
+            int y1 = Math.Min(p1.Y, p2.Y);
+            int x2 = Math.Max(p1.X, p2.X);
+            int y2 = Math.Max(p1.Y, p2.Y);
+
+            drawingContext.DrawRectangle(null, SelectionPen, new Rect(x1, y1, x2 - x1, y2 - y1));
          }
 
          #region -- copyright --
@@ -583,7 +693,7 @@ namespace System.Windows.Controls
             case MapType.ArcGIS_MapsLT_Map_Hybrid:
             case MapType.ArcGIS_MapsLT_Map_Labels:
             {
-               drawingContext.DrawText(arcGisMapCopyright, new System.Windows.Point(5, ActualHeight - virtualEarthCopyright.Height - 5));            
+               drawingContext.DrawText(arcGisMapCopyright, new System.Windows.Point(5, ActualHeight - virtualEarthCopyright.Height - 5));
             }
             break;
          }
@@ -629,6 +739,7 @@ namespace System.Windows.Controls
          base.OnMouseWheel(e);
       }
 
+      bool isSelected = false;
       protected override void OnMouseDown(MouseButtonEventArgs e)
       {
          if(CanDragMap && e.ChangedButton == DragButton && e.ButtonState == MouseButtonState.Pressed)
@@ -640,21 +751,59 @@ namespace System.Windows.Controls
                Cursor = Cursors.SizeAll;
                Core.BeginDrag(Core.mouseDown);
             }
+            InvalidateVisual();
          }
-
-         InvalidateVisual();
+         else if(!isSelected)
+         {
+            System.Windows.Point p = e.GetPosition(this);
+            isSelected = true;
+            SelectedArea = RectLatLng.Empty;
+            selectionEnd = PointLatLng.Empty;
+            selectionStart = FromLocalToLatLng((int) p.X, (int) p.Y);
+         }         
 
          base.OnMouseDown(e);
       }
 
       protected override void OnMouseUp(MouseButtonEventArgs e)
       {
+         if(isSelected)
+         {
+            isSelected = false;
+         }
+
          if(Core.IsDragging)
          {
             Core.EndDrag();
             Cursor = Cursors.Arrow;
          }
+         else
+         {
+            if(SelectedArea.IsEmpty && !selectionEnd.IsEmpty && !selectionStart.IsEmpty)
+            {
+               if(Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Alt)
+               {
+                  GMap.NET.PointLatLng p1 = selectionStart;
+                  GMap.NET.PointLatLng p2 = selectionEnd;
 
+                  double x1 = Math.Min(p1.Lng, p2.Lng);
+                  double y1 = Math.Max(p1.Lat, p2.Lat);
+                  double x2 = Math.Max(p1.Lng, p2.Lng);
+                  double y2 = Math.Min(p1.Lat, p2.Lat);
+
+                  SelectedArea = new RectLatLng(y1, x1, x2 - x1, y1 - y2);
+               }
+
+               if(!SelectedArea.IsEmpty && Keyboard.Modifiers == ModifierKeys.Shift)
+               {
+                  SetZoomToFitRect(SelectedArea);
+               }
+            }
+            else
+            {
+               InvalidateVisual();
+            }
+         }
          RaiseEmptyTileError = false;
 
          base.OnMouseUp(e);
@@ -671,9 +820,18 @@ namespace System.Windows.Controls
                Core.Drag(Core.mouseCurrent);
             }
          }
+         else
+         {
+            if(isSelected && !selectionStart.IsEmpty && SelectedArea.IsEmpty && (Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Alt))
+            {
+               System.Windows.Point p = e.GetPosition(this);
+               selectionEnd = FromLocalToLatLng((int)p.X, (int)p.Y);
+               InvalidateVisual();
+            }
+         }
 
          base.OnMouseMove(e);
-      }
+      }  
 
       #endregion
 

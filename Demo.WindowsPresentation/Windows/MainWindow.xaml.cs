@@ -259,7 +259,7 @@ namespace Demo.WindowsPresentation
       // MapZoomChanged
       void MainMap_OnMapZoomChanged()
       {
-         //sliderZoom.Value = MainMap.ZoomReal;
+         sliderZoom.Value = MainMap.Zoom;
       }
 
       // tile louading starts

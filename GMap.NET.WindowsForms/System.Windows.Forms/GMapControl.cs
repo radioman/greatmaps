@@ -101,7 +101,7 @@ namespace System.Windows.Forms
       /// </summary>
       public MouseButtons DragButton = MouseButtons.Right;
 
-      private bool showTileGridLines = true;
+      private bool showTileGridLines = false;
 
       /// <summary>
       /// shows tile gridlines
@@ -656,8 +656,8 @@ namespace System.Windows.Forms
                int x1 = Math.Min(p1.X, p2.X);
                int y1 = Math.Min(p1.Y, p2.Y);
                int x2 = Math.Max(p1.X, p2.X);
-               int y2 = Math.Max(p1.Y, p2.Y);
-
+               int y2 = Math.Max(p1.Y, p2.Y);   
+               
                e.Graphics.DrawRectangle(SelectionPen, x1, y1, x2 - x1, y2 - y1);
             }
 
