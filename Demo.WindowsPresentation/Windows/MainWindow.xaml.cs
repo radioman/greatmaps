@@ -609,5 +609,17 @@ namespace Demo.WindowsPresentation
             MainMap.Markers.Add(mRoute);
          }
       }
+
+      // enables tile grid view
+      private void checkBox1_Checked(object sender, RoutedEventArgs e)
+      {
+         MainMap.ShowTileGridLines = true;
+      }
+
+      // disables tile grid view
+      private void checkBox1_Unchecked(object sender, RoutedEventArgs e)
+      {
+         MainMap.ShowTileGridLines = false;
+      }
    }
 }
