@@ -8,7 +8,8 @@ namespace GMap.NET
    public delegate void TileLoadStart(int loaderId);
   
    public delegate void MapDrag();
-   public delegate void MapZoomChanged();    
+   public delegate void MapZoomChanged();
+   public delegate void MapTypeChanged(MapType type);
 
    public delegate void EmptyTileError(int zoom, Point pos);
 }

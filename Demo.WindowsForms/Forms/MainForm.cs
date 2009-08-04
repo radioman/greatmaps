@@ -62,7 +62,7 @@ namespace Demo.WindowsForms
             MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
             MainMap.OnEmptyTileError += new EmptyTileError(MainMap_OnEmptyTileError);
             MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
-
+            MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
             MainMap.MouseMove += new MouseEventHandler(MainMap_MouseMove);
             MainMap.MouseDown += new MouseEventHandler(MainMap_MouseDown);
             MainMap.MouseUp += new MouseEventHandler(MainMap_MouseUp);
@@ -133,6 +133,42 @@ namespace Demo.WindowsForms
 
             MainMap.ZoomAndCenterMarkers(null);
          }
+      }
+
+      void MainMap_OnMapTypeChanged(MapType type)
+      {
+         switch(type)
+         {
+            case MapType.ArcGIS_Map:
+            case MapType.ArcGIS_Satellite:
+            case MapType.ArcGIS_ShadedRelief:
+            case MapType.ArcGIS_Terrain:
+            {
+               MainMap.MaxZoom = 13;
+            }
+            break;
+
+            case MapType.ArcGIS_MapsLT_Map_Hybrid:
+            case MapType.ArcGIS_MapsLT_Map_Labels:
+            case MapType.ArcGIS_MapsLT_Map:
+            case MapType.ArcGIS_MapsLT_OrtoFoto:
+            {
+               MainMap.MaxZoom = 12;
+            }
+            break;
+
+            default:
+            {
+               MainMap.MaxZoom = 17;
+            }
+            break;
+         }
+
+         if(MainMap.Zoom > MainMap.MaxZoom)
+         {
+            MainMap.Zoom = MainMap.MaxZoom;
+         }
+         trackBar1.Maximum = MainMap.MaxZoom;
       }
 
       /// <summary>
@@ -265,38 +301,6 @@ namespace Demo.WindowsForms
       private void comboBoxMapType_DropDownClosed(object sender, EventArgs e)
       {
          MainMap.MapType = (MapType) comboBoxMapType.SelectedValue;
-         switch(MainMap.MapType)
-         {
-            case MapType.ArcGIS_Map:
-            case MapType.ArcGIS_Satellite:
-            case MapType.ArcGIS_ShadedRelief:
-            case MapType.ArcGIS_Terrain:
-            {
-               MainMap.MaxZoom = 13;
-            }
-            break;
-
-            case MapType.ArcGIS_MapsLT_Map_Hybrid:
-            case MapType.ArcGIS_MapsLT_Map_Labels:
-            case MapType.ArcGIS_MapsLT_Map:
-            case MapType.ArcGIS_MapsLT_OrtoFoto:
-            {
-               MainMap.MaxZoom = 12;                   
-            }
-            break;
-
-            default:
-            {
-               MainMap.MaxZoom = 17;               
-            }
-            break;
-         }
-
-         if(MainMap.Zoom > MainMap.MaxZoom)
-         {
-            MainMap.Zoom = MainMap.MaxZoom;
-         }
-         trackBar1.Maximum = MainMap.MaxZoom;
       }
 
       // change mdoe
@@ -557,9 +561,9 @@ namespace Demo.WindowsForms
          RectLatLng area = MainMap.SelectedArea;
          if(!area.IsEmpty)
          {
-            StaticImage st = new StaticImage(MainMap);
-            st.Owner = this;
-            st.Show();
+            //StaticImage st = new StaticImage(MainMap);
+            //st.Owner = this;
+            //st.Show();
          }
          else
          {

@@ -256,6 +256,11 @@ namespace GMap.NET.Internals
                GoToCurrentPosition();
 
                ReloadMap();
+
+               if(OnMapTypeChanged != null)
+               {
+                  OnMapTypeChanged(value);
+               }
             }
          }
       }
@@ -309,6 +314,11 @@ namespace GMap.NET.Internals
       /// occurs on map zoom changed
       /// </summary>
       public event MapZoomChanged OnMapZoomChanged;
+
+      /// <summary>
+      /// occurs on map type changed
+      /// </summary>
+      public event MapTypeChanged OnMapTypeChanged;
 
       /// <summary>
       /// starts core system

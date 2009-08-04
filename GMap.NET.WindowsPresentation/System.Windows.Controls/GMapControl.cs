@@ -957,6 +957,21 @@ namespace System.Windows.Controls
          }
       }
 
+      /// <summary>
+      /// occures on map type changed
+      /// </summary>
+      public event MapTypeChanged OnMapTypeChanged
+      {
+         add
+         {
+            Core.OnMapTypeChanged += value;
+         }
+         remove
+         {
+            Core.OnMapTypeChanged -= value;
+         }
+      }
+
       #endregion
    }
 }
