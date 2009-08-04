@@ -561,9 +561,9 @@ namespace Demo.WindowsForms
          RectLatLng area = MainMap.SelectedArea;
          if(!area.IsEmpty)
          {
-            //StaticImage st = new StaticImage(MainMap);
-            //st.Owner = this;
-            //st.Show();
+            StaticImage st = new StaticImage(MainMap);
+            st.Owner = this;
+            st.Show();
          }
          else
          {
