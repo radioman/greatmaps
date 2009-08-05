@@ -46,6 +46,7 @@
          this.trackBar1 = new System.Windows.Forms.TrackBar();
          this.groupBox2 = new System.Windows.Forms.GroupBox();
          this.groupBox5 = new System.Windows.Forms.GroupBox();
+         this.button13 = new System.Windows.Forms.Button();
          this.checkBoxDebug = new System.Windows.Forms.CheckBox();
          this.button12 = new System.Windows.Forms.Button();
          this.label8 = new System.Windows.Forms.Label();
@@ -78,7 +79,6 @@
          this.groupBox8 = new System.Windows.Forms.GroupBox();
          this.button7 = new System.Windows.Forms.Button();
          this.checkBoxPlacemarkInfo = new System.Windows.Forms.CheckBox();
-         this.button13 = new System.Windows.Forms.Button();
          this.groupBox4.SuspendLayout();
          this.groupBox3.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize) (this.trackBar1)).BeginInit();
@@ -139,7 +139,6 @@
          this.MainMap.MarkersEnabled = true;
          this.MainMap.Name = "MainMap";
          this.MainMap.RoutesEnabled = true;
-         this.MainMap.ShowTileGridLines = true;
          this.MainMap.Size = new System.Drawing.Size(638, 819);
          this.MainMap.TabIndex = 0;
          // 
@@ -318,16 +317,24 @@
          this.groupBox5.TabStop = false;
          this.groupBox5.Text = "gmap";
          // 
+         // button13
+         // 
+         this.button13.Location = new System.Drawing.Point(9, 144);
+         this.button13.Name = "button13";
+         this.button13.Size = new System.Drawing.Size(110, 29);
+         this.button13.TabIndex = 41;
+         this.button13.Text = "Get Static Map";
+         this.button13.UseVisualStyleBackColor = true;
+         this.button13.Click += new System.EventHandler(this.button13_Click);
+         // 
          // checkBoxDebug
          // 
          this.checkBoxDebug.AutoSize = true;
-         this.checkBoxDebug.Checked = true;
-         this.checkBoxDebug.CheckState = System.Windows.Forms.CheckState.Checked;
          this.checkBoxDebug.Location = new System.Drawing.Point(139, 91);
          this.checkBoxDebug.Name = "checkBoxDebug";
-         this.checkBoxDebug.Size = new System.Drawing.Size(72, 21);
+         this.checkBoxDebug.Size = new System.Drawing.Size(57, 21);
          this.checkBoxDebug.TabIndex = 40;
-         this.checkBoxDebug.Text = "Debug";
+         this.checkBoxDebug.Text = "Grid";
          this.checkBoxDebug.UseVisualStyleBackColor = true;
          this.checkBoxDebug.CheckedChanged += new System.EventHandler(this.checkBoxDebug_CheckedChanged);
          // 
@@ -705,16 +712,6 @@
          this.checkBoxPlacemarkInfo.TabIndex = 14;
          this.checkBoxPlacemarkInfo.Text = "place info";
          this.checkBoxPlacemarkInfo.UseVisualStyleBackColor = true;
-         // 
-         // button13
-         // 
-         this.button13.Location = new System.Drawing.Point(9, 144);
-         this.button13.Name = "button13";
-         this.button13.Size = new System.Drawing.Size(110, 29);
-         this.button13.TabIndex = 41;
-         this.button13.Text = "Get Static Map";
-         this.button13.UseVisualStyleBackColor = true;
-         this.button13.Click += new System.EventHandler(this.button13_Click);
          // 
          // MainForm
          // 

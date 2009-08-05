@@ -107,6 +107,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// shows tile gridlines
       /// </summary>
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public bool ShowTileGridLines
       {
          get
@@ -1247,6 +1248,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// is routes enabled
       /// </summary>
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public bool RoutesEnabled
       {
          get
