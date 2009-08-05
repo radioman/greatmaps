@@ -82,7 +82,6 @@ namespace Demo.WindowsForms
             GMap.NET.Point topLeftPx = MainMap.Projection.FromLatLngToPixel(area.Location,zoom);
             GMap.NET.Point rightButtomPx = MainMap.Projection.FromLatLngToPixel(area.Bottom, area.Right, zoom);
             GMap.NET.Point pxDelta = new GMap.NET.Point(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
-            GMap.NET.Size minXY = MainMap.Projection.GetTileMatrixMinXY(zoom);
 
             int padding = 22;
             {
@@ -90,8 +89,6 @@ namespace Demo.WindowsForms
                {
                   using(Graphics gfx = Graphics.FromImage(bmpDestination))
                   {
-                     gfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-
                      int i = 0;
 
                      // get tiles & combine into one
@@ -113,8 +110,8 @@ namespace Demo.WindowsForms
                            {
                               using(tile)
                               {
-                                 int x = minXY.Width + p.X*MainMap.Projection.TileSize.Width - topLeftPx.X + padding;
-                                 int y = minXY.Height + p.Y*MainMap.Projection.TileSize.Width - topLeftPx.Y + padding;
+                                 int x = p.X*MainMap.Projection.TileSize.Width - topLeftPx.X + padding;
+                                 int y = p.Y*MainMap.Projection.TileSize.Width - topLeftPx.Y + padding;
                                  {
                                     gfx.DrawImageUnscaled(tile.Img, x, y);
                                  }
