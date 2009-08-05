@@ -103,32 +103,8 @@ namespace GMap.NET.WindowsPresentation
       {
          int countOk = 0;
 
-         Stuff.Shuffle<GMap.NET.Point>(list);
-
-         List<MapType> types = new List<MapType>();
-         {
-            if(type == MapType.GoogleHybrid)
-            {
-               types.Add(MapType.GoogleLabels);
-               types.Add(MapType.GoogleSatellite);
-            }
-            else if(type == MapType.YahooHybrid)
-            {
-               types.Add(MapType.YahooLabels);
-               types.Add(MapType.YahooSatellite);
-            }
-            else if(type == MapType.GoogleHybridChina)
-            {
-               types.Add(MapType.GoogleLabelsChina);
-               types.Add(MapType.GoogleSatelliteChina);
-            }
-            else if(type == MapType.ArcGIS_MapsLT_Map_Hybrid)
-            {
-               types.Add(MapType.ArcGIS_MapsLT_Map_Labels);
-               types.Add(MapType.ArcGIS_MapsLT_OrtoFoto);
-            }
-         }
-         types.TrimExcess();
+         Stuff.Shuffle<GMap.NET.Point>(list); 
+         List<MapType> types = GMaps.Instance.GetAllLayersOfType(type);
 
          for(int i = 0; i < all; i++)
          {

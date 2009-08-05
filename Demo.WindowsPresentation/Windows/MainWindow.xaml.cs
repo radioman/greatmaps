@@ -61,7 +61,7 @@ namespace Demo.WindowsPresentation
          MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
          MainMap.MouseMove += new System.Windows.Input.MouseEventHandler(MainMap_MouseMove);
          MainMap.MouseLeftButtonDown += new System.Windows.Input.MouseButtonEventHandler(MainMap_MouseLeftButtonDown);
-         
+
          // get map types
          comboBoxMapType.ItemsSource = Enum.GetValues(typeof(MapType));
          comboBoxMapType.SelectedItem = MainMap.MapType;
@@ -227,7 +227,7 @@ namespace Demo.WindowsPresentation
          }
          else // add
          {
-            PointLatLng p = MainMap.FromLocalToLatLng(0, (int)MainMap.ActualHeight);
+            PointLatLng p = MainMap.FromLocalToLatLng(0, (int) MainMap.ActualHeight);
             p.Lng += r.NextDouble()/3.0;
             p.Lat += r.NextDouble()/4.0;
 
@@ -407,13 +407,13 @@ namespace Demo.WindowsPresentation
       // zoom changed
       private void sliderZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
       {
-        MainMap.Zoom = e.NewValue;
+         MainMap.Zoom = e.NewValue;
       }
 
       // zoom up
       private void czuZoomUp_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
       {
-         sliderZoom.Value = ((int)MainMap.Zoom) + 1;
+         sliderZoom.Value = ((int) MainMap.Zoom) + 1;
       }
 
       // zoom down
@@ -425,30 +425,36 @@ namespace Demo.WindowsPresentation
       // prefetch
       private void button3_Click(object sender, RoutedEventArgs e)
       {
-         RectLatLng area = MainMap.CurrentViewArea;
-
-         for(int i = (int) MainMap.Zoom; i <= MainMap.MaxZoom; i++)
+         RectLatLng area = MainMap.SelectedArea;
+         if(!area.IsEmpty)
          {
-            var x = MainMap.Projection.GetAreaTileList(area, i, 0);
-
-            MessageBoxResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButton.YesNoCancel);
-
-            if(res == MessageBoxResult.Yes)
+            for(int i = (int) MainMap.Zoom; i <= MainMap.MaxZoom; i++)
             {
-               TilePrefetcher obj = new TilePrefetcher();
-               obj.ShowCompleteMessage = true;
-               obj.Start(x, i, MainMap.MapType, 100);
-            }
-            else if(res == MessageBoxResult.No)
-            {
-               continue;
-            }
-            else if(res == MessageBoxResult.Cancel)
-            {
-               break;
-            }
+               var x = MainMap.Projection.GetAreaTileList(area, i, 0);
 
-            x.Clear();
+               MessageBoxResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButton.YesNoCancel);
+
+               if(res == MessageBoxResult.Yes)
+               {
+                  TilePrefetcher obj = new TilePrefetcher();
+                  obj.ShowCompleteMessage = true;
+                  obj.Start(x, i, MainMap.MapType, 100);
+               }
+               else if(res == MessageBoxResult.No)
+               {
+                  continue;
+               }
+               else if(res == MessageBoxResult.Cancel)
+               {
+                  break;
+               }
+
+               x.Clear();
+            }
+         }
+         else
+         {
+            MessageBox.Show("Select map area holding ALT", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Exclamation);
          }
       }
 
@@ -588,7 +594,7 @@ namespace Demo.WindowsPresentation
       // adds route
       private void button12_Click(object sender, RoutedEventArgs e)
       {
-         MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, (int)MainMap.Zoom);
+         MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, (int) MainMap.Zoom);
          if(route != null)
          {
             GMapMarker m1 = new GMapMarker(start);

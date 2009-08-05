@@ -495,30 +495,36 @@ namespace Demo.WindowsForms
       // prefetch
       private void button11_Click(object sender, EventArgs e)
       {
-         RectLatLng area = MainMap.CurrentViewArea;
-
-         for(int i = MainMap.Zoom; i <= MainMap.MaxZoom; i++)
+         RectLatLng area = MainMap.SelectedArea;
+         if(!area.IsEmpty)
          {
-            List<GMap.NET.Point> x = MainMap.Projection.GetAreaTileList(area, i, 0);
-
-            DialogResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButtons.YesNoCancel);
-
-            if(res == DialogResult.Yes)
+            for(int i = MainMap.Zoom; i <= MainMap.MaxZoom; i++)
             {
-               TilePrefetcher obj = new TilePrefetcher();
-               obj.ShowCompleteMessage = true;
-               obj.Start(x, i, MainMap.MapType, 100);
-            }
-            else if(res == DialogResult.No)
-            {
-               continue;
-            }
-            else if(res == DialogResult.Cancel)
-            {
-               break;
-            }
+               List<GMap.NET.Point> x = MainMap.Projection.GetAreaTileList(area, i, 0);
 
-            x.Clear();
+               DialogResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButtons.YesNoCancel);
+
+               if(res == DialogResult.Yes)
+               {
+                  TilePrefetcher obj = new TilePrefetcher();
+                  obj.ShowCompleteMessage = true;
+                  obj.Start(x, i, MainMap.MapType, 100);
+               }
+               else if(res == DialogResult.No)
+               {
+                  continue;
+               }
+               else if(res == DialogResult.Cancel)
+               {
+                  break;
+               }
+
+               x.Clear();
+            }
+         }
+         else
+         {
+            MessageBox.Show("Select map area holding ALT", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
          }
       }
 
@@ -567,7 +573,7 @@ namespace Demo.WindowsForms
          }
          else
          {
-            MessageBox.Show("Select map holding ALT", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            MessageBox.Show("Select map area holding ALT", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
          }
       }
    }
