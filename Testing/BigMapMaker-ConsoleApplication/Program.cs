@@ -38,6 +38,7 @@ namespace BigMapMaker_ConsoleApplication
                GMap.NET.Point topLeftPx = prj.FromLatLngToPixel(area.Location, zoom);
                GMap.NET.Point rightButtomPx = prj.FromLatLngToPixel(area.Bottom, area.Right, zoom);
                GMap.NET.Point pxDelta = new GMap.NET.Point(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
+               GMap.NET.Size minXY = prj.GetTileMatrixMinXY(zoom);
 
                int padding = 22;
                {
@@ -61,8 +62,8 @@ namespace BigMapMaker_ConsoleApplication
                               {
                                  using(tile)
                                  {
-                                    int x = p.X*prj.TileSize.Width - topLeftPx.X + padding;
-                                    int y = p.Y*prj.TileSize.Width - topLeftPx.Y + padding;
+                                    int x = minXY.Width + p.X*prj.TileSize.Width - topLeftPx.X + padding;
+                                    int y = minXY.Height + p.Y*prj.TileSize.Width - topLeftPx.Y + padding;
                                     {
                                        gfx.DrawImageUnscaled(tile.Img, x, y);
                                     }

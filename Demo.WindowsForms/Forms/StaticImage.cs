@@ -76,12 +76,14 @@ namespace Demo.WindowsForms
             e.Result = bigImage;
 
             List<MapType> types = GMaps.Instance.GetAllLayersOfType(MainMap.MapType);
+            int zoom = (int) numericUpDown1.Value;
 
             // current area
-            GMap.NET.Point topLeftPx = MainMap.Projection.FromLatLngToPixel(area.Location, (int) numericUpDown1.Value);
-            GMap.NET.Point rightButtomPx = MainMap.Projection.FromLatLngToPixel(area.Bottom, area.Right, (int) numericUpDown1.Value);
+            GMap.NET.Point topLeftPx = MainMap.Projection.FromLatLngToPixel(area.Location,zoom);
+            GMap.NET.Point rightButtomPx = MainMap.Projection.FromLatLngToPixel(area.Bottom, area.Right, zoom);
             GMap.NET.Point pxDelta = new GMap.NET.Point(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
-            
+            GMap.NET.Size minXY = MainMap.Projection.GetTileMatrixMinXY(zoom);
+
             int padding = 22;
             {
                using(Bitmap bmpDestination = new Bitmap(pxDelta.X + padding*2, pxDelta.Y + padding*2))
@@ -106,13 +108,13 @@ namespace Demo.WindowsForms
 
                         foreach(MapType tp in types)
                         {
-                           WindowsFormsImage tile = GMaps.Instance.GetImageFrom(tp, p, (int) numericUpDown1.Value) as WindowsFormsImage;
+                           WindowsFormsImage tile = GMaps.Instance.GetImageFrom(tp, p, zoom) as WindowsFormsImage;
                            if(tile != null)
                            {
                               using(tile)
                               {
-                                 int x = p.X*MainMap.Projection.TileSize.Width - topLeftPx.X + padding;
-                                 int y = p.Y*MainMap.Projection.TileSize.Width - topLeftPx.Y + padding;
+                                 int x = minXY.Width + p.X*MainMap.Projection.TileSize.Width - topLeftPx.X + padding;
+                                 int y = minXY.Height + p.Y*MainMap.Projection.TileSize.Width - topLeftPx.Y + padding;
                                  {
                                     gfx.DrawImageUnscaled(tile.Img, x, y);
                                  }
@@ -153,7 +155,7 @@ namespace Demo.WindowsForms
                         // draw scale
                         using(Pen p = new Pen(Brushes.Blue, 1))
                         {
-                           double rez = MainMap.Projection.GetGroundResolution((int) numericUpDown1.Value, area.Bottom);
+                           double rez = MainMap.Projection.GetGroundResolution(zoom, area.Bottom);
                            int px100 = (int) (100.0 / rez); // 100 meters
                            int px1000 = (int) (1000.0 / rez); // 1km   
 
