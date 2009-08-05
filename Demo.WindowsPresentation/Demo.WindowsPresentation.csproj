@@ -118,16 +118,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GMap.NET.Core\GMap.NET.Core.csproj">
-      <Project>{D0C39D9D-BED0-418B-9A5E-713176CAF40C}</Project>
-      <Name>GMap.NET.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GMap.NET.WindowsPresentation\GMap.NET.WindowsPresentation.csproj">
-      <Project>{644FE7D4-0184-400F-B2D7-99CB41360658}</Project>
-      <Name>GMap.NET.WindowsPresentation</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\ImageReady.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +126,16 @@
   <ItemGroup>
     <Resource Include="Windows\Zoom\zoom+.png" />
     <Resource Include="Windows\Zoom\zoom-.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GMap.NET.Core\GMap.NET.Core.csproj">
+      <Project>{D0C39D9D-BED0-418B-9A5E-713176CAF40C}</Project>
+      <Name>GMap.NET.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GMap.NET.WindowsPresentation\GMap.NET.WindowsPresentation.csproj">
+      <Project>{644FE7D4-0184-400F-B2D7-99CB41360658}</Project>
+      <Name>GMap.NET.WindowsPresentation</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
