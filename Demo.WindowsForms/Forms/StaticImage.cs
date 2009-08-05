@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
-using System.Text;
+using System.IO;
 using System.Windows.Forms;
 using GMap.NET;
 using GMap.NET.WindowsForms;
-using System.Linq;
-using System.IO;
-using System.Diagnostics;
 
 namespace Demo.WindowsForms
 {
@@ -16,11 +14,13 @@ namespace Demo.WindowsForms
    {
       GMapControl MainMap;
       BackgroundWorker bg = new BackgroundWorker();
+      readonly List<GMap.NET.Point> tileArea = new List<GMap.NET.Point>();
 
       public StaticImage(GMapControl main)
       {
-         this.MainMap = main;
          InitializeComponent();
+
+         this.MainMap = main;
 
          numericUpDown1.Maximum = MainMap.MaxZoom;
          numericUpDown1.Minimum = MainMap.MinZoom;
@@ -72,55 +72,19 @@ namespace Demo.WindowsForms
          RectLatLng area = (RectLatLng) e.Argument;
          if(!area.IsEmpty)
          {
-            int minX = tileArea.Min(p => p.X);
-            int minY = tileArea.Min(p => p.Y);
-            int maxX = tileArea.Max(p => p.X);
-            int maxY = tileArea.Max(p => p.Y);
+            string bigImage = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + Path.DirectorySeparatorChar + "GMap-" + DateTime.Now.Ticks + ".png";
+            e.Result = bigImage;
 
-            GMap.NET.Point pxMin = MainMap.Projection.FromTileXYToPixel(new GMap.NET.Point(minX, minY));
-            GMap.NET.Point pxMax = MainMap.Projection.FromTileXYToPixel(new GMap.NET.Point(maxX+1, maxY+1));
-            GMap.NET.Point pxDeltaA = new GMap.NET.Point(pxMax.X - pxMin.X, pxMax.Y - pxMin.Y);
+            List<MapType> types = GMaps.Instance.GetAllLayersOfType(MainMap.MapType);
 
+            // current area
             GMap.NET.Point topLeftPx = MainMap.Projection.FromLatLngToPixel(area.Location, (int) numericUpDown1.Value);
             GMap.NET.Point rightButtomPx = MainMap.Projection.FromLatLngToPixel(area.Bottom, area.Right, (int) numericUpDown1.Value);
             GMap.NET.Point pxDelta = new GMap.NET.Point(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
-
-            string bigImage = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + Path.DirectorySeparatorChar + "GMap-" + DateTime.Now.Ticks + "  .png";
-            e.Result = bigImage;
-
-            List<MapType> types = new List<MapType>();
+            
+            int padding = 22;
             {
-               MapType type = MainMap.MapType;
-               if(type == MapType.GoogleHybrid)
-               {
-                  types.Add(MapType.GoogleSatellite);
-                  types.Add(MapType.GoogleLabels);
-               }
-               else if(type == MapType.YahooHybrid)
-               {
-                  types.Add(MapType.YahooSatellite);
-                  types.Add(MapType.YahooLabels);
-               }
-               else if(type == MapType.GoogleHybridChina)
-               {
-                  types.Add(MapType.GoogleSatelliteChina);
-                  types.Add(MapType.GoogleLabelsChina);
-               }
-               else if(type == MapType.ArcGIS_MapsLT_Map_Hybrid)
-               {
-                  types.Add(MapType.ArcGIS_MapsLT_OrtoFoto);
-                  types.Add(MapType.ArcGIS_MapsLT_Map_Labels);
-               }
-               else
-               {
-                  types.Add(type);
-               }
-            }
-            types.TrimExcess();
-
-            try
-            {
-               using(Bitmap bmpDestination = new Bitmap(pxDeltaA.X, pxDeltaA.Y, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+               using(Bitmap bmpDestination = new Bitmap(pxDelta.X + padding*2, pxDelta.Y + padding*2))
                {
                   using(Graphics gfx = Graphics.FromImage(bmpDestination))
                   {
@@ -147,23 +111,28 @@ namespace Demo.WindowsForms
                            {
                               using(tile)
                               {
-                                 gfx.DrawImageUnscaled(tile.Img, (p.X - minX)*MainMap.Projection.TileSize.Width, (p.Y - minY)*MainMap.Projection.TileSize.Width);
+                                 int x = p.X*MainMap.Projection.TileSize.Width - topLeftPx.X + padding;
+                                 int y = p.Y*MainMap.Projection.TileSize.Width - topLeftPx.Y + padding;
+                                 {
+                                    gfx.DrawImageUnscaled(tile.Img, x, y);
+                                 }
                               }
                            }
                         }
                      }
                   }
 
-                  System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
+                  // draw info
                   {
-                     rect.Location = new System.Drawing.Point(topLeftPx.X - pxMin.X, topLeftPx.Y - pxMin.Y);
-                     rect.Size = new System.Drawing.Size(pxDelta.X, pxDelta.Y);
-
-                     Font f = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold);
-
-                     // draw bounds & info
+                     System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
+                     {
+                        rect.Location = new System.Drawing.Point(padding, padding);
+                        rect.Size = new System.Drawing.Size(pxDelta.X, pxDelta.Y);
+                     }
+                     using(Font f = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold))                        
                      using(Graphics gfx = Graphics.FromImage(bmpDestination))
                      {
+                        // draw bounds & coordinates
                         using(Pen p = new Pen(Brushes.Red, 3))
                         {
                            p.DashStyle = System.Drawing.Drawing2D.DashStyle.DashDot;
@@ -201,29 +170,9 @@ namespace Demo.WindowsForms
                   bmpDestination.Save(bigImage, System.Drawing.Imaging.ImageFormat.Png);
                }
             }
-            catch(Exception ex)
-            {
-               try
-               {
-                  File.Delete(bigImage);
-               }
-               catch
-               {
-               }
-               e.Result = "Error:" + ex.ToString();
-            }
-            finally
-            {
-
-            }
          }
-         else
-         {
-            MessageBox.Show("Select map holding ALT", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-         }
-      }
+      }         
 
-      readonly List<GMap.NET.Point> tileArea = new List<GMap.NET.Point>();
       private void button1_Click(object sender, EventArgs e)
       {
          RectLatLng area = MainMap.SelectedArea;
@@ -232,7 +181,8 @@ namespace Demo.WindowsForms
             if(!bg.IsBusy)
             {
                tileArea.Clear();
-               tileArea.AddRange(MainMap.Projection.GetAreaTileList(area, (int) numericUpDown1.Value));
+               tileArea.AddRange(MainMap.Projection.GetAreaTileList(area, (int) numericUpDown1.Value, 1));
+               tileArea.TrimExcess();
 
                numericUpDown1.Enabled = false;
                progressBar1.Value = 0;

@@ -11,8 +11,8 @@ namespace GMap.NET.Projections
    {
       const double MinLatitude = -85.05112878;
       const double MaxLatitude = 85.05112878;
-      const double MinLongitude = -180;
-      const double MaxLongitude = 180;
+      const double MinLongitude = -177;
+      const double MaxLongitude = 177;
 
       Size tileSize = new Size(256, 256);
       public override Size TileSize

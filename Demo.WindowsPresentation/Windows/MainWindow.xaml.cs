@@ -429,7 +429,7 @@ namespace Demo.WindowsPresentation
 
          for(int i = (int) MainMap.Zoom; i <= MainMap.MaxZoom; i++)
          {
-            var x = MainMap.Projection.GetAreaTileList(area, i);
+            var x = MainMap.Projection.GetAreaTileList(area, i, 0);
 
             MessageBoxResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButton.YesNoCancel);
 

@@ -145,18 +145,22 @@ namespace GMap.NET
       /// <summary>
       /// gets all tiles in rect at specific zoom
       /// </summary>
-      public List<Point> GetAreaTileList(RectLatLng rect, int zoom)
+      public List<Point> GetAreaTileList(RectLatLng rect, int zoom, int padding)
       {
          List<Point> ret = new List<Point>();
 
          Point topLeft = FromPixelToTileXY(FromLatLngToPixel(rect.Location, zoom));
          Point rightBottom = FromPixelToTileXY(FromLatLngToPixel(rect.Bottom, rect.Right, zoom));
 
-         for(int x = topLeft.X; x <= rightBottom.X; x++)
+         for(int x = (topLeft.X - padding); x <= (rightBottom.X + padding); x++)
          {
-            for(int y = topLeft.Y; y <= rightBottom.Y; y++)
+            for(int y = (topLeft.Y - padding); y <= (rightBottom.Y + padding); y++)
             {
-               ret.Add(new Point(x, y));
+               Point p = new Point(x, y);
+               if(!ret.Contains(p) && p.X >= 0 && p.Y >= 0)
+               {
+                  ret.Add(p);
+               }
             }
          }
          ret.TrimExcess();

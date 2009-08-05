@@ -156,6 +156,56 @@ namespace GMap.NET
       #region -- Stuff --
 
       /// <summary>
+      /// gets all layers of map type
+      /// </summary>
+      /// <param name="type"></param>
+      /// <returns></returns>
+      public List<MapType> GetAllLayersOfType(MapType type)
+      {
+         List<MapType> types = new List<MapType>();
+         {
+            switch(type)
+            {
+               case MapType.GoogleHybrid:
+               {
+                  types.Add(MapType.GoogleSatellite);
+                  types.Add(MapType.GoogleLabels);
+               }
+               break;
+
+               case MapType.GoogleHybridChina:
+               {
+                  types.Add(MapType.GoogleSatelliteChina);
+                  types.Add(MapType.GoogleLabelsChina);
+               }
+               break;
+
+               case MapType.YahooHybrid:
+               {
+                  types.Add(MapType.YahooSatellite);
+                  types.Add(MapType.YahooLabels);
+               }
+               break;
+
+               case MapType.ArcGIS_MapsLT_Map_Hybrid:
+               {
+                  types.Add(MapType.ArcGIS_MapsLT_OrtoFoto);
+                  types.Add(MapType.ArcGIS_MapsLT_Map_Labels);
+               }
+               break;
+
+               default:
+               {
+                  types.Add(type);
+               }
+               break;
+            }
+         }
+         types.TrimExcess();
+         return types;
+      }
+
+      /// <summary>
       /// distance (in km) between two points specified by latitude/longitude
       /// The Haversine formula, http://www.movable-type.co.uk/scripts/latlong.html
       /// </summary>
@@ -646,7 +696,7 @@ namespace GMap.NET
                //http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto_overlay/MapServer/tile/0/9/13
 
                return string.Format("http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto_overlay/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
-            }             
+            }
             #endregion
          }
 

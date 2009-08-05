@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using GMap.NET;
 using GMap.NET.Projections;
 using GMap.NET.WindowsForms;
@@ -18,113 +17,123 @@ namespace BigMapMaker_ConsoleApplication
          GMaps.Instance.ImageProxy = new WindowsFormsImageProxy();
 
          MapType type = MapType.GoogleMap;
-         PureProjection pr = new MercatorProjection(); 
+         PureProjection prj = new MercatorProjection();
          int zoom = 12;
          RectLatLng area = RectLatLng.FromLTRB(25.013809204101563, 54.832138557519563, 25.506134033203125, 54.615623046071839);
-         List<GMap.NET.Point> tileArea = pr.GetAreaTileList(area, zoom);
-         string bigImage = zoom + "-" + type + "-vilnius.png";
-
-         Console.WriteLine("Preparing: " + bigImage);
-         Console.WriteLine("Zoom: " + zoom);
-         Console.WriteLine("Type: " + type.ToString());
-         Console.WriteLine("Area: " + area);
-
-         int minX = tileArea.Min(p => p.X);
-         int minY = tileArea.Min(p => p.Y);
-         int maxX = tileArea.Max(p => p.X);
-         int maxY = tileArea.Max(p => p.Y);
-
-         GMap.NET.Point pxMin = pr.FromTileXYToPixel(new GMap.NET.Point(minX, minY));
-         GMap.NET.Point pxMax = pr.FromTileXYToPixel(new GMap.NET.Point(maxX+1, maxY+1));
-         GMap.NET.Point pxDeltaA = new GMap.NET.Point(pxMax.X - pxMin.X, pxMax.Y - pxMin.Y);
-
-         GMap.NET.Point topLeftPx = pr.FromLatLngToPixel(area.Location, zoom);
-         GMap.NET.Point rightButtomPx = pr.FromLatLngToPixel(area.Bottom, area.Right, zoom);
-         GMap.NET.Point pxDelta = new GMap.NET.Point(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
-
-         try
+         if(!area.IsEmpty)
          {
-            using(Bitmap bmpDestination = new Bitmap(pxDeltaA.X, pxDeltaA.Y))
+            try
             {
-               // get tiles & combine into one
-               foreach(var p in tileArea)
-               {
-                  Console.WriteLine("Downloading[" + p + "]: " + tileArea.IndexOf(p) + " of " + tileArea.Count);
+               List<GMap.NET.Point> tileArea = prj.GetAreaTileList(area, zoom, 0);
+               string bigImage = zoom + "-" + type + "-vilnius.png";
 
-                  WindowsFormsImage tile = GMaps.Instance.GetImageFrom(type, p, zoom) as WindowsFormsImage;
-                  if(tile != null)
+               Console.WriteLine("Preparing: " + bigImage);
+               Console.WriteLine("Zoom: " + zoom);
+               Console.WriteLine("Type: " + type.ToString());
+               Console.WriteLine("Area: " + area);
+
+               List<MapType> types = GMaps.Instance.GetAllLayersOfType(type);
+
+               // current area
+               GMap.NET.Point topLeftPx = prj.FromLatLngToPixel(area.Location, zoom);
+               GMap.NET.Point rightButtomPx = prj.FromLatLngToPixel(area.Bottom, area.Right, zoom);
+               GMap.NET.Point pxDelta = new GMap.NET.Point(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
+
+               int padding = 22;
+               {
+                  using(Bitmap bmpDestination = new Bitmap(pxDelta.X + padding*2, pxDelta.Y + padding*2))
                   {
-                     using(tile)
+                     using(Graphics gfx = Graphics.FromImage(bmpDestination))
                      {
-                        using(Graphics gfx = Graphics.FromImage(bmpDestination))
+                        gfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+
+                        int i = 0;
+
+                        // get tiles & combine into one
+                        foreach(var p in tileArea)
                         {
-                           gfx.DrawImage(tile.Img, (p.X - minX)*pr.TileSize.Width, (p.Y - minY)*pr.TileSize.Width);
+                           Console.WriteLine("Downloading[" + p + "]: " + tileArea.IndexOf(p) + " of " + tileArea.Count);
+
+                           foreach(MapType tp in types)
+                           {
+                              WindowsFormsImage tile = GMaps.Instance.GetImageFrom(tp, p, zoom) as WindowsFormsImage;
+                              if(tile != null)
+                              {
+                                 using(tile)
+                                 {
+                                    int x = p.X*prj.TileSize.Width - topLeftPx.X + padding;
+                                    int y = p.Y*prj.TileSize.Width - topLeftPx.Y + padding;
+                                    {
+                                       gfx.DrawImageUnscaled(tile.Img, x, y);
+                                    }
+                                 }
+                              }
+                           }
                         }
                      }
+
+                     // draw info
+                     {
+                        System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
+                        {
+                           rect.Location = new System.Drawing.Point(padding, padding);
+                           rect.Size = new System.Drawing.Size(pxDelta.X, pxDelta.Y);
+                        }
+                        using(Font f = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold))
+                        using(Graphics gfx = Graphics.FromImage(bmpDestination))
+                        {
+                           // draw bounds & coordinates
+                           using(Pen p = new Pen(Brushes.Red, 3))
+                           {
+                              p.DashStyle = System.Drawing.Drawing2D.DashStyle.DashDot;
+
+                              gfx.DrawRectangle(p, rect);
+
+                              string topleft = area.Location.ToString();
+                              SizeF s = gfx.MeasureString(topleft, f);
+
+                              gfx.DrawString(topleft, f, p.Brush, rect.X + s.Height/2, rect.Y + s.Height/2);
+
+                              string rightBottom = new PointLatLng(area.Bottom, area.Right).ToString();
+                              SizeF s2 = gfx.MeasureString(rightBottom, f);
+
+                              gfx.DrawString(rightBottom, f, p.Brush, rect.Right - s2.Width - s2.Height/2, rect.Bottom - s2.Height - s2.Height/2);
+                           }
+
+                           // draw scale
+                           using(Pen p = new Pen(Brushes.Blue, 1))
+                           {
+                              double rez = prj.GetGroundResolution(zoom, area.Bottom);
+                              int px100 = (int) (100.0 / rez); // 100 meters
+                              int px1000 = (int) (1000.0 / rez); // 1km   
+
+                              gfx.DrawRectangle(p, rect.X + 10, rect.Bottom - 20, px1000, 10);
+                              gfx.DrawRectangle(p, rect.X + 10, rect.Bottom - 20, px100, 10);
+
+                              string leftBottom = "scale: 100m | 1Km";
+                              SizeF s = gfx.MeasureString(leftBottom, f);
+                              gfx.DrawString(leftBottom, f, p.Brush, rect.X+10, rect.Bottom - s.Height - 20);
+                           }
+                        }
+                     }
+
+                     bmpDestination.Save(bigImage, System.Drawing.Imaging.ImageFormat.Png);
                   }
                }
 
-               System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
+               // ok, lets see what we get
                {
-                  rect.Location = new System.Drawing.Point(topLeftPx.X - pxMin.X, topLeftPx.Y - pxMin.Y);
-                  rect.Size = new System.Drawing.Size(pxDelta.X, pxDelta.Y);
+                  Console.WriteLine("Done! Starting Image: " + bigImage);
 
-                  Font f = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold);
-
-                  // draw bounds & info
-                  using(Graphics gfx = Graphics.FromImage(bmpDestination))
-                  {
-                     using(Pen p = new Pen(Brushes.Red, 3))
-                     {
-                        p.DashStyle = System.Drawing.Drawing2D.DashStyle.DashDot;
-
-                        gfx.DrawRectangle(p, rect);
-
-                        string topleft = area.Location.ToString();
-                        SizeF s = gfx.MeasureString(topleft, f);
-
-                        gfx.DrawString(topleft, f, p.Brush, rect.X + s.Height/2, rect.Y + s.Height/2);
-
-                        string rightBottom = new PointLatLng(area.Bottom, area.Right).ToString();
-                        SizeF s2 = gfx.MeasureString(rightBottom, f);
-
-                        gfx.DrawString(rightBottom, f, p.Brush, rect.Right - s2.Width - s2.Height/2, rect.Bottom - s2.Height - s2.Height/2);
-                     }
-
-                     // draw scale
-                     using(Pen p = new Pen(Brushes.Blue, 1))
-                     {
-                        double rez = pr.GetGroundResolution(zoom, area.Bottom);
-                        int px100 = (int) (100.0 / rez); // 100 meters
-                        int px1000 = (int) (1000.0 / rez); // 1km  
-                        int px10km = (int) (10000.0 / rez); // 10km   
-
-                        gfx.DrawRectangle(p, rect.X + 10, rect.Bottom - 20, px10km, 10);
-                        gfx.DrawRectangle(p, rect.X + 10, rect.Bottom - 20, px1000, 10);
-                        gfx.DrawRectangle(p, rect.X + 10, rect.Bottom - 20, px100, 10);
-
-                        string leftBottom = "scale: 100m | 1Km | 10Km";
-                        SizeF s = gfx.MeasureString(leftBottom, f);
-                        gfx.DrawString(leftBottom, f, p.Brush, rect.X+10, rect.Bottom - s.Height - 20);
-                     }
-                  }
+                  Process.Start(bigImage);
                }
-
-               bmpDestination.Save(bigImage);
             }
-
-            // ok, lets see what we get
+            catch(Exception ex)
             {
-               Console.WriteLine("Done! Starting Image: " + bigImage);
+               Console.WriteLine("Error: " + ex.ToString());
 
-               Process.Start(bigImage);
+               Console.ReadLine();
             }
-         }
-         catch(Exception ex)
-         {
-            Console.WriteLine("Error: " + ex.ToString());
-
-            Console.ReadLine();
          }
       }
    }

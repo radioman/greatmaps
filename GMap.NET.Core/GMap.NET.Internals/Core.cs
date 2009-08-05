@@ -461,7 +461,7 @@ namespace GMap.NET.Internals
          }
 
          return zoom;
-      }
+      }        
 
       /// <summary>
       /// initiates map dragging
@@ -668,51 +668,18 @@ namespace GMap.NET.Internals
 
             Tile t = new Tile(task.Zoom, task.Pos, RenderMode);
             {
-               if(MapType == MapType.GoogleHybrid)
+               List<MapType> layers = GMaps.Instance.GetAllLayersOfType(MapType);
+               foreach(MapType tl in layers)
                {
-                  PureImage img = GMaps.Instance.GetImageFrom(MapType.GoogleSatellite, task.Pos, task.Zoom);
-                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.GoogleLabels, task.Pos, task.Zoom);
+                  PureImage img = GMaps.Instance.GetImageFrom(tl, task.Pos, task.Zoom);
                   lock(t.Overlays)
                   {
                      t.Overlays.Add(img);
-                     t.Overlays.Add(img2);
                   }
                }
-               else if(MapType == MapType.YahooHybrid)
-               {
-                  PureImage img = GMaps.Instance.GetImageFrom(MapType.YahooSatellite, task.Pos, task.Zoom);
-                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.YahooLabels, task.Pos, task.Zoom);
-                  lock(t.Overlays)
-                  {
-                     t.Overlays.Add(img);
-                     t.Overlays.Add(img2);
-                  }
-               }
-               else if(MapType == MapType.GoogleHybridChina)
-               {
-                  PureImage img = GMaps.Instance.GetImageFrom(MapType.GoogleSatelliteChina, task.Pos, task.Zoom);
-                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.GoogleLabelsChina, task.Pos, task.Zoom);
-                  lock(t.Overlays)
-                  {
-                     t.Overlays.Add(img);
-                     t.Overlays.Add(img2);
-                  }
-               }
-               else if(MapType == MapType.ArcGIS_MapsLT_Map_Hybrid)
-               {
-                  PureImage img = GMaps.Instance.GetImageFrom(MapType.ArcGIS_MapsLT_OrtoFoto, task.Pos, task.Zoom);
-                  PureImage img2 = GMaps.Instance.GetImageFrom(MapType.ArcGIS_MapsLT_Map_Labels, task.Pos, task.Zoom);
-                  lock(t.Overlays)
-                  {
-                     t.Overlays.Add(img);
-                     t.Overlays.Add(img2);
-                  }
-               }
-               else // single layer
-               {
-                  PureImage img = GMaps.Instance.GetImageFrom(MapType, task.Pos, task.Zoom);
-                  t.Overlays.Add(img);
-               }
+               layers.Clear();
+               layers = null;
+
                Matrix[task.Pos] = t;
             }
             loader.ReportProgress(id);
