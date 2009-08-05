@@ -48,9 +48,9 @@ namespace Demo.WindowsForms
             //GMaps.Instance.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
             // config map 
-            MainMap.MapType = MapType.GoogleMap;
+            MainMap.MapType = MapType.ArcGIS_MapsLT_Map_Hybrid;
             MainMap.MaxZoom = 12;
-            MainMap.MinZoom = 1;
+            MainMap.MinZoom = 2;
             MainMap.Zoom = MainMap.MinZoom;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
             //MainMap.CurrentPosition = new PointLatLng(29.8741410626414, 121.563806533813); // china test
