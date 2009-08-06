@@ -20,16 +20,16 @@ namespace GMap.NET
    {
       // Google version strings
       public string VersionGoogleMap = "w2.101";
-      public string VersionGoogleSatellite = "41";
+      public string VersionGoogleSatellite = "42";
       public string VersionGoogleLabels = "w2t.101";
       public string VersionGoogleTerrain = "w2p.87";
       public string SecGoogleWord = "Galileo";
 
       // Google (china) version strings
-      public string VersionGoogleMapChina = "cn1.11";
-      public string VersionGoogleSatelliteChina = "41";
-      public string VersionGoogleLabelsChina = "cn1t.11";
-      public string VersionGoogleTerrainChina = "cn1p.12";
+      public string VersionGoogleMapChina = "w2.101";
+      public string VersionGoogleSatelliteChina = "42";
+      public string VersionGoogleLabelsChina = "w2t.101";
+      public string VersionGoogleTerrainChina = "cnw2p.98";        
 
       // Yahoo version strings
       public string VersionYahooMap = "4.2";
@@ -37,7 +37,7 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.2";
 
       // Virtual Earth
-      public string VersionVirtualEarth = "304";
+      public string VersionVirtualEarth = "321";
 
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
@@ -537,12 +537,12 @@ namespace GMap.NET
             case MapType.GoogleMapChina:
             {
                string server = "mt";
-               string request = "mt";
+               string request = "vt";
                string sec1 = ""; // after &x=...
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               // http://mt0.google.cn/mt/v=cn1.11&hl=zh-CN&gl=cn&x=26&y=11&z=5&s=G
+               // http://mt0.google.cn/vt/v=w2.101&hl=zh-CN&gl=cn&x=12&y=6&z=4&s=Ga
 
                return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
@@ -556,7 +556,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               // http://khm0.google.cn/kh/v=40&x=26&y=11&z=5&s=G
+               // http://khm0.google.cn/kh/v=42&x=12&y=6&z=4&s=Ga
 
                return string.Format("http://{0}{1}.google.cn/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteChina, pos.X, sec1, pos.Y, zoom, sec2);
             }
@@ -565,12 +565,12 @@ namespace GMap.NET
             case MapType.GoogleLabelsChina:
             {
                string server = "mt";
-               string request = "mt";
+               string request = "vt";
                string sec1 = ""; // after &x=...
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               // http://mt0.google.cn/mt/v=cn1t.11&hl=zh-CN&gl=cn&x=26&y=11&z=5&s=G
+               // http://mt0.google.cn/vt/v=w2t.101&hl=zh-CN&gl=cn&x=12&y=6&z=4&s=Ga
 
                return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
@@ -584,9 +584,9 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               // http://mt0.google.cn/mt/v=cn1p.12&hl=zh-CN&gl=cn&x=26&y=11&z=5&s=G
+               // http://mt0.google.com/mt/v=cnw2p.98&hl=zh-CN&gl=cn&x=12&y=6&z=4&s=Ga
 
-               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;
             #endregion
