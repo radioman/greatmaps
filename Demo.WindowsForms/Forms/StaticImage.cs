@@ -69,18 +69,17 @@ namespace Demo.WindowsForms
 
       void bg_DoWork(object sender, DoWorkEventArgs e)
       {
-         RectLatLng area = (RectLatLng) e.Argument;
-         if(!area.IsEmpty)
+         MapInfo info = e.Argument as MapInfo;
+         if(!info.Area.IsEmpty)
          {
             string bigImage = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + Path.DirectorySeparatorChar + "GMap-" + DateTime.Now.Ticks + ".png";
             e.Result = bigImage;
 
-            List<MapType> types = GMaps.Instance.GetAllLayersOfType(MainMap.MapType);
-            int zoom = (int) numericUpDown1.Value;
+            List<MapType> types = GMaps.Instance.GetAllLayersOfType(info.Type);
 
             // current area
-            GMap.NET.Point topLeftPx = MainMap.Projection.FromLatLngToPixel(area.Location,zoom);
-            GMap.NET.Point rightButtomPx = MainMap.Projection.FromLatLngToPixel(area.Bottom, area.Right, zoom);
+            GMap.NET.Point topLeftPx = info.Projection.FromLatLngToPixel(info.Area.Location, info.Zoom);
+            GMap.NET.Point rightButtomPx = info.Projection.FromLatLngToPixel(info.Area.Bottom, info.Area.Right, info.Zoom);
             GMap.NET.Point pxDelta = new GMap.NET.Point(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
 
             int padding = 22;
@@ -92,28 +91,31 @@ namespace Demo.WindowsForms
                      int i = 0;
 
                      // get tiles & combine into one
-                     foreach(var p in tileArea)
+                     lock(tileArea)
                      {
-                        if(bg.CancellationPending)
+                        foreach(var p in tileArea)
                         {
-                           e.Cancel = true;
-                           return;
-                        }
-
-                        int pc = (int) (((double) ++i / tileArea.Count)*100);
-                        bg.ReportProgress(pc, p);
-
-                        foreach(MapType tp in types)
-                        {
-                           WindowsFormsImage tile = GMaps.Instance.GetImageFrom(tp, p, zoom) as WindowsFormsImage;
-                           if(tile != null)
+                           if(bg.CancellationPending)
                            {
-                              using(tile)
+                              e.Cancel = true;
+                              return;
+                           }
+
+                           int pc = (int) (((double) ++i / tileArea.Count)*100);
+                           bg.ReportProgress(pc, p);
+
+                           foreach(MapType tp in types)
+                           {
+                              WindowsFormsImage tile = GMaps.Instance.GetImageFrom(tp, p, info.Zoom) as WindowsFormsImage;
+                              if(tile != null)
                               {
-                                 int x = p.X*MainMap.Projection.TileSize.Width - topLeftPx.X + padding;
-                                 int y = p.Y*MainMap.Projection.TileSize.Width - topLeftPx.Y + padding;
+                                 using(tile)
                                  {
-                                    gfx.DrawImageUnscaled(tile.Img, x, y);
+                                    int x = p.X*info.Projection.TileSize.Width - topLeftPx.X + padding;
+                                    int y = p.Y*info.Projection.TileSize.Width - topLeftPx.Y + padding;
+                                    {
+                                       gfx.DrawImage(tile.Img, x, y);
+                                    }
                                  }
                               }
                            }
@@ -138,12 +140,12 @@ namespace Demo.WindowsForms
 
                            gfx.DrawRectangle(p, rect);
 
-                           string topleft = area.Location.ToString();
+                           string topleft = info.Area.Location.ToString();
                            SizeF s = gfx.MeasureString(topleft, f);
 
                            gfx.DrawString(topleft, f, p.Brush, rect.X + s.Height/2, rect.Y + s.Height/2);
 
-                           string rightBottom = new PointLatLng(area.Bottom, area.Right).ToString();
+                           string rightBottom = new PointLatLng(info.Area.Bottom, info.Area.Right).ToString();
                            SizeF s2 = gfx.MeasureString(rightBottom, f);
 
                            gfx.DrawString(rightBottom, f, p.Brush, rect.Right - s2.Width - s2.Height/2, rect.Bottom - s2.Height - s2.Height/2);
@@ -152,7 +154,7 @@ namespace Demo.WindowsForms
                         // draw scale
                         using(Pen p = new Pen(Brushes.Blue, 1))
                         {
-                           double rez = MainMap.Projection.GetGroundResolution(zoom, area.Bottom);
+                           double rez = info.Projection.GetGroundResolution(info.Zoom, info.Area.Bottom);
                            int px100 = (int) (100.0 / rez); // 100 meters
                            int px1000 = (int) (1000.0 / rez); // 1km   
 
@@ -179,15 +181,18 @@ namespace Demo.WindowsForms
          {
             if(!bg.IsBusy)
             {
-               tileArea.Clear();
-               tileArea.AddRange(MainMap.Projection.GetAreaTileList(area, (int) numericUpDown1.Value, 1));
-               tileArea.TrimExcess();
+               lock(tileArea)
+               {
+                  tileArea.Clear();
+                  tileArea.AddRange(MainMap.Projection.GetAreaTileList(area, (int) numericUpDown1.Value, 1));
+                  tileArea.TrimExcess();
+               }
 
                numericUpDown1.Enabled = false;
                progressBar1.Value = 0;
                button1.Enabled = false;
 
-               bg.RunWorkerAsync(area);
+               bg.RunWorkerAsync(new MapInfo(MainMap.Projection, area, (int)numericUpDown1.Value, MainMap.MapType));
             }
          }
          else
@@ -202,6 +207,22 @@ namespace Demo.WindowsForms
          {
             bg.CancelAsync();
          }
+      }
+   }
+
+   public class MapInfo
+   {
+      public PureProjection Projection;
+      public RectLatLng Area;
+      public int Zoom;
+      public MapType Type;
+
+      public MapInfo(PureProjection Projection, RectLatLng Area, int Zoom, MapType Type)
+      {
+         this.Projection = Projection;
+         this.Area = Area;
+         this.Zoom = Zoom;
+         this.Type = Type;
       }
    }
 }
