@@ -1371,10 +1371,12 @@ namespace GMap.NET
                request.ServicePoint.ConnectionLimit = 50;
                request.ServicePoint.SetTcpKeepAlive(true, 1000*60*60, 1000); // does it improve speed?
                request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
-               request.AutomaticDecompression = DecompressionMethods.GZip;
+               request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
                request.UserAgent = UserAgent;
                request.Timeout = Timeout;
                request.ReadWriteTimeout = Timeout*6;
+               request.KeepAlive = true;
+
                switch(type)
                {
                   case MapType.GoogleMap:
@@ -1422,8 +1424,7 @@ namespace GMap.NET
                      request.Referer = "Referer: http://arcgis.maps.lt/";
                   }
                   break;
-               }
-               request.KeepAlive = false;
+               }                
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                {
@@ -1437,6 +1438,10 @@ namespace GMap.NET
                         if(ret != null && Mode != AccessMode.ServerOnly)
                         {
                            EnqueueCacheTask(new CacheQueue(type, pos, zoom, responseStream, CacheUsage.Both));
+                        }
+                        else
+                        {
+                           responseStream.Dispose();
                         }
                      }
                      else
