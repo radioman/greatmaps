@@ -14,11 +14,6 @@ namespace GMap.NET
          get;
       }
 
-      Point CurrentPositionGTile
-      {
-         get;
-      }
-
       string CacheLocation
       {
          get;

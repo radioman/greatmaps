@@ -974,14 +974,6 @@ namespace System.Windows.Controls
          }
       }
 
-      public GMap.NET.Point CurrentPositionGTile
-      {
-         get
-         {
-            return Core.CurrentPositionGTile;
-         }
-      }
-
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public string CacheLocation
       {

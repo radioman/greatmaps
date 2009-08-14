@@ -1369,7 +1369,6 @@ namespace GMap.NET
 
                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
                request.ServicePoint.ConnectionLimit = 50;
-               request.ServicePoint.SetTcpKeepAlive(true, 1000*60*60, 1000); // does it improve speed?
                request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
                request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
                request.UserAgent = UserAgent;

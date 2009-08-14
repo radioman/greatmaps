@@ -1151,17 +1151,6 @@ namespace System.Windows.Forms
       }
 
       /// <summary>
-      /// google tile in which current marker is
-      /// </summary>
-      public GMap.NET.Point CurrentPositionGTile
-      {
-         get
-         {
-            return Core.CurrentPositionGTile;
-         }
-      }
-
-      /// <summary>
       /// location of cache
       /// </summary>
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
