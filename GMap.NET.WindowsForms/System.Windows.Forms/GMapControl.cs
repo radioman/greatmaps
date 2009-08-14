@@ -753,6 +753,7 @@ namespace System.Windows.Forms
             }
             #endregion
          }
+         base.OnPaint(e);
       }
 
       protected override void OnSizeChanged(EventArgs e)
