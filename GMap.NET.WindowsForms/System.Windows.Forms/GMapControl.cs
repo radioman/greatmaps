@@ -58,11 +58,6 @@ namespace System.Windows.Forms
       public MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePosition;
 
       /// <summary>
-      /// where to set current position if map size is changed
-      /// </summary>
-      public SizeChangedType SizeChangedType = SizeChangedType.ViewCenter;
-
-      /// <summary>
       /// text on empty tiles
       /// </summary>
       public string EmptyTileText = "We are sorry, but we don't\nhave imagery at this zoom\nlevel for this region.";
@@ -770,20 +765,7 @@ namespace System.Windows.Forms
             if(Visible && IsHandleCreated)
             {
                // keep center on same position
-               if(SizeChangedType == SizeChangedType.CurrentPosition)
-               {
-                  Core.renderOffset.Offset((Width-Core.Width)/2, (Height-Core.Height)/2);
-                  Core.GoToCurrentPosition();
-               }
-               else if(SizeChangedType == SizeChangedType.ViewCenter)
-               {
-                  // do not work as expected ;/
-
-                  //Core.renderOffset.Offset((Width-Core.Width)/2, (Height-Core.Height)/2);
-                  //Core.CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
-
-                  //Core.GoToCurrentPosition();
-               }
+               Core.GoToCurrentPosition();
             }
          }
       }

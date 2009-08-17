@@ -16,7 +16,8 @@ namespace Demo.WindowsForms
       PointLatLng end;
 
       // marker
-      GMapMarker currentMarker;
+      GMapMarker currentMarker; 
+      GMapMarker center;
 
       // layers
       GMapOverlay top;
@@ -107,6 +108,10 @@ namespace Demo.WindowsForms
             // set current marker
             currentMarker = new GMapMarkerGoogleRed(MainMap.CurrentPosition);
             top.Markers.Add(currentMarker);
+
+            // map center
+            center = new GMapMarkerCross(MainMap.CurrentPosition);
+            top.Markers.Add(center);
 
             // add my city location for demo
             GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
@@ -293,8 +298,7 @@ namespace Demo.WindowsForms
       // current point changed
       void MainMap_OnCurrentPositionChanged(PointLatLng point)
       {
-         currentMarker.Position = point;
-         UpdateCurrentMarkerPositionText();
+         center.Position = point;
       }
 
       // change map type

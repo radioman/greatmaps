@@ -22,6 +22,7 @@ namespace Demo.WindowsPresentation
 
       // marker
       GMapMarker currentMarker;
+      GMapMarker center;
 
       public MainWindow()
       {
@@ -92,10 +93,19 @@ namespace Demo.WindowsPresentation
          // set current marker
          currentMarker = new GMapMarker(MainMap.CurrentPosition);
          {
-            currentMarker.Shape = new Cross();
+            currentMarker.Shape = new CustomMarkerRed(this, currentMarker, "custom position marker");
             currentMarker.Offset = new System.Windows.Point(-15, -15);
             currentMarker.ZIndex = int.MaxValue;
             MainMap.Markers.Add(currentMarker);
+         }
+
+         // map center
+         center = new GMapMarker(MainMap.CurrentPosition);
+         {
+            center.Shape = new Cross();
+            center.Offset = new System.Windows.Point(-15, -15);
+            center.ZIndex = int.MaxValue;
+            MainMap.Markers.Add(center);
          }
 
          // add my city location for demo
@@ -303,9 +313,7 @@ namespace Demo.WindowsPresentation
       // current location changed
       void MainMap_OnCurrentPositionChanged(PointLatLng point)
       {
-         UpdateCurrentMarkerPositionText();
-
-         currentMarker.Position = point;
+         center.Position = point;
       }
 
       // reload

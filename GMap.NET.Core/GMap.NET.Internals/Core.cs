@@ -96,42 +96,37 @@ namespace GMap.NET.Internals
          {
             if(zoom != value && !IsDragging)
             {
-               zoom = value;
-               minOfTiles = Projection.GetTileMatrixMinXY(value);
-               maxOfTiles = Projection.GetTileMatrixMaxXY(value);
-
-               CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, value);
-               CurrentPositionGTile = Projection.FromPixelToTileXY(CurrentPositionGPixel);
-
                lock(tileLoadQueue)
                {
                   tileLoadQueue.Clear();
                }
-
                Matrix.Clear();
 
-               GoToCurrentPositionOnZoom();
+               zoom = value;
 
+               minOfTiles = Projection.GetTileMatrixMinXY(value);
+               maxOfTiles = Projection.GetTileMatrixMaxXY(value);
+
+               CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, value);
+               GoToCurrentPositionOnZoom();
                UpdateBaunds();
+               RunAsyncTasks();
 
                if(OnNeedInvalidation != null)
                {
                   OnNeedInvalidation();
                }
 
-               // start loading
-               RunAsyncTasks();
-
                if(OnMapDrag != null)
                {
                   OnMapDrag();
                }
 
-               if(OnCurrentPositionChanged != null)
-                  OnCurrentPositionChanged(currentPosition);
-
                if(OnMapZoomChanged != null)
                   OnMapZoomChanged();
+
+               if(OnCurrentPositionChanged != null)
+                  OnCurrentPositionChanged(currentPosition);
             }
          }
       }
@@ -152,21 +147,6 @@ namespace GMap.NET.Internals
       }
 
       /// <summary>
-      /// google tile in which current marker is
-      /// </summary>
-      public Point CurrentPositionGTile
-      {
-         get
-         {
-            return currentPositionTile;
-         }
-         internal set
-         {
-            currentPositionTile = value;
-         }
-      }
-
-      /// <summary>
       /// current marker position
       /// </summary>
       public PointLatLng CurrentPosition
@@ -182,9 +162,15 @@ namespace GMap.NET.Internals
             {
                currentPosition = value;
                CurrentPositionGPixel = Projection.FromLatLngToPixel(value, Zoom);
-               CurrentPositionGTile = Projection.FromPixelToTileXY(CurrentPositionGPixel);
-
                GoToCurrentPosition();
+
+               if(OnCurrentPositionChanged != null)
+                  OnCurrentPositionChanged(currentPosition);
+            }
+            else
+            {
+               currentPosition = value;
+               CurrentPositionGPixel = Projection.FromLatLngToPixel(value, Zoom);
 
                if(OnCurrentPositionChanged != null)
                   OnCurrentPositionChanged(currentPosition);
@@ -250,11 +236,8 @@ namespace GMap.NET.Internals
                maxOfTiles = Projection.GetTileMatrixMaxXY(Zoom);
 
                CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, Zoom);
-               CurrentPositionGTile = Projection.FromPixelToTileXY(CurrentPositionGPixel);
-
                OnMapSizeChanged(Width, Height);
                GoToCurrentPosition();
-
                ReloadMap();
 
                if(OnMapTypeChanged != null)
@@ -364,9 +347,11 @@ namespace GMap.NET.Internals
          sizeOfMapArea.Width = 1 + (Width/Projection.TileSize.Width)/2;
          sizeOfMapArea.Height = 1 + (Height/Projection.TileSize.Height)/2;
 
-         UpdateCenterTileXYLocation();
-
+         UpdateCenterTileXYLocation();  
          UpdateBaunds();
+
+         if(OnCurrentPositionChanged != null)
+            OnCurrentPositionChanged(currentPosition);         
       }
 
       public void OnMapClose()
@@ -461,7 +446,7 @@ namespace GMap.NET.Internals
          }
 
          return zoom;
-      }        
+      }
 
       /// <summary>
       /// initiates map dragging
@@ -556,6 +541,11 @@ namespace GMap.NET.Internals
          {
             centerTileXYLocationLast = centerTileXYLocation;
             UpdateBaunds();
+         }
+
+         if(IsDragging)
+         {
+            CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
          }
 
          if(OnNeedInvalidation != null)

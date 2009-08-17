@@ -77,12 +77,6 @@ namespace System.Windows.Controls
       public MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePosition;
 
       /// <summary>
-      /// NOT WORK YET
-      /// where to set current position if map size is changed
-      /// </summary>
-      public SizeChangedType SizeChangedType = SizeChangedType.ViewCenter;
-
-      /// <summary>
       /// center mouse OnMouseWheel
       /// </summary>
       public bool CenterPositionOnMouseWheel = true;
@@ -351,27 +345,7 @@ namespace System.Windows.Controls
          // keep center on same position
          if(IsLoaded)
          {
-            if(SizeChangedType == SizeChangedType.CurrentPosition)
-            {
-               Core.renderOffset.Offset(((int) constraint.Width-Core.Width)/2, ((int) constraint.Height-Core.Height)/2);
-               Core.GoToCurrentPosition();
-            }
-            else if(SizeChangedType == SizeChangedType.ViewCenter)
-            {
-               // do not work as expected ;/
-
-               //CurrentPosition = FromLocalToLatLng((int) constraint.Width/2, (int) constraint.Height/2);
-               //Core.CurrentPositionGPixel = GMaps.Instance.FromLatLngToPixel(Core.currentPosition, Zoom);
-               //Core.CurrentPositionGTile = GMaps.Instance.FromPixelToTileXY(CurrentPositionGPixel);
-
-               //GoToCurrentPosition();
-
-
-               //Core.renderOffset.Offset(((int) e.NewSize.Width-Core.Width)/2, ((int) e.NewSize.Height-Core.Height)/2);
-               //Core.CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
-
-               //Core.GoToCurrentPosition();
-            }
+            Core.GoToCurrentPosition();
          }
       }
 
@@ -606,7 +580,7 @@ namespace System.Windows.Controls
             if(ZoomStep != maxZoom)
             {
                Zoom = maxZoom;
-            }             
+            }
 
             return true;
          }
@@ -760,7 +734,7 @@ namespace System.Windows.Controls
             SelectedArea = RectLatLng.Empty;
             selectionEnd = PointLatLng.Empty;
             selectionStart = FromLocalToLatLng((int) p.X, (int) p.Y);
-         }         
+         }
 
          base.OnMouseDown(e);
       }
@@ -825,13 +799,13 @@ namespace System.Windows.Controls
             if(isSelected && !selectionStart.IsEmpty && SelectedArea.IsEmpty && (Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Alt))
             {
                System.Windows.Point p = e.GetPosition(this);
-               selectionEnd = FromLocalToLatLng((int)p.X, (int)p.Y);
+               selectionEnd = FromLocalToLatLng((int) p.X, (int) p.Y);
                InvalidateVisual();
             }
          }
 
          base.OnMouseMove(e);
-      }  
+      }
 
       #endregion
 

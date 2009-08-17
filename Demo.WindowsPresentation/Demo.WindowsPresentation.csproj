@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{83195AEF-0071-471C-9E8B-E67211F5D028}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -55,6 +55,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="CustomMarkers\CustomMarkerRed.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="CustomMarkers\Cross.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -85,6 +89,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomMarkers\CustomMarkerRed.xaml.cs">
+      <DependentUpon>CustomMarkerRed.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomMarkers\Cross.xaml.cs">
       <DependentUpon>Cross.xaml</DependentUpon>
     </Compile>
@@ -136,6 +143,9 @@
       <Project>{644FE7D4-0184-400F-B2D7-99CB41360658}</Project>
       <Name>GMap.NET.WindowsPresentation</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="CustomMarkers\red-dot.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
