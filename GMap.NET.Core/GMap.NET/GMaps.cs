@@ -19,16 +19,16 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "w2.103";
+      public string VersionGoogleMap = "w2.104";
       public string VersionGoogleSatellite = "43";
-      public string VersionGoogleLabels = "w2t.103";
+      public string VersionGoogleLabels = "w2t.104";
       public string VersionGoogleTerrain = "w2p.87";
       public string SecGoogleWord = "Galileo";
 
       // Google (china) version strings
-      public string VersionGoogleMapChina = "w2.103";
+      public string VersionGoogleMapChina = "w2.104";
       public string VersionGoogleSatelliteChina = "43";
-      public string VersionGoogleLabelsChina = "w2t.103";
+      public string VersionGoogleLabelsChina = "w2t.104";
       public string VersionGoogleTerrainChina = "cnw2p.98";        
 
       // Yahoo version strings
