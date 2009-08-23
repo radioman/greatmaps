@@ -16,7 +16,7 @@ namespace Demo.WindowsForms
       PointLatLng end;
 
       // marker
-      GMapMarker currentMarker; 
+      GMapMarker currentMarker;
       GMapMarker center;
 
       // layers
@@ -99,7 +99,7 @@ namespace Demo.WindowsForms
                MainMap.Overlays.Add(routes);
 
                objects = new GMapOverlay(MainMap, "objects");
-               MainMap.Overlays.Add(objects);                 
+               MainMap.Overlays.Add(objects);
 
                top = new GMapOverlay(MainMap, "top");
                MainMap.Overlays.Add(top);
@@ -478,10 +478,7 @@ namespace Demo.WindowsForms
       // zoom to max for markers
       private void button7_Click(object sender, EventArgs e)
       {
-         if(MainMap.ZoomAndCenterMarkers("objects"))
-         {
-            trackBar1.Value = MainMap.Zoom > trackBar1.Maximum ? trackBar1.Maximum : MainMap.Zoom;
-         }
+         MainMap.ZoomAndCenterMarkers("objects");
       }
 
       // expord map data

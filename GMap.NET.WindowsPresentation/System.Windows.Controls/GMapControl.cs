@@ -28,6 +28,8 @@ namespace System.Windows.Controls
       GMap.NET.Rectangle region;
       bool RaiseEmptyTileError = false;
       delegate void MethodInvoker();
+      PointLatLng selectionStart;
+      PointLatLng selectionEnd;
 
       FormattedText googleCopyright;
       FormattedText yahooMapCopyright;
@@ -562,7 +564,7 @@ namespace System.Windows.Controls
       /// <summary>
       /// sets zoom to max to fit rect
       /// </summary>
-      /// <param name="rect"></param>
+      /// <param name="rect">area</param>
       /// <returns></returns>
       public bool SetZoomToFitRect(RectLatLng rect)
       {
@@ -587,8 +589,83 @@ namespace System.Windows.Controls
          return false;
       }
 
-      PointLatLng selectionStart;
-      PointLatLng selectionEnd;
+      /// <summary>
+      /// sets to max zoom to fit all markers and centers them in map
+      /// </summary>
+      /// <param name="ZIndex">z index or null to check all</param>
+      /// <returns></returns>
+      public bool ZoomAndCenterMarkers(int? ZIndex)
+      {
+         RectLatLng? rect = GetRectOfAllMarkers(ZIndex);
+         if(rect.HasValue)
+         {
+            return SetZoomToFitRect(rect.Value);
+         }
+
+         return false;
+      }
+
+      /// <summary>
+      /// gets rectangle with all objects inside
+      /// </summary>
+      /// <param name="ZIndex">z index or null to check all</param>
+      /// <returns></returns>
+      public RectLatLng? GetRectOfAllMarkers(int? ZIndex)
+      {
+         RectLatLng? ret = null;
+
+         double left = double.MaxValue;
+         double top = double.MinValue;
+         double right = double.MinValue;
+         double bottom = double.MaxValue;
+         IEnumerable<GMapMarker> Overlays;
+
+         if(ZIndex.HasValue)
+         {
+            Overlays = Markers.Where(p => p != null && p.ZIndex == ZIndex);
+         }
+         else
+         {
+            Overlays = Markers;
+         }
+
+         if(Overlays != null)
+         {
+            foreach(var m in Overlays)
+            {
+               if(m.Shape != null && m.Shape.IsVisible)
+               {
+                  // left
+                  if(m.Position.Lng < left)
+                  {
+                     left = m.Position.Lng;
+                  }
+
+                  // top
+                  if(m.Position.Lat > top)
+                  {
+                     top = m.Position.Lat;
+                  }
+
+                  // right
+                  if(m.Position.Lng > right)
+                  {
+                     right = m.Position.Lng;
+                  }
+
+                  // bottom
+                  if(m.Position.Lat < bottom)
+                  {
+                     bottom = m.Position.Lat;
+                  }
+
+                  ret = RectLatLng.FromLTRB(left, top, right, bottom);
+               }
+            }            
+         }
+
+         return ret;
+      }
 
       #region UserControl Events
       protected override void OnRender(DrawingContext drawingContext)

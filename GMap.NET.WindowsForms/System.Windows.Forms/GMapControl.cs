@@ -437,10 +437,10 @@ namespace System.Windows.Forms
                         {
                            bottom = m.Position.Lat;
                         }
-                     }
-                  }
 
-                  ret = RectLatLng.FromLTRB(left, top, right, bottom);
+                        ret = RectLatLng.FromLTRB(left, top, right, bottom);
+                     }
+                  }                  
                }
             }
          }

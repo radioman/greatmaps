@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Linq;
 using GMap.NET;
 using GMap.NET.WindowsPresentation;
 using System.Windows.Threading;
@@ -115,13 +116,11 @@ namespace Demo.WindowsPresentation
          {
             GMapMarker it = new GMapMarker(pos.Value);
             {
+               it.ZIndex = 55;
                it.Shape = new CustomMarkerDemo(this, it, "Welcome to Lithuania! ;}");
             }
             MainMap.Markers.Add(it);
          }
-
-         memoryLeakTestTimer.Tick += new EventHandler(memoryLeakTestTimer_Tick);
-         memoryLeakTestTimer.Interval = TimeSpan.FromMilliseconds(5);
       }
 
       void MainMap_OnMapTypeChanged(MapType type)
@@ -185,73 +184,9 @@ namespace Demo.WindowsPresentation
          textBoxCurrLng.Text = currentMarker.Position.Lng.ToString(CultureInfo.InvariantCulture);
       }
 
-      DispatcherTimer memoryLeakTestTimer = new DispatcherTimer();
-
-      // real time testing
       private void button13_Click(object sender, RoutedEventArgs e)
       {
-         if(memoryLeakTestTimer.IsEnabled)
-         {
-            memoryLeakTestTimer.Stop();
-         }
-         else
-         {
-            memoryLeakTestTimer.Start();
-         }
-      }
-
-      int many = 444;
-      Random r = new Random(44);
-      bool manualClear = false;
-      void memoryLeakTestTimer_Tick(object sender, EventArgs e)
-      {
-         memoryLeakTestTimer.Stop();
-
-         if(MainMap.Markers.Count >= many)
-         {
-            if(manualClear)
-            {
-               while(MainMap.Markers.Count > 0)
-               {
-                  GMapMarker first = MainMap.Markers[0];
-                  MainMap.Markers.RemoveAt(0);
-                  if(first != null)
-                  {
-                     first.Clear();
-                     first = null;
-                  }
-               }
-            }
-            else // auto clear, shoud cause memmory leak if marker is using events
-            {
-               MainMap.Markers.Clear();
-            }
-
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-
-            //MessageBox.Show("Hold!");
-
-            Debug.WriteLine("GC: " + GC.GetTotalMemory(true));
-         }
-         else // add
-         {
-            PointLatLng p = MainMap.FromLocalToLatLng(0, (int) MainMap.ActualHeight);
-            p.Lng += r.NextDouble()/3.0;
-            p.Lat += r.NextDouble()/4.0;
-
-            GMapMarker it = new GMapMarker(p);
-            //it.Shape = new CustomMarkerDemo(this, it, null);
-            it.Shape = new Test(MainMap.Markers.Count.ToString());
-            MainMap.Markers.Add(it);
-
-            // forcing to update local positions because Test marker
-            // do not use offset so don't update position automaticaly 
-            it.ForceUpdateLocalPosition(MainMap);
-         }
-
-         memoryLeakTestTimer.Start();
+         MainMap.ZoomAndCenterMarkers(55);
       }
 
       // empty tile displayed
@@ -363,18 +298,19 @@ namespace Demo.WindowsPresentation
       // enable current marker
       private void checkBoxCurrentMarker_Checked(object sender, RoutedEventArgs e)
       {
-         if(!MainMap.Markers.Contains(currentMarker))
+         if(currentMarker != null)
          {
-            MainMap.Markers.Add(currentMarker);
+            currentMarker.Shape.Visibility = Visibility.Visible;
+            currentMarker.ForceUpdateLocalPosition(MainMap);
          }
       }
 
       // disable current marker
       private void checkBoxCurrentMarker_Unchecked(object sender, RoutedEventArgs e)
       {
-         if(MainMap.Markers.Contains(currentMarker))
+         if(currentMarker != null)
          {
-            MainMap.Markers.Remove(currentMarker);
+            currentMarker.Shape.Visibility = Visibility.Collapsed;
          }
       }
 
@@ -554,10 +490,14 @@ namespace Demo.WindowsPresentation
       // clear all markers
       private void button10_Click(object sender, RoutedEventArgs e)
       {
-         MainMap.Markers.Clear();
-         if(checkBoxCurrentMarker.IsChecked.Value)
+         var clear = MainMap.Markers.Where(p => p != null && p != currentMarker && p != center);
+         if(clear != null)
          {
-            MainMap.Markers.Add(currentMarker);
+            for(int i = 0; i < clear.Count(); i++)
+            {
+               MainMap.Markers.Remove(clear.ElementAt(i));
+               i--;
+            }
          }
       }
 
@@ -583,6 +523,7 @@ namespace Demo.WindowsPresentation
             }
 
             m.Shape = new CustomMarkerDemo(this, m, ToolTipText);
+            m.ZIndex = 55;
          }
          MainMap.Markers.Add(m);
       }

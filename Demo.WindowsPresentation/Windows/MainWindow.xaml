@@ -72,7 +72,7 @@
             <Button Margin="7,6,77,0" Name="button8" Height="21.04" VerticalAlignment="Top" Click="button8_Click">Add Marker</Button>
             <Button Margin="7,0,0,6" Name="button10" Height="21.04" VerticalAlignment="Bottom" Click="button10_Click" HorizontalAlignment="Left" Width="56">Clear All</Button>
             <CheckBox HorizontalAlignment="Right" Margin="0,9,0,0" Name="checkBoxPlace" Width="71" Height="16.04" VerticalAlignment="Top" IsChecked="True">place info</CheckBox>
-            <Button Margin="78,0,1,5" Name="button13" Height="21.04" VerticalAlignment="Bottom" Click="button13_Click">Test Realtime</Button>
+            <Button Margin="78,0,1,5" Name="button13" Height="21.04" VerticalAlignment="Bottom" Click="button13_Click">Zoom Center</Button>
          </Grid>
       </GroupBox>
        <GroupBox Header="routes" HorizontalAlignment="Right" Name="routes" Width="169" Margin="0,385,11,283" Height="80" VerticalAlignment="Top">
