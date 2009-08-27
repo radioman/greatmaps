@@ -2,9 +2,20 @@
 namespace GMap.NET.Internals
 {
    using System.Collections.Generic;
+   using System.Data.Common;
+#if !MONO
    using System.Data.SQLite;
+#else
+   using SQLiteConnection=Mono.Data.SqliteClient.SqliteConnection;
+   using SQLiteTransaction=Mono.Data.SqliteClient.SqliteTransaction;
+   using SQLiteCommand=Mono.Data.SqliteClient.SqliteCommand;
+   using SQLiteDataReader=Mono.Data.SqliteClient.SqliteDataReader;
+   using SQLiteParameter=Mono.Data.SqliteClient.SqliteParameter;
+#endif
    using System.IO;
    using System.Text;
+   using System;
+   using System.Diagnostics;
 
    /// <summary>
    /// cache system for tiles, geocoding, etc...
@@ -59,6 +70,7 @@ namespace GMap.NET.Internals
          CacheLocation = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
       }
 
+      #region -- import / export --
       bool CreateEmptyDB(string file)
       {
          bool ret = true;
@@ -73,15 +85,19 @@ namespace GMap.NET.Internals
 
             using(SQLiteConnection cn = new SQLiteConnection())
             {
+#if !MONO
                cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=False;", file);
+#else
+               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=False", file);
+#endif
                cn.Open();
                if(cn.State == System.Data.ConnectionState.Open)
                {
-                  using(SQLiteTransaction tr = cn.BeginTransaction())
+                  using(DbTransaction tr = cn.BeginTransaction())
                   {
                      try
                      {
-                        using(SQLiteCommand cmd = new SQLiteCommand(cn))
+                        using(DbCommand cmd = cn.CreateCommand())
                         {
                            cmd.CommandText = Properties.Resources.CreateTileDb;
                            cmd.ExecuteNonQuery();
@@ -98,8 +114,9 @@ namespace GMap.NET.Internals
                }
             }
          }
-         catch
+         catch(Exception ex)
          {
+            Debug.WriteLine("CreateEmptyDB: " + ex.ToString());
             ret = false;
          }
          return ret;
@@ -120,13 +137,22 @@ namespace GMap.NET.Internals
             {
                using(SQLiteConnection cn1 = new SQLiteConnection())
                {
+#if !MONO
                   cn1.ConnectionString = string.Format("Data Source=\"{0}\";", sourceFile);
+#else
+                  cn1.ConnectionString = string.Format("Version=3,URI=file://{0}", sourceFile);
+#endif
+
                   cn1.Open();
                   if(cn1.State == System.Data.ConnectionState.Open)
                   {
                      using(SQLiteConnection cn2 = new SQLiteConnection())
                      {
+#if !MONO
                         cn2.ConnectionString = string.Format("Data Source=\"{0}\";", destFile);
+#else
+                        cn2.ConnectionString = string.Format("Version=3,URI=file://{0}", destFile);
+#endif
                         cn2.Open();
                         if(cn2.State == System.Data.ConnectionState.Open)
                         {
@@ -135,7 +161,7 @@ namespace GMap.NET.Internals
                               cmd.ExecuteNonQuery();
                            }
 
-                           using(SQLiteTransaction tr = cn2.BeginTransaction())
+                           using(DbTransaction tr = cn2.BeginTransaction())
                            {
                               try
                               {
@@ -184,13 +210,16 @@ namespace GMap.NET.Internals
                }
             }
          }
-         catch
+         catch(Exception ex)
          {
+            Debug.WriteLine("ExportMapDataToDB: " + ex.ToString());
             ret = false;
          }
          return ret;
       }
+      #endregion
 
+      #region -- etc cache --
       public void CacheGeocoder(string urlEnd, string content)
       {
          try
@@ -316,6 +345,7 @@ namespace GMap.NET.Internals
 
          return ret;
       }
+      #endregion
 
       #region PureImageCache Members
 
@@ -349,35 +379,40 @@ namespace GMap.NET.Internals
                {
                   using(SQLiteConnection cn = new SQLiteConnection())
                   {
+#if !MONO
                      cn.ConnectionString = string.Format("Data Source=\"{0}\";", db);
+#else
+                     cn.ConnectionString = string.Format("Version=3,URI=file://{0}", db);
+#endif
+
                      cn.Open();
-                     if(cn.State == System.Data.ConnectionState.Open)
                      {
                         using(tile)
                         {
-                           using(SQLiteTransaction tr = cn.BeginTransaction())
+                           using(DbTransaction tr = cn.BeginTransaction())
                            {
                               try
                               {
-                                 using(SQLiteCommand cmd = new SQLiteCommand(cn))
+                                 using(DbCommand cmd = cn.CreateCommand())
                                  {
                                     cmd.Transaction = tr;
 
                                     cmd.CommandText = "INSERT INTO Tiles(X, Y, Zoom, Type) VALUES(@p1, @p2, @p3, @p4)";
-                                    cmd.Parameters.AddWithValue("@p1", pos.X);
-                                    cmd.Parameters.AddWithValue("@p2", pos.Y);
-                                    cmd.Parameters.AddWithValue("@p3", zoom);
-                                    cmd.Parameters.AddWithValue("@p4", (int) type);
+
+                                    cmd.Parameters.Add(new SQLiteParameter("@p1", pos.X));
+                                    cmd.Parameters.Add(new SQLiteParameter("@p2", pos.Y));
+                                    cmd.Parameters.Add(new SQLiteParameter("@p3", zoom));
+                                    cmd.Parameters.Add(new SQLiteParameter("@p4", (int) type));
 
                                     cmd.ExecuteNonQuery();
                                  }
 
-                                 using(SQLiteCommand cmd = new SQLiteCommand(cn))
+                                 using(DbCommand cmd = cn.CreateCommand())
                                  {
                                     cmd.Transaction = tr;
 
                                     cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
-                                    cmd.Parameters.AddWithValue("@p1", tile.GetBuffer());
+                                    cmd.Parameters.Add(new SQLiteParameter("@p1", tile.GetBuffer()));
 
                                     cmd.ExecuteNonQuery();
                                  }
@@ -395,8 +430,9 @@ namespace GMap.NET.Internals
                }
             }
          }
-         catch
+         catch(Exception ex)
          {
+            Debug.WriteLine("PutImageToCache: " + ex.ToString());
             ret = false;
          }
          return ret;
@@ -417,15 +453,18 @@ namespace GMap.NET.Internals
                {
                   using(SQLiteConnection cn = new SQLiteConnection())
                   {
+#if !MONO
                      cn.ConnectionString = string.Format("Data Source=\"{0}\";", db);
+#else
+                     cn.ConnectionString = string.Format("Version=3,URI=file://{0}", db);
+#endif
                      cn.Open();
-                     if(cn.State == System.Data.ConnectionState.Open)
                      {
-                        using(SQLiteCommand com = new SQLiteCommand(cn))
+                        using(DbCommand com = cn.CreateCommand())
                         {
                            com.CommandText = string.Format("SELECT Tile FROM TilesData WHERE id = (SELECT id FROM Tiles WHERE X={0} AND Y={1} AND Zoom={2} AND Type={3})", pos.X, pos.Y, zoom, (int) type);
 
-                           using(SQLiteDataReader rd = com.ExecuteReader())
+                           using(DbDataReader rd = com.ExecuteReader())
                            {
                               if(rd.Read())
                               {
@@ -449,8 +488,9 @@ namespace GMap.NET.Internals
                }
             }
          }
-         catch
+         catch(Exception ex)
          {
+            Debug.WriteLine("GetImageFromCache: " + ex.ToString());
             ret = null;
          }
 

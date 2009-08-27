@@ -135,6 +135,35 @@ namespace GMap.NET
       /// </summary>
       readonly Queue<CacheQueue> tileCacheQueue = new Queue<CacheQueue>();
 
+      bool? isRunningOnMono;
+
+      /// <summary>
+      /// return true if running on mono
+      /// </summary>
+      /// <returns></returns>
+      public bool IsRunningOnMono
+      {
+         get
+         {
+            if(!isRunningOnMono.HasValue)
+            {
+               try
+               {
+                  isRunningOnMono = (Type.GetType("Mono.Runtime") != null);
+                  return isRunningOnMono.Value;  
+               }
+               catch
+               {
+               }
+            }
+            else
+            {
+               return isRunningOnMono.Value;
+            }
+            return false;
+         }
+      }
+
       /// <summary>
       /// cache worker
       /// </summary>
@@ -1370,7 +1399,6 @@ namespace GMap.NET
                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
                request.ServicePoint.ConnectionLimit = 50;
                request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
-               request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
                request.UserAgent = UserAgent;
                request.Timeout = Timeout;
                request.ReadWriteTimeout = Timeout*6;

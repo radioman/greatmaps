@@ -588,7 +588,7 @@ namespace System.Windows.Forms
             ret = null;
          }
          return ret;
-      }
+      }         
 
       #region UserControl Events
 
@@ -943,7 +943,7 @@ namespace System.Windows.Forms
             }
 
             // set mouse position to map center
-            if(CenterPositionOnMouseWheel)
+            if(CenterPositionOnMouseWheel && !GMaps.Instance.IsRunningOnMono)
             {
                System.Drawing.Point p = PointToScreen(new System.Drawing.Point(Width/2, Height/2));
                Stuff.SetCursorPos((int) p.X, (int) p.Y);

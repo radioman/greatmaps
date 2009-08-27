@@ -42,11 +42,23 @@ namespace GMap.NET.WindowsForms
          WindowsFormsImage ret = null;
          try
          {
-            Image m = Image.FromStream(stream, true, true);
-            if(m != null)
+            if(!GMaps.Instance.IsRunningOnMono)
             {
-               ret = new WindowsFormsImage();
-               ret.Img = m;
+               Image m = Image.FromStream(stream, true, true);
+               if(m != null)
+               {
+                  ret = new WindowsFormsImage();
+                  ret.Img = m;
+               }
+            }
+            else // mono yet do not support validation
+            {
+               Image m = Image.FromStream(stream);
+               if(m != null)
+               {
+                  ret = new WindowsFormsImage();
+                  ret.Img = m;
+               }
             }
          }
          catch
