@@ -96,7 +96,7 @@ namespace TemplatedBinding
 
          // main
          UserMap.MapType = GMap.NET.MapType.GoogleMap;
-         UserMap.MinZoom = 5;          
+         UserMap.MinZoom = 5;
          UserMap.MaxZoom = 13;
          UserMap.Zoom = 5;
          UserMap.SetCurrentPositionByKeywords("Leuven");
