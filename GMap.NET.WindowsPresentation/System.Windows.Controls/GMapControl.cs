@@ -468,7 +468,11 @@ namespace System.Windows.Controls
                            if(!RaiseEmptyTileError)
                            {
                               RaiseEmptyTileError = true;
-                              OnEmptyTileError(t.Zoom, t.Pos);
+
+                              this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(delegate()
+                              {
+                                 OnEmptyTileError(t.Zoom, t.Pos);
+                              }));
                            }
                         }
                      }
@@ -661,7 +665,7 @@ namespace System.Windows.Controls
 
                   ret = RectLatLng.FromLTRB(left, top, right, bottom);
                }
-            }            
+            }
          }
 
          return ret;

@@ -192,13 +192,7 @@ namespace Demo.WindowsPresentation
       // empty tile displayed
       void MainMap_OnEmptyTileError(int zoom, GMap.NET.Point pos)
       {
-         // we get that exception:
-         // Dispatcher processing has been suspended,
-         // but messages are still being processed.
-
-         // any ideas? ;}
-
-         // MessageBox.Show("OnEmptyTileError, Zoom: " + zoom + ", " + pos.ToString(), "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
+         MessageBox.Show("OnEmptyTileError, Zoom: " + zoom + ", " + pos.ToString(), "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
       }
 
       // MapZoomChanged
