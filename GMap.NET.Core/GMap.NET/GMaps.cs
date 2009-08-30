@@ -19,16 +19,16 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "w2.105";
-      public string VersionGoogleSatellite = "43";
-      public string VersionGoogleLabels = "w2t.105";
-      public string VersionGoogleTerrain = "w2p.87";
+      public string VersionGoogleMap = "w2.106";
+      public string VersionGoogleSatellite = "45";
+      public string VersionGoogleLabels = "w2t.106";
+      public string VersionGoogleTerrain = "w2p.106";
       public string SecGoogleWord = "Galileo";
 
       // Google (china) version strings
-      public string VersionGoogleMapChina = "w2.105";
-      public string VersionGoogleSatelliteChina = "43";
-      public string VersionGoogleLabelsChina = "w2t.105";
+      public string VersionGoogleMapChina = "w2.106";
+      public string VersionGoogleSatelliteChina = "45";
+      public string VersionGoogleLabelsChina = "w2t.106";
       public string VersionGoogleTerrainChina = "cnw2p.98";        
 
       // Yahoo version strings
@@ -552,7 +552,7 @@ namespace GMap.NET
             case MapType.GoogleTerrain:
             {
                string server = "mt";
-               string request = "mt";
+               string request = "vt";
                string sec1 = ""; // after &x=...
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
