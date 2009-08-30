@@ -45,12 +45,12 @@ namespace System.Windows.Forms
       /// <summary>
       /// max zoom
       /// </summary>
-      public int MaxZoom;
+      public int MaxZoom = 2;
 
       /// <summary>
       /// min zoom
       /// </summary>
-      public int MinZoom;
+      public int MinZoom = 2;
 
       /// <summary>
       /// map zooming type for mouse wheel

@@ -18,6 +18,7 @@ namespace System.Windows.Controls
    using GMap.NET;
    using GMap.NET.Internals;
    using GMap.NET.WindowsPresentation;
+   using System.Diagnostics;
 
    /// <summary>
    /// GMap.NET control for Windows Presentation
@@ -30,6 +31,9 @@ namespace System.Windows.Controls
       delegate void MethodInvoker();
       PointLatLng selectionStart;
       PointLatLng selectionEnd;
+      Typeface tileTypeface = new Typeface("Arial");
+      double zoomReal;
+      bool showTileGridLines = false;
 
       FormattedText googleCopyright;
       FormattedText yahooMapCopyright;
@@ -66,12 +70,12 @@ namespace System.Windows.Controls
       /// <summary>
       /// max zoom
       /// </summary>
-      public int MaxZoom;
+      public int MaxZoom = 2;
 
       /// <summary>
       /// min zoom
       /// </summary>
-      public int MinZoom;
+      public int MinZoom = 2;
 
       /// <summary>
       /// map zooming type for mouse wheel
@@ -92,8 +96,6 @@ namespace System.Windows.Controls
       /// zoom increment on mouse wheel
       /// </summary>
       public double ZoomIncrement = 1.0;
-
-      private bool showTileGridLines = false;
 
       /// <summary>
       /// shows tile gridlines
@@ -131,6 +133,75 @@ namespace System.Windows.Controls
       /// list of markers
       /// </summary>
       public readonly ObservableCollection<GMapMarker> Markers = new ObservableCollection<GMapMarker>();
+
+      /// <summary>
+      /// current map transformation
+      /// </summary>
+      internal Transform MapRenderTransform;       
+
+      /// <summary>
+      /// map zoom
+      /// </summary>
+      public double Zoom
+      {
+         get
+         {
+            return zoomReal;
+         }
+         set
+         {
+            if(zoomReal != value)
+            {
+               if(value > MaxZoom)
+               {
+                  zoomReal = MaxZoom;
+               }
+               else if(value < MinZoom)
+               {
+                  zoomReal = MinZoom;
+               }
+               else
+               {
+                  zoomReal = value;
+               }
+
+               double remainder = (double) System.Decimal.Remainder((Decimal) value, (Decimal) 1);
+               if(remainder != 0)
+               {
+                  double scaleValue = remainder + 1;
+                  {
+                     MapRenderTransform = new ScaleTransform(scaleValue, scaleValue, ActualWidth/2, ActualHeight/2);
+                  }
+
+                  if(IsLoaded)
+                  {
+                     //DisplayZoomInFadeImage();
+                  }
+
+                  ZoomStep = Convert.ToInt32(value - remainder);
+
+                  Core_OnMapDrag();
+
+                  InvalidateVisual();
+               }
+               else
+               {
+                  MapRenderTransform = null;
+                  ZoomStep = Convert.ToInt32(value);
+                  InvalidateVisual();
+               }
+            }
+         }
+      }
+
+      protected bool DesignModeInConstruct
+      {
+         get
+         {
+            //Are we in Visual Studio Designer?
+            return System.ComponentModel.DesignerProperties.GetIsInDesignMode(this);
+         }
+      }
 
       public GMapControl()
       {
@@ -257,66 +328,7 @@ namespace System.Windows.Controls
             FadeImage.RenderTransform = scaleTransform;
          }
          mapFadeStoryboard.Begin(this);
-      }
-
-      Transform MapRenderTransform;
-      double zoomReal;
-      public double Zoom
-      {
-         get
-         {
-            return zoomReal;
-         }
-         set
-         {
-            if(zoomReal != value)
-            {
-               if(value > MaxZoom)
-               {
-                  zoomReal = MaxZoom;
-               }
-               else if(value < MinZoom)
-               {
-                  zoomReal = MinZoom;
-               }
-               else
-               {
-                  zoomReal = value;
-               }
-
-               double remainder = (double) System.Decimal.Remainder((Decimal) value, (Decimal) 1);
-               if(remainder != 0)
-               {
-                  double scaleValue = remainder + 1;
-                  {
-                     MapRenderTransform = new ScaleTransform(scaleValue, scaleValue, ActualWidth/2, ActualHeight/2);
-                  }
-
-                  if(IsLoaded)
-                  {
-                     //DisplayZoomInFadeImage();
-                  }
-
-                  ZoomStep = Convert.ToInt32(value - remainder);
-                  InvalidateVisual();
-               }
-               else
-               {
-                  MapRenderTransform = null;
-                  ZoomStep = Convert.ToInt32(value);
-                  InvalidateVisual();
-               }
-            }
-         }
-      }
-
-      protected bool DesignModeInConstruct
-      {
-         get
-         {
-            return (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
-         }
-      }
+      }        
 
       /// <summary>
       /// inits core system
@@ -391,9 +403,7 @@ namespace System.Windows.Controls
             };
             this.Dispatcher.Invoke(DispatcherPriority.Render, m);
          }
-      }
-
-      Typeface tileTypeface = new Typeface("Arial");
+      }        
 
       /// <summary>
       /// render map in WPF
@@ -800,6 +810,12 @@ namespace System.Windows.Controls
          if(CanDragMap && e.ChangedButton == DragButton && e.ButtonState == MouseButtonState.Pressed)
          {
             System.Windows.Point p = e.GetPosition(this);
+
+            if(MapRenderTransform != null)
+            {
+               p = MapRenderTransform.Inverse.Transform(p);
+            }
+
             Core.mouseDown.X = (int) p.X;
             Core.mouseDown.Y = (int) p.Y;
             {
@@ -869,6 +885,12 @@ namespace System.Windows.Controls
          if(Core.IsDragging)
          {
             System.Windows.Point p = e.GetPosition(this);
+
+            if(MapRenderTransform != null)
+            {
+               p = MapRenderTransform.Inverse.Transform(p);
+            }  
+
             Core.mouseCurrent.X = (int) p.X;
             Core.mouseCurrent.Y = (int) p.Y;
             {
@@ -904,12 +926,28 @@ namespace System.Windows.Controls
 
       public PointLatLng FromLocalToLatLng(int x, int y)
       {
+         if(MapRenderTransform != null)
+         {
+            var tp = MapRenderTransform.Inverse.Transform(new System.Windows.Point(x, y));
+            x = (int) tp.X;
+            y = (int) tp.Y;
+         }
+
          return Core.FromLocalToLatLng(x, y);
       }
 
       public GMap.NET.Point FromLatLngToLocal(PointLatLng point)
       {
-         return Core.FromLatLngToLocal(point);
+         GMap.NET.Point ret = Core.FromLatLngToLocal(point);
+
+         if(MapRenderTransform != null)
+         {
+            var tp = MapRenderTransform.Transform(new System.Windows.Point(ret.X, ret.Y));
+            ret.X = (int)tp.X;
+            ret.Y = (int)tp.Y;
+         }   
+
+         return ret;
       }
 
       public bool ShowExportDialog()

@@ -7,6 +7,7 @@ namespace GMap.NET.WindowsPresentation
    using System.Windows.Controls;
    using GMap.NET;
    using System.Windows.Media;
+   using System.Diagnostics;
 
    /// <summary>
    /// GMap.NET marker
