@@ -181,6 +181,7 @@ namespace System.Windows.Controls
                   ZoomStep = Convert.ToInt32(value - remainder);
 
                   Core_OnMapDrag();
+                  Core_OnMapZoomChanged();
 
                   InvalidateVisual();
                }
@@ -188,7 +189,7 @@ namespace System.Windows.Controls
                {
                   MapRenderTransform = null;
                   ZoomStep = Convert.ToInt32(value);
-                  InvalidateVisual();
+                  InvalidateVisual();                    
                }
             }
          }
@@ -776,8 +777,8 @@ namespace System.Windows.Controls
          {
             if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
             {
-               System.Windows.Point pl = e.GetPosition(this);
-               Core.currentPosition = FromLocalToLatLng((int) pl.X, (int) pl.Y);
+               System.Windows.Point p = e.GetPosition(this);
+               Core.currentPosition = FromLocalToLatLng((int) p.X, (int) p.Y);
             }
             else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
             {
