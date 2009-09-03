@@ -90,6 +90,17 @@ namespace GMap.NET
          return (((tf.Lng == this.Lng) && (tf.Lat == this.Lat)) && tf.GetType().Equals(base.GetType()));
       }
 
+      public void Offset(PointLatLng pos)
+      {
+         this.Offset(pos.Lat, pos.Lng);
+      }
+
+      public void Offset(double lat, double lng)
+      {
+         this.Lng += lng;
+         this.Lat -= lat;
+      }
+
       public override int GetHashCode()
       {
          return base.GetHashCode();

@@ -78,7 +78,7 @@ namespace Demo.WindowsForms
             List<MapType> types = GMaps.Instance.GetAllLayersOfType(info.Type);
 
             // current area
-            GMap.NET.Point topLeftPx = info.Projection.FromLatLngToPixel(info.Area.Location, info.Zoom);
+            GMap.NET.Point topLeftPx = info.Projection.FromLatLngToPixel(info.Area.LocationTopLeft, info.Zoom);
             GMap.NET.Point rightButtomPx = info.Projection.FromLatLngToPixel(info.Area.Bottom, info.Area.Right, info.Zoom);
             GMap.NET.Point pxDelta = new GMap.NET.Point(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
 
@@ -140,7 +140,7 @@ namespace Demo.WindowsForms
 
                            gfx.DrawRectangle(p, rect);
 
-                           string topleft = info.Area.Location.ToString();
+                           string topleft = info.Area.LocationTopLeft.ToString();
                            SizeF s = gfx.MeasureString(topleft, f);
 
                            gfx.DrawString(topleft, f, p.Brush, rect.X + s.Height/2, rect.Y + s.Height/2);

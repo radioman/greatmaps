@@ -36,7 +36,7 @@ namespace GMap.NET
          return new RectLatLng(lat, lng, rightLng - lng, lat - bottomLat);
       }
 
-      public PointLatLng Location
+      public PointLatLng LocationTopLeft
       {
          get
          {
@@ -46,6 +46,16 @@ namespace GMap.NET
          {
             this.Lng = value.Lng;
             this.Lat = value.Lat;
+         }
+      }
+
+      public PointLatLng LocationRightBottom
+      {
+         get
+         {
+            PointLatLng ret = new PointLatLng(this.Lat, this.Lng);
+            ret.Offset(HeightLat, WidthLng);
+            return ret;            
          }
       }
 

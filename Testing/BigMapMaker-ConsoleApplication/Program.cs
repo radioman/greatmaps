@@ -35,7 +35,7 @@ namespace BigMapMaker_ConsoleApplication
                List<MapType> types = GMaps.Instance.GetAllLayersOfType(type);
 
                // current area
-               GMap.NET.Point topLeftPx = prj.FromLatLngToPixel(area.Location, zoom);
+               GMap.NET.Point topLeftPx = prj.FromLatLngToPixel(area.LocationTopLeft, zoom);
                GMap.NET.Point rightButtomPx = prj.FromLatLngToPixel(area.Bottom, area.Right, zoom);
                GMap.NET.Point pxDelta = new GMap.NET.Point(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
 
@@ -89,7 +89,7 @@ namespace BigMapMaker_ConsoleApplication
 
                               gfx.DrawRectangle(p, rect);
 
-                              string topleft = area.Location.ToString();
+                              string topleft = area.LocationTopLeft.ToString();
                               SizeF s = gfx.MeasureString(topleft, f);
 
                               gfx.DrawString(topleft, f, p.Brush, rect.X + s.Height/2, rect.Y + s.Height/2);

@@ -432,7 +432,7 @@ namespace GMap.NET.Internals
 
          for(int i = 1; i <= GMaps.Instance.MaxZoom; i++)
          {
-            Point p1 = Projection.FromLatLngToPixel(rect.Location, i);
+            Point p1 = Projection.FromLatLngToPixel(rect.LocationTopLeft, i);
             Point p2 = Projection.FromLatLngToPixel(rect.Bottom, rect.Right, i);
 
             if(((p2.X - p1.X) <= Width+10) && (p2.Y - p1.Y) <= Height+10)

@@ -123,9 +123,10 @@ namespace System.Windows.Controls
          {
             return selectedArea;
          }
-         internal set
+         set
          {
             selectedArea = value;
+            InvalidateVisual();
          }
       }
 
@@ -699,15 +700,15 @@ namespace System.Windows.Controls
          }
 
          // selection
-         if(!selectionEnd.IsEmpty && !selectionStart.IsEmpty)
+         if(!SelectedArea.IsEmpty)
          {
-            GMap.NET.Point p1 = FromLatLngToLocal(selectionStart);
-            GMap.NET.Point p2 = FromLatLngToLocal(selectionEnd);
+            GMap.NET.Point p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
+            GMap.NET.Point p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
 
-            int x1 = Math.Min(p1.X, p2.X);
-            int y1 = Math.Min(p1.Y, p2.Y);
-            int x2 = Math.Max(p1.X, p2.X);
-            int y2 = Math.Max(p1.Y, p2.Y);
+            int x1 = p1.X;
+            int y1 = p1.Y;
+            int x2 = p2.X;
+            int y2 = p2.Y;
 
             drawingContext.DrawRectangle(null, SelectionPen, new Rect(x1, y1, x2 - x1, y2 - y1));
          }
@@ -851,21 +852,8 @@ namespace System.Windows.Controls
          }
          else
          {
-            if(SelectedArea.IsEmpty && !selectionEnd.IsEmpty && !selectionStart.IsEmpty)
+            if(!selectionEnd.IsEmpty && !selectionStart.IsEmpty)
             {
-               if(Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Alt)
-               {
-                  GMap.NET.PointLatLng p1 = selectionStart;
-                  GMap.NET.PointLatLng p2 = selectionEnd;
-
-                  double x1 = Math.Min(p1.Lng, p2.Lng);
-                  double y1 = Math.Max(p1.Lat, p2.Lat);
-                  double x2 = Math.Max(p1.Lng, p2.Lng);
-                  double y2 = Math.Min(p1.Lat, p2.Lat);
-
-                  SelectedArea = new RectLatLng(y1, x1, x2 - x1, y1 - y2);
-               }
-
                if(!SelectedArea.IsEmpty && Keyboard.Modifiers == ModifierKeys.Shift)
                {
                   SetZoomToFitRect(SelectedArea);
@@ -900,11 +888,21 @@ namespace System.Windows.Controls
          }
          else
          {
-            if(isSelected && !selectionStart.IsEmpty && SelectedArea.IsEmpty && (Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Alt))
+            if(isSelected && !selectionStart.IsEmpty && (Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Alt))
             {
                System.Windows.Point p = e.GetPosition(this);
                selectionEnd = FromLocalToLatLng((int) p.X, (int) p.Y);
-               InvalidateVisual();
+               {
+                  GMap.NET.PointLatLng p1 = selectionStart;
+                  GMap.NET.PointLatLng p2 = selectionEnd;
+
+                  double x1 = Math.Min(p1.Lng, p2.Lng);
+                  double y1 = Math.Max(p1.Lat, p2.Lat);
+                  double x2 = Math.Max(p1.Lng, p2.Lng);
+                  double y2 = Math.Min(p1.Lat, p2.Lat);
+
+                  SelectedArea = new RectLatLng(y1, x1, x2 - x1, y1 - y2);
+               }
             }
          }
 

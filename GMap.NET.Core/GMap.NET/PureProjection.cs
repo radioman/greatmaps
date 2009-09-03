@@ -149,7 +149,7 @@ namespace GMap.NET
       {
          List<Point> ret = new List<Point>();
 
-         Point topLeft = FromPixelToTileXY(FromLatLngToPixel(rect.Location, zoom));
+         Point topLeft = FromPixelToTileXY(FromLatLngToPixel(rect.LocationTopLeft, zoom));
          Point rightBottom = FromPixelToTileXY(FromLatLngToPixel(rect.Bottom, rect.Right, zoom));
 
          for(int x = (topLeft.X - padding); x <= (rightBottom.X + padding); x++)
