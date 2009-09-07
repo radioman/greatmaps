@@ -8,6 +8,7 @@ namespace GMap.NET.WindowsPresentation
    using GMap.NET;
    using System.Windows.Media;
    using System.Diagnostics;
+   using System.Windows.Shapes;
 
    /// <summary>
    /// GMap.NET marker
@@ -241,7 +242,19 @@ namespace GMap.NET.WindowsPresentation
                var p = Map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
                localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
             }
+
+            Brush before = null;
+            if(this.Shape != null && this.Shape is Path)
+            {
+               before = (this.Shape as Path).Stroke;
+            }
+
             this.Shape = map.CreateRoutePath(localPath);
+
+            if(before != null)
+            {
+               (this.Shape as Path).Stroke = before;
+            }
          }
       }
    }
