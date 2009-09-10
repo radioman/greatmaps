@@ -23,9 +23,7 @@ namespace GMap.NET.Internals
             {
                t.Clear();
             }
-            {
-               matrix.Clear();
-            }
+            matrix.Clear();
          }
       }
 

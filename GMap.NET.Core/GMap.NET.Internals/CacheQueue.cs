@@ -26,7 +26,7 @@ namespace GMap.NET.Internals
 
    internal enum CacheUsage
    {
-      First = 0 ,
+      First = 0,
       Second = 1,
       Both = First | Second
    }

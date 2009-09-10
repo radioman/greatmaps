@@ -9,6 +9,7 @@ namespace GMap.NET.WindowsPresentation
    using System.Windows.Media;
    using System.Diagnostics;
    using System.Windows.Shapes;
+   using System;
 
    /// <summary>
    /// GMap.NET marker
@@ -191,12 +192,19 @@ namespace GMap.NET.WindowsPresentation
       }
 
       /// <summary>
-      /// sets shape to null and clears route
+      /// calls Dispose on shape if it implements IDisposable, sets shape to null and clears route
       /// </summary>
       public void Clear()
       {
+         var s = (Shape as IDisposable);
+         if(s != null)
+         {
+            s.Dispose();
+            s = null;
+         }
          Shape = null;
          Route.Clear();
+         Route.TrimExcess();
       }
 
       /// <summary>
