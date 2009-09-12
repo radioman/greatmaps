@@ -139,25 +139,25 @@ namespace GMap.NET
       /// <summary>
       /// tiles in memmory
       /// </summary>
-      readonly List<RawTile> TilesInMemmory = new List<RawTile>(222);
+      readonly List<RawTile> TilesInMemory = new List<RawTile>(222);
 
       /// <summary>
       /// the amount of tiles in MB to keep in memmory, default: 22MB, if each ~100Kb it's ~222 tiles
       /// </summary>
-      public int MemmoryCacheCapacity = 22;
+      public int MemoryCacheCapacity = 22;
 
-      long memmoryCacheSize = 0;
+      long memoryCacheSize = 0;
 
       /// <summary>
       /// current memmory cache size in MB
       /// </summary>
-      public double MemmoryCacheSize
+      public double MemoryCacheSize
       {
          get
          {
-            lock(TilesInMemmory)
+            lock(TilesInMemory)
             {
-               return memmoryCacheSize/1048576.0;
+               return memoryCacheSize/1048576.0;
             }
          }
       }
@@ -233,15 +233,16 @@ namespace GMap.NET
 
       #region -- Stuff --
 
-      MemoryStream GetTileFromMemmoryCache(int zoom, MapType type, Point pos)
+      MemoryStream GetTileFromMemoryCache(int zoom, MapType type, Point pos)
       {
-         lock(TilesInMemmory)
+         lock(TilesInMemory)
          {
-            foreach(RawTile tile in TilesInMemmory)
+            for(int i = TilesInMemory.Count - 1; i >= 0; i--)
             {
+               RawTile tile = TilesInMemory[i];
                if(tile.Zoom == zoom && tile.Type == type && tile.Pos == pos)
                {
-                  //Debug.WriteLine("GetTileFromMemmoryCache: " + zoom + ", " + pos + ", " + type);
+                  //Debug.WriteLine("GetTileFromMemoryCache: " + zoom + ", " + pos + ", " + type);
                   return tile.Img;
                }
             }
@@ -249,22 +250,22 @@ namespace GMap.NET
          return null;
       }
 
-      void AddTileToMemmoryCache(RawTile tile)
+      void AddTileToMemoryCache(RawTile tile)
       {
-         lock(TilesInMemmory)
+         lock(TilesInMemory)
          {
             // clear oldest values
-            if(memmoryCacheSize/1048576.0 > MemmoryCacheCapacity)
+            if(memoryCacheSize/1048576.0 > MemoryCacheCapacity)
             {
-               memmoryCacheSize -= TilesInMemmory[0].Img.Length;
-               TilesInMemmory[0].Img.Dispose();
-               TilesInMemmory.RemoveAt(0);
+               memoryCacheSize -= TilesInMemory[0].Img.Length;
+               TilesInMemory[0].Img.Dispose();
+               TilesInMemory.RemoveAt(0);
             }
 
-            Debug.WriteLine("AddTileToMemmoryCache: " + tile.Zoom + ", " + tile.Pos + ", Total " + memmoryCacheSize/1048576.0 + "MB");
+            Debug.WriteLine("AddTileToMemmoryCache: " + tile.Zoom + ", " + tile.Pos + ", Total " + memoryCacheSize/1048576.0 + "MB");
 
-            TilesInMemmory.Add(tile);
-            memmoryCacheSize += tile.Img.Length;
+            TilesInMemory.Add(tile);
+            memoryCacheSize += tile.Img.Length;
          }
       }
 
@@ -1577,7 +1578,7 @@ namespace GMap.NET
          {
             // let't check memmory first
             {
-               MemoryStream m = GetTileFromMemmoryCache(zoom, type, pos);
+               MemoryStream m = GetTileFromMemoryCache(zoom, type, pos);
                if(m != null)
                {
                   if(GMaps.Instance.ImageProxy != null)
@@ -1601,7 +1602,7 @@ namespace GMap.NET
                      ret = Cache.Instance.ImageCache.GetImageFromCache(type, pos, zoom);
                      if(ret != null)
                      {
-                        AddTileToMemmoryCache(new RawTile(type, pos, zoom, ret.Data));
+                        AddTileToMemoryCache(new RawTile(type, pos, zoom, ret.Data));
                         return ret;
                      }
                   }
@@ -1611,7 +1612,7 @@ namespace GMap.NET
                      ret = Cache.Instance.ImageCacheSecond.GetImageFromCache(type, pos, zoom);
                      if(ret != null)
                      {
-                        AddTileToMemmoryCache(new RawTile(type, pos, zoom, ret.Data));
+                        AddTileToMemoryCache(new RawTile(type, pos, zoom, ret.Data));
                         EnqueueCacheTask(new CacheItemQueue(type, pos, zoom, ret.Data, CacheUsage.First));
                         return ret;
                      }
@@ -1690,7 +1691,7 @@ namespace GMap.NET
                            // Enqueue Cache
                            if(ret != null)
                            {
-                              AddTileToMemmoryCache(new RawTile(type, pos, zoom, responseStream));
+                              AddTileToMemoryCache(new RawTile(type, pos, zoom, responseStream));
 
                               if(Mode != AccessMode.ServerOnly)
                               {
