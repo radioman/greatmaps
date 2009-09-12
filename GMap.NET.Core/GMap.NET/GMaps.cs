@@ -2,6 +2,7 @@
 namespace GMap.NET
 {
    using System;
+   using System.Collections;
    using System.Collections.Generic;
    using System.ComponentModel;
    using System.Diagnostics;
@@ -131,9 +132,35 @@ namespace GMap.NET
       public bool ShuffleTilesOnLoad = true;
 
       /// <summary>
-      /// tile cache queue
+      /// tile queue to cache
       /// </summary>
-      readonly Queue<CacheQueue> tileCacheQueue = new Queue<CacheQueue>();
+      readonly Queue<CacheItemQueue> tileCacheQueue = new Queue<CacheItemQueue>();
+
+      /// <summary>
+      /// tiles in memmory
+      /// </summary>
+      readonly List<RawTile> TilesInMemmory = new List<RawTile>(222);
+
+      /// <summary>
+      /// the amount of tiles in MB to keep in memmory, default: 22MB, if each ~100Kb it's ~222 tiles
+      /// </summary>
+      public int MemmoryCacheCapacity = 22;
+
+      long memmoryCacheSize = 0;
+
+      /// <summary>
+      /// current memmory cache size in MB
+      /// </summary>
+      public double MemmoryCacheSize
+      {
+         get
+         {
+            lock(TilesInMemmory)
+            {
+               return memmoryCacheSize/1048576.0;
+            }
+         }
+      }
 
       bool? isRunningOnMono;
 
@@ -205,6 +232,41 @@ namespace GMap.NET
       }
 
       #region -- Stuff --
+
+      MemoryStream GetTileFromMemmoryCache(int zoom, MapType type, Point pos)
+      {
+         lock(TilesInMemmory)
+         {
+            foreach(RawTile tile in TilesInMemmory)
+            {
+               if(tile.Zoom == zoom && tile.Type == type && tile.Pos == pos)
+               {
+                  //Debug.WriteLine("GetTileFromMemmoryCache: " + zoom + ", " + pos + ", " + type);
+                  return tile.Img;
+               }
+            }
+         }
+         return null;
+      }
+
+      void AddTileToMemmoryCache(RawTile tile)
+      {
+         lock(TilesInMemmory)
+         {
+            // clear oldest values
+            if(memmoryCacheSize/1048576.0 > MemmoryCacheCapacity)
+            {
+               memmoryCacheSize -= TilesInMemmory[0].Img.Length;
+               TilesInMemmory[0].Img.Dispose();
+               TilesInMemmory.RemoveAt(0);
+            }
+
+            Debug.WriteLine("AddTileToMemmoryCache: " + tile.Zoom + ", " + tile.Pos + ", Total " + memmoryCacheSize/1048576.0 + "MB");
+
+            TilesInMemmory.Add(tile);
+            memmoryCacheSize += tile.Img.Length;
+         }
+      }
 
       /// <summary>
       /// gets all layers of map type
@@ -443,7 +505,7 @@ namespace GMap.NET
       /// enqueueens tile to cache
       /// </summary>
       /// <param name="task"></param>
-      void EnqueueCacheTask(CacheQueue task)
+      void EnqueueCacheTask(CacheItemQueue task)
       {
          lock(tileCacheQueue)
          {
@@ -474,7 +536,7 @@ namespace GMap.NET
          while(!cacher.CancellationPending)
          {
             bool process = true;
-            CacheQueue? task = null;
+            CacheItemQueue? task = null;
 
             lock(tileCacheQueue)
             {
@@ -1035,7 +1097,7 @@ namespace GMap.NET
                                                 {
                                                    Debug.WriteLine("TryCorrectGoogleVersions[terrain FAILED]: " + u);
                                                 }
-                                                break;  
+                                                break;
                                              }
                                              i++;
                                           }
@@ -1513,124 +1575,132 @@ namespace GMap.NET
 
          try
          {
-            if(Mode != AccessMode.ServerOnly)
+            // let't check memmory first
             {
-               if(Cache.Instance.ImageCache != null)
+               MemoryStream m = GetTileFromMemmoryCache(zoom, type, pos);
+               if(m != null)
                {
-                  ret = Cache.Instance.ImageCache.GetImageFromCache(type, pos, zoom);
-                  if(ret != null)
+                  if(GMaps.Instance.ImageProxy != null)
                   {
-                     return ret;
-                  }
-               }
-
-               if(Cache.Instance.ImageCacheSecond != null)
-               {
-                  ret = Cache.Instance.ImageCacheSecond.GetImageFromCache(type, pos, zoom);
-                  if(ret != null)
-                  {
-                     MemoryStream m = new MemoryStream();
+                     ret = GMaps.Instance.ImageProxy.FromStream(m);
+                     if(ret == null)
                      {
-                        if(GMaps.Instance.ImageProxy.Save(m, ret))
-                        {
-                           EnqueueCacheTask(new CacheQueue(type, pos, zoom, m, CacheUsage.First));
-                        }
-                        else
-                        {
-                           m.Dispose();
-                        }
+                        // should never happen ;}
+                        m.Dispose();
                      }
-
-                     return ret;
                   }
                }
             }
 
-            if(Mode != AccessMode.CacheOnly)
+            if(ret == null)
             {
-               string url = MakeImageUrl(type, pos, zoom, Language);
-
-               HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-               request.ServicePoint.ConnectionLimit = 50;
-               request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
-               request.UserAgent = UserAgent;
-               request.Timeout = Timeout;
-               request.ReadWriteTimeout = Timeout*6;
-               request.KeepAlive = true;
-
-               switch(type)
+               if(Mode != AccessMode.ServerOnly)
                {
-                  case MapType.GoogleMap:
-                  case MapType.GoogleSatellite:
-                  case MapType.GoogleLabels:
-                  case MapType.GoogleTerrain:
-                  case MapType.GoogleHybrid:
+                  if(Cache.Instance.ImageCache != null)
                   {
-                     request.Referer = "http://maps.google.com/";
+                     ret = Cache.Instance.ImageCache.GetImageFromCache(type, pos, zoom);
+                     if(ret != null)
+                     {
+                        AddTileToMemmoryCache(new RawTile(type, pos, zoom, ret.Data));
+                        return ret;
+                     }
                   }
-                  break;
 
-                  case MapType.GoogleMapChina:
-                  case MapType.GoogleSatelliteChina:
-                  case MapType.GoogleLabelsChina:
-                  case MapType.GoogleTerrainChina:
-                  case MapType.GoogleHybridChina:
+                  if(Cache.Instance.ImageCacheSecond != null)
                   {
-                     request.Referer = "http://ditu.google.cn/";
+                     ret = Cache.Instance.ImageCacheSecond.GetImageFromCache(type, pos, zoom);
+                     if(ret != null)
+                     {
+                        AddTileToMemmoryCache(new RawTile(type, pos, zoom, ret.Data));
+                        EnqueueCacheTask(new CacheItemQueue(type, pos, zoom, ret.Data, CacheUsage.First));
+                        return ret;
+                     }
                   }
-                  break;
-
-                  case MapType.VirtualEarthHybrid:
-                  case MapType.VirtualEarthMap:
-                  case MapType.VirtualEarthSatellite:
-                  {
-                     request.Referer = "http://www.bing.com/maps/";
-                  }
-                  break;
-
-                  case MapType.YahooHybrid:
-                  case MapType.YahooLabels:
-                  case MapType.YahooMap:
-                  case MapType.YahooSatellite:
-                  {
-                     request.Referer = "http://maps.yahoo.com/";
-                  }
-                  break;
-
-                  case MapType.ArcGIS_MapsLT_Map_Labels:
-                  case MapType.ArcGIS_MapsLT_Map:
-                  case MapType.ArcGIS_MapsLT_OrtoFoto:
-                  case MapType.ArcGIS_MapsLT_Map_Hybrid:
-                  {
-                     request.Referer = "Referer: http://arcgis.maps.lt/";
-                  }
-                  break;
                }
 
-               using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+               if(Mode != AccessMode.CacheOnly)
                {
-                  MemoryStream responseStream = Stuff.CopyStream(response.GetResponseStream());
-                  {
-                     if(GMaps.Instance.ImageProxy != null)
-                     {
-                        ret = GMaps.Instance.ImageProxy.FromStream(responseStream);
+                  string url = MakeImageUrl(type, pos, zoom, Language);
 
-                        // Enqueue Cache
-                        if(ret != null && Mode != AccessMode.ServerOnly)
-                        {
-                           EnqueueCacheTask(new CacheQueue(type, pos, zoom, responseStream, CacheUsage.Both));
-                        }
-                        else
-                        {
-                           responseStream.Dispose();
-                        }
-                     }
-                     else
+                  HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+                  request.ServicePoint.ConnectionLimit = 50;
+                  request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
+                  request.UserAgent = UserAgent;
+                  request.Timeout = Timeout;
+                  request.ReadWriteTimeout = Timeout*6;
+                  request.KeepAlive = true;
+
+                  switch(type)
+                  {
+                     case MapType.GoogleMap:
+                     case MapType.GoogleSatellite:
+                     case MapType.GoogleLabels:
+                     case MapType.GoogleTerrain:
+                     case MapType.GoogleHybrid:
                      {
-                        responseStream.Dispose();
+                        request.Referer = "http://maps.google.com/";
                      }
+                     break;
+
+                     case MapType.GoogleMapChina:
+                     case MapType.GoogleSatelliteChina:
+                     case MapType.GoogleLabelsChina:
+                     case MapType.GoogleTerrainChina:
+                     case MapType.GoogleHybridChina:
+                     {
+                        request.Referer = "http://ditu.google.cn/";
+                     }
+                     break;
+
+                     case MapType.VirtualEarthHybrid:
+                     case MapType.VirtualEarthMap:
+                     case MapType.VirtualEarthSatellite:
+                     {
+                        request.Referer = "http://www.bing.com/maps/";
+                     }
+                     break;
+
+                     case MapType.YahooHybrid:
+                     case MapType.YahooLabels:
+                     case MapType.YahooMap:
+                     case MapType.YahooSatellite:
+                     {
+                        request.Referer = "http://maps.yahoo.com/";
+                     }
+                     break;
+
+                     case MapType.ArcGIS_MapsLT_Map_Labels:
+                     case MapType.ArcGIS_MapsLT_Map:
+                     case MapType.ArcGIS_MapsLT_OrtoFoto:
+                     case MapType.ArcGIS_MapsLT_Map_Hybrid:
+                     {
+                        request.Referer = "Referer: http://arcgis.maps.lt/";
+                     }
+                     break;
                   }
-                  response.Close();
+
+                  using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                  {
+                     MemoryStream responseStream = Stuff.CopyStream(response.GetResponseStream(), false);
+                     {
+                        if(GMaps.Instance.ImageProxy != null)
+                        {
+                           ret = GMaps.Instance.ImageProxy.FromStream(responseStream);
+
+                           // Enqueue Cache
+                           if(ret != null)
+                           {
+                              AddTileToMemmoryCache(new RawTile(type, pos, zoom, responseStream));
+
+                              if(Mode != AccessMode.ServerOnly)
+                              {
+                                 EnqueueCacheTask(new CacheItemQueue(type, pos, zoom, responseStream, CacheUsage.Both));
+                              }
+                           }
+                        }
+                     }
+                     response.Close();
+                  }
                }
             }
          }

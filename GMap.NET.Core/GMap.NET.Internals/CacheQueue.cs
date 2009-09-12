@@ -6,7 +6,7 @@ namespace GMap.NET.Internals
    /// <summary>
    /// cache queue item
    /// </summary>
-   internal struct CacheQueue
+   internal struct CacheItemQueue
    {
       public MapType Type;
       public Point Pos;
@@ -14,7 +14,7 @@ namespace GMap.NET.Internals
       public MemoryStream Img;
       public CacheUsage CacheType;
 
-      public CacheQueue(MapType Type, Point Pos, int Zoom, MemoryStream Img, CacheUsage cacheType)
+      public CacheItemQueue(MapType Type, Point Pos, int Zoom, MemoryStream Img, CacheUsage cacheType)
       {
          this.Type = Type;
          this.Pos = Pos;
@@ -26,8 +26,8 @@ namespace GMap.NET.Internals
 
    internal enum CacheUsage
    {
-      First = 0,
-      Second = 1,
-      Both = First | Second
+      First=0,
+      Second=1,
+      Both=First | Second
    }
 }

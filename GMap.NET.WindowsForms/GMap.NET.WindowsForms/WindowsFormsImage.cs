@@ -65,6 +65,21 @@ namespace GMap.NET.WindowsForms
          {
             ret = null;
          }
+         finally
+         {
+            try
+            {
+               stream.Seek(0, System.IO.SeekOrigin.Begin);
+
+               if(ret == null)
+               {
+                  stream.Dispose();
+               }
+            }
+            catch
+            {
+            }
+         }
          return ret;
       }
 

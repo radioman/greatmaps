@@ -3,6 +3,7 @@ namespace GMap.NET.WindowsPresentation
 {
    using System.Windows.Media;
    using System.Windows.Media.Imaging;
+   using GMap.NET.Internals;
 
    /// <summary>
    /// image abstraction
@@ -45,6 +46,9 @@ namespace GMap.NET.WindowsPresentation
          WindowsPresentationImage ret = null;
          if(stream != null)
          {
+            // use double copy of streams to keep memmory cache ok
+            //stream = Stuff.CopyStream(stream);
+
             // try png decoder
             try
             {
@@ -86,7 +90,22 @@ namespace GMap.NET.WindowsPresentation
                   ret = null;
                }
             }
-         }
+            finally
+            {
+               try
+               {
+                  stream.Seek(0, System.IO.SeekOrigin.Begin);
+
+                  if(ret == null)
+                  {
+                     stream.Dispose();
+                  }
+               }
+               catch
+               {
+               }
+            }
+         } 
          return ret;
       }
 

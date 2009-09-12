@@ -8,14 +8,12 @@ namespace GMap.NET.Internals
    /// </summary>
    internal class Tile
    {
-      RenderMode mode;
       Point pos;
       int zoom;
       public readonly List<PureImage> Overlays = new List<PureImage>(1);
 
-      public Tile(int zoom, Point pos, RenderMode mode)
+      public Tile(int zoom, Point pos)
       {
-         this.mode = mode;
          this.Zoom = zoom;
          this.Pos = pos;
       }
@@ -24,13 +22,6 @@ namespace GMap.NET.Internals
       {
          lock(Overlays)
          {
-            foreach(PureImage img in Overlays)
-            {
-               if(img != null)
-               {
-                  img.Dispose();
-               }
-            }
             Overlays.Clear();
             Overlays.TrimExcess();
          }

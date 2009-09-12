@@ -656,7 +656,7 @@ namespace GMap.NET.Internals
             // report load start
             loader.ReportProgress(id, false);
 
-            Tile t = new Tile(task.Zoom, task.Pos, RenderMode);
+            Tile t = new Tile(task.Zoom, task.Pos);
             {
                List<MapType> layers = GMaps.Instance.GetAllLayersOfType(MapType);
                foreach(MapType tl in layers)

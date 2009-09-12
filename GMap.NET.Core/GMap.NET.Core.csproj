@@ -122,6 +122,7 @@
     <Compile Include="GMap.NET.Internals\CacheQueue.cs" />
     <Compile Include="GMap.NET.Internals\PureImage.cs" />
     <Compile Include="GMap.NET.Internals\LoadTask.cs" />
+    <Compile Include="GMap.NET.Internals\RawTile.cs" />
     <Compile Include="GMap.NET.Projections\MapsLTProjection.cs" />
     <Compile Include="GMap.NET.Projections\MercatorProjection.cs" />
     <Compile Include="GMap.NET.Projections\PlateCarreeProjection.cs" />

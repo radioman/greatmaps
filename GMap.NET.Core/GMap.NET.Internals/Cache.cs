@@ -387,7 +387,6 @@ namespace GMap.NET.Internals
 
                      cn.Open();
                      {
-                        using(tile)
                         {
                            using(DbTransaction tr = cn.BeginTransaction())
                            {
@@ -471,12 +470,12 @@ namespace GMap.NET.Internals
                                  long length = rd.GetBytes(0, 0, null, 0, 0);
                                  byte[] tile = new byte[length];
                                  rd.GetBytes(0, 0, tile, 0, tile.Length);
-
-                                 using(MemoryStream stm = new MemoryStream(tile))
                                  {
                                     if(GMaps.Instance.ImageProxy != null)
                                     {
+                                       MemoryStream stm = new MemoryStream(tile);                                         
                                        ret = GMaps.Instance.ImageProxy.FromStream(stm);
+                                       ret.Data = stm;
                                     }
                                  }
                                  tile = null;
