@@ -29,7 +29,7 @@ namespace GMap.NET
       public string VersionGoogleMapChina = "w2.106";
       public string VersionGoogleSatelliteChina = "45";
       public string VersionGoogleLabelsChina = "w2t.106";
-      public string VersionGoogleTerrainChina = "cnw2p.98";        
+      public string VersionGoogleTerrainChina = "cnw2p.98";
 
       // Yahoo version strings
       public string VersionYahooMap = "4.2";
@@ -150,7 +150,7 @@ namespace GMap.NET
                try
                {
                   isRunningOnMono = (Type.GetType("Mono.Runtime") != null);
-                  return isRunningOnMono.Value;  
+                  return isRunningOnMono.Value;
                }
                catch
                {
@@ -163,6 +163,28 @@ namespace GMap.NET
             return false;
          }
       }
+
+      bool isCorrectedGoogleVersions = false;
+
+      /// <summary>
+      /// true if google versions was corrected
+      /// </summary>
+      internal bool IsCorrectedGoogleVersions
+      {
+         get
+         {
+            return isCorrectedGoogleVersions;
+         }
+         set
+         {
+            isCorrectedGoogleVersions = value;
+         }
+      }
+
+      /// <summary>
+      /// try correct versions once
+      /// </summary>
+      public bool CorrectGoogleVersions = true;
 
       /// <summary>
       /// cache worker
@@ -520,7 +542,7 @@ namespace GMap.NET
                string sec1 = ""; // after &x=...
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
-
+               TryCorrectGoogleVersions();
                return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMap, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;
@@ -532,7 +554,7 @@ namespace GMap.NET
                string sec1 = ""; // after &x=...
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
-
+               TryCorrectGoogleVersions();
                return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleSatellite, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;
@@ -544,7 +566,7 @@ namespace GMap.NET
                string sec1 = ""; // after &x=...
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
-
+               TryCorrectGoogleVersions();
                return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabels, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;
@@ -556,7 +578,7 @@ namespace GMap.NET
                string sec1 = ""; // after &x=...
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
-
+               TryCorrectGoogleVersions();
                return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrain, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;
@@ -901,6 +923,110 @@ namespace GMap.NET
       #endregion
 
       #region -- Content download --
+
+      /// <summary>
+      /// try to correct google versions
+      /// </summary>
+      internal void TryCorrectGoogleVersions()
+      {
+         if(CorrectGoogleVersions && !IsCorrectedGoogleVersions)
+         {
+            IsCorrectedGoogleVersions = true; // try it only once
+
+            string url = @"http://maps.google.com";
+            try
+            {
+               HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+               request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
+               request.UserAgent = UserAgent;
+               request.Timeout = Timeout;
+               request.ReadWriteTimeout = Timeout*6;
+
+               using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+               {
+                  using(Stream responseStream = response.GetResponseStream())
+                  {
+                     using(StreamReader read = new StreamReader(responseStream))
+                     {
+                        string html = read.ReadToEnd();                         
+
+                        // find it  
+                        // apiCallback(["http://mt0.google.com/vt/v\x3dw2.106\x26hl\x3dlt\x26","http://mt1.google.com/vt/v\x3dw2.106\x26hl\x3dlt\x26","http://mt2.google.com/vt/v\x3dw2.106\x26hl\x3dlt\x26","http://mt3.google.com/vt/v\x3dw2.106\x26hl\x3dlt\x26"],
+                        // ["http://khm0.google.com/kh/v\x3d45\x26","http://khm1.google.com/kh/v\x3d45\x26","http://khm2.google.com/kh/v\x3d45\x26","http://khm3.google.com/kh/v\x3d45\x26"],
+                        // ["http://mt0.google.com/vt/v\x3dw2t.106\x26hl\x3dlt\x26","http://mt1.google.com/vt/v\x3dw2t.106\x26hl\x3dlt\x26","http://mt2.google.com/vt/v\x3dw2t.106\x26hl\x3dlt\x26","http://mt3.google.com/vt/v\x3dw2t.106\x26hl\x3dlt\x26"],
+                        // "","","",false,"G",opts,["http://mt0.google.com/vt/v\x3dw2p.106\x26hl\x3dlt\x26","http://mt1.google.com/vt/v\x3dw2p.106\x26hl\x3dlt\x26","http://mt2.google.com/vt/v\x3dw2p.106\x26hl\x3dlt\x26","http://mt3.google.com/vt/v\x3dw2p.106\x26hl\x3dlt\x26"],jslinker,pageArgs);
+
+                        int id = html.LastIndexOf("apiCallback([");
+                        if(id > 0)
+                        {
+                           int idEnd = html.IndexOf("jslinker,pageArgs", id);
+                           if(idEnd > id)
+                           {
+                              string api = html.Substring(id, idEnd - id);
+                              if(!string.IsNullOrEmpty(api))
+                              {
+                                 int i = 0;
+                                 string [] opts = api.Split(new string [] {"[\""}, StringSplitOptions.RemoveEmptyEntries);
+                                 foreach(string opt in opts)
+                                 {
+                                    if(opt.Contains("http://"))
+                                    {
+                                       int start = opt.IndexOf("x3d");
+                                       if(start > 0)
+                                       {
+                                          int end = opt.IndexOf("\\x26", start);
+                                          if(end > start)
+                                          {
+                                             start += 3;  
+                                             string u = opt.Substring(start, end - start);
+                                             
+                                             if(i == 0)
+                                             {
+                                                // w2.106
+                                                Debug.WriteLine("TryCorrectGoogleVersions[map]: " + u);
+                                                VersionGoogleMap = u;
+                                                VersionGoogleMapChina = u;
+                                             }
+                                             else if(i == 1)
+                                             {
+                                                // 45
+                                                Debug.WriteLine("TryCorrectGoogleVersions[satelite]: " + u);
+                                                VersionGoogleSatellite = u;
+                                                VersionGoogleSatelliteChina = u;
+                                             }
+                                             else if(i == 2)
+                                             {
+                                                // w2t.106
+                                                Debug.WriteLine("TryCorrectGoogleVersions[labels]: " + u);
+                                                VersionGoogleLabels = u;
+                                                VersionGoogleLabelsChina = u;
+                                             }
+                                             else if(i == 3)
+                                             {
+                                                // w2p.106
+                                                Debug.WriteLine("TryCorrectGoogleVersions[terrain]: " + u);
+                                                VersionGoogleTerrain = u;
+                                                // VersionGoogleTerrainChina - diffs
+                                                break;
+                                             }
+                                             i++;
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+            catch(Exception ex)
+            {
+               Debug.WriteLine("TryCorrectGoogleVersions: " + ex.ToString());
+            }
+         }
+      }
 
       /// <summary>
       /// get route between two points, kml format
@@ -1394,7 +1520,7 @@ namespace GMap.NET
 
             if(Mode != AccessMode.CacheOnly)
             {
-               string url = MakeImageUrl(type, pos, zoom, Language);                
+               string url = MakeImageUrl(type, pos, zoom, Language);
 
                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
                request.ServicePoint.ConnectionLimit = 50;
@@ -1451,7 +1577,7 @@ namespace GMap.NET
                      request.Referer = "Referer: http://arcgis.maps.lt/";
                   }
                   break;
-               }                
+               }
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                {
