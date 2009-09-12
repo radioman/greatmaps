@@ -592,7 +592,7 @@ namespace GMap.NET
                string sec1 = ""; // after &x=...
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
-
+               TryCorrectGoogleVersions();
                // http://mt0.google.cn/vt/v=w2.101&hl=zh-CN&gl=cn&x=12&y=6&z=4&s=Ga
 
                return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
@@ -606,7 +606,7 @@ namespace GMap.NET
                string sec1 = ""; // after &x=...
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
-
+               TryCorrectGoogleVersions();
                // http://khm0.google.cn/kh/v=42&x=12&y=6&z=4&s=Ga
 
                return string.Format("http://{0}{1}.google.cn/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteChina, pos.X, sec1, pos.Y, zoom, sec2);
@@ -620,7 +620,7 @@ namespace GMap.NET
                string sec1 = ""; // after &x=...
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
-
+               TryCorrectGoogleVersions();
                // http://mt0.google.cn/vt/v=w2t.101&hl=zh-CN&gl=cn&x=12&y=6&z=4&s=Ga
 
                return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
@@ -948,7 +948,7 @@ namespace GMap.NET
                   {
                      using(StreamReader read = new StreamReader(responseStream))
                      {
-                        string html = read.ReadToEnd();                         
+                        string html = read.ReadToEnd();
 
                         // find it  
                         // apiCallback(["http://mt0.google.com/vt/v\x3dw2.106\x26hl\x3dlt\x26","http://mt1.google.com/vt/v\x3dw2.106\x26hl\x3dlt\x26","http://mt2.google.com/vt/v\x3dw2.106\x26hl\x3dlt\x26","http://mt3.google.com/vt/v\x3dw2.106\x26hl\x3dlt\x26"],
@@ -966,7 +966,7 @@ namespace GMap.NET
                               if(!string.IsNullOrEmpty(api))
                               {
                                  int i = 0;
-                                 string [] opts = api.Split(new string [] {"[\""}, StringSplitOptions.RemoveEmptyEntries);
+                                 string[] opts = api.Split(new string[] { "[\"" }, StringSplitOptions.RemoveEmptyEntries);
                                  foreach(string opt in opts)
                                  {
                                     if(opt.Contains("http://"))
@@ -977,37 +977,65 @@ namespace GMap.NET
                                           int end = opt.IndexOf("\\x26", start);
                                           if(end > start)
                                           {
-                                             start += 3;  
+                                             start += 3;
                                              string u = opt.Substring(start, end - start);
-                                             
+
                                              if(i == 0)
                                              {
                                                 // w2.106
-                                                Debug.WriteLine("TryCorrectGoogleVersions[map]: " + u);
-                                                VersionGoogleMap = u;
-                                                VersionGoogleMapChina = u;
+                                                if(u.StartsWith("w2"))
+                                                {
+                                                   Debug.WriteLine("TryCorrectGoogleVersions[map]: " + u);
+                                                   VersionGoogleMap = u;
+                                                   VersionGoogleMapChina = u;
+                                                }
+                                                else
+                                                {
+                                                   Debug.WriteLine("TryCorrectGoogleVersions[map FAILED]: " + u);
+                                                }
                                              }
                                              else if(i == 1)
                                              {
                                                 // 45
-                                                Debug.WriteLine("TryCorrectGoogleVersions[satelite]: " + u);
-                                                VersionGoogleSatellite = u;
-                                                VersionGoogleSatelliteChina = u;
+                                                if(char.IsDigit(u[0]))
+                                                {
+                                                   Debug.WriteLine("TryCorrectGoogleVersions[satelite]: " + u);
+                                                   VersionGoogleSatellite = u;
+                                                   VersionGoogleSatelliteChina = u;
+                                                }
+                                                else
+                                                {
+                                                   Debug.WriteLine("TryCorrectGoogleVersions[satelite FAILED]: " + u);
+                                                }
                                              }
                                              else if(i == 2)
                                              {
                                                 // w2t.106
-                                                Debug.WriteLine("TryCorrectGoogleVersions[labels]: " + u);
-                                                VersionGoogleLabels = u;
-                                                VersionGoogleLabelsChina = u;
+                                                if(u.StartsWith("w2t"))
+                                                {
+                                                   Debug.WriteLine("TryCorrectGoogleVersions[labels]: " + u);
+                                                   VersionGoogleLabels = u;
+                                                   VersionGoogleLabelsChina = u;
+                                                }
+                                                else
+                                                {
+                                                   Debug.WriteLine("TryCorrectGoogleVersions[labels FAILED]: " + u);
+                                                }
                                              }
                                              else if(i == 3)
                                              {
                                                 // w2p.106
-                                                Debug.WriteLine("TryCorrectGoogleVersions[terrain]: " + u);
-                                                VersionGoogleTerrain = u;
-                                                // VersionGoogleTerrainChina - diffs
-                                                break;
+                                                if(u.StartsWith("w2p"))
+                                                {
+                                                   Debug.WriteLine("TryCorrectGoogleVersions[terrain]: " + u);
+                                                   VersionGoogleTerrain = u;
+                                                   // VersionGoogleTerrainChina - diffs
+                                                }
+                                                else
+                                                {
+                                                   Debug.WriteLine("TryCorrectGoogleVersions[terrain FAILED]: " + u);
+                                                }
+                                                break;  
                                              }
                                              i++;
                                           }
