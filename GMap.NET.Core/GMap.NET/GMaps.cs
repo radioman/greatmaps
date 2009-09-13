@@ -139,14 +139,38 @@ namespace GMap.NET
       /// <summary>
       /// tiles in memmory
       /// </summary>
-      readonly List<RawTile> TilesInMemory = new List<RawTile>(222);
+      readonly KiberTileCache TilesInMemory = new KiberTileCache();
 
       /// <summary>
       /// the amount of tiles in MB to keep in memmory, default: 22MB, if each ~100Kb it's ~222 tiles
       /// </summary>
-      public int MemoryCacheCapacity = 22;
-
-      long memoryCacheSize = 0;
+      public int MemoryCacheCapacity
+      {
+         get
+         {
+            kiberCacheLock.AcquireReaderLock(1111);
+            try
+            {
+               return TilesInMemory.MemoryCacheCapacity;
+            }
+            finally
+            {
+               kiberCacheLock.ReleaseReaderLock();
+            }
+         }
+         set
+         {
+            kiberCacheLock.AcquireWriterLock(1111);
+            try
+            {
+               TilesInMemory.MemoryCacheCapacity = value;
+            }
+            finally
+            {
+               kiberCacheLock.ReleaseWriterLock();
+            }
+         }
+      }
 
       /// <summary>
       /// current memmory cache size in MB
@@ -155,9 +179,14 @@ namespace GMap.NET
       {
          get
          {
-            lock(TilesInMemory)
+            kiberCacheLock.AcquireReaderLock(1111);
+            try
             {
-               return memoryCacheSize/1048576.0;
+               return TilesInMemory.MemoryCacheSize;
+            }
+            finally
+            {
+               kiberCacheLock.ReleaseReaderLock();
             }
          }
       }
@@ -231,41 +260,39 @@ namespace GMap.NET
          cacher.WorkerSupportsCancellation = true;
       }
 
+      ReaderWriterLock kiberCacheLock = new ReaderWriterLock();
+
       #region -- Stuff --
 
-      MemoryStream GetTileFromMemoryCache(int zoom, MapType type, Point pos)
+      MemoryStream GetTileFromMemoryCache(RawTile tile)
       {
-         lock(TilesInMemory)
+         kiberCacheLock.AcquireReaderLock(1111);
+         try
          {
-            for(int i = TilesInMemory.Count - 1; i >= 0; i--)
+            MemoryStream ret = null;
+            if(TilesInMemory.TryGetValue(tile, out ret))
             {
-               RawTile tile = TilesInMemory[i];
-               if(tile.Zoom == zoom && tile.Type == type && tile.Pos == pos)
-               {
-                  //Debug.WriteLine("GetTileFromMemoryCache: " + zoom + ", " + pos + ", " + type);
-                  return tile.Img;
-               }
+               return ret;
             }
+         }
+         finally
+         {
+            kiberCacheLock.ReleaseReaderLock();
          }
          return null;
       }
 
-      void AddTileToMemoryCache(RawTile tile)
+      void AddTileToMemoryCache(RawTile tile, MemoryStream data)
       {
-         lock(TilesInMemory)
+         kiberCacheLock.AcquireWriterLock(1111);
+         try
          {
-            // clear oldest values
-            if(memoryCacheSize/1048576.0 > MemoryCacheCapacity)
-            {
-               memoryCacheSize -= TilesInMemory[0].Img.Length;
-               TilesInMemory[0].Img.Dispose();
-               TilesInMemory.RemoveAt(0);
-            }
-
-            Debug.WriteLine("AddTileToMemmoryCache: " + tile.Zoom + ", " + tile.Pos + ", Total " + memoryCacheSize/1048576.0 + "MB");
-
-            TilesInMemory.Add(tile);
-            memoryCacheSize += tile.Img.Length;
+            TilesInMemory.Add(tile, data);
+         }
+         finally
+         {
+            Debug.WriteLine("MemoryCacheSize: " + TilesInMemory.MemoryCacheSize + "MB");
+            kiberCacheLock.ReleaseWriterLock();               
          }
       }
 
@@ -1578,7 +1605,7 @@ namespace GMap.NET
          {
             // let't check memmory first
             {
-               MemoryStream m = GetTileFromMemoryCache(zoom, type, pos);
+               MemoryStream m = GetTileFromMemoryCache(new RawTile(type, pos, zoom));
                if(m != null)
                {
                   if(GMaps.Instance.ImageProxy != null)
@@ -1602,7 +1629,7 @@ namespace GMap.NET
                      ret = Cache.Instance.ImageCache.GetImageFromCache(type, pos, zoom);
                      if(ret != null)
                      {
-                        AddTileToMemoryCache(new RawTile(type, pos, zoom, ret.Data));
+                        AddTileToMemoryCache(new RawTile(type, pos, zoom), ret.Data);
                         return ret;
                      }
                   }
@@ -1612,7 +1639,7 @@ namespace GMap.NET
                      ret = Cache.Instance.ImageCacheSecond.GetImageFromCache(type, pos, zoom);
                      if(ret != null)
                      {
-                        AddTileToMemoryCache(new RawTile(type, pos, zoom, ret.Data));
+                        AddTileToMemoryCache(new RawTile(type, pos, zoom), ret.Data);
                         EnqueueCacheTask(new CacheItemQueue(type, pos, zoom, ret.Data, CacheUsage.First));
                         return ret;
                      }
@@ -1691,7 +1718,7 @@ namespace GMap.NET
                            // Enqueue Cache
                            if(ret != null)
                            {
-                              AddTileToMemoryCache(new RawTile(type, pos, zoom, responseStream));
+                              AddTileToMemoryCache(new RawTile(type, pos, zoom), responseStream);
 
                               if(Mode != AccessMode.ServerOnly)
                               {

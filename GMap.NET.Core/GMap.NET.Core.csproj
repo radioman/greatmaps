@@ -120,6 +120,7 @@
     <Compile Include="GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\MathTransform.cs" />
     <Compile Include="GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\TransformType.cs" />
     <Compile Include="GMap.NET.Internals\CacheQueue.cs" />
+    <Compile Include="GMap.NET.Internals\KiberTileCache.cs" />
     <Compile Include="GMap.NET.Internals\PureImage.cs" />
     <Compile Include="GMap.NET.Internals\LoadTask.cs" />
     <Compile Include="GMap.NET.Internals\RawTile.cs" />

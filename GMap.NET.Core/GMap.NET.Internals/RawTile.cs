@@ -10,14 +10,12 @@
       public MapType Type;
       public Point Pos;
       public int Zoom;
-      public MemoryStream Img;
 
-      public RawTile(MapType Type, Point Pos, int Zoom, MemoryStream Img)
+      public RawTile(MapType Type, Point Pos, int Zoom)
       {
          this.Type = Type;
          this.Pos = Pos;
          this.Zoom = Zoom;
-         this.Img = Img;
       }
    }
 }
