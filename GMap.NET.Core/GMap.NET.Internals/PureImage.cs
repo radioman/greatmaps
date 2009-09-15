@@ -18,7 +18,7 @@ namespace GMap.NET
    /// </summary>
    public abstract class PureImage : ICloneable, IDisposable
    {
-      internal MemoryStream Data;
+      public MemoryStream Data;
 
       #region ICloneable Members
 
