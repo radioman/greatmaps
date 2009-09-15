@@ -168,24 +168,21 @@ namespace GMap.NET
             {
                try
                {
-                  using(tile)
+                  lock(cmdInsert)
                   {
-                     lock(cmdInsert)
+                     if(cmdInsert.Connection.State == System.Data.ConnectionState.Open)
                      {
-                        if(cmdInsert.Connection.State == System.Data.ConnectionState.Open)
-                        {
-                           cmdInsert.Parameters["@x"].Value = pos.X;
-                           cmdInsert.Parameters["@y"].Value = pos.Y;
-                           cmdInsert.Parameters["@zoom"].Value = zoom;
-                           cmdInsert.Parameters["@type"].Value = (int) type;
-                           cmdInsert.Parameters["@tile"].Value = tile.GetBuffer();
-                           cmdInsert.ExecuteNonQuery();
-                        }
-                        else
-                        {
-                           ret = false;
-                           Dispose();
-                        }
+                        cmdInsert.Parameters["@x"].Value = pos.X;
+                        cmdInsert.Parameters["@y"].Value = pos.Y;
+                        cmdInsert.Parameters["@zoom"].Value = zoom;
+                        cmdInsert.Parameters["@type"].Value = (int) type;
+                        cmdInsert.Parameters["@tile"].Value = tile.GetBuffer();
+                        cmdInsert.ExecuteNonQuery();
+                     }
+                     else
+                     {
+                        ret = false;
+                        Dispose();
                      }
                   }
                }
@@ -230,12 +227,11 @@ namespace GMap.NET
                      byte[] tile = (byte[]) odata;
                      if(tile != null && tile.Length > 0)
                      {
-                        using(MemoryStream stm = new MemoryStream(tile))
+                        if(GMaps.Instance.ImageProxy != null)
                         {
-                           if(GMaps.Instance.ImageProxy != null)
-                           {
-                              ret = GMaps.Instance.ImageProxy.FromStream(stm);
-                           }
+                           MemoryStream stm = new MemoryStream(tile);
+                           ret = GMaps.Instance.ImageProxy.FromStream(stm);
+                           ret.Data = stm;
                         }
                      }
                      tile = null;
