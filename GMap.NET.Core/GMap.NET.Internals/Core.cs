@@ -96,37 +96,41 @@ namespace GMap.NET.Internals
          {
             if(zoom != value && !IsDragging)
             {
-               lock(tileLoadQueue)
-               {
-                  tileLoadQueue.Clear();
-               }
-               Matrix.Clear();
-
                zoom = value;
 
                minOfTiles = Projection.GetTileMatrixMinXY(value);
                maxOfTiles = Projection.GetTileMatrixMaxXY(value);
 
                CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, value);
-               GoToCurrentPositionOnZoom();
-               UpdateBaunds();
-               RunAsyncTasks();
 
-               if(OnNeedInvalidation != null)
+               if(started)
                {
-                  OnNeedInvalidation();
+                  lock(tileLoadQueue)
+                  {
+                     tileLoadQueue.Clear();
+                  }
+                  Matrix.Clear();   
+                  
+                  GoToCurrentPositionOnZoom();
+                  UpdateBaunds();
+                  RunAsyncTasks();
+
+                  if(OnNeedInvalidation != null)
+                  {
+                     OnNeedInvalidation();
+                  }
+
+                  if(OnMapDrag != null)
+                  {
+                     OnMapDrag();
+                  }
+
+                  if(OnMapZoomChanged != null)
+                     OnMapZoomChanged();
+
+                  if(OnCurrentPositionChanged != null)
+                     OnCurrentPositionChanged(currentPosition);
                }
-
-               if(OnMapDrag != null)
-               {
-                  OnMapDrag();
-               }
-
-               if(OnMapZoomChanged != null)
-                  OnMapZoomChanged();
-
-               if(OnCurrentPositionChanged != null)
-                  OnCurrentPositionChanged(currentPosition);
             }
          }
       }
@@ -162,10 +166,14 @@ namespace GMap.NET.Internals
             {
                currentPosition = value;
                CurrentPositionGPixel = Projection.FromLatLngToPixel(value, Zoom);
-               GoToCurrentPosition();
 
-               if(OnCurrentPositionChanged != null)
-                  OnCurrentPositionChanged(currentPosition);
+               if(started)
+               {
+                  GoToCurrentPosition();
+
+                  if(OnCurrentPositionChanged != null)
+                     OnCurrentPositionChanged(currentPosition);
+               }
             }
             else
             {
@@ -192,57 +200,60 @@ namespace GMap.NET.Internals
          }
          set
          {
-            switch(value)
-            {
-               case MapType.ArcGIS_Map:
-               case MapType.ArcGIS_Satellite:
-               case MapType.ArcGIS_ShadedRelief:
-               case MapType.ArcGIS_Terrain:
-               {
-                  if(false == (Projection is PlateCarreeProjection))
-                  {
-                     Projection = new PlateCarreeProjection();
-                  }
-               }
-               break;
-
-               case MapType.ArcGIS_MapsLT_Map_Hybrid:
-               case MapType.ArcGIS_MapsLT_Map_Labels:
-               case MapType.ArcGIS_MapsLT_Map:
-               case MapType.ArcGIS_MapsLT_OrtoFoto:
-               {
-                  if(false == (Projection is LKS94Projection))
-                  {
-                     Projection = new LKS94Projection();
-                  }
-               }
-               break;
-
-               default:
-               {
-                  if(false == (Projection is MercatorProjection))
-                  {
-                     Projection = new MercatorProjection();
-                  }
-               }
-               break;
-            }
-
             if(value != MapType)
             {
                mapType = value;
 
+               switch(value)
+               {
+                  case MapType.ArcGIS_Map:
+                  case MapType.ArcGIS_Satellite:
+                  case MapType.ArcGIS_ShadedRelief:
+                  case MapType.ArcGIS_Terrain:
+                  {
+                     if(false == (Projection is PlateCarreeProjection))
+                     {
+                        Projection = new PlateCarreeProjection();
+                     }
+                  }
+                  break;
+
+                  case MapType.ArcGIS_MapsLT_Map_Hybrid:
+                  case MapType.ArcGIS_MapsLT_Map_Labels:
+                  case MapType.ArcGIS_MapsLT_Map:
+                  case MapType.ArcGIS_MapsLT_OrtoFoto:
+                  {
+                     if(false == (Projection is LKS94Projection))
+                     {
+                        Projection = new LKS94Projection();
+                     }
+                  }
+                  break;
+
+                  default:
+                  {
+                     if(false == (Projection is MercatorProjection))
+                     {
+                        Projection = new MercatorProjection();
+                     }
+                  }
+                  break;
+               }
+
                minOfTiles = Projection.GetTileMatrixMinXY(Zoom);
                maxOfTiles = Projection.GetTileMatrixMaxXY(Zoom);
-
                CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, Zoom);
-               OnMapSizeChanged(Width, Height);
-               GoToCurrentPosition();
-               ReloadMap();
 
-               if(OnMapTypeChanged != null)
+               if(started)
                {
-                  OnMapTypeChanged(value);
+                  OnMapSizeChanged(Width, Height);
+                  GoToCurrentPosition();
+                  ReloadMap();
+
+                  if(OnMapTypeChanged != null)
+                  {
+                     OnMapTypeChanged(value);
+                  }
                }
             }
          }
@@ -326,8 +337,8 @@ namespace GMap.NET.Internals
             loader3.DoWork += new DoWorkEventHandler(loader3_DoWork);
 
             started = true;
-         }
-
+         }  
+         
          ReloadMap();
          GoToCurrentPosition();
       }

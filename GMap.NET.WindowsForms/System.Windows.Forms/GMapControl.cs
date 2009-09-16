@@ -602,19 +602,6 @@ namespace System.Windows.Forms
          }
       }
 
-      // forces to load map
-      bool isLoaded = false;
-      protected override void OnMouseEnter(EventArgs e)
-      {
-         base.OnMouseEnter(e);
-
-         if(!isLoaded)
-         {
-            isLoaded = true;
-            Core.ReloadMap();
-         }
-      }
-
       protected override void OnLoad(EventArgs e)
       {
          base.OnLoad(e);           
@@ -623,9 +610,8 @@ namespace System.Windows.Forms
          {
             MethodInvoker m = delegate
             {
-               Thread.Sleep(444);
-               Core.StartSystem();
-               isLoaded = true;
+               Thread.Sleep(222);
+               Core.StartSystem(); 
             };
             this.BeginInvoke(m);
          }
