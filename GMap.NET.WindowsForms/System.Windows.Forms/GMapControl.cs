@@ -11,6 +11,7 @@ namespace System.Windows.Forms
    using System.Drawing.Imaging;
    using System.Diagnostics;
    using System.Collections.Generic;
+   using System.Threading;
 
    /// <summary>
    /// GMap.NET control for Windows Forms
@@ -616,11 +617,17 @@ namespace System.Windows.Forms
 
       protected override void OnLoad(EventArgs e)
       {
-         base.OnLoad(e);
+         base.OnLoad(e);           
 
          if(!DesignMode)
          {
-            Core.StartSystem();
+            MethodInvoker m = delegate
+            {
+               Thread.Sleep(444);
+               Core.StartSystem();
+               isLoaded = true;
+            };
+            this.BeginInvoke(m);
          }
       }
 
