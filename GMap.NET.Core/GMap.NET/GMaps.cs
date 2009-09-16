@@ -284,10 +284,13 @@ namespace GMap.NET
 
       void AddTileToMemoryCache(RawTile tile, MemoryStream data)
       {
-         kiberCacheLock.AcquireWriterLock(1111);
+         kiberCacheLock.AcquireWriterLock(2222);
          try
          {
-            TilesInMemory.Add(tile, data);
+            if(!TilesInMemory.ContainsKey(tile))
+            {
+               TilesInMemory.Add(tile, data);
+            }
          }
          finally
          {
