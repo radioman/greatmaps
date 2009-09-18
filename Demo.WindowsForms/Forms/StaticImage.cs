@@ -7,6 +7,8 @@ using System.IO;
 using System.Windows.Forms;
 using GMap.NET;
 using GMap.NET.WindowsForms;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace Demo.WindowsForms
 {
@@ -88,6 +90,8 @@ namespace Demo.WindowsForms
                {
                   using(Graphics gfx = Graphics.FromImage(bmpDestination))
                   {
+                     gfx.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
                      int i = 0;
 
                      // get tiles & combine into one
@@ -114,7 +118,7 @@ namespace Demo.WindowsForms
                                     int x = p.X*info.Projection.TileSize.Width - topLeftPx.X + padding;
                                     int y = p.Y*info.Projection.TileSize.Width - topLeftPx.Y + padding;
                                     {
-                                       gfx.DrawImage(tile.Img, x, y);
+                                       gfx.DrawImage(tile.Img, x, y, info.Projection.TileSize.Width, info.Projection.TileSize.Height);
                                     }
                                  }
                               }
@@ -133,6 +137,8 @@ namespace Demo.WindowsForms
                      using(Font f = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold))                        
                      using(Graphics gfx = Graphics.FromImage(bmpDestination))
                      {
+                        gfx.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
                         // draw bounds & coordinates
                         using(Pen p = new Pen(Brushes.Red, 3))
                         {
@@ -168,11 +174,11 @@ namespace Demo.WindowsForms
                      }
                   }
 
-                  bmpDestination.Save(bigImage, System.Drawing.Imaging.ImageFormat.Png);
+                  bmpDestination.Save(bigImage, ImageFormat.Png);
                }
             }
          }
-      }         
+      }        
 
       private void button1_Click(object sender, EventArgs e)
       {

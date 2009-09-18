@@ -64,7 +64,7 @@ namespace BigMapMaker_ConsoleApplication
                                     int x = p.X*prj.TileSize.Width - topLeftPx.X + padding;
                                     int y = p.Y*prj.TileSize.Width - topLeftPx.Y + padding;
                                     {
-                                       gfx.DrawImageUnscaled(tile.Img, x, y);
+                                       gfx.DrawImage(tile.Img, x, y, prj.TileSize.Width, prj.TileSize.Height);
                                     }
                                  }
                               }
