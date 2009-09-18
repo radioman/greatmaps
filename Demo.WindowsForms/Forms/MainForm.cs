@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
 using GMap.NET;
+using GMap.NET.CacheProviders;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
-using System.IO;
 
 namespace Demo.WindowsForms
 {
@@ -40,7 +40,7 @@ namespace Demo.WindowsForms
             GMaps.Instance.Mode = AccessMode.ServerAndCache;
 
             // add your custom map db provider
-            //MSSQLPureImageCache ch = new MSSQLPureImageCache();
+            // MsSQLPureImageCache ch = new MsSQLPureImageCache();
             //ch.ConnectionString = @"Data Source=RADIOMAN-PC\SQLEXPRESS;Initial Catalog=Test;Persist Security Info=False;User ID=aa;Password=aa;";
             //GMaps.Instance.ImageCacheSecond = ch;
 

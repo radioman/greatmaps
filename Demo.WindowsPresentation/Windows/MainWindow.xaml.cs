@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Linq;
-using GMap.NET;
-using GMap.NET.WindowsPresentation;
-using System.Windows.Threading;
-using System.Diagnostics;
-using System.Threading;
 using Demo.WindowsPresentation.CustomMarkers;
+using GMap.NET;
+using GMap.NET.CacheProviders;
+using GMap.NET.WindowsPresentation;
 
 namespace Demo.WindowsPresentation
 {
@@ -39,7 +34,7 @@ namespace Demo.WindowsPresentation
          GMaps.Instance.Mode = AccessMode.ServerAndCache;
 
          // add your custom map db provider
-         //MSSQLPureImageCache ch = new MSSQLPureImageCache();
+         // MsSQLPureImageCache ch = new MsSQLPureImageCache();
          //ch.ConnectionString = @"Data Source=SQL2008\SQLSRV08;Initial Catalog=PFleet;Integrated Security=True";
          //GMaps.Instance.ImageCacheSecond = ch;
 

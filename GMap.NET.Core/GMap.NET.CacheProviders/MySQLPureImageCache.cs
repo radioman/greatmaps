@@ -1,17 +1,15 @@
 ﻿
-namespace GMap.NET
+namespace GMap.NET.CacheProviders
 {
    using System;
-   using System.Data.SqlClient;
    using System.Diagnostics;
    using System.IO;
-   using GMap.NET.Internals;
+   using MySql.Data.MySqlClient;
 
    /// <summary>
-   /// image cache for ms sql server
-   /// optimized by mmurfinsimmons@gmail.com
+   /// image cache for mysql server
    /// </summary>
-   public class MSSQLPureImageCache : PureImageCache, IDisposable
+   public class MySQLPureImageCache : PureImageCache, IDisposable
    {
       string connectionString = string.Empty;
       public string ConnectionString
@@ -35,10 +33,10 @@ namespace GMap.NET
          }
       }
 
-      SqlCommand cmdInsert;
-      SqlCommand cmdFetch;
-      SqlConnection cnGet;
-      SqlConnection cnSet;
+      MySqlCommand cmdInsert;
+      MySqlCommand cmdFetch;
+      MySqlConnection cnGet;
+      MySqlConnection cnSet;
 
       bool initialized = false;
 
@@ -71,52 +69,45 @@ namespace GMap.NET
       {
          lock(this)
          {
-            if(!Initialized)
+            if(!initialized)
             {
                #region prepare mssql & cache table
                try
                {
                   // different connections so the multi-thread inserts and selects don't collide on open readers.
-                  this.cnGet = new SqlConnection(connectionString);
+                  this.cnGet = new MySqlConnection(connectionString);
                   this.cnGet.Open();
-                  this.cnSet = new SqlConnection(connectionString);
+                  this.cnSet = new MySqlConnection(connectionString);
                   this.cnSet.Open();
 
-                  bool tableexists = false;
-                  using(SqlCommand cmd = new SqlCommand("select object_id('GMapNETcache')", cnGet))
                   {
-                     object objid = cmd.ExecuteScalar();
-                     tableexists = (objid != null && objid != DBNull.Value);
-                  }
-                  if(!tableexists)
-                  {
-                     using(SqlCommand cmd = new SqlCommand(
-                        "CREATE TABLE [GMapNETcache] ( \n"
-                  + "   [Type] [int]   NOT NULL, \n"
-                  + "   [Zoom] [int]   NOT NULL, \n"
-                  + "   [X]    [int]   NOT NULL, \n"
-                  + "   [Y]    [int]   NOT NULL, \n"
-                  + "   [Tile] [image] NOT NULL, \n"
-                  + "   CONSTRAINT [PK_GMapNETcache] PRIMARY KEY CLUSTERED (Type, Zoom, X, Y) \n"
-                  + ")", cnGet))
+                     using(MySqlCommand cmd = new MySqlCommand(
+                        @" CREATE TABLE IF NOT EXISTS `gmapnetcache` (
+                             `Type` int(10) NOT NULL,
+                             `Zoom` int(10) NOT NULL,
+                             `X` int(10) NOT NULL,
+                             `Y` int(10) NOT NULL,
+                             `Tile` longblob NOT NULL,
+                             PRIMARY KEY (`Type`,`Zoom`,`X`,`Y`)
+                           ) ENGINE=InnoDB DEFAULT CHARSET=utf8;", cnGet))
                      {
                         cmd.ExecuteNonQuery();
                      }
                   }
 
-                  this.cmdFetch = new SqlCommand("SELECT [Tile] FROM [GMapNETcache] WITH (NOLOCK) WHERE [X]=@x AND [Y]=@y AND [Zoom]=@zoom AND [Type]=@type", cnGet);
-                  this.cmdFetch.Parameters.Add("@x", System.Data.SqlDbType.Int);
-                  this.cmdFetch.Parameters.Add("@y", System.Data.SqlDbType.Int);
-                  this.cmdFetch.Parameters.Add("@zoom", System.Data.SqlDbType.Int);
-                  this.cmdFetch.Parameters.Add("@type", System.Data.SqlDbType.Int);
+                  this.cmdFetch = new MySqlCommand("SELECT Tile FROM `gmapnetcache` WHERE Type=@type AND Zoom=@zoom AND X=@x AND Y=@y", cnGet);
+                  this.cmdFetch.Parameters.Add("@type", MySqlDbType.Int32);
+                  this.cmdFetch.Parameters.Add("@zoom", MySqlDbType.Int32);
+                  this.cmdFetch.Parameters.Add("@x", MySqlDbType.Int32);
+                  this.cmdFetch.Parameters.Add("@y", MySqlDbType.Int32);
                   this.cmdFetch.Prepare();
 
-                  this.cmdInsert = new SqlCommand("INSERT INTO [GMapNETcache] ( [X], [Y], [Zoom], [Type], [Tile] ) VALUES ( @x, @y, @zoom, @type, @tile )", cnSet);
-                  this.cmdInsert.Parameters.Add("@x", System.Data.SqlDbType.Int);
-                  this.cmdInsert.Parameters.Add("@y", System.Data.SqlDbType.Int);
-                  this.cmdInsert.Parameters.Add("@zoom", System.Data.SqlDbType.Int);
-                  this.cmdInsert.Parameters.Add("@type", System.Data.SqlDbType.Int);
-                  this.cmdInsert.Parameters.Add("@tile", System.Data.SqlDbType.Image); //, calcmaximgsize);
+                  this.cmdInsert = new MySqlCommand("INSERT INTO `gmapnetcache` ( Type, Zoom, X, Y, Tile ) VALUES ( @type, @zoom, @x, @y, @tile )", cnSet);
+                  this.cmdInsert.Parameters.Add("@type", MySqlDbType.Int32);
+                  this.cmdInsert.Parameters.Add("@zoom", MySqlDbType.Int32);
+                  this.cmdInsert.Parameters.Add("@x", MySqlDbType.Int32);
+                  this.cmdInsert.Parameters.Add("@y", MySqlDbType.Int32);
+                  this.cmdInsert.Parameters.Add("@tile", MySqlDbType.Blob); //, calcmaximgsize);
                   //can't prepare insert because of the IMAGE field having a variable size.  Could set it to some 'maximum' size?
 
                   Initialized = true;
@@ -128,7 +119,7 @@ namespace GMap.NET
                }
                #endregion
             }
-            return Initialized;
+            return initialized;
          }
       }
 
@@ -172,10 +163,10 @@ namespace GMap.NET
                   {
                      if(cmdInsert.Connection.State == System.Data.ConnectionState.Open)
                      {
+                        cmdInsert.Parameters["@type"].Value = (int) type;
+                        cmdInsert.Parameters["@zoom"].Value = zoom;
                         cmdInsert.Parameters["@x"].Value = pos.X;
                         cmdInsert.Parameters["@y"].Value = pos.Y;
-                        cmdInsert.Parameters["@zoom"].Value = zoom;
-                        cmdInsert.Parameters["@type"].Value = (int) type;
                         cmdInsert.Parameters["@tile"].Value = tile.GetBuffer();
                         cmdInsert.ExecuteNonQuery();
                      }
@@ -209,10 +200,10 @@ namespace GMap.NET
                   {
                      if(cmdFetch.Connection.State == System.Data.ConnectionState.Open)
                      {
+                        cmdFetch.Parameters["@type"].Value = (int) type;
+                        cmdFetch.Parameters["@zoom"].Value = zoom;
                         cmdFetch.Parameters["@x"].Value = pos.X;
                         cmdFetch.Parameters["@y"].Value = pos.Y;
-                        cmdFetch.Parameters["@zoom"].Value = zoom;
-                        cmdFetch.Parameters["@type"].Value = (int) type;
                         odata = cmdFetch.ExecuteScalar();
                      }
                      else
