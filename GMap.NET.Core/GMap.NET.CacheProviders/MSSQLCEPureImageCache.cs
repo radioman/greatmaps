@@ -1,7 +1,9 @@
 ﻿
 namespace GMap.NET.CacheProviders
 {
+#if !SQLiteEnabled
    using System;
+   using System.Data;
    using System.Diagnostics;
    using System.IO;
    using SqlCommand=System.Data.SqlServerCe.SqlCeCommand;
@@ -10,34 +12,36 @@ namespace GMap.NET.CacheProviders
    /// <summary>
    /// image cache for ms sql server
    /// </summary>
-   public class MsSQLCePureImageCache : PureImageCache, IDisposable
+   internal class MsSQLCePureImageCache : PureImageCache, IDisposable
    {
+      string cache;
+      string gtileCache;
+
+      /// <summary>
+      /// local cache location
+      /// </summary>
+      public string CacheLocation
+      {
+         get
+         {
+            return cache;
+         }
+         set
+         {
+            cache = value;
+            gtileCache = cache + "TileDBv3" + Path.DirectorySeparatorChar + GMaps.Instance.Language + Path.DirectorySeparatorChar;
+         }
+      }
+
       SqlCommand cmdInsert;
       SqlCommand cmdFetch;
       SqlConnection cnGet;
       SqlConnection cnSet;
 
-      string connectionString = string.Empty;
-      public string ConnectionString
+      public MsSQLCePureImageCache()
       {
-         get
-         {
-            return connectionString;
-         }
-         set
-         {
-            if(connectionString != value)
-            {
-               connectionString = value;
-
-               if(Initialized)
-               {
-                  Dispose();
-                  Initialize();
-               }
-            }
-         }
-      }       
+         CacheLocation = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+      }
 
       bool initialized = false;
 
@@ -72,36 +76,63 @@ namespace GMap.NET.CacheProviders
          {
             if(!Initialized)
             {
-               #region prepare mssql & cache table
+   #region prepare mssql & cache table
                try
                {
-                  // different connections so the multi-thread inserts and selects don't collide on open readers.
-                  this.cnGet = new SqlConnection(connectionString);
-                  this.cnGet.Open();
-                  this.cnSet = new SqlConnection(connectionString);
-                  this.cnSet.Open();
-
-                  bool tableexists = false;
-                  using(SqlCommand cmd = new SqlCommand("select object_id('GMapNETcache')", cnGet))
+                  // precrete dir
+                  if(!Directory.Exists(gtileCache))
                   {
-                     object objid = cmd.ExecuteScalar();
-                     tableexists = (objid != null && objid != DBNull.Value);
+                     Directory.CreateDirectory(gtileCache);
                   }
-                  if(!tableexists)
+
+                  string connectionString = string.Format("Data Source={0}Data.sdf", gtileCache);
+
+                  if(!File.Exists(gtileCache + "Data.sdf"))
                   {
-                     using(SqlCommand cmd = new SqlCommand(
-                        "CREATE TABLE [GMapNETcache] ( \n"
+                     using(System.Data.SqlServerCe.SqlCeEngine engine = new System.Data.SqlServerCe.SqlCeEngine(connectionString))
+                     {
+                        engine.CreateDatabase();                         
+                     }
+
+                     try
+                        {
+                           using(SqlConnection c = new SqlConnection(connectionString))
+                           {
+                              c.Open();
+
+                              using(SqlCommand cmd = new SqlCommand(
+                                 "CREATE TABLE [GMapNETcache] ( \n"
                   + "   [Type] [int]   NOT NULL, \n"
                   + "   [Zoom] [int]   NOT NULL, \n"
                   + "   [X]    [int]   NOT NULL, \n"
                   + "   [Y]    [int]   NOT NULL, \n"
                   + "   [Tile] [image] NOT NULL, \n"
-                  + "   CONSTRAINT [PK_GMapNETcache] PRIMARY KEY CLUSTERED (Type, Zoom, X, Y) \n"
-                  + ")", cnGet))
-                     {
-                        cmd.ExecuteNonQuery();
-                     }
+                  + "   CONSTRAINT [PK_GMapNETcache] PRIMARY KEY (Type, Zoom, X, Y) \n"
+                  + ")", c))
+                              {
+                                 cmd.ExecuteNonQuery();
+                              }
+                           }
+                        }
+                        catch(Exception ex)
+                        {
+                           try
+                           {
+                              File.Delete(gtileCache + "Data.sdf");
+                           }
+                           catch
+                           {
+                           }
+
+                           throw ex;
+                        }
                   }
+
+                  // different connections so the multi-thread inserts and selects don't collide on open readers.
+                  this.cnGet = new SqlConnection(connectionString);
+                  this.cnGet.Open();
+                  this.cnSet = new SqlConnection(connectionString);
+                  this.cnSet.Open();
 
                   this.cmdFetch = new SqlCommand("SELECT [Tile] FROM [GMapNETcache] WITH (NOLOCK) WHERE [X]=@x AND [Y]=@y AND [Zoom]=@zoom AND [Type]=@type", cnGet);
                   this.cmdFetch.Parameters.Add("@x", System.Data.SqlDbType.Int);
@@ -131,34 +162,43 @@ namespace GMap.NET.CacheProviders
          }
       }
 
-      #region IDisposable Members
+   #region IDisposable Members
       public void Dispose()
       {
-         if(cmdInsert != null)
+         lock(cmdInsert)
          {
-            cmdInsert.Dispose();
-            cmdInsert = null;
+            if(cmdInsert != null)
+            {
+               cmdInsert.Dispose();
+               cmdInsert = null;
+            }
+
+            if(cnSet != null)
+            {
+               cnSet.Dispose();
+               cnSet = null;
+            }
          }
-         if(cmdFetch != null)
+
+         lock(cmdFetch)
          {
-            cmdFetch.Dispose();
-            cmdFetch = null;
-         }
-         if(cnGet != null)
-         {
-            cnGet.Dispose();
-            cnGet = null;
-         }
-         if(cnSet != null)
-         {
-            cnSet.Dispose();
-            cnSet = null;
+            if(cmdFetch != null)
+            {
+               cmdFetch.Dispose();
+               cmdFetch = null;
+            }
+
+            if(cnGet != null)
+            {
+               cnGet.Dispose();
+               cnGet = null;
+            }
          }
          Initialized = false;
       }
       #endregion
 
-      #region PureImageCache Members
+   #region PureImageCache Members
       public bool PutImageToCache(MemoryStream tile, MapType type, Point pos, int zoom)
       {
          bool ret = true;
@@ -169,26 +209,26 @@ namespace GMap.NET.CacheProviders
                {
                   lock(cmdInsert)
                   {
-                     if(cmdInsert.Connection.State == System.Data.ConnectionState.Open)
+                     //cnSet.Ping();
+
+                     if(cnSet.State != ConnectionState.Open)
                      {
-                        cmdInsert.Parameters["@x"].Value = pos.X;
-                        cmdInsert.Parameters["@y"].Value = pos.Y;
-                        cmdInsert.Parameters["@zoom"].Value = zoom;
-                        cmdInsert.Parameters["@type"].Value = (int) type;
-                        cmdInsert.Parameters["@tile"].Value = tile.GetBuffer();
-                        cmdInsert.ExecuteNonQuery();
+                        cnSet.Open();
                      }
-                     else
-                     {
-                        ret = false;
-                        Dispose();
-                     }
+
+                     cmdInsert.Parameters["@x"].Value = pos.X;
+                     cmdInsert.Parameters["@y"].Value = pos.Y;
+                     cmdInsert.Parameters["@zoom"].Value = zoom;
+                     cmdInsert.Parameters["@type"].Value = (int) type;
+                     cmdInsert.Parameters["@tile"].Value = tile.GetBuffer();
+                     cmdInsert.ExecuteNonQuery();
                   }
                }
                catch(Exception ex)
                {
                   Debug.WriteLine(ex.ToString());
                   ret = false;
+                  Dispose();
                }
             }
          }
@@ -206,19 +246,18 @@ namespace GMap.NET.CacheProviders
                   object odata = null;
                   lock(cmdFetch)
                   {
-                     if(cmdFetch.Connection.State == System.Data.ConnectionState.Open)
+                     //cnGet.Ping();
+
+                     if(cnGet.State != ConnectionState.Open)
                      {
-                        cmdFetch.Parameters["@x"].Value = pos.X;
-                        cmdFetch.Parameters["@y"].Value = pos.Y;
-                        cmdFetch.Parameters["@zoom"].Value = zoom;
-                        cmdFetch.Parameters["@type"].Value = (int) type;
-                        odata = cmdFetch.ExecuteScalar();
+                        cnGet.Open();
                      }
-                     else
-                     {
-                        ret = null;
-                        Dispose();
-                     }
+
+                     cmdFetch.Parameters["@x"].Value = pos.X;
+                     cmdFetch.Parameters["@y"].Value = pos.Y;
+                     cmdFetch.Parameters["@zoom"].Value = zoom;
+                     cmdFetch.Parameters["@type"].Value = (int) type;
+                     odata = cmdFetch.ExecuteScalar();
                   }
 
                   if(odata != null && odata != DBNull.Value)
@@ -240,6 +279,7 @@ namespace GMap.NET.CacheProviders
                {
                   Debug.WriteLine(ex.ToString());
                   ret = null;
+                  Dispose();
                }
             }
          }
@@ -247,4 +287,5 @@ namespace GMap.NET.CacheProviders
       }
       #endregion
    }
+#endif
 }

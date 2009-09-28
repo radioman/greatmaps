@@ -2,8 +2,10 @@
 namespace GMap.NET.CacheProviders
 {
    using System;
+   using System.Data;
    using System.Diagnostics;
    using System.IO;
+   using GMap.NET;
    using MySql.Data.MySqlClient;
 
    /// <summary>
@@ -124,27 +126,37 @@ namespace GMap.NET.CacheProviders
       }
 
       #region IDisposable Members
+
       public void Dispose()
       {
-         if(cmdInsert != null)
+         lock(cmdInsert)
          {
-            cmdInsert.Dispose();
-            cmdInsert = null;
+            if(cmdInsert != null)
+            {
+               cmdInsert.Dispose();
+               cmdInsert = null;
+            }
+
+            if(cnSet != null)
+            {
+               cnSet.Dispose();
+               cnSet = null;
+            }              
          }
-         if(cmdFetch != null)
+
+         lock(cmdFetch)
          {
-            cmdFetch.Dispose();
-            cmdFetch = null;
-         }
-         if(cnGet != null)
-         {
-            cnGet.Dispose();
-            cnGet = null;
-         }
-         if(cnSet != null)
-         {
-            cnSet.Dispose();
-            cnSet = null;
+            if(cmdFetch != null)
+            {
+               cmdFetch.Dispose();
+               cmdFetch = null;
+            }
+
+            if(cnGet != null)
+            {
+               cnGet.Dispose();
+               cnGet = null;
+            }              
          }
          Initialized = false;
       }
@@ -161,26 +173,26 @@ namespace GMap.NET.CacheProviders
                {
                   lock(cmdInsert)
                   {
-                     if(cmdInsert.Connection.State == System.Data.ConnectionState.Open)
+                     cnSet.Ping();
+
+                     if(cnSet.State != ConnectionState.Open)
                      {
-                        cmdInsert.Parameters["@type"].Value = (int) type;
-                        cmdInsert.Parameters["@zoom"].Value = zoom;
-                        cmdInsert.Parameters["@x"].Value = pos.X;
-                        cmdInsert.Parameters["@y"].Value = pos.Y;
-                        cmdInsert.Parameters["@tile"].Value = tile.GetBuffer();
-                        cmdInsert.ExecuteNonQuery();
+                        cnSet.Open();
                      }
-                     else
-                     {
-                        ret = false;
-                        Dispose();
-                     }
+
+                     cmdInsert.Parameters["@type"].Value = (int) type;
+                     cmdInsert.Parameters["@zoom"].Value = zoom;
+                     cmdInsert.Parameters["@x"].Value = pos.X;
+                     cmdInsert.Parameters["@y"].Value = pos.Y;
+                     cmdInsert.Parameters["@tile"].Value = tile.GetBuffer();
+                     cmdInsert.ExecuteNonQuery();
                   }
                }
                catch(Exception ex)
                {
                   Debug.WriteLine(ex.ToString());
                   ret = false;
+                  Dispose();
                }
             }
          }
@@ -198,19 +210,18 @@ namespace GMap.NET.CacheProviders
                   object odata = null;
                   lock(cmdFetch)
                   {
-                     if(cmdFetch.Connection.State == System.Data.ConnectionState.Open)
+                     cnGet.Ping();
+
+                     if(cnGet.State != ConnectionState.Open)
                      {
-                        cmdFetch.Parameters["@type"].Value = (int) type;
-                        cmdFetch.Parameters["@zoom"].Value = zoom;
-                        cmdFetch.Parameters["@x"].Value = pos.X;
-                        cmdFetch.Parameters["@y"].Value = pos.Y;
-                        odata = cmdFetch.ExecuteScalar();
+                        cnGet.Open();
                      }
-                     else
-                     {
-                        ret = null;
-                        Dispose();
-                     }
+
+                     cmdFetch.Parameters["@type"].Value = (int) type;
+                     cmdFetch.Parameters["@zoom"].Value = zoom;
+                     cmdFetch.Parameters["@x"].Value = pos.X;
+                     cmdFetch.Parameters["@y"].Value = pos.Y;
+                     odata = cmdFetch.ExecuteScalar();
                   }
 
                   if(odata != null && odata != DBNull.Value)
@@ -232,6 +243,7 @@ namespace GMap.NET.CacheProviders
                {
                   Debug.WriteLine(ex.ToString());
                   ret = null;
+                  Dispose();
                }
             }
          }

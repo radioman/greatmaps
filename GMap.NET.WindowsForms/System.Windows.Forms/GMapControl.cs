@@ -442,7 +442,7 @@ namespace System.Windows.Forms
 
                         ret = RectLatLng.FromLTRB(left, top, right, bottom);
                      }
-                  }                  
+                  }
                }
             }
          }
@@ -590,7 +590,7 @@ namespace System.Windows.Forms
             ret = null;
          }
          return ret;
-      }         
+      }
 
       #region UserControl Events
 
@@ -604,14 +604,14 @@ namespace System.Windows.Forms
 
       protected override void OnLoad(EventArgs e)
       {
-         base.OnLoad(e);           
+         base.OnLoad(e);
 
          if(!DesignMode)
          {
             MethodInvoker m = delegate
             {
                Thread.Sleep(222);
-               Core.StartSystem(); 
+               Core.StartSystem();
             };
             this.BeginInvoke(m);
          }
@@ -862,7 +862,7 @@ namespace System.Windows.Forms
          {
             if(isSelected && !selectionStart.IsEmpty && (Form.ModifierKeys == Keys.Alt || Form.ModifierKeys == Keys.Shift))
             {
-               selectionEnd = FromLocalToLatLng(e.X, e.Y); 
+               selectionEnd = FromLocalToLatLng(e.X, e.Y);
                {
                   GMap.NET.PointLatLng p1 = selectionStart;
                   GMap.NET.PointLatLng p2 = selectionEnd;
@@ -1001,6 +1001,7 @@ namespace System.Windows.Forms
       /// <returns></returns>
       public bool ShowExportDialog()
       {
+#if SQLiteEnabled
          using(FileDialog dlg = new SaveFileDialog())
          {
             dlg.CheckPathExists = true;
@@ -1030,6 +1031,7 @@ namespace System.Windows.Forms
                return ok;
             }
          }
+#endif
          return false;
       }
 
@@ -1039,6 +1041,7 @@ namespace System.Windows.Forms
       /// <returns></returns>
       public bool ShowImportDialog()
       {
+#if SQLiteEnabled
          using(FileDialog dlg = new OpenFileDialog())
          {
             dlg.CheckPathExists = true;
@@ -1068,6 +1071,7 @@ namespace System.Windows.Forms
                return ok;
             }
          }
+#endif
          return false;
       }
 

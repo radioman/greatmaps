@@ -18,7 +18,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MONO-disabled</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MONOdisabled; SQLiteEnabled</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -55,7 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="GMap.NET.CacheProviders\MsSQLCePureImageCache.cs" />
+    <Compile Include="GMap.NET.CacheProviders\MsSQLCePureImageCache.cs" />
+    <Compile Include="GMap.NET.CacheProviders\SQLitePureImageCache.cs" />
     <Compile Include="GMap.NET.CoordinateSystems\ThanksProjNet\IO\CoordinateSystemWktReader.cs" />
     <Compile Include="GMap.NET.CoordinateSystems\ThanksProjNet\IO\StreamTokenizer.cs" />
     <Compile Include="GMap.NET.CoordinateSystems\ThanksProjNet\IO\TokenType.cs" />

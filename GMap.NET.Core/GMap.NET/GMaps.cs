@@ -2,7 +2,6 @@
 namespace GMap.NET
 {
    using System;
-   using System.Collections;
    using System.Collections.Generic;
    using System.ComponentModel;
    using System.Diagnostics;
@@ -12,6 +11,7 @@ namespace GMap.NET
    using System.Text;
    using System.Threading;
    using System.Xml.Serialization;
+   using GMap.NET.CacheProviders;
    using GMap.NET.Internals;
 
    /// <summary>
@@ -295,7 +295,7 @@ namespace GMap.NET
          finally
          {
             Debug.WriteLine("MemoryCacheSize: " + TilesInMemory.MemoryCacheSize + "MB");
-            kiberCacheLock.ReleaseWriterLock();               
+            kiberCacheLock.ReleaseWriterLock();
          }
       }
 
@@ -503,6 +503,7 @@ namespace GMap.NET
          return GetPlacemarkFromReverseGeocoderUrl(MakeReverseGeocoderUrl(location, Language), UsePlacemarkCache);
       }
 
+#if SQLiteEnabled
       /// <summary>
       /// exports current map cache to GMDB file
       /// if file exsist only new records will be added
@@ -515,7 +516,7 @@ namespace GMap.NET
          StringBuilder db = new StringBuilder(Cache.Instance.gtileCache);
          db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.Language, Path.DirectorySeparatorChar);
 
-         return Cache.Instance.ExportMapDataToDB(db.ToString(), file);
+         return SQLitePureImageCache.ExportMapDataToDB(db.ToString(), file);
       }
 
       /// <summary>
@@ -529,8 +530,9 @@ namespace GMap.NET
          StringBuilder db = new StringBuilder(Cache.Instance.gtileCache);
          db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.Language, Path.DirectorySeparatorChar);
 
-         return Cache.Instance.ExportMapDataToDB(file, db.ToString());
+         return SQLitePureImageCache.ExportMapDataToDB(file, db.ToString());
       }
+#endif
 
       /// <summary>
       /// enqueueens tile to cache

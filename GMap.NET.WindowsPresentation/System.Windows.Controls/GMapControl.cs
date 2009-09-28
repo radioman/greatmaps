@@ -138,7 +138,7 @@ namespace System.Windows.Controls
       /// <summary>
       /// current map transformation
       /// </summary>
-      internal Transform MapRenderTransform;       
+      internal Transform MapRenderTransform;
 
       /// <summary>
       /// map zoom
@@ -190,7 +190,7 @@ namespace System.Windows.Controls
                {
                   MapRenderTransform = null;
                   ZoomStep = Convert.ToInt32(value);
-                  InvalidateVisual();                    
+                  InvalidateVisual();
                }
             }
          }
@@ -330,7 +330,7 @@ namespace System.Windows.Controls
             FadeImage.RenderTransform = scaleTransform;
          }
          mapFadeStoryboard.Begin(this);
-      }        
+      }
 
       /// <summary>
       /// inits core system
@@ -405,7 +405,7 @@ namespace System.Windows.Controls
             };
             this.Dispatcher.Invoke(DispatcherPriority.Render, m);
          }
-      }        
+      }
 
       /// <summary>
       /// render map in WPF
@@ -878,7 +878,7 @@ namespace System.Windows.Controls
             if(MapRenderTransform != null)
             {
                p = MapRenderTransform.Inverse.Transform(p);
-            }  
+            }
 
             Core.mouseCurrent.X = (int) p.X;
             Core.mouseCurrent.Y = (int) p.Y;
@@ -942,15 +942,16 @@ namespace System.Windows.Controls
          if(MapRenderTransform != null)
          {
             var tp = MapRenderTransform.Transform(new System.Windows.Point(ret.X, ret.Y));
-            ret.X = (int)tp.X;
-            ret.Y = (int)tp.Y;
-         }   
+            ret.X = (int) tp.X;
+            ret.Y = (int) tp.Y;
+         }
 
          return ret;
       }
 
       public bool ShowExportDialog()
       {
+#if SQLiteEnabled
          Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
          {
             dlg.CheckPathExists = true;
@@ -980,11 +981,13 @@ namespace System.Windows.Controls
                return ok;
             }
          }
+#endif
          return false;
       }
 
       public bool ShowImportDialog()
       {
+#if SQLiteEnabled
          Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
          {
             dlg.CheckPathExists = true;
@@ -1019,6 +1022,7 @@ namespace System.Windows.Controls
                return ok;
             }
          }
+#endif
          return false;
       }
 
