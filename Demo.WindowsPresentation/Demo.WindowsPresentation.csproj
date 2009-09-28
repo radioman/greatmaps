@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{83195AEF-0071-471C-9E8B-E67211F5D028}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -72,6 +72,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="CustomMarkers\Circle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CustomMarkers\CustomMarkerRed.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -106,6 +110,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomMarkers\Circle.xaml.cs">
+      <DependentUpon>Circle.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomMarkers\CustomMarkerRed.xaml.cs">
       <DependentUpon>CustomMarkerRed.xaml</DependentUpon>
     </Compile>

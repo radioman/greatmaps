@@ -8,6 +8,7 @@ using Demo.WindowsPresentation.CustomMarkers;
 using GMap.NET;
 using GMap.NET.CacheProviders;
 using GMap.NET.WindowsPresentation;
+using System.Collections.Generic;
 
 namespace Demo.WindowsPresentation
 {
@@ -19,6 +20,9 @@ namespace Demo.WindowsPresentation
       // marker
       GMapMarker currentMarker;
       GMapMarker center;
+
+      // zones list
+      List<GMapMarker> Circles = new List<GMapMarker>();
 
       public MainWindow()
       {
@@ -106,16 +110,109 @@ namespace Demo.WindowsPresentation
 
          // add my city location for demo
          GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
-         PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius", out status);
-         if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
+
+         PointLatLng? city = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius", out status);
+         if(city != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
          {
-            GMapMarker it = new GMapMarker(pos.Value);
+            GMapMarker it = new GMapMarker(city.Value);
             {
                it.ZIndex = 55;
                it.Shape = new CustomMarkerDemo(this, it, "Welcome to Lithuania! ;}");
             }
             MainMap.Markers.Add(it);
+
+            #region -- add some markers and zone around them --
+            {
+               List<PointAndInfo> objects = new List<PointAndInfo>();
+               {
+                  string area = "Antakalnis";
+                  PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius, " + area, out status);
+                  if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
+                  {
+                     objects.Add(new PointAndInfo(pos.Value, area));
+                  }
+               }
+               {
+                  string area = "Senamiestis";
+                  PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius, " + area, out status);
+                  if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
+                  {
+                     objects.Add(new PointAndInfo(pos.Value, area));
+                  }
+               }
+               {
+                  string area = "Pilaite";
+                  PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius, " + area, out status);
+                  if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
+                  {
+                     objects.Add(new PointAndInfo(pos.Value, area));
+                  }
+               }
+               AddDemoZone(8.8, city.Value, objects);
+            }
+            #endregion
          }
+      }
+
+      // add objects and zone around them
+      void AddDemoZone(double areaRadius, PointLatLng center, List<PointAndInfo> objects)
+      {
+         var objectsInArea = from p in objects
+                             where GMaps.Instance.GetDistance(center, p.Point) <= areaRadius
+                             select new {
+                                Obj = p,
+                                    Dist = GMaps.Instance.GetDistance(center, p.Point)
+                             };
+         if(objectsInArea.Any())
+         {
+            var maxDistObject = (from p in objectsInArea
+                                 orderby p.Dist descending
+                                 select p).First();
+
+            // add objects to zone
+            foreach(var o in objectsInArea)
+            {
+               GMapMarker it = new GMapMarker(o.Obj.Point);
+               {
+                  it.ZIndex = 55;
+                  var s = new CustomMarkerDemo(this, it, o.Obj.Info + ", distance from center: " + o.Dist + "km.");
+                  it.Shape = s;
+               }
+               MainMap.Markers.Add(it);
+            }
+
+            // add zone circle
+            {
+               GMapMarker it = new GMapMarker(center);
+               it.ZIndex = -1;
+
+               Circle c = new Circle();
+               c.Center = center;
+               c.Bound = maxDistObject.Obj.Point;
+               c.Tag = it;
+
+               UpdateCircle(c);
+               Circles.Add(it);
+
+               it.Shape = c;
+               MainMap.Markers.Add(it);                
+            }
+         }
+      }
+
+      // calculates circle radius
+      void UpdateCircle(Circle c)
+      {
+         var pxCenter = MainMap.FromLatLngToLocal(c.Center);
+         var pxBounds = MainMap.FromLatLngToLocal(c.Bound);
+
+         double a = (double) (pxBounds.X - pxCenter.X);
+         double b = (double) (pxBounds.Y - pxCenter.Y);
+         var pxCircleRadius = Math.Sqrt(a * a + b * b);
+
+         c.Width = 55 + pxCircleRadius * 2;
+         c.Height = 55 + pxCircleRadius * 2;
+         (c.Tag as GMapMarker).Offset = new System.Windows.Point(-c.Width/2, -c.Height/2);
       }
 
       void MainMap_OnMapTypeChanged(MapType type)
@@ -341,6 +438,12 @@ namespace Demo.WindowsPresentation
       private void sliderZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
       {
          MainMap.Zoom = e.NewValue;
+
+         // updates circles on map
+         foreach(var c in Circles)
+         {
+            UpdateCircle(c.Shape as Circle);
+         }
       }
 
       // zoom up
