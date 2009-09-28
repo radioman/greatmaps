@@ -48,7 +48,7 @@ namespace GMap.NET.Internals
       public readonly string virtualEarthCopyright = string.Format("©{0} Microsoft Corporation, ©{0} NAVTEQ, ©{0} Image courtesy of NASA", DateTime.Today.Year);
       public readonly string arcGisCopyright = string.Format("©{0} ESRI - Map data ©{0} ArcGIS", DateTime.Today.Year);
 
-      bool started = false;
+      internal bool started = false;
       int zoom;
       internal int Width;
       internal int Height;
@@ -109,8 +109,8 @@ namespace GMap.NET.Internals
                   {
                      tileLoadQueue.Clear();
                   }
-                  Matrix.Clear();   
-                  
+                  Matrix.Clear();
+
                   GoToCurrentPositionOnZoom();
                   UpdateBaunds();
                   RunAsyncTasks();
@@ -180,8 +180,11 @@ namespace GMap.NET.Internals
                currentPosition = value;
                CurrentPositionGPixel = Projection.FromLatLngToPixel(value, Zoom);
 
-               if(OnCurrentPositionChanged != null)
-                  OnCurrentPositionChanged(currentPosition);
+               if(started)
+               {
+                  if(OnCurrentPositionChanged != null)
+                     OnCurrentPositionChanged(currentPosition);
+               }
             }
          }
       }
@@ -337,10 +340,10 @@ namespace GMap.NET.Internals
             loader3.DoWork += new DoWorkEventHandler(loader3_DoWork);
 
             started = true;
-         }  
-         
-         ReloadMap();
-         GoToCurrentPosition();
+
+            ReloadMap();
+            GoToCurrentPosition();             
+         }
       }
 
       public void UpdateCenterTileXYLocation()
@@ -358,11 +361,15 @@ namespace GMap.NET.Internals
          sizeOfMapArea.Width = 1 + (Width/Projection.TileSize.Width)/2;
          sizeOfMapArea.Height = 1 + (Height/Projection.TileSize.Height)/2;
 
-         UpdateCenterTileXYLocation();  
-         UpdateBaunds();
+         UpdateCenterTileXYLocation();
 
-         if(OnCurrentPositionChanged != null)
-            OnCurrentPositionChanged(currentPosition);         
+         if(started)
+         {
+            UpdateBaunds();
+
+            if(OnCurrentPositionChanged != null)
+               OnCurrentPositionChanged(currentPosition);
+         }
       }
 
       public void OnMapClose()
@@ -487,22 +494,25 @@ namespace GMap.NET.Internals
       /// </summary>
       public void ReloadMap()
       {
-         lock(tileLoadQueue)
+         if(started)
          {
-            tileLoadQueue.Clear();
+            lock(tileLoadQueue)
+            {
+               tileLoadQueue.Clear();
+            }
+
+            Matrix.Clear();
+
+            if(OnNeedInvalidation != null)
+            {
+               OnNeedInvalidation();
+            }
+
+            UpdateBaunds();
+
+            // start loading
+            RunAsyncTasks();
          }
-
-         Matrix.Clear();
-
-         if(OnNeedInvalidation != null)
-         {
-            OnNeedInvalidation();
-         }
-
-         UpdateBaunds();
-
-         // start loading
-         RunAsyncTasks();
       }
 
       /// <summary>
@@ -575,19 +585,22 @@ namespace GMap.NET.Internals
       /// </summary>
       public void CancelAsyncTasks()
       {
-         if(loader.IsBusy)
+         if(started)
          {
-            loader.CancelAsync();
-         }
+            if(loader.IsBusy && !loader.CancellationPending)
+            {
+               loader.CancelAsync();
+            }
 
-         if(loader2.IsBusy)
-         {
-            loader2.CancelAsync();
-         }
+            if(loader2.IsBusy && !loader2.CancellationPending)
+            {
+               loader2.CancelAsync();
+            }
 
-         if(loader3.IsBusy)
-         {
-            loader3.CancelAsync();
+            if(loader3.IsBusy && !loader3.CancellationPending)
+            {
+               loader3.CancelAsync();
+            }
          }
       }
 
@@ -596,19 +609,22 @@ namespace GMap.NET.Internals
       /// </summary>
       void RunAsyncTasks()
       {
-         if(!loader.IsBusy)
+         if(started)
          {
-            loader.RunWorkerAsync();
-         }
+            if(!loader.IsBusy)
+            {
+               loader.RunWorkerAsync();
+            }
 
-         if(!loader2.IsBusy)
-         {
-            loader2.RunWorkerAsync();
-         }
+            if(!loader2.IsBusy)
+            {
+               loader2.RunWorkerAsync();
+            }
 
-         if(!loader3.IsBusy)
-         {
-            loader3.RunWorkerAsync();
+            if(!loader3.IsBusy)
+            {
+               loader3.RunWorkerAsync();
+            }
          }
       }
 

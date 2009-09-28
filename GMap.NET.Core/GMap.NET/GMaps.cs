@@ -636,6 +636,9 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
                TryCorrectGoogleVersions();
+
+               //http://mt2.google.com/vt/lyrs=m@107&hl=lt&x=18&y=10&z=5&s=
+
                return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMap, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;

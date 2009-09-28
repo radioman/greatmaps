@@ -749,7 +749,7 @@ namespace System.Windows.Forms
       {
          base.OnSizeChanged(e);
 
-         if(!DesignMode)
+         if(!DesignMode && !DesignModeInConstruct)
          {
             Core.OnMapSizeChanged(Width, Height);
 
