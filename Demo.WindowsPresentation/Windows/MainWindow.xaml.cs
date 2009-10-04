@@ -159,9 +159,10 @@ namespace Demo.WindowsPresentation
       {
          var objectsInArea = from p in objects
                              where GMaps.Instance.GetDistance(center, p.Point) <= areaRadius
-                             select new {
+                             select new
+                             {
                                 Obj = p,
-                                    Dist = GMaps.Instance.GetDistance(center, p.Point)
+                                Dist = GMaps.Instance.GetDistance(center, p.Point)
                              };
          if(objectsInArea.Any())
          {
@@ -195,7 +196,7 @@ namespace Demo.WindowsPresentation
                Circles.Add(it);
 
                it.Shape = c;
-               MainMap.Markers.Add(it);                
+               MainMap.Markers.Add(it);
             }
          }
       }
@@ -212,7 +213,7 @@ namespace Demo.WindowsPresentation
 
          c.Width = 55 + pxCircleRadius * 2;
          c.Height = 55 + pxCircleRadius * 2;
-         (c.Tag as GMapMarker).Offset = new System.Windows.Point(-c.Width/2, -c.Height/2);
+         (c.Tag as GMapMarker).Offset = new System.Windows.Point(-c.Width / 2, -c.Height / 2);
       }
 
       void MainMap_OnMapTypeChanged(MapType type)
@@ -476,11 +477,13 @@ namespace Demo.WindowsPresentation
                   obj.ShowCompleteMessage = true;
                   obj.Start(x, i, MainMap.MapType, 100);
                }
-               else if(res == MessageBoxResult.No)
+               else
+               if(res == MessageBoxResult.No)
                {
                   continue;
                }
-               else if(res == MessageBoxResult.Cancel)
+               else
+               if(res == MessageBoxResult.Cancel)
                {
                   break;
                }
