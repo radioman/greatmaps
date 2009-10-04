@@ -18,7 +18,6 @@ namespace System.Windows.Controls
    using GMap.NET;
    using GMap.NET.Internals;
    using GMap.NET.WindowsPresentation;
-   using System.Diagnostics;
 
    /// <summary>
    /// GMap.NET control for Windows Presentation
@@ -203,7 +202,7 @@ namespace System.Windows.Controls
             //Are we in Visual Studio Designer?
             return System.ComponentModel.DesignerProperties.GetIsInDesignMode(this);
          }
-      }
+      }       
 
       public GMapControl()
       {
@@ -689,7 +688,7 @@ namespace System.Windows.Controls
          if(MapRenderTransform != null)
          {
             drawingContext.PushTransform(MapRenderTransform);
-            {
+            {  
                DrawMapWPF(drawingContext);
             }
             drawingContext.Pop();
@@ -743,9 +742,9 @@ namespace System.Windows.Controls
             }
             break;
 
-            case MapType.VirtualEarthHybrid:
-            case MapType.VirtualEarthMap:
-            case MapType.VirtualEarthSatellite:
+            case MapType.BingHybrid:
+            case MapType.BingMap:
+            case MapType.BingSatellite:
             {
                drawingContext.DrawText(virtualEarthCopyright, new System.Windows.Point(5, ActualHeight - virtualEarthCopyright.Height - 5));
             }

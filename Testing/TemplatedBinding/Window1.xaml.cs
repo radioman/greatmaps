@@ -77,7 +77,7 @@ namespace TemplatedBinding
          // 2
          {
             GMapControl map = new GMapControl();
-            map.MapType = GMap.NET.MapType.VirtualEarthMap;
+            map.MapType = GMap.NET.MapType.BingMap;
             map.MinZoom = 4;
             map.MaxZoom = map.MinZoom + 3;
             map.Zoom = map.MinZoom;

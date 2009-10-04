@@ -682,9 +682,9 @@ namespace System.Windows.Forms
                }
                break;
 
-               case MapType.VirtualEarthHybrid:
-               case MapType.VirtualEarthMap:
-               case MapType.VirtualEarthSatellite:
+               case MapType.BingHybrid:
+               case MapType.BingMap:
+               case MapType.BingSatellite:
                {
                   e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
                }

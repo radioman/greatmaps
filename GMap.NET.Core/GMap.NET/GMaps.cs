@@ -20,16 +20,16 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "w2.106";
-      public string VersionGoogleSatellite = "45";
-      public string VersionGoogleLabels = "w2t.106";
-      public string VersionGoogleTerrain = "w2p.106";
+      public string VersionGoogleMap = "m@107";
+      public string VersionGoogleSatellite = "46";
+      public string VersionGoogleLabels = "h@107";
+      public string VersionGoogleTerrain = "w2p.107";
       public string SecGoogleWord = "Galileo";
 
       // Google (china) version strings
-      public string VersionGoogleMapChina = "w2.106";
-      public string VersionGoogleSatelliteChina = "45";
-      public string VersionGoogleLabelsChina = "w2t.106";
+      public string VersionGoogleMapChina = "w2.107";
+      public string VersionGoogleSatelliteChina = "46";
+      public string VersionGoogleLabelsChina = "w2t.107";
       public string VersionGoogleTerrainChina = "cnw2p.98";
 
       // Yahoo version strings
@@ -37,8 +37,8 @@ namespace GMap.NET
       public string VersionYahooSatellite = "1.9";
       public string VersionYahooLabels = "4.2";
 
-      // Virtual Earth
-      public string VersionVirtualEarth = "321";
+      // BingMaps
+      public string VersionBingMaps = "346";
 
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
@@ -641,7 +641,7 @@ namespace GMap.NET
 
                //http://mt2.google.com/vt/lyrs=m@107&hl=lt&x=18&y=10&z=5&s=
 
-               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMap, language, pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.google.com/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMap, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;
 
@@ -665,7 +665,10 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
                TryCorrectGoogleVersions();
-               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabels, language, pos.X, sec1, pos.Y, zoom, sec2);
+
+               // http://mt1.google.com/vt/lyrs=h@107&hl=lt&x=583&y=325&z=10&s=Ga
+
+               return string.Format("http://{0}{1}.google.com/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabels, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
             break;
 
@@ -772,22 +775,22 @@ namespace GMap.NET
             #endregion
 
             #region -- VirtualEarth --
-            case MapType.VirtualEarthMap:
+            case MapType.BingMap:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}", GetServerNum(pos, 4), key, VersionVirtualEarth, language);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}", GetServerNum(pos, 4), key, VersionBingMaps, language);
             }
 
-            case MapType.VirtualEarthSatellite:
+            case MapType.BingSatellite:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}", GetServerNum(pos, 4), key, VersionVirtualEarth, language);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}", GetServerNum(pos, 4), key, VersionBingMaps, language);
             }
 
-            case MapType.VirtualEarthHybrid:
+            case MapType.BingHybrid:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}", GetServerNum(pos, 4), key, VersionVirtualEarth, language);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}", GetServerNum(pos, 4), key, VersionBingMaps, language);
             }
             #endregion
 
@@ -836,6 +839,7 @@ namespace GMap.NET
                // http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L02/R0000001b/C00000028.jpg
                // http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto/MapServer/tile/0/9/13
                //return string.Format("http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
+               // http://arcgis.maps.lt/ArcGIS/rest/services/mapslt/MapServer/tile/7/1162/1684.png
 
                return string.Format("http://arcgis.maps.lt/ArcGIS/rest/services/mapslt/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
             }
@@ -1080,8 +1084,7 @@ namespace GMap.NET
 
                                              if(i == 0)
                                              {
-                                                // w2.106
-                                                if(u.StartsWith("w2"))
+                                                if(u.StartsWith("m@"))
                                                 {
                                                    Debug.WriteLine("TryCorrectGoogleVersions[map]: " + u);
                                                    VersionGoogleMap = u;
@@ -1108,8 +1111,7 @@ namespace GMap.NET
                                              }
                                              else if(i == 2)
                                              {
-                                                // w2t.106
-                                                if(u.StartsWith("w2t"))
+                                                if(u.StartsWith("h@"))
                                                 {
                                                    Debug.WriteLine("TryCorrectGoogleVersions[labels]: " + u);
                                                    VersionGoogleLabels = u;
@@ -1688,9 +1690,9 @@ namespace GMap.NET
                      }
                      break;
 
-                     case MapType.VirtualEarthHybrid:
-                     case MapType.VirtualEarthMap:
-                     case MapType.VirtualEarthSatellite:
+                     case MapType.BingHybrid:
+                     case MapType.BingMap:
+                     case MapType.BingSatellite:
                      {
                         request.Referer = "http://www.bing.com/maps/";
                      }
