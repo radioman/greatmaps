@@ -165,7 +165,7 @@
     <Compile Include="GMap.NET\Kml.cs" />
     <Compile Include="GMap.NET\MapRoute.cs" />
     <Compile Include="GMap.NET\MapType.cs" />
-    <None Include="GMap.NET.CacheProviders\MsSQLPureImageCache.cs" />
+    <Compile Include="GMap.NET.CacheProviders\MsSQLPureImageCache.cs" />
     <Compile Include="GMap.NET\Point.cs" />
     <Compile Include="GMap.NET\PureImageCache.cs" />
     <Compile Include="GMap.NET\Rectangle.cs" />
