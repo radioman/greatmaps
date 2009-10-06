@@ -251,17 +251,15 @@ namespace GMap.NET.WindowsPresentation
                localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
             }
 
-            Brush before = null;
+            var shape = map.CreateRoutePath(localPath);
+
             if(this.Shape != null && this.Shape is Path)
             {
-               before = (this.Shape as Path).Stroke;
+               (this.Shape as Path).Data = shape.Data;
             }
-
-            this.Shape = map.CreateRoutePath(localPath);
-
-            if(before != null)
+            else
             {
-               (this.Shape as Path).Stroke = before;
+               this.Shape = shape;
             }
          }
       }
