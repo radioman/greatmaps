@@ -134,6 +134,11 @@ namespace System.Windows.Forms
          }
       }
 
+      /// <summary>
+      /// map boundaries
+      /// </summary>
+      public RectLatLng? Bounds = null;
+
       // internal stuff
       internal readonly Core Core = new Core();
       internal readonly Font CopyrightFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
@@ -804,6 +809,14 @@ namespace System.Windows.Forms
          {
             Core.EndDrag();
             this.Cursor = System.Windows.Forms.Cursors.Default;
+
+            if(Bounds.HasValue && !Bounds.Value.Contains(CurrentPosition))
+            {
+               if(Core.LastLocationInBounds.HasValue)
+               {
+                  CurrentPosition = Core.LastLocationInBounds.Value;
+               }
+            }
          }
          else
          {
@@ -852,10 +865,17 @@ namespace System.Windows.Forms
       {
          if(Core.IsDragging)
          {
-            Core.mouseCurrent.X = e.X;
-            Core.mouseCurrent.Y = e.Y;
+            if(Bounds.HasValue && !Bounds.Value.Contains(CurrentPosition))
             {
-               Core.Drag(Core.mouseCurrent);
+               // ...
+            }
+            else
+            {
+               Core.mouseCurrent.X = e.X;
+               Core.mouseCurrent.Y = e.Y;
+               {
+                  Core.Drag(Core.mouseCurrent);
+               }
             }
          }
          else

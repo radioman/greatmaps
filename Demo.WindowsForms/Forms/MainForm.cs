@@ -24,9 +24,6 @@ namespace Demo.WindowsForms
       GMapOverlay objects;
       GMapOverlay routes;
 
-      // testing projection
-      GMap.NET.Projections.LKS94Projection prj = new GMap.NET.Projections.LKS94Projection();
-
       public MainForm()
       {
          InitializeComponent();

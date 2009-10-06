@@ -24,6 +24,7 @@ namespace GMap.NET.Internals
 
       public Point mouseDown;
       public Point mouseCurrent;
+      public PointLatLng? LastLocationInBounds = null;
 
       public Size sizeOfMapArea;
       public Size minOfTiles;
@@ -32,7 +33,7 @@ namespace GMap.NET.Internals
       public Rectangle tileRect;
       public Point tilePoint;
 
-      public Rectangle CurrentRegion;
+      public Rectangle CurrentRegion; 
 
       public readonly TileMatrix Matrix = new TileMatrix();
       readonly BackgroundWorker loader = new BackgroundWorker();
@@ -545,7 +546,7 @@ namespace GMap.NET.Internals
          renderOffset.Y = pt.Y - dragPoint.Y;
 
          UpdateCenterTileXYLocation();
-      }
+      }        
 
       /// <summary>
       /// drag map
@@ -566,6 +567,7 @@ namespace GMap.NET.Internals
 
          if(IsDragging)
          {
+            LastLocationInBounds = CurrentPosition;
             CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
          }
 

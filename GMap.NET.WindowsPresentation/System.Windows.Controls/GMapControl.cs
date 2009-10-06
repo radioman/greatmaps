@@ -130,6 +130,11 @@ namespace System.Windows.Controls
       }
 
       /// <summary>
+      /// map boundaries
+      /// </summary>
+      public RectLatLng? Bounds = null;
+
+      /// <summary>
       /// list of markers
       /// </summary>
       public readonly ObservableCollection<GMapMarker> Markers = new ObservableCollection<GMapMarker>();
@@ -202,7 +207,7 @@ namespace System.Windows.Controls
             //Are we in Visual Studio Designer?
             return System.ComponentModel.DesignerProperties.GetIsInDesignMode(this);
          }
-      }       
+      }
 
       public GMapControl()
       {
@@ -688,7 +693,7 @@ namespace System.Windows.Controls
          if(MapRenderTransform != null)
          {
             drawingContext.PushTransform(MapRenderTransform);
-            {  
+            {
                DrawMapWPF(drawingContext);
             }
             drawingContext.Pop();
@@ -848,6 +853,14 @@ namespace System.Windows.Controls
          {
             Core.EndDrag();
             Cursor = Cursors.Arrow;
+
+            if(Bounds.HasValue && !Bounds.Value.Contains(CurrentPosition))
+            {
+               if(Core.LastLocationInBounds.HasValue)
+               {
+                  CurrentPosition = Core.LastLocationInBounds.Value;
+               }
+            }
          }
          else
          {
@@ -872,17 +885,24 @@ namespace System.Windows.Controls
       {
          if(Core.IsDragging)
          {
-            System.Windows.Point p = e.GetPosition(this);
-
-            if(MapRenderTransform != null)
+            if(Bounds.HasValue && !Bounds.Value.Contains(CurrentPosition))
             {
-               p = MapRenderTransform.Inverse.Transform(p);
+               // ...
             }
-
-            Core.mouseCurrent.X = (int) p.X;
-            Core.mouseCurrent.Y = (int) p.Y;
+            else
             {
-               Core.Drag(Core.mouseCurrent);
+               System.Windows.Point p = e.GetPosition(this);
+
+               if(MapRenderTransform != null)
+               {
+                  p = MapRenderTransform.Inverse.Transform(p);
+               }
+
+               Core.mouseCurrent.X = (int) p.X;
+               Core.mouseCurrent.Y = (int) p.Y;
+               {
+                  Core.Drag(Core.mouseCurrent);
+               }
             }
          }
          else
