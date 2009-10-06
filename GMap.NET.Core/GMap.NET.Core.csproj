@@ -157,7 +157,7 @@
     <Compile Include="GMap.NET.Projections\MercatorProjection.cs" />
     <Compile Include="GMap.NET.Projections\PlateCarreeProjection.cs" />
     <Compile Include="GMap.NET\GeoCoderStatusCode.cs" />
-    <Compile Include="GMap.NET.CacheProviders\MySQLPureImageCache.cs" />
+    <None Include="GMap.NET.CacheProviders\MySQLPureImageCache.cs" />
     <Compile Include="GMap.NET\PureProjection.cs" />
     <Compile Include="GMap.NET\IGControl.cs" />
     <Compile Include="GMap.NET\AccessMode.cs" />
