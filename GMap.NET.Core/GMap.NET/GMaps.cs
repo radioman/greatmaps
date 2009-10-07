@@ -20,17 +20,17 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "m@107";
+      public string VersionGoogleMap = "m@110";
       public string VersionGoogleSatellite = "46";
-      public string VersionGoogleLabels = "h@107";
-      public string VersionGoogleTerrain = "w2p.107";
+      public string VersionGoogleLabels = "h@110";
+      public string VersionGoogleTerrain = "w2p.110";
       public string SecGoogleWord = "Galileo";
 
       // Google (china) version strings
-      public string VersionGoogleMapChina = "w2.107";
+      public string VersionGoogleMapChina = "w2.110";
       public string VersionGoogleSatelliteChina = "46";
-      public string VersionGoogleLabelsChina = "w2t.107";
-      public string VersionGoogleTerrainChina = "cnw2p.98";
+      public string VersionGoogleLabelsChina = "w2t.110";
+      public string VersionGoogleTerrainChina = "w2p.110";
 
       // Yahoo version strings
       public string VersionYahooMap = "4.2";
@@ -38,7 +38,7 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.2";
 
       // BingMaps
-      public string VersionBingMaps = "346";
+      public string VersionBingMaps = "330";
 
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
@@ -48,7 +48,7 @@ namespace GMap.NET
       /// <summary>
       /// timeout for map connections
       /// </summary>
-      public int Timeout = 30*1000;
+      public int Timeout = 30 * 1000;
 
       /// <summary>
       /// proxy for net access
@@ -590,7 +590,7 @@ namespace GMap.NET
                   ImageCacheLocal.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
                }
 
-               if((task.Value.CacheType & CacheUsage.Second)== CacheUsage.Second && ImageCacheSecond != null)
+               if((task.Value.CacheType & CacheUsage.Second) == CacheUsage.Second && ImageCacheSecond != null)
                {
                   ImageCacheSecond.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
                }
@@ -708,7 +708,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
                TryCorrectGoogleVersions();
-               // http://khm0.google.cn/kh/v=42&x=12&y=6&z=4&s=Ga
+               // http://khm0.google.cn/kh/v=46&x=12&y=6&z=4&s=Ga
 
                return string.Format("http://{0}{1}.google.cn/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteChina, pos.X, sec1, pos.Y, zoom, sec2);
             }
@@ -722,7 +722,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
                TryCorrectGoogleVersions();
-               // http://mt0.google.cn/vt/v=w2t.101&hl=zh-CN&gl=cn&x=12&y=6&z=4&s=Ga
+               // http://mt0.google.cn/vt/v=w2t.110&hl=zh-CN&gl=cn&x=12&y=6&z=4&s=Ga
 
                return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
@@ -731,12 +731,12 @@ namespace GMap.NET
             case MapType.GoogleTerrainChina:
             {
                string server = "mt";
-               string request = "mt";
+               string request = "vt";
                string sec1 = ""; // after &x=...
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               // http://mt0.google.com/mt/v=cnw2p.98&hl=zh-CN&gl=cn&x=12&y=6&z=4&s=Ga
+               // http://mt0.google.cn/vt/v=w2p.110&hl=zh-CN&gl=cn&x=12&y=6&z=4&s=Ga
 
                return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
@@ -746,30 +746,30 @@ namespace GMap.NET
             #region -- Yahoo --
             case MapType.YahooMap:
             {
-               return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&.intl={2}&x={3}&y={4}&z={5}&r=1", ((GetServerNum(pos, 2))+1), VersionYahooMap, language, pos.X, (((1 << zoom) >> 1)-1-pos.Y), (zoom+1));
+               return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&.intl={2}&x={3}&y={4}&z={5}&r=1", ((GetServerNum(pos, 2)) + 1), VersionYahooMap, language, pos.X, (((1 << zoom) >> 1) - 1 - pos.Y), (zoom + 1));
             }
 
             case MapType.YahooSatellite:
             {
-               return string.Format("http://maps{0}.yimg.com/ae/ximg?v={1}&t=a&s=256&.intl={2}&x={3}&y={4}&z={5}&r=1", 3, VersionYahooSatellite, language, pos.X, (((1 << zoom) >> 1)-1-pos.Y), (zoom+1));
+               return string.Format("http://maps{0}.yimg.com/ae/ximg?v={1}&t=a&s=256&.intl={2}&x={3}&y={4}&z={5}&r=1", 3, VersionYahooSatellite, language, pos.X, (((1 << zoom) >> 1) - 1 - pos.Y), (zoom + 1));
             }
 
             case MapType.YahooLabels:
             {
-               return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&t=h&.intl={2}&x={3}&y={4}&z={5}&r=1", 1, VersionYahooLabels, language, pos.X, (((1 << zoom) >> 1)-1-pos.Y), (zoom+1));
+               return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&t=h&.intl={2}&x={3}&y={4}&z={5}&r=1", 1, VersionYahooLabels, language, pos.X, (((1 << zoom) >> 1) - 1 - pos.Y), (zoom + 1));
             }
             #endregion
 
             #region -- OpenStreet --
             case MapType.OpenStreetMap:
             {
-               char letter = "abc"[GetServerNum(pos, 3)];
+               char letter = "abc" [GetServerNum(pos, 3)];
                return string.Format("http://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
             }
 
             case MapType.OpenStreetOsm:
             {
-               char letter = "abc"[GetServerNum(pos, 3)];
+               char letter = "abc" [GetServerNum(pos, 3)];
                return string.Format("http://{0}.tah.openstreetmap.org/Tiles/tile/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
             }
             #endregion
@@ -866,7 +866,7 @@ namespace GMap.NET
       {
          sec1 = ""; // after &x=...
          sec2 = ""; // after &zoom=...
-         int seclen = ((pos.X*3) + pos.Y) % 8;
+         int seclen = ((pos.X * 3) + pos.Y) % 8;
          sec2 = SecGoogleWord.Substring(0, seclen);
          if(pos.Y >= 10000 && pos.Y < 100000)
          {
@@ -1042,7 +1042,7 @@ namespace GMap.NET
                request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
                request.UserAgent = UserAgent;
                request.Timeout = Timeout;
-               request.ReadWriteTimeout = Timeout*6;
+               request.ReadWriteTimeout = Timeout * 6;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                {
@@ -1068,7 +1068,7 @@ namespace GMap.NET
                               if(!string.IsNullOrEmpty(api))
                               {
                                  int i = 0;
-                                 string[] opts = api.Split(new string[] { "[\"" }, StringSplitOptions.RemoveEmptyEntries);
+                                 string [] opts = api.Split(new string [] { "[\"" }, StringSplitOptions.RemoveEmptyEntries);
                                  foreach(string opt in opts)
                                  {
                                     if(opt.Contains("http://"))
@@ -1088,48 +1088,48 @@ namespace GMap.NET
                                                 {
                                                    Debug.WriteLine("TryCorrectGoogleVersions[map]: " + u);
                                                    VersionGoogleMap = u;
-                                                   VersionGoogleMapChina = u;
                                                 }
                                                 else
                                                 {
                                                    Debug.WriteLine("TryCorrectGoogleVersions[map FAILED]: " + u);
                                                 }
                                              }
-                                             else if(i == 1)
+                                             else
+                                             if(i == 1)
                                              {
                                                 // 45
-                                                if(char.IsDigit(u[0]))
+                                                if(char.IsDigit(u [0]))
                                                 {
                                                    Debug.WriteLine("TryCorrectGoogleVersions[satelite]: " + u);
                                                    VersionGoogleSatellite = u;
-                                                   VersionGoogleSatelliteChina = u;
                                                 }
                                                 else
                                                 {
                                                    Debug.WriteLine("TryCorrectGoogleVersions[satelite FAILED]: " + u);
                                                 }
                                              }
-                                             else if(i == 2)
+                                             else
+                                             if(i == 2)
                                              {
                                                 if(u.StartsWith("h@"))
                                                 {
                                                    Debug.WriteLine("TryCorrectGoogleVersions[labels]: " + u);
-                                                   VersionGoogleLabels = u;
-                                                   VersionGoogleLabelsChina = u;
+                                                   VersionGoogleLabels = u;                                      
                                                 }
                                                 else
                                                 {
                                                    Debug.WriteLine("TryCorrectGoogleVersions[labels FAILED]: " + u);
                                                 }
                                              }
-                                             else if(i == 3)
+                                             else
+                                             if(i == 3)
                                              {
                                                 // w2p.106
                                                 if(u.StartsWith("w2p"))
                                                 {
                                                    Debug.WriteLine("TryCorrectGoogleVersions[terrain]: " + u);
                                                    VersionGoogleTerrain = u;
-                                                   // VersionGoogleTerrainChina - diffs
+                                                   VersionGoogleTerrainChina = u;
                                                 }
                                                 else
                                                 {
@@ -1173,7 +1173,7 @@ namespace GMap.NET
 
             request.UserAgent = UserAgent;
             request.Timeout = Timeout;
-            request.ReadWriteTimeout = Timeout*6;
+            request.ReadWriteTimeout = Timeout * 6;
 
             using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
             {
@@ -1215,7 +1215,7 @@ namespace GMap.NET
          {
             string urlEnd = url.Substring(url.IndexOf("geo?q="));
 
-            char[] ilg = Path.GetInvalidFileNameChars();
+            char [] ilg = Path.GetInvalidFileNameChars();
             foreach(char c in ilg)
             {
                urlEnd = urlEnd.Replace(c, '_');
@@ -1231,7 +1231,7 @@ namespace GMap.NET
 
                request.UserAgent = UserAgent;
                request.Timeout = Timeout;
-               request.ReadWriteTimeout = Timeout*6;
+               request.ReadWriteTimeout = Timeout * 6;
                request.KeepAlive = false;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
@@ -1256,14 +1256,14 @@ namespace GMap.NET
             // true : 200,4,56.1451640,22.0681787
             // false: 602,0,0,0
             {
-               string[] values = geo.Split(',');
+               string [] values = geo.Split(',');
                if(values.Length == 4)
                {
-                  status = (GeoCoderStatusCode) int.Parse(values[0]);
+                  status = (GeoCoderStatusCode) int.Parse(values [0]);
                   if(status == GeoCoderStatusCode.G_GEO_SUCCESS)
                   {
-                     double lat = double.Parse(values[2], CultureInfo.InvariantCulture);
-                     double lng = double.Parse(values[3], CultureInfo.InvariantCulture);
+                     double lat = double.Parse(values [2], CultureInfo.InvariantCulture);
+                     double lng = double.Parse(values [3], CultureInfo.InvariantCulture);
 
                      ret = new PointLatLng(lat, lng);
                   }
@@ -1291,7 +1291,7 @@ namespace GMap.NET
          {
             string urlEnd = url.Substring(url.IndexOf("geo?hl="));
 
-            char[] ilg = Path.GetInvalidFileNameChars();
+            char [] ilg = Path.GetInvalidFileNameChars();
             foreach(char c in ilg)
             {
                urlEnd = urlEnd.Replace(c, '_');
@@ -1307,7 +1307,7 @@ namespace GMap.NET
 
                request.UserAgent = UserAgent;
                request.Timeout = Timeout;
-               request.ReadWriteTimeout = Timeout*6;
+               request.ReadWriteTimeout = Timeout * 6;
                request.KeepAlive = false;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
@@ -1366,7 +1366,7 @@ namespace GMap.NET
          {
             string urlEnd = url.Substring(url.IndexOf("&hl="));
 
-            char[] ilg = Path.GetInvalidFileNameChars();
+            char [] ilg = Path.GetInvalidFileNameChars();
             foreach(char c in ilg)
             {
                urlEnd = urlEnd.Replace(c, '_');
@@ -1382,7 +1382,7 @@ namespace GMap.NET
 
                request.UserAgent = UserAgent;
                request.Timeout = Timeout;
-               request.ReadWriteTimeout = Timeout*6;
+               request.ReadWriteTimeout = Timeout * 6;
                request.KeepAlive = false;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
@@ -1438,7 +1438,7 @@ namespace GMap.NET
             // points
             int pointsEnd = 0;
             {
-               int x = route.IndexOf("points:", tooltipEnd >= 0 ? tooltipEnd:0) + 8;
+               int x = route.IndexOf("points:", tooltipEnd >= 0 ? tooltipEnd : 0) + 8;
                if(x > 0)
                {
                   pointsEnd = route.IndexOf("\"", x + 1);
@@ -1471,7 +1471,7 @@ namespace GMap.NET
 
                               do
                               {
-                                 b = encoded[index++] - 63;
+                                 b = encoded [index++] - 63;
                                  result |= (b & 0x1f) << shift;
                                  shift += 5;
 
@@ -1486,7 +1486,7 @@ namespace GMap.NET
                               {
                                  do
                                  {
-                                    b = encoded[index++] - 63;
+                                    b = encoded [index++] - 63;
                                     result |= (b & 0x1f) << shift;
                                     shift += 5;
                                  }
@@ -1507,7 +1507,7 @@ namespace GMap.NET
             string levels = string.Empty;
             int levelsEnd = 0;
             {
-               int x = route.IndexOf("levels:", pointsEnd >= 0 ? pointsEnd:0) + 8;
+               int x = route.IndexOf("levels:", pointsEnd >= 0 ? pointsEnd : 0) + 8;
                if(x > 0)
                {
                   levelsEnd = route.IndexOf("\"", x + 1);
@@ -1525,7 +1525,7 @@ namespace GMap.NET
             // numLevel             
             int numLevelsEnd = 0;
             {
-               int x = route.IndexOf("numLevels:", levelsEnd >= 0 ? levelsEnd:0) + 10;
+               int x = route.IndexOf("numLevels:", levelsEnd >= 0 ? levelsEnd : 0) + 10;
                if(x > 0)
                {
                   numLevelsEnd = route.IndexOf(",", x);
@@ -1542,7 +1542,7 @@ namespace GMap.NET
 
             // zoomFactor             
             {
-               int x = route.IndexOf("zoomFactor:", numLevelsEnd >= 0 ? numLevelsEnd:0) + 11;
+               int x = route.IndexOf("zoomFactor:", numLevelsEnd >= 0 ? numLevelsEnd : 0) + 11;
                if(x > 0)
                {
                   int end = route.IndexOf("}", x);
@@ -1574,15 +1574,15 @@ namespace GMap.NET
                }
 
                // used letters in levels string
-               string pLevels = allZlevels.Substring(allZlevels.Length-numLevel);
+               string pLevels = allZlevels.Substring(allZlevels.Length - numLevel);
 
                // remove useless points at zoom
                for(int i = 0; i < levels.Length; i++)
                {
-                  int zi = pLevels.IndexOf(levels[i]);
+                  int zi = pLevels.IndexOf(levels [i]);
                   if(zi > 0 && i < points.Count)
                   {
-                     if(zi*numLevel > zoom)
+                     if(zi * numLevel > zoom)
                      {
                         points.RemoveAt(i);
                      }
@@ -1665,7 +1665,7 @@ namespace GMap.NET
                   request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
                   request.UserAgent = UserAgent;
                   request.Timeout = Timeout;
-                  request.ReadWriteTimeout = Timeout*6;
+                  request.ReadWriteTimeout = Timeout * 6;
                   request.KeepAlive = true;
 
                   switch(type)
