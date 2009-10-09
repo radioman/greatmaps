@@ -8,6 +8,11 @@ namespace GMap.NET.Internals
    using System.Threading;
    using GMap.NET.Projections;
 
+#if PocketPC
+   using OpenNETCF.ComponentModel;
+   using OpenNETCF.Threading;  
+#endif
+
    /// <summary>
    /// internal map control core
    /// </summary>

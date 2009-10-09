@@ -172,11 +172,11 @@ namespace ProjNet.CoordinateSystems
 			get
 			{
 				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat("DATUM[\"{0}\", {1}", Name, _Ellipsoid.WKT);
+				sb.AppendFormat(CultureInfo.InvariantCulture, "DATUM[\"{0}\", {1}", Name, _Ellipsoid.WKT);
 				if (_Wgs84ConversionInfo != null)
-					sb.AppendFormat(", {0}", _Wgs84ConversionInfo.WKT);
+					sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", _Wgs84ConversionInfo.WKT);
 				if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
-					sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+					sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
 				sb.Append("]");
 				return sb.ToString();
 			}

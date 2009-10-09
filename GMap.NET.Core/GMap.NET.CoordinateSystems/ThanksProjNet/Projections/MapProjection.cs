@@ -209,9 +209,9 @@ namespace ProjNet.CoordinateSystems.Projections
 				StringBuilder sb = new StringBuilder();
 				if (_isInverse)
 					sb.Append("INVERSE_MT[");
-				sb.AppendFormat("PARAM_MT[\"{0}\"", this.Name);
+                sb.AppendFormat(CultureInfo.InvariantCulture, "PARAM_MT[\"{0}\"", this.Name);
 				for (int i = 0; i < this.NumParameters; i++)
-					sb.AppendFormat(", {0}", this.GetParameter(i).WKT);
+                   sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.GetParameter(i).WKT);
 				//if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
 				//	sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
 				sb.Append("]");
@@ -231,11 +231,11 @@ namespace ProjNet.CoordinateSystems.Projections
 				StringBuilder sb = new StringBuilder();
 				sb.Append("<CT_MathTransform>");
 				if (_isInverse)
-					sb.AppendFormat("<CT_InverseTransform Name=\"{0}\">", ClassName);
+					sb.AppendFormat(CultureInfo.InvariantCulture, "<CT_InverseTransform Name=\"{0}\">", ClassName);
 				else
-					sb.AppendFormat("<CT_ParameterizedMathTransform Name=\"{0}\">", ClassName);
+                   sb.AppendFormat(CultureInfo.InvariantCulture, "<CT_ParameterizedMathTransform Name=\"{0}\">", ClassName);
 				for (int i = 0; i < this.NumParameters; i++)
-					sb.AppendFormat(this.GetParameter(i).XML);
+                   sb.AppendFormat(CultureInfo.InvariantCulture, this.GetParameter(i).XML);
 				if (_isInverse)
 					sb.Append("</CT_InverseTransform>");
 				else

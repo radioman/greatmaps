@@ -103,7 +103,6 @@ namespace System.Windows.Forms
       /// <summary>
       /// shows tile gridlines
       /// </summary>
-      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public bool ShowTileGridLines
       {
          get
@@ -607,6 +606,7 @@ namespace System.Windows.Forms
          }
       }
 
+#if !PocketPC
       protected override void OnLoad(EventArgs e)
       {
          base.OnLoad(e);
@@ -621,6 +621,23 @@ namespace System.Windows.Forms
             this.BeginInvoke(m);
          }
       }
+
+#else
+      delegate void MethodInvoker();
+
+      protected override void OnHandleCreated(EventArgs e)
+      {
+         base.OnHandleCreated(e);
+         {
+            MethodInvoker m = delegate
+            {
+               Thread.Sleep(222);
+               Core.StartSystem();
+            };
+            this.BeginInvoke(m);
+         }
+      }
+#endif
 
       PointLatLng selectionStart;
       PointLatLng selectionEnd;
@@ -750,6 +767,7 @@ namespace System.Windows.Forms
          base.OnPaint(e);
       }
 
+#if !PocketPC
       protected override void OnSizeChanged(EventArgs e)
       {
          base.OnSizeChanged(e);
@@ -768,6 +786,26 @@ namespace System.Windows.Forms
             }
          }
       }
+#else
+      protected override void OnResize(EventArgs e)
+      {
+         base.OnResize(e);
+
+         if(!DesignMode && !DesignModeInConstruct)
+         {
+            Core.OnMapSizeChanged(Width, Height);
+
+            // 50px outside control
+            Core.CurrentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
+
+            if(Visible && IsHandleCreated)
+            {
+               // keep center on same position
+               Core.GoToCurrentPosition();
+            }
+         }
+      }
+#endif
 
       bool isSelected = false;
       protected override void OnMouseDown(MouseEventArgs e)
@@ -831,6 +869,7 @@ namespace System.Windows.Forms
          RaiseEmptyTileError = false;
       }
 
+#if !PocketPC
       protected override void OnMouseClick(MouseEventArgs e)
       {
          if(e.Button == MouseButtons.Left && !Core.IsDragging)
@@ -860,6 +899,7 @@ namespace System.Windows.Forms
 
          base.OnMouseClick(e);
       }
+#endif
 
       protected override void OnMouseMove(MouseEventArgs e)
       {
@@ -939,6 +979,7 @@ namespace System.Windows.Forms
          base.OnMouseMove(e);
       }
 
+#if !PocketPC
       protected override void OnMouseWheel(MouseEventArgs e)
       {
          base.OnMouseWheel(e);
@@ -971,7 +1012,7 @@ namespace System.Windows.Forms
             }
          }
       }
-
+#endif
       #endregion
 
       #region IGControl Members
@@ -1098,7 +1139,6 @@ namespace System.Windows.Forms
       /// <summary>
       /// map zoom level
       /// </summary>
-      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public int Zoom
       {
          get
@@ -1151,7 +1191,6 @@ namespace System.Windows.Forms
       /// <summary>
       /// location of cache
       /// </summary>
-      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public string CacheLocation
       {
          get
@@ -1209,7 +1248,6 @@ namespace System.Windows.Forms
       /// <summary>
       /// type of map
       /// </summary>
-      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public MapType MapType
       {
          get
@@ -1236,7 +1274,6 @@ namespace System.Windows.Forms
       /// <summary>
       /// is routes enabled
       /// </summary>
-      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public bool RoutesEnabled
       {
          get

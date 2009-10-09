@@ -1,0 +1,476 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{421813B1-A007-44B2-8C53-32751C45113E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GMap.NET.WindowsMobile</RootNamespace>
+    <AssemblyName>GMap.NET.WindowsMobile</AssemblyName>
+    <ProjectTypeGuids>{4D628B5B-2FBC-4AA6-8C16-197242AEB884};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <PlatformFamilyName>PocketPC</PlatformFamilyName>
+    <PlatformID>b2c48bd2-963d-4549-9169-1fa021dce484</PlatformID>
+    <OSVersion>5.2</OSVersion>
+    <DeployDirSuffix>GMap.NET.WindowsMobile</DeployDirSuffix>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <NativePlatformName>Windows Mobile 6 Professional SDK</NativePlatformName>
+    <FormFactorID>
+    </FormFactorID>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;PocketPC; SQLiteEnabled</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <FileAlignment>512</FileAlignment>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;PocketPC; SQLiteEnabled</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <FileAlignment>512</FileAlignment>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="OpenNETCF, Version=2.2.0.0, Culture=neutral, PublicKeyToken=e60dbea84bb431b7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\CompactFramework\OpenNETCF.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenNETCF.Drawing, Version=2.2.0.0, Culture=neutral, PublicKeyToken=e60dbea84bb431b7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\CompactFramework\OpenNETCF.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenNETCF.Windows.Forms, Version=2.2.0.0, Culture=neutral, PublicKeyToken=e60dbea84bb431b7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\CompactFramework\OpenNETCF.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SqlClient, Version=3.0.3600.0, Culture=neutral, PublicKeyToken=3be235df1c8d2ad3, processorArchitecture=MSIL" />
+    <Reference Include="System.Data.SQLite, Version=1.0.65.0, Culture=neutral, PublicKeyToken=1fdb50b1b62b4c84, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\CompactFramework\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SqlServerCe, Version=3.5.0.0, Culture=neutral, PublicKeyToken=3be235df1c8d2ad3, processorArchitecture=MSIL" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CacheProviders\MSSQLCEPureImageCache.cs">
+      <Link>GMap.NET.CacheProviders\MSSQLCEPureImageCache.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CacheProviders\MSSQLPureImageCache.cs">
+      <Link>GMap.NET.CacheProviders\MSSQLPureImageCache.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CacheProviders\SQLitePureImageCache.cs">
+      <Link>GMap.NET.CacheProviders\SQLitePureImageCache.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\IO\CoordinateSystemWktReader.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\IO\CoordinateSystemWktReader.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\IO\StreamTokenizer.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\IO\StreamTokenizer.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\IO\TokenType.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\IO\TokenType.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\IO\WKTStreamTokenizer.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\IO\WKTStreamTokenizer.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\AngularUnit.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\AngularUnit.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\AxisInfo.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\AxisInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\AxisOrientationEnum.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\AxisOrientationEnum.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\CoordinateSystem.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\CoordinateSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\CoordinateSystemFactory.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\CoordinateSystemFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\Datum.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\Datum.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\DatumType.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\DatumType.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\Ellipsoid.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\Ellipsoid.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\GeocentricCoordinateSystem.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\GeocentricCoordinateSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\GeographicCoordinateSystem.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\GeographicCoordinateSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\GeographicTransform.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\GeographicTransform.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\HorizontalCoordinateSystem.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\HorizontalCoordinateSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\HorizontalDatum.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\HorizontalDatum.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IAngularUnit.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IAngularUnit.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\ICompoundCoordinateSystem.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\ICompoundCoordinateSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\ICoordinateSystem.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\ICoordinateSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\ICoordinateSystemFactory.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\ICoordinateSystemFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IDatum.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IDatum.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IEllipsoid.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IEllipsoid.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IFittedCoordinateSystem.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IFittedCoordinateSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IGeocentricCoordinateSystem.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IGeocentricCoordinateSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IGeodeticSpatialReference.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IGeodeticSpatialReference.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IGeographicCoordinateSystem.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IGeographicCoordinateSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IGeographicTransform.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IGeographicTransform.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IHorizontalCoordinateSystem.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IHorizontalCoordinateSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IHorizontalDatum.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IHorizontalDatum.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IInfo.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\ILinearUnit.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\ILinearUnit.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\ILocalCoordinateSystem.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\ILocalCoordinateSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\ILocalDatum.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\ILocalDatum.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\Info.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\Info.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IParameterInfo.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IParameterInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IPrimeMeridian.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IPrimeMeridian.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IProjectedCoordinateSystem.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IProjectedCoordinateSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IProjection.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IProjection.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IUnit.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IUnit.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IVerticalCoordinateSystem.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IVerticalCoordinateSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\IVerticalDatum.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\IVerticalDatum.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\LinearUnit.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\LinearUnit.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\Parameter.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\PrimeMeridian.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\PrimeMeridian.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\ProjectedCoordinateSystem.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\ProjectedCoordinateSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\Projection.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\Projection.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\ProjectionParameter.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\ProjectionParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\Unit.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\Unit.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Main\WGS84ConversionInfo.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Main\WGS84ConversionInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Projections\AlbersProjection.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Projections\AlbersProjection.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Projections\KrovakProjection.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Projections\KrovakProjection.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Projections\LambertConformalConic.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Projections\LambertConformalConic.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Projections\MapProjection.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Projections\MapProjection.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Projections\Mercator.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Projections\Mercator.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Projections\TransverseMercator.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Projections\TransverseMercator.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\ConcatenatedTransform.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\ConcatenatedTransform.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\CoordinateTransformation.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\CoordinateTransformation.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\CoordinateTransformationAuthorityFactory.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\CoordinateTransformationAuthorityFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\CoordinateTransformationFactory.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\CoordinateTransformationFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\DatumTransform.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\DatumTransform.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\DomainFlags.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\DomainFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\GeocentricTransform.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\GeocentricTransform.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\GeographicTransform.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\GeographicTransform.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\ICoordinateSystemAuthorityFactory.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\ICoordinateSystemAuthorityFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\ICoordinateTransformation.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\ICoordinateTransformation.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\ICoordinateTransformationAuthorityFactory.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\ICoordinateTransformationAuthorityFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\ICoordinateTransformationFactory.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\ICoordinateTransformationFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\IMathTransform.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\IMathTransform.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\IMathTransformFactory.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\IMathTransformFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\MathTransform.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\MathTransform.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\TransformType.cs">
+      <Link>GMap.NET.CoordinateSystems\ThanksProjNet\Transformations\TransformType.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\Cache.cs">
+      <Link>GMap.NET.Internals\Cache.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\CacheQueue.cs">
+      <Link>GMap.NET.Internals\CacheQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\Core.cs">
+      <Link>GMap.NET.Internals\Core.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\KiberTileCache.cs">
+      <Link>GMap.NET.Internals\KiberTileCache.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\LoadTask.cs">
+      <Link>GMap.NET.Internals\LoadTask.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\PureImage.cs">
+      <Link>GMap.NET.Internals\PureImage.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\RawTile.cs">
+      <Link>GMap.NET.Internals\RawTile.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\Stuff.cs">
+      <Link>GMap.NET.Internals\Stuff.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\Tile.cs">
+      <Link>GMap.NET.Internals\Tile.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\TileMatrix.cs">
+      <Link>GMap.NET.Internals\TileMatrix.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\MapsLTProjection.cs">
+      <Link>GMap.NET.Projections\MapsLTProjection.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\MercatorProjection.cs">
+      <Link>GMap.NET.Projections\MercatorProjection.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\PlateCarreeProjection.cs">
+      <Link>GMap.NET.Projections\PlateCarreeProjection.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\AccessMode.cs">
+      <Link>GMap.NET\AccessMode.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\Delegates.cs">
+      <Link>GMap.NET\Delegates.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\GeoCoderStatusCode.cs">
+      <Link>GMap.NET\GeoCoderStatusCode.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\GMaps.cs">
+      <Link>GMap.NET\GMaps.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\IGControl.cs">
+      <Link>GMap.NET\IGControl.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\Kml.cs">
+      <Link>GMap.NET\Kml.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\MapRoute.cs">
+      <Link>GMap.NET\MapRoute.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\MapType.cs">
+      <Link>GMap.NET\MapType.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\MouseWheelZoomType.cs">
+      <Link>GMap.NET\MouseWheelZoomType.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\Placemark.cs">
+      <Link>GMap.NET\Placemark.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\Point.cs">
+      <Link>GMap.NET\Point.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\PointLatLng.cs">
+      <Link>GMap.NET\PointLatLng.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\PureImageCache.cs">
+      <Link>GMap.NET\PureImageCache.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\PureProjection.cs">
+      <Link>GMap.NET\PureProjection.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\Rectangle.cs">
+      <Link>GMap.NET\Rectangle.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\RectLatLng.cs">
+      <Link>GMap.NET\RectLatLng.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\RenderMode.cs">
+      <Link>GMap.NET\RenderMode.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\Singleton.cs">
+      <Link>GMap.NET\Singleton.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\Size.cs">
+      <Link>GMap.NET\Size.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\SizeLatLng.cs">
+      <Link>GMap.NET\SizeLatLng.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.ObjectModel\ObservableCollection.cs">
+      <Link>GMap.NET.ObjectModel\ObservableCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.ObjectModel\ObservableCollectionThreadSafe.cs">
+      <Link>GMap.NET.ObjectModel\ObservableCollectionThreadSafe.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms.Markers\GMapMarkerCross.cs">
+      <Link>GMap.NET.WindowsForms.Markers\GMapMarkerCross.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms.Markers\GMapMarkerGoogleGreen.cs">
+      <Link>GMap.NET.WindowsForms.Markers\GMapMarkerGoogleGreen.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms.Markers\GMapMarkerGoogleRed.cs">
+      <Link>GMap.NET.WindowsForms.Markers\GMapMarkerGoogleRed.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\GMapMarker.cs">
+      <Link>GMap.NET.WindowsForms\GMapMarker.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\GMapOverlay.cs">
+      <Link>GMap.NET.WindowsForms\GMapOverlay.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\GMapRoute.cs">
+      <Link>GMap.NET.WindowsForms\GMapRoute.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\WindowsFormsImage.cs">
+      <Link>GMap.NET.WindowsForms\WindowsFormsImage.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\System.Windows.Forms\GMapControl.cs">
+      <Link>System.Windows.Forms\GMapControl.cs</Link>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="System.Threading\ReaderWriterLock.cs" />
+    <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sn.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bigMarkerGreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\drag_cross_67_16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\marker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shadow50.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}">
+        <HostingProcess disable="1" />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

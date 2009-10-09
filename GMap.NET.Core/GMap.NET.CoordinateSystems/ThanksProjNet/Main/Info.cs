@@ -17,6 +17,7 @@
 
 using System;
 using System.Text;
+using System.Globalization;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -161,11 +162,12 @@ namespace ProjNet.CoordinateSystems
 			get
 			{
 				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat("<CS_Info");
-				if(AuthorityCode>0) sb.AppendFormat(" AuthorityCode=\"{0}\"",AuthorityCode);
-				if (!String.IsNullOrEmpty(Abbreviation)) sb.AppendFormat(" Abbreviation=\"{0}\"", Abbreviation);
-				if (!String.IsNullOrEmpty(Authority)) sb.AppendFormat(" Authority=\"{0}\"", Authority);
-				if (!String.IsNullOrEmpty(Name)) sb.AppendFormat(" Name=\"{0}\"", Name);
+				sb.Append("<CS_Info");
+                if(AuthorityCode>0)
+                   sb.AppendFormat(CultureInfo.InvariantCulture, " AuthorityCode=\"{0}\"", AuthorityCode);
+				if (!String.IsNullOrEmpty(Abbreviation)) sb.AppendFormat(CultureInfo.InvariantCulture, " Abbreviation=\"{0}\"", Abbreviation);
+				if (!String.IsNullOrEmpty(Authority)) sb.AppendFormat(CultureInfo.InvariantCulture, " Authority=\"{0}\"", Authority);
+				if (!String.IsNullOrEmpty(Name)) sb.AppendFormat(CultureInfo.InvariantCulture, " Name=\"{0}\"", Name);
 				sb.Append("/>");
 				return sb.ToString();
 			}

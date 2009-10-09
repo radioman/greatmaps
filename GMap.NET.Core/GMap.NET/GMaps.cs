@@ -14,6 +14,10 @@ namespace GMap.NET
    using GMap.NET.CacheProviders;
    using GMap.NET.Internals;
 
+#if PocketPC
+   using OpenNETCF.ComponentModel;
+#endif
+
    /// <summary>
    /// maps manager
    /// </summary>
@@ -763,14 +767,28 @@ namespace GMap.NET
             #region -- OpenStreet --
             case MapType.OpenStreetMap:
             {
-               char letter = "abc" [GetServerNum(pos, 3)];
+               char letter = "abc"[GetServerNum(pos, 3)];
                return string.Format("http://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
             }
 
             case MapType.OpenStreetOsm:
             {
-               char letter = "abc" [GetServerNum(pos, 3)];
+               char letter = "abc"[GetServerNum(pos, 3)];
                return string.Format("http://{0}.tah.openstreetmap.org/Tiles/tile/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
+            }
+
+            case MapType.OpenStreetMapSurfer:
+            {
+               // http://tiles1.mapsurfer.net/tms_r.ashx?x=37378&y=20826&z=16
+
+               return string.Format("http://tiles1.mapsurfer.net/tms_r.ashx?x={0}&y={1}&z={2}", pos.X, pos.Y, zoom);
+            }
+
+            case MapType.OpenStreetMapSurferTerrain:
+            {
+               // http://tiles2.mapsurfer.net/tms_t.ashx?x=9346&y=5209&z=14
+
+               return string.Format("http://tiles2.mapsurfer.net/tms_t.ashx?x={0}&y={1}&z={2}", pos.X, pos.Y, zoom);
             }
             #endregion
 
@@ -1068,7 +1086,7 @@ namespace GMap.NET
                               if(!string.IsNullOrEmpty(api))
                               {
                                  int i = 0;
-                                 string [] opts = api.Split(new string [] { "[\"" }, StringSplitOptions.RemoveEmptyEntries);
+                                 string[] opts = api.Split(new string[] { "[\"" }, StringSplitOptions.RemoveEmptyEntries);
                                  foreach(string opt in opts)
                                  {
                                     if(opt.Contains("http://"))
@@ -1095,48 +1113,48 @@ namespace GMap.NET
                                                 }
                                              }
                                              else
-                                             if(i == 1)
-                                             {
-                                                // 45
-                                                if(char.IsDigit(u [0]))
+                                                if(i == 1)
                                                 {
-                                                   Debug.WriteLine("TryCorrectGoogleVersions[satelite]: " + u);
-                                                   VersionGoogleSatellite = u;
+                                                   // 45
+                                                   if(char.IsDigit(u[0]))
+                                                   {
+                                                      Debug.WriteLine("TryCorrectGoogleVersions[satelite]: " + u);
+                                                      VersionGoogleSatellite = u;
+                                                   }
+                                                   else
+                                                   {
+                                                      Debug.WriteLine("TryCorrectGoogleVersions[satelite FAILED]: " + u);
+                                                   }
                                                 }
                                                 else
-                                                {
-                                                   Debug.WriteLine("TryCorrectGoogleVersions[satelite FAILED]: " + u);
-                                                }
-                                             }
-                                             else
-                                             if(i == 2)
-                                             {
-                                                if(u.StartsWith("h@"))
-                                                {
-                                                   Debug.WriteLine("TryCorrectGoogleVersions[labels]: " + u);
-                                                   VersionGoogleLabels = u;                                      
-                                                }
-                                                else
-                                                {
-                                                   Debug.WriteLine("TryCorrectGoogleVersions[labels FAILED]: " + u);
-                                                }
-                                             }
-                                             else
-                                             if(i == 3)
-                                             {
-                                                // w2p.106
-                                                if(u.StartsWith("w2p"))
-                                                {
-                                                   Debug.WriteLine("TryCorrectGoogleVersions[terrain]: " + u);
-                                                   VersionGoogleTerrain = u;
-                                                   VersionGoogleTerrainChina = u;
-                                                }
-                                                else
-                                                {
-                                                   Debug.WriteLine("TryCorrectGoogleVersions[terrain FAILED]: " + u);
-                                                }
-                                                break;
-                                             }
+                                                   if(i == 2)
+                                                   {
+                                                      if(u.StartsWith("h@"))
+                                                      {
+                                                         Debug.WriteLine("TryCorrectGoogleVersions[labels]: " + u);
+                                                         VersionGoogleLabels = u;
+                                                      }
+                                                      else
+                                                      {
+                                                         Debug.WriteLine("TryCorrectGoogleVersions[labels FAILED]: " + u);
+                                                      }
+                                                   }
+                                                   else
+                                                      if(i == 3)
+                                                      {
+                                                         // w2p.106
+                                                         if(u.StartsWith("w2p"))
+                                                         {
+                                                            Debug.WriteLine("TryCorrectGoogleVersions[terrain]: " + u);
+                                                            VersionGoogleTerrain = u;
+                                                            VersionGoogleTerrainChina = u;
+                                                         }
+                                                         else
+                                                         {
+                                                            Debug.WriteLine("TryCorrectGoogleVersions[terrain FAILED]: " + u);
+                                                         }
+                                                         break;
+                                                      }
                                              i++;
                                           }
                                        }
@@ -1215,7 +1233,7 @@ namespace GMap.NET
          {
             string urlEnd = url.Substring(url.IndexOf("geo?q="));
 
-            char [] ilg = Path.GetInvalidFileNameChars();
+            char[] ilg = Path.GetInvalidFileNameChars();
             foreach(char c in ilg)
             {
                urlEnd = urlEnd.Replace(c, '_');
@@ -1256,14 +1274,14 @@ namespace GMap.NET
             // true : 200,4,56.1451640,22.0681787
             // false: 602,0,0,0
             {
-               string [] values = geo.Split(',');
+               string[] values = geo.Split(',');
                if(values.Length == 4)
                {
-                  status = (GeoCoderStatusCode) int.Parse(values [0]);
+                  status = (GeoCoderStatusCode) int.Parse(values[0]);
                   if(status == GeoCoderStatusCode.G_GEO_SUCCESS)
                   {
-                     double lat = double.Parse(values [2], CultureInfo.InvariantCulture);
-                     double lng = double.Parse(values [3], CultureInfo.InvariantCulture);
+                     double lat = double.Parse(values[2], CultureInfo.InvariantCulture);
+                     double lng = double.Parse(values[3], CultureInfo.InvariantCulture);
 
                      ret = new PointLatLng(lat, lng);
                   }
@@ -1291,7 +1309,7 @@ namespace GMap.NET
          {
             string urlEnd = url.Substring(url.IndexOf("geo?hl="));
 
-            char [] ilg = Path.GetInvalidFileNameChars();
+            char[] ilg = Path.GetInvalidFileNameChars();
             foreach(char c in ilg)
             {
                urlEnd = urlEnd.Replace(c, '_');
@@ -1366,7 +1384,7 @@ namespace GMap.NET
          {
             string urlEnd = url.Substring(url.IndexOf("&hl="));
 
-            char [] ilg = Path.GetInvalidFileNameChars();
+            char[] ilg = Path.GetInvalidFileNameChars();
             foreach(char c in ilg)
             {
                urlEnd = urlEnd.Replace(c, '_');
@@ -1471,7 +1489,7 @@ namespace GMap.NET
 
                               do
                               {
-                                 b = encoded [index++] - 63;
+                                 b = encoded[index++] - 63;
                                  result |= (b & 0x1f) << shift;
                                  shift += 5;
 
@@ -1486,7 +1504,7 @@ namespace GMap.NET
                               {
                                  do
                                  {
-                                    b = encoded [index++] - 63;
+                                    b = encoded[index++] - 63;
                                     result |= (b & 0x1f) << shift;
                                     shift += 5;
                                  }
@@ -1579,7 +1597,7 @@ namespace GMap.NET
                // remove useless points at zoom
                for(int i = 0; i < levels.Length; i++)
                {
-                  int zi = pLevels.IndexOf(levels [i]);
+                  int zi = pLevels.IndexOf(levels[i]);
                   if(zi > 0 && i < points.Count)
                   {
                      if(zi * numLevel > zoom)
@@ -1712,9 +1730,23 @@ namespace GMap.NET
                      case MapType.ArcGIS_MapsLT_OrtoFoto:
                      case MapType.ArcGIS_MapsLT_Map_Hybrid:
                      {
-                        request.Referer = "Referer: http://arcgis.maps.lt/";
+                        request.Referer = "http://arcgis.maps.lt/";
                      }
                      break;
+
+                     case MapType.OpenStreetMapSurfer:
+                     case MapType.OpenStreetMapSurferTerrain:
+                     {
+                        request.Referer = "http://www.mapsurfer.net/";
+                     }
+                     break;
+
+                     case MapType.OpenStreetMap:
+                     case MapType.OpenStreetOsm:
+                     {
+                        request.Referer = "http://www.openstreetmap.org/";
+                     }
+                     break;                      
                   }
 
                   using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
