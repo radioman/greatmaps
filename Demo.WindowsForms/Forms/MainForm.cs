@@ -159,6 +159,13 @@ namespace Demo.WindowsForms
             }
             break;
 
+            case MapType.OpenStreetMapSurfer:
+            case MapType.OpenStreetMapSurferTerrain:
+            {
+               MainMap.MaxZoom = 19;
+            }
+            break;
+
             default:
             {
                MainMap.MaxZoom = 17;

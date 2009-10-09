@@ -234,7 +234,14 @@ namespace Demo.WindowsPresentation
             case MapType.ArcGIS_MapsLT_Map:
             case MapType.ArcGIS_MapsLT_OrtoFoto:
             {
-               MainMap.MaxZoom = 12;
+               MainMap.MaxZoom = 11;
+            }
+            break;
+
+            case MapType.OpenStreetMapSurfer:
+            case MapType.OpenStreetMapSurferTerrain:
+            {
+               MainMap.MaxZoom = 19;
             }
             break;
 
@@ -348,38 +355,6 @@ namespace Demo.WindowsPresentation
       private void comboBoxMapType_DropDownClosed(object sender, EventArgs e)
       {
          MainMap.MapType = (MapType) comboBoxMapType.SelectedItem;
-         switch(MainMap.MapType)
-         {
-            case MapType.ArcGIS_Map:
-            case MapType.ArcGIS_Satellite:
-            case MapType.ArcGIS_ShadedRelief:
-            case MapType.ArcGIS_Terrain:
-            {
-               MainMap.MaxZoom = 13;
-            }
-            break;
-
-            case MapType.ArcGIS_MapsLT_Map_Hybrid:
-            case MapType.ArcGIS_MapsLT_Map_Labels:
-            case MapType.ArcGIS_MapsLT_Map:
-            case MapType.ArcGIS_MapsLT_OrtoFoto:
-            {
-               MainMap.MaxZoom = 12;
-            }
-            break;
-
-            default:
-            {
-               MainMap.MaxZoom = 17;
-            }
-            break;
-         }
-
-         if(MainMap.Zoom > MainMap.MaxZoom)
-         {
-            MainMap.Zoom = MainMap.MaxZoom;
-         }
-         sliderZoom.Maximum = MainMap.MaxZoom;
       }
 
       // enable current marker
