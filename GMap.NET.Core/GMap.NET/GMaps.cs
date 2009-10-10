@@ -42,7 +42,7 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.2";
 
       // BingMaps
-      public string VersionBingMaps = "330";
+      public string VersionBingMaps = "346";
 
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
