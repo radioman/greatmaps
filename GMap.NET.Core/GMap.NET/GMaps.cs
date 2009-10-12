@@ -64,10 +64,24 @@ namespace GMap.NET
       /// </summary>
       public AccessMode Mode = AccessMode.ServerAndCache;
 
+      internal string LanguageStr;
+      LanguageType language = LanguageType.English;
+
       /// <summary>
-      /// language for map
+      /// map language
       /// </summary>
-      public string Language = "en";
+      public LanguageType Language
+      {
+         get
+         {
+            return language;
+         }
+         set
+         {
+            language = value;
+            LanguageStr = Stuff.EnumToString(Language);
+         }
+      }
 
       /// <summary>
       /// is map ussing cache for routing
@@ -260,6 +274,8 @@ namespace GMap.NET
          }
          #endregion
 
+         Language = LanguageType.English;
+
          cacher.DoWork += new DoWorkEventHandler(cacher_DoWork);
          cacher.WorkerSupportsCancellation = true;
       }
@@ -388,7 +404,7 @@ namespace GMap.NET
          int numLevels;
          int zoomFactor;
          MapRoute ret = null;
-         List<PointLatLng> points = GetRouteBetweenPointsUrl(MakeRouteUrl(start, end, Language, avoidHighways), Zoom, UseRouteCache, out tooltip, out numLevels, out zoomFactor);
+         List<PointLatLng> points = GetRouteBetweenPointsUrl(MakeRouteUrl(start, end, LanguageStr, avoidHighways), Zoom, UseRouteCache, out tooltip, out numLevels, out zoomFactor);
          if(points != null)
          {
             ret = new MapRoute(points, tooltip);
@@ -406,7 +422,7 @@ namespace GMap.NET
       /// <returns></returns>
       public KmlType GetRouteBetweenPointsKml(PointLatLng start, PointLatLng end, bool avoidHighways)
       {
-         return GetRouteBetweenPointsKmlUrl(MakeRouteAndDirectionsKmlUrl(start, end, Language, avoidHighways));
+         return GetRouteBetweenPointsKmlUrl(MakeRouteAndDirectionsKmlUrl(start, end, LanguageStr, avoidHighways));
       }
 
       /// <summary>
@@ -419,7 +435,7 @@ namespace GMap.NET
       /// <returns></returns>
       public KmlType GetRouteBetweenPointsKml(string start, string end, bool avoidHighways)
       {
-         return GetRouteBetweenPointsKmlUrl(MakeRouteAndDirectionsKmlUrl(start, end, Language, avoidHighways));
+         return GetRouteBetweenPointsKmlUrl(MakeRouteAndDirectionsKmlUrl(start, end, LanguageStr, avoidHighways));
       }
 
       /// <summary>
@@ -436,7 +452,7 @@ namespace GMap.NET
          int numLevels;
          int zoomFactor;
          MapRoute ret = null;
-         List<PointLatLng> points = GetRouteBetweenPointsUrl(MakeRouteUrl(start, end, Language, avoidHighways), Zoom, UseRouteCache, out tooltip, out numLevels, out zoomFactor);
+         List<PointLatLng> points = GetRouteBetweenPointsUrl(MakeRouteUrl(start, end, LanguageStr, avoidHighways), Zoom, UseRouteCache, out tooltip, out numLevels, out zoomFactor);
          if(points != null)
          {
             ret = new MapRoute(points, tooltip);
@@ -457,7 +473,7 @@ namespace GMap.NET
          int numLevels;
          int zoomFactor;
          MapRoute ret = null;
-         List<PointLatLng> points = GetRouteBetweenPointsUrl(MakeWalkingRouteUrl(start, end, Language), Zoom, UseRouteCache, out tooltip, out numLevels, out zoomFactor);
+         List<PointLatLng> points = GetRouteBetweenPointsUrl(MakeWalkingRouteUrl(start, end, LanguageStr), Zoom, UseRouteCache, out tooltip, out numLevels, out zoomFactor);
          if(points != null)
          {
             ret = new MapRoute(points, tooltip);
@@ -478,7 +494,7 @@ namespace GMap.NET
          int numLevels;
          int zoomFactor;
          MapRoute ret = null;
-         List<PointLatLng> points = GetRouteBetweenPointsUrl(MakeWalkingRouteUrl(start, end, Language), Zoom, UseRouteCache, out tooltip, out numLevels, out zoomFactor);
+         List<PointLatLng> points = GetRouteBetweenPointsUrl(MakeWalkingRouteUrl(start, end, LanguageStr), Zoom, UseRouteCache, out tooltip, out numLevels, out zoomFactor);
          if(points != null)
          {
             ret = new MapRoute(points, tooltip);
@@ -504,7 +520,7 @@ namespace GMap.NET
       /// <returns></returns>
       public Placemark GetPlacemarkFromGeocoder(PointLatLng location)
       {
-         return GetPlacemarkFromReverseGeocoderUrl(MakeReverseGeocoderUrl(location, Language), UsePlacemarkCache);
+         return GetPlacemarkFromReverseGeocoderUrl(MakeReverseGeocoderUrl(location, LanguageStr), UsePlacemarkCache);
       }
 
 #if SQLiteEnabled
@@ -518,7 +534,7 @@ namespace GMap.NET
       public bool ExportToGMDB(string file)
       {
          StringBuilder db = new StringBuilder(Cache.Instance.gtileCache);
-         db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.Language, Path.DirectorySeparatorChar);
+         db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
 
          return SQLitePureImageCache.ExportMapDataToDB(db.ToString(), file);
       }
@@ -532,7 +548,7 @@ namespace GMap.NET
       public bool ImportFromGMDB(string file)
       {
          StringBuilder db = new StringBuilder(Cache.Instance.gtileCache);
-         db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.Language, Path.DirectorySeparatorChar);
+         db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
 
          return SQLitePureImageCache.ExportMapDataToDB(file, db.ToString());
       }
@@ -767,13 +783,13 @@ namespace GMap.NET
             #region -- OpenStreet --
             case MapType.OpenStreetMap:
             {
-               char letter = "abc"[GetServerNum(pos, 3)];
+               char letter = "abc" [GetServerNum(pos, 3)];
                return string.Format("http://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
             }
 
             case MapType.OpenStreetOsm:
             {
-               char letter = "abc"[GetServerNum(pos, 3)];
+               char letter = "abc" [GetServerNum(pos, 3)];
                return string.Format("http://{0}.tah.openstreetmap.org/Tiles/tile/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
             }
 
@@ -1094,7 +1110,7 @@ namespace GMap.NET
                               if(!string.IsNullOrEmpty(api))
                               {
                                  int i = 0;
-                                 string[] opts = api.Split(new string[] { "[\"" }, StringSplitOptions.RemoveEmptyEntries);
+                                 string [] opts = api.Split(new string [] { "[\"" }, StringSplitOptions.RemoveEmptyEntries);
                                  foreach(string opt in opts)
                                  {
                                     if(opt.Contains("http://"))
@@ -1124,7 +1140,7 @@ namespace GMap.NET
                                                 if(i == 1)
                                                 {
                                                    // 45
-                                                   if(char.IsDigit(u[0]))
+                                                   if(char.IsDigit(u [0]))
                                                    {
                                                       Debug.WriteLine("TryCorrectGoogleVersions[satelite]: " + u);
                                                       VersionGoogleSatellite = u;
@@ -1249,7 +1265,7 @@ namespace GMap.NET
          {
             string urlEnd = url.Substring(url.IndexOf("geo?q="));
 
-            char[] ilg = Path.GetInvalidFileNameChars();
+            char [] ilg = Path.GetInvalidFileNameChars();
             foreach(char c in ilg)
             {
                urlEnd = urlEnd.Replace(c, '_');
@@ -1298,14 +1314,14 @@ namespace GMap.NET
             // true : 200,4,56.1451640,22.0681787
             // false: 602,0,0,0
             {
-               string[] values = geo.Split(',');
+               string [] values = geo.Split(',');
                if(values.Length == 4)
                {
-                  status = (GeoCoderStatusCode) int.Parse(values[0]);
+                  status = (GeoCoderStatusCode) int.Parse(values [0]);
                   if(status == GeoCoderStatusCode.G_GEO_SUCCESS)
                   {
-                     double lat = double.Parse(values[2], CultureInfo.InvariantCulture);
-                     double lng = double.Parse(values[3], CultureInfo.InvariantCulture);
+                     double lat = double.Parse(values [2], CultureInfo.InvariantCulture);
+                     double lng = double.Parse(values [3], CultureInfo.InvariantCulture);
 
                      ret = new PointLatLng(lat, lng);
                   }
@@ -1333,7 +1349,7 @@ namespace GMap.NET
          {
             string urlEnd = url.Substring(url.IndexOf("geo?hl="));
 
-            char[] ilg = Path.GetInvalidFileNameChars();
+            char [] ilg = Path.GetInvalidFileNameChars();
             foreach(char c in ilg)
             {
                urlEnd = urlEnd.Replace(c, '_');
@@ -1416,7 +1432,7 @@ namespace GMap.NET
          {
             string urlEnd = url.Substring(url.IndexOf("&hl="));
 
-            char[] ilg = Path.GetInvalidFileNameChars();
+            char [] ilg = Path.GetInvalidFileNameChars();
             foreach(char c in ilg)
             {
                urlEnd = urlEnd.Replace(c, '_');
@@ -1529,7 +1545,7 @@ namespace GMap.NET
 
                               do
                               {
-                                 b = encoded[index++] - 63;
+                                 b = encoded [index++] - 63;
                                  result |= (b & 0x1f) << shift;
                                  shift += 5;
 
@@ -1544,7 +1560,7 @@ namespace GMap.NET
                               {
                                  do
                                  {
-                                    b = encoded[index++] - 63;
+                                    b = encoded [index++] - 63;
                                     result |= (b & 0x1f) << shift;
                                     shift += 5;
                                  }
@@ -1637,7 +1653,7 @@ namespace GMap.NET
                // remove useless points at zoom
                for(int i = 0; i < levels.Length; i++)
                {
-                  int zi = pLevels.IndexOf(levels[i]);
+                  int zi = pLevels.IndexOf(levels [i]);
                   if(zi > 0 && i < points.Count)
                   {
                      if(zi * numLevel > zoom)
@@ -1716,7 +1732,7 @@ namespace GMap.NET
 
                if(Mode != AccessMode.CacheOnly)
                {
-                  string url = MakeImageUrl(type, pos, zoom, Language);
+                  string url = MakeImageUrl(type, pos, zoom, LanguageStr);
 
                   HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
                   if(Proxy != null)
@@ -1793,7 +1809,7 @@ namespace GMap.NET
                      {
                         request.Referer = "http://www.openstreetmap.org/";
                      }
-                     break;                      
+                     break;
                   }
 
                   using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)

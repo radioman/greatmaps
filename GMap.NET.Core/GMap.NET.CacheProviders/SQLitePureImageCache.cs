@@ -203,7 +203,7 @@ namespace GMap.NET.CacheProviders
          try
          {
             StringBuilder dir = new StringBuilder(gtileCache);
-            dir.AppendFormat("{0}{1}", GMaps.Instance.Language, Path.DirectorySeparatorChar);
+            dir.AppendFormat("{0}{1}", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
 
             string d = dir.ToString();
 
@@ -291,7 +291,7 @@ namespace GMap.NET.CacheProviders
          try
          {
             StringBuilder dir = new StringBuilder(gtileCache);
-            dir.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.Language, Path.DirectorySeparatorChar);
+            dir.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
 
             // get
             {

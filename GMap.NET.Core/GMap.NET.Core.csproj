@@ -71,7 +71,7 @@
     <Reference Include="System.Data.SqlServerCe, Version=3.5.1.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="System.Xml" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GMap.NET.CacheProviders\MsSQLCePureImageCache.cs" />
@@ -158,6 +158,7 @@
     <Compile Include="GMap.NET.Projections\PlateCarreeProjection.cs" />
     <Compile Include="GMap.NET\GeoCoderStatusCode.cs" />
     <None Include="GMap.NET.CacheProviders\MySQLPureImageCache.cs" />
+    <Compile Include="GMap.NET\LanguageType.cs" />
     <Compile Include="GMap.NET\PureProjection.cs" />
     <Compile Include="GMap.NET\IGControl.cs" />
     <Compile Include="GMap.NET\AccessMode.cs" />
