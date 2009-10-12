@@ -253,7 +253,7 @@ namespace Street_WpfApplication
                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
                request.ServicePoint.ConnectionLimit = 50;
                request.Proxy = WebRequest.DefaultWebProxy;
-
+               
                request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
                request.Timeout = 10*1000;
                request.ReadWriteTimeout = request.Timeout*6;

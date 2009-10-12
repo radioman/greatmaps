@@ -1057,7 +1057,15 @@ namespace GMap.NET
             try
             {
                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-               request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
+               if(Proxy != null)
+               {
+                  request.Proxy = Proxy;
+                  request.PreAuthenticate = true;
+               }
+               else
+               {
+                  request.Proxy = WebRequest.DefaultWebProxy;
+               }
                request.UserAgent = UserAgent;
                request.Timeout = Timeout;
                request.ReadWriteTimeout = Timeout * 6;
@@ -1187,7 +1195,15 @@ namespace GMap.NET
          {
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
             request.ServicePoint.ConnectionLimit = 50;
-            request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
+            if(Proxy != null)
+            {
+               request.Proxy = Proxy;
+               request.PreAuthenticate = true;
+            }
+            else
+            {
+               request.Proxy = WebRequest.DefaultWebProxy;
+            }
 
             request.UserAgent = UserAgent;
             request.Timeout = Timeout;
@@ -1245,7 +1261,15 @@ namespace GMap.NET
             {
                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
                request.ServicePoint.ConnectionLimit = 50;
-               request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
+               if(Proxy != null)
+               {
+                  request.Proxy = Proxy;
+                  request.PreAuthenticate = true;
+               }
+               else
+               {
+                  request.Proxy = WebRequest.DefaultWebProxy;
+               }
 
                request.UserAgent = UserAgent;
                request.Timeout = Timeout;
@@ -1321,7 +1345,15 @@ namespace GMap.NET
             {
                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
                request.ServicePoint.ConnectionLimit = 50;
-               request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
+               if(Proxy != null)
+               {
+                  request.Proxy = Proxy;
+                  request.PreAuthenticate = true;
+               }
+               else
+               {
+                  request.Proxy = WebRequest.DefaultWebProxy;
+               }
 
                request.UserAgent = UserAgent;
                request.Timeout = Timeout;
@@ -1396,7 +1428,15 @@ namespace GMap.NET
             {
                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
                request.ServicePoint.ConnectionLimit = 50;
-               request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
+               if(Proxy != null)
+               {
+                  request.Proxy = Proxy;
+                  request.PreAuthenticate = true;
+               }
+               else
+               {
+                  request.Proxy = WebRequest.DefaultWebProxy;
+               }
 
                request.UserAgent = UserAgent;
                request.Timeout = Timeout;
@@ -1679,8 +1719,15 @@ namespace GMap.NET
                   string url = MakeImageUrl(type, pos, zoom, Language);
 
                   HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-                  request.ServicePoint.ConnectionLimit = 50;
-                  request.Proxy = Proxy != null ? Proxy : WebRequest.DefaultWebProxy;
+                  if(Proxy != null)
+                  {
+                     request.Proxy = Proxy;
+                     request.PreAuthenticate = true;
+                  }
+                  else
+                  {
+                     request.Proxy = WebRequest.DefaultWebProxy;
+                  }
                   request.UserAgent = UserAgent;
                   request.Timeout = Timeout;
                   request.ReadWriteTimeout = Timeout * 6;
