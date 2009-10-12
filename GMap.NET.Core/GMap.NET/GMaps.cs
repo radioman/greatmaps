@@ -57,7 +57,7 @@ namespace GMap.NET
       /// <summary>
       /// proxy for net access
       /// </summary>
-      public WebProxy Proxy;
+      public IWebProxy Proxy;
 
       /// <summary>
       /// tile access mode
