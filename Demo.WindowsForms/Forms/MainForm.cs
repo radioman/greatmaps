@@ -47,7 +47,7 @@ namespace Demo.WindowsForms
 
             // config map 
             MainMap.MapType = MapType.ArcGIS_MapsLT_Map;
-            MainMap.MaxZoom = 12;
+            MainMap.MaxZoom = 11;
             MainMap.MinZoom = 3;
             MainMap.Zoom = MainMap.MinZoom;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);

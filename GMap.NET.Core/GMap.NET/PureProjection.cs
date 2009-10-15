@@ -80,7 +80,7 @@ namespace GMap.NET
       /// <returns></returns>
       public virtual Point FromPixelToTileXY(Point p)
       {
-         return new Point((int) (p.X/TileSize.Width), (int) (p.Y/TileSize.Height));
+         return new Point((int) (p.X / TileSize.Width), (int) (p.Y / TileSize.Height));
       }
 
       /// <summary>
@@ -90,7 +90,7 @@ namespace GMap.NET
       /// <returns></returns>
       public virtual Point FromTileXYToPixel(Point p)
       {
-         return new Point((p.X*TileSize.Width), (p.Y*TileSize.Height));
+         return new Point((p.X * TileSize.Width), (p.Y * TileSize.Height));
       }
 
       /// <summary>
@@ -117,7 +117,7 @@ namespace GMap.NET
          Size sMin = GetTileMatrixMinXY(zoom);
          Size sMax = GetTileMatrixMaxXY(zoom);
 
-         return new Size(sMax.Width - sMin.Width + 1, sMax.Height - sMin.Height  + 1);
+         return new Size(sMax.Width - sMin.Width + 1, sMax.Height - sMin.Height + 1);
       }
 
       /// <summary>
@@ -177,8 +177,159 @@ namespace GMap.NET
       /// <returns></returns>
       public virtual double GetGroundResolution(int zoom, double latitude)
       {
-         return (Math.Cos(latitude * (Math.PI/180)) * 2 * Math.PI * Axis) / GetTileMatrixSizePixel(zoom).Width;
+         return (Math.Cos(latitude * (Math.PI / 180)) * 2 * Math.PI * Axis) / GetTileMatrixSizePixel(zoom).Width;
       }
+
+      #region -- math functions --
+
+      /// <summary>
+      /// PI
+      /// </summary>
+      protected const double PI = Math.PI;
+
+      /// <summary>
+      /// Half of PI
+      /// </summary>
+      protected const double HALF_PI = (PI * 0.5);
+
+      /// <summary>
+      /// PI * 2
+      /// </summary>
+      protected const double TWO_PI = (PI * 2.0);
+
+      /// <summary>
+      /// EPSLoN
+      /// </summary>
+      protected const double EPSLoN = 1.0e-10;
+
+      /// <summary>
+      /// MAX_VAL
+      /// </summary>
+      protected const double MAX_VAL = 4;
+
+      /// <summary>
+      /// MAXLONG
+      /// </summary>
+      protected const double MAXLONG = 2147483647;
+
+      /// <summary>
+      /// DBLLONG
+      /// </summary>
+      protected const double DBLLONG = 4.61168601e18;
+
+      const double R2D = 180 / Math.PI;
+      const double D2R = Math.PI / 180;
+
+      public double DegreesToRadians(double deg)
+      {
+         return (D2R * deg);
+      }
+
+      public double RadiansToDegrees(double rad)
+      {
+         return (R2D * rad);
+      }
+
+      ///<summary>
+      /// return the sign of an argument 
+      ///</summary>
+      protected static double Sign(double x)
+      {
+         if(x < 0.0)
+            return (-1);
+         else
+            return (1);
+      }
+
+      protected static double AdjustLongitude(double x)
+      {
+         long count = 0;
+         while(true)
+         {
+            if(Math.Abs(x) <= PI)
+               break;
+            else
+               if(((long) Math.Abs(x / Math.PI)) < 2)
+                  x = x - (Sign(x) * TWO_PI);
+               else
+                  if(((long) Math.Abs(x / TWO_PI)) < MAXLONG)
+                  {
+                     x = x - (((long) (x / TWO_PI)) * TWO_PI);
+                  }
+                  else
+                     if(((long) Math.Abs(x / (MAXLONG * TWO_PI))) < MAXLONG)
+                     {
+                        x = x - (((long) (x / (MAXLONG * TWO_PI))) * (TWO_PI * MAXLONG));
+                     }
+                     else
+                        if(((long) Math.Abs(x / (DBLLONG * TWO_PI))) < MAXLONG)
+                        {
+                           x = x - (((long) (x / (DBLLONG * TWO_PI))) * (TWO_PI * DBLLONG));
+                        }
+                        else
+                           x = x - (Sign(x) * TWO_PI);
+            count++;
+            if(count > MAX_VAL)
+               break;
+         }
+         return (x);
+      }
+
+      /// <summary>
+      /// calculates the sine and cosine
+      /// </summary>
+      protected static void SinCos(double val, out double sin, out double cos)
+      {
+         sin = Math.Sin(val);
+         cos = Math.Cos(val);
+      }
+
+      /// <summary>
+      /// computes the constants e0, e1, e2, and e3 which are used
+      /// in a series for calculating the distance along a meridian.
+      /// </summary>
+      /// <param name="x">represents the eccentricity squared</param>
+      /// <returns></returns>
+      protected static double e0fn(double x)
+      {
+         return (1.0 - 0.25 * x * (1.0 + x / 16.0 * (3.0 + 1.25 * x)));
+      }
+
+      protected static double e1fn(double x)
+      {
+         return (0.375 * x * (1.0 + 0.25 * x * (1.0 + 0.46875 * x)));
+      }
+
+      protected static double e2fn(double x)
+      {
+         return (0.05859375 * x * x * (1.0 + 0.75 * x));
+      }
+
+      protected static double e3fn(double x)
+      {
+         return (x * x * x * (35.0 / 3072.0));
+      }
+
+      /// <summary>
+      /// computes the value of M which is the distance along a meridian
+      /// from the Equator to latitude phi.
+      /// </summary>
+      protected static double mlfn(double e0, double e1, double e2, double e3, double phi)
+      {
+         return (e0 * phi - e1 * Math.Sin(2.0 * phi) + e2 * Math.Sin(4.0 * phi) - e3 * Math.Sin(6.0 * phi));
+      }
+
+      /// <summary>
+      /// calculates UTM zone number
+      /// </summary>
+      /// <param name="lon">Longitude in degrees</param>
+      /// <returns></returns>
+      protected static long GetUTMzone(double lon)
+      {
+         return ((long) (((lon + 180.0) / 6.0) + 1.0));
+      }
+
+      #endregion
 
       /// <summary>
       /// Conversion from cartesian earth-sentered coordinates to geodetic coordinates in the given datum
@@ -194,13 +345,13 @@ namespace GMap.NET
          Lat = (Math.PI / 180) * Lat;
          Lng = (Math.PI / 180) * Lng;
 
-         double B = Axis*(1.0-Flattening);
-         double ee = 1.0 - (B/Axis)*(B/Axis);
-         double N = (Axis / Math.Sqrt(1.0-ee*Math.Sin(Lat)*Math.Sin(Lat)));
+         double B = Axis * (1.0 - Flattening);
+         double ee = 1.0 - (B / Axis) * (B / Axis);
+         double N = (Axis / Math.Sqrt(1.0 - ee * Math.Sin(Lat) * Math.Sin(Lat)));
 
-         X = (N+Height)*Math.Cos(Lat)*Math.Cos(Lng);
-         Y = (N+Height)*Math.Cos(Lat)*Math.Sin(Lng);
-         Z = (N*(B/Axis)*(B/Axis)+Height)*Math.Sin(Lat);
+         X = (N + Height) * Math.Cos(Lat) * Math.Cos(Lng);
+         Y = (N + Height) * Math.Cos(Lat) * Math.Sin(Lng);
+         Z = (N * (B / Axis) * (B / Axis) + Height) * Math.Sin(Lat);
       }
 
       /// <summary>
@@ -213,14 +364,14 @@ namespace GMap.NET
       /// <param name="Lon"></param>
       public void FromCartesianTGeodetic(double X, double Y, double Z, out double Lat, out double Lng)
       {
-         double E = Flattening*(2.0-Flattening);
-         Lng  = Math.Atan2(Y, X);
+         double E = Flattening * (2.0 - Flattening);
+         Lng = Math.Atan2(Y, X);
 
-         double P     = Math.Sqrt(X*X + Y*Y);
-         double Theta = Math.Atan2(Z, (P*(1.0-Flattening)));
-         double st    = Math.Sin(Theta);
-         double ct    = Math.Cos(Theta);
-         Lat  = Math.Atan2(Z+E/(1.0-Flattening)*Axis*st*st*st, P-E*Axis*ct*ct*ct);
+         double P = Math.Sqrt(X * X + Y * Y);
+         double Theta = Math.Atan2(Z, (P * (1.0 - Flattening)));
+         double st = Math.Sin(Theta);
+         double ct = Math.Cos(Theta);
+         Lat = Math.Atan2(Z + E / (1.0 - Flattening) * Axis * st * st * st, P - E * Axis * ct * ct * ct);
 
          Lat /= (Math.PI / 180);
          Lng /= (Math.PI / 180);
