@@ -53,8 +53,8 @@
             <Grid>
                 <Button Margin="0,0,12,6" Name="button3" Click="button3_Click" Height="23" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="65">Prefetch</Button>
                 <Button Height="23" HorizontalAlignment="Left" Margin="6,0,0,6" Name="button4" VerticalAlignment="Bottom" Width="68" Click="button4_Click">Clear All</Button>
-                <Button HorizontalAlignment="Right" Margin="0,28.138,12,33.585" Name="button5" Width="65" Click="button5_Click">Import</Button>
-                <Button HorizontalAlignment="Left" Margin="7,27,0,33" Name="button6" Width="66" VerticalContentAlignment="Center" Click="button6_Click" Height="23">Export</Button>
+                <Button HorizontalAlignment="Right" Margin="0,28.138,12,0" Name="button5" Width="65" Click="button5_Click" Height="19.317" VerticalAlignment="Top">Import</Button>
+                <Button HorizontalAlignment="Left" Margin="7,27,0,0" Name="button6" Width="66" VerticalContentAlignment="Center" Click="button6_Click" Height="20.455" VerticalAlignment="Top">Export</Button>
                 <CheckBox Height="15" Margin="8,6,0,0" Name="checkBoxCacheRoute" VerticalAlignment="Top" Checked="checkBoxCacheRoute_Checked" Unchecked="checkBoxCacheRoute_Checked" HorizontalAlignment="Left" Width="65">routing</CheckBox>
                 <CheckBox Height="15" HorizontalAlignment="Right" Margin="0,7,0,0" Name="checkBoxGeoCache" VerticalAlignment="Top" Width="78" Checked="checkBoxGeoCache_Checked">geocoding</CheckBox>
             </Grid>
