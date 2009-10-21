@@ -43,9 +43,14 @@ namespace GMap.NET
       //ArcGIS_MapsLT_Map_Labels_Old = 890,
       //ArcGIS_MapsLT_Map_Hybrid_Old = 899,
 
-      ArcGIS_MapsLT_Map=977,
-      ArcGIS_MapsLT_OrtoFoto=988,
-      ArcGIS_MapsLT_Map_Labels=990,
-      ArcGIS_MapsLT_Map_Hybrid=999,
+      //ArcGIS_MapsLT_Map=977,
+      //ArcGIS_MapsLT_OrtoFoto=988,
+      //ArcGIS_MapsLT_Map_Labels=990,
+      //ArcGIS_MapsLT_Map_Hybrid=999,
+
+      ArcGIS_MapsLT_Map=978,
+      ArcGIS_MapsLT_OrtoFoto=989,
+      ArcGIS_MapsLT_Map_Labels=991,
+      ArcGIS_MapsLT_Map_Hybrid=998,
    }
 }

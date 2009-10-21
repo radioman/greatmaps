@@ -36,13 +36,19 @@ namespace GMap.NET
       public string VersionGoogleLabelsChina = "w2t.110";
       public string VersionGoogleTerrainChina = "w2p.110";
 
+      /// <summary>
+      /// Google Maps API generated using http://greatmaps.codeplex.com/
+      /// from http://code.google.com/intl/en-us/apis/maps/signup.html
+      /// </summary>
+      string GoogleMapsAPIKey = @"ABQIAAAAWaQgWiEBF3lW97ifKnAczhRAzBk5Igf8Z5n2W3hNnMT0j2TikxTLtVIGU7hCLLHMAuAMt-BO5UrEWA";
+
       // Yahoo version strings
       public string VersionYahooMap = "4.2";
       public string VersionYahooSatellite = "1.9";
       public string VersionYahooLabels = "4.2";
 
       // BingMaps
-      public string VersionBingMaps = "346";
+      public string VersionBingMaps = "353";
 
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
@@ -863,26 +869,32 @@ namespace GMap.NET
             {
                // http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L02/R0000001b/C00000028.jpg
                // http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto/MapServer/tile/0/9/13
-               //return string.Format("http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
+               // return string.Format("http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
+               // http://dc1.maps.lt/cache/mapslt_ortofoto_512/map/_alllayers/L03/R0000001c/C00000029.jpg
+               // return string.Format("http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
+               // http://dc1.maps.lt/cache/mapslt_ortofoto_512/map/_alllayers/L03/R0000001d/C0000002a.jpg
 
-               return string.Format("http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
+               return string.Format("http://dc1.maps.lt/cache/mapslt_ortofoto_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
             }
 
             case MapType.ArcGIS_MapsLT_Map:
             {
                // http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L02/R0000001b/C00000028.jpg
                // http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto/MapServer/tile/0/9/13
-               //return string.Format("http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
+               // return string.Format("http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
                // http://arcgis.maps.lt/ArcGIS/rest/services/mapslt/MapServer/tile/7/1162/1684.png
+               // http://dc1.maps.lt/cache/mapslt_512/map/_alllayers/L03/R0000001b/C00000029.png
 
-               return string.Format("http://arcgis.maps.lt/ArcGIS/rest/services/mapslt/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
+               return string.Format("http://dc1.maps.lt/cache/mapslt_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png", zoom, pos.Y, pos.X);
             }
 
             case MapType.ArcGIS_MapsLT_Map_Labels:
             {
                //http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto_overlay/MapServer/tile/0/9/13
+               //return string.Format("http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto_overlay/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
+               //http://dc1.maps.lt/cache/mapslt_ortofoto_overlay_512/map/_alllayers/L03/R0000001d/C00000029.png
 
-               return string.Format("http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto_overlay/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
+               return string.Format("http://dc1.maps.lt/cache/mapslt_ortofoto_overlay_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png", zoom, pos.Y, pos.X);
             }
             #endregion
          }
@@ -955,7 +967,7 @@ namespace GMap.NET
       internal string MakeGeocoderUrl(string keywords)
       {
          string key = keywords.Replace(' ', '+');
-         return string.Format("http://maps.google.com/maps/geo?q={0}&output=csv", key);
+         return string.Format("http://maps.google.com/maps/geo?q={0}&output=csv&key={1}", key, GoogleMapsAPIKey);
       }
 
       /// <summary>
@@ -1793,7 +1805,7 @@ namespace GMap.NET
                      case MapType.ArcGIS_MapsLT_OrtoFoto:
                      case MapType.ArcGIS_MapsLT_Map_Hybrid:
                      {
-                        request.Referer = "http://arcgis.maps.lt/";
+                        request.Referer = "http://www.maps.lt/map_beta/";
                      }
                      break;
 

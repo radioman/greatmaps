@@ -10,13 +10,13 @@ namespace GMap.NET.Projections
    public class LKS94Projection : PureProjection
    {
       const double MinLatitude = 53.33;
-      const double MaxLatitude = 56.33;
+      const double MaxLatitude = 56.55;
       const double MinLongitude = 20.22;
       const double MaxLongitude = 27.11;
       const double orignX = 5122000;
       const double orignY = 10000100;
-
-      Size tileSize = new Size(256, 256);
+           
+      Size tileSize = new Size(512, 512);
       public override Size TileSize
       {
          get
@@ -476,6 +476,32 @@ namespace GMap.NET.Projections
          return Math.Min(Math.Max(n, minValue), maxValue);
       }
 
+      #region -- levels info --
+      //      "layers":[{"id":0,"name":"lietuva_MAPSLT_DB_GB200_01_P_APSK","parentLayerId":-1,"defaultVisibility":true,"subLayerIds":null}],
+      //      "spatialReference":{"wkid":2600},"singleFusedMapCache":true,
+      //      "tileInfo":{"rows":512,"cols":512,"dpi":96,"format":"PNG8","compressionQuality":0,
+      //      "origin":{"x":-5122000,"y":10000100},
+      //      "spatialReference":{"wkid":2600},
+
+      //      "lods":[  
+      //      {"level":0,"resolution":1587.50317500635,"scale":6000000},
+      //      {"level":1,"resolution":793.751587503175,"scale":3000000},
+      //      {"level":2,"resolution":529.167725002117,"scale":2000000},
+      //      {"level":3,"resolution":264.583862501058,"scale":1000000},
+      //      {"level":4,"resolution":132.291931250529,"scale":500000},
+      //      {"level":5,"resolution":52.9167725002117,"scale":200000},
+      //      {"level":6,"resolution":26.4583862501058,"scale":100000},
+      //      {"level":7,"resolution":13.2291931250529,"scale":50000},
+      //      {"level":8,"resolution":6.61459656252646,"scale":25000},
+      //      {"level":9,"resolution":2.64583862501058,"scale":10000},
+      //      {"level":10,"resolution":1.32291931250529,"scale":5000},
+      //      {"level":11,"resolution":0.529167725002117,"scale":2000}]},
+
+      // "fullExtent":{"xmin":287939.042,"ymin":5959053.2199,"xmax":698767.482,"ymax":6271989.1421,
+      // "units":"esriMeters",
+      // "documentInfo":{"Title":"mapslt_minimal","Author":"gstanevicius","Comments":"","Subject":"","Category":"","Keywords":""}}); 
+      #endregion
+
       public double GetTileMatrixResolution(int zoom)
       {
          double ret = 0;
@@ -574,25 +600,25 @@ namespace GMap.NET.Projections
             #region -- sizes --
             case 0:
             {
-               ret = new Size(13, 9);
+               ret = new Size(6, 4);
             }
             break;
 
             case 1:
             {
-               ret = new Size(26, 18);
+               ret = new Size(13, 9);
             }
             break;
 
             case 2:
             {
-               ret = new Size(39, 27);
+               ret = new Size(19, 13);
             }
             break;
 
             case 3:
             {
-               ret = new Size(79, 55);
+               ret = new Size(39, 27);
             }
             break;
 
@@ -658,25 +684,25 @@ namespace GMap.NET.Projections
             #region -- sizes --
             case 0:
             {
-               ret = new Size(14, 9);
+               ret = new Size(7, 4);
             }
             break;
 
             case 1:
             {
-               ret = new Size(28, 19);
+               ret = new Size(14, 9);
             }
             break;
 
             case 2:
             {
-               ret = new Size(42, 29);
+               ret = new Size(21, 14);
             }
             break;
 
             case 3:
             {
-               ret = new Size(85, 59);
+               ret = new Size(42, 29);
             }
             break;
 
