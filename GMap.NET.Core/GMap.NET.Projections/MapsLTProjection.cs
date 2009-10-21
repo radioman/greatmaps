@@ -624,49 +624,49 @@ namespace GMap.NET.Projections
 
             case 4:
             {
-               ret = new Size(159, 110);
+               ret = new Size(79, 55);
             }
             break;
 
             case 5:
             {
-               ret = new Size(399, 275);
+               ret = new Size(199, 137);
             }
             break;
 
             case 6:
             {
-               ret = new Size(798, 550);
+               ret = new Size(399, 275);
             }
             break;
 
             case 7:
             {
-               ret = new Size(1597, 1100);
+               ret = new Size(798, 550);
             }
             break;
 
             case 8:
             {
-               ret = new Size(3194, 2201);
+               ret = new Size(1597, 1100);
             }
             break;
 
             case 9:
             {
-               ret = new Size(7987, 5504);
+               ret = new Size(3993, 2752);
             }
             break;
 
             case 10:
             {
-               ret = new Size(15974, 11008);
+               ret = new Size(7987, 5504);
             }
             break;
 
             case 11:
             {
-               ret = new Size(39935, 27520);
+               ret = new Size(19967, 13760);
             }
             break;
             #endregion
@@ -708,49 +708,49 @@ namespace GMap.NET.Projections
 
             case 4:
             {
-               ret = new Size(171, 119);
+               ret = new Size(85, 59);
             }
             break;
 
             case 5:
             {
-               ret = new Size(429, 298);
+               ret = new Size(214, 149);
             }
             break;
 
             case 6:
             {
-               ret = new Size(859, 596);
+               ret = new Size(429, 298);
             }
             break;
 
             case 7:
             {
-               ret = new Size(1718, 1193);
+               ret = new Size(859, 596);
             }
             break;
 
             case 8:
             {
-               ret = new Size(3437, 2386);
+               ret = new Size(1718, 1193);
             }
             break;
 
             case 9:
             {
-               ret = new Size(8593, 5966);
+               ret = new Size(4296, 2983);
             }
             break;
 
             case 10:
             {
-               ret = new Size(17187, 11932);
+               ret = new Size(8593, 5966);
             }
             break;
 
             case 11:
             {
-               ret = new Size(42968, 29830);
+               ret = new Size(21484, 14915);
             }
             break;
             #endregion

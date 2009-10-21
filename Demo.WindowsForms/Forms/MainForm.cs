@@ -34,7 +34,7 @@ namespace Demo.WindowsForms
             GMaps.Instance.UseRouteCache = true;
             GMaps.Instance.UseGeocoderCache = true;
             GMaps.Instance.UsePlacemarkCache = true;
-            GMaps.Instance.Mode = AccessMode.ServerOnly;
+            GMaps.Instance.Mode = AccessMode.ServerAndCache;
 
             // add your custom map db provider
             // MsSQLPureImageCache ch = new MsSQLPureImageCache();
@@ -48,8 +48,8 @@ namespace Demo.WindowsForms
             // config map 
             MainMap.MapType = MapType.ArcGIS_MapsLT_Map;
             MainMap.MaxZoom = 11;
-            MainMap.MinZoom = 3; // max zoom 3, correcting others now
-            MainMap.Zoom = MainMap.MinZoom;
+            MainMap.MinZoom = 2;
+            MainMap.Zoom = MainMap.MinZoom + 1;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
             //MainMap.CurrentPosition = new PointLatLng(29.8741410626414, 121.563806533813); // china test
 
