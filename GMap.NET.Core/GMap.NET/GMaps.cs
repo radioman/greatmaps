@@ -978,7 +978,7 @@ namespace GMap.NET
       /// <returns></returns>
       internal string MakeReverseGeocoderUrl(PointLatLng pt, string language)
       {
-         return string.Format("http://maps.google.com/maps/geo?hl={0}&ll={1},{2}&output=csv", language, pt.Lat.ToString(CultureInfo.InvariantCulture), pt.Lng.ToString(CultureInfo.InvariantCulture));
+         return string.Format("http://maps.google.com/maps/geo?hl={0}&ll={1},{2}&output=csv&key={3}", language, pt.Lat.ToString(CultureInfo.InvariantCulture), pt.Lng.ToString(CultureInfo.InvariantCulture), GoogleMapsAPIKey);
       }
 
       /// <summary>
