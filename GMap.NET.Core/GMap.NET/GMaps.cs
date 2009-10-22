@@ -40,7 +40,7 @@ namespace GMap.NET
       /// Google Maps API generated using http://greatmaps.codeplex.com/
       /// from http://code.google.com/intl/en-us/apis/maps/signup.html
       /// </summary>
-      string GoogleMapsAPIKey = @"ABQIAAAAWaQgWiEBF3lW97ifKnAczhRAzBk5Igf8Z5n2W3hNnMT0j2TikxTLtVIGU7hCLLHMAuAMt-BO5UrEWA";
+      public string GoogleMapsAPIKey = @"ABQIAAAAWaQgWiEBF3lW97ifKnAczhRAzBk5Igf8Z5n2W3hNnMT0j2TikxTLtVIGU7hCLLHMAuAMt-BO5UrEWA";
 
       // Yahoo version strings
       public string VersionYahooMap = "4.2";
