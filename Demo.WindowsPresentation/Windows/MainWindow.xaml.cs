@@ -394,7 +394,11 @@ namespace Demo.WindowsPresentation
          double lat = double.Parse(textBoxLat.Text, CultureInfo.InvariantCulture);
          double lng = double.Parse(textBoxLng.Text, CultureInfo.InvariantCulture);
 
-         MainMap.CurrentPosition = new PointLatLng(lat, lng);
+         center.Position = new PointLatLng(lat, lng);
+
+         MainMap.CurrentPosition = center.Position;
+
+        // MainMap.InvalidateVisual();
       }
 
       // goto by geocoder

@@ -145,6 +145,11 @@ namespace System.Windows.Controls
       internal Transform MapRenderTransform;
 
       /// <summary>
+      /// current markers overlay offset
+      /// </summary>
+      internal TranslateTransform MapTranslateTransform = new TranslateTransform();
+
+      /// <summary>
       /// map zoom
       /// </summary>
       public double Zoom
@@ -161,21 +166,22 @@ namespace System.Windows.Controls
                {
                   zoomReal = MaxZoom;
                }
-               else if(value < MinZoom)
-               {
-                  zoomReal = MinZoom;
-               }
                else
-               {
-                  zoomReal = value;
-               }
+                  if(value < MinZoom)
+                  {
+                     zoomReal = MinZoom;
+                  }
+                  else
+                  {
+                     zoomReal = value;
+                  }
 
                double remainder = (double) System.Decimal.Remainder((Decimal) value, (Decimal) 1);
                if(remainder != 0)
                {
                   double scaleValue = remainder + 1;
                   {
-                     MapRenderTransform = new ScaleTransform(scaleValue, scaleValue, ActualWidth/2, ActualHeight/2);
+                     MapRenderTransform = new ScaleTransform(scaleValue, scaleValue, ActualWidth / 2, ActualHeight / 2);
                   }
 
                   if(IsLoaded)
@@ -185,7 +191,6 @@ namespace System.Windows.Controls
 
                   ZoomStep = Convert.ToInt32(value - remainder);
 
-                  Core_OnMapDrag();
                   Core_OnMapZoomChanged();
 
                   InvalidateVisual();
@@ -206,6 +211,30 @@ namespace System.Windows.Controls
          {
             //Are we in Visual Studio Designer?
             return System.ComponentModel.DesignerProperties.GetIsInDesignMode(this);
+         }
+      }
+
+      Canvas mapCanvas = null;
+
+      /// <summary>
+      /// markers overlay
+      /// </summary>
+      internal Canvas MapCanvas
+      {
+         get
+         {
+            if(mapCanvas == null)
+            {
+               if(this.VisualChildrenCount > 0)
+               {
+                  Border border = VisualTreeHelper.GetChild(this, 0) as Border;
+                  ItemsPresenter items = border.Child as ItemsPresenter;
+                  DependencyObject target = VisualTreeHelper.GetChild(items, 0);
+                  mapCanvas = target as Canvas;
+               }
+            }
+
+            return mapCanvas;
          }
       }
 
@@ -246,6 +275,8 @@ namespace System.Windows.Controls
 
             FrameworkElementFactory factoryPanel = new FrameworkElementFactory(typeof(Canvas));
             {
+               factoryPanel.SetValue(Canvas.IsItemsHostProperty, true);
+
                ItemsPanelTemplate template = new ItemsPanelTemplate();
                template.VisualTree = factoryPanel;
                ItemsPanel = template;
@@ -270,7 +301,6 @@ namespace System.Windows.Controls
 
             Core.RenderMode = GMap.NET.RenderMode.WPF;
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
-            Core.OnMapDrag += new MapDrag(Core_OnMapDrag);
             Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
             Loaded += new RoutedEventHandler(GMapControl_Loaded);
             SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
@@ -344,8 +374,7 @@ namespace System.Windows.Controls
       void GMapControl_Loaded(object sender, RoutedEventArgs e)
       {
          Core.StartSystem();
-
-         //SetFadeStoryBoard(500);
+         Core_OnMapZoomChanged();
       }
 
       /// <summary>
@@ -358,7 +387,7 @@ namespace System.Windows.Controls
          System.Windows.Size constraint = e.NewSize;
 
          // 50px outside control
-         region = new GMap.NET.Rectangle(-50, -50, (int) constraint.Width+100, (int) constraint.Height+100);
+         region = new GMap.NET.Rectangle(-50, -50, (int) constraint.Width + 100, (int) constraint.Height + 100);
 
          Core.OnMapSizeChanged((int) constraint.Width, (int) constraint.Height);
 
@@ -366,11 +395,20 @@ namespace System.Windows.Controls
          if(IsLoaded)
          {
             Core.GoToCurrentPosition();
+
+            UpdateMarkersOffset();
          }
       }
 
       void Core_OnMapZoomChanged()
       {
+         UpdateMarkersOffset();
+
+         foreach(var i in Markers)
+         {
+            i.ForceUpdateLocalPosition(this);
+         }
+
          var routes = Markers.Where(p => p != null && p.Route.Count > 1);
          if(routes != null)
          {
@@ -381,33 +419,34 @@ namespace System.Windows.Controls
          }
       }
 
-      void Core_OnMapDrag()
-      {
-         foreach(GMapMarker obj in Markers)
-         {
-            if(obj != null)
-            {
-               obj.UpdateLocalPosition();
-            }
-         }
-      }
-
       /// <summary>
       /// on core needs invalidation
       /// </summary>
       void Core_OnNeedInvalidation()
       {
-         if(this.Dispatcher.CheckAccess())
+         this.InvalidateVisual();
+      }
+
+      /// <summary>
+      /// updates markers overlay offset
+      /// </summary>
+      void UpdateMarkersOffset()
+      {
+         if(MapCanvas != null)
          {
-            this.InvalidateVisual();
-         }
-         else
-         {
-            MethodInvoker m = delegate
+            if(MapRenderTransform != null)
             {
-               this.InvalidateVisual();
-            };
-            this.Dispatcher.Invoke(DispatcherPriority.Render, m);
+               var tp = MapRenderTransform.Transform(new System.Windows.Point(Core.renderOffset.X, Core.renderOffset.Y));
+               MapTranslateTransform.X = tp.X;
+               MapTranslateTransform.Y = tp.Y;
+            }
+            else
+            {
+               MapTranslateTransform.X = Core.renderOffset.X;
+               MapTranslateTransform.Y = Core.renderOffset.Y;
+            }
+
+            MapCanvas.RenderTransform = MapTranslateTransform;
          }
       }
 
@@ -428,8 +467,8 @@ namespace System.Windows.Controls
                Tile t = Core.Matrix[Core.tilePoint];
                if(t != null)
                {
-                  Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
-                  Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
+                  Core.tileRect.X = Core.tilePoint.X * Core.tileRect.Width;
+                  Core.tileRect.Y = Core.tilePoint.Y * Core.tileRect.Height;
                   Core.tileRect.Offset(Core.renderOffset);
 
                   if(region.IntersectsWith(Core.tileRect))
@@ -452,12 +491,12 @@ namespace System.Windows.Controls
                               if(Core.tilePoint == Core.centerTileXYLocation)
                               {
                                  FormattedText TileText = new FormattedText("             CENTER\nTILE:" + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
-                                 g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width/2 - EmptyTileText.Width/2, Core.tileRect.Y + Core.tileRect.Height/2 - EmptyTileText.Height/2));
+                                 g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
                               }
                               else
                               {
                                  FormattedText TileText = new FormattedText("TILE: " + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
-                                 g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width/2 - EmptyTileText.Width/2, Core.tileRect.Y + Core.tileRect.Height/2 - EmptyTileText.Height/2));
+                                 g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
                               }
                            }
                         }
@@ -467,14 +506,14 @@ namespace System.Windows.Controls
                      if(!found)
                      {
                         g.DrawRectangle(EmptytileBrush, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
-                        g.DrawText(EmptyTileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width/2 - EmptyTileText.Width/2, Core.tileRect.Y + Core.tileRect.Height/2 - EmptyTileText.Height/2));
+                        g.DrawText(EmptyTileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
 
                         if(ShowTileGridLines)
                         {
                            g.DrawRectangle(null, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
                            {
                               FormattedText TileText = new FormattedText("TILE: " + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
-                              g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width/2 - EmptyTileText.Width/2, Core.tileRect.Y - EmptyTileText.Height/2));
+                              g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y - EmptyTileText.Height / 2));
                            }
                         }
 
@@ -591,7 +630,7 @@ namespace System.Windows.Controls
          int maxZoom = Core.GetMaxZoomToFitRect(rect);
          if(maxZoom > 0)
          {
-            PointLatLng center = new PointLatLng(rect.Lat-(rect.HeightLat/2), rect.Lng+(rect.WidthLng/2));
+            PointLatLng center = new PointLatLng(rect.Lat - (rect.HeightLat / 2), rect.Lng + (rect.WidthLng / 2));
             CurrentPosition = center;
 
             if(maxZoom > MaxZoom)
@@ -685,7 +724,7 @@ namespace System.Windows.Controls
          }
 
          return ret;
-      }
+      }      
 
       #region UserControl Events
       protected override void OnRender(DrawingContext drawingContext)
@@ -708,6 +747,12 @@ namespace System.Windows.Controls
          {
             GMap.NET.Point p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
             GMap.NET.Point p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
+
+            if(MapTranslateTransform != null)
+            {
+               p1.Offset((int) MapTranslateTransform.X, (int) MapTranslateTransform.Y);
+               p2.Offset((int) MapTranslateTransform.X, (int) MapTranslateTransform.Y);
+            }
 
             int x1 = p1.X;
             int y1 = p1.Y;
@@ -785,15 +830,16 @@ namespace System.Windows.Controls
                System.Windows.Point p = e.GetPosition(this);
                Core.currentPosition = FromLocalToLatLng((int) p.X, (int) p.Y);
             }
-            else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
-            {
-               Core.currentPosition = FromLocalToLatLng((int) ActualWidth/2, (int) ActualHeight/2);
-            }
+            else
+               if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
+               {
+                  Core.currentPosition = FromLocalToLatLng((int) ActualWidth / 2, (int) ActualHeight / 2);
+               }
 
             // set mouse position to map center
             if(CenterPositionOnMouseWheel)
             {
-               System.Windows.Point p = PointToScreen(new System.Windows.Point(ActualWidth/2, ActualHeight/2));
+               System.Windows.Point p = PointToScreen(new System.Windows.Point(ActualWidth / 2, ActualHeight / 2));
                Stuff.SetCursorPos((int) p.X, (int) p.Y);
             }
 
@@ -801,10 +847,11 @@ namespace System.Windows.Controls
             {
                Zoom += ZoomIncrement;
             }
-            else if(e.Delta < 0)
-            {
-               Zoom -= ZoomIncrement;
-            }
+            else
+               if(e.Delta < 0)
+               {
+                  Zoom -= ZoomIncrement;
+               }
          }
 
          base.OnMouseWheel(e);
@@ -830,14 +877,15 @@ namespace System.Windows.Controls
             }
             InvalidateVisual();
          }
-         else if(!isSelected)
-         {
-            System.Windows.Point p = e.GetPosition(this);
-            isSelected = true;
-            SelectedArea = RectLatLng.Empty;
-            selectionEnd = PointLatLng.Empty;
-            selectionStart = FromLocalToLatLng((int) p.X, (int) p.Y);
-         }
+         else
+            if(!isSelected)
+            {
+               System.Windows.Point p = e.GetPosition(this);
+               isSelected = true;
+               SelectedArea = RectLatLng.Empty;
+               selectionEnd = PointLatLng.Empty;
+               selectionStart = FromLocalToLatLng((int) p.X, (int) p.Y);
+            }
 
          base.OnMouseDown(e);
       }
@@ -879,7 +927,7 @@ namespace System.Windows.Controls
          RaiseEmptyTileError = false;
 
          base.OnMouseUp(e);
-      }
+      }     
 
       protected override void OnMouseMove(MouseEventArgs e)
       {
@@ -903,6 +951,8 @@ namespace System.Windows.Controls
                {
                   Core.Drag(Core.mouseCurrent);
                }
+
+               UpdateMarkersOffset();
             }
          }
          else
@@ -951,6 +1001,12 @@ namespace System.Windows.Controls
             y = (int) tp.Y;
          }
 
+         if(MapTranslateTransform != null)
+         {
+            //x -= (int) MapTranslateTransform.X;
+            //y -= (int) MapTranslateTransform.Y;
+         }
+
          return Core.FromLocalToLatLng(x, y);
       }
 
@@ -963,6 +1019,11 @@ namespace System.Windows.Controls
             var tp = MapRenderTransform.Transform(new System.Windows.Point(ret.X, ret.Y));
             ret.X = (int) tp.X;
             ret.Y = (int) tp.Y;
+         }
+
+         if(MapTranslateTransform != null)
+         {
+            ret.Offset(-(int) MapTranslateTransform.X, -(int) MapTranslateTransform.Y);
          }
 
          return ret;
@@ -1058,14 +1119,15 @@ namespace System.Windows.Controls
             {
                Core.Zoom = MaxZoom;
             }
-            else if(value < MinZoom)
-            {
-               Core.Zoom = MinZoom;
-            }
             else
-            {
-               Core.Zoom = value;
-            }
+               if(value < MinZoom)
+               {
+                  Core.Zoom = MinZoom;
+               }
+               else
+               {
+                  Core.Zoom = value;
+               }
          }
       }
 
@@ -1078,6 +1140,7 @@ namespace System.Windows.Controls
          set
          {
             Core.CurrentPosition = value;
+            UpdateMarkersOffset();
          }
       }
 

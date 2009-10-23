@@ -63,8 +63,8 @@ namespace GMap.NET.WindowsPresentation
          {
             if(position != value)
             {
-               position = value; 
-               UpdateLocalPosition();                 
+               position = value;
+               UpdateLocalPosition();
             }
          }
       }
@@ -230,8 +230,8 @@ namespace GMap.NET.WindowsPresentation
          if(m != null)
          {
             map = m;
-            UpdateLocalPosition();
          }
+         UpdateLocalPosition();
       }
 
       /// <summary>
