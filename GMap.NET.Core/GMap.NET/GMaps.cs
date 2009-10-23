@@ -24,17 +24,17 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "m@110";
-      public string VersionGoogleSatellite = "46";
-      public string VersionGoogleLabels = "h@110";
-      public string VersionGoogleTerrain = "w2p.110";
+      public string VersionGoogleMap = "m@111";
+      public string VersionGoogleSatellite = "47";
+      public string VersionGoogleLabels = "h@111";
+      public string VersionGoogleTerrain = "w2p.111";
       public string SecGoogleWord = "Galileo";
 
       // Google (china) version strings
-      public string VersionGoogleMapChina = "w2.110";
-      public string VersionGoogleSatelliteChina = "46";
-      public string VersionGoogleLabelsChina = "w2t.110";
-      public string VersionGoogleTerrainChina = "w2p.110";
+      public string VersionGoogleMapChina = "w2.111";
+      public string VersionGoogleSatelliteChina = "47";
+      public string VersionGoogleLabelsChina = "w2t.111";
+      public string VersionGoogleTerrainChina = "w2p.111";
 
       /// <summary>
       /// Google Maps API generated using http://greatmaps.codeplex.com/
