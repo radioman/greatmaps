@@ -47,8 +47,6 @@ namespace BigMapMaker_ConsoleApplication
                      {
                         gfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
 
-                        int i = 0;
-
                         // get tiles & combine into one
                         foreach(var p in tileArea)
                         {

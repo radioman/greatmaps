@@ -24,17 +24,17 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "m@111";
+      public string VersionGoogleMap = "m@112";
       public string VersionGoogleSatellite = "47";
-      public string VersionGoogleLabels = "h@111";
-      public string VersionGoogleTerrain = "w2p.111";
+      public string VersionGoogleLabels = "h@112";
+      public string VersionGoogleTerrain = "w2p.112";
       public string SecGoogleWord = "Galileo";
 
       // Google (china) version strings
-      public string VersionGoogleMapChina = "w2.111";
+      public string VersionGoogleMapChina = "w2.112";
       public string VersionGoogleSatelliteChina = "47";
-      public string VersionGoogleLabelsChina = "w2t.111";
-      public string VersionGoogleTerrainChina = "w2p.111";
+      public string VersionGoogleLabelsChina = "w2t.112";
+      public string VersionGoogleTerrainChina = "w2p.112";
 
       /// <summary>
       /// Google Maps API generated using http://greatmaps.codeplex.com/
@@ -419,32 +419,6 @@ namespace GMap.NET
       }
 
       /// <summary>
-      /// DOES NOT WORK YET
-      /// get route between two points, kml format
-      /// </summary>
-      /// <param name="start"></param>
-      /// <param name="end"></param>
-      /// <param name="avoidHighways"></param>
-      /// <returns></returns>
-      public KmlType GetRouteBetweenPointsKml(PointLatLng start, PointLatLng end, bool avoidHighways)
-      {
-         return GetRouteBetweenPointsKmlUrl(MakeRouteAndDirectionsKmlUrl(start, end, LanguageStr, avoidHighways));
-      }
-
-      /// <summary>
-      /// DOES NOT WORK YET
-      /// get route between two points, kml format
-      /// </summary>
-      /// <param name="start"></param>
-      /// <param name="end"></param>
-      /// <param name="avoidHighways"></param>
-      /// <returns></returns>
-      public KmlType GetRouteBetweenPointsKml(string start, string end, bool avoidHighways)
-      {
-         return GetRouteBetweenPointsKmlUrl(MakeRouteAndDirectionsKmlUrl(start, end, LanguageStr, avoidHighways));
-      }
-
-      /// <summary>
       /// get route between two points
       /// </summary>
       /// <param name="start"></param>
@@ -669,7 +643,6 @@ namespace GMap.NET
 
                return string.Format("http://{0}{1}.google.com/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMap, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
-            break;
 
             case MapType.GoogleSatellite:
             {
@@ -681,7 +654,6 @@ namespace GMap.NET
                TryCorrectGoogleVersions();
                return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleSatellite, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
-            break;
 
             case MapType.GoogleLabels:
             {
@@ -696,7 +668,6 @@ namespace GMap.NET
 
                return string.Format("http://{0}{1}.google.com/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabels, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
-            break;
 
             case MapType.GoogleTerrain:
             {
@@ -708,7 +679,6 @@ namespace GMap.NET
                TryCorrectGoogleVersions();
                return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrain, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
-            break;
             #endregion
 
             #region -- Google (China) version --
@@ -724,7 +694,6 @@ namespace GMap.NET
 
                return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
-            break;
 
             case MapType.GoogleSatelliteChina:
             {
@@ -738,7 +707,6 @@ namespace GMap.NET
 
                return string.Format("http://{0}{1}.google.cn/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteChina, pos.X, sec1, pos.Y, zoom, sec2);
             }
-            break;
 
             case MapType.GoogleLabelsChina:
             {
@@ -752,7 +720,6 @@ namespace GMap.NET
 
                return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
-            break;
 
             case MapType.GoogleTerrainChina:
             {
@@ -766,7 +733,6 @@ namespace GMap.NET
 
                return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
-            break;
             #endregion
 
             #region -- Yahoo --
@@ -789,13 +755,13 @@ namespace GMap.NET
             #region -- OpenStreet --
             case MapType.OpenStreetMap:
             {
-               char letter = "abc" [GetServerNum(pos, 3)];
+               char letter = "abc"[GetServerNum(pos, 3)];
                return string.Format("http://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
             }
 
             case MapType.OpenStreetOsm:
             {
-               char letter = "abc" [GetServerNum(pos, 3)];
+               char letter = "abc"[GetServerNum(pos, 3)];
                return string.Format("http://{0}.tah.openstreetmap.org/Tiles/tile/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
             }
 
@@ -1122,7 +1088,7 @@ namespace GMap.NET
                               if(!string.IsNullOrEmpty(api))
                               {
                                  int i = 0;
-                                 string [] opts = api.Split(new string [] { "[\"" }, StringSplitOptions.RemoveEmptyEntries);
+                                 string[] opts = api.Split(new string[] { "[\"" }, StringSplitOptions.RemoveEmptyEntries);
                                  foreach(string opt in opts)
                                  {
                                     if(opt.Contains("http://"))
@@ -1152,7 +1118,7 @@ namespace GMap.NET
                                                 if(i == 1)
                                                 {
                                                    // 45
-                                                   if(char.IsDigit(u [0]))
+                                                   if(char.IsDigit(u[0]))
                                                    {
                                                       Debug.WriteLine("TryCorrectGoogleVersions[satelite]: " + u);
                                                       VersionGoogleSatellite = u;
@@ -1215,9 +1181,9 @@ namespace GMap.NET
       /// </summary>
       /// <param name="url"></param>
       /// <returns></returns>
-      internal KmlType GetRouteBetweenPointsKmlUrl(string url)
+      internal string GetRouteBetweenPointsKmlUrl(string url)
       {
-         KmlType ret = null;
+         string ret = null;
 
          try
          {
@@ -1245,10 +1211,10 @@ namespace GMap.NET
                   {
                      string kmls = read.ReadToEnd();
 
-                     XmlSerializer serializer = new XmlSerializer(typeof(KmlType));
+                     //XmlSerializer serializer = new XmlSerializer(typeof(KmlType));
                      using(StringReader reader = new StringReader(kmls)) //Substring(kmls.IndexOf("<kml"))
                      {
-                        ret = (KmlType) serializer.Deserialize(reader);
+                        //ret = (KmlType) serializer.Deserialize(reader);
                      }
                   }
                }
@@ -1277,7 +1243,7 @@ namespace GMap.NET
          {
             string urlEnd = url.Substring(url.IndexOf("geo?q="));
 
-            char [] ilg = Path.GetInvalidFileNameChars();
+            char[] ilg = Path.GetInvalidFileNameChars();
             foreach(char c in ilg)
             {
                urlEnd = urlEnd.Replace(c, '_');
@@ -1326,14 +1292,14 @@ namespace GMap.NET
             // true : 200,4,56.1451640,22.0681787
             // false: 602,0,0,0
             {
-               string [] values = geo.Split(',');
+               string[] values = geo.Split(',');
                if(values.Length == 4)
                {
-                  status = (GeoCoderStatusCode) int.Parse(values [0]);
+                  status = (GeoCoderStatusCode) int.Parse(values[0]);
                   if(status == GeoCoderStatusCode.G_GEO_SUCCESS)
                   {
-                     double lat = double.Parse(values [2], CultureInfo.InvariantCulture);
-                     double lng = double.Parse(values [3], CultureInfo.InvariantCulture);
+                     double lat = double.Parse(values[2], CultureInfo.InvariantCulture);
+                     double lng = double.Parse(values[3], CultureInfo.InvariantCulture);
 
                      ret = new PointLatLng(lat, lng);
                   }
@@ -1361,7 +1327,7 @@ namespace GMap.NET
          {
             string urlEnd = url.Substring(url.IndexOf("geo?hl="));
 
-            char [] ilg = Path.GetInvalidFileNameChars();
+            char[] ilg = Path.GetInvalidFileNameChars();
             foreach(char c in ilg)
             {
                urlEnd = urlEnd.Replace(c, '_');
@@ -1444,7 +1410,7 @@ namespace GMap.NET
          {
             string urlEnd = url.Substring(url.IndexOf("&hl="));
 
-            char [] ilg = Path.GetInvalidFileNameChars();
+            char[] ilg = Path.GetInvalidFileNameChars();
             foreach(char c in ilg)
             {
                urlEnd = urlEnd.Replace(c, '_');
@@ -1557,7 +1523,7 @@ namespace GMap.NET
 
                               do
                               {
-                                 b = encoded [index++] - 63;
+                                 b = encoded[index++] - 63;
                                  result |= (b & 0x1f) << shift;
                                  shift += 5;
 
@@ -1572,7 +1538,7 @@ namespace GMap.NET
                               {
                                  do
                                  {
-                                    b = encoded [index++] - 63;
+                                    b = encoded[index++] - 63;
                                     result |= (b & 0x1f) << shift;
                                     shift += 5;
                                  }
@@ -1665,7 +1631,7 @@ namespace GMap.NET
                // remove useless points at zoom
                for(int i = 0; i < levels.Length; i++)
                {
-                  int zi = pLevels.IndexOf(levels [i]);
+                  int zi = pLevels.IndexOf(levels[i]);
                   if(zi > 0 && i < points.Count)
                   {
                      if(zi * numLevel > zoom)

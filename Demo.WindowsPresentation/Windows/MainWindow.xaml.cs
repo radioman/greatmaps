@@ -9,6 +9,7 @@ using GMap.NET;
 using GMap.NET.CacheProviders;
 using GMap.NET.WindowsPresentation;
 using System.Collections.Generic;
+using System.Windows.Threading;
 
 namespace Demo.WindowsPresentation
 {
@@ -49,7 +50,7 @@ namespace Demo.WindowsPresentation
          // config map
          MainMap.MapType = MapType.OpenStreetMap;
          MainMap.MaxZoom = 17;
-         MainMap.MinZoom = 5;
+         MainMap.MinZoom = 3;
          MainMap.Zoom = 12;
          MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
 
@@ -152,7 +153,41 @@ namespace Demo.WindowsPresentation
             }
             #endregion
          }
+
+         if(false)  // set true to enable marker performance test
+         {
+            timer.Interval = TimeSpan.FromMilliseconds(222);
+            timer.Tick += new EventHandler(timer_Tick);
+            timer.Start();
+         }
       }
+
+      #region -- marker performance testing --
+      DispatcherTimer timer = new DispatcherTimer();
+      Random r = new Random(22);
+      long xx = 1;
+
+      double NextDouble(Random rng, double min, double max)
+      {
+         return min + (rng.NextDouble() * (max - min));
+      }
+
+      void timer_Tick(object sender, EventArgs e)
+      {
+         var pos = new PointLatLng(NextDouble(r, MainMap.CurrentViewArea.Top, MainMap.CurrentViewArea.Bottom), NextDouble(r, MainMap.CurrentViewArea.Left, MainMap.CurrentViewArea.Right));
+
+         GMapMarker it = new GMapMarker(pos);
+         {
+            it.Shape = new Test((xx++).ToString());
+         }
+         it.ForceUpdateLocalPosition(MainMap);
+
+         MainMap.Markers.Add(it);
+
+         if(xx >= 1111)
+            timer.Stop();
+      } 
+      #endregion
 
       // add objects and zone around them
       void AddDemoZone(double areaRadius, PointLatLng center, List<PointAndInfo> objects)
@@ -398,7 +433,7 @@ namespace Demo.WindowsPresentation
 
          MainMap.CurrentPosition = center.Position;
 
-        // MainMap.InvalidateVisual();
+         // MainMap.InvalidateVisual();
       }
 
       // goto by geocoder
@@ -457,15 +492,15 @@ namespace Demo.WindowsPresentation
                   obj.Start(x, i, MainMap.MapType, 100);
                }
                else
-               if(res == MessageBoxResult.No)
-               {
-                  continue;
-               }
-               else
-               if(res == MessageBoxResult.Cancel)
-               {
-                  break;
-               }
+                  if(res == MessageBoxResult.No)
+                  {
+                     continue;
+                  }
+                  else
+                     if(res == MessageBoxResult.Cancel)
+                     {
+                        break;
+                     }
 
                x.Clear();
             }

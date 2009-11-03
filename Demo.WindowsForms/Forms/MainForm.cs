@@ -402,11 +402,11 @@ namespace Demo.WindowsForms
             MainMap.ZoomAndCenterRoute(r);
 
             // testing kml support
-            KmlType info = GMaps.Instance.GetRouteBetweenPointsKml(start, end, false);
-            if(info != null)
-            {
+            //KmlType info = GMaps.Instance.GetRouteBetweenPointsKml(start, end, false);
+            //if(info != null)
+            //{
 
-            }
+            //}
          }
       }
 

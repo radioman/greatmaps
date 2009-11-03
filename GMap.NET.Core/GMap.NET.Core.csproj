@@ -91,7 +91,6 @@
     <Compile Include="GMap.NET\IGControl.cs" />
     <Compile Include="GMap.NET\AccessMode.cs" />
     <Compile Include="GMap.NET\Delegates.cs" />
-    <Compile Include="GMap.NET\Kml.cs" />
     <Compile Include="GMap.NET\MapRoute.cs" />
     <Compile Include="GMap.NET\MapType.cs" />
     <Compile Include="GMap.NET.CacheProviders\MsSQLPureImageCache.cs" />

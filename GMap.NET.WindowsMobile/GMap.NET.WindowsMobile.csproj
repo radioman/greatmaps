@@ -136,9 +136,6 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET\IGControl.cs">
       <Link>GMap.NET\IGControl.cs</Link>
     </Compile>
-    <Compile Include="..\GMap.NET.Core\GMap.NET\Kml.cs">
-      <Link>GMap.NET\Kml.cs</Link>
-    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET\LanguageType.cs">
       <Link>GMap.NET\LanguageType.cs</Link>
     </Compile>

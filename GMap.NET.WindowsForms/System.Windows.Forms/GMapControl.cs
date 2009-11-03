@@ -136,7 +136,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// map boundaries
       /// </summary>
-      public RectLatLng? Bounds = null;
+      public RectLatLng? BoundsOfMap = null;
 
       // internal stuff
       internal readonly Core Core = new Core();
@@ -848,7 +848,7 @@ namespace System.Windows.Forms
             Core.EndDrag();
             this.Cursor = System.Windows.Forms.Cursors.Default;
 
-            if(Bounds.HasValue && !Bounds.Value.Contains(CurrentPosition))
+            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
             {
                if(Core.LastLocationInBounds.HasValue)
                {
@@ -905,7 +905,7 @@ namespace System.Windows.Forms
       {
          if(Core.IsDragging)
          {
-            if(Bounds.HasValue && !Bounds.Value.Contains(CurrentPosition))
+            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
             {
                // ...
             }

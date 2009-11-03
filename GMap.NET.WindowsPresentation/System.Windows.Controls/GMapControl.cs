@@ -132,7 +132,7 @@ namespace System.Windows.Controls
       /// <summary>
       /// map boundaries
       /// </summary>
-      public RectLatLng? Bounds = null;
+      public RectLatLng? BoundsOfMap = null;
 
       /// <summary>
       /// list of markers
@@ -902,7 +902,7 @@ namespace System.Windows.Controls
             Core.EndDrag();
             Cursor = Cursors.Arrow;
 
-            if(Bounds.HasValue && !Bounds.Value.Contains(CurrentPosition))
+            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
             {
                if(Core.LastLocationInBounds.HasValue)
                {
@@ -933,7 +933,7 @@ namespace System.Windows.Controls
       {
          if(Core.IsDragging)
          {
-            if(Bounds.HasValue && !Bounds.Value.Contains(CurrentPosition))
+            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
             {
                // ...
             }
