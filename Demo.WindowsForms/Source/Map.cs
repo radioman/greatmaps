@@ -15,12 +15,7 @@ namespace Demo.WindowsForms
       /// <param name="drawingContext"></param>
       protected override void OnPaint(PaintEventArgs e)
       {
-         base.OnPaint(e);
-
-         //using(System.Drawing.Pen p = new System.Drawing.Pen(System.Drawing.Color.Blue, 2))
-         //{
-         //   e.Graphics.DrawLine(p, 0, 0, 200, 200);
-         //}
+         base.OnPaint(e);            
       }
    }
 }

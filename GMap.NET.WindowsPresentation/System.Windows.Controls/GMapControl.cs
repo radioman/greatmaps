@@ -483,22 +483,22 @@ namespace System.Windows.Controls
                               found = true;
 
                            g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                        }
+                     }
 
-                           if(ShowTileGridLines)
-                           {
-                              g.DrawRectangle(null, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                     if(ShowTileGridLines)
+                     {
+                        g.DrawRectangle(null, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
 
-                              if(Core.tilePoint == Core.centerTileXYLocation)
-                              {
-                                 FormattedText TileText = new FormattedText("             CENTER\nTILE:" + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
-                                 g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
-                              }
-                              else
-                              {
-                                 FormattedText TileText = new FormattedText("TILE: " + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
-                                 g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
-                              }
-                           }
+                        if(Core.tilePoint == Core.centerTileXYLocation)
+                        {
+                           FormattedText TileText = new FormattedText("CENTER:" + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
+                           g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
+                        }
+                        else
+                        {
+                           FormattedText TileText = new FormattedText("TILE: " + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
+                           g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
                         }
                      }
 
@@ -724,7 +724,7 @@ namespace System.Windows.Controls
          }
 
          return ret;
-      }      
+      }
 
       #region UserControl Events
       protected override void OnRender(DrawingContext drawingContext)
@@ -778,6 +778,8 @@ namespace System.Windows.Controls
 
             case MapType.OpenStreetMap:
             case MapType.OpenStreetOsm:
+            case MapType.OpenStreetMapSurfer:
+            case MapType.OpenStreetMapSurferTerrain:
             {
                drawingContext.DrawText(openStreetMapCopyright, new System.Windows.Point(5, ActualHeight - openStreetMapCopyright.Height - 5));
             }
@@ -927,7 +929,7 @@ namespace System.Windows.Controls
          RaiseEmptyTileError = false;
 
          base.OnMouseUp(e);
-      }     
+      }
 
       protected override void OnMouseMove(MouseEventArgs e)
       {
@@ -1031,78 +1033,89 @@ namespace System.Windows.Controls
 
       public bool ShowExportDialog()
       {
-#if SQLiteEnabled
-         Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+         if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
-            dlg.CheckPathExists = true;
-            dlg.CheckFileExists = false;
-            dlg.AddExtension = true;
-            dlg.DefaultExt = "gmdb";
-            dlg.ValidateNames = true;
-            dlg.Title = "GMap.NET: Export map to db, if file exsist only new data will be added";
-            dlg.FileName = "DataExp";
-            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
-            dlg.FilterIndex = 1;
-            dlg.RestoreDirectory = true;
-
-            if(dlg.ShowDialog() == true)
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             {
-               bool ok = GMaps.Instance.ExportToGMDB(dlg.FileName);
-               if(ok)
-               {
-                  MessageBox.Show("Complete!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Information);
-               }
-               else
-               {
-                  MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
-               }
+               dlg.CheckPathExists = true;
+               dlg.CheckFileExists = false;
+               dlg.AddExtension = true;
+               dlg.DefaultExt = "gmdb";
+               dlg.ValidateNames = true;
+               dlg.Title = "GMap.NET: Export map to db, if file exsist only new data will be added";
+               dlg.FileName = "DataExp";
+               dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+               dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
+               dlg.FilterIndex = 1;
+               dlg.RestoreDirectory = true;
 
-               return ok;
+               if(dlg.ShowDialog() == true)
+               {
+                  bool ok = GMaps.Instance.ExportToGMDB(dlg.FileName);
+                  if(ok)
+                  {
+                     MessageBox.Show("Complete!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Information);
+                  }
+                  else
+                  {
+                     MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
+                  }
+
+                  return ok;
+               }
             }
          }
-#endif
+         else
+         {
+            MessageBox.Show("Failed! Only SQLite support ;/", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
+         }
          return false;
       }
 
       public bool ShowImportDialog()
       {
-#if SQLiteEnabled
-         Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+         if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
-            dlg.CheckPathExists = true;
-            dlg.CheckFileExists = false;
-            dlg.AddExtension = true;
-            dlg.DefaultExt = "gmdb";
-            dlg.ValidateNames = true;
-            dlg.Title = "GMap.NET: Import to db, only new data will be added";
-            dlg.FileName = "DataImport";
-            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
-            dlg.FilterIndex = 1;
-            dlg.RestoreDirectory = true;
-
-            if(dlg.ShowDialog() == true)
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             {
-               Cursor = Cursors.Wait;
+               dlg.CheckPathExists = true;
+               dlg.CheckFileExists = false;
+               dlg.AddExtension = true;
+               dlg.DefaultExt = "gmdb";
+               dlg.ValidateNames = true;
+               dlg.Title = "GMap.NET: Import to db, only new data will be added";
+               dlg.FileName = "DataImport";
+               dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+               dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
+               dlg.FilterIndex = 1;
+               dlg.RestoreDirectory = true;
 
-               bool ok = GMaps.Instance.ImportFromGMDB(dlg.FileName);
-               if(ok)
+               if(dlg.ShowDialog() == true)
                {
-                  MessageBox.Show("Complete!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Information);
-                  ReloadMap();
-               }
-               else
-               {
-                  MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
-               }
+                  Cursor = Cursors.Wait;
 
-               Cursor = Cursors.Arrow;
+                  bool ok = GMaps.Instance.ImportFromGMDB(dlg.FileName);
+                  if(ok)
+                  {
+                     MessageBox.Show("Complete!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Information);
+                     ReloadMap();
+                  }
+                  else
+                  {
+                     MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
+                  }
 
-               return ok;
+                  Cursor = Cursors.Arrow;
+
+                  return ok;
+               }
             }
          }
-#endif
+         else
+         {
+            MessageBox.Show("Failed! Only SQLite support ;/", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
+         }
+
          return false;
       }
 

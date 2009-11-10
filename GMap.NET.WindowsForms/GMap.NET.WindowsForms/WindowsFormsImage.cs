@@ -3,6 +3,9 @@ namespace GMap.NET.WindowsForms
 {
    using System.Drawing;
    using System.IO;
+   using System.Drawing.Imaging;
+   using System;
+   using System.Diagnostics;
 
    /// <summary>
    /// image abstraction
@@ -37,6 +40,17 @@ namespace GMap.NET.WindowsForms
    /// </summary>
    public class WindowsFormsImageProxy : PureImageProxy
    {
+      public ColorMatrix ColorMatrixForGrayScale = new ColorMatrix(new float[][] 
+      {
+         new float[] {.3f, .3f, .3f, 0, 0},
+         new float[] {.59f, .59f, .59f, 0, 0},
+         new float[] {.11f, .11f, .11f, 0, 0},
+         new float[] {0, 0, 0, 1, 0},
+         new float[] {0, 0, 0, 0, 1}
+      });     
+
+      public bool GrayScale = false;
+
       public override PureImage FromStream(Stream stream)
       {
          WindowsFormsImage ret = null;
@@ -48,7 +62,7 @@ namespace GMap.NET.WindowsForms
                if(m != null)
                {
                   ret = new WindowsFormsImage();
-                  ret.Img = m;
+                  ret.Img = GrayScale ? MakeGrayscale(m) : m;
                }
             }
             else // mono yet do not support validation
@@ -57,13 +71,14 @@ namespace GMap.NET.WindowsForms
                if(m != null)
                {
                   ret = new WindowsFormsImage();
-                  ret.Img = m;
+                  ret.Img = GrayScale ? MakeGrayscale(m) : m;
                }
             }
          }
-         catch
+         catch(Exception ex)
          {
             ret = null;
+            Debug.WriteLine("FromStream: " + ex.ToString());
          }
          finally
          {
@@ -115,6 +130,27 @@ namespace GMap.NET.WindowsForms
          }
 
          return ok;
+      }
+
+      Bitmap MakeGrayscale(Image original)
+      {
+         // create a blank bitmap the same size as original
+         Bitmap newBitmap = newBitmap = new Bitmap(original.Width, original.Height);
+         using(original) // destroy original
+         {
+            // get a graphics object from the new image
+            using(Graphics g = Graphics.FromImage(newBitmap))
+            {
+               // set the color matrix attribute
+               using(ImageAttributes attributes = new ImageAttributes())
+               {
+                  attributes.SetColorMatrix(ColorMatrixForGrayScale);
+                  g.DrawImage(original, new Rectangle(0, 0, original.Width, original.Height), 0, 0, original.Width, original.Height, GraphicsUnit.Pixel, attributes);
+               }
+            }
+         }
+
+         return newBitmap;
       }
    }
 }

@@ -38,7 +38,7 @@ namespace GMap.NET.Internals
       public Rectangle tileRect;
       public Point tilePoint;
 
-      public Rectangle CurrentRegion; 
+      public Rectangle CurrentRegion;
 
       public readonly TileMatrix Matrix = new TileMatrix();
       readonly BackgroundWorker loader = new BackgroundWorker();
@@ -348,7 +348,7 @@ namespace GMap.NET.Internals
             started = true;
 
             ReloadMap();
-            GoToCurrentPosition();             
+            GoToCurrentPosition();
          }
       }
 
@@ -551,7 +551,7 @@ namespace GMap.NET.Internals
          renderOffset.Y = pt.Y - dragPoint.Y;
 
          UpdateCenterTileXYLocation();
-      }        
+      }
 
       /// <summary>
       /// drag map
@@ -814,9 +814,22 @@ namespace GMap.NET.Internals
                p.X += i;
                p.Y += j;
 
+               //if(p.X < minOfTiles.Width)
+               //{
+               //   p.X += (maxOfTiles.Width + 1);
+               //}
+
+               //if(p.X > maxOfTiles.Width)
+               //{
+               //   p.X -= (maxOfTiles.Width + 1);
+               //}
+
                if(p.X >= minOfTiles.Width && p.Y >= minOfTiles.Height && p.X <= maxOfTiles.Width && p.Y <= maxOfTiles.Height)
                {
-                  list.Add(p);
+                  if(!list.Contains(p))
+                  {
+                     list.Add(p);
+                  }
                }
             }
          }

@@ -233,7 +233,10 @@ namespace GMap.NET.CacheProviders
                         {
                            MemoryStream stm = new MemoryStream(tile);
                            ret = GMaps.Instance.ImageProxy.FromStream(stm);
-                           ret.Data = stm;
+                           if(ret!= null)
+                           {
+                              ret.Data = stm;
+                           }
                         }
                      }
                      tile = null;

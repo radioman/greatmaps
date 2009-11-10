@@ -138,6 +138,26 @@ namespace System.Windows.Forms
       /// </summary>
       public RectLatLng? BoundsOfMap = null;
 
+      private bool _GrayScale = false;
+
+      [Description("Gray Scale"), Category("GMap.NET")]
+      public bool GrayScaleMode
+      {
+         get
+         {
+            return _GrayScale;
+         }
+         set
+         {
+            _GrayScale = value;
+            if(GMaps.Instance.ImageProxy != null && GMaps.Instance.ImageProxy is WindowsFormsImageProxy)
+            {
+               (GMaps.Instance.ImageProxy as WindowsFormsImageProxy).GrayScale = value;
+               this.ReloadMap();
+            }               
+         }
+      }
+
       // internal stuff
       internal readonly Core Core = new Core();
       internal readonly Font CopyrightFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
@@ -154,7 +174,11 @@ namespace System.Windows.Forms
       {
          if(!DesignModeInConstruct && !DesignMode)
          {
-            GMaps.Instance.ImageProxy = new WindowsFormsImageProxy();
+            WindowsFormsImageProxy wimg = new WindowsFormsImageProxy();
+            {
+               wimg.GrayScale = this.GrayScaleMode;
+            }
+            GMaps.Instance.ImageProxy = wimg;
 
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -233,8 +257,22 @@ namespace System.Windows.Forms
                Core.tilePoint = Core.centerTileXYLocation;
                Core.tilePoint.X += i;
                Core.tilePoint.Y += j;
+
+               //-----
+               //GMap.NET.Point tileToDraw = Core.tilePoint;  
+               //if(tileToDraw.X < Core.minOfTiles.Width)
+               //{
+               //   tileToDraw.X += (Core.maxOfTiles.Width + 1);
+               //}
+               //if(tileToDraw.X > Core.maxOfTiles.Width)
+               //{
+               //   tileToDraw.X -= (Core.maxOfTiles.Width + 1);
+               //}
+               //-----
+
                {
                   Tile t = Core.Matrix[Core.tilePoint];
+                  //Tile t = Core.Matrix[tileToDraw];                     
                   if(t != null)
                   {
                      Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
@@ -254,23 +292,24 @@ namespace System.Windows.Forms
                               {
                                  if(!found)
                                     found = true;
-
-                                 g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
-
-                                 if(ShowTileGridLines)
                                  {
-                                    g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
-
-                                    if(Core.tilePoint == Core.centerTileXYLocation)
-                                    {
-                                       g.DrawString("CENTER TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
-                                    }
-                                    else
-                                    {
-                                       g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
-                                    }
+                                    g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
                                  }
                               }
+                           }
+                        }
+
+                        if(ShowTileGridLines)
+                        {
+                           g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+
+                           if(Core.tilePoint == Core.centerTileXYLocation)
+                           {
+                              g.DrawString("CENTER: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                           }
+                           else
+                           {
+                              g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
                            }
                         }
 
@@ -690,6 +729,8 @@ namespace System.Windows.Forms
 
                case MapType.OpenStreetMap:
                case MapType.OpenStreetOsm:
+               case MapType.OpenStreetMapSurfer:
+               case MapType.OpenStreetMapSurferTerrain:
                {
                   e.Graphics.DrawString(Core.openStreetMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
                }
@@ -1062,37 +1103,42 @@ namespace System.Windows.Forms
       /// <returns></returns>
       public bool ShowExportDialog()
       {
-#if SQLiteEnabled
-         using(FileDialog dlg = new SaveFileDialog())
+         if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
-            dlg.CheckPathExists = true;
-            dlg.CheckFileExists = false;
-            dlg.AddExtension = true;
-            dlg.DefaultExt = "gmdb";
-            dlg.ValidateNames = true;
-            dlg.Title = "GMap.NET: Export map to db, if file exsist only new data will be added";
-            dlg.FileName = "DataExp";
-            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
-            dlg.FilterIndex = 1;
-            dlg.RestoreDirectory = true;
-
-            if(dlg.ShowDialog() == DialogResult.OK)
+            using(FileDialog dlg = new SaveFileDialog())
             {
-               bool ok = GMaps.Instance.ExportToGMDB(dlg.FileName);
-               if(ok)
-               {
-                  MessageBox.Show("Complete!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
-               }
-               else
-               {
-                  MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-               }
+               dlg.CheckPathExists = true;
+               dlg.CheckFileExists = false;
+               dlg.AddExtension = true;
+               dlg.DefaultExt = "gmdb";
+               dlg.ValidateNames = true;
+               dlg.Title = "GMap.NET: Export map to db, if file exsist only new data will be added";
+               dlg.FileName = "DataExp";
+               dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+               dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
+               dlg.FilterIndex = 1;
+               dlg.RestoreDirectory = true;
 
-               return ok;
+               if(dlg.ShowDialog() == DialogResult.OK)
+               {
+                  bool ok = GMaps.Instance.ExportToGMDB(dlg.FileName);
+                  if(ok)
+                  {
+                     MessageBox.Show("Complete!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                  }
+                  else
+                  {
+                     MessageBox.Show("Failed!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  }
+
+                  return ok;
+               }
             }
          }
-#endif
+         else
+         {
+            MessageBox.Show("Failed! Only SQLite support ;/", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+         }
          return false;
       }
 
@@ -1102,37 +1148,42 @@ namespace System.Windows.Forms
       /// <returns></returns>
       public bool ShowImportDialog()
       {
-#if SQLiteEnabled
-         using(FileDialog dlg = new OpenFileDialog())
+         if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
-            dlg.CheckPathExists = true;
-            dlg.CheckFileExists = false;
-            dlg.AddExtension = true;
-            dlg.DefaultExt = "gmdb";
-            dlg.ValidateNames = true;
-            dlg.Title = "GMap.NET: Import to db, only new data will be added";
-            dlg.FileName = "DataExp";
-            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
-            dlg.FilterIndex = 1;
-            dlg.RestoreDirectory = true;
-
-            if(dlg.ShowDialog() == DialogResult.OK)
+            using(FileDialog dlg = new OpenFileDialog())
             {
-               bool ok = GMaps.Instance.ImportFromGMDB(dlg.FileName);
-               if(ok)
-               {
-                  MessageBox.Show("Complete!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
-               }
-               else
-               {
-                  MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-               }
+               dlg.CheckPathExists = true;
+               dlg.CheckFileExists = false;
+               dlg.AddExtension = true;
+               dlg.DefaultExt = "gmdb";
+               dlg.ValidateNames = true;
+               dlg.Title = "GMap.NET: Import to db, only new data will be added";
+               dlg.FileName = "DataExp";
+               dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+               dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
+               dlg.FilterIndex = 1;
+               dlg.RestoreDirectory = true;
 
-               return ok;
+               if(dlg.ShowDialog() == DialogResult.OK)
+               {
+                  bool ok = GMaps.Instance.ImportFromGMDB(dlg.FileName);
+                  if(ok)
+                  {
+                     MessageBox.Show("Complete!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                  }
+                  else
+                  {
+                     MessageBox.Show("Failed!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  }
+
+                  return ok;
+               }
             }
          }
-#endif
+         else
+         {
+            MessageBox.Show("Failed! Only SQLite support ;/", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+         }
          return false;
       }
 

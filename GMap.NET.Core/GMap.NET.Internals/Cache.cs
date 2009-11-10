@@ -14,7 +14,6 @@ namespace GMap.NET.Internals
    internal class Cache : Singleton<Cache>
    {
       string cache;
-      public string gtileCache;
       string routeCache;
       string geoCache;
       string placemarkCache;

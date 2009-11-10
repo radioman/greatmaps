@@ -503,7 +503,6 @@ namespace GMap.NET
          return GetPlacemarkFromReverseGeocoderUrl(MakeReverseGeocoderUrl(location, LanguageStr), UsePlacemarkCache);
       }
 
-#if SQLiteEnabled
       /// <summary>
       /// exports current map cache to GMDB file
       /// if file exsist only new records will be added
@@ -513,10 +512,16 @@ namespace GMap.NET
       /// <returns></returns>
       public bool ExportToGMDB(string file)
       {
-         StringBuilder db = new StringBuilder(Cache.Instance.gtileCache);
-         db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
+#if SQLiteEnabled
+         if(Cache.Instance.ImageCache is SQLitePureImageCache)
+         {
+            StringBuilder db = new StringBuilder((Cache.Instance.ImageCache as SQLitePureImageCache).GtileCache);
+            db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
 
-         return SQLitePureImageCache.ExportMapDataToDB(db.ToString(), file);
+            return SQLitePureImageCache.ExportMapDataToDB(db.ToString(), file);
+         }
+#endif
+         return false;
       }
 
       /// <summary>
@@ -527,12 +532,17 @@ namespace GMap.NET
       /// <returns></returns>
       public bool ImportFromGMDB(string file)
       {
-         StringBuilder db = new StringBuilder(Cache.Instance.gtileCache);
-         db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
+#if SQLiteEnabled
+         if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
+         {
+            StringBuilder db = new StringBuilder((Cache.Instance.ImageCache as SQLitePureImageCache).GtileCache);
+            db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
 
-         return SQLitePureImageCache.ExportMapDataToDB(file, db.ToString());
-      }
+            return SQLitePureImageCache.ExportMapDataToDB(file, db.ToString());
+         }
 #endif
+         return false;
+      }
 
       /// <summary>
       /// enqueueens tile to cache
