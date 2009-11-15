@@ -303,6 +303,7 @@ namespace System.Windows.Controls
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
             Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
             Loaded += new RoutedEventHandler(GMapControl_Loaded);
+            Unloaded += new RoutedEventHandler(GMapControl_Unloaded);
             SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
 
             this.ItemsSource = Markers;
@@ -315,7 +316,7 @@ namespace System.Windows.Controls
 
             MapType = MapType.GoogleMap;
          }
-      }
+      }       
 
       // testing smooth zoom
       Storyboard mapFadeStoryboard;
@@ -375,6 +376,11 @@ namespace System.Windows.Controls
       {
          Core.StartSystem();
          Core_OnMapZoomChanged();
+      }
+
+      void GMapControl_Unloaded(object sender, RoutedEventArgs e)
+      {
+         Core.OnMapClose();
       }
 
       /// <summary>

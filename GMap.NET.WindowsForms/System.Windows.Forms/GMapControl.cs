@@ -646,6 +646,12 @@ namespace System.Windows.Forms
       }
 
 #if !PocketPC
+      protected override void OnHandleDestroyed(EventArgs e)
+      {
+         Core.OnMapClose();
+         base.OnHandleDestroyed(e);          
+      }
+
       protected override void OnLoad(EventArgs e)
       {
          base.OnLoad(e);

@@ -44,7 +44,7 @@ namespace GMap.NET.Internals
       readonly BackgroundWorker loader = new BackgroundWorker();
       readonly BackgroundWorker loader2 = new BackgroundWorker();
       readonly BackgroundWorker loader3 = new BackgroundWorker();
-      readonly EventWaitHandle waitOnEmptyTasks = new AutoResetEvent(false);
+      readonly EventWaitHandle waitOnEmptyTasks = new EventWaitHandle(false, EventResetMode.AutoReset);
       public List<Point> tileDrawingList = new List<Point>();
       public readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>();
 
@@ -642,6 +642,7 @@ namespace GMap.NET.Internals
          {
             LoaderWork(1);
          }
+         Debug.WriteLine("loader[1]: exit");
       }
 
       // loader2
@@ -651,6 +652,7 @@ namespace GMap.NET.Internals
          {
             LoaderWork(2);
          }
+         Debug.WriteLine("loader[2]: exit");
       }
 
       // loader3
@@ -660,6 +662,7 @@ namespace GMap.NET.Internals
          {
             LoaderWork(3);
          }
+         Debug.WriteLine("loader[3]: exit");
       }
 
       /// <summary>
@@ -685,6 +688,8 @@ namespace GMap.NET.Internals
 
          if(process)
          {
+            loaderDone[id-1] = false;
+
             Debug.WriteLine("loader[" + id + "]: download => " + task);
 
             // report load start
@@ -710,20 +715,31 @@ namespace GMap.NET.Internals
          }
          else // empty now, clean things up
          {
-            Debug.WriteLine("loader[" + id + "]: wait");
+            if(!loaderDone[id-1])
+            {
+               Matrix.ClearPointsNotIn(ref tileDrawingList);
 
-            // report load complete
-            loader.ReportProgress(id, true);
+               GC.Collect();
+               GC.WaitForPendingFinalizers();
+               GC.Collect();                 
 
-            Matrix.ClearPointsNotIn(ref tileDrawingList);
+               // report load complete
+               loader.ReportProgress(id, true);
 
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
+               loaderDone[id-1] = true;
 
-            waitOnEmptyTasks.WaitOne();  // No more tasks - wait for a signal
+               Debug.WriteLine("loader[" + id + "]: wait");
+            }
+            
+            waitOnEmptyTasks.WaitOne(1111);  // No more tasks - wait for a signal
          }
       }
+
+      bool[] loaderDone = new bool[]
+      {
+         false, false, false
+      };
+
 
       /// <summary>
       /// invalidates map on tile loaded
