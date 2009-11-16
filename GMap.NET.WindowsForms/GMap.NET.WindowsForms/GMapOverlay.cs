@@ -51,7 +51,11 @@ namespace GMap.NET.WindowsForms
       /// </summary>
       public StringFormat TooltipFormat = new StringFormat();
 
-      Pen RoutePen = new Pen(Color.MidnightBlue);
+      /// <summary>
+      /// pen for routes, be aware that the color is adjusted in each GMapRoute
+      /// </summary>
+      public Pen RoutePen = new Pen(Color.MidnightBlue);   
+
       internal System.Windows.Forms.GMapControl Control;
 
       public GMapOverlay(System.Windows.Forms.GMapControl control, string id)
@@ -170,7 +174,7 @@ namespace GMap.NET.WindowsForms
       /// renders objects and routes
       /// </summary>
       /// <param name="g"></param>
-      internal void Render(Graphics g)
+      public virtual void Render(Graphics g)
       {
          if(Control.RoutesEnabled)
          {
