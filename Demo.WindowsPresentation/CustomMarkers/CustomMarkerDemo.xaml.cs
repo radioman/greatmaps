@@ -4,6 +4,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using GMap.NET.WindowsPresentation;
+using System.Diagnostics;
 
 namespace Demo.WindowsPresentation.CustomMarkers
 {
@@ -85,7 +86,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
          if(e.LeftButton == MouseButtonState.Pressed && IsMouseCaptured)
          {
             Point p = e.GetPosition(MainWindow.MainMap);
-            Marker.Position = MainWindow.MainMap.FromLocalToLatLng((int) p.X, (int) p.Y);
+            Marker.Position = MainWindow.MainMap.FromLocalToLatLng((int) (p.X), (int) (p.Y));
          }
       }
 
