@@ -572,9 +572,14 @@ namespace System.Windows.Controls
 
          bmp.Render(obj);
 
+         if(bmp.CanFreeze)
+         {
+            bmp.Freeze();
+         }
+
          // return values as they were before
          obj.LayoutTransform = transform;
-         obj.Margin = margin;
+         obj.Margin = margin;   
 
          return bmp;
       }

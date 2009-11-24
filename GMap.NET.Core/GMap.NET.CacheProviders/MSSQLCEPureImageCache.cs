@@ -76,7 +76,7 @@ namespace GMap.NET.CacheProviders
          {
             if(!Initialized)
             {
-   #region prepare mssql & cache table
+               #region prepare mssql & cache table
                try
                {
                   // precrete dir
@@ -91,17 +91,17 @@ namespace GMap.NET.CacheProviders
                   {
                      using(System.Data.SqlServerCe.SqlCeEngine engine = new System.Data.SqlServerCe.SqlCeEngine(connectionString))
                      {
-                        engine.CreateDatabase();                         
+                        engine.CreateDatabase();
                      }
 
                      try
+                     {
+                        using(SqlConnection c = new SqlConnection(connectionString))
                         {
-                           using(SqlConnection c = new SqlConnection(connectionString))
-                           {
-                              c.Open();
+                           c.Open();
 
-                              using(SqlCommand cmd = new SqlCommand(
-                                 "CREATE TABLE [GMapNETcache] ( \n"
+                           using(SqlCommand cmd = new SqlCommand(
+                              "CREATE TABLE [GMapNETcache] ( \n"
                   + "   [Type] [int]   NOT NULL, \n"
                   + "   [Zoom] [int]   NOT NULL, \n"
                   + "   [X]    [int]   NOT NULL, \n"
@@ -109,23 +109,23 @@ namespace GMap.NET.CacheProviders
                   + "   [Tile] [image] NOT NULL, \n"
                   + "   CONSTRAINT [PK_GMapNETcache] PRIMARY KEY (Type, Zoom, X, Y) \n"
                   + ")", c))
-                              {
-                                 cmd.ExecuteNonQuery();
-                              }
+                           {
+                              cmd.ExecuteNonQuery();
                            }
                         }
-                        catch(Exception ex)
+                     }
+                     catch(Exception ex)
+                     {
+                        try
                         {
-                           try
-                           {
-                              File.Delete(gtileCache + "Data.sdf");
-                           }
-                           catch
-                           {
-                           }
-
-                           throw ex;
+                           File.Delete(gtileCache + "Data.sdf");
                         }
+                        catch
+                        {
+                        }
+
+                        throw ex;
+                     }
                   }
 
                   // different connections so the multi-thread inserts and selects don't collide on open readers.
@@ -162,7 +162,7 @@ namespace GMap.NET.CacheProviders
          }
       }
 
-   #region IDisposable Members
+      #region IDisposable Members
       public void Dispose()
       {
          lock(cmdInsert)
@@ -198,7 +198,7 @@ namespace GMap.NET.CacheProviders
       }
       #endregion
 
-   #region PureImageCache Members
+      #region PureImageCache Members
       public bool PutImageToCache(MemoryStream tile, MapType type, Point pos, int zoom)
       {
          bool ret = true;
@@ -267,7 +267,8 @@ namespace GMap.NET.CacheProviders
                      {
                         if(GMaps.Instance.ImageProxy != null)
                         {
-                           MemoryStream stm = new MemoryStream(tile);
+                           MemoryStream stm = new MemoryStream(tile, 0, tile.Length, false, true);
+
                            ret = GMaps.Instance.ImageProxy.FromStream(stm);
                            if(ret!= null)
                            {
@@ -288,7 +289,7 @@ namespace GMap.NET.CacheProviders
          }
          return ret;
       }
-   #endregion
+      #endregion
    }
 #endif
 }

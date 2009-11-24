@@ -273,8 +273,10 @@ namespace GMap.NET.CacheProviders
                                  }
                                  tr.Commit();
                               }
-                              catch
+                              catch(Exception ex)
                               {
+                                 Debug.WriteLine("PutImageToCache: " + ex.ToString());
+
                                  tr.Rollback();
                                  ret = false;
                               }
@@ -329,7 +331,8 @@ namespace GMap.NET.CacheProviders
                                  {
                                     if(GMaps.Instance.ImageProxy != null)
                                     {
-                                       MemoryStream stm = new MemoryStream(tile);
+                                       MemoryStream stm = new MemoryStream(tile, 0, tile.Length, false, true);
+
                                        ret = GMaps.Instance.ImageProxy.FromStream(stm);
                                        if(ret!= null)
                                        {

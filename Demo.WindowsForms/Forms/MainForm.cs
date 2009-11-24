@@ -37,8 +37,8 @@ namespace Demo.WindowsForms
             GMaps.Instance.Mode = AccessMode.ServerAndCache;
 
             // add your custom map db provider
-            // MsSQLPureImageCache ch = new MsSQLPureImageCache();
-            //ch.ConnectionString = @"Data Source=RADIOMAN-PC\SQLEXPRESS;Initial Catalog=Test;Persist Security Info=False;User ID=aa;Password=aa;";
+            //MySQLPureImageCache ch = new MySQLPureImageCache();
+            //ch.ConnectionString = @"server=sql2008;User Id=trolis;Persist Security Info=True;database=gmapnetcache;password=trolis;";
             //GMaps.Instance.ImageCacheSecond = ch;
 
             // set your proxy here if need
