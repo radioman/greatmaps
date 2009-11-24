@@ -89,10 +89,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="CustomMarkers\UserControl1.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Windows\Zoom\ControlZoomDown.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -128,9 +124,6 @@
     </Compile>
     <Compile Include="CustomMarkers\CustomMarkerDemo.xaml.cs">
       <DependentUpon>CustomMarkerDemo.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="CustomMarkers\UserControl1.xaml.cs">
-      <DependentUpon>UserControl1.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\App.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
