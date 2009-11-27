@@ -382,8 +382,14 @@ namespace GMap.NET.Internals
       {
          if(waitOnEmptyTasks != null)
          {
-            waitOnEmptyTasks.Set();
-            waitOnEmptyTasks.Close();
+            try
+            {
+               waitOnEmptyTasks.Set();
+               waitOnEmptyTasks.Close();
+            }
+            catch
+            {
+            }
          }
 
          CancelAsyncTasks();
