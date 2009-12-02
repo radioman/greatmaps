@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("GMap.NET.WindowsMobile")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("GMap.NET - Great Maps for Windows Mobile")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Universe")]
 [assembly: AssemblyProduct("GMap.NET.WindowsMobile")]
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("1.0.0.0")]
 

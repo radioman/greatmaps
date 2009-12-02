@@ -35,7 +35,7 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE;PocketPC; SQLiteEnabled</DefineConstants>
@@ -62,7 +62,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SqlClient, Version=3.0.3600.0, Culture=neutral, PublicKeyToken=3be235df1c8d2ad3, processorArchitecture=MSIL" />
+    <Reference Include="System.Data.SqlClient, Version=3.0.3600.0, Culture=neutral, PublicKeyToken=3be235df1c8d2ad3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="System.Data.SQLite, Version=1.0.65.0, Culture=neutral, PublicKeyToken=1fdb50b1b62b4c84, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\CompactFramework\System.Data.SQLite.dll</HintPath>
@@ -212,6 +214,13 @@
       <Link>System.Windows.Forms\GMapControl.cs</Link>
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="GMap.NET.GPS\DegreesMinutesSeconds.cs" />
+    <Compile Include="GMap.NET.GPS\DeviceStateChangedEventArgs.cs" />
+    <Compile Include="GMap.NET.GPS\GPS.cs" />
+    <Compile Include="GMap.NET.GPS\GpsDeviceState.cs" />
+    <Compile Include="GMap.NET.GPS\GpsPosition.cs" />
+    <Compile Include="GMap.NET.GPS\LocationChangedEventArgs.cs" />
+    <Compile Include="GMap.NET.GPS\Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

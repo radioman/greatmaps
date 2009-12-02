@@ -140,7 +140,6 @@ namespace System.Windows.Forms
 
       private bool _GrayScale = false;
 
-      [Description("Gray Scale"), Category("GMap.NET")]
       public bool GrayScaleMode
       {
          get

@@ -8,7 +8,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("GMap.NET.WindowsPresentation")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("GMap.NET - Great Maps for Windows Presentation")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Universe")]
 [assembly: AssemblyProduct("GMap.NET.WindowsPresentation")]
