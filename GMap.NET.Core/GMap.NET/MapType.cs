@@ -37,6 +37,10 @@ namespace GMap.NET
       ArcGIS_ShadedRelief=799,
       ArcGIS_Terrain=811,
 
+#if TESTpjbcoetzer
+      ArcGIS_TestPjbcoetzer=822, // test for pjbcoetzer@gmail.com
+#endif
+
       // use these numbers to clean up old stuff
       //ArcGIS_MapsLT_Map_Old= 877,
       //ArcGIS_MapsLT_OrtoFoto_Old = 888,

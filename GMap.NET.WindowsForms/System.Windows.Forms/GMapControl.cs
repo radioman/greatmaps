@@ -165,6 +165,7 @@ namespace System.Windows.Forms
       internal readonly StringFormat CenterFormat = new StringFormat();
       internal readonly StringFormat BottomFormat = new StringFormat();
       bool RaiseEmptyTileError = false;
+      double zoomReal;
 
       /// <summary>
       /// construct
@@ -685,6 +686,7 @@ namespace System.Windows.Forms
 
       PointLatLng selectionStart;
       PointLatLng selectionEnd;
+      float? MapRenderTransform = null;
 
       protected override void OnPaint(PaintEventArgs e)
       {
@@ -692,30 +694,43 @@ namespace System.Windows.Forms
             // render white background
             e.Graphics.Clear(Color.WhiteSmoke);
 
-            // render map
-            DrawMapGDIplus(e.Graphics);
-
-            // render objects on each layer
-            foreach(GMapOverlay o in Overlays)
+            if(MapRenderTransform.HasValue)
             {
-               if(o.IsVisibile)
+               e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
                {
-                  o.Render(e.Graphics);
+                  DrawMapGDIplus(e.Graphics);
                }
+               e.Graphics.ResetTransform();
+            }
+            else
+            {
+               DrawMapGDIplus(e.Graphics);
             }
 
-            // selection
-            if(!SelectedArea.IsEmpty)
+            // render objects on each layer
+            //if(false)
             {
-               GMap.NET.Point p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
-               GMap.NET.Point p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
+               foreach(GMapOverlay o in Overlays)
+               {
+                  if(o.IsVisibile)
+                  {
+                     o.Render(e.Graphics);
+                  }
+               }    
+               
+               // selection
+               if(!SelectedArea.IsEmpty)
+               {
+                  GMap.NET.Point p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
+                  GMap.NET.Point p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
 
-               int x1 = p1.X;
-               int y1 = p1.Y;
-               int x2 = p2.X;
-               int y2 = p2.Y;
+                  int x1 = p1.X;
+                  int y1 = p1.Y;
+                  int x2 = p2.X;
+                  int y2 = p2.Y;
 
-               e.Graphics.DrawRectangle(SelectionPen, x1, y1, x2 - x1, y2 - y1);
+                  e.Graphics.DrawRectangle(SelectionPen, x1, y1, x2 - x1, y2 - y1);
+               }
             }
 
             #region -- copyright --
@@ -1089,6 +1104,15 @@ namespace System.Windows.Forms
       /// <returns></returns>
       public PointLatLng FromLocalToLatLng(int x, int y)
       {
+         if(MapRenderTransform.HasValue)
+         {
+            // var tp = MapRenderTransform.Inverse.Transform(new System.Windows.Point(x, y));
+            //x = (int) tp.X;
+            //y = (int) tp.Y;
+            x = (int) (x * MapRenderTransform.Value);
+            y = (int) (y * MapRenderTransform.Value);
+         }
+
          return Core.FromLocalToLatLng(x, y);
       }
 
@@ -1099,7 +1123,16 @@ namespace System.Windows.Forms
       /// <returns></returns>
       public GMap.NET.Point FromLatLngToLocal(PointLatLng point)
       {
-         return Core.FromLatLngToLocal(point);
+         GMap.NET.Point ret = Core.FromLatLngToLocal(point);
+
+         if(MapRenderTransform.HasValue)
+         {
+            //var tp = MapRenderTransform.Transform(new System.Windows.Point(ret.X, ret.Y));
+            ret.X = (int) (ret.X / MapRenderTransform.Value);
+            ret.Y = (int) (ret.X / MapRenderTransform.Value);
+         }
+
+         return ret;
       }
 
       /// <summary>
@@ -1192,10 +1225,59 @@ namespace System.Windows.Forms
          return false;
       }
 
+      public double Zoom
+      {
+         get
+         {
+            return zoomReal;
+         }
+         set
+         {
+            if(zoomReal != value)
+            {
+               if(value > MaxZoom)
+               {
+                  zoomReal = MaxZoom;
+               }
+               else
+                  if(value < MinZoom)
+                  {
+                     zoomReal = MinZoom;
+                  }
+                  else
+                  {
+                     zoomReal = value;
+                  }
+
+               float remainder = (float) System.Decimal.Remainder((Decimal) value, (Decimal) 1);
+               if(remainder != 0)
+               {
+                  float scaleValue = remainder + 1;
+                  {
+                     MapRenderTransform = scaleValue;
+                  }
+
+                  ZoomStep = Convert.ToInt32(value - remainder);
+
+                  //Core_OnMapZoomChanged();
+
+                  Invalidate(false);
+               }
+               else
+               {
+                  MapRenderTransform = null;
+                  ZoomStep = Convert.ToInt32(value);
+                  Invalidate(false);
+               }
+            }
+         }
+      }
+
       /// <summary>
       /// map zoom level
       /// </summary>
-      public int Zoom
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      internal int ZoomStep
       {
          get
          {

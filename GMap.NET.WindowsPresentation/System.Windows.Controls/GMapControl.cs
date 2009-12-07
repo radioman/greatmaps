@@ -316,7 +316,7 @@ namespace System.Windows.Controls
 
             MapType = MapType.GoogleMap;
          }
-      }       
+      }
 
       // testing smooth zoom
       Storyboard mapFadeStoryboard;
@@ -579,7 +579,7 @@ namespace System.Windows.Controls
 
          // return values as they were before
          obj.LayoutTransform = transform;
-         obj.Margin = margin;   
+         obj.Margin = margin;
 
          return bmp;
       }
@@ -1143,15 +1143,14 @@ namespace System.Windows.Controls
             {
                Core.Zoom = MaxZoom;
             }
+            else if(value < MinZoom)
+            {
+               Core.Zoom = MinZoom;
+            }
             else
-               if(value < MinZoom)
-               {
-                  Core.Zoom = MinZoom;
-               }
-               else
-               {
-                  Core.Zoom = value;
-               }
+            {
+               Core.Zoom = value;
+            }
          }
       }
 

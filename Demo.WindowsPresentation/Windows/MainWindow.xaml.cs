@@ -10,6 +10,7 @@ using GMap.NET.CacheProviders;
 using GMap.NET.WindowsPresentation;
 using System.Collections.Generic;
 using System.Windows.Threading;
+using System.Windows.Controls;
 
 namespace Demo.WindowsPresentation
 {
@@ -39,8 +40,8 @@ namespace Demo.WindowsPresentation
          GMaps.Instance.Mode = AccessMode.ServerAndCache;
 
          // add your custom map db provider
-         // MsSQLPureImageCache ch = new MsSQLPureImageCache();
-         //ch.ConnectionString = @"Data Source=SQL2008\SQLSRV08;Initial Catalog=PFleet;Integrated Security=True";
+         //MySQLPureImageCache ch = new MySQLPureImageCache();
+         //ch.ConnectionString = @"server=sql2008;User Id=trolis;Persist Security Info=True;database=gmapnetcache;password=trolis;";
          //GMaps.Instance.ImageCacheSecond = ch;
 
          // set your proxy here if need
@@ -50,7 +51,7 @@ namespace Demo.WindowsPresentation
          // config map
          MainMap.MapType = MapType.OpenStreetMap;
          MainMap.MaxZoom = 17;
-         MainMap.MinZoom = 3;
+         MainMap.MinZoom = 5;
          MainMap.Zoom = 12;
          MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
 
@@ -154,39 +155,99 @@ namespace Demo.WindowsPresentation
             #endregion
          }
 
-         if(false)  // set true to enable marker performance test
-         {
-            timer.Interval = TimeSpan.FromMilliseconds(222);
-            timer.Tick += new EventHandler(timer_Tick);
-            timer.Start();
-         }
+         // test performance
+         timer.Interval = TimeSpan.FromMilliseconds(4);
+         timer.Tick += new EventHandler(timer_Tick);
+         //timer.Start();
       }
 
-      #region -- marker performance testing --
-      DispatcherTimer timer = new DispatcherTimer();
-      Random r = new Random(22);
-      long xx = 1;
+      #region -- performance test--
+      public RenderTargetBitmap ToImageSource(FrameworkElement obj)
+      {
+         // Save current canvas transform
+         Transform transform = obj.LayoutTransform;
+         obj.LayoutTransform = null;
+
+         // fix margin offset as well
+         Thickness margin = obj.Margin;
+         obj.Margin = new Thickness(0, 0, margin.Right - margin.Left, margin.Bottom - margin.Top);
+
+         // Get the size of canvas
+         System.Windows.Size size = new System.Windows.Size(obj.Width, obj.Height);
+
+         // force control to Update
+         obj.Measure(size);
+         obj.Arrange(new Rect(size));
+
+         RenderTargetBitmap bmp = new RenderTargetBitmap((int) size.Width, (int) size.Height, 96, 96, PixelFormats.Pbgra32);
+         bmp.Render(obj);
+
+         if(bmp.CanFreeze)
+         {
+            bmp.Freeze();
+         }
+
+         // return values as they were before
+         obj.LayoutTransform = transform;
+         obj.Margin = margin;
+
+         return bmp;
+      }
 
       double NextDouble(Random rng, double min, double max)
       {
          return min + (rng.NextDouble() * (max - min));
       }
 
+      Random r = new Random();
+
+      int tt = 0;
       void timer_Tick(object sender, EventArgs e)
       {
          var pos = new PointLatLng(NextDouble(r, MainMap.CurrentViewArea.Top, MainMap.CurrentViewArea.Bottom), NextDouble(r, MainMap.CurrentViewArea.Left, MainMap.CurrentViewArea.Right));
-
-         GMapMarker it = new GMapMarker(pos);
+         GMapMarker m = new GMapMarker(pos);
          {
-            it.Shape = new Test((xx++).ToString());
+            var s = new Test((tt++).ToString());
+
+            var image = new Image();
+            {
+               RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.LowQuality);
+               image.Stretch = Stretch.None;
+               image.Opacity = s.Opacity;
+
+               image.MouseEnter += new System.Windows.Input.MouseEventHandler(image_MouseEnter);
+               image.MouseLeave += new System.Windows.Input.MouseEventHandler(image_MouseLeave);
+
+               image.Source = ToImageSource(s);
+            }
+
+            m.Shape = image;
+
+            m.Offset = new System.Windows.Point(-s.Width, -s.Height);
          }
-         it.ForceUpdateLocalPosition(MainMap);
+         m.ForceUpdateLocalPosition(MainMap);
+         MainMap.Markers.Add(m);
 
-         MainMap.Markers.Add(it);
-
-         if(xx >= 1111)
+         if(tt >= 333)
+         {
             timer.Stop();
-      } 
+            tt = 0;
+         }
+      }
+
+      void image_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+      {
+         Image img = sender as Image;
+         img.RenderTransform = null;
+      }
+
+      void image_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+      {
+         Image img = sender as Image;
+         img.RenderTransform = new ScaleTransform(1.2, 1.2, 12.5, 12.5);
+      }
+
+      DispatcherTimer timer = new DispatcherTimer(); 
       #endregion
 
       // add objects and zone around them
@@ -432,8 +493,6 @@ namespace Demo.WindowsPresentation
          center.Position = new PointLatLng(lat, lng);
 
          MainMap.CurrentPosition = center.Position;
-
-         // MainMap.InvalidateVisual();
       }
 
       // goto by geocoder
@@ -492,15 +551,15 @@ namespace Demo.WindowsPresentation
                   obj.Start(x, i, MainMap.MapType, 100);
                }
                else
-                  if(res == MessageBoxResult.No)
-                  {
-                     continue;
-                  }
-                  else
-                     if(res == MessageBoxResult.Cancel)
-                     {
-                        break;
-                     }
+               if(res == MessageBoxResult.No)
+               {
+                  continue;
+               }
+               else
+               if(res == MessageBoxResult.Cancel)
+               {
+                  break;
+               }
 
                x.Clear();
             }
@@ -607,6 +666,12 @@ namespace Demo.WindowsPresentation
                MainMap.Markers.Remove(clear.ElementAt(i));
                i--;
             }
+         }
+
+         tt = 0;
+         if(!timer.IsEnabled)
+         {
+            timer.Start();
          }
       }
 

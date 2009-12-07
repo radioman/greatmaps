@@ -57,7 +57,7 @@ namespace GMap.NET
 
       public MapRoute(List<PointLatLng> points, string name)
       {
-         Points = points;
+         Points = new List<PointLatLng>(points);
          Points.TrimExcess();
 
          Name = name;

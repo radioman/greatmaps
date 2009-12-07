@@ -838,7 +838,17 @@ namespace GMap.NET
 
                return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/NGS_Topo_US_2D/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
             }
+
+#if TESTpjbcoetzer
+            case MapType.ArcGIS_TestPjbcoetzer:
+            {
+               // http://mapping.mapit.co.za/ArcGIS/rest/services/World/MapServer/tile/Zoom/X/Y
+
+               return string.Format("http://mapping.mapit.co.za/ArcGIS/rest/services/World/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
+            }
+#endif
             #endregion
+
 
             #region -- MapsLT --
             case MapType.ArcGIS_MapsLT_OrtoFoto:

@@ -26,7 +26,7 @@ namespace Demo.WindowsForms
 
          numericUpDown1.Maximum = MainMap.MaxZoom;
          numericUpDown1.Minimum = MainMap.MinZoom;
-         numericUpDown1.Value = MainMap.Zoom;
+         numericUpDown1.Value = new decimal(MainMap.Zoom);
 
          bg.WorkerReportsProgress = true;
          bg.WorkerSupportsCancellation = true;

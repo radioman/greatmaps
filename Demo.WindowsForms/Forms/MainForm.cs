@@ -7,6 +7,7 @@ using GMap.NET;
 using GMap.NET.CacheProviders;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
+using System.IO;
 
 namespace Demo.WindowsForms
 {
@@ -48,8 +49,8 @@ namespace Demo.WindowsForms
             // config map 
             MainMap.MapType = MapType.ArcGIS_MapsLT_Map;
             MainMap.MaxZoom = 11;
-            MainMap.MinZoom = 3;
-            MainMap.Zoom = MainMap.MinZoom - 1;
+            MainMap.MinZoom = 2;
+            MainMap.Zoom = MainMap.MinZoom + 1;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
             //MainMap.CurrentPosition = new PointLatLng(29.8741410626414, 121.563806533813); // china test
 
@@ -84,7 +85,7 @@ namespace Demo.WindowsForms
             // get zoom  
             trackBar1.Minimum = MainMap.MinZoom;
             trackBar1.Maximum = MainMap.MaxZoom;
-            trackBar1.Value = MainMap.Zoom;
+            trackBar1.Value = (int) MainMap.Zoom;
 
 #if !DEBUG
             checkBoxDebug.Checked = false;
@@ -134,6 +135,10 @@ namespace Demo.WindowsForms
             }
 
             MainMap.ZoomAndCenterMarkers(null);
+
+            // test
+            //AddGpsMobileLogRoutes(@"D:\md\Desktop\2009-12-07-t1.txt");
+            //MainMap.ZoomAndCenterRoutes(null);
          }
       }
 
@@ -178,6 +183,67 @@ namespace Demo.WindowsForms
             MainMap.Zoom = MainMap.MaxZoom;
          }
          trackBar1.Maximum = MainMap.MaxZoom;
+      }
+
+      // testing my mobile gp log
+      void AddGpsMobileLogRoutes(string file)
+      {
+         try
+         {
+            using(var f = File.OpenText(file))
+            {
+               string str = null;
+               List<PointLatLng> points = new List<PointLatLng>();
+
+               while(!string.IsNullOrEmpty((str = f.ReadLine())))
+               {
+                  if(str.StartsWith("Stop"))
+                  {
+                     GMapRoute r = new GMapRoute(points, null);
+                     {
+                        r.Color = Color.Blue;
+                     }
+                     routes.Routes.Add(r);
+
+                     GMapMarker m1 = new GMapMarkerGoogleRed(points[points.Count-1]);
+                     m1.ToolTipText = "End";
+                     m1.TooltipMode = MarkerTooltipMode.Always;
+                     objects.Markers.Add(m1);
+
+                     points.Clear();
+                  }
+                  else if(str.StartsWith("Start"))
+                  {
+                     points.Clear();
+                  }
+                  else // log
+                  {
+                     var values = str.Split('|');
+                     if(values.Length == 16)
+                     {
+                        var lat = double.Parse(values[8]);
+                        var lng = double.Parse(values[9]);
+                        points.Add(new PointLatLng(lat, lng));
+
+                        if(points.Count == 1)
+                        {
+                           GMapMarker m1 = new GMapMarkerGoogleRed(points[0]);
+                           m1.ToolTipText = "Start";
+                           m1.TooltipMode = MarkerTooltipMode.Always;
+                           objects.Markers.Add(m1);
+                        }
+                     }
+                  }
+               }
+
+               points.Clear();
+
+               f.Close();
+            }
+         }
+         catch
+         {
+         }
       }
 
       /// <summary>
@@ -241,7 +307,7 @@ namespace Demo.WindowsForms
       // MapZoomChanged
       void MainMap_OnMapZoomChanged()
       {
-         trackBar1.Value = MainMap.Zoom;
+         trackBar1.Value = (int) (MainMap.Zoom);
       }
 
       // empty tile displayed
@@ -321,7 +387,7 @@ namespace Demo.WindowsForms
       // zoom
       private void trackBar1_ValueChanged(object sender, EventArgs e)
       {
-         MainMap.Zoom = trackBar1.Value;
+         MainMap.Zoom = (trackBar1.Value);
       }
 
       // go to
@@ -379,7 +445,7 @@ namespace Demo.WindowsForms
       // add test route
       private void button3_Click(object sender, EventArgs e)
       {
-         MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, MainMap.Zoom);
+         MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, (int) MainMap.Zoom);
          if(route != null)
          {
             // add route
@@ -503,7 +569,7 @@ namespace Demo.WindowsForms
          RectLatLng area = MainMap.SelectedArea;
          if(!area.IsEmpty)
          {
-            for(int i = MainMap.Zoom; i <= MainMap.MaxZoom; i++)
+            for(int i = (int) MainMap.Zoom; i <= MainMap.MaxZoom; i++)
             {
                List<GMap.NET.Point> x = MainMap.Projection.GetAreaTileList(area, i, 0);
 
@@ -546,11 +612,14 @@ namespace Demo.WindowsForms
                Image tmpImage = MainMap.ToImage();
                if(tmpImage != null)
                {
-                  if(sfd.ShowDialog() == DialogResult.OK)
+                  using(tmpImage)
                   {
-                     tmpImage.Save(sfd.FileName);
+                     if(sfd.ShowDialog() == DialogResult.OK)
+                     {
+                        tmpImage.Save(sfd.FileName);
 
-                     MessageBox.Show("Image saved: " + sfd.FileName, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Image saved: " + sfd.FileName, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                     }
                   }
                }
             }

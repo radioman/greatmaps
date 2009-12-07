@@ -215,6 +215,17 @@ namespace GMap.NET.Internals
 
                switch(value)
                {
+#if TESTpjbcoetzer
+                  case MapType.ArcGIS_TestPjbcoetzer:
+                  {
+                     if(false == (Projection is PlateCarreeProjection2))
+                     {
+                        Projection = new PlateCarreeProjection2();
+                     }
+                  }
+                  break;
+#endif
+
                   case MapType.ArcGIS_Map:
                   case MapType.ArcGIS_Satellite:
                   case MapType.ArcGIS_ShadedRelief:
@@ -727,7 +738,7 @@ namespace GMap.NET.Internals
 
                GC.Collect();
                GC.WaitForPendingFinalizers();
-               GC.Collect();                 
+               GC.Collect();
 
                // report load complete
                loader.ReportProgress(id, true);
@@ -736,7 +747,7 @@ namespace GMap.NET.Internals
 
                Debug.WriteLine("loader[" + id + "]: wait");
             }
-            
+
             waitOnEmptyTasks.WaitOne(1111);  // No more tasks - wait for a signal
          }
       }
@@ -818,7 +829,13 @@ namespace GMap.NET.Internals
                tileLoadQueue.Enqueue(task);
             }
          }
-         waitOnEmptyTasks.Set();
+         try
+         {
+            waitOnEmptyTasks.Set();
+         }
+         catch
+         {
+         }
       }
 
       /// <summary>

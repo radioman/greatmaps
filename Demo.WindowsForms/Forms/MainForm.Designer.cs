@@ -127,14 +127,19 @@
          // 
          this.MainMap.BackColor = System.Drawing.SystemColors.AppWorkspace;
          this.MainMap.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+         this.MainMap.CacheLocation = "C:\\Users\\a011\\AppData\\Roaming\\GMap.NET\\";
          this.MainMap.CanDragMap = true;
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
          this.MainMap.ForeColor = System.Drawing.SystemColors.ControlText;
+         this.MainMap.GrayScaleMode = false;
          this.MainMap.Location = new System.Drawing.Point(3, 16);
          this.MainMap.MarkersEnabled = true;
          this.MainMap.Name = "MainMap";
+         this.MainMap.RoutesEnabled = true;
+         this.MainMap.ShowTileGridLines = false;
          this.MainMap.Size = new System.Drawing.Size(635, 665);
          this.MainMap.TabIndex = 0;
+         this.MainMap.Zoom = 0;
          // 
          // groupBox3
          // 
