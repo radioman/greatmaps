@@ -127,7 +127,6 @@
          // 
          this.MainMap.BackColor = System.Drawing.SystemColors.AppWorkspace;
          this.MainMap.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-         this.MainMap.CacheLocation = "C:\\Users\\a011\\AppData\\Roaming\\GMap.NET\\";
          this.MainMap.CanDragMap = true;
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
          this.MainMap.ForeColor = System.Drawing.SystemColors.ControlText;

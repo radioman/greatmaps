@@ -81,7 +81,7 @@
     <Compile Include="GMap.NET.Internals\PureImage.cs" />
     <Compile Include="GMap.NET.Internals\LoadTask.cs" />
     <Compile Include="GMap.NET.Internals\RawTile.cs" />
-    <None Include="GMap.NET.Projections\PlateCarreeProjection2.cs" />
+    <Compile Include="GMap.NET.Projections\PlateCarreeProjection2.cs" />
     <Compile Include="GMap.NET.Projections\MapsLTProjection.cs" />
     <Compile Include="GMap.NET.Projections\MercatorProjection.cs" />
     <Compile Include="GMap.NET.Projections\PlateCarreeProjection.cs" />
