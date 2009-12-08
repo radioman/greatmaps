@@ -6,6 +6,7 @@ using System.Data.Common;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -18,8 +19,8 @@ namespace GpsTest
    /// </summary>
    public class Form1 : System.Windows.Forms.Form
    {
-      private System.Windows.Forms.MenuItem exitMenuItem;
-      private System.Windows.Forms.MainMenu mainMenu1;
+      private MenuItem exitMenuItem;
+      private MainMenu mainMenu1;
       private MenuItem menuItem2;
       private MenuItem startGpsMenuItem;
       private MenuItem stopGpsMenuItem;
@@ -29,19 +30,6 @@ namespace GpsTest
       private TabControl tabControlLog;
       private Panel panelSignals;
       private Splitter splitter1;
-
-      public Form1()
-      {
-         InitializeComponent();
-      }
-
-      /// <summary>
-      /// Clean up any resources being used.
-      /// </summary>
-      protected override void Dispose(bool disposing)
-      {
-         base.Dispose(disposing);
-      }
 
       #region Windows Form Designer generated code
       /// <summary>
@@ -165,6 +153,19 @@ namespace GpsTest
       }
       #endregion
 
+      public Form1()
+      {
+         InitializeComponent();
+      }
+
+      /// <summary>
+      /// Clean up any resources being used.
+      /// </summary>
+      protected override void Dispose(bool disposing)
+      {
+         base.Dispose(disposing);
+      }
+
       /// <summary>
       /// The main entry point for the application.
       /// </summary>
@@ -173,106 +174,59 @@ namespace GpsTest
          Application.Run(new Form1());
       }
 
+      #region -- native imports --
+
       [DllImport("coredll.dll")]
       static extern int ShowWindow(IntPtr hWnd, int nCmdShow);
 
       const int SW_MINIMIZED = 6;
 
-      public new void Hide()
+      public static readonly IntPtr INVALID_HANDLE_VALUE = (IntPtr) (-1);
+
+      // The CharSet must match the CharSet of the corresponding PInvoke signature
+      [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto)]
+      public struct WIN32_FIND_DATA
       {
-         ShowWindow(this.Handle, SW_MINIMIZED);
+         public int dwFileAttributes;
+         public FILETIME ftCreationTime;
+         public FILETIME ftLastAccessTime;
+         public FILETIME ftLastWriteTime;
+         public int nFileSizeHigh;
+         public int nFileSizeLow;
+         public int dwOID;
+         [MarshalAs(UnmanagedType.ByValTStr, SizeConst=260)]
+         public string cFileName;
+         [MarshalAs(UnmanagedType.ByValTStr, SizeConst=14)]
+         public string cAlternateFileName;
       }
 
-      private void exitMenuItem_Click(object sender, EventArgs e)
+      [StructLayout(LayoutKind.Sequential)]
+      public struct FILETIME
       {
-         Hide();
-      }
+         public int dwLowDateTime;
+         public int dwHighDateTime;
+      };
 
-      private void Form1_Load(object sender, System.EventArgs e)
-      {
-         updateDataHandler = new EventHandler(UpdateData);
+      [DllImport("note_prj", EntryPoint="FindFirstFlashCard")]
+      public extern static IntPtr FindFirstFlashCard(ref WIN32_FIND_DATA findData);
 
-         status.Text = "";
+      [DllImport("note_prj", EntryPoint="FindNextFlashCard")]
+      [return: MarshalAs(UnmanagedType.Bool)]
+      public extern static bool FindNextFlashCard(IntPtr hFlashCard, ref WIN32_FIND_DATA findData);
 
-         status.Width = Screen.PrimaryScreen.WorkingArea.Width;
-         status.Height = Screen.PrimaryScreen.WorkingArea.Height;
+      [DllImport("coredll")]
+      public static extern bool FindClose(IntPtr hFindFile);
 
-         gps.DeviceStateChanged += new DeviceStateChangedEventHandler(gps_DeviceStateChanged);
-         gps.LocationChanged += new LocationChangedEventHandler(gps_LocationChanged);
+      #endregion
 
-         panelSignals.MouseMove += new MouseEventHandler(panelSignals_MouseMove);
-      }
-
-      void panelSignals_MouseMove(object sender, MouseEventArgs e)
-      {
-         LastMove = DateTime.Now;
-      }
-
+      #region -- variables --
       DateTime LastMove = DateTime.Now;
-
-      protected void gps_LocationChanged(object sender, LocationChangedEventArgs args)
-      {
-         try
-         {
-            var position = args.Position;
-            if(position != null)
-            {
-               if(position.Time.HasValue && position.Latitude.HasValue && position.Longitude.HasValue)
-               {
-                  // first time
-                  if(!TimeUTC.HasValue)
-                  {
-                     TimeUTC = position.Time;
-                     Lat = position.Latitude;
-                     Lng = position.Longitude;
-                  }
-
-                  if(TimeUTC.HasValue && position.Time - TimeUTC.Value >= delay)
-                  {
-                     Delta = gps.GetDistance(position.Latitude.Value, position.Longitude.Value, Lat.Value, Lng.Value);
-                     Total += Delta;
-                     Lat = position.Latitude;
-                     Lng = position.Longitude;
-                     TimeUTC = position.Time;
-
-                     AddToLogCurrentInfo(position);
-                  }
-               }
-               else
-               {
-                  Lat = position.Latitude;
-                  Lng = position.Longitude;
-                  TimeUTC = position.Time;
-               }
-
-               // do not update if user is idling
-               if((DateTime.Now - LastMove).TotalMinutes < 1)
-               {
-                  lock(Satellites)
-                  {
-                     Satellites.Clear();
-                     Satellites.AddRange(position.GetSatellitesInView());
-                     Satellites.TrimExcess();
-                  }
-
-                  Invoke(updateDataHandler, position);
-               }
-            }
-         }
-         catch
-         {
-         }
-      }
-
-      void gps_DeviceStateChanged(object sender, DeviceStateChangedEventArgs args)
-      {
-         device = args.DeviceState;
-         Invoke(updateDataHandler);
-      }
 
       string LogDb;
       SQLiteConnection cn;
       DbCommand cmd;
+      DateTime LastFlush = DateTime.Now;
+      TimeSpan FlushDelay = TimeSpan.FromSeconds(60);
 
       Gps gps = new Gps();
       GpsDeviceState device = null;
@@ -292,218 +246,13 @@ namespace GpsTest
       Pen penForSat = new Pen(Color.White, 3.0f);
       Brush brushForSatOk = new SolidBrush(Color.LimeGreen);
       Brush brushForSatNo = new SolidBrush(Color.Red);
+      #endregion
 
-      private void panelSignals_Paint(object sender, PaintEventArgs e)
+      #region -- functions --
+      public new void Hide()
       {
-         {
-            lock(Satellites)
-            {
-               if(Satellites.Count > 0)
-               {
-                  int cc = Width / Satellites.Count;
-                  for(int i = 0; i < Satellites.Count; i++)
-                  {
-                     int str = (int) ((panelSignals.Height * Satellites[i].SignalStrength)/100.0);
-
-                     if(Satellites[i].InSolution)
-                     {
-                        e.Graphics.FillRectangle(brushForSatOk, new Rectangle(i*cc, panelSignals.Height - str, cc, str));
-                     }
-                     else
-                     {
-                        e.Graphics.FillRectangle(brushForSatNo, new Rectangle(i*cc, panelSignals.Height - str, cc, str));
-                     }
-
-                     e.Graphics.DrawRectangle(penForSat, new Rectangle(i*cc + (int) penForSat.Width/2, 0, cc - (int) penForSat.Width/2, panelSignals.Height));
-                  }
-               }
-            }
-         }
+         ShowWindow(this.Handle, SW_MINIMIZED);
       }
-
-      void UpdateData(object sender, System.EventArgs args)
-      {
-         try
-         {
-            // update signals
-            panelSignals.Invalidate();
-            {
-               var data = sender as GpsPosition;
-               string str = "\n";
-
-               if(data != null)
-               {
-                  count++;
-                  {
-                     if(data.Time.HasValue && data.Longitude.HasValue && data.Longitude.HasValue)
-                     {
-                        str += "Time: " + data.Time.Value.ToLongDateString() + " " + data.Time.Value.ToLongTimeString() + "\n";
-                        str += "Delay: " + ((int) (DateTime.UtcNow - data.Time.Value).TotalSeconds) + "s\n";
-                        str += "Delta: " + string.Format("{0:0.00}m, total: {1:0.00m}\n", Delta*1000.0, Total*1000.0);
-                        str += "Latitude: " + data.Latitude.Value + "\n";
-                        str += "Longitude: " + data.Longitude.Value + "\n\n";
-                     }
-                     else
-                     {
-                        str += "Time: -" + "\n";
-                        str += "Delay: -" + "\n";
-                        str += "Delta: - \n";
-                        str += "Latitude: -" + "\n";
-                        str += "Longitude: -" + "\n\n";
-                     }
-
-                     if(data.Speed.HasValue)
-                     {
-                        str += "Speed: " + string.Format("{0:0.00} km/h\n", data.Speed);
-                     }
-                     else
-                     {
-                        str += "Speed: -\n";
-                     }
-
-                     if(data.SeaLevelAltitude.HasValue)
-                     {
-                        str += "SeaLevelAltitude: " + string.Format("{0:0.00}m\n", data.SeaLevelAltitude);
-                     }
-                     else
-                     {
-                        str += "SeaLevelAltitude: -\n";
-                     }
-
-                     if(data.PositionDilutionOfPrecision.HasValue)
-                     {
-                        str += "PositionDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.PositionDilutionOfPrecision);
-                     }
-                     else
-                     {
-                        str += "PositionDilutionOfPrecision: -\n";
-                     }
-
-                     if(data.HorizontalDilutionOfPrecision.HasValue)
-                     {
-                        str += "HorizontalDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.HorizontalDilutionOfPrecision);
-                     }
-                     else
-                     {
-                        str += "HorizontalDilutionOfPrecision: -\n";
-                     }
-
-                     if(data.VerticalDilutionOfPrecision.HasValue)
-                     {
-                        str += "VerticalDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.VerticalDilutionOfPrecision);
-                     }
-                     else
-                     {
-                        str += "VerticalDilutionOfPrecision: -\n";
-                     }
-
-                     if(data.SatellitesInViewCount.HasValue)
-                     {
-                        str += "SatellitesInView: " + data.SatellitesInViewCount + "\n";
-                     }
-                     else
-                     {
-                        str += "SatellitesInView: -" + "\n";
-                     }
-
-                     if(data.SatelliteCount.HasValue)
-                     {
-                        str += "SatelliteCount: " + data.SatelliteCount + "\n";
-                     }
-                     else
-                     {
-                        str += "SatelliteCount: -" + "\n";
-                     }
-                  }
-               }
-
-               status.Text = str;
-               this.Text = "GPS: " + count + "|" + countReal;
-            }
-         }
-         catch(Exception ex)
-         {
-            status.Text = "\n" + ex.ToString();
-         }
-      }
-
-      private void Form1_Closed(object sender, System.EventArgs e)
-      {
-         if(gps.Opened)
-         {
-            gps.Close();
-         }
-
-         if(cn != null)
-         {
-            TryCommitData();
-
-            if(cn.State == ConnectionState.Open)
-            {
-               cn.Close();
-            }
-            cn.Dispose();
-            cn = null;
-         }
-         if(cmd != null)
-         {
-            cmd.Dispose();
-            cmd = null;
-         }
-      }
-
-      private void stopGpsMenuItem_Click(object sender, EventArgs e)
-      {
-         if(gps.Opened)
-         {
-            gps.Close();
-         }
-
-         startGpsMenuItem.Enabled = true;
-         stopGpsMenuItem.Enabled = false;
-         count = 0;
-         countReal = 0;
-         Total = 0;
-         {
-            TimeUTC = null;
-            Lat = null;
-            Lng = null;
-            Delta = 0;
-         }
-         lock(Satellites)
-         {
-            Satellites.Clear();
-            Satellites.TrimExcess();
-         }
-         tabControlLog.Height = 688;
-         panelSignals.Invalidate();
-
-         TryCommitData();
-      }
-
-      private void startGpsMenuItem_Click(object sender, EventArgs e)
-      {
-         string sd = GetRemovableStorageDirectory();
-         if(!string.IsNullOrEmpty(sd))
-         {
-            var fileName = sd + Path.DirectorySeparatorChar + "GPS" + Path.DirectorySeparatorChar + DateTime.Today.Year + Path.DirectorySeparatorChar + DateTime.Now.ToString("MMMM-dd") +  ".gpsd";
-            {
-               CheckLogDb(fileName);
-            }
-         }
-
-         if(!gps.Opened)
-         {
-            gps.Open();
-         }
-
-         startGpsMenuItem.Enabled = false;
-         stopGpsMenuItem.Enabled = true;
-         tabControlLog.Height = 511;
-      }
-
-      DateTime LastFlush = DateTime.Now;
-      TimeSpan FlushDelay = TimeSpan.FromSeconds(60);
 
       public bool AddToLogCurrentInfo(GpsPosition data)
       {
@@ -565,7 +314,7 @@ namespace GpsTest
                using(cmd.Transaction)
                {
                   cmd.Transaction.Commit();
-                  LastFlush = DateTime.Now;                  
+                  LastFlush = DateTime.Now;
                }
                cmd.Transaction = null;
                Debug.WriteLine("TryCommitData: OK " + LastFlush.ToLongTimeString());
@@ -698,7 +447,7 @@ namespace GpsTest
          return ret;
       }
 
-      public static string GetRemovableStorageDirectory()
+      string GetRemovableStorageDirectory()
       {
          string removableStorageDirectory = null;
 
@@ -723,45 +472,301 @@ namespace GpsTest
 
          return removableStorageDirectory;
       }
+      #endregion
 
-      public static readonly IntPtr INVALID_HANDLE_VALUE = (IntPtr) (-1);
-
-      // The CharSet must match the CharSet of the corresponding PInvoke signature
-      [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto)]
-      public struct WIN32_FIND_DATA
+      void Form1_Load(object sender, System.EventArgs e)
       {
-         public int dwFileAttributes;
-         public FILETIME ftCreationTime;
-         public FILETIME ftLastAccessTime;
-         public FILETIME ftLastWriteTime;
-         public int nFileSizeHigh;
-         public int nFileSizeLow;
-         public int dwOID;
-         [MarshalAs(UnmanagedType.ByValTStr, SizeConst=260)]
-         public string cFileName;
-         [MarshalAs(UnmanagedType.ByValTStr, SizeConst=14)]
-         public string cAlternateFileName;
+         updateDataHandler = new EventHandler(UpdateData);
+
+         status.Text = "";
+
+         status.Width = Screen.PrimaryScreen.WorkingArea.Width;
+         status.Height = Screen.PrimaryScreen.WorkingArea.Height;
+
+         gps.DeviceStateChanged += new DeviceStateChangedEventHandler(gps_DeviceStateChanged);
+         gps.LocationChanged += new LocationChangedEventHandler(gps_LocationChanged);
+
+         panelSignals.MouseMove += new MouseEventHandler(panelSignals_MouseMove);
       }
 
-      [StructLayout(LayoutKind.Sequential)]
-      public struct FILETIME
+      void panelSignals_MouseMove(object sender, MouseEventArgs e)
       {
-         public int dwLowDateTime;
-         public int dwHighDateTime;
-      };
+         LastMove = DateTime.Now;
+      }
 
-      [DllImport("note_prj", EntryPoint="FindFirstFlashCard")]
-      public extern static IntPtr FindFirstFlashCard(ref WIN32_FIND_DATA findData);
+      void gps_LocationChanged(object sender, LocationChangedEventArgs args)
+      {
+         try
+         {
+            var position = args.Position;
+            if(position != null)
+            {
+               if(position.Time.HasValue && position.Latitude.HasValue && position.Longitude.HasValue)
+               {
+                  // first time
+                  if(!TimeUTC.HasValue)
+                  {
+                     TimeUTC = position.Time;
+                     Lat = position.Latitude;
+                     Lng = position.Longitude;
+                  }
 
-      [DllImport("note_prj", EntryPoint="FindNextFlashCard")]
-      [return: MarshalAs(UnmanagedType.Bool)]
-      public extern static bool FindNextFlashCard(IntPtr hFlashCard, ref WIN32_FIND_DATA findData);
+                  if(TimeUTC.HasValue && position.Time - TimeUTC.Value >= delay)
+                  {
+                     Delta = gps.GetDistance(position.Latitude.Value, position.Longitude.Value, Lat.Value, Lng.Value);
+                     Total += Delta;
+                     Lat = position.Latitude;
+                     Lng = position.Longitude;
+                     TimeUTC = position.Time;
 
-      [DllImport("coredll")]
-      public static extern bool FindClose(IntPtr hFindFile);
+                     AddToLogCurrentInfo(position);
+                  }
+               }
+               else
+               {
+                  Lat = position.Latitude;
+                  Lng = position.Longitude;
+                  TimeUTC = position.Time;
+               }
 
-      // exit
-      private void menuItem1_Click(object sender, EventArgs e)
+               // do not update if user is idling
+               if((DateTime.Now - LastMove).TotalMinutes < 1)
+               {
+                  lock(Satellites)
+                  {
+                     Satellites.Clear();
+                     Satellites.AddRange(position.GetSatellitesInView());
+                     Satellites.TrimExcess();
+                  }
+
+                  Invoke(updateDataHandler, position);
+               }
+            }
+         }
+         catch
+         {
+         }
+      }
+
+      void gps_DeviceStateChanged(object sender, DeviceStateChangedEventArgs args)
+      {
+         device = args.DeviceState;
+         Invoke(updateDataHandler);
+      }
+
+      void panelSignals_Paint(object sender, PaintEventArgs e)
+      {
+         lock(Satellites)
+         {
+            if(Satellites.Count > 0)
+            {
+               int cc = Width / Satellites.Count;
+               for(int i = 0; i < Satellites.Count; i++)
+               {
+                  int str = (int) ((panelSignals.Height * Satellites[i].SignalStrength)/100.0);
+
+                  if(Satellites[i].InSolution)
+                  {
+                     e.Graphics.FillRectangle(brushForSatOk, new Rectangle(i*cc, panelSignals.Height - str, cc, str));
+                  }
+                  else
+                  {
+                     e.Graphics.FillRectangle(brushForSatNo, new Rectangle(i*cc, panelSignals.Height - str, cc, str));
+                  }
+
+                  e.Graphics.DrawRectangle(penForSat, new Rectangle(i*cc + (int) penForSat.Width/2, 0, cc - (int) penForSat.Width/2, panelSignals.Height));
+               }
+            }
+         }
+      }
+
+      void UpdateData(object sender, System.EventArgs args)
+      {
+         try
+         {
+            // update signals
+            panelSignals.Invalidate();
+            {
+               var data = sender as GpsPosition;
+               string str = "\n";
+
+               if(data != null)
+               {
+                  count++;
+                  {
+                     if(data.Time.HasValue && data.Longitude.HasValue && data.Longitude.HasValue)
+                     {
+                        str += "Time: " + data.Time.Value.ToLongDateString() + " " + data.Time.Value.ToLongTimeString() + "\n";
+                        str += "Delay: " + ((int) (DateTime.UtcNow - data.Time.Value).TotalSeconds) + "s\n";
+                        str += "Delta: " + string.Format("{0:0.00}m, total: {1:0.00m}\n", Delta*1000.0, Total*1000.0);
+                        str += "Latitude: " + data.Latitude.Value + "\n";
+                        str += "Longitude: " + data.Longitude.Value + "\n\n";
+                     }
+                     else
+                     {
+                        str += "Time: -" + "\n";
+                        str += "Delay: -" + "\n";
+                        str += "Delta: - \n";
+                        str += "Latitude: -" + "\n";
+                        str += "Longitude: -" + "\n\n";
+                     }
+
+                     if(data.Speed.HasValue)
+                     {
+                        str += "Speed: " + string.Format("{0:0.00} km/h\n", data.Speed);
+                     }
+                     else
+                     {
+                        str += "Speed: -\n";
+                     }
+
+                     if(data.SeaLevelAltitude.HasValue)
+                     {
+                        str += "SeaLevelAltitude: " + string.Format("{0:0.00}m\n", data.SeaLevelAltitude);
+                     }
+                     else
+                     {
+                        str += "SeaLevelAltitude: -\n";
+                     }
+
+                     if(data.PositionDilutionOfPrecision.HasValue)
+                     {
+                        str += "PositionDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.PositionDilutionOfPrecision);
+                     }
+                     else
+                     {
+                        str += "PositionDilutionOfPrecision: -\n";
+                     }
+
+                     if(data.HorizontalDilutionOfPrecision.HasValue)
+                     {
+                        str += "HorizontalDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.HorizontalDilutionOfPrecision);
+                     }
+                     else
+                     {
+                        str += "HorizontalDilutionOfPrecision: -\n";
+                     }
+
+                     if(data.VerticalDilutionOfPrecision.HasValue)
+                     {
+                        str += "VerticalDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.VerticalDilutionOfPrecision);
+                     }
+                     else
+                     {
+                        str += "VerticalDilutionOfPrecision: -\n";
+                     }
+
+                     if(data.SatellitesInViewCount.HasValue)
+                     {
+                        str += "SatellitesInView: " + data.SatellitesInViewCount + "\n";
+                     }
+                     else
+                     {
+                        str += "SatellitesInView: -" + "\n";
+                     }
+
+                     if(data.SatelliteCount.HasValue)
+                     {
+                        str += "SatelliteCount: " + data.SatelliteCount + "\n";
+                     }
+                     else
+                     {
+                        str += "SatelliteCount: -" + "\n";
+                     }
+                  }
+               }
+
+               status.Text = str;
+               this.Text = "GPS: " + count + "|" + countReal;
+            }
+         }
+         catch(Exception ex)
+         {
+            status.Text = "\n" + ex.ToString();
+         }
+      }
+
+      void Form1_Closed(object sender, System.EventArgs e)
+      {
+         if(gps.Opened)
+         {
+            gps.Close();
+         }
+
+         if(cn != null)
+         {
+            TryCommitData();
+
+            if(cn.State == ConnectionState.Open)
+            {
+               cn.Close();
+            }
+            cn.Dispose();
+            cn = null;
+         }
+         if(cmd != null)
+         {
+            cmd.Dispose();
+            cmd = null;
+         }
+      }
+
+      void stopGpsMenuItem_Click(object sender, EventArgs e)
+      {
+         if(gps.Opened)
+         {
+            gps.Close();
+         }
+
+         startGpsMenuItem.Enabled = true;
+         stopGpsMenuItem.Enabled = false;
+         count = 0;
+         countReal = 0;
+         Total = 0;
+         {
+            TimeUTC = null;
+            Lat = null;
+            Lng = null;
+            Delta = 0;
+         }
+         lock(Satellites)
+         {
+            Satellites.Clear();
+            Satellites.TrimExcess();
+         }
+         tabControlLog.Height = 688;
+         panelSignals.Invalidate();
+
+         TryCommitData();
+      }
+
+      void startGpsMenuItem_Click(object sender, EventArgs e)
+      {
+         string sd = GetRemovableStorageDirectory();
+         if(!string.IsNullOrEmpty(sd))
+         {
+            var fileName = sd + Path.DirectorySeparatorChar + "GPS" + Path.DirectorySeparatorChar + DateTime.Today.Year + Path.DirectorySeparatorChar + DateTime.Now.ToString("MMMM-dd", CultureInfo.InvariantCulture) +  ".gpsd";
+            {
+               CheckLogDb(fileName);
+            }
+         }
+
+         if(!gps.Opened)
+         {
+            gps.Open();
+         }
+
+         startGpsMenuItem.Enabled = false;
+         stopGpsMenuItem.Enabled = true;
+         tabControlLog.Height = 511;
+      }
+
+      void exitMenuItem_Click(object sender, EventArgs e)
+      {
+         Hide();
+      }
+
+      void menuItem1_Click(object sender, EventArgs e)
       {
          Close();
       }

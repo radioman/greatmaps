@@ -95,10 +95,6 @@ namespace Microsoft.WindowsMobile.Samples.Location
          }
       }
 
-      public Gps()
-      {
-      }
-
       ~Gps()
       {
          // make sure that the GPS was closed.
