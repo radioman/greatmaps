@@ -489,6 +489,532 @@
             Specifies a solid line.
             </summary>
         </member>
+        <member name="T:OpenNETCF.Drawing.Imaging.IBasicBitmapOps">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IBasicBitmapOps.Clone(OpenNETCF.Drawing.Imaging.RECT,OpenNETCF.Drawing.Imaging.IBitmapImage@,System.Boolean)">
+            <summary>
+            Clone an area of the bitmap image
+            </summary>
+            <param name="rect"></param>
+            <param name="outbmp"></param>
+            <param name="bNeedCloneProperty"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IBasicBitmapOps.Flip(System.Boolean,System.Boolean,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
+            <summary>
+            Flip the bitmap image in x- and/or y-direction
+            </summary>
+            <param name="flipX"></param>
+            <param name="flipY"></param>
+            <param name="outbmp"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IBasicBitmapOps.Resize(System.UInt32,System.UInt32,System.Drawing.Imaging.PixelFormat,OpenNETCF.Drawing.Imaging.InterpolationHint,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
+            <summary>
+            Resize the bitmap image
+            </summary>
+            <param name="newWidth"></param>
+            <param name="newHeight"></param>
+            <param name="pixelFormat"></param>
+            <param name="hints"></param>
+            <param name="outbmp"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IBasicBitmapOps.Rotate(System.Single,OpenNETCF.Drawing.Imaging.InterpolationHint,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
+            <summary>
+            Rotate the bitmap image by the specified angle
+            </summary>
+            <param name="angle"></param>
+            <param name="hints"></param>
+            <param name="outbmp"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IBasicBitmapOps.AdjustBrightness(System.Single)">
+            <summary>
+            Adjust the brightness of the bitmap image
+            </summary>
+            <param name="percent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IBasicBitmapOps.AdjustContrast(System.Single,System.Single)">
+            <summary>
+            This method adjusts the contrast of an image by rescaling the pixel values in the range from 0 to 1 to the new range from shadow to highlight.
+            The old pixel value 0 is mapped to the new pixel value of shadow and the old pixel value 1 is mapped to the new pixel value of highlight. All other old pixel values are mapped into the new range through linear interpolation.
+            </summary>
+            <param name="shadow">A FLOAT value that defines the value for pixels that are currently 0.</param>
+            <param name="highlight">A FLOAT value that defines the value for pixels that are currently 1.</param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IBasicBitmapOps.AdjustGamma(System.Single)">
+            <summary>
+            Adjust the gamma of the bitmap image
+            </summary>
+            <param name="gamma"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IBitmapImage.GetSize(System.Drawing.Size@)">
+            <summary>
+            Get bitmap dimensions pixels
+            </summary>
+            <param name="size"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IBitmapImage.GetPixelFormatID(System.Drawing.Imaging.PixelFormat@)">
+            <summary>
+            Get bitmap pixel format
+            </summary>
+            <param name="pixelFormat"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IBitmapImage.LockBits(OpenNETCF.Drawing.Imaging.RECT,System.UInt32,System.Drawing.Imaging.PixelFormat,OpenNETCF.Drawing.Imaging.BitmapDataInternal@)">
+            <summary>
+            Access bitmap data the specified pixel format
+             must support at least PIXFMT_DONTCARE and
+             the canonical formats.
+            </summary>
+            <param name="rect"></param>
+            <param name="flags"></param>
+            <param name="pixelFormat"></param>
+            <param name="lockedBitmapData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IBitmapImage.UnlockBits(OpenNETCF.Drawing.Imaging.BitmapDataInternal@)">
+            <summary>
+            
+            </summary>
+            <param name="lockedBitmapData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IBitmapImage.GetPalette(System.IntPtr@)">
+            <summary>
+            Set/get palette associated with the bitmap image
+            Do not use directly. Use <c>ImageUtils.GetBitmapPalette</c> instead
+            </summary>
+            <param name="palette"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IBitmapImage.SetPalette(System.IntPtr)">
+            <summary>
+            Do not use directly. Use <c>ImageUtils.SetBitmapPalette</c> instead
+            </summary>
+            <param name="palette"></param>
+            <returns></returns>
+        </member>
+        <member name="T:OpenNETCF.Drawing.Imaging.IImage">
+            <summary>
+            This is the basic interface to an image object. It allows applications to do the following: 
+            Display the image onto a destination graphics context  
+            Push image data into an image sink 
+            Access image properties and metadata Decoded image objects and in-memory bitmap image objects support the IImage interface
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImage.GetPhysicalDimension(System.Drawing.Size@)">
+            <summary>
+            Get the device-independent physical dimension of the image
+             unit of 0.01mm
+            </summary>
+            <param name="size"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImage.GetImageInfo(OpenNETCF.Drawing.Imaging.ImageInfo@)">
+            <summary>
+            Get basic image info
+            </summary>
+            <param name="imageInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImage.SetImageFlags(OpenNETCF.Drawing.Imaging.ImageFlags)">
+            <summary>
+            Set image flags
+            </summary>
+            <param name="flags"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImage.Draw(System.IntPtr,OpenNETCF.Drawing.Imaging.RECT,OpenNETCF.Drawing.Imaging.RECT)">
+            <summary>
+            Display the image a GDI device context
+            </summary>
+            <param name="hdc"></param>
+            <param name="dstRect"></param>
+            <param name="srcRect"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImage.PushIntoSink(OpenNETCF.Drawing.Imaging.IImageSink)">
+            <summary>
+            Push image data into an IImageSink
+            </summary>
+            <param name="sink"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImage.GetThumbnail(System.UInt32,System.UInt32,OpenNETCF.Drawing.Imaging.IImage@)">
+            <summary>
+            Get a thumbnail representation for the image object
+            </summary>
+            <param name="thumbWidth"></param>
+            <param name="thumbHeight"></param>
+            <param name="thumbImage"></param>
+            <returns></returns>
+        </member>
+        <member name="T:OpenNETCF.Drawing.Imaging.IImageDecoder">
+            <summary>
+            This is a low-level interface to an image decoder object. 
+            Many simple applications do not need to work with decoder objects directly and can work with 
+            higher level decoded image objects instead. 
+            More sophisticated applications can use the IImageDecoder interface to have finer control over the interaction with decoder objects.
+            The IImageDecoder interface can support images with multiple frames. Multiframe images are accessed via multidimensional indices. 
+            This interface can support an arbitrary number of dimensions in nonrectangular arrangements
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.InitDecoder(OpenNETCF.Runtime.InteropServices.ComTypes.IStream,OpenNETCF.Drawing.Imaging.DecoderInitFlag)">
+            <summary>
+            Initialize the image decoder object
+            </summary>
+            <param name="stream"></param>
+            <param name="flags"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.TerminateDecoder">
+            <summary>
+            Clean up the image decoder object
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.BeginDecode(OpenNETCF.Drawing.Imaging.IImageSink,System.IntPtr)">
+            <summary>
+            Start decoding the current frame
+            </summary>
+            <param name="sink"></param>
+            <param name="newPropSet"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.Decode">
+            <summary>
+            Continue decoding
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.EndDecode(System.Int32)">
+            <summary>
+            Stop decoding the current frame
+            </summary>
+            <param name="statusCode"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetFrameDimensionsCount(System.UInt32@)">
+            <summary>
+            Query multi-frame dimensions
+            </summary>
+            <param name="count"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetFrameDimensionsList(System.Guid@,System.UInt32@)">
+            <summary>
+            Query multi-frame dimensions
+            </summary>
+            <param name="dimensionIDs"></param>
+            <param name="count"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetFrameCount(System.Guid@,System.UInt32@)">
+            <summary>
+            Get number of frames for the specified dimension
+            </summary>
+            <param name="dimensionID"></param>
+            <param name="count"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.SelectActiveFrame(System.Guid@,System.UInt32)">
+            <summary>
+            Select currently active frame
+            </summary>
+            <param name="dimensionID"></param>
+            <param name="frameIndex"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetImageInfo(OpenNETCF.Drawing.Imaging.ImageInfo@)">
+            <summary>
+            Get basic information about the image
+            </summary>
+            <param name="imageInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetThumbnail(System.UInt32,System.UInt32,OpenNETCF.Drawing.Imaging.IImage@)">
+            <summary>
+            Get image thumbnail
+            </summary>
+            <param name="thumbWidth"></param>
+            <param name="thumbHeight"></param>
+            <param name="thumbImage"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.QueryDecoderParam(System.Guid)">
+            <summary>
+            Query decoder parameters
+            </summary>
+            <param name="Guid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.SetDecoderParam(System.Guid,System.UInt32,System.IntPtr)">
+            <summary>
+            Set decoder parameters
+            </summary>
+            <param name="Guid"></param>
+            <param name="Length"></param>
+            <param name="Value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetPropertyCount(System.UInt32@)">
+            <summary>
+            Get image property count
+            </summary>
+            <param name="numOfProperty"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetPropertyIdList(System.UInt32,OpenNETCF.Drawing.Imaging.ImageTag[])">
+            <summary>
+            Get selected image properties
+            </summary>
+            <param name="numOfProperty"></param>
+            <param name="list"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetPropertyItemSize(OpenNETCF.Drawing.Imaging.ImageTag,System.UInt32@)">
+            <summary>
+            Get the size of property data
+            </summary>
+            <param name="propId"></param>
+            <param name="size"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetPropertyItem(OpenNETCF.Drawing.Imaging.ImageTag,System.UInt32,System.IntPtr)">
+            <summary>
+            Get the property data
+            </summary>
+            <param name="propId"></param>
+            <param name="propSize"></param>
+            <param name="buffer"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetPropertySize(System.UInt32@,System.UInt32@)">
+            <summary>
+            
+            </summary>
+            <param name="totalBufferSize"></param>
+            <param name="numProperties"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.SetPropertyItem(OpenNETCF.Drawing.Imaging.PropertyItem)">
+            <summary>
+            Sets property on the image
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="T:OpenNETCF.Drawing.Imaging.IImageSink">
+            <summary>
+            This interface allows an image source, such as an image decoder, and an image sink to exchange data. 
+            The most important interaction between the source and the sink happens when they negotiate data transfer 
+            parameters during the call to the IImageSink::BeginSink method
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.BeginSink(OpenNETCF.Drawing.Imaging.ImageInfo@,OpenNETCF.Drawing.Imaging.RECT@)">
+            <summary>
+            Begin the sink process
+            </summary>
+            <param name="imageInfo"></param>
+            <param name="subarea"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.EndSink(System.Int32)">
+            <summary>
+            End the sink process
+            </summary>
+            <param name="statusCode"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.SetPalette(OpenNETCF.Drawing.Imaging.ColorPalette@)">
+            <summary>
+            Pass the color palette to the image sink
+            </summary>
+            <param name="palette"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.GetPixelDataBuffer(OpenNETCF.Drawing.Imaging.RECT,System.Drawing.Imaging.PixelFormat,System.Boolean,OpenNETCF.Drawing.Imaging.BitmapDataInternal@)">
+            <summary>
+            Ask the sink to allocate pixel data buffer
+            </summary>
+            <param name="rect"></param>
+            <param name="pixelFormat"></param>
+            <param name="lastPass"></param>
+            <param name="bitmapData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.ReleasePixelDataBuffer(OpenNETCF.Drawing.Imaging.BitmapDataInternal@)">
+            <summary>
+            Give the sink pixel data and release data buffer
+            </summary>
+            <param name="bitmapData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.PushPixelData(OpenNETCF.Drawing.Imaging.RECT,OpenNETCF.Drawing.Imaging.BitmapDataInternal@,System.Boolean)">
+            <summary>
+            Push pixel data
+            </summary>
+            <param name="rect"></param>
+            <param name="bitmapData"></param>
+            <param name="lastPass"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.PushRawData(System.IntPtr,System.UInt32)">
+            <summary>
+            Push raw image data
+            </summary>
+            <param name="buffer"></param>
+            <param name="bufsize"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.NeedTransform(System.UInt32@)">
+            <summary>
+            This method is used by an image source to determine whether an image 
+            sink should rotate an image and by how much it should rotate the image
+            </summary>
+            <param name="rotation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.NeedRawProperty">
+            <summary>
+            This method is used by an image source to determine whether an image sink can accept raw properties
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.PushRawInfo(System.Byte[])">
+            <summary>
+            This method is used by an image source to send raw information about an image to an image sink
+            </summary>
+            <param name="info"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.GetPropertyBuffer(System.Int32,System.IntPtr)">
+            <summary>
+            Retrieves a property as a blob
+            </summary>
+            <param name="uiTotalBufferSize"></param>
+            <param name="ppBuffer"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateImageFromStream(OpenNETCF.Runtime.InteropServices.ComTypes.IStream,OpenNETCF.Drawing.Imaging.IImage@)">
+            <summary>
+            Create an image object from an input stream
+             stream doesn't have to seekable
+             caller should Release the stream if call is successful
+            </summary>
+            <param name="stream"></param>
+            <param name="image"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateImageFromFile(System.String,OpenNETCF.Drawing.Imaging.IImage@)">
+            <summary>
+            Create an image object from a file
+            </summary>
+            <param name="filename"></param>
+            <param name="image"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateImageFromBuffer(System.Byte[],System.UInt32,OpenNETCF.Drawing.Imaging.BufferDisposalFlag,OpenNETCF.Drawing.Imaging.IImage@)">
+            <summary>
+            Create an image object from a memory buffer
+            </summary>
+            <param name="buf"></param>
+            <param name="size"></param>
+            <param name="disposalFlag"></param>
+            <param name="image"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateNewBitmap(System.UInt32,System.UInt32,System.Drawing.Imaging.PixelFormat,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
+            <summary>
+            Create a new bitmap image object
+            </summary>
+            <param name="width"></param>
+            <param name="height"></param>
+            <param name="pixelFormat"></param>
+            <param name="bitmap"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateBitmapFromImage(OpenNETCF.Drawing.Imaging.IImage,System.UInt32,System.UInt32,System.Drawing.Imaging.PixelFormat,OpenNETCF.Drawing.Imaging.InterpolationHint,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
+            <summary>
+            Create a bitmap image from an IImage object
+            </summary>
+            <param name="image"></param>
+            <param name="width"></param>
+            <param name="height"></param>
+            <param name="pixelFormat"></param>
+            <param name="hints"></param>
+            <param name="bitmap"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateBitmapFromBuffer(OpenNETCF.Drawing.Imaging.BitmapDataInternal@,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
+            <summary>
+            Create a new bitmap image object on user-supplied memory buffer
+            </summary>
+            <param name="bitmapData"></param>
+            <param name="bitmap"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateImageDecoder(OpenNETCF.Runtime.InteropServices.ComTypes.IStream,OpenNETCF.Drawing.Imaging.DecoderInitFlag,OpenNETCF.Drawing.Imaging.IImageDecoder@)">
+            <summary>
+            Create an image decoder object to process the given input stream
+            </summary>
+            <param name="stream"></param>
+            <param name="flags"></param>
+            <param name="decoder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateImageEncoderToStream(System.Guid@,OpenNETCF.Runtime.InteropServices.ComTypes.IStream,OpenNETCF.Drawing.Imaging.IImageEncoder@)">
+            <summary>
+            Create an image encoder object that can output data the
+            specified image file format.
+            </summary>
+            <param name="clsid"></param>
+            <param name="stream"></param>
+            <param name="encoder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.GetInstalledDecoders(System.UInt32@,System.IntPtr@)">
+            <summary>
+            Get a list of all currently installed image decoders
+            </summary>
+            <param name="count"></param>
+            <param name="decoders"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.GetInstalledEncoders(System.UInt32@,System.IntPtr@)">
+            <summary>
+            Get a list of all currently installed image decoders
+            </summary>
+            <param name="count"></param>
+            <param name="encoders"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.InstallImageCodec(OpenNETCF.Drawing.Imaging.ImageCodecInfo@)">
+            <summary>
+            Install an image encoder / decoder
+             caller should do the regular COM component
+             installation before calling this method
+            </summary>
+            <param name="codecInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.UninstallImageCodec(System.String,System.UInt32)">
+            <summary>
+            Uninstall an image encoder / decoder
+            </summary>
+            <param name="codecName"></param>
+            <param name="flags"></param>
+            <returns></returns>
+        </member>
         <member name="T:OpenNETCF.Drawing.Imaging.ImageCodecInfo">
             <summary>
             Describes Imaging codec
@@ -529,6 +1055,150 @@
             Codec version
             </summary>
         </member>
+        <member name="T:OpenNETCF.Drawing.Imaging.ImageProperty">
+            <summary>
+            Defines a property of an Image
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImageProperty.FromByteArray(System.Byte[])">
+            <summary>
+            Generates an ImageProperty from an array of bytes
+            </summary>
+            <param name="data"></param>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImageProperty.ToByteArray">
+            <summary>
+            Gets the property as a byte representation
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImageProperty.GetValue">
+            <summary>
+            Retrieves the value of the given property
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:OpenNETCF.Drawing.Imaging.ImagingFactory">
+            <summary>
+            This interface is used to create bitmaps and images and to manage image encoders and decoders.
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Drawing.Imaging.ImagingFactoryClass">
+            <summary>
+            This interface is used to create bitmaps and images and to manage image encoders and decoders.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateImageFromStream(OpenNETCF.Runtime.InteropServices.ComTypes.IStream,OpenNETCF.Drawing.Imaging.IImage@)">
+            <summary>
+            Create an image object from an input stream
+             stream doesn't have to seekable
+             caller should Release the stream if call is successful
+            </summary>
+            <param name="stream"></param>
+            <param name="image"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateImageFromFile(System.String,OpenNETCF.Drawing.Imaging.IImage@)">
+            <summary>
+            Create an image object from a file
+            </summary>
+            <param name="filename"></param>
+            <param name="image"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateImageFromBuffer(System.Byte[],System.UInt32,OpenNETCF.Drawing.Imaging.BufferDisposalFlag,OpenNETCF.Drawing.Imaging.IImage@)">
+            <summary>
+            Create an image object from a memory buffer
+            </summary>
+            <param name="buf"></param>
+            <param name="size"></param>
+            <param name="disposalFlag"></param>
+            <param name="image"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateNewBitmap(System.UInt32,System.UInt32,System.Drawing.Imaging.PixelFormat,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
+            <summary>
+            Create a new bitmap image object
+            </summary>
+            <param name="width"></param>
+            <param name="height"></param>
+            <param name="pixelFormat"></param>
+            <param name="bitmap"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateBitmapFromImage(OpenNETCF.Drawing.Imaging.IImage,System.UInt32,System.UInt32,System.Drawing.Imaging.PixelFormat,OpenNETCF.Drawing.Imaging.InterpolationHint,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
+            <summary>
+            Create a bitmap image from an IImage object
+            </summary>
+            <param name="image"></param>
+            <param name="width"></param>
+            <param name="height"></param>
+            <param name="pixelFormat"></param>
+            <param name="hints"></param>
+            <param name="bitmap"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateBitmapFromBuffer(OpenNETCF.Drawing.Imaging.BitmapDataInternal@,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
+            <summary>
+            Create a new bitmap image object on user-supplied memory buffer
+            </summary>
+            <param name="bitmapData"></param>
+            <param name="bitmap"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateImageEncoderToStream(System.Guid@,OpenNETCF.Runtime.InteropServices.ComTypes.IStream,OpenNETCF.Drawing.Imaging.IImageEncoder@)">
+            <summary>
+            Create an image encoder object that can output data the
+            specified image file format.
+            </summary>
+            <param name="clsid"></param>
+            <param name="stream"></param>
+            <param name="encoder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateImageEncoderToFile(System.Guid@,System.String,OpenNETCF.Drawing.Imaging.IImageEncoder@)">
+            <summary>
+            Create an image encoder object that can output data the
+            specified image file format.
+            </summary>
+            <param name="clsid"></param>
+            <param name="filename"></param>
+            <param name="encoder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.GetInstalledDecoders(System.UInt32@,System.IntPtr@)">
+            <summary>
+            Get a list of all currently installed image decoders
+            </summary>
+            <param name="count"></param>
+            <param name="decoders"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.GetInstalledEncoders(System.UInt32@,System.IntPtr@)">
+            <summary>
+            Get a list of all currently installed image decoders
+            </summary>
+            <param name="count"></param>
+            <param name="encoders"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.InstallImageCodec(OpenNETCF.Drawing.Imaging.ImageCodecInfo@)">
+            <summary>
+            Install an image encoder / decoder
+             caller should do the regular COM component
+             installation before calling this method
+            </summary>
+            <param name="codecInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.UninstallImageCodec(System.String,System.UInt32)">
+            <summary>
+            Uninstall an image encoder / decoder
+            </summary>
+            <param name="codecName"></param>
+            <param name="flags"></param>
+            <returns></returns>
+        </member>
         <member name="T:OpenNETCF.Drawing.Imaging.Rational">
             <summary>
             Holds a Rational number used by imaging properties
@@ -537,6 +1207,54 @@
         <member name="T:OpenNETCF.Drawing.Imaging.SRational">
             <summary>
             Holds a Signed Rational number used by imaging properties
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Drawing.Imaging.TAG_TYPE">
+            <summary>
+            Property tag types
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.BYTE">
+            <summary>
+            8-bit unsigned int
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.ASCII">
+            <summary>
+            8-bit byte containing one 7-bit ASCII code.
+            NULL terminated.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.SHORT">
+            <summary>
+            16-bit unsigned int
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.LONG">
+            <summary>
+            32-bit unsigned int
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.RATIONAL">
+            <summary>
+            Two LONGs.  The first LONG is the numerator,
+            the second LONG expresses the denominator.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.UNDEFINED">
+            <summary>
+            8-bit byte that can take any value depending
+            on field definition
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.SLONG">
+            <summary>
+            32-bit singed integer (2's complement notation)
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.SRATIONAL">
+            <summary>
+            Two SLONGs. First is numerator, second is the denominator
             </summary>
         </member>
         <member name="T:OpenNETCF.Drawing.PenEx">
@@ -1633,6 +2351,14 @@
             High-level image manipulation routines
             </summary>
         </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImageUtils.RotateFlip(System.Drawing.Bitmap,OpenNETCF.Drawing.RotationAngle,OpenNETCF.Drawing.FlipAxis)">
+            <summary>
+            Rotate and/or flip bitmap
+            </summary>
+            <param name="bitmap">Image</param>
+            <param name="type">Operation</param>
+            <returns>Modified bitmap</returns>
+        </member>
         <member name="M:OpenNETCF.Drawing.Imaging.ImageUtils.RotateFlip(System.Drawing.Bitmap,OpenNETCF.Drawing.RotateFlipType)">
             <summary>
             Rotate and/or flip bitmap
@@ -1641,6 +2367,14 @@
             <param name="type">Operation</param>
             <returns>Modified bitmap</returns>
         </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImageUtils.Rotate(System.Drawing.Bitmap,OpenNETCF.Drawing.RotationAngle)">
+            <summary>
+            Rotates image by specified amount of degrees
+            </summary>
+            <param name="bitmap">Image</param>
+            <param name="angle">Amount of degrees to rotate image by. Must be 90, 180, or 270</param>
+            <returns>Rotated image</returns>
+        </member>
         <member name="M:OpenNETCF.Drawing.Imaging.ImageUtils.Rotate(System.Drawing.Bitmap,System.Single)">
             <summary>
             Rotates image by specified amount of degrees
@@ -1648,6 +2382,20 @@
             <param name="bitmap">Image</param>
             <param name="angle">Amount of degrees to rotate image by. Must be 90, 180, or 270</param>
             <returns>Rotated image</returns>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImageUtils.Flip(System.Drawing.Bitmap,OpenNETCF.Drawing.FlipAxis)">
+            <summary>
+            Flips image around X and/or Y axes
+            </summary>
+            <param name="bitmap">Image</param>
+            <param name="axis">Axis or axes to flip on</param>
+        </member>
+        <member name="M:OpenNETCF.Drawing.Imaging.ImageUtils.Flip(OpenNETCF.Drawing.Imaging.IBitmapImage,OpenNETCF.Drawing.FlipAxis)">
+            <summary>
+            Flips image around X and/or Y axes
+            </summary>
+            <param name="bitmap">Image</param>
+            <param name="axis">Axis or axes to flip on</param>
         </member>
         <member name="M:OpenNETCF.Drawing.Imaging.ImageUtils.Flip(System.Drawing.Bitmap,System.Boolean,System.Boolean)">
             <summary>
@@ -1732,699 +2480,17 @@
             <param name="palette">New palette</param>
             <returns>Success indicator</returns>
         </member>
-        <member name="T:OpenNETCF.Drawing.Imaging.ImagingFactoryClass">
+        <member name="M:OpenNETCF.Drawing.Imaging.ImageUtils.GetInstalledEncoders">
             <summary>
-            This interface is used to create bitmaps and images and to manage image encoders and decoders.
+            Gets all of the installed imaging encoders on the device
             </summary>
-        </member>
-        <member name="T:OpenNETCF.Drawing.Imaging.ImagingFactory">
-            <summary>
-            This interface is used to create bitmaps and images and to manage image encoders and decoders.
-            </summary>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateImageFromStream(OpenNETCF.Runtime.InteropServices.ComTypes.IStream,OpenNETCF.Drawing.Imaging.IImage@)">
-            <summary>
-            Create an image object from an input stream
-             stream doesn't have to seekable
-             caller should Release the stream if call is successful
-            </summary>
-            <param name="stream"></param>
-            <param name="image"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateImageFromFile(System.String,OpenNETCF.Drawing.Imaging.IImage@)">
-            <summary>
-            Create an image object from a file
-            </summary>
-            <param name="filename"></param>
-            <param name="image"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateImageFromBuffer(System.Byte[],System.UInt32,OpenNETCF.Drawing.Imaging.BufferDisposalFlag,OpenNETCF.Drawing.Imaging.IImage@)">
-            <summary>
-            Create an image object from a memory buffer
-            </summary>
-            <param name="buf"></param>
-            <param name="size"></param>
-            <param name="disposalFlag"></param>
-            <param name="image"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateNewBitmap(System.UInt32,System.UInt32,System.Drawing.Imaging.PixelFormat,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
-            <summary>
-            Create a new bitmap image object
-            </summary>
-            <param name="width"></param>
-            <param name="height"></param>
-            <param name="pixelFormat"></param>
-            <param name="bitmap"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateBitmapFromImage(OpenNETCF.Drawing.Imaging.IImage,System.UInt32,System.UInt32,System.Drawing.Imaging.PixelFormat,OpenNETCF.Drawing.Imaging.InterpolationHint,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
-            <summary>
-            Create a bitmap image from an IImage object
-            </summary>
-            <param name="image"></param>
-            <param name="width"></param>
-            <param name="height"></param>
-            <param name="pixelFormat"></param>
-            <param name="hints"></param>
-            <param name="bitmap"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateBitmapFromBuffer(OpenNETCF.Drawing.Imaging.BitmapDataInternal@,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
-            <summary>
-            Create a new bitmap image object on user-supplied memory buffer
-            </summary>
-            <param name="bitmapData"></param>
-            <param name="bitmap"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateImageDecoder(OpenNETCF.Runtime.InteropServices.ComTypes.IStream,OpenNETCF.Drawing.Imaging.DecoderInitFlag,OpenNETCF.Drawing.Imaging.IImageDecoder@)">
-            <summary>
-            Create an image decoder object to process the given input stream
-            </summary>
-            <param name="stream"></param>
-            <param name="flags"></param>
-            <param name="decoder"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.CreateImageEncoderToStream(System.Guid@,OpenNETCF.Runtime.InteropServices.ComTypes.IStream,OpenNETCF.Drawing.Imaging.IImageEncoder@)">
-            <summary>
-            Create an image encoder object that can output data the
-            specified image file format.
-            </summary>
-            <param name="clsid"></param>
-            <param name="stream"></param>
-            <param name="encoder"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.GetInstalledDecoders(System.UInt32@,System.IntPtr@)">
-            <summary>
-            Get a list of all currently installed image decoders
-            </summary>
-            <param name="count"></param>
-            <param name="decoders"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.GetInstalledEncoders(System.UInt32@,System.IntPtr@)">
-            <summary>
-            Get a list of all currently installed image decoders
-            </summary>
-            <param name="count"></param>
-            <param name="encoders"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.InstallImageCodec(OpenNETCF.Drawing.Imaging.ImageCodecInfo@)">
-            <summary>
-            Install an image encoder / decoder
-             caller should do the regular COM component
-             installation before calling this method
-            </summary>
-            <param name="codecInfo"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImagingFactory.UninstallImageCodec(System.String,System.UInt32)">
-            <summary>
-            Uninstall an image encoder / decoder
-            </summary>
-            <param name="codecName"></param>
-            <param name="flags"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateImageFromStream(OpenNETCF.Runtime.InteropServices.ComTypes.IStream,OpenNETCF.Drawing.Imaging.IImage@)">
-            <summary>
-            Create an image object from an input stream
-             stream doesn't have to seekable
-             caller should Release the stream if call is successful
-            </summary>
-            <param name="stream"></param>
-            <param name="image"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateImageFromFile(System.String,OpenNETCF.Drawing.Imaging.IImage@)">
-            <summary>
-            Create an image object from a file
-            </summary>
-            <param name="filename"></param>
-            <param name="image"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateImageFromBuffer(System.Byte[],System.UInt32,OpenNETCF.Drawing.Imaging.BufferDisposalFlag,OpenNETCF.Drawing.Imaging.IImage@)">
-            <summary>
-            Create an image object from a memory buffer
-            </summary>
-            <param name="buf"></param>
-            <param name="size"></param>
-            <param name="disposalFlag"></param>
-            <param name="image"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateNewBitmap(System.UInt32,System.UInt32,System.Drawing.Imaging.PixelFormat,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
-            <summary>
-            Create a new bitmap image object
-            </summary>
-            <param name="width"></param>
-            <param name="height"></param>
-            <param name="pixelFormat"></param>
-            <param name="bitmap"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateBitmapFromImage(OpenNETCF.Drawing.Imaging.IImage,System.UInt32,System.UInt32,System.Drawing.Imaging.PixelFormat,OpenNETCF.Drawing.Imaging.InterpolationHint,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
-            <summary>
-            Create a bitmap image from an IImage object
-            </summary>
-            <param name="image"></param>
-            <param name="width"></param>
-            <param name="height"></param>
-            <param name="pixelFormat"></param>
-            <param name="hints"></param>
-            <param name="bitmap"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateBitmapFromBuffer(OpenNETCF.Drawing.Imaging.BitmapDataInternal@,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
-            <summary>
-            Create a new bitmap image object on user-supplied memory buffer
-            </summary>
-            <param name="bitmapData"></param>
-            <param name="bitmap"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateImageEncoderToStream(System.Guid@,OpenNETCF.Runtime.InteropServices.ComTypes.IStream,OpenNETCF.Drawing.Imaging.IImageEncoder@)">
-            <summary>
-            Create an image encoder object that can output data the
-            specified image file format.
-            </summary>
-            <param name="clsid"></param>
-            <param name="stream"></param>
-            <param name="encoder"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.CreateImageEncoderToFile(System.Guid@,System.String,OpenNETCF.Drawing.Imaging.IImageEncoder@)">
-            <summary>
-            Create an image encoder object that can output data the
-            specified image file format.
-            </summary>
-            <param name="clsid"></param>
-            <param name="filename"></param>
-            <param name="encoder"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.GetInstalledDecoders(System.UInt32@,System.IntPtr@)">
-            <summary>
-            Get a list of all currently installed image decoders
-            </summary>
-            <param name="count"></param>
-            <param name="decoders"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.GetInstalledEncoders(System.UInt32@,System.IntPtr@)">
-            <summary>
-            Get a list of all currently installed image decoders
-            </summary>
-            <param name="count"></param>
-            <param name="encoders"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.InstallImageCodec(OpenNETCF.Drawing.Imaging.ImageCodecInfo@)">
-            <summary>
-            Install an image encoder / decoder
-             caller should do the regular COM component
-             installation before calling this method
-            </summary>
-            <param name="codecInfo"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.ImagingFactoryClass.UninstallImageCodec(System.String,System.UInt32)">
-            <summary>
-            Uninstall an image encoder / decoder
-            </summary>
-            <param name="codecName"></param>
-            <param name="flags"></param>
-            <returns></returns>
-        </member>
-        <member name="T:OpenNETCF.Drawing.Imaging.IImage">
-            <summary>
-            This is the basic interface to an image object. It allows applications to do the following: 
-            Display the image onto a destination graphics context  
-            Push image data into an image sink 
-            Access image properties and metadata Decoded image objects and in-memory bitmap image objects support the IImage interface
-            </summary>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImage.GetPhysicalDimension(System.Drawing.Size@)">
-            <summary>
-            Get the device-independent physical dimension of the image
-             unit of 0.01mm
-            </summary>
-            <param name="size"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImage.GetImageInfo(OpenNETCF.Drawing.Imaging.ImageInfo@)">
-            <summary>
-            Get basic image info
-            </summary>
-            <param name="imageInfo"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImage.SetImageFlags(OpenNETCF.Drawing.Imaging.ImageFlags)">
-            <summary>
-            Set image flags
-            </summary>
-            <param name="flags"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImage.Draw(System.IntPtr,OpenNETCF.Drawing.Imaging.RECT,OpenNETCF.Drawing.Imaging.RECT)">
-            <summary>
-            Display the image a GDI device context
-            </summary>
-            <param name="hdc"></param>
-            <param name="dstRect"></param>
-            <param name="srcRect"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImage.PushIntoSink(OpenNETCF.Drawing.Imaging.IImageSink)">
-            <summary>
-            Push image data into an IImageSink
-            </summary>
-            <param name="sink"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImage.GetThumbnail(System.UInt32,System.UInt32,OpenNETCF.Drawing.Imaging.IImage@)">
-            <summary>
-            Get a thumbnail representation for the image object
-            </summary>
-            <param name="thumbWidth"></param>
-            <param name="thumbHeight"></param>
-            <param name="thumbImage"></param>
-            <returns></returns>
-        </member>
-        <member name="T:OpenNETCF.Drawing.Imaging.IImageDecoder">
-            <summary>
-            This is a low-level interface to an image decoder object. 
-            Many simple applications do not need to work with decoder objects directly and can work with 
-            higher level decoded image objects instead. 
-            More sophisticated applications can use the IImageDecoder interface to have finer control over the interaction with decoder objects.
-            The IImageDecoder interface can support images with multiple frames. Multiframe images are accessed via multidimensional indices. 
-            This interface can support an arbitrary number of dimensions in nonrectangular arrangements
-            </summary>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.InitDecoder(OpenNETCF.Runtime.InteropServices.ComTypes.IStream,OpenNETCF.Drawing.Imaging.DecoderInitFlag)">
-            <summary>
-            Initialize the image decoder object
-            </summary>
-            <param name="stream"></param>
-            <param name="flags"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.TerminateDecoder">
-            <summary>
-            Clean up the image decoder object
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.BeginDecode(OpenNETCF.Drawing.Imaging.IImageSink,System.IntPtr)">
-            <summary>
-            Start decoding the current frame
-            </summary>
-            <param name="sink"></param>
-            <param name="newPropSet"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.Decode">
-            <summary>
-            Continue decoding
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.EndDecode(System.Int32)">
-            <summary>
-            Stop decoding the current frame
-            </summary>
-            <param name="statusCode"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetFrameDimensionsCount(System.UInt32@)">
-            <summary>
-            Query multi-frame dimensions
-            </summary>
-            <param name="count"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetFrameDimensionsList(System.Guid@,System.UInt32@)">
-            <summary>
-            Query multi-frame dimensions
-            </summary>
-            <param name="dimensionIDs"></param>
-            <param name="count"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetFrameCount(System.Guid@,System.UInt32@)">
-            <summary>
-            Get number of frames for the specified dimension
-            </summary>
-            <param name="dimensionID"></param>
-            <param name="count"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.SelectActiveFrame(System.Guid@,System.UInt32)">
-            <summary>
-            Select currently active frame
-            </summary>
-            <param name="dimensionID"></param>
-            <param name="frameIndex"></param>
             <returns></returns>
         </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetImageInfo(OpenNETCF.Drawing.Imaging.ImageInfo@)">
+        <member name="M:OpenNETCF.Drawing.Imaging.ImageUtils.GetInstalledDecoders">
             <summary>
-            Get basic information about the image
+            Gets all of the installed imaging decoders on the device
             </summary>
-            <param name="imageInfo"></param>
             <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetThumbnail(System.UInt32,System.UInt32,OpenNETCF.Drawing.Imaging.IImage@)">
-            <summary>
-            Get image thumbnail
-            </summary>
-            <param name="thumbWidth"></param>
-            <param name="thumbHeight"></param>
-            <param name="thumbImage"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.QueryDecoderParam(System.Guid)">
-            <summary>
-            Query decoder parameters
-            </summary>
-            <param name="Guid"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.SetDecoderParam(System.Guid,System.UInt32,System.IntPtr)">
-            <summary>
-            Set decoder parameters
-            </summary>
-            <param name="Guid"></param>
-            <param name="Length"></param>
-            <param name="Value"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetPropertyCount(System.UInt32@)">
-            <summary>
-            Get image property count
-            </summary>
-            <param name="numOfProperty"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetPropertyIdList(System.UInt32,OpenNETCF.Drawing.Imaging.ImageTag[])">
-            <summary>
-            Get selected image properties
-            </summary>
-            <param name="numOfProperty"></param>
-            <param name="list"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetPropertyItemSize(OpenNETCF.Drawing.Imaging.ImageTag,System.UInt32@)">
-            <summary>
-            Get the size of property data
-            </summary>
-            <param name="propId"></param>
-            <param name="size"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetPropertyItem(OpenNETCF.Drawing.Imaging.ImageTag,System.UInt32,System.IntPtr)">
-            <summary>
-            Get the property data
-            </summary>
-            <param name="propId"></param>
-            <param name="propSize"></param>
-            <param name="buffer"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.GetPropertySize(System.UInt32@,System.UInt32@)">
-            <summary>
-            
-            </summary>
-            <param name="totalBufferSize"></param>
-            <param name="numProperties"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageDecoder.SetPropertyItem(OpenNETCF.Drawing.Imaging.PropertyItem)">
-            <summary>
-            Sets property on the image
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
-        <member name="T:OpenNETCF.Drawing.Imaging.IImageSink">
-            <summary>
-            This interface allows an image source, such as an image decoder, and an image sink to exchange data. 
-            The most important interaction between the source and the sink happens when they negotiate data transfer 
-            parameters during the call to the IImageSink::BeginSink method
-            </summary>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.BeginSink(OpenNETCF.Drawing.Imaging.ImageInfo@,OpenNETCF.Drawing.Imaging.RECT@)">
-            <summary>
-            Begin the sink process
-            </summary>
-            <param name="imageInfo"></param>
-            <param name="subarea"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.EndSink(System.Int32)">
-            <summary>
-            End the sink process
-            </summary>
-            <param name="statusCode"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.SetPalette(OpenNETCF.Drawing.Imaging.ColorPalette@)">
-            <summary>
-            Pass the color palette to the image sink
-            </summary>
-            <param name="palette"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.GetPixelDataBuffer(OpenNETCF.Drawing.Imaging.RECT,System.Drawing.Imaging.PixelFormat,System.Boolean,OpenNETCF.Drawing.Imaging.BitmapDataInternal@)">
-            <summary>
-            Ask the sink to allocate pixel data buffer
-            </summary>
-            <param name="rect"></param>
-            <param name="pixelFormat"></param>
-            <param name="lastPass"></param>
-            <param name="bitmapData"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.ReleasePixelDataBuffer(OpenNETCF.Drawing.Imaging.BitmapDataInternal@)">
-            <summary>
-            Give the sink pixel data and release data buffer
-            </summary>
-            <param name="bitmapData"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.PushPixelData(OpenNETCF.Drawing.Imaging.RECT,OpenNETCF.Drawing.Imaging.BitmapDataInternal@,System.Boolean)">
-            <summary>
-            Push pixel data
-            </summary>
-            <param name="rect"></param>
-            <param name="bitmapData"></param>
-            <param name="lastPass"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.PushRawData(System.IntPtr,System.UInt32)">
-            <summary>
-            Push raw image data
-            </summary>
-            <param name="buffer"></param>
-            <param name="bufsize"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.NeedTransform(System.UInt32@)">
-            <summary>
-            This method is used by an image source to determine whether an image 
-            sink should rotate an image and by how much it should rotate the image
-            </summary>
-            <param name="rotation"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.NeedRawProperty">
-            <summary>
-            This method is used by an image source to determine whether an image sink can accept raw properties
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.PushRawInfo(System.Byte[])">
-            <summary>
-            This method is used by an image source to send raw information about an image to an image sink
-            </summary>
-            <param name="info"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IImageSink.GetPropertyBuffer(System.Int32,System.IntPtr)">
-            <summary>
-            Retrieves a property as a blob
-            </summary>
-            <param name="uiTotalBufferSize"></param>
-            <param name="ppBuffer"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IBitmapImage.GetSize(System.Drawing.Size@)">
-            <summary>
-            Get bitmap dimensions pixels
-            </summary>
-            <param name="size"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IBitmapImage.GetPixelFormatID(System.Drawing.Imaging.PixelFormat@)">
-            <summary>
-            Get bitmap pixel format
-            </summary>
-            <param name="pixelFormat"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IBitmapImage.LockBits(OpenNETCF.Drawing.Imaging.RECT,System.UInt32,System.Drawing.Imaging.PixelFormat,OpenNETCF.Drawing.Imaging.BitmapDataInternal@)">
-            <summary>
-            Access bitmap data the specified pixel format
-             must support at least PIXFMT_DONTCARE and
-             the canonical formats.
-            </summary>
-            <param name="rect"></param>
-            <param name="flags"></param>
-            <param name="pixelFormat"></param>
-            <param name="lockedBitmapData"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IBitmapImage.UnlockBits(OpenNETCF.Drawing.Imaging.BitmapDataInternal@)">
-            <summary>
-            
-            </summary>
-            <param name="lockedBitmapData"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IBitmapImage.GetPalette(System.IntPtr@)">
-            <summary>
-            Set/get palette associated with the bitmap image
-            Do not use directly. Use <c>ImageUtils.GetBitmapPalette</c> instead
-            </summary>
-            <param name="palette"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IBitmapImage.SetPalette(System.IntPtr)">
-            <summary>
-            Do not use directly. Use <c>ImageUtils.SetBitmapPalette</c> instead
-            </summary>
-            <param name="palette"></param>
-            <returns></returns>
-        </member>
-        <member name="T:OpenNETCF.Drawing.Imaging.IBasicBitmapOps">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IBasicBitmapOps.Clone(OpenNETCF.Drawing.Imaging.RECT,OpenNETCF.Drawing.Imaging.IBitmapImage@,System.Boolean)">
-            <summary>
-            Clone an area of the bitmap image
-            </summary>
-            <param name="rect"></param>
-            <param name="outbmp"></param>
-            <param name="bNeedCloneProperty"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IBasicBitmapOps.Flip(System.Boolean,System.Boolean,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
-            <summary>
-            Flip the bitmap image in x- and/or y-direction
-            </summary>
-            <param name="flipX"></param>
-            <param name="flipY"></param>
-            <param name="outbmp"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IBasicBitmapOps.Resize(System.UInt32,System.UInt32,System.Drawing.Imaging.PixelFormat,OpenNETCF.Drawing.Imaging.InterpolationHint,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
-            <summary>
-            Resize the bitmap image
-            </summary>
-            <param name="newWidth"></param>
-            <param name="newHeight"></param>
-            <param name="pixelFormat"></param>
-            <param name="hints"></param>
-            <param name="outbmp"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IBasicBitmapOps.Rotate(System.Single,OpenNETCF.Drawing.Imaging.InterpolationHint,OpenNETCF.Drawing.Imaging.IBitmapImage@)">
-            <summary>
-            Rotate the bitmap image by the specified angle
-            </summary>
-            <param name="angle"></param>
-            <param name="hints"></param>
-            <param name="outbmp"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IBasicBitmapOps.AdjustBrightness(System.Single)">
-            <summary>
-            Adjust the brightness of the bitmap image
-            </summary>
-            <param name="percent"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IBasicBitmapOps.AdjustContrast(System.Single,System.Single)">
-            <summary>
-            Adjust the contrast of the bitmap image
-            </summary>
-            <param name="shadow"></param>
-            <param name="highlight"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Drawing.Imaging.IBasicBitmapOps.AdjustGamma(System.Single)">
-            <summary>
-            Adjust the gamma of the bitmap image
-            </summary>
-            <param name="gamma"></param>
-            <returns></returns>
-        </member>
-        <member name="T:OpenNETCF.Drawing.Imaging.TAG_TYPE">
-            <summary>
-            Property tag types
-            </summary>
-        </member>
-        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.BYTE">
-            <summary>
-            8-bit unsigned int
-            </summary>
-        </member>
-        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.ASCII">
-            <summary>
-            8-bit byte containing one 7-bit ASCII code.
-            NULL terminated.
-            </summary>
-        </member>
-        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.SHORT">
-            <summary>
-            16-bit unsigned int
-            </summary>
-        </member>
-        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.LONG">
-            <summary>
-            32-bit unsigned int
-            </summary>
-        </member>
-        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.RATIONAL">
-            <summary>
-            Two LONGs.  The first LONG is the numerator,
-            the second LONG expresses the denominator.
-            </summary>
-        </member>
-        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.UNDEFINED">
-            <summary>
-            8-bit byte that can take any value depending
-            on field definition
-            </summary>
-        </member>
-        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.SLONG">
-            <summary>
-            32-bit singed integer (2's complement notation)
-            </summary>
-        </member>
-        <member name="F:OpenNETCF.Drawing.Imaging.TAG_TYPE.SRATIONAL">
-            <summary>
-            Two SLONGs. First is numerator, second is the denominator
-            </summary>
         </member>
         <member name="T:OpenNETCF.Drawing.Imaging.PropertyItem">
             <summary>
@@ -2524,6 +2590,212 @@
         <member name="T:OpenNETCF.Drawing.SystemColorsHelper">
             <summary>
             
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Drawing.SystemColorsHelper.SetSchemeByName(OpenNETCF.Drawing.SystemColorsHelper.SchemeName)">
+            <summary>
+            Sets the current system color scheme
+            </summary>
+            <param name="aSchemeName"></param>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.GradientActiveCaption">
+            <summary>
+            Gets a Color structure that is the lightest color in the color gradient of an active window's title bar.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.GradientInactiveCaption">
+            <summary>
+            Gets a Color structure that is the lightest color in the color gradient of an inactive window's title bar.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.ActiveBorder">
+            <summary>
+            Gets a Color structure that is the color of the active window's border.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.AppWorkspace">
+            <summary>
+            Gets a Color structure that is the color of the application workspace.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.Control">
+            <summary>
+            Gets a Color structure that is the face color of a 3-D element.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.ControlLight">
+            <summary>
+            Gets a Color structure that is the light color of a 3-D element.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.ControlLightLight">
+            <summary>
+            Gets a Color structure that is the highlight color of a 3-D element.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.ControlDark">
+            <summary>
+            Gets a Color structure that is the shadow color of a 3-D element.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.ControlDarkDark">
+            <summary>
+            Gets a Color structure that is the dark shadow color of a 3-D element.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.ScrollBar">
+            <summary>
+            Gets a Color structure that is the color of the background of a scroll bar.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.WindowFrame">
+            <summary>
+            Gets a Color structure that is the color of a window frame.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.HotTrack">
+            <summary>
+            Gets a Color structure that is the color used to designate a hot-tracked item.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.InactiveBorder">
+            <summary>
+            Gets a Color structure that is the color of an inactive window's border.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.Info">
+            <summary>
+            Gets a Color structure that is the color of the background of a ToolTip.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.InfoText">
+            <summary>
+            Gets a Color structure that is the color of the text of a ToolTip.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.ActiveCaption">
+            <summary>
+            Gets a Color structure that is the color of the background of the active window's title bar.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.ActiveCaptionText">
+            <summary>
+            Gets a Color structure that is the color of the text in the active window's title bar.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.ControlText">
+            <summary>
+            	Gets a Color structure that is the color of text in a 3-D element.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.Desktop">
+            <summary>
+            Gets a Color structure that is the color of the desktop.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.DialogBackground">
+            <summary>
+            Gets a Color structure that is the color of the background of a Dialog.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.DialogBoxText">
+            <summary>
+            Gets a Color structure that is the color of text on a Dialog.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.GrayText">
+            <summary>
+            Gets a Color structure that is the color of dimmed text.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.InactiveCaption">
+            <summary>
+            Gets a Color structure that is the color of the background of an inactive window's title bar.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.InactiveCaptionText">
+            <summary>
+            Gets a Color structure that is the color of the text in an inactive window's title bar.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.Menu">
+            <summary>
+            Gets a Color structure that is the color of a menu's background.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.MenuText">
+            <summary>
+            Gets a Color structure that is the color of a menu's text.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.Highlight">
+            <summary>
+            Gets a Color structure that is the color of the background of selected items.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.HighlightText">
+            <summary>
+            Gets a Color structure that is the color of the text of selected items.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.Window">
+            <summary>
+            Gets a Color structure that is the color of the background in the client area of a window.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Drawing.SystemColorsHelper.WindowText">
+            <summary>
+            Gets a Color structure that is the color of the text in the client area of a window.
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Drawing.SystemColorsHelper.SchemeName">
+            <summary>
+            System Color scheme names
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.SystemColorsHelper.SchemeName.Brick">
+            <summary>
+            Brick
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.SystemColorsHelper.SchemeName.Desert">
+            <summary>
+            Desert
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.SystemColorsHelper.SchemeName.Eggplant">
+            <summary>
+            Eggplant
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.SystemColorsHelper.SchemeName.HighContrastBlack">
+            <summary>
+            High-Contrast Black
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.SystemColorsHelper.SchemeName.HighContrastWhite">
+            <summary>
+            High-Contrast White
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.SystemColorsHelper.SchemeName.Lilac">
+            <summary>
+            Lilac
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.SystemColorsHelper.SchemeName.Spruce">
+            <summary>
+            Spruce
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.SystemColorsHelper.SchemeName.Storm">
+            <summary>
+            Storm
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Drawing.SystemColorsHelper.SchemeName.WindowsStandard">
+            <summary>
+            Windows Standard
             </summary>
         </member>
         <member name="T:OpenNETCF.Win32.BitmapFileHeader">
@@ -2650,10 +2922,102 @@
             This value must be divisible by 2, because the system assumes that the bit values of a bitmap form an array that is word aligned.
             </summary>
         </member>
+        <member name="F:OpenNETCF.Win32.DibSection.bmPlanes">
+            <summary>
+            Specifies the count of color planes.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.bmBitsPixel">
+            <summary>
+            Specifies the number of bits required to indicate the color of a pixel.
+            </summary>
+        </member>
         <member name="F:OpenNETCF.Win32.DibSection.bmBits">
             <summary>
             Pointer to the location of the bit values for the bitmap.
             The bmBits member must be a long pointer to an array of character (1-byte) values.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.biSize">
+            <summary>
+            Specifies the number of bytes required by the structure.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.biWidth">
+            <summary>
+            Specifies the width of the bitmap, in pixels.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.biHeight">
+            <summary>
+            Specifies the height of the bitmap, in pixels. If biHeight is positive, the bitmap is a bottom-up DIB and its origin is the lower-left corner. If biHeight is negative, the bitmap is a top-down DIB and its origin is the upper-left corner.
+            If biHeight is negative, indicating a top-down DIB, biCompression must be either BI_RGB or BI_BITFIELDS. Top-down DIBs cannot be compressed. 
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.biPlanes">
+            <summary>
+            Specifies the number of planes for the target device. This value must be set to 1.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.biBitCount">
+            <summary>
+            Specifies the number of bits-per-pixel. The biBitCount member of the BITMAPINFOHEADER structure determines the number of bits that define each pixel and the maximum number of colors in the bitmap.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.biCompression">
+            <summary>
+            Specifies the type of compression for a compressed bottom-up bitmap (top-down DIBs cannot be compressed).
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.biSizeImage">
+            <summary>
+            Specifies the size, in bytes, of the image. This may be set to zero for BI_RGB bitmaps.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.biXPelsPerMeter">
+            <summary>
+            Specifies the horizontal resolution, in pixels-per-meter, of the target device for the bitmap. An application can use this value to select a bitmap from a resource group that best matches the characteristics of the current device.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.biYPelsPerMeter">
+            <summary>
+            Specifies the vertical resolution, in pixels-per-meter, of the target device for the bitmap.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.biClrUsed">
+            <summary>
+            Specifies the number of color indexes in the color table that are actually used by the bitmap. If this value is zero, the bitmap uses the maximum number of colors corresponding to the value of the biBitCount member for the compression mode specified by biCompression.
+            If biClrUsed is nonzero and the biBitCount member is less than 16, the biClrUsed member specifies the actual number of colors the graphics engine or device driver accesses. If biBitCount is 16 or greater, the biClrUsed member specifies the size of the color table used to optimize performance of the system color palettes. If biBitCount equals 16 or 32, the optimal color palette starts immediately following the three DWORD masks. 
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.biClrImportant">
+            <summary>
+            Specifies the number of color indexes that are required for displaying the bitmap. If this value is zero, all colors are required.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.dsBitfields0">
+            <summary>
+            Specifies three color masks for the DIB. This field is only valid when the BitCount member of the BITMAPINFOHEADER structure has a value greater than 8. Each color mask indicates the bits that are used to encode one of the three color channels (red, green, and blue).
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.dsBitfields1">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.dsBitfields2">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.dshSection">
+            <summary>
+            Contains a handle to the file mapping object that the CreateDIBSection function used to create the DIB. If CreateDIBSection was called with a NULL value for its hSection parameter, causing the system to allocate memory for the bitmap, the dshSection member will be NULL.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.DibSection.dsOffset">
+            <summary>
+            Specifies the offset to the bitmap's bit values within the file mapping object referenced by dshSection. If dshSection is NULL, the dsOffset value has no meaning.
             </summary>
         </member>
         <member name="T:OpenNETCF.Win32.GDI">

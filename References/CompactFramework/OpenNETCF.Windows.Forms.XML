@@ -1024,6 +1024,11 @@
             Represents a button control.
             </summary>
         </member>
+        <member name="P:OpenNETCF.Windows.Forms.Button2.ShowFocusBorder">
+            <summary>
+            Determines if the control will show a border when it has focus
+            </summary>
+        </member>
         <member name="P:OpenNETCF.Windows.Forms.Button2.ActiveBackColor">
             <summary>
             Gets or sets the background color for the control in an active state.
@@ -1456,7 +1461,7 @@
             <summary>
             Represents a common dialog box that displays available colors along with controls that allow the user to define custom colors.
             </summary>
-            <remarks>The method <see cref="M:OpenNETCF.Windows.Forms.ColorDialog.ShowDialog(OpenNETCF.Windows.Forms.IWin32Window)"/> must be invoked to create this specific common dialog box.
+            <remarks>The method <see cref="M:OpenNETCF.Windows.Forms.ColorDialog.ShowDialog"/> must be invoked to create this specific common dialog box.
             Use <see cref="P:OpenNETCF.Windows.Forms.ColorDialog.Color"/> to retrieve the color selected by the user.
             <para>When you create an instance of ColorDialog, some of the read/write properties are set to initial values.
             For a list of these values, see the ColorDialog constructor.</para></remarks>
@@ -2085,6 +2090,96 @@
             The layout of the animation is vertical
             </summary>
         </member>
+        <member name="T:OpenNETCF.Windows.Forms.DrawItemEventArgs">
+            <summary>
+            Provides data for the DrawItem event.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.DrawItemEventArgs.#ctor(System.Drawing.Graphics,System.Drawing.Font,System.Drawing.Rectangle,System.Int32,OpenNETCF.Windows.Forms.DrawItemState,System.Drawing.Color,System.Drawing.Color)">
+            <summary>
+            Initializes a new instance
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.DrawItemEventArgs.#ctor(System.Drawing.Graphics,System.Drawing.Font,System.Drawing.Rectangle,System.Int32,OpenNETCF.Windows.Forms.DrawItemState)">
+            <summary>
+            Initializes a new instance
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.DrawItemEventArgs.DrawBackground">
+            <summary>
+            Draws the background within the bounds specified in the DrawItemEventArgs constructor and with the appropriate color.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.DrawItemEventArgs.DrawBackground(System.Drawing.Color)">
+            <summary>
+            Draws the background within the bounds specified in the DrawItemEventArgs constructor and with the appropriate color.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.DrawItemEventArgs.DrawFocusRectangle">
+            <summary>
+            Draws a focus rectangle.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.DrawItemEventArgs.Bounds">
+            <summary>
+            Gets the rectangle that represents the bounds of the item that is being drawn.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.DrawItemEventArgs.State">
+            <summary>
+            Gets the state of the item being drawn.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.DrawItemEventArgs.Graphics">
+            <summary>
+            Gets the graphics surface to draw the item on.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.DrawItemEventArgs.Index">
+            <summary>
+            Gets the index value of the item that is being drawn.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.DrawItemEventArgs.Font">
+            <summary>
+            Gets the font assigned to the item being drawn.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.DrawItemEventArgs.BackColor">
+            <summary>
+            Gets the background color of the item that is being drawn.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.DrawItemEventArgs.ForeColor">
+            <summary>
+            Gets the foreground color of the of the item being drawn.
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Windows.Forms.DrawItemState">
+            <summary>
+            Specifies the state of an item that is being drawn.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Windows.Forms.DrawItemState.None">
+            <summary>
+            The item currently has no state.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Windows.Forms.DrawItemState.Selected">
+            <summary>
+            The item is selected.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Windows.Forms.DrawItemState.Disabled">
+            <summary>
+            The item is disabled.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Windows.Forms.DrawItemState.Focus">
+            <summary>
+            The item has focus.
+            </summary>
+        </member>
         <member name="T:OpenNETCF.Windows.Forms.DrawMode">
             <summary>
             Specifies how the elements of a control are drawn.
@@ -2442,6 +2537,130 @@
         <member name="P:OpenNETCF.Windows.Forms.ImageViewer.Center">
             <summary>
             Gets or sets the value to specify if the image should be centered.
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Windows.Forms.ItemCollection">
+            <summary>
+            Represents the collection of items in a ListBox2. 
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.ItemCollection.Add(OpenNETCF.Windows.Forms.ListItem)">
+            <summary>
+            Adds an item to the list of items for a ListBox2. 
+            </summary>
+            <param name="value">ListItem to add</param>
+            <returns>Newly created ListItem</returns>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.ItemCollection.Add(System.String)">
+            <summary>
+            Adds an item to the list of items for a ListBox2 
+            </summary>
+            <param name="value">string for text property</param>
+            <returns>Newly created ListItem</returns>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.ItemCollection.Remove(OpenNETCF.Windows.Forms.ListItem)">
+            <summary>
+            Removes the specified object from the collection.
+            </summary>
+            <param name="value">ListItem to remove</param>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.ItemCollection.Insert(System.Int32,OpenNETCF.Windows.Forms.ListItem)">
+            <summary>
+            Inserts an item into the list box at the specified index.  
+            </summary>
+            <param name="index">The zero-based index location where the item is inserted.</param>
+            <param name="value">An object representing the item to insert.</param>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.ItemCollection.Contains(OpenNETCF.Windows.Forms.ListItem)">
+            <summary>
+            Determines whether the specified item is located within the collection.  
+            </summary>
+            <param name="value">An object representing the item to locate in the collection.</param>
+            <returns>true if the item is located within the collection; otherwise, false .</returns>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.ItemCollection.Clear">
+            <summary>
+            Removes all elements from the System.Collections.ArrayList.  
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.ItemCollection.IndexOf(OpenNETCF.Windows.Forms.ListItem)">
+            <summary>
+            Returns the index within the collection of the specified item
+            </summary>
+            <param name="value">An object representing the item to locate in the collection.</param>
+            <returns>The zero-based index where the item is located within the collection; otherwise, negative one (-1). </returns>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.ItemCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the item.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.ItemCollection.Item(System.String)">
+            <summary>
+            Gets the item.
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Windows.Forms.KeyData">
+            <summary>
+            Data passed on by the KeyboardHook
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.KeyData.KeyCode">
+            <summary>
+            The key code
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.KeyData.ScanCode">
+            <summary>
+            The hardware scan code
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.KeyData.TimeStamp">
+            <summary>
+            The Environement.Tickcount time at which the key was intercepted
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Windows.Forms.KeyHookEventHandler">
+            <summary>
+            Handler for KeyboardHook key events
+            </summary>
+            <param name="keyMessage">The key message (up, down, sysup or sysdown)</param>
+            <param name="keyData">The key data associated with the event</param>
+            <returns>Return <b>true</b> to pass the key data on to the next hook, <b>false</b> to prevent further system processing</returns>
+        </member>
+        <member name="T:OpenNETCF.Windows.Forms.KeyboardHook">
+            <summary>
+            Used for system-wide hooking of keyboard events
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.KeyboardHook.#ctor">
+            <summary>
+            Creates an instance of a KeyboardHook
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.KeyboardHook.Dispose">
+            <summary>
+            Disposes the KeyboardHook
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Windows.Forms.KeyboardHook.Finalize">
+            <summary>
+            Finalizes the KeyboardHook
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.Windows.Forms.KeyboardHook.KeyDetected">
+            <summary>
+            Fired when keyboard data is present in the system
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.KeyboardHook.Enabled">
+            <summary>
+            Gets or sets the state of the hook
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.KeyboardHook.PassOnKeys">
+            <summary>
+            Set to <b>false</b> to prevent the system from forwarding the key data to further hooks or the target control.  Defaults to <b>true</b>
             </summary>
         </member>
         <member name="T:OpenNETCF.Windows.Forms.LinkLabel2">
@@ -2876,67 +3095,6 @@
             Gets or sets the item height
             </summary>
         </member>
-        <member name="T:OpenNETCF.Windows.Forms.ListBox2.ItemCollection">
-            <summary>
-            Represents the collection of items in a ListBox2. 
-            </summary>
-        </member>
-        <member name="M:OpenNETCF.Windows.Forms.ListBox2.ItemCollection.Add(OpenNETCF.Windows.Forms.ListItem)">
-            <summary>
-            Adds an item to the list of items for a ListBox2. 
-            </summary>
-            <param name="value">ListItem to add</param>
-            <returns>Newly created ListItem</returns>
-        </member>
-        <member name="M:OpenNETCF.Windows.Forms.ListBox2.ItemCollection.Add(System.String)">
-            <summary>
-            Adds an item to the list of items for a ListBox2 
-            </summary>
-            <param name="value">string for text property</param>
-            <returns>Newly created ListItem</returns>
-        </member>
-        <member name="M:OpenNETCF.Windows.Forms.ListBox2.ItemCollection.Remove(OpenNETCF.Windows.Forms.ListItem)">
-            <summary>
-            Removes the specified object from the collection.
-            </summary>
-            <param name="value">ListItem to remove</param>
-        </member>
-        <member name="M:OpenNETCF.Windows.Forms.ListBox2.ItemCollection.Insert(System.Int32,OpenNETCF.Windows.Forms.ListItem)">
-            <summary>
-            Inserts an item into the list box at the specified index.  
-            </summary>
-            <param name="index">The zero-based index location where the item is inserted.</param>
-            <param name="value">An object representing the item to insert.</param>
-        </member>
-        <member name="M:OpenNETCF.Windows.Forms.ListBox2.ItemCollection.Contains(OpenNETCF.Windows.Forms.ListItem)">
-            <summary>
-            Determines whether the specified item is located within the collection.  
-            </summary>
-            <param name="value">An object representing the item to locate in the collection.</param>
-            <returns>true if the item is located within the collection; otherwise, false .</returns>
-        </member>
-        <member name="M:OpenNETCF.Windows.Forms.ListBox2.ItemCollection.Clear">
-            <summary>
-            Removes all elements from the System.Collections.ArrayList.  
-            </summary>
-        </member>
-        <member name="M:OpenNETCF.Windows.Forms.ListBox2.ItemCollection.IndexOf(OpenNETCF.Windows.Forms.ListItem)">
-            <summary>
-            Returns the index within the collection of the specified item
-            </summary>
-            <param name="value">An object representing the item to locate in the collection.</param>
-            <returns>The zero-based index where the item is located within the collection; otherwise, negative one (-1). </returns>
-        </member>
-        <member name="P:OpenNETCF.Windows.Forms.ListBox2.ItemCollection.Item(System.Int32)">
-            <summary>
-            Gets or sets the item.
-            </summary>
-        </member>
-        <member name="P:OpenNETCF.Windows.Forms.ListBox2.ItemCollection.Item(System.String)">
-            <summary>
-            Gets the item.
-            </summary>
-        </member>
         <member name="M:OpenNETCF.Windows.Forms.ListItem.#ctor">
             <summary>
             Initializes a new instance of the ListItem class with default values.
@@ -2975,6 +3133,17 @@
         <member name="P:OpenNETCF.Windows.Forms.ListItem.ImageIndex">
             <summary>
             Gets or sets the ImageIndex associated with this item.   
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.ListItem.Tag">
+            <summary>
+            Gets or sets an object that contains data to associate with the item.
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Windows.Forms.MethodInvoker">
+            <summary>
+            Represents a delegate that can execute any method in managed code that is
+            declared void and takes no parameters.
             </summary>
         </member>
         <member name="T:OpenNETCF.Windows.Forms.MonthCalendar2">
@@ -3133,96 +3302,6 @@
         <member name="T:OpenNETCF.Windows.Forms.DrawItemEventHandler">
             <summary>
             Represents the method that will handle the DrawItem.
-            </summary>
-        </member>
-        <member name="T:OpenNETCF.Windows.Forms.DrawItemState">
-            <summary>
-            Specifies the state of an item that is being drawn.
-            </summary>
-        </member>
-        <member name="F:OpenNETCF.Windows.Forms.DrawItemState.None">
-            <summary>
-            The item currently has no state.
-            </summary>
-        </member>
-        <member name="F:OpenNETCF.Windows.Forms.DrawItemState.Selected">
-            <summary>
-            The item is selected.
-            </summary>
-        </member>
-        <member name="F:OpenNETCF.Windows.Forms.DrawItemState.Disabled">
-            <summary>
-            The item is disabled.
-            </summary>
-        </member>
-        <member name="F:OpenNETCF.Windows.Forms.DrawItemState.Focus">
-            <summary>
-            The item has focus.
-            </summary>
-        </member>
-        <member name="T:OpenNETCF.Windows.Forms.DrawItemEventArgs">
-            <summary>
-            Provides data for the DrawItem event.
-            </summary>
-        </member>
-        <member name="M:OpenNETCF.Windows.Forms.DrawItemEventArgs.#ctor(System.Drawing.Graphics,System.Drawing.Font,System.Drawing.Rectangle,System.Int32,OpenNETCF.Windows.Forms.DrawItemState,System.Drawing.Color,System.Drawing.Color)">
-            <summary>
-            Initializes a new instance
-            </summary>
-        </member>
-        <member name="M:OpenNETCF.Windows.Forms.DrawItemEventArgs.#ctor(System.Drawing.Graphics,System.Drawing.Font,System.Drawing.Rectangle,System.Int32,OpenNETCF.Windows.Forms.DrawItemState)">
-            <summary>
-            Initializes a new instance
-            </summary>
-        </member>
-        <member name="M:OpenNETCF.Windows.Forms.DrawItemEventArgs.DrawBackground">
-            <summary>
-            Draws the background within the bounds specified in the DrawItemEventArgs constructor and with the appropriate color.
-            </summary>
-        </member>
-        <member name="M:OpenNETCF.Windows.Forms.DrawItemEventArgs.DrawBackground(System.Drawing.Color)">
-            <summary>
-            Draws the background within the bounds specified in the DrawItemEventArgs constructor and with the appropriate color.
-            </summary>
-        </member>
-        <member name="M:OpenNETCF.Windows.Forms.DrawItemEventArgs.DrawFocusRectangle">
-            <summary>
-            Draws a focus rectangle.
-            </summary>
-        </member>
-        <member name="P:OpenNETCF.Windows.Forms.DrawItemEventArgs.Bounds">
-            <summary>
-            Gets the rectangle that represents the bounds of the item that is being drawn.
-            </summary>
-        </member>
-        <member name="P:OpenNETCF.Windows.Forms.DrawItemEventArgs.State">
-            <summary>
-            Gets the state of the item being drawn.
-            </summary>
-        </member>
-        <member name="P:OpenNETCF.Windows.Forms.DrawItemEventArgs.Graphics">
-            <summary>
-            Gets the graphics surface to draw the item on.
-            </summary>
-        </member>
-        <member name="P:OpenNETCF.Windows.Forms.DrawItemEventArgs.Index">
-            <summary>
-            Gets the index value of the item that is being drawn.
-            </summary>
-        </member>
-        <member name="P:OpenNETCF.Windows.Forms.DrawItemEventArgs.Font">
-            <summary>
-            Gets the font assigned to the item being drawn.
-            </summary>
-        </member>
-        <member name="P:OpenNETCF.Windows.Forms.DrawItemEventArgs.BackColor">
-            <summary>
-            Gets the background color of the item that is being drawn.
-            </summary>
-        </member>
-        <member name="P:OpenNETCF.Windows.Forms.DrawItemEventArgs.ForeColor">
-            <summary>
-            Gets the foreground color of the of the item being drawn.
             </summary>
         </member>
         <member name="M:OpenNETCF.Windows.Forms.PictureBox2.#ctor">
@@ -3631,6 +3710,22 @@
             Gets whether the control is in design mode
             </summary>
         </member>
+        <member name="T:OpenNETCF.Windows.Forms.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
         <member name="T:OpenNETCF.Windows.Forms.HighWarnHandler">
             <summary>
             Used when a gauge value exceeds its high warn level.
@@ -3983,10 +4078,6 @@
             Captures a signature from the user.
             Can be saved to a control specific byte array or a Bitmap.
             </summary>
-            <summary>
-            Captures a signature from the user.
-            Can be saved to a control specific byte array or a Bitmap.
-            </summary>
         </member>
         <member name="M:OpenNETCF.Windows.Forms.Signature.#ctor">
             <summary>
@@ -4090,6 +4181,11 @@
         <member name="P:OpenNETCF.Windows.Forms.Signature.PenWidth">
             <summary>
             Gets or sets the width of the signature draw pen
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Windows.Forms.Signature.DesignMode">
+            <summary>
+            Gets a value indicating whether a control is being used on a design surface.
             </summary>
         </member>
         <member name="T:OpenNETCF.Windows.Forms.Point2">
@@ -4857,6 +4953,166 @@
         <member name="T:OpenNETCF.Win32.EM">
             <summary>
             Edit control Messages.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.GETSEL">
+            <summary>
+            This message retrieves the starting and ending character positions of the current selection in an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.SETSEL">
+            <summary>
+            This message selects a range of characters in an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.GETRECT">
+            <summary>
+            This message retrieves the formatting rectangle of an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.SETRECT">
+            <summary>
+            This message sets the formatting rectangle of a multiline edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.SETRECTNP">
+            <summary>
+            This message sets the formatting rectangle of a multiline edit control. 
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.SCROLL">
+            <summary>
+            This message scrolls the text vertically in a multiline edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.LINESCROLL">
+            <summary>
+            This message scrolls the text vertically or horizontally in a multiline edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.SCROLLCARET">
+            <summary>
+            This message scrolls the caret into view in an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.GETMODIFY">
+            <summary>
+            This message determines whether the contents of an edit control have been modified.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.SETMODIFY">
+            <summary>
+            This message sets or clears the modification flag for an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.GETLINECOUNT">
+            <summary>
+            This message retrieves the number of lines in a multiline edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.LINEINDEX">
+            <summary>
+            This message retrieves the character index of a line in a multiline edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.LINELENGTH">
+            <summary>
+            This message retrieves the length of a line, in characters, in an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.REPLACESEL">
+            <summary>
+            This message replaces the current selection in an edit control with the specified text.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.GETLINE">
+            <summary>
+            This message copies a line of text from an edit control and places the text in a specified buffer. 
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.LIMITTEXT">
+            <summary>
+            This message limits the amount of text the user can enter into an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.CANUNDO">
+            <summary>
+            This message determines whether an edit-control operation can be undone; that is, whether the control can respond to the EM_UNDO message.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.UNDO">
+            <summary>
+            This message reverses the effect of the last edit control operation.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.FMTLINES">
+            <summary>
+            This message sets the inclusion flag for soft line-break characters on or off within a multiline edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.LINEFROMCHAR">
+            <summary>
+            This message retrieves the index of the line that contains the specified character index in a multiline edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.SETTABSTOPS">
+            <summary>
+            This message sets the tab stops in a multiline edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.SETPASSWORDCHAR">
+            <summary>
+            This message sets or removes a password character displayed in a single-line edit control when the user types text.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.EMPTYUNDOBUFFER">
+            <summary>
+            This message resets the undo flag of an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.GETFIRSTVISIBLELINE">
+            <summary>
+            This message determines the uppermost visible line in an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.SETREADONLY">
+            <summary>
+            This message sets or removes the read-only style (ES_READONLY) of an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.GETPASSWORDCHAR">
+            <summary>
+            This message retrieves the password character displayed in an edit control when the user enters text.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.SETMARGINS">
+            <summary>
+            This message sets the widths of the left and right margins for an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.GETMARGINS">
+            <summary>
+            This message retrieves the widths of the left and right margins for an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.SETLIMITTEXT">
+            <summary>
+            This message limits the amount of text the user can enter into an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.GETLIMITTEXT">
+            <summary>
+            This message retrieves the current text limit, in characters, for an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.POSFROMCHAR">
+            <summary>
+            This message retrieves the coordinates of the specified character in an edit control.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Win32.EM.CHARFROMPOS">
+            <summary>
+            This message retrieves the zero-based character index and zero-based line index of the character nearest the specified point in an edit control.
             </summary>
         </member>
         <member name="T:OpenNETCF.Win32.ES">

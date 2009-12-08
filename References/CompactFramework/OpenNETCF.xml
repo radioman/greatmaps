@@ -145,6 +145,16 @@
             Gets the root directory of a drive.
             </summary>
         </member>
+        <member name="P:OpenNETCF.IO.DriveInfo.ManufacturerID">
+            <summary>
+            Gets the manufacturer ID of the volume (if available)
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.DriveInfo.SerialNumber">
+            <summary>
+            Gets the serial number of the volume (if available)
+            </summary>
+        </member>
         <member name="P:OpenNETCF.IO.DriveInfo.AvailableFreeSpace">
             <summary>
             Indicates the amount of available free space on a drive.
@@ -254,7 +264,7 @@
         </member>
         <member name="T:OpenNETCF.IO.FileSystemEventHandler">
             <summary>
-            Represents the method that will handle the <see cref="E:OpenNETCF.IO.FileSystemWatcher.Changed"/>, <see cref="!:FileSystemMonitor.Created"/>, or <see cref="E:OpenNETCF.IO.FileSystemWatcher.Deleted"/> event of a <see cref="T:OpenNETCF.IO.FileSystemWatcher"/> class.
+            Represents the method that will handle the <see cref="E:OpenNETCF.IO.FileSystemWatcher.Changed"/>, <see cref="E:OpenNETCF.IO.FileSystemMonitor.Created"/>, or <see cref="E:OpenNETCF.IO.FileSystemWatcher.Deleted"/> event of a <see cref="T:OpenNETCF.IO.FileSystemWatcher"/> class.
             </summary>
             <param name="sender">The source of the event.</param>
             <param name="e">The <see cref="T:OpenNETCF.IO.FileSystemEventArgs"/> that contains the event data.</param>
@@ -263,12 +273,12 @@
         </member>
         <member name="T:OpenNETCF.IO.FileSystemEventArgs">
             <summary>
-            Provides data for the directory events: <see cref="E:OpenNETCF.IO.FileSystemWatcher.Changed"/>, <see cref="E:OpenNETCF.IO.FileSystemWatcher.Created"/>, <see cref="!:FileSystemMonitor.Deleted"/>.
+            Provides data for the directory events: <see cref="E:OpenNETCF.IO.FileSystemWatcher.Changed"/>, <see cref="E:OpenNETCF.IO.FileSystemWatcher.Created"/>, <see cref="E:OpenNETCF.IO.FileSystemMonitor.Deleted"/>.
             </summary>
             <remarks>The <b>FileSystemEventArgs</b> class is passed as a parameter to event handlers for these events:
-            <para>The <see cref="E:OpenNETCF.IO.FileSystemWatcher.Changed"/> event occurs when changes are made to the size, system attributes, last write time, last access time, or security permissions in a file or directory in the specified <see cref="!:FileSystemMonitor.Path"/> of a <see cref="!:FileSystemMonitor"/>.</para>
-            <para>The <see cref="E:OpenNETCF.IO.FileSystemWatcher.Created"/> event occurs when a file or directory in the specified <see cref="P:OpenNETCF.IO.FileSystemWatcher.Path"/> of a <see cref="!:FileSystemMonitor"/> is created.</para>
-            <para>The <see cref="E:OpenNETCF.IO.FileSystemWatcher.Deleted"/> event occurs when a file or directory in the specified <see cref="P:OpenNETCF.IO.FileSystemWatcher.Path"/> of a <see cref="!:FileSystemMonitor"/> is deleted. For more information, see <see cref="!:FileSystemMonitor"/>.</para></remarks>
+            <para>The <see cref="E:OpenNETCF.IO.FileSystemWatcher.Changed"/> event occurs when changes are made to the size, system attributes, last write time, last access time, or security permissions in a file or directory in the specified <see cref="P:OpenNETCF.IO.FileSystemMonitor.Path"/> of a <see cref="T:OpenNETCF.IO.FileSystemMonitor"/>.</para>
+            <para>The <see cref="E:OpenNETCF.IO.FileSystemWatcher.Created"/> event occurs when a file or directory in the specified <see cref="P:OpenNETCF.IO.FileSystemWatcher.Path"/> of a <see cref="T:OpenNETCF.IO.FileSystemMonitor"/> is created.</para>
+            <para>The <see cref="E:OpenNETCF.IO.FileSystemWatcher.Deleted"/> event occurs when a file or directory in the specified <see cref="P:OpenNETCF.IO.FileSystemWatcher.Path"/> of a <see cref="T:OpenNETCF.IO.FileSystemMonitor"/> is deleted. For more information, see <see cref="T:OpenNETCF.IO.FileSystemMonitor"/>.</para></remarks>
         </member>
         <member name="M:OpenNETCF.IO.FileSystemEventArgs.#ctor(OpenNETCF.IO.WatcherChangeTypes,System.String,System.String)">
             <summary>
@@ -303,7 +313,7 @@
             Specifies changes to watch for in a file or folder.
             </summary>
             <remarks>You can combine the members of this enumeration to watch for more than one kind of change. For example, you can watch for changes in the size of a file or folder, and for changes in security settings. This raises an event anytime there is a change in size or security settings of a file or folder.</remarks>
-            <seealso cref="!:FileSystemMonitor"/>
+            <seealso cref="T:OpenNETCF.IO.FileSystemMonitor"/>
             <seealso cref="T:OpenNETCF.IO.FileSystemEventArgs"/>
             <seealso cref="T:OpenNETCF.IO.FileSystemEventHandler"/>
             <seealso cref="T:OpenNETCF.IO.RenamedEventArgs"/>
@@ -352,7 +362,7 @@
         </member>
         <member name="T:OpenNETCF.IO.RenamedEventHandler">
             <summary>
-            Represents the method that will handle the <see cref="!:FileSystemMonitor.Renamed"/> event of a <see cref="!:FileSystemMonitor"/> class.
+            Represents the method that will handle the <see cref="E:OpenNETCF.IO.FileSystemMonitor.Renamed"/> event of a <see cref="T:OpenNETCF.IO.FileSystemMonitor"/> class.
             </summary>
             <param name="sender">The source of the event.</param>
             <param name="e">The <see cref="T:OpenNETCF.IO.RenamedEventArgs"/> that contains the event data.</param>
@@ -379,8 +389,8 @@
             <summary>
             Changes that might occur to a file or directory.
             </summary>
-            <remarks>Each <see cref="T:OpenNETCF.IO.WatcherChangeTypes"/> member is associated with an event in <see cref="!:FileSystemMonitor"/>.
-            For more information on the events, see <see cref="!:FileSystemMonitor.Changed"/>, <see cref="!:FileSystemMonitor.Created"/>, <see cref="!:FileSystemMonitor.Deleted"/> and <see cref="!:FileSystemMonitor.Renamed"/>.</remarks>
+            <remarks>Each <see cref="T:OpenNETCF.IO.WatcherChangeTypes"/> member is associated with an event in <see cref="T:OpenNETCF.IO.FileSystemMonitor"/>.
+            For more information on the events, see <see cref="E:OpenNETCF.IO.FileSystemMonitor.Changed"/>, <see cref="E:OpenNETCF.IO.FileSystemMonitor.Created"/>, <see cref="E:OpenNETCF.IO.FileSystemMonitor.Deleted"/> and <see cref="E:OpenNETCF.IO.FileSystemMonitor.Renamed"/>.</remarks>
         </member>
         <member name="F:OpenNETCF.IO.WatcherChangeTypes.All">
             <summary>
@@ -443,16 +453,16 @@
             Executes an operation on a separate thread.
             </summary>
         </member>
-        <member name="M:OpenNETCF.ComponentModel.BackgroundWorker.#ctor">
-            <summary>
-            Initializes a new instance of the BackgroundWorker class.
-            </summary>
-        </member>
         <member name="M:OpenNETCF.ComponentModel.BackgroundWorker.#ctor(System.Windows.Forms.Control)">
             <summary>
             Initializes a new instance of the BackgroundWorker class.
             Call from the desktop code as the other ctor is not good enough
             Call it passing in a created control e.g. the Form
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.ComponentModel.BackgroundWorker.#ctor">
+            <summary>
+            Initializes a new instance of the BackgroundWorker class.
             </summary>
         </member>
         <member name="M:OpenNETCF.ComponentModel.BackgroundWorker.ReportProgress(System.Int32)">
@@ -665,9 +675,6 @@
             <param name="data">Data to generate a CRC for</param>
             <param name="offset">The offset into the source data at which to start the CRC</param>
             <param name="length">The number of bytes in the source data to analyze</param>
-            <param name="crcBitLength">Length, in bits, of the polynomial to use</param>
-            <param name="polynomial">Standard polynomial to use for the CRC</param>
-            <param name="seedCRC">CRC seed value</param>
             <returns>The CRC</returns>
             <returns></returns>
         </member>
@@ -688,7 +695,6 @@
             <param name="data">Data to generate a CRC for</param>
             <param name="offset">The offset into the source data at which to start the CRC</param>
             <param name="length">The number of bytes in the source data to analyze</param>
-            <param name="crcBitLength">Length, in bits, of the polynomial to use</param>
             <param name="polynomial">Standard polynomial to use for the CRC</param>
             <param name="seedCRC">CRC seed value</param>
             <returns>The CRC</returns>
@@ -2532,13 +2538,14 @@
             <param name="bytesToWrite">Number of bytes from passed in buffer to write</param>
             <returns>Number of bytes actually written</returns>
         </member>
-        <member name="M:OpenNETCF.IO.StreamInterfaceDriver.DeviceIoControl(System.UInt32,System.Byte[],System.Byte[])">
+        <member name="M:OpenNETCF.IO.StreamInterfaceDriver.DeviceIoControl(System.UInt32,System.Byte[],System.Byte[],System.Int32@)">
             <summary>
             Call a device specific IOControl
             </summary>
             <param name="controlCode">The IOCTL code</param>
             <param name="inData">Data to pass into the IOCTL</param>
             <param name="outData">Data returned by the IOCTL</param>
+            <param name="bytesReturned">Data returned by the call</param>
         </member>
         <member name="M:OpenNETCF.IO.StreamInterfaceDriver.Seek(System.Int32,System.IO.SeekOrigin)">
             <summary>
@@ -2566,6 +2573,37 @@
             </summary>
             <param name="controlCode">The IOCTL code</param>
             <param name="inData">Data to pass into the IOCTL</param>
+        </member>
+        <member name="M:OpenNETCF.IO.StreamInterfaceDriver.DeviceIoControl(System.UInt32,System.IntPtr,System.Int32,System.IntPtr,System.Int32,System.Int32@)">
+            <summary>
+            Call a device specific IOControl
+            </summary>
+            <param name="controlCode">The IOCTL code</param>
+            <param name="inData">Data to pass into the IOCTL</param>
+            <param name="inSize"></param>
+            <param name="bytesReturned"></param>
+            <param name="outData"></param>
+            <param name="outSize"></param>
+        </member>
+        <member name="M:OpenNETCF.IO.StreamInterfaceDriver.DeviceIoControl(System.UInt32,System.Void*,System.Int32,System.Void*,System.Int32,System.Int32@)">
+            <summary>
+            Call a device specific IOControl
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.IO.StreamInterfaceDriver.DeviceIoControl``2(System.UInt32,``0,``1@,System.Int32@)">
+            <summary>
+            Call a device specific IOControl
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.IO.StreamInterfaceDriver.DeviceIoControl``1(System.UInt32,``0)">
+            <summary>
+            Call a device specific IOControl
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.IO.StreamInterfaceDriver.DeviceIoControl``1(System.UInt32,``0@,System.Int32@)">
+            <summary>
+            Call a device specific IOControl
+            </summary>
         </member>
         <member name="M:OpenNETCF.IO.StreamInterfaceDriver.DeviceIoControl(System.UInt32)">
             <summary>
@@ -2727,25 +2765,6 @@
             <summary>
             Elementaty Charge (C)
             </summary>
-        </member>
-        <member name="T:OpenNETCF.Math2.FFTReal">
-            <summary>
-            An implementation of the Fast Fourier Transform based on the work of Laurent de Soras
-            </summary>
-        </member>
-        <member name="M:OpenNETCF.Math2.FFTReal.Compute(System.Double[])">
-            <summary>
-            Compute an FFT on a 2^n-length data set
-            </summary>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenNETCF.Math2.FFTReal.ComputeInverse(OpenNETCF.Complex[])">
-            <summary>
-            Compute an inverse FFT on a 2^n-length data set of complex numbers
-            </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
         <member name="T:OpenNETCF.Media.SoundPlayer">
             <summary>
@@ -3123,7 +3142,6 @@
         <member name="M:OpenNETCF.Media.WaveAudio.WaveHeader.#ctor(System.Byte[],System.Int32)">
             <summary>
             Creates WaveHeader and fills it with wave data
-            <see cref="T:OpenNETCF.Media.WaveAudio.WaveHdr"/>
             </summary>
             <param name="data">wave data bytes</param>
             <param name="datalength">length of Wave data</param>
@@ -3134,15 +3152,6 @@
             Allocates a buffer of required size
             </summary>
             <param name="BufferSize"></param>
-        </member>
-        <member name="P:OpenNETCF.Media.WaveAudio.WaveHeader.Header">
-            <summary>Ptr to WAVEHDR in the unmanaged memory</summary>
-        </member>
-        <member name="P:OpenNETCF.Media.WaveAudio.WaveHeader.Data">
-            <summary>Ptr to wave data in the unmanaged memory</summary>
-        </member>
-        <member name="P:OpenNETCF.Media.WaveAudio.WaveHeader.DataLength">
-            <summary>Wave data size</summary>
         </member>
         <member name="T:OpenNETCF.Reflection.Assembly2">
             <summary>
@@ -4669,16 +4678,6 @@
             Gets the time the Elapsed event was raised.
             </summary>
         </member>
-        <member name="T:OpenNETCF.Timers.ISynchronizationInvoker">
-            <summary>
-            Parent for any component containing a Timer2 class
-            </summary>
-        </member>
-        <member name="F:OpenNETCF.Timers.ISynchronizationInvoker.TimerElapsed">
-            <summary>
-            Delegate on which timer events will be marshaled to the UI thread
-            </summary>
-        </member>
         <member name="T:OpenNETCF.Timers.ElapsedEventHandler">
             <summary>
             Represents the method that will handle the Elapsed event of a Timer.
@@ -4760,6 +4759,7 @@
             <summary>
             Gets or sets the interval at which to either raise the Elapsed event or run the TimerCallback method
             </summary>
+            <remarks>Default Interval is 100ms</remarks>
         </member>
         <member name="P:OpenNETCF.Timers.Timer2.Resolution">
             <summary>
@@ -5564,11 +5564,6 @@
             </summary>
             <returns>byte array representation of this instance</returns>
         </member>
-        <member name="T:OpenNETCF.Media.WaveAudio.WaveHdr">
-            <summary>
-            This class defines the header used to identify a waveform-audio buffer
-            </summary>
-        </member>
         <member name="T:OpenNETCF.Media.WaveAudio.WaveInCaps">
             <summary>
             Class for getting audio device capabilities.
@@ -5766,14 +5761,39 @@
             Gets the milliseconds component of the date represented by this instance.   
             </summary> 
         </member>
+        <member name="T:OpenNETCF.Collections.Generic.SynchronizedCollection`1">
+            <summary>
+            Provides a thread-safe collection that contains objects of a type specified by the generic parameter as elements.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:OpenNETCF.Collections.Generic.SynchronizedCollection`1.#ctor">
+            <summary>
+            Initializes a new instance of the SynchronizedCollection(T) class. 
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.FFTReal">
+            <summary>
+            An implementation of the Fast Fourier Transform based on the work of Laurent de Soras
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.FFTReal.Compute(System.Double[])">
+            <summary>
+            Compute an FFT on a 2^n-length data set
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.FFTReal.ComputeInverse(OpenNETCF.Complex[])">
+            <summary>
+            Compute an inverse FFT on a 2^n-length data set of complex numbers
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
         <member name="M:OpenNETCF.IO.DelimitedTextWriter.#ctor(System.String)">
             <summary>
             Creates a DelimitedTextFileWriter with a comma (',') FieldDelimiter and a newline ('\n') RowDelimiter
-            </summary>
-        </member>
-        <member name="M:OpenNETCF.IO.DelimitedTextWriter.NextRow">
-            <summary>
-            Writes a RowDelimiter to the output file
             </summary>
         </member>
         <member name="M:OpenNETCF.IO.DelimitedTextWriter.#ctor(System.String,System.Char)">
@@ -5781,42 +5801,49 @@
             Creates a DelimitedTextFileWriter with the provided FieldDelimiter and a newline ('\n') RowDelimiter
             </summary>
             <param name="fieldDelimiter">char that separates fields in a row</param>
+            <param name="path">Fully-qualified path to the delimited text file</param>
         </member>
         <member name="M:OpenNETCF.IO.DelimitedTextWriter.#ctor(System.String,System.String)">
             <summary>
             Creates a DelimitedTextFileWriter with the provided FieldDelimiter and a newline ('\n') RowDelimiter
             </summary>
             <param name="fieldDelimiter">string that separates fields in a row</param>
+            <param name="path">Fully-qualified path to the delimited text file</param>
         </member>
         <member name="M:OpenNETCF.IO.DelimitedTextWriter.#ctor(System.String,System.Char,System.Char)">
             <summary>
             Creates a DelimitedTextFileWriter with the provided FieldDelimiter and RowDelimiter
             </summary>
-            <param name="path">The complete file path to write to.</param>
+            <param name="path">Fully-qualified path to the delimited text file</param>
             <param name="fieldDelimiter">char that separates fields in a row</param>
-            <param name="RowDelimiter">char that separates rows in the file</param>
+            <param name="rowDelimiter">char that separates rows in the file</param>
         </member>
         <member name="M:OpenNETCF.IO.DelimitedTextWriter.#ctor(System.String,System.String,System.String)">
             <summary>
             Creates a DelimitedTextFileWriter with the provided FieldDelimiter and RowDelimiter
             </summary>
-            <param name="path">The complete file path to write to.</param>
+            <param name="path">Fully-qualified path to the delimited text file</param>
             <param name="fieldDelimiter">char that separates fields in a row</param>
-            <param name="RowDelimiter">char that separates rows in the file</param>
+            <param name="rowDelimiter">char that separates rows in the file</param>
         </member>
         <member name="M:OpenNETCF.IO.DelimitedTextWriter.#ctor(System.String,System.Boolean,System.Text.Encoding,System.String,System.String)">
             <summary>
             Creates a DelimitedTextFileWriter with the provided FieldDelimiter and RowDelimiter
             </summary>
             <param name="fieldDelimiter">string that separates fields in a row</param>
-            <param name="RowDelimiter">string that separates rows in the file</param>
+            <param name="rowDelimiter">string that separates rows in the file</param>
             <param name="encoding">The character encoding to use.</param>
-            <param name="path">The complete file path to write to.</param>
+            <param name="path">Fully-qualified path to the delimited text file</param>
             <param name="append">
             Determines whether data is to be appended to the file. If the file exists
             and append is false, the file is overwritten. If the file exists and append
             is true, the data is appended to the file. Otherwise, a new file is created.
             </param>
+        </member>
+        <member name="M:OpenNETCF.IO.DelimitedTextWriter.NextRow">
+            <summary>
+            Writes a RowDelimiter to the output file
+            </summary>
         </member>
         <member name="M:OpenNETCF.IO.DelimitedTextWriter.Write(System.Object[])">
             <summary>
@@ -5826,7 +5853,6 @@
             <summary>
             Writes an array of values to a single row in the target file
             </summary>
-            <param name="values">values to write</param>
         </member>
         <member name="M:OpenNETCF.IO.DelimitedTextWriter.Write(System.String[])">
             <summary>
@@ -5858,7 +5884,11 @@
             Causes any buffered data to be flushed to the target file
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:OpenNETCF.IO.DelimitedTextWriter.Dispose" -->
+        <member name="M:OpenNETCF.IO.DelimitedTextWriter.Dispose">
+            <summary>
+             Releases the unmanaged resources used by the DelimitedTextWriter
+            </summary>
+        </member>
         <member name="P:OpenNETCF.IO.DelimitedTextWriter.FieldDelimiter">
             <summary>
             Gets or sets the string that separates fields in a row
@@ -5867,6 +5897,181 @@
         <member name="P:OpenNETCF.IO.DelimitedTextWriter.RowDelimiter">
             <summary>
             Gets or sets the string that separates rows in the file
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.IO.FileSystemMonitor">
+            <summary>
+            Listens to the file system change notifications and raises events when a directory, or file in a directory, changes.
+            </summary>
+            <remarks>
+            The FileSystemMonitor is thread-safe and does not depend on aygshell.dll being present in the system, 
+            therefore, it is safe to use this for file system notifications when no GUI is present. 
+            </remarks>
+        </member>
+        <member name="M:OpenNETCF.IO.FileSystemMonitor.#ctor">
+            <summary>
+            Initializes a new instance of the <b>FileSystemMonitor</b> class.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.IO.FileSystemMonitor.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <b>FileSystemMonitor</b> class, given the specified directory to monitor.
+            </summary>
+            <param name="path">The directory to monitor, in standard or Universal Naming Convention (UNC) notation.</param>
+        </member>
+        <member name="M:OpenNETCF.IO.FileSystemMonitor.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <b>FileSystemMonitor</b> class, given the specified directory and type of files to monitor.
+            </summary>
+            <param name="path">The directory to monitor, in standard or Universal Naming Convention (UNC) notation.</param>
+            <param name="filter">The type of files to watch. For example, "*.txt" watches for changes to all text files.</param>
+        </member>
+        <member name="M:OpenNETCF.IO.FileSystemMonitor.Finalize">
+            <summary>
+            Releases unmanaged resources and performs other cleanup operations before the <see cref="T:OpenNETCF.IO.FileSystemMonitor"/> is reclaimed by garbage collection.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.IO.FileSystemMonitor.Dispose(System.Boolean)">
+            <summary>
+            Releases the unmanaged resources used by the <see cref="T:OpenNETCF.IO.FileSystemMonitor"/> and optionally releases the managed resources.
+            </summary>
+            <param name="finalizing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        </member>
+        <member name="E:OpenNETCF.IO.FileSystemMonitor.Created">
+            <summary>
+            Occurs when a file or directory in the specified <see cref="P:OpenNETCF.IO.FileSystemMonitor.Path"/> is created.
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.IO.FileSystemMonitor.Changed">
+            <summary>
+            Occurs when a file or directory in the specified <see cref="P:OpenNETCF.IO.FileSystemMonitor.Path"/> is changed.
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.IO.FileSystemMonitor.Deleted">
+            <summary>
+            Occurs when a file or directory in the specified <see cref="P:OpenNETCF.IO.FileSystemWatcher.Path"/> is deleted.
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.IO.FileSystemMonitor.Renamed">
+            <summary>
+            Occurs when a file or directory in the specified <see cref="P:OpenNETCF.IO.FileSystemMonitor.Path"/> is renamed.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.FileSystemMonitor.EnableRaisingEvents">
+            <summary>
+            Gets or sets a value indicating whether the component is enabled.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.FileSystemMonitor.IncludeSubdirectories">
+            <summary>
+            Gets or sets a value indicating whether subdirectories within the specified path should be monitored.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.FileSystemMonitor.NotifyFilter">
+            <summary>
+            Gets or sets the type of changes to watch for.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.FileSystemMonitor.Path">
+            <summary>
+            Gets or sets the path of the directory to watch.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.FileSystemMonitor.Filter">
+            <summary>
+            Gets or sets the filter string, used to determine what files are monitored in a directory.
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Media.Tone">
+            <summary>
+            Represents a note for the SoundPlayer to play.
+            </summary>
+            <remarks>
+            Internally this class stores data as the MIDINote value, which is a whole number. Due to mathematical rounding, if you set a 
+            specific frequency, you may not get the exact same frequency back on a read.  Instead you will get the frequency associated with the nearest
+            MIDI note to the frequency.
+            </remarks>
+        </member>
+        <member name="M:OpenNETCF.Media.Tone.GetFrequency(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="midiNote"></param>
+            <returns></returns>
+            <remarks>
+            freq = 440 * 2^((n-69)/12)
+            </remarks>
+        </member>
+        <member name="M:OpenNETCF.Media.Tone.GetNote(System.Single)">
+            <summary>
+            
+            </summary>
+            <param name="frequency"></param>
+            <returns></returns>
+            <remarks>
+            n = 69 + 12*log(freq/440)/log(2)
+            </remarks>
+        </member>
+        <member name="P:OpenNETCF.Media.Tone.Frequency">
+            <summary>
+            frequency in Hertz
+            </summary> 
+        </member>
+        <member name="P:OpenNETCF.Media.Tone.MIDINote">
+            <summary>
+            MIDI note value
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Media.Tone.Duration">
+            <summary>
+            Duration in tenths of a second
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Reflection.Device">
+            <summary>
+            A static (<b>Shared</b> in Visual Basic) class designed to help
+            determine whether a Win32 library exists and if so, whether the 
+            library exports a specific entry point. 
+            </summary>
+            <example>
+            <code lang="VB">
+            If Device.Win32Library("coredll").HasMethod("FindWindow") Then
+                NativeMethods.FindWindow("MyWindowName", String.Empty)
+            End If
+            </code>
+            <code lang="C#">
+            if (Device.Win32Library("coredll").HasMethod("FindWindow")
+            {
+                NativeMethods.FindWindow("MyWindowName", String.Empty);
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:OpenNETCF.Reflection.Device.Win32Library(System.String)">
+            <summary>
+            Creates an instance of the NativeLibrary class.
+            </summary>
+            <remarks>The returned instance will always be non-null. 
+            To determine the existence of the library, check the 
+            <see cref="P:OpenNETCF.Reflection.NativeLibrary.Exists"/> property.</remarks>
+            <param name="library">The name of the Win32 library. The 
+            file extension is optional.</param>
+        </member>
+        <member name="M:OpenNETCF.Reflection.NativeLibrary.HasMethod(System.String)">
+            <summary>
+            Indicates whether the Win32 library exports the specified entry point.
+            </summary>
+            <param name="methodName"></param>
+            <returns></returns>
+        </member>
+        <member name="P:OpenNETCF.Reflection.NativeLibrary.Exists">
+            <summary>
+            Indicates whether the library exists or not.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Reflection.NativeLibrary.Name">
+            <summary>
+            The name of the Win32 library.
             </summary>
         </member>
         <member name="T:OpenNETCF.Threading.Monitor2">
@@ -5979,6 +6184,142 @@
             Initializes a new instance of the <see cref="T:OpenNETCF.Threading.SynchronizationLockException"/> class with a specified error message.
             </summary>
             <param name="message">The error message that explains the reason for the exception.</param>
+        </member>
+        <member name="M:OpenNETCF.IO.MemoryMappedFile.CreateInMemoryMap">
+            <summary>
+            Creates an unnamed MemoryMappedFile instance using an in-memory map as the backing object with a maximum size of <b>DefaultInMemoryMapSize</b>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.IO.MemoryMappedFile.CreateInMemoryMap(System.String)">
+            <summary>
+            Creates a named MemoryMappedFile instance using an in-memory map as the backing object with a maximum size of <b>DefaultInMemoryMapSize</b>
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.IO.MemoryMappedFile.CreateInMemoryMap(System.String,System.Int64)">
+            <summary>
+            Creates a named MemoryMappedFile instance using an in-memory map as the backing object
+            </summary>
+            <param name="name"></param>
+            <param name="maxSize"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.IO.MemoryMappedFile.CreateWithFileBacking(System.String,System.Boolean,System.Int64)">
+            <summary>
+            Creates a MemoryMappedFile instance using a file system file as the backing object
+            </summary>
+            <param name="backingFile"></param>
+            <param name="failIfFileExists"></param>
+            <param name="maxSize">A positive number or the UseFileSizeForMaximumMapSize constant</param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.IO.MemoryMappedFile.Close">
+            <summary>
+            Closes and releases all resources associated with the stream
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.IO.MemoryMappedFile.Flush">
+            <summary>
+            Flushes all pending writes
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.IO.MemoryMappedFile.Seek(System.Int64,System.IO.SeekOrigin)">
+            <summary>
+            Moves the current stream position pointer
+            </summary>
+            <param name="offset"></param>
+            <param name="origin"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.IO.MemoryMappedFile.Read(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Reads data from the MemoryMappedFile
+            </summary>
+            <param name="buffer"></param>
+            <param name="offset"></param>
+            <param name="count"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.IO.MemoryMappedFile.Write(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Writes data to the MemoryMappedFile
+            </summary>
+            <param name="buffer"></param>
+            <param name="offset"></param>
+            <param name="count"></param>
+        </member>
+        <member name="M:OpenNETCF.IO.MemoryMappedFile.SetLength(System.Int64)">
+            <summary>
+            Throws a NotSupportedException
+            </summary>
+            <param name="value">Not Supported</param>
+        </member>
+        <member name="M:OpenNETCF.IO.MemoryMappedFile.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)">
+            <summary>
+            Throws a NotSupportedException
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.IO.MemoryMappedFile.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)">
+            <summary>
+            Throws a NotSupportedException
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.IO.MemoryMappedFile.EndRead(System.IAsyncResult)">
+            <summary>
+            Throws a NotSupportedException
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.IO.MemoryMappedFile.EndWrite(System.IAsyncResult)">
+            <summary>
+            Throws a NotSupportedException
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.MemoryMappedFile.Name">
+            <summary>
+            The name of the MemoryMapped file provided during construction
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.MemoryMappedFile.Length">
+            <summary>
+            Gets the maximum length of the MemoryMappedFile
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.MemoryMappedFile.Position">
+            <summary>
+            Gets or sets the current position within the MemoryMappedFile stream
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.MemoryMappedFile.CanRead">
+            <summary>
+            Always returns <b>true</b> for MemoryMappedFiles
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.MemoryMappedFile.CanSeek">
+            <summary>
+            Always returns <b>true</b> for MemoryMappedFiles
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.MemoryMappedFile.CanTimeout">
+            <summary>
+            Always returns <b>false</b> for MemoryMappedFiles
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.MemoryMappedFile.CanWrite">
+            <summary>
+            Always returns <b>true</b> for MemoryMappedFiles
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.MemoryMappedFile.WriteTimeout">
+            <summary>
+            Throws a NotSupportedException
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.IO.MemoryMappedFile.ReadTimeout">
+            <summary>
+            Throws a NotSupportedException
+            </summary>
         </member>
         <member name="T:OpenNETCF.ToolHelp.ModuleEntry">
             <summary>

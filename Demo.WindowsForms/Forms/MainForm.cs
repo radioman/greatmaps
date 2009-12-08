@@ -137,7 +137,7 @@ namespace Demo.WindowsForms
             MainMap.ZoomAndCenterMarkers(null);
 
             // test
-            //AddGpsMobileLogRoutes(@"D:\md\Desktop\2009-12-07-t1.txt");
+            //AddGpsMobileLogRoutes(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + Path.DirectorySeparatorChar + "2009-12-07.txt");
             //MainMap.ZoomAndCenterRoutes(null);
          }
       }
@@ -221,8 +221,8 @@ namespace Demo.WindowsForms
                      var values = str.Split('|');
                      if(values.Length == 16)
                      {
-                        var lat = double.Parse(values[8]);
-                        var lng = double.Parse(values[9]);
+                        var lat = double.Parse(values[8], CultureInfo.InvariantCulture);
+                        var lng = double.Parse(values[9], CultureInfo.InvariantCulture);
                         points.Add(new PointLatLng(lat, lng));
 
                         if(points.Count == 1)

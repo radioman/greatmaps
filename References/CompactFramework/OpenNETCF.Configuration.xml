@@ -1,0 +1,394 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>OpenNETCF.Configuration</name>
+    </assembly>
+    <members>
+        <member name="T:OpenNETCF.Configuration.AppSettingsReader">
+            <summary>
+            Provides a method for reading values of a particular type from the .config file.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Configuration.AppSettingsReader.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Configuration.AppSettingsReader.GetValue(System.String,System.Type)">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="T:OpenNETCF.Reflection.Assembly2">
+            <summary>
+            Contains helper functions for the <see cref="T:System.Reflection.Assembly"/> class.
+            </summary>
+            <seealso cref="T:System.Reflection.Assembly"/>
+        </member>
+        <member name="M:OpenNETCF.Reflection.Assembly2.GetEntryAssembly">
+            <summary>
+            Gets the process executable.
+            </summary>
+            <returns>The <see cref="T:System.Reflection.Assembly"/> that is the process executable.</returns>
+        </member>
+        <member name="T:OpenNETCF.Configuration.ConfigurationException">
+            <summary>
+            The exception that is thrown when an error occurs in a configuration setting.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigurationException.#ctor">
+            <summary>
+            Initializes a new instance of the System.Configuration.ConfigurationException class.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigurationException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the System.Configuration.ConfigurationException class with the specified error message. 
+            </summary>
+            <param name="message">The message to display to the client when the exception is thrown.</param>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigurationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the System.Configuration.ConfigurationException class with the specified error message and System.Exception.InnerException  property.
+            </summary>
+            <param name="message">The message to display to the client when the exception is thrown.</param>
+            <param name="inner">The System.Exception.InnerException , if any, that threw the current exception.</param>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigurationException.#ctor(System.String,System.Exception,System.Xml.XmlNode)">
+            <summary>
+            Initializes a new instance of the System.Configuration.ConfigurationException class with the specified error message and System.Exception.InnerException and the name of the configuration section node that contains the error.  
+            </summary>
+            <param name="message">The message to display to the client when the exception is thrown.</param>
+            <param name="inner">The System.Exception.InnerException , if any, that threw the current exception.</param>
+            <param name="node">The System.Xml.XmlNode that contains the error.</param>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigurationException.#ctor(System.String,System.String,System.Int32)">
+            <summary>
+            Initializes a new instance of the System.Configuration.ConfigurationException class with the specified error message, the name of the configuration file that contains the error, and the line number in the file.
+            </summary>
+            <param name="message">The message to display to the client when the exception is thrown.</param>
+            <param name="filename">The name of the configuration file that contains the error.</param>
+            <param name="line">The number of the line that contains the error.</param>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigurationException.#ctor(System.String,System.Exception,System.String,System.Int32)">
+            <summary>
+            Initializes a new instance of the System.Configuration.ConfigurationException with the specified error message and System.Exception.InnerException, the name of the file containing the error, and the line number of the error in the file. 
+            </summary>
+            <param name="message">The message to display to the client when the exception is thrown.</param>
+            <param name="inner">The System.Exception.InnerException , if any, that threw the current exception.</param>
+            <param name="filename">The name of the configuration file that contains the error.</param>
+            <param name="line">The number of the line that contains the error.</param>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigurationException.#ctor(System.String,System.Xml.XmlNode)">
+            <summary>
+            Initializes a new instance of the System.Configuration.ConfigurationException with the specified error message and the name of the configuration section containing the error.  
+            </summary>
+            <param name="message">The message to display to the client when the exception is thrown.</param>
+            <param name="node">The System.Xml.XmlNode that contains the error.</param>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigurationException.GetXmlNodeLineNumber(System.Xml.XmlNode)">
+            <summary>
+            Returns the line number of the configuration section node that contains the error.
+            </summary>
+            <param name="node">The name of the configuration section node that contains the error.</param>
+            <returns>The line number that contains the error.</returns>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigurationException.GetXmlNodeFilename(System.Xml.XmlNode)">
+            <summary>
+             Returns the name of the file that contains the configuration section node that contains the error.
+            </summary>
+            <param name="node">The name of the configuration section node that contains the error.</param>
+            <returns>The name of the configuration file.</returns>
+        </member>
+        <member name="T:OpenNETCF.Configuration.ConfigurationSettings">
+            <summary>
+            Provides access to configuration settings in a specified configuration section. This class cannot be inherited.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigurationSettings.Reload">
+            <summary>
+            Forces the settings provider to re-load the settings from the configuration file.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigurationSettings.GetConfig(System.String)">
+            <summary>
+            Returns configuration settings for a user-defined configuration section.  
+            </summary>
+            <param name="sectionName">The configuration section to read.</param>
+            <returns>The configuration settings for sectionName.</returns>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigurationSettings.GetConfig(System.String,System.Object)">
+            <summary>
+            Returns configuration settings for a user-defined configuration section. 
+            </summary>
+            <param name="sectionName">The configuration section to read.</param>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="P:OpenNETCF.Configuration.ConfigurationSettings.AppSettings">
+            <summary>
+            Gets configuration settings in the configuration section.
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Configuration.ConfigXmlDocument">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigXmlDocument.Load(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="filename"></param>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigXmlDocument.ReadConfigNode(System.String,System.Xml.XmlTextReader)">
+            <summary>
+            
+            </summary>
+            <param name="filename"></param>
+            <param name="sourceReader"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigXmlDocument.LoadSingleElement(System.String,System.Xml.XmlTextReader)">
+            <summary>
+            
+            </summary>
+            <param name="filename"></param>
+            <param name="sourceReader"></param>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigXmlDocument.CreateAttribute(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="prefix"></param>
+            <param name="localName"></param>
+            <param name="namespaceUri"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigXmlDocument.CreateElement(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="prefix"></param>
+            <param name="localName"></param>
+            <param name="namespaceUri"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigXmlDocument.CreateTextNode(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigXmlDocument.CreateCDataSection(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigXmlDocument.CreateComment(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigXmlDocument.CreateSignificantWhitespace(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Configuration.ConfigXmlDocument.CreateWhitespace(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="P:OpenNETCF.Configuration.ConfigXmlDocument.Filename">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Configuration.ConfigXmlDocument.LineNumber">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Configuration.DefaultConfigurationSystem">
+            <summary>
+            Summary description for DefaultConfigurationSystem.
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Configuration.IConfigurationSystem">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Configuration.IConfigurationSystem.GetConfig(System.String,System.Object)">
+            <summary>
+            Returns the config object for the specified key.  
+            </summary>
+            <param name="configKey">Section name of config object to retrieve. </param>
+            <param name="context">Application provided context object that gets passed into the Create method of the IConfigurationSectionHandler</param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Configuration.IConfigurationSystem.Init">
+            <summary>
+            Initializes the configuration system. 
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Configuration.DictionarySectionHandler">
+            <summary>
+            Reads key-value pair configuration information for a configuration section.
+            </summary>
+            <example>
+            <code>
+            &lt;add key="name" value="text"> - sets key=text
+            &lt;remove key="name"> - removes the definition of key
+            &lt;clear/> - removes all definitions
+            </code>
+            </example>
+        </member>
+        <member name="T:OpenNETCF.Configuration.IConfigurationSectionHandler">
+            <summary>
+            Defines the contract that all configuration section handlers must implement in order to participate in the resolution of configuration settings.
+            Reads key-value pair configuration information for a configuration section.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Configuration.IConfigurationSectionHandler.Create(System.Object,System.Object,System.Xml.XmlNode)">
+            <summary>
+            Implemented by all configuration section handlers to parse the XML of the configuration section. The 
+            returned object is added to the configuration collection and is accessed by 
+            System.Configuration.ConfigurationSettings.GetConfig(System.String).
+            </summary>
+            <param name="parent">The configuration settings in a corresponding parent configuration section.</param>
+            <param name="configContext">An System.Web.Configuration.HttpConfigurationContext when 
+            System.Configuration.IConfigurationSectionHandler.Create(System.Object,System.Object,System.Xml.XmlNode) 
+            is called from the ASP.NET configuration system. Otherwise, this parameter is reserved and is null.</param>
+            <param name="section">The System.Xml.XmlNode that contains the configuration information from the 
+            configuration file. Provides direct access to the XML contents of the configuration section.</param>
+            <returns>A configuration object.</returns>
+        </member>
+        <member name="M:OpenNETCF.Configuration.DictionarySectionHandler.Create(System.Object,System.Object,System.Xml.XmlNode)">
+            <summary>
+            
+            </summary>
+            <param name="parent"></param>
+            <param name="context"></param>
+            <param name="section"></param>
+            <returns></returns>
+        </member>
+        <member name="P:OpenNETCF.Configuration.DictionarySectionHandler.KeyAttributeName">
+            <summary>
+            Make the name of the key attribute configurable by derived classes.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Configuration.DictionarySectionHandler.ValueAttributeName">
+            <summary>
+            Make the name of the value attribute configurable by derived classes.
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Configuration.IgnoreSectionHandler">
+            <summary>
+            Provides a section handler definition for configuration sections read and handled by systems other than OpenNETCF.Configuration. 
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Configuration.IgnoreSectionHandler.Create(System.Object,System.Object,System.Xml.XmlNode)">
+            <summary>
+            
+            </summary>
+            <param name="parent"></param>
+            <param name="configContext"></param>
+            <param name="section"></param>
+            <returns></returns>
+        </member>
+        <member name="T:OpenNETCF.Configuration.machineconfig">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Configuration.machineconfig.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Configuration.machineconfig.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Configuration.machineconfig.machine_config">
+             <summary>
+               Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+            &lt;configuration&gt;
+                &lt;configSections&gt;
+                    &lt;section name=&quot;appSettings&quot; type=&quot;OpenNETCF.Configuration.NameValueFileSectionHandler, OpenNETCF.Configuration&quot; allowLocation=&quot;false&quot; /&gt;
+                    &lt;section name=&quot;opennetcf.diagnostics&quot; type=&quot;OpenNETCF.Diagnostics.DiagnosticsConfigurationHandler, OpenNETCF&quot;/&gt;
+                &lt;/configSections&gt;
+            &lt;/configuration&gt;.
+             </summary>
+        </member>
+        <member name="T:OpenNETCF.Configuration.NameValueFileSectionHandler">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Configuration.NameValueFileSectionHandler.Create(System.Object,System.Object,System.Xml.XmlNode)">
+            <summary>
+            
+            </summary>
+            <param name="parent"></param>
+            <param name="configContext"></param>
+            <param name="section"></param>
+            <returns></returns>
+        </member>
+        <member name="T:OpenNETCF.Configuration.NameValueSectionHandler">
+            <summary>
+            Provides name-value pair configuration information from a configuration section.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Configuration.NameValueSectionHandler.Create(System.Object,System.Object,System.Xml.XmlNode)">
+            <summary>
+            
+            </summary>
+            <param name="parent"></param>
+            <param name="context"></param>
+            <param name="section"></param>
+            <returns></returns>
+        </member>
+        <member name="P:OpenNETCF.Configuration.NameValueSectionHandler.KeyAttributeName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Configuration.NameValueSectionHandler.ValueAttributeName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Configuration.SingleTagSectionHandler">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Configuration.SingleTagSectionHandler.Create(System.Object,System.Object,System.Xml.XmlNode)">
+            <summary>
+            Returns a collection of configuration section values.
+            </summary>
+            <param name="parent">The configuration settings in a corresponding parent configuration section.</param>
+            <param name="context">This parameter is reserved and is null.</param>
+            <param name="section">An <see cref="T:System.Xml.XmlNode"/> that contains configuration information from the configuration file.
+            Provides direct access to the XML contents of the configuration section.</param>
+            <returns>A <see cref="T:System.Collections.Hashtable"/> containing configuration section directives.</returns>
+        </member>
+    </members>
+</doc>
