@@ -8,6 +8,7 @@ using GMap.NET.CacheProviders;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using System.IO;
+using System.Diagnostics;
 
 namespace Demo.WindowsForms
 {
@@ -85,7 +86,6 @@ namespace Demo.WindowsForms
             // get zoom  
             trackBar1.Minimum = MainMap.MinZoom;
             trackBar1.Maximum = MainMap.MaxZoom;
-            trackBar1.Value = (int) MainMap.Zoom;
 
 #if !DEBUG
             checkBoxDebug.Checked = false;
@@ -136,9 +136,7 @@ namespace Demo.WindowsForms
 
             MainMap.ZoomAndCenterMarkers(null);
 
-            // test
-            //AddGpsMobileLogRoutes(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + Path.DirectorySeparatorChar + "2009-12-07.txt");
-            //MainMap.ZoomAndCenterRoutes(null);
+            trackBar1.Value = (int) MainMap.Zoom;
          }
       }
 
@@ -183,6 +181,11 @@ namespace Demo.WindowsForms
             MainMap.Zoom = MainMap.MaxZoom;
          }
          trackBar1.Maximum = MainMap.MaxZoom;
+
+         if(routes.Routes.Count > 0)
+         {
+            MainMap.ZoomAndCenterRoutes(null);
+         }
       }
 
       // testing my mobile gp log
@@ -190,59 +193,48 @@ namespace Demo.WindowsForms
       {
          try
          {
-            using(var f = File.OpenText(file))
+            DateTime? date = null;
+            DateTime? dateEnd = null;
+            if(dateTimePickerMobileLog.Checked)
             {
-               string str = null;
-               List<PointLatLng> points = new List<PointLatLng>();
+               date = dateTimePickerMobileLog.Value.Date.ToUniversalTime();
+               dateEnd = date.Value.AddDays(1);                 
+            }
 
-               while(!string.IsNullOrEmpty((str = f.ReadLine())))
+            var log = GMaps.Instance.GetRoutesFromMobileLog(file, date, dateEnd, 3.3);
+
+            if(routes != null)
+            {
+               foreach(var r in log)
                {
-                  if(str.StartsWith("Stop"))
                   {
-                     GMapRoute r = new GMapRoute(points, null);
+                     GMapRoute gr = new GMapRoute(r, "");
                      {
-                        r.Color = Color.Blue;
+                        gr.Color = Color.Blue;
                      }
-                     routes.Routes.Add(r);
+                     routes.Routes.Add(gr);
 
-                     GMapMarker m1 = new GMapMarkerGoogleRed(points[points.Count-1]);
-                     m1.ToolTipText = "End";
-                     m1.TooltipMode = MarkerTooltipMode.Always;
-                     objects.Markers.Add(m1);
-
-                     points.Clear();
+                     //GMapMarker m1 = new GMapMarkerGoogleRed(points[points.Count-1]);
+                     //m1.ToolTipText = "End";
+                     //m1.TooltipMode = MarkerTooltipMode.Always;
+                     //objects.Markers.Add(m1);
                   }
-                  else if(str.StartsWith("Start"))
+                  //else // log
                   {
-                     points.Clear();
-                  }
-                  else // log
-                  {
-                     var values = str.Split('|');
-                     if(values.Length == 16)
                      {
-                        var lat = double.Parse(values[8], CultureInfo.InvariantCulture);
-                        var lng = double.Parse(values[9], CultureInfo.InvariantCulture);
-                        points.Add(new PointLatLng(lat, lng));
-
-                        if(points.Count == 1)
-                        {
-                           GMapMarker m1 = new GMapMarkerGoogleRed(points[0]);
-                           m1.ToolTipText = "Start";
-                           m1.TooltipMode = MarkerTooltipMode.Always;
-                           objects.Markers.Add(m1);
-                        }
+                        //{
+                        //   GMapMarker m1 = new GMapMarkerGoogleRed(points[0]);
+                        //   m1.ToolTipText = "Start";
+                        //   m1.TooltipMode = MarkerTooltipMode.Always;
+                        //   objects.Markers.Add(m1);
                      }
                   }
                }
-
-               points.Clear();
-
-               f.Close();
             }
          }
-         catch
+         catch(Exception ex)
          {
+            Debug.WriteLine("AddGpsMobileLogRoutes: " + ex.ToString());
          }
       }
 
@@ -648,6 +640,37 @@ namespace Demo.WindowsForms
          else
          {
             MessageBox.Show("Select map area holding ALT", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+         }
+      }
+
+      // add gps log from mobile
+      private void button14_Click(object sender, EventArgs e)
+      {
+         using(FileDialog dlg = new OpenFileDialog())
+         {
+            dlg.CheckPathExists = true;
+            dlg.CheckFileExists = false;
+            dlg.AddExtension = true;
+            dlg.DefaultExt = "gpsd";
+            dlg.ValidateNames = true;
+            dlg.Title = "GMap.NET: open gps log generated in your windows mobile";
+            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            dlg.Filter = "GMap.NET gps log DB files (*.gpsd)|*.gpsd";
+            dlg.FilterIndex = 1;
+            dlg.RestoreDirectory = true;
+
+            if(dlg.ShowDialog() == DialogResult.OK)
+            {
+               routes.Routes.Clear();
+
+               // test
+               AddGpsMobileLogRoutes(dlg.FileName);
+
+               if(routes.Routes.Count > 0)
+               {
+                  MainMap.ZoomAndCenterRoutes(null);
+               }
+            }
          }
       }
    }

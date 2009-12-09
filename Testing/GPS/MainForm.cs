@@ -745,7 +745,7 @@ namespace GpsTest
          string sd = GetRemovableStorageDirectory();
          if(!string.IsNullOrEmpty(sd))
          {
-            var fileName = sd + Path.DirectorySeparatorChar + "GPS" + Path.DirectorySeparatorChar + DateTime.Today.Year + Path.DirectorySeparatorChar + DateTime.Now.ToString("MMMM-dd", CultureInfo.InvariantCulture) +  ".gpsd";
+            var fileName = sd + Path.DirectorySeparatorChar +  "GMap.NET" + Path.DirectorySeparatorChar + "log.gpsd";
             {
                CheckLogDb(fileName);
             }

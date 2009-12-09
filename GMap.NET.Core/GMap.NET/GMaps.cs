@@ -13,6 +13,17 @@ namespace GMap.NET
    using System.Xml.Serialization;
    using GMap.NET.CacheProviders;
    using GMap.NET.Internals;
+   using System.Data.Common;
+
+#if !MONO
+   using System.Data.SQLite;
+#else
+   using SQLiteConnection=Mono.Data.SqliteClient.SqliteConnection;
+   using SQLiteTransaction=Mono.Data.SqliteClient.SqliteTransaction;
+   using SQLiteCommand=Mono.Data.SqliteClient.SqliteCommand;
+   using SQLiteDataReader=Mono.Data.SqliteClient.SqliteDataReader;
+   using SQLiteParameter=Mono.Data.SqliteClient.SqliteParameter;
+#endif
 
 #if PocketPC
    using OpenNETCF.ComponentModel;
@@ -542,6 +553,116 @@ namespace GMap.NET
          }
 #endif
          return false;
+      }
+
+      /// <summary>
+      /// gets routes from gpsd log file
+      /// </summary>
+      /// <param name="gpsdLogFile"></param>
+      /// <param name="start">start time(UTC) of route, null to read from very start</param>
+      /// <param name="end">end time(UTC) of route, null to read to the very end</param>
+      /// <param name="maxPositionDilutionOfPrecision">max value of PositionDilutionOfPrecision, null to get all</param>
+      /// <returns></returns>
+      public IEnumerable<List<PointLatLng>> GetRoutesFromMobileLog(string gpsdLogFile, DateTime? start, DateTime? end, double? maxPositionDilutionOfPrecision)
+      {
+#if SQLiteEnabled
+         using(SQLiteConnection cn = new SQLiteConnection())
+         {
+#if !MONO
+            cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=True;", gpsdLogFile);
+#else
+            cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True", gpsdLogFile);
+#endif
+
+            cn.Open();
+            {
+               using(DbCommand cmd = cn.CreateCommand())
+               {
+                  cmd.CommandText = "SELECT * FROM GPSLog ";
+                  int initLenght = cmd.CommandText.Length;
+
+                  if(start.HasValue)
+                  {
+                     cmd.CommandText += "WHERE TimeUTC >= @t1 ";
+                     SQLiteParameter lookupValue = new SQLiteParameter("@t1", start);
+                     cmd.Parameters.Add(lookupValue);
+                  }
+
+                  if(end.HasValue)
+                  {
+                     if(cmd.CommandText.Length <= initLenght)
+                     {
+                        cmd.CommandText += "WHERE ";
+                     }
+                     else
+                     {
+                        cmd.CommandText += "AND ";
+                     }
+
+                     cmd.CommandText += "TimeUTC <= @t2 ";
+                     SQLiteParameter lookupValue = new SQLiteParameter("@t2", end);
+                     cmd.Parameters.Add(lookupValue);
+                  }
+
+                  if(maxPositionDilutionOfPrecision.HasValue)
+                  {
+                     if(cmd.CommandText.Length <= initLenght)
+                     {
+                        cmd.CommandText += "WHERE ";
+                     }
+                     else
+                     {
+                        cmd.CommandText += "AND ";
+                     }
+
+                     cmd.CommandText += "PositionDilutionOfPrecision <= @p3 ";
+                     SQLiteParameter lookupValue = new SQLiteParameter("@p3", maxPositionDilutionOfPrecision);
+                     cmd.Parameters.Add(lookupValue);
+                  }
+
+                  using(DbDataReader rd = cmd.ExecuteReader())
+                  {
+                     List<PointLatLng> points = new List<PointLatLng>();
+                     while(rd.Read())
+                     {
+                        DateTime TimeUTC = (DateTime) rd["TimeUTC"];
+                        long Counter = (long) rd["Counter"];
+                        double Lat = (double) rd["Lat"];
+                        double Lng = (double) rd["Lng"];
+                        double? PositionDilutionOfPrecision = rd["PositionDilutionOfPrecision"] as double?;
+
+                        if(Counter == 0 && points.Count > 0)
+                        {
+                           List<PointLatLng> ret = new List<PointLatLng>(points);
+                           points.Clear();
+                           {
+                              yield return ret;
+                           }
+                        }
+                        points.Add(new PointLatLng(Lat, Lng));
+                     }
+
+                     if(points.Count > 0)
+                     {
+                        List<PointLatLng> ret = new List<PointLatLng>(points);
+                        points.Clear();
+                        {
+                           yield return ret;
+                        }
+                     }
+
+                     points.Clear();
+                     points = null;
+
+                     rd.Close();
+                  }
+               }
+            }
+            cn.Close();
+         }
+#else
+         return null;
+#endif
       }
 
       /// <summary>

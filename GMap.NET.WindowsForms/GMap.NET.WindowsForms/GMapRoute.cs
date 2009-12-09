@@ -13,14 +13,13 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// the color of route
       /// </summary>
-      public Color Color;
+      public Color Color = Color.FromArgb(140, Color.MidnightBlue);
 
-      internal readonly List<GMap.NET.Point> LocalPoints;
+      internal readonly List<GMap.NET.Point> LocalPoints = new List<GMap.NET.Point>();
 
       public GMapRoute(List<PointLatLng> points, string name) : base(points, name)
       {        
-         Color = Color.FromArgb(140, Color.MidnightBlue);
-         LocalPoints = new List<GMap.NET.Point>(Points.Count);
+         LocalPoints.Capacity = Points.Count;
       }
    }
 }
