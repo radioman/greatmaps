@@ -654,7 +654,6 @@ namespace Demo.WindowsForms
             dlg.DefaultExt = "gpsd";
             dlg.ValidateNames = true;
             dlg.Title = "GMap.NET: open gps log generated in your windows mobile";
-            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             dlg.Filter = "GMap.NET gps log DB files (*.gpsd)|*.gpsd";
             dlg.FilterIndex = 1;
             dlg.RestoreDirectory = true;

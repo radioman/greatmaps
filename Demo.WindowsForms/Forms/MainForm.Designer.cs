@@ -583,6 +583,7 @@
          // 
          // dateTimePickerMobileLog
          // 
+         this.dateTimePickerMobileLog.Checked = false;
          this.dateTimePickerMobileLog.Location = new System.Drawing.Point(9, 101);
          this.dateTimePickerMobileLog.Name = "dateTimePickerMobileLog";
          this.dateTimePickerMobileLog.ShowCheckBox = true;
