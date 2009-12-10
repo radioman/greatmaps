@@ -59,7 +59,13 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.3";
 
       // BingMaps
-      public string VersionBingMaps = "386";
+      public string VersionBingMaps = "387";
+
+      /// <summary>
+      /// Bing Maps Customer Identification, more info here
+      /// http://msdn.microsoft.com/en-us/library/bb924353.aspx
+      /// </summary>
+      public string BingMapsClientToken = null;
 
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
@@ -300,6 +306,36 @@ namespace GMap.NET
       ReaderWriterLock kiberCacheLock = new ReaderWriterLock();
 
       #region -- Stuff --
+
+      /// <summary>
+      /// get a token from the Bing Maps Token service
+      /// </summary>
+      /// <param name="BingMapsDeveloperAccountID"></param>
+      /// <param name="BingMapsDeveloperAccountpassword"></param>
+      //bool UpdateTokenFromBingMaps(string BingMapsDeveloperAccountID, string BingMapsDeveloperAccountpassword)
+      //{
+      //   // Place the following code in the Page_Load event of your ASP .NET Web
+      //   // application so that it runs before the map control is loaded.
+      //   // This code assumes a using reference to the Bing Maps
+      //   // Token service. 
+      //   // Be sure to use an SSL connection to protect your information.
+      //   CommonServiceSoap commonService = new CommonServiceSoap();
+      //   commonService.Url = "https://staging.common.virtualearth.net/find-30/common.asmx";
+      //   commonService.Credentials = new NetworkCredential(BingMapsDeveloperAccountID, BingMapsDeveloperAccountpassword);
+
+      //   // Create the TokenSpecification object to pass to GetClientToken.
+      //   TokenSpecification tokenSpec = new TokenSpecification();
+
+      //   // Use the Page object to retrieve the end-client’s IPAddress.
+      //   tokenSpec.ClientIPAddress = Page.Request.UserHostAddress;
+
+      //   // The maximum allowable token duration is 480 minutes (8 hours).
+      //   // The minimum allowable duration is 15 minutes.
+      //   tokenSpec.TokenValidityDurationMinutes = 480;
+
+      //   // Now get a token from the Bing Maps Token service.
+      //   string clienttoken = commonService.GetClientToken(tokenSpec);
+      //}
 
       MemoryStream GetTileFromMemoryCache(RawTile tile)
       {
@@ -911,23 +947,23 @@ namespace GMap.NET
             }
             #endregion
 
-            #region -- VirtualEarth --
+            #region -- Bing --
             case MapType.BingMap:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}", GetServerNum(pos, 4), key, VersionBingMaps, language);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}{4}", GetServerNum(pos, 4), key, VersionBingMaps, language, (!string.IsNullOrEmpty(BingMapsClientToken) ? "&token=" + BingMapsClientToken : string.Empty));
             }
 
             case MapType.BingSatellite:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}", GetServerNum(pos, 4), key, VersionBingMaps, language);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}{4}", GetServerNum(pos, 4), key, VersionBingMaps, language, (!string.IsNullOrEmpty(BingMapsClientToken) ? "&token=" + BingMapsClientToken : string.Empty));
             }
 
             case MapType.BingHybrid:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}", GetServerNum(pos, 4), key, VersionBingMaps, language);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}{4}", GetServerNum(pos, 4), key, VersionBingMaps, language, (!string.IsNullOrEmpty(BingMapsClientToken) ? "&token=" + BingMapsClientToken : string.Empty));
             }
             #endregion
 
@@ -969,7 +1005,6 @@ namespace GMap.NET
             }
 #endif
             #endregion
-
 
             #region -- MapsLT --
             case MapType.ArcGIS_MapsLT_OrtoFoto:
