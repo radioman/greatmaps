@@ -35,17 +35,17 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "m@114";
-      public string VersionGoogleSatellite = "49";
-      public string VersionGoogleLabels = "h@114";
-      public string VersionGoogleTerrain = "w2p.114";
+      public string VersionGoogleMap = "m@115";
+      public string VersionGoogleSatellite = "50";
+      public string VersionGoogleLabels = "h@115";
+      public string VersionGoogleTerrain = "w2p.115";
       public string SecGoogleWord = "Galileo";
 
       // Google (china) version strings
-      public string VersionGoogleMapChina = "w2.114";
-      public string VersionGoogleSatelliteChina = "49";
-      public string VersionGoogleLabelsChina = "w2t.114";
-      public string VersionGoogleTerrainChina = "w2p.114";
+      public string VersionGoogleMapChina = "w2.115";
+      public string VersionGoogleSatelliteChina = "50";
+      public string VersionGoogleLabelsChina = "w2t.115";
+      public string VersionGoogleTerrainChina = "w2p.115";
 
       /// <summary>
       /// Google Maps API generated using http://greatmaps.codeplex.com/
@@ -54,12 +54,12 @@ namespace GMap.NET
       public string GoogleMapsAPIKey = @"ABQIAAAAWaQgWiEBF3lW97ifKnAczhRAzBk5Igf8Z5n2W3hNnMT0j2TikxTLtVIGU7hCLLHMAuAMt-BO5UrEWA";
 
       // Yahoo version strings
-      public string VersionYahooMap = "4.2";
+      public string VersionYahooMap = "4.3";
       public string VersionYahooSatellite = "1.9";
-      public string VersionYahooLabels = "4.2";
+      public string VersionYahooLabels = "4.3";
 
       // BingMaps
-      public string VersionBingMaps = "353";
+      public string VersionBingMaps = "386";
 
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
