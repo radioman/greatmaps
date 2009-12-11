@@ -156,10 +156,15 @@ namespace Demo.WindowsPresentation
          }
 
          // test performance
-         timer.Interval = TimeSpan.FromMilliseconds(4);
-         timer.Tick += new EventHandler(timer_Tick);
-         //timer.Start();
+         if(PerfTestEnabled)
+         {
+            timer.Interval = TimeSpan.FromMilliseconds(4);
+            timer.Tick += new EventHandler(timer_Tick);
+            timer.Start();
+         }
       }
+
+      bool PerfTestEnabled = false;
 
       #region -- performance test--
       public RenderTargetBitmap ToImageSource(FrameworkElement obj)
@@ -668,10 +673,13 @@ namespace Demo.WindowsPresentation
             }
          }
 
-         tt = 0;
-         if(!timer.IsEnabled)
+         if(PerfTestEnabled)
          {
-            timer.Start();
+            tt = 0;
+            if(!timer.IsEnabled)
+            {
+               timer.Start();
+            }
          }
       }
 
