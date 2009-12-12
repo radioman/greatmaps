@@ -99,6 +99,7 @@ namespace System.Windows.Controls
       /// <summary>
       /// shows tile gridlines
       /// </summary>
+      [Category("GMap.NET")]
       public bool ShowTileGridLines
       {
          get
@@ -116,6 +117,8 @@ namespace System.Windows.Controls
       /// current selected area in map
       /// </summary>
       private RectLatLng selectedArea;
+
+      [Browsable(false)]        
       public RectLatLng SelectedArea
       {
          get
@@ -152,6 +155,7 @@ namespace System.Windows.Controls
       /// <summary>
       /// map zoom
       /// </summary>
+      [Category("GMap.NET")]
       public double Zoom
       {
          get
@@ -1131,6 +1135,7 @@ namespace System.Windows.Controls
       }
 
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      [Browsable(false)]
       internal int ZoomStep
       {
          get
@@ -1154,6 +1159,7 @@ namespace System.Windows.Controls
          }
       }
 
+      [Browsable(false)]
       public PointLatLng CurrentPosition
       {
          get
@@ -1167,6 +1173,7 @@ namespace System.Windows.Controls
          }
       }
 
+      [Browsable(false)]     
       public GMap.NET.Point CurrentPositionGPixel
       {
          get
@@ -1176,6 +1183,7 @@ namespace System.Windows.Controls
       }
 
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      [Browsable(false)]
       public string CacheLocation
       {
          get
@@ -1188,6 +1196,7 @@ namespace System.Windows.Controls
          }
       }
 
+      [Browsable(false)] 
       public bool IsDragging
       {
          get
@@ -1196,6 +1205,7 @@ namespace System.Windows.Controls
          }
       }
 
+      [Browsable(false)]
       public RectLatLng CurrentViewArea
       {
          get
@@ -1204,6 +1214,7 @@ namespace System.Windows.Controls
          }
       }
 
+      [Category("GMap.NET")]
       public MapType MapType
       {
          get
@@ -1216,6 +1227,7 @@ namespace System.Windows.Controls
          }
       }
 
+      [Browsable(false)]    
       public PureProjection Projection
       {
          get
@@ -1224,6 +1236,7 @@ namespace System.Windows.Controls
          }
       }
 
+      [Category("GMap.NET")]
       public bool CanDragMap
       {
          get

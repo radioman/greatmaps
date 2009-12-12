@@ -135,6 +135,9 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET\GMaps.cs">
       <Link>GMap.NET\GMaps.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\GpsLog.cs">
+      <Link>GMap.NET\GpsLog.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET\IGControl.cs">
       <Link>GMap.NET\IGControl.cs</Link>
     </Compile>

@@ -15,7 +15,7 @@ namespace System.Windows.Forms
 
    /// <summary>
    /// GMap.NET control for Windows Forms
-   /// </summary>
+   /// </summary>   
    public partial class GMapControl : UserControl, IGControl
    {
       /// <summary>
@@ -103,6 +103,8 @@ namespace System.Windows.Forms
       /// <summary>
       /// shows tile gridlines
       /// </summary>
+      [Category("GMap.NET")]
+      [Description("shows tile gridlines")]
       public bool ShowTileGridLines
       {
          get
@@ -120,6 +122,8 @@ namespace System.Windows.Forms
       /// current selected area in map
       /// </summary>
       private RectLatLng selectedArea;
+
+      [Browsable(false)]
       public RectLatLng SelectedArea
       {
          get
@@ -140,6 +144,7 @@ namespace System.Windows.Forms
 
       private bool _GrayScale = false;
 
+      [Category("GMap.NET")]
       public bool GrayScaleMode
       {
          get
@@ -1225,6 +1230,7 @@ namespace System.Windows.Forms
          return false;
       }
 
+      [Category("GMap.NET")]
       public double Zoom
       {
          get
@@ -1277,6 +1283,7 @@ namespace System.Windows.Forms
       /// map zoom level
       /// </summary>
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      [Browsable(false)]
       internal int ZoomStep
       {
          get
@@ -1303,6 +1310,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// current map center position
       /// </summary>
+      [Browsable(false)]      
       public PointLatLng CurrentPosition
       {
          get
@@ -1318,6 +1326,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// current marker position in pixel coordinates
       /// </summary>
+      [Browsable(false)]       
       public GMap.NET.Point CurrentPositionGPixel
       {
          get
@@ -1329,6 +1338,8 @@ namespace System.Windows.Forms
       /// <summary>
       /// location of cache
       /// </summary>
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      [Browsable(false)]
       public string CacheLocation
       {
          get
@@ -1344,6 +1355,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// is user dragging map
       /// </summary>
+      [Browsable(false)]       
       public bool IsDragging
       {
          get
@@ -1360,6 +1372,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// gets current map view top/left coordinate, width in Lng, height in Lat
       /// </summary>
+      [Browsable(false)]      
       public RectLatLng CurrentViewArea
       {
          get
@@ -1371,6 +1384,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// for tooltip text padding
       /// </summary>
+      [Browsable(false)]
       public GMap.NET.Size TooltipTextPadding
       {
          get
@@ -1386,6 +1400,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// type of map
       /// </summary>
+      [Category("GMap.NET")]
       public MapType MapType
       {
          get
@@ -1401,6 +1416,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// map projection
       /// </summary>
+      [Browsable(false)]        
       public PureProjection Projection
       {
          get
@@ -1412,6 +1428,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// is routes enabled
       /// </summary>
+      [Category("GMap.NET")]
       public bool RoutesEnabled
       {
          get
@@ -1427,6 +1444,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// is markers enabled
       /// </summary>
+      [Category("GMap.NET")]
       public bool MarkersEnabled
       {
          get
@@ -1442,6 +1460,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// can user drag map
       /// </summary>
+      [Category("GMap.NET")]
       public bool CanDragMap
       {
          get
@@ -1457,6 +1476,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// map render mode
       /// </summary>
+      [Browsable(false)]
       public RenderMode RenderMode
       {
          get

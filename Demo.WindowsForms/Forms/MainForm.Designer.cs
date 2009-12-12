@@ -31,7 +31,6 @@
          this.label7 = new System.Windows.Forms.Label();
          this.comboBoxMapType = new System.Windows.Forms.ComboBox();
          this.groupBox4 = new System.Windows.Forms.GroupBox();
-         this.MainMap = new Demo.WindowsForms.Map();
          this.groupBox3 = new System.Windows.Forms.GroupBox();
          this.label6 = new System.Windows.Forms.Label();
          this.textBoxGeo = new System.Windows.Forms.TextBox();
@@ -79,6 +78,7 @@
          this.groupBox8 = new System.Windows.Forms.GroupBox();
          this.button7 = new System.Windows.Forms.Button();
          this.checkBoxPlacemarkInfo = new System.Windows.Forms.CheckBox();
+         this.MainMap = new Demo.WindowsForms.Map();
          this.groupBox4.SuspendLayout();
          this.groupBox3.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize) (this.trackBar1)).BeginInit();
@@ -126,26 +126,6 @@
          this.groupBox4.TabIndex = 27;
          this.groupBox4.TabStop = false;
          this.groupBox4.Text = "gmap";
-         // 
-         // MainMap
-         // 
-         this.MainMap.BackColor = System.Drawing.SystemColors.AppWorkspace;
-         this.MainMap.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-         this.MainMap.CacheLocation = "C:\\Users\\radioman\\AppData\\Roaming\\GMap.NET\\";
-         this.MainMap.CanDragMap = true;
-         this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.MainMap.ForeColor = System.Drawing.SystemColors.ControlText;
-         this.MainMap.GrayScaleMode = false;
-         this.MainMap.Location = new System.Drawing.Point(4, 19);
-         this.MainMap.MapType = GMap.NET.MapType.ArcGIS_MapsLT_Map;
-         this.MainMap.Margin = new System.Windows.Forms.Padding(4);
-         this.MainMap.MarkersEnabled = true;
-         this.MainMap.Name = "MainMap";
-         this.MainMap.RoutesEnabled = true;
-         this.MainMap.ShowTileGridLines = false;
-         this.MainMap.Size = new System.Drawing.Size(847, 884);
-         this.MainMap.TabIndex = 0;
-         this.MainMap.Zoom = 0;
          // 
          // groupBox3
          // 
@@ -721,6 +701,21 @@
          this.checkBoxPlacemarkInfo.TabIndex = 14;
          this.checkBoxPlacemarkInfo.Text = "place info";
          this.checkBoxPlacemarkInfo.UseVisualStyleBackColor = true;
+         // 
+         // MainMap
+         // 
+         this.MainMap.CanDragMap = true;
+         this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.MainMap.GrayScaleMode = false;
+         this.MainMap.Location = new System.Drawing.Point(4, 19);
+         this.MainMap.MapType = GMap.NET.MapType.ArcGIS_MapsLT_Map;
+         this.MainMap.MarkersEnabled = true;
+         this.MainMap.Name = "MainMap";
+         this.MainMap.RoutesEnabled = true;
+         this.MainMap.ShowTileGridLines = false;
+         this.MainMap.Size = new System.Drawing.Size(847, 884);
+         this.MainMap.TabIndex = 0;
+         this.MainMap.Zoom = 0;
          // 
          // MainForm
          // 
