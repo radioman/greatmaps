@@ -198,38 +198,33 @@ namespace Demo.WindowsForms
             if(dateTimePickerMobileLog.Checked)
             {
                date = dateTimePickerMobileLog.Value.Date.ToUniversalTime();
-               dateEnd = date.Value.AddDays(1);                 
+               dateEnd = date.Value.AddDays(1);
             }
 
             var log = GMaps.Instance.GetRoutesFromMobileLog(file, date, dateEnd, 3.3);
 
             if(routes != null)
             {
-               foreach(var r in log)
-               {
-                  {
-                     GMapRoute gr = new GMapRoute(r, "");
-                     {
-                        gr.Color = Color.Blue;
-                     }
-                     routes.Routes.Add(gr);
+               List<PointLatLng> track = new List<PointLatLng>();
 
-                     //GMapMarker m1 = new GMapMarkerGoogleRed(points[points.Count-1]);
-                     //m1.ToolTipText = "End";
-                     //m1.TooltipMode = MarkerTooltipMode.Always;
-                     //objects.Markers.Add(m1);
-                  }
-                  //else // log
+               foreach(var session in log)
+               {
+                  track.Clear();
+
+                  foreach(var points in session)
                   {
-                     {
-                        //{
-                        //   GMapMarker m1 = new GMapMarkerGoogleRed(points[0]);
-                        //   m1.ToolTipText = "Start";
-                        //   m1.TooltipMode = MarkerTooltipMode.Always;
-                        //   objects.Markers.Add(m1);
-                     }
+                     track.Add(points.Position);
                   }
+
+                  GMapRoute gr = new GMapRoute(track, "");
+                  {
+                     gr.Color = Color.Blue;
+                  }
+                  routes.Routes.Add(gr);
                }
+
+               track.Clear();  
+               track = null;
             }
          }
          catch(Exception ex)

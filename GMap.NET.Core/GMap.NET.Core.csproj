@@ -87,6 +87,7 @@
     <Compile Include="GMap.NET.Projections\PlateCarreeProjection.cs" />
     <Compile Include="GMap.NET\GeoCoderStatusCode.cs" />
     <Compile Include="GMap.NET.CacheProviders\MySQLPureImageCache.cs" />
+    <Compile Include="GMap.NET\GpsLog.cs" />
     <Compile Include="GMap.NET\LanguageType.cs" />
     <Compile Include="GMap.NET\PureProjection.cs" />
     <Compile Include="GMap.NET\IGControl.cs" />

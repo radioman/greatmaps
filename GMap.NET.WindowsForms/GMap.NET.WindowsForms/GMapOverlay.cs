@@ -54,7 +54,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// pen for routes, be aware that the color is adjusted in each GMapRoute
       /// </summary>
-      public Pen RoutePen = new Pen(Color.MidnightBlue);   
+      public Pen RoutePen = new Pen(Color.MidnightBlue);
 
       internal System.Windows.Forms.GMapControl Control;
 
@@ -84,7 +84,7 @@ namespace GMap.NET.WindowsForms
             {
                Control.UpdateRouteLocalPosition(obj);
             }
-         }  
+         }
 
          Control.Core_OnNeedInvalidation();
       }

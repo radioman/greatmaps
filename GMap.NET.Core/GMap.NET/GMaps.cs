@@ -183,6 +183,11 @@ namespace GMap.NET
       readonly KiberTileCache TilesInMemory = new KiberTileCache();
 
       /// <summary>
+      /// lock for TilesInMemory
+      /// </summary>
+      readonly ReaderWriterLock kiberCacheLock = new ReaderWriterLock();
+
+      /// <summary>
       /// the amount of tiles in MB to keep in memmory, default: 22MB, if each ~100Kb it's ~222 tiles
       /// </summary>
       public int MemoryCacheCapacity
@@ -302,8 +307,6 @@ namespace GMap.NET
          cacher.DoWork += new DoWorkEventHandler(cacher_DoWork);
          cacher.WorkerSupportsCancellation = true;
       }
-
-      ReaderWriterLock kiberCacheLock = new ReaderWriterLock();
 
       #region -- Stuff --
 
@@ -553,7 +556,7 @@ namespace GMap.NET
       /// <summary>
       /// exports current map cache to GMDB file
       /// if file exsist only new records will be added
-      /// otherwise file will be created and all data expoted
+      /// otherwise file will be created and all data exported
       /// </summary>
       /// <param name="file"></param>
       /// <returns></returns>
@@ -599,7 +602,7 @@ namespace GMap.NET
       /// <param name="end">end time(UTC) of route, null to read to the very end</param>
       /// <param name="maxPositionDilutionOfPrecision">max value of PositionDilutionOfPrecision, null to get all</param>
       /// <returns></returns>
-      public IEnumerable<List<PointLatLng>> GetRoutesFromMobileLog(string gpsdLogFile, DateTime? start, DateTime? end, double? maxPositionDilutionOfPrecision)
+      public IEnumerable<List<GpsLog>> GetRoutesFromMobileLog(string gpsdLogFile, DateTime? start, DateTime? end, double? maxPositionDilutionOfPrecision)
       {
 #if SQLiteEnabled
          using(SQLiteConnection cn = new SQLiteConnection())
@@ -614,7 +617,7 @@ namespace GMap.NET
             {
                using(DbCommand cmd = cn.CreateCommand())
                {
-                  cmd.CommandText = "SELECT * FROM GPSLog ";
+                  cmd.CommandText = "SELECT * FROM GPS ";
                   int initLenght = cmd.CommandText.Length;
 
                   if(start.HasValue)
@@ -658,29 +661,43 @@ namespace GMap.NET
 
                   using(DbDataReader rd = cmd.ExecuteReader())
                   {
-                     List<PointLatLng> points = new List<PointLatLng>();
+                     List<GpsLog> points = new List<GpsLog>();
                      while(rd.Read())
                      {
-                        DateTime TimeUTC = (DateTime) rd["TimeUTC"];
-                        long Counter = (long) rd["Counter"];
-                        double Lat = (double) rd["Lat"];
-                        double Lng = (double) rd["Lng"];
-                        double? PositionDilutionOfPrecision = rd["PositionDilutionOfPrecision"] as double?;
-
-                        if(Counter == 0 && points.Count > 0)
+                        GpsLog log = new GpsLog();
                         {
-                           List<PointLatLng> ret = new List<PointLatLng>(points);
+                           log.TimeUTC = (DateTime) rd["TimeUTC"];
+                           log.SessionCounter = (long) rd["SessionCounter"];
+                           log.Delta = rd["Delta"] as double?;
+                           log.Speed = rd["Speed"] as double?;
+                           log.SeaLevelAltitude = rd["SeaLevelAltitude"] as double?;
+                           log.EllipsoidAltitude = rd["EllipsoidAltitude"] as double?;
+                           log.SatellitesInView = rd["SatellitesInView"] as short?;
+                           log.SatelliteCount = rd["SatelliteCount"] as short?;
+                           log.Position = new PointLatLng((double) rd["Lat"], (double) rd["Lng"]);
+                           log.PositionDilutionOfPrecision = rd["PositionDilutionOfPrecision"] as double?;
+                           log.HorizontalDilutionOfPrecision = rd["HorizontalDilutionOfPrecision"] as double?;
+                           log.VerticalDilutionOfPrecision = rd["VerticalDilutionOfPrecision"] as double?;
+                           log.FixQuality = (FixQuality) ((byte) rd["FixQuality"]);
+                           log.FixType = (FixType) ((byte) rd["FixType"]);
+                           log.FixSelection = (FixSelection) ((byte) rd["FixSelection"]);
+                        }
+
+                        if(log.SessionCounter == 0 && points.Count > 0)
+                        {
+                           List<GpsLog> ret = new List<GpsLog>(points);
                            points.Clear();
                            {
                               yield return ret;
                            }
                         }
-                        points.Add(new PointLatLng(Lat, Lng));
+
+                        points.Add(log);
                      }
 
                      if(points.Count > 0)
                      {
-                        List<PointLatLng> ret = new List<PointLatLng>(points);
+                        List<GpsLog> ret = new List<GpsLog>(points);
                         points.Clear();
                         {
                            yield return ret;

@@ -277,16 +277,16 @@ namespace GpsTest
                cmd.Parameters["@p4"].Value = data.Speed;
                cmd.Parameters["@p5"].Value = data.SeaLevelAltitude;
                cmd.Parameters["@p6"].Value = data.EllipsoidAltitude;
-               cmd.Parameters["@p7"].Value = data.SatellitesInViewCount;
-               cmd.Parameters["@p8"].Value = data.SatelliteCount;
+               cmd.Parameters["@p7"].Value = (short?) data.SatellitesInViewCount;
+               cmd.Parameters["@p8"].Value = (short?) data.SatelliteCount;
                cmd.Parameters["@p9"].Value = data.Latitude.Value;
                cmd.Parameters["@p10"].Value = data.Longitude.Value;
                cmd.Parameters["@p11"].Value = data.PositionDilutionOfPrecision;
                cmd.Parameters["@p12"].Value = data.HorizontalDilutionOfPrecision;
                cmd.Parameters["@p13"].Value = data.VerticalDilutionOfPrecision;
-               cmd.Parameters["@p14"].Value = (int) data.FixQuality;
-               cmd.Parameters["@p15"].Value = (int) data.FixType;
-               cmd.Parameters["@p16"].Value = (int) data.FixSelection;
+               cmd.Parameters["@p14"].Value = (byte) data.FixQuality;
+               cmd.Parameters["@p15"].Value = (byte) data.FixType;
+               cmd.Parameters["@p16"].Value = (byte) data.FixSelection;
 
                cmd.ExecuteNonQuery();
             }
@@ -350,40 +350,32 @@ namespace GpsTest
                         using(DbCommand cmd = cn.CreateCommand())
                         {
                            cmd.Transaction = tr;
-                           cmd.CommandText = @"CREATE TABLE IF NOT EXISTS GPSLog (id INTEGER NOT NULL PRIMARY KEY,
+                           cmd.CommandText = @"CREATE TABLE IF NOT EXISTS GPS (id INTEGER NOT NULL PRIMARY KEY,
                                                 TimeUTC DATETIME NOT NULL,
-                                                Counter INTEGER NOT NULL,
+                                                SessionCounter INTEGER NOT NULL,
                                                 Delta DOUBLE,
                                                 Speed DOUBLE,
                                                 SeaLevelAltitude DOUBLE,
                                                 EllipsoidAltitude DOUBLE,
-                                                SatellitesInView DOUBLE,
-                                                SatelliteCount DOUBLE,
+                                                SatellitesInView TINYINT,
+                                                SatelliteCount TINYINT,
                                                 Lat DOUBLE NOT NULL,
                                                 Lng DOUBLE NOT NULL,
                                                 PositionDilutionOfPrecision DOUBLE,
                                                 HorizontalDilutionOfPrecision DOUBLE,
                                                 VerticalDilutionOfPrecision DOUBLE,
-                                                FixQuality INTEGER NOT NULL,
-                                                FixType INTEGER NOT NULL,
-                                                FixSelection INTEGER NOT NULL); 
-                                               CREATE INDEX IF NOT EXISTS IndexOfGPSLog ON GPSLog (TimeUTC, PositionDilutionOfPrecision);";
+                                                FixQuality TINYINT NOT NULL,
+                                                FixType TINYINT NOT NULL,
+                                                FixSelection TINYINT NOT NULL); 
+                                               CREATE INDEX IF NOT EXISTS IndexOfGPS ON GPS (TimeUTC, PositionDilutionOfPrecision);";
                            cmd.ExecuteNonQuery();
                         }
-                        tr.Commit();
-                     }
-                     catch
-                     {
-                        tr.Rollback();
-                        ret = false;
-                     }
-                  }
 
-                  this.cmd = cn.CreateCommand();
-                  {
-                     cmd.CommandText = @"INSERT INTO GPSLog
+                        this.cmd = cn.CreateCommand();
+                        {
+                           cmd.CommandText = @"INSERT INTO GPS
                                          (TimeUTC,
-                                          Counter,
+                                          SessionCounter,
                                           Delta,
                                           Speed,
                                           SeaLevelAltitude,
@@ -399,23 +391,33 @@ namespace GpsTest
                                           FixType,
                                           FixSelection) VALUES(@p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, @p14, @p15, @p16);";
 
-                     cmd.Parameters.Add(new SQLiteParameter("@p1"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p2"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p3"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p4"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p5"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p6"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p7"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p8"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p9"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p10"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p11"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p12"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p13"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p14"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p15"));
-                     cmd.Parameters.Add(new SQLiteParameter("@p16"));
-                  }
+                           cmd.Parameters.Add(new SQLiteParameter("@p1"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p2"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p3"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p4"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p5"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p6"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p7"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p8"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p9"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p10"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p11"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p12"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p13"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p14"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p15"));
+                           cmd.Parameters.Add(new SQLiteParameter("@p16"));
+                           cmd.Prepare();
+                        }
+
+                        tr.Commit();
+                     }
+                     catch
+                     {
+                        tr.Rollback();
+                        ret = false;
+                     }
+                  }                   
                }
             }
          }
