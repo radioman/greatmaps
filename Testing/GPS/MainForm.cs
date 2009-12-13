@@ -217,6 +217,32 @@ namespace GpsTest
       [DllImport("coredll")]
       public static extern bool FindClose(IntPtr hFindFile);
 
+      public const int PPN_UNATTENDEDMODE = 0x0003;
+      public const int POWER_NAME = 0x00000001;
+      public const int POWER_FORCE = 0x00001000;
+
+      [DllImport("coredll.dll")]
+      public static extern bool PowerPolicyNotify(int dwMessage, bool dwData);
+
+      [DllImport("coredll.dll", SetLastError=true)]
+      public static extern IntPtr SetPowerRequirement(string pvDevice, CedevicePowerStateState deviceState, uint deviceFlags, string pvSystemState, ulong stateFlags);
+
+      [DllImport("coredll.dll", SetLastError=true)]
+      public static extern int ReleasePowerRequirement(IntPtr hPowerReq);
+
+      public enum CedevicePowerStateState : int
+      {
+         PwrDeviceUnspecified=-1,
+         D0=0,
+         D1,
+         D2,
+         D3,
+         D4,
+      }
+
+      [DllImport("coredll")]
+      public static extern void SystemIdleTimerReset();
+
       #endregion
 
       #region -- variables --
@@ -246,6 +272,8 @@ namespace GpsTest
       Pen penForSat = new Pen(Color.White, 3.0f);
       Brush brushForSatOk = new SolidBrush(Color.LimeGreen);
       Brush brushForSatNo = new SolidBrush(Color.Red);
+
+      IntPtr gpsPowerHandle = IntPtr.Zero;
       #endregion
 
       #region -- functions --
@@ -417,7 +445,7 @@ namespace GpsTest
                         tr.Rollback();
                         ret = false;
                      }
-                  }                   
+                  }
                }
             }
          }
@@ -489,95 +517,19 @@ namespace GpsTest
          gps.LocationChanged += new LocationChangedEventHandler(gps_LocationChanged);
 
          panelSignals.MouseMove += new MouseEventHandler(panelSignals_MouseMove);
-      }
 
-      void panelSignals_MouseMove(object sender, MouseEventArgs e)
-      {
-         LastMove = DateTime.Now;
-      }
-
-      void gps_LocationChanged(object sender, LocationChangedEventArgs args)
-      {
-         try
+         // Keep the GPS and device alive
+         bool power = PowerPolicyNotify(PPN_UNATTENDEDMODE, true);
+         if(!power)
          {
-            var position = args.Position;
-            if(position != null)
-            {
-               if(position.Time.HasValue && position.Latitude.HasValue && position.Longitude.HasValue)
-               {
-                  // first time
-                  if(!TimeUTC.HasValue)
-                  {
-                     TimeUTC = position.Time;
-                     Lat = position.Latitude;
-                     Lng = position.Longitude;
-                  }
-
-                  if(TimeUTC.HasValue && position.Time - TimeUTC.Value >= delay)
-                  {
-                     Delta = gps.GetDistance(position.Latitude.Value, position.Longitude.Value, Lat.Value, Lng.Value);
-                     Total += Delta;
-                     Lat = position.Latitude;
-                     Lng = position.Longitude;
-                     TimeUTC = position.Time;
-
-                     AddToLogCurrentInfo(position);
-                  }
-               }
-               else
-               {
-                  Lat = position.Latitude;
-                  Lng = position.Longitude;
-                  TimeUTC = position.Time;
-               }
-
-               // do not update if user is idling
-               if((DateTime.Now - LastMove).TotalMinutes < 1)
-               {
-                  lock(Satellites)
-                  {
-                     Satellites.Clear();
-                     Satellites.AddRange(position.GetSatellitesInView());
-                     Satellites.TrimExcess();
-                  }
-
-                  Invoke(updateDataHandler, position);
-               }
-            }
+            Debug.WriteLine("PowerPolicyNotify failed for PPN_UNATTENDEDMODE");
          }
-         catch
+         else
          {
-         }
-      }
-
-      void gps_DeviceStateChanged(object sender, DeviceStateChangedEventArgs args)
-      {
-         device = args.DeviceState;
-         Invoke(updateDataHandler);
-      }
-
-      void panelSignals_Paint(object sender, PaintEventArgs e)
-      {
-         lock(Satellites)
-         {
-            if(Satellites.Count > 0)
+            gpsPowerHandle = SetPowerRequirement("gps0:", CedevicePowerStateState.D0, POWER_NAME | POWER_FORCE, null, 0);
+            if(gpsPowerHandle == IntPtr.Zero)
             {
-               int cc = Width / Satellites.Count;
-               for(int i = 0; i < Satellites.Count; i++)
-               {
-                  int str = (int) ((panelSignals.Height * Satellites[i].SignalStrength)/100.0);
-
-                  if(Satellites[i].InSolution)
-                  {
-                     e.Graphics.FillRectangle(brushForSatOk, new Rectangle(i*cc, panelSignals.Height - str, cc, str));
-                  }
-                  else
-                  {
-                     e.Graphics.FillRectangle(brushForSatNo, new Rectangle(i*cc, panelSignals.Height - str, cc, str));
-                  }
-
-                  e.Graphics.DrawRectangle(penForSat, new Rectangle(i*cc + (int) penForSat.Width/2, 0, cc - (int) penForSat.Width/2, panelSignals.Height));
-               }
+               Debug.WriteLine("SetPowerRequirement failed for GPS");
             }
          }
       }
@@ -594,7 +546,6 @@ namespace GpsTest
 
                if(data != null)
                {
-                  count++;
                   {
                      if(data.Time.HasValue && data.Longitude.HasValue && data.Longitude.HasValue)
                      {
@@ -710,6 +661,110 @@ namespace GpsTest
          {
             cmd.Dispose();
             cmd = null;
+         }
+
+         if(gpsPowerHandle == IntPtr.Zero)
+         {
+            ReleasePowerRequirement(gpsPowerHandle);
+            gpsPowerHandle = IntPtr.Zero;
+         }
+         PowerPolicyNotify(PPN_UNATTENDEDMODE, false);         
+      }
+
+      void panelSignals_MouseMove(object sender, MouseEventArgs e)
+      {
+         LastMove = DateTime.Now;
+      }
+
+      void gps_LocationChanged(object sender, LocationChangedEventArgs args)
+      {
+         try
+         {
+            var position = args.Position;
+            if(position != null)
+            {
+               count++;
+
+               Debug.WriteLine("LocationChanged: " + DateTime.Now.ToLongTimeString() + " -> " + count);
+
+               if(position.Time.HasValue && position.Latitude.HasValue && position.Longitude.HasValue)
+               {
+                  Debug.WriteLine("Location: " + position.Latitude.Value + "|" + position.Longitude.Value);
+
+                  // first time
+                  if(!TimeUTC.HasValue)
+                  {
+                     TimeUTC = position.Time;
+                     Lat = position.Latitude;
+                     Lng = position.Longitude;
+                  }
+
+                  if(TimeUTC.HasValue && position.Time - TimeUTC.Value >= delay)
+                  {
+                     Delta = gps.GetDistance(position.Latitude.Value, position.Longitude.Value, Lat.Value, Lng.Value);
+                     Total += Delta;
+                     Lat = position.Latitude;
+                     Lng = position.Longitude;
+                     TimeUTC = position.Time;
+
+                     AddToLogCurrentInfo(position);
+                  }
+               }
+               else
+               {
+                  Lat = position.Latitude;
+                  Lng = position.Longitude;
+                  TimeUTC = position.Time;
+               }
+
+               // do not update if user is idling
+               if((DateTime.Now - LastMove).TotalMinutes < 1)
+               {
+                  lock(Satellites)
+                  {
+                     Satellites.Clear();
+                     Satellites.AddRange(position.GetSatellitesInView());
+                     Satellites.TrimExcess();
+                  }
+
+                  Invoke(updateDataHandler, position);
+               }
+            }
+         }
+         catch
+         {
+         }
+      }
+
+      void gps_DeviceStateChanged(object sender, DeviceStateChangedEventArgs args)
+      {
+         device = args.DeviceState;
+         Invoke(updateDataHandler);
+      }
+
+      void panelSignals_Paint(object sender, PaintEventArgs e)
+      {
+         lock(Satellites)
+         {
+            if(Satellites.Count > 0)
+            {
+               int cc = Width / Satellites.Count;
+               for(int i = 0; i < Satellites.Count; i++)
+               {
+                  int str = (int) ((panelSignals.Height * Satellites[i].SignalStrength)/100.0);
+
+                  if(Satellites[i].InSolution)
+                  {
+                     e.Graphics.FillRectangle(brushForSatOk, new Rectangle(i*cc, panelSignals.Height - str, cc, str));
+                  }
+                  else
+                  {
+                     e.Graphics.FillRectangle(brushForSatNo, new Rectangle(i*cc, panelSignals.Height - str, cc, str));
+                  }
+
+                  e.Graphics.DrawRectangle(penForSat, new Rectangle(i*cc + (int) penForSat.Width/2, 0, cc - (int) penForSat.Width/2, panelSignals.Height));
+               }
+            }
          }
       }
 
