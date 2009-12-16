@@ -1,7 +1,7 @@
 ﻿
 namespace GMap.NET.CacheProviders
 {
-#if MySQLEnabled
+#if MySQL
    using System;
    using System.Data;
    using System.Diagnostics;

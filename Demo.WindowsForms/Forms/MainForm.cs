@@ -50,7 +50,7 @@ namespace Demo.WindowsForms
             // config map 
             MainMap.MapType = MapType.ArcGIS_MapsLT_Map;
             MainMap.MaxZoom = 11;
-            MainMap.MinZoom = 2;
+            MainMap.MinZoom = 1;
             MainMap.Zoom = MainMap.MinZoom + 1;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
             //MainMap.CurrentPosition = new PointLatLng(29.8741410626414, 121.563806533813); // china test
@@ -132,11 +132,7 @@ namespace Demo.WindowsForms
                AddLocationLithuania("Šiauliai");
                AddLocationLithuania("Panevėžys");
                AddLocationLithuania("Kaunas");
-            }
-
-            MainMap.ZoomAndCenterMarkers(null);
-
-            trackBar1.Value = (int) MainMap.Zoom;
+            }              
          }
       }
 
@@ -666,6 +662,12 @@ namespace Demo.WindowsForms
                }
             }
          }
+      }
+
+      private void MainForm_Load(object sender, EventArgs e)
+      {
+         MainMap.ZoomAndCenterMarkers(null);
+         trackBar1.Value = (int) MainMap.Zoom;
       }
    }
 }

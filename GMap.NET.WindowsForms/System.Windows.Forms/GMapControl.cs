@@ -382,7 +382,7 @@ namespace System.Windows.Forms
                maxZoom = MaxZoom;
             }
 
-            if(Zoom != maxZoom)
+            if((int)Zoom != maxZoom)
             {
                Zoom = maxZoom;
             }

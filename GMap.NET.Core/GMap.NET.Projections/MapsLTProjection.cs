@@ -15,8 +15,8 @@ namespace GMap.NET.Projections
       const double MaxLongitude = 27.11;
       const double orignX = 5122000;
       const double orignY = 10000100;
-           
-      Size tileSize = new Size(512, 512);
+
+      Size tileSize = new Size(256, 256);
       public override Size TileSize
       {
          get
@@ -477,29 +477,36 @@ namespace GMap.NET.Projections
       }
 
       #region -- levels info --
-      //      "layers":[{"id":0,"name":"lietuva_MAPSLT_DB_GB200_01_P_APSK","parentLayerId":-1,"defaultVisibility":true,"subLayerIds":null}],
+      //dojo.io.script.jsonp_dojoIoScript1._jsonpCallback({"serviceDescription":"",
+      //      "mapName":"map","description":"","copyrightText":"",
+      //      "layers":[{"id":0,"name":"lietuva_MAPSLT_DB_GB200_01_P_APSK",
+      //      "parentLayerId":-1,"defaultVisibility":true,"subLayerIds":null}],
       //      "spatialReference":{"wkid":2600},"singleFusedMapCache":true,
-      //      "tileInfo":{"rows":512,"cols":512,"dpi":96,"format":"PNG8","compressionQuality":0,
-      //      "origin":{"x":-5122000,"y":10000100},
-      //      "spatialReference":{"wkid":2600},
+      //      "tileInfo":{"rows":256,"cols":256,"dpi":96,"format":"PNG8","compressionQuality":0,
+      //      "origin":{"x":-5122000,"y":10000100},"spatialReference":{"wkid":2600},
+      //      "lods":[
+      //{"level":0,"resolution":1587.50317500635,"scale":6000000},
+      //{"level":1,"resolution":793.751587503175,"scale":3000000},
+      //{"level":2,"resolution":529.167725002117,"scale":2000000},
+      //{"level":3,"resolution":264.583862501058,"scale":1000000},
+      //{"level":4,"resolution":132.291931250529,"scale":500000},
+      //{"level":5,"resolution":52.9167725002117,"scale":200000},
+      //{"level":6,"resolution":26.4583862501058,"scale":100000},
+      //{"level":7,"resolution":13.2291931250529,"scale":50000},
+      //{"level":8,"resolution":6.61459656252646,"scale":25000},
+      //{"level":9,"resolution":2.64583862501058,"scale":10000},
+      //{"level":10,"resolution":1.32291931250529,"scale":5000},
+      //{"level":11,"resolution":0.529167725002117,"scale":2000}]},
 
-      //      "lods":[  
-      //      {"level":0,"resolution":1587.50317500635,"scale":6000000},
-      //      {"level":1,"resolution":793.751587503175,"scale":3000000},
-      //      {"level":2,"resolution":529.167725002117,"scale":2000000},
-      //      {"level":3,"resolution":264.583862501058,"scale":1000000},
-      //      {"level":4,"resolution":132.291931250529,"scale":500000},
-      //      {"level":5,"resolution":52.9167725002117,"scale":200000},
-      //      {"level":6,"resolution":26.4583862501058,"scale":100000},
-      //      {"level":7,"resolution":13.2291931250529,"scale":50000},
-      //      {"level":8,"resolution":6.61459656252646,"scale":25000},
-      //      {"level":9,"resolution":2.64583862501058,"scale":10000},
-      //      {"level":10,"resolution":1.32291931250529,"scale":5000},
-      //      {"level":11,"resolution":0.529167725002117,"scale":2000}]},
+      //"initialExtent":{"xmin":-42686.481789127,"ymin":5746881.05416859,
+      //                 "xmax":1029393.00578913,"ymax":6484161.30783141,
+      //"spatialReference":{"wkid":2600}},
+      //"fullExtent":{"xmin":-42686.481789127,"ymin":5746881.05416859,
+      //              "xmax":1029393.00578913,"ymax":6484161.30783141,
+      //"spatialReference":{"wkid":2600}},"units":"esriMeters",
 
-      // "fullExtent":{"xmin":287939.042,"ymin":5959053.2199,"xmax":698767.482,"ymax":6271989.1421,
-      // "units":"esriMeters",
-      // "documentInfo":{"Title":"mapslt_minimal","Author":"gstanevicius","Comments":"","Subject":"","Category":"","Keywords":""}}); 
+      //"supportedImageFormatTypes":"PNG24,PNG,JPG,DIB,TIFF,EMF,PS,PDF,GIF,SVG,SVGZ,AI",
+      //"documentInfo":{"Title":"mapslt_minimal","Author":"gstanevicius","Comments":"","Subject":"","Category":"","Keywords":""}}); 
       #endregion
 
       public double GetTileMatrixResolution(int zoom)
@@ -600,73 +607,73 @@ namespace GMap.NET.Projections
             #region -- sizes --
             case 0:
             {
-               ret = new Size(6, 4);
+               ret = new Size(12, 8);
             }
             break;
 
             case 1:
             {
-               ret = new Size(13, 9);
+               ret = new Size(24, 17);
             }
             break;
 
             case 2:
             {
-               ret = new Size(19, 13);
+               ret = new Size(37, 25);
             }
             break;
 
             case 3:
             {
-               ret = new Size(39, 27);
+               ret = new Size(74, 51);
             }
             break;
 
             case 4:
             {
-               ret = new Size(79, 55);
+               ret = new Size(149, 103);
             }
             break;
 
             case 5:
             {
-               ret = new Size(199, 137);
+               ret = new Size(374, 259);
             }
             break;
 
             case 6:
             {
-               ret = new Size(399, 275);
+               ret = new Size(749, 519);
             }
             break;
 
             case 7:
             {
-               ret = new Size(798, 550);
+               ret = new Size(1594, 1100);
             }
             break;
 
             case 8:
             {
-               ret = new Size(1597, 1100);
+               ret = new Size(3188, 2201);
             }
             break;
 
             case 9:
             {
-               ret = new Size(3993, 2752);
+               ret = new Size(7971, 5502);
             }
             break;
 
             case 10:
             {
-               ret = new Size(7987, 5504);
+               ret = new Size(15943, 11005);
             }
             break;
 
             case 11:
             {
-               ret = new Size(19967, 13760);
+               ret = new Size(39858, 27514);
             }
             break;
             #endregion
@@ -684,73 +691,73 @@ namespace GMap.NET.Projections
             #region -- sizes --
             case 0:
             {
-               ret = new Size(7, 4);
+               ret = new Size(14, 10);
             }
             break;
 
             case 1:
             {
-               ret = new Size(14, 9);
+               ret = new Size(30, 20);
             }
             break;
 
             case 2:
             {
-               ret = new Size(21, 14);
+               ret = new Size(45, 31);
             }
             break;
 
             case 3:
             {
-               ret = new Size(42, 29);
+               ret = new Size(90, 62);
             }
             break;
 
             case 4:
             {
-               ret = new Size(85, 59);
+               ret = new Size(181, 125);
             }
             break;
 
             case 5:
             {
-               ret = new Size(214, 149);
+               ret = new Size(454, 311);
             }
             break;
 
             case 6:
             {
-               ret = new Size(429, 298);
+               ret = new Size(903, 623);
             }
             break;
 
             case 7:
             {
-               ret = new Size(859, 596);
+               ret = new Size(1718, 1193);
             }
             break;
 
             case 8:
             {
-               ret = new Size(1718, 1193);
+               ret = new Size(3437, 2386);
             }
             break;
 
             case 9:
             {
-               ret = new Size(4296, 2983);
+               ret = new Size(8594, 5966);
             }
             break;
 
             case 10:
             {
-               ret = new Size(8593, 5966);
+               ret = new Size(17189, 11932);
             }
             break;
 
             case 11:
             {
-               ret = new Size(21484, 14915);
+               ret = new Size(42972, 29831);
             }
             break;
             #endregion

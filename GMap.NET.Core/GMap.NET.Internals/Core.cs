@@ -748,15 +748,14 @@ namespace GMap.NET.Internals
                Debug.WriteLine("loader[" + id + "]: wait");
             }
 
-            waitOnEmptyTasks.WaitOne(1111);  // No more tasks - wait for a signal
+            waitOnEmptyTasks.WaitOne(1111, false);  // No more tasks - wait for a signal
          }
       }
 
       bool[] loaderDone = new bool[]
       {
          false, false, false
-      };
-
+      };   
 
       /// <summary>
       /// invalidates map on tile loaded

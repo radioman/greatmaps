@@ -31,6 +31,7 @@
          this.label7 = new System.Windows.Forms.Label();
          this.comboBoxMapType = new System.Windows.Forms.ComboBox();
          this.groupBox4 = new System.Windows.Forms.GroupBox();
+         this.MainMap = new Demo.WindowsForms.Map();
          this.groupBox3 = new System.Windows.Forms.GroupBox();
          this.label6 = new System.Windows.Forms.Label();
          this.textBoxGeo = new System.Windows.Forms.TextBox();
@@ -78,7 +79,6 @@
          this.groupBox8 = new System.Windows.Forms.GroupBox();
          this.button7 = new System.Windows.Forms.Button();
          this.checkBoxPlacemarkInfo = new System.Windows.Forms.CheckBox();
-         this.MainMap = new Demo.WindowsForms.Map();
          this.groupBox4.SuspendLayout();
          this.groupBox3.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize) (this.trackBar1)).BeginInit();
@@ -126,6 +126,21 @@
          this.groupBox4.TabIndex = 27;
          this.groupBox4.TabStop = false;
          this.groupBox4.Text = "gmap";
+         // 
+         // MainMap
+         // 
+         this.MainMap.CanDragMap = true;
+         this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.MainMap.GrayScaleMode = false;
+         this.MainMap.Location = new System.Drawing.Point(4, 19);
+         this.MainMap.MapType = GMap.NET.MapType.ArcGIS_MapsLT_Map;
+         this.MainMap.MarkersEnabled = true;
+         this.MainMap.Name = "MainMap";
+         this.MainMap.RoutesEnabled = true;
+         this.MainMap.ShowTileGridLines = false;
+         this.MainMap.Size = new System.Drawing.Size(847, 884);
+         this.MainMap.TabIndex = 0;
+         this.MainMap.Zoom = 0;
          // 
          // groupBox3
          // 
@@ -702,21 +717,6 @@
          this.checkBoxPlacemarkInfo.Text = "place info";
          this.checkBoxPlacemarkInfo.UseVisualStyleBackColor = true;
          // 
-         // MainMap
-         // 
-         this.MainMap.CanDragMap = true;
-         this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.MainMap.GrayScaleMode = false;
-         this.MainMap.Location = new System.Drawing.Point(4, 19);
-         this.MainMap.MapType = GMap.NET.MapType.ArcGIS_MapsLT_Map;
-         this.MainMap.MarkersEnabled = true;
-         this.MainMap.Name = "MainMap";
-         this.MainMap.RoutesEnabled = true;
-         this.MainMap.ShowTileGridLines = false;
-         this.MainMap.Size = new System.Drawing.Size(847, 884);
-         this.MainMap.TabIndex = 0;
-         this.MainMap.Zoom = 0;
-         // 
          // MainForm
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -738,6 +738,7 @@
          this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
          this.Text = "GMap.NET - Great Maps for Windows Forms";
          this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+         this.Load += new System.EventHandler(this.MainForm_Load);
          this.groupBox4.ResumeLayout(false);
          this.groupBox3.ResumeLayout(false);
          this.groupBox3.PerformLayout();

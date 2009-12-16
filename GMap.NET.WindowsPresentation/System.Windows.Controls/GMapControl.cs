@@ -379,7 +379,7 @@ namespace System.Windows.Controls
       void GMapControl_Loaded(object sender, RoutedEventArgs e)
       {
          Core.StartSystem();
-         Core_OnMapZoomChanged();
+         Core_OnMapZoomChanged();          
       }
 
       void GMapControl_Unloaded(object sender, RoutedEventArgs e)
