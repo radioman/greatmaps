@@ -403,41 +403,25 @@ namespace Demo.WindowsPresentation
       }
 
       // tile louading starts
-      void MainMap_OnTileLoadStart(int loaderId)
+      void MainMap_OnTileLoadStart()
       {
-         switch(loaderId)
+         System.Windows.Forms.MethodInvoker m = delegate()
          {
-            case 1:
             progressBar1.Visibility = Visibility.Visible;
-            break;
+         };
 
-            case 2:
-            progressBar2.Visibility = Visibility.Visible;
-            break;
-
-            case 3:
-            progressBar3.Visibility = Visibility.Visible;
-            break;
-         }
+         this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, m);
       }
 
       // tile loading stops
-      void MainMap_OnTileLoadComplete(int loaderId)
+      void MainMap_OnTileLoadComplete()
       {
-         switch(loaderId)
+         System.Windows.Forms.MethodInvoker m = delegate()
          {
-            case 1:
             progressBar1.Visibility = Visibility.Hidden;
-            break;
+         };
 
-            case 2:
-            progressBar2.Visibility = Visibility.Hidden;
-            break;
-
-            case 3:
-            progressBar3.Visibility = Visibility.Hidden;
-            break;
-         }
+         this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, m);
       }
 
       // current location changed

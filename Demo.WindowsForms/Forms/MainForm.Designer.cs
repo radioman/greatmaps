@@ -73,8 +73,6 @@
          this.buttonSetStart = new System.Windows.Forms.Button();
          this.button6 = new System.Windows.Forms.Button();
          this.groupBoxLoading = new System.Windows.Forms.GroupBox();
-         this.progressBar3 = new System.Windows.Forms.ProgressBar();
-         this.progressBar2 = new System.Windows.Forms.ProgressBar();
          this.progressBar1 = new System.Windows.Forms.ProgressBar();
          this.groupBox8 = new System.Windows.Forms.GroupBox();
          this.button7 = new System.Windows.Forms.Button();
@@ -634,8 +632,6 @@
          // groupBoxLoading
          // 
          this.groupBoxLoading.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-         this.groupBoxLoading.Controls.Add(this.progressBar3);
-         this.groupBoxLoading.Controls.Add(this.progressBar2);
          this.groupBoxLoading.Controls.Add(this.progressBar1);
          this.groupBoxLoading.Location = new System.Drawing.Point(951, 858);
          this.groupBoxLoading.Margin = new System.Windows.Forms.Padding(4);
@@ -646,32 +642,13 @@
          this.groupBoxLoading.TabStop = false;
          this.groupBoxLoading.Text = "loading";
          // 
-         // progressBar3
-         // 
-         this.progressBar3.Location = new System.Drawing.Point(147, 23);
-         this.progressBar3.Margin = new System.Windows.Forms.Padding(4);
-         this.progressBar3.Name = "progressBar3";
-         this.progressBar3.Size = new System.Drawing.Size(71, 25);
-         this.progressBar3.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-         this.progressBar3.TabIndex = 2;
-         this.progressBar3.Visible = false;
-         // 
-         // progressBar2
-         // 
-         this.progressBar2.Location = new System.Drawing.Point(79, 23);
-         this.progressBar2.Margin = new System.Windows.Forms.Padding(4);
-         this.progressBar2.Name = "progressBar2";
-         this.progressBar2.Size = new System.Drawing.Size(71, 25);
-         this.progressBar2.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-         this.progressBar2.TabIndex = 1;
-         this.progressBar2.Visible = false;
-         // 
          // progressBar1
          // 
-         this.progressBar1.Location = new System.Drawing.Point(8, 23);
+         this.progressBar1.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.progressBar1.Location = new System.Drawing.Point(4, 19);
          this.progressBar1.Margin = new System.Windows.Forms.Padding(4);
          this.progressBar1.Name = "progressBar1";
-         this.progressBar1.Size = new System.Drawing.Size(71, 25);
+         this.progressBar1.Size = new System.Drawing.Size(217, 36);
          this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
          this.progressBar1.TabIndex = 0;
          this.progressBar1.Visible = false;
@@ -791,8 +768,6 @@
       private System.Windows.Forms.Button button6;
       private System.Windows.Forms.GroupBox groupBoxLoading;
       private System.Windows.Forms.ProgressBar progressBar1;
-      private System.Windows.Forms.ProgressBar progressBar3;
-      private System.Windows.Forms.ProgressBar progressBar2;
       private System.Windows.Forms.CheckBox checkBoxUseGeoCache;
       private System.Windows.Forms.CheckBox checkBoxUseRouteCache;
       private System.Windows.Forms.GroupBox groupBox8;

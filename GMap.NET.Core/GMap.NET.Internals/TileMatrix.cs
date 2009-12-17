@@ -8,12 +8,8 @@ namespace GMap.NET.Internals
    /// </summary>
    internal class TileMatrix
    {
-      Dictionary<Point, Tile> matrix;
-
-      public TileMatrix()
-      {
-         matrix = new Dictionary<Point, Tile>(50);
-      }
+      readonly Dictionary<Point, Tile> matrix = new Dictionary<Point, Tile>(55);
+      readonly List<Point> removals = new List<Point>();
 
       public void Clear()
       {
@@ -25,12 +21,11 @@ namespace GMap.NET.Internals
             }
             matrix.Clear();
          }
-      }
+      }       
 
       public void ClearPointsNotIn(ref List<Point> list)
       {
-         List<Point> removals = new List<Point>();
-
+         removals.Clear();
          lock(matrix)
          {
             foreach(Point p in matrix.Keys)
@@ -57,8 +52,6 @@ namespace GMap.NET.Internals
             }
          }
          removals.Clear();
-         removals.TrimExcess();
-         removals = null;
       }
 
       public Tile this[Point p]

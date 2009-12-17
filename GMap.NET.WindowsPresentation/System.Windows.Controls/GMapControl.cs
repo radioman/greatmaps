@@ -118,7 +118,7 @@ namespace System.Windows.Controls
       /// </summary>
       private RectLatLng selectedArea;
 
-      [Browsable(false)]        
+      [Browsable(false)]
       public RectLatLng SelectedArea
       {
          get
@@ -379,7 +379,7 @@ namespace System.Windows.Controls
       void GMapControl_Loaded(object sender, RoutedEventArgs e)
       {
          Core.StartSystem();
-         Core_OnMapZoomChanged();          
+         Core_OnMapZoomChanged();
       }
 
       void GMapControl_Unloaded(object sender, RoutedEventArgs e)
@@ -434,7 +434,7 @@ namespace System.Windows.Controls
       /// </summary>
       void Core_OnNeedInvalidation()
       {
-         this.InvalidateVisual();
+         this.Dispatcher.BeginInvoke(DispatcherPriority.Input, new MethodInvoker(InvalidateVisual));
       }
 
       /// <summary>
@@ -1173,7 +1173,7 @@ namespace System.Windows.Controls
          }
       }
 
-      [Browsable(false)]     
+      [Browsable(false)]
       public GMap.NET.Point CurrentPositionGPixel
       {
          get
@@ -1196,7 +1196,7 @@ namespace System.Windows.Controls
          }
       }
 
-      [Browsable(false)] 
+      [Browsable(false)]
       public bool IsDragging
       {
          get
@@ -1227,7 +1227,7 @@ namespace System.Windows.Controls
          }
       }
 
-      [Browsable(false)]    
+      [Browsable(false)]
       public PureProjection Projection
       {
          get

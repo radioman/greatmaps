@@ -291,7 +291,8 @@ namespace GMap.NET
       /// <summary>
       /// cache worker
       /// </summary>
-      internal BackgroundWorker cacher = new BackgroundWorker();
+      Thread CacheEngine;  
+      AutoResetEvent WaitForCache = new AutoResetEvent(false);
 
       public GMaps()
       {
@@ -303,9 +304,6 @@ namespace GMap.NET
          #endregion
 
          Language = LanguageType.English;
-
-         cacher.DoWork += new DoWorkEventHandler(cacher_DoWork);
-         cacher.WorkerSupportsCancellation = true;
       }
 
       #region -- Stuff --
@@ -732,69 +730,76 @@ namespace GMap.NET
 
                tileCacheQueue.Enqueue(task);
 
-               if(!cacher.IsBusy)
+               if(CacheEngine != null && CacheEngine.IsAlive)
                {
-                  cacher.RunWorkerAsync();
+                  WaitForCache.Set();
+               }
+               else if(CacheEngine == null || CacheEngine.ThreadState == System.Threading.ThreadState.Stopped || CacheEngine.ThreadState == System.Threading.ThreadState.Unstarted)
+               {
+                  CacheEngine = new Thread(new ThreadStart(CacheEngineLoop));
+                  CacheEngine.Name = "GMap.NET CacheEngine";
+                  CacheEngine.IsBackground = false;
+                  CacheEngine.Priority = ThreadPriority.BelowNormal;
+                  CacheEngine.Start();
                }
             }
          }
-      }
+      }         
 
       /// <summary>
       /// live for cache ;}
       /// </summary>
       /// <param name="sender"></param>
       /// <param name="e"></param>
-      void cacher_DoWork(object sender, DoWorkEventArgs e)
+      void CacheEngineLoop()
       {
-         Thread.CurrentThread.IsBackground = false;
-         int completed = 0;
-
-         while(!cacher.CancellationPending)
+         Debug.WriteLine("CacheEngine: start");
+         while(true)
          {
-            bool process = true;
-            CacheItemQueue? task = null;
-
-            lock(tileCacheQueue)
+            try
             {
-               if(tileCacheQueue.Count > 0)
+               CacheItemQueue? task = null;
+
+               lock(tileCacheQueue)
                {
-                  task = tileCacheQueue.Dequeue();
+                  if(tileCacheQueue.Count > 0)
+                  {
+                     task = tileCacheQueue.Dequeue();
+                  }
+               }
+
+               if(task.HasValue)
+               {
+                  if((task.Value.CacheType & CacheUsage.First) == CacheUsage.First && ImageCacheLocal != null)
+                  {
+                     ImageCacheLocal.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
+                  }
+
+                  if((task.Value.CacheType & CacheUsage.Second) == CacheUsage.Second && ImageCacheSecond != null)
+                  {
+                     ImageCacheSecond.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
+                  }
+
+                  Thread.Sleep(44);
                }
                else
                {
-                  process = false;
+                  if(!WaitForCache.WaitOne(4444, false))
+                  {
+                     break;
+                  }
                }
             }
-
-            if(process && task.HasValue)
+            catch(AbandonedMutexException)
             {
-               if((task.Value.CacheType & CacheUsage.First) == CacheUsage.First && ImageCacheLocal != null)
-               {
-                  ImageCacheLocal.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
-               }
-
-               if((task.Value.CacheType & CacheUsage.Second) == CacheUsage.Second && ImageCacheSecond != null)
-               {
-                  ImageCacheSecond.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
-               }
-               completed = 0;
+               break;
             }
-            else
+            catch(Exception ex)
             {
-               if(completed++ == 22)
-               {
-                  Debug.WriteLine("CacheEngine: exit");
-                  break;
-               }
-               else
-               {
-                  Thread.Sleep(444);
-               }
+               Debug.WriteLine("CacheEngineLoop: " + ex.ToString());
             }
-
-            Thread.Sleep(44);
          }
+         Debug.WriteLine("CacheEngine: stop");
       }
 
       #endregion

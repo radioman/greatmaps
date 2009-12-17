@@ -307,45 +307,25 @@ namespace Demo.WindowsForms
       }
 
       // loader start loading tiles
-      void MainMap_OnTileLoadStart(int loaderId)
+      void MainMap_OnTileLoadStart()
       {
-         switch(loaderId)
+         MethodInvoker m = delegate()
          {
-            case 1:
             progressBar1.Show();
-            break;
-
-            case 2:
-            progressBar2.Show();
-            break;
-
-            case 3:
-            progressBar3.Show();
-            break;
-         }
-
-         groupBoxLoading.Invalidate(true);
+            groupBoxLoading.Invalidate(true);
+         };
+         BeginInvoke(m);
       }
 
       // loader end loading tiles
-      void MainMap_OnTileLoadComplete(int loaderId)
+      void MainMap_OnTileLoadComplete()
       {
-         switch(loaderId)
+         MethodInvoker m = delegate()
          {
-            case 1:
-            progressBar1.Hide();
-            break;
-
-            case 2:
-            progressBar2.Hide();
-            break;
-
-            case 3:
-            progressBar3.Hide();
-            break;
-         }
-
-         groupBoxLoading.Invalidate(true);
+            progressBar1.Hide();     
+            groupBoxLoading.Invalidate(true);
+         };
+         BeginInvoke(m);
       }
 
       // current point changed

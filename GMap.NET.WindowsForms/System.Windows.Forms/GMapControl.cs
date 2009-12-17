@@ -241,7 +241,7 @@ namespace System.Windows.Forms
             {
                Invalidate(false);
             };
-            this.Invoke(m);
+            this.BeginInvoke(m);
          }
          else
          {

@@ -41,12 +41,10 @@ namespace GMap.NET.Internals
       public Rectangle CurrentRegion;
 
       public readonly TileMatrix Matrix = new TileMatrix();
-      readonly BackgroundWorker loader = new BackgroundWorker();
-      readonly BackgroundWorker loader2 = new BackgroundWorker();
-      readonly BackgroundWorker loader3 = new BackgroundWorker();
       readonly EventWaitHandle waitOnEmptyTasks = new EventWaitHandle(false, EventResetMode.AutoReset);
       public List<Point> tileDrawingList = new List<Point>();
       public readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>();
+      readonly WaitCallback ProcessLoadTaskCallback;
 
       public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
@@ -119,7 +117,6 @@ namespace GMap.NET.Internals
 
                   GoToCurrentPositionOnZoom();
                   UpdateBaunds();
-                  RunAsyncTasks();
 
                   if(OnNeedInvalidation != null)
                   {
@@ -334,6 +331,11 @@ namespace GMap.NET.Internals
       /// </summary>
       public event MapTypeChanged OnMapTypeChanged;
 
+      public Core()
+      {
+         ProcessLoadTaskCallback = new WaitCallback(ProcessLoadTask);
+      }
+
       /// <summary>
       /// starts core system
       /// </summary>
@@ -341,21 +343,6 @@ namespace GMap.NET.Internals
       {
          if(!started)
          {
-            loader.WorkerReportsProgress = true;
-            loader.WorkerSupportsCancellation = true;
-            loader.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
-            loader.DoWork += new DoWorkEventHandler(loader_DoWork);
-
-            loader2.WorkerReportsProgress = true;
-            loader2.WorkerSupportsCancellation = true;
-            loader2.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
-            loader2.DoWork += new DoWorkEventHandler(loader2_DoWork);
-
-            loader3.WorkerReportsProgress = true;
-            loader3.WorkerSupportsCancellation = true;
-            loader3.ProgressChanged += new ProgressChangedEventHandler(loader_ProgressChanged);
-            loader3.DoWork += new DoWorkEventHandler(loader3_DoWork);
-
             started = true;
 
             ReloadMap();
@@ -532,9 +519,6 @@ namespace GMap.NET.Internals
             }
 
             UpdateBaunds();
-
-            // start loading
-            RunAsyncTasks();
          }
       }
 
@@ -611,84 +595,17 @@ namespace GMap.NET.Internals
       {
          if(started)
          {
-            if(loader.IsBusy && !loader.CancellationPending)
+            lock(tileLoadQueue)
             {
-               loader.CancelAsync();
-            }
-
-            if(loader2.IsBusy && !loader2.CancellationPending)
-            {
-               loader2.CancelAsync();
-            }
-
-            if(loader3.IsBusy && !loader3.CancellationPending)
-            {
-               loader3.CancelAsync();
+               tileLoadQueue.Clear();
             }
          }
       }
 
-      /// <summary>
-      /// runs tile loaders and bounds checker
-      /// </summary>
-      void RunAsyncTasks()
-      {
-         if(started)
-         {
-            if(!loader.IsBusy)
-            {
-               loader.RunWorkerAsync();
-            }
-
-            if(!loader2.IsBusy)
-            {
-               loader2.RunWorkerAsync();
-            }
-
-            if(!loader3.IsBusy)
-            {
-               loader3.RunWorkerAsync();
-            }
-         }
-      }
-
-      // loader1
-      void loader_DoWork(object sender, DoWorkEventArgs e)
-      {
-         while(!loader.CancellationPending)
-         {
-            LoaderWork(1);
-         }
-         Debug.WriteLine("loader[1]: exit");
-      }
-
-      // loader2
-      void loader2_DoWork(object sender, DoWorkEventArgs e)
-      {
-         while(!loader2.CancellationPending)
-         {
-            LoaderWork(2);
-         }
-         Debug.WriteLine("loader[2]: exit");
-      }
-
-      // loader3
-      void loader3_DoWork(object sender, DoWorkEventArgs e)
-      {
-         while(!loader3.CancellationPending)
-         {
-            LoaderWork(3);
-         }
-         Debug.WriteLine("loader[3]: exit");
-      }
-
-      /// <summary>
-      /// tile loader worker
-      /// </summary>
-      /// <param name="id"></param>
-      void LoaderWork(int id)
+      void ProcessLoadTask(object obj)
       {
          bool process = true;
+
          LoadTask task = new LoadTask();
 
          lock(tileLoadQueue)
@@ -703,93 +620,79 @@ namespace GMap.NET.Internals
             }
          }
 
-         if(process)
+         if(process && Matrix[task.Pos] == null)
          {
-            loaderDone[id-1] = false;
-
-            Debug.WriteLine("loader[" + id + "]: download => " + task);
-
-            // report load start
-            loader.ReportProgress(id, false);
-
-            Tile t = new Tile(task.Zoom, task.Pos);
+            lock(loadingLock)
             {
-               List<MapType> layers = GMaps.Instance.GetAllLayersOfType(MapType);
-               foreach(MapType tl in layers)
+               if(tileLoaders++ == 0)
                {
-                  PureImage img = GMaps.Instance.GetImageFrom(tl, task.Pos, task.Zoom);
-                  lock(t.Overlays)
+                  if(OnTileLoadStart != null)
                   {
-                     t.Overlays.Add(img);
+                     OnTileLoadStart();
                   }
                }
-               layers.Clear();
-               layers = null;
-
-               Matrix[task.Pos] = t;
             }
-            loader.ReportProgress(id);
-         }
-         else // empty now, clean things up
-         {
-            if(!loaderDone[id-1])
+
+            try
             {
-               Matrix.ClearPointsNotIn(ref tileDrawingList);
+               //Debug.WriteLine("loader[" + 0 + "]: download => " + task);
 
-               GC.Collect();
-               GC.WaitForPendingFinalizers();
-               GC.Collect();
+               Tile t = new Tile(task.Zoom, task.Pos);
+               {
+                  List<MapType> layers = GMaps.Instance.GetAllLayersOfType(MapType);
+                  foreach(MapType tl in layers)
+                  {
+                     PureImage img = GMaps.Instance.GetImageFrom(tl, task.Pos, task.Zoom);
+                     lock(t.Overlays)
+                     {
+                        t.Overlays.Add(img);
+                     }
+                  }
+                  layers.Clear();
+                  layers = null;
 
-               // report load complete
-               loader.ReportProgress(id, true);
-
-               loaderDone[id-1] = true;
-
-               Debug.WriteLine("loader[" + id + "]: wait");
+                  Matrix[task.Pos] = t;
+               }
             }
+            catch(Exception ex)
+            {
+               Debug.WriteLine("ProcessLoadTask: " + ex.ToString());
+            }
+            finally
+            {
+               if(OnNeedInvalidation != null)
+               {
+                  OnNeedInvalidation();
+               }
 
-            waitOnEmptyTasks.WaitOne(1111, false);  // No more tasks - wait for a signal
+               lock(loadingLock)
+               {
+                  // last buddy cleans stuff ;}
+                  if(--tileLoaders <= 0)
+                  {
+                     if(OnTileLoadComplete != null)
+                     {
+                        OnTileLoadComplete();
+                     }
+
+                     lock(tileDrawingList)
+                     {
+                        Matrix.ClearPointsNotIn(ref tileDrawingList);
+
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        GC.Collect();
+                     }
+                  }
+
+                  //Debug.WriteLine("tileLoaders: " + tileLoaders);
+               }                 
+            }
          }
       }
 
-      bool[] loaderDone = new bool[]
-      {
-         false, false, false
-      };   
-
-      /// <summary>
-      /// invalidates map on tile loaded
-      /// </summary>
-      /// <param name="sender"></param>
-      /// <param name="e"></param>
-      void loader_ProgressChanged(object sender, ProgressChangedEventArgs e)
-      {
-         if(OnNeedInvalidation != null)
-         {
-            OnNeedInvalidation();
-         }
-
-         // some tile loader complete
-         if(e.UserState != null && e.UserState.GetType() == typeof(bool))
-         {
-            bool complete = (bool) e.UserState;
-
-            if(complete)
-            {
-               if(OnTileLoadComplete != null)
-               {
-                  OnTileLoadComplete(e.ProgressPercentage);
-               }
-            }
-            else
-            {
-               if(OnTileLoadStart != null)
-               {
-                  OnTileLoadStart(e.ProgressPercentage);
-               }
-            }
-         }
-      }
+      int tileLoaders = 0;
+      object loadingLock = new object();
 
       /// <summary>
       /// updates map bounds
@@ -800,15 +703,12 @@ namespace GMap.NET.Internals
          {
             FindTilesAround(ref tileDrawingList);
 
-            Debug.WriteLine("UpdateBaunds: total tiles => " + tileDrawingList.Count.ToString());
+            Debug.WriteLine(DateTime.Now.TimeOfDay + " UpdateBaunds: total tiles at zoom " + Zoom + " -> " + tileDrawingList.Count.ToString());
 
             foreach(Point p in tileDrawingList)
             {
-               if(Matrix[p] == null)
-               {
-                  EnqueueLoadTask(new LoadTask(p, Zoom));
-               }
-            }
+               EnqueueLoadTask(new LoadTask(p, Zoom));
+            }             
          }
 
          UpdateGroundResolution();
@@ -824,17 +724,12 @@ namespace GMap.NET.Internals
          {
             if(!tileLoadQueue.Contains(task))
             {
-               Debug.WriteLine("EnqueueLoadTask: " + task.ToString());
+               //Debug.WriteLine("EnqueueLoadTask: " + task.ToString());
+
                tileLoadQueue.Enqueue(task);
+               ThreadPool.QueueUserWorkItem(ProcessLoadTaskCallback);
             }
-         }
-         try
-         {
-            waitOnEmptyTasks.Set();
-         }
-         catch
-         {
-         }
+         }           
       }
 
       /// <summary>
