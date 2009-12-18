@@ -92,6 +92,10 @@ namespace Demo.WindowsPresentation
          // can drag map
          checkBoxDragMap.IsChecked = MainMap.CanDragMap;
 
+#if DEBUG
+         checkBoxDebug.IsChecked = true;
+#endif
+
          // set current marker
          currentMarker = new GMapMarker(MainMap.CurrentPosition);
          {

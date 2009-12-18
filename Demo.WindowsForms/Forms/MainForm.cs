@@ -87,8 +87,8 @@ namespace Demo.WindowsForms
             trackBar1.Minimum = MainMap.MinZoom;
             trackBar1.Maximum = MainMap.MaxZoom;
 
-#if !DEBUG
-            checkBoxDebug.Checked = false;
+#if DEBUG
+            checkBoxDebug.Checked = true;
 #endif
 
             // add custom layers  

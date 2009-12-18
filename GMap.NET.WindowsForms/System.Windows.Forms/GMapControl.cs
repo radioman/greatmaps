@@ -487,12 +487,15 @@ namespace System.Windows.Forms
                         {
                            bottom = m.Position.Lat;
                         }
-
-                        ret = RectLatLng.FromLTRB(left, top, right, bottom);
                      }
                   }
                }
             }
+         }
+
+         if(left != double.MaxValue && right != double.MinValue && top != double.MinValue && bottom != double.MaxValue)
+         {
+            ret = RectLatLng.FromLTRB(left, top, right, bottom);
          }
 
          return ret;
@@ -549,11 +552,14 @@ namespace System.Windows.Forms
                            }
                         }
                      }
-                  }
-
-                  ret = RectLatLng.FromLTRB(left, top, right, bottom);
+                  }                   
                }
             }
+         }
+
+         if(left != double.MaxValue && right != double.MinValue && top != double.MinValue && bottom != double.MaxValue)
+         {
+            ret = RectLatLng.FromLTRB(left, top, right, bottom);
          }
 
          return ret;

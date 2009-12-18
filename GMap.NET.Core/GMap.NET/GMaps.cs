@@ -194,7 +194,7 @@ namespace GMap.NET
       {
          get
          {
-            kiberCacheLock.AcquireReaderLock(1111);
+            kiberCacheLock.AcquireReaderLock(-1);
             try
             {
                return TilesInMemory.MemoryCacheCapacity;
@@ -206,7 +206,7 @@ namespace GMap.NET
          }
          set
          {
-            kiberCacheLock.AcquireWriterLock(1111);
+            kiberCacheLock.AcquireWriterLock(-1);
             try
             {
                TilesInMemory.MemoryCacheCapacity = value;
@@ -225,7 +225,7 @@ namespace GMap.NET
       {
          get
          {
-            kiberCacheLock.AcquireReaderLock(1111);
+            kiberCacheLock.AcquireReaderLock(-1);
             try
             {
                return TilesInMemory.MemoryCacheSize;
@@ -340,7 +340,7 @@ namespace GMap.NET
 
       MemoryStream GetTileFromMemoryCache(RawTile tile)
       {
-         kiberCacheLock.AcquireReaderLock(1111);
+         kiberCacheLock.AcquireReaderLock(-1);
          try
          {
             MemoryStream ret = null;
@@ -358,7 +358,7 @@ namespace GMap.NET
 
       void AddTileToMemoryCache(RawTile tile, MemoryStream data)
       {
-         kiberCacheLock.AcquireWriterLock(2222);
+         kiberCacheLock.AcquireWriterLock(-1);
          try
          {
             if(!TilesInMemory.ContainsKey(tile))
@@ -368,7 +368,6 @@ namespace GMap.NET
          }
          finally
          {
-            Debug.WriteLine("MemoryCacheSize: " + TilesInMemory.MemoryCacheSize + "MB");
             kiberCacheLock.ReleaseWriterLock();
          }
       }

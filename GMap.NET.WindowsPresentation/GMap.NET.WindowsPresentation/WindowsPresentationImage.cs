@@ -46,9 +46,6 @@ namespace GMap.NET.WindowsPresentation
          WindowsPresentationImage ret = null;
          if(stream != null)
          {
-            // use double copy of streams to keep memmory cache ok
-            //stream = Stuff.CopyStream(stream);
-
             // try png decoder
             try
             {

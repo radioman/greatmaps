@@ -640,18 +640,43 @@ namespace GMap.NET.Internals
                Tile t = new Tile(task.Zoom, task.Pos);
                {
                   List<MapType> layers = GMaps.Instance.GetAllLayersOfType(MapType);
-                  foreach(MapType tl in layers)
+                  int retry = 0;
+
+                  // try get it few times
+                  do
                   {
-                     PureImage img = GMaps.Instance.GetImageFrom(tl, task.Pos, task.Zoom);
                      lock(t.Overlays)
                      {
-                        t.Overlays.Add(img);
+                        t.Overlays.Clear();
+                     }
+
+                     foreach(MapType tl in layers)
+                     {
+                        PureImage img = GMaps.Instance.GetImageFrom(tl, task.Pos, task.Zoom);
+                        if(img != null)
+                        {
+                           lock(t.Overlays)
+                           {
+                              t.Overlays.Add(img);
+                           }
+                           retry = 0;
+                        }
+                        else
+                        {
+                           Debug.WriteLine("ProcessLoadTask: " + task + " -> empty tile, reloading " + retry);
+
+                           retry++;
+                           Thread.Sleep(2222);
+                           break;
+                        }
                      }
                   }
-                  layers.Clear();
-                  layers = null;
+                  while(retry > 0 && retry < 5);
 
                   Matrix[task.Pos] = t;
+
+                  layers.Clear();
+                  layers = null;
                }
             }
             catch(Exception ex)
@@ -683,10 +708,10 @@ namespace GMap.NET.Internals
                         GC.WaitForPendingFinalizers();
                         GC.Collect();
                      }
-                  }
 
-                  //Debug.WriteLine("tileLoaders: " + tileLoaders);
-               }                 
+                     Debug.WriteLine("MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB - " + tileLoaders);
+                  }
+               }
             }
          }
       }
@@ -708,7 +733,7 @@ namespace GMap.NET.Internals
             foreach(Point p in tileDrawingList)
             {
                EnqueueLoadTask(new LoadTask(p, Zoom));
-            }             
+            }
          }
 
          UpdateGroundResolution();
@@ -729,7 +754,7 @@ namespace GMap.NET.Internals
                tileLoadQueue.Enqueue(task);
                ThreadPool.QueueUserWorkItem(ProcessLoadTaskCallback);
             }
-         }           
+         }
       }
 
       /// <summary>

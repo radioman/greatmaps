@@ -731,11 +731,14 @@ namespace System.Windows.Controls
                   if(m.Position.Lat < bottom)
                   {
                      bottom = m.Position.Lat;
-                  }
-
-                  ret = RectLatLng.FromLTRB(left, top, right, bottom);
+                  }                     
                }
             }
+         }
+
+         if(left != double.MaxValue && right != double.MinValue && top != double.MinValue && bottom != double.MaxValue)
+         {
+            ret = RectLatLng.FromLTRB(left, top, right, bottom);
          }
 
          return ret;

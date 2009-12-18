@@ -27,7 +27,7 @@
                 <ComboBox FontSize="12" Height="25.04" Margin="6,37,45,0" Name="comboBoxMode" VerticalAlignment="Top" DropDownClosed="comboBoxMode_DropDownClosed" />
                 <Label Height="25.04" HorizontalAlignment="Right" Margin="0,37,-4,0" Name="label5" VerticalAlignment="Top" Width="43">mode</Label>
                 <Button Height="22" HorizontalAlignment="Right" Name="button7" VerticalAlignment="Bottom" Width="54" Click="button7_Click" Margin="0,0,6,3.06">Save</Button>
-                <CheckBox Height="16" Margin="0,0,4,28" Name="checkBox1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="43" Checked="checkBox1_Checked" Unchecked="checkBox1_Unchecked">Grid</CheckBox>
+                <CheckBox Height="16" Margin="0,0,4,28" Name="checkBoxDebug" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="43" Checked="checkBox1_Checked" Unchecked="checkBox1_Unchecked">Grid</CheckBox>
             </Grid>
         </GroupBox>
         <GroupBox Header="coordinates" Height="144" HorizontalAlignment="Right" Margin="0,7,12,0" Name="groupBox1" VerticalAlignment="Top" Width="169">
