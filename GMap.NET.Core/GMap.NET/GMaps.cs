@@ -291,7 +291,7 @@ namespace GMap.NET
       /// <summary>
       /// cache worker
       /// </summary>
-      Thread CacheEngine;  
+      Thread CacheEngine;
       AutoResetEvent WaitForCache = new AutoResetEvent(false);
 
       public GMaps()
@@ -563,7 +563,7 @@ namespace GMap.NET
          if(Cache.Instance.ImageCache is SQLitePureImageCache)
          {
             StringBuilder db = new StringBuilder((Cache.Instance.ImageCache as SQLitePureImageCache).GtileCache);
-            db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
+            db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
 
             return SQLitePureImageCache.ExportMapDataToDB(db.ToString(), file);
          }
@@ -583,7 +583,7 @@ namespace GMap.NET
          if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
             StringBuilder db = new StringBuilder((Cache.Instance.ImageCache as SQLitePureImageCache).GtileCache);
-            db.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
+            db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
 
             return SQLitePureImageCache.ExportMapDataToDB(file, db.ToString());
          }
@@ -743,7 +743,7 @@ namespace GMap.NET
                }
             }
          }
-      }         
+      }
 
       /// <summary>
       /// live for cache ;}
@@ -1048,7 +1048,7 @@ namespace GMap.NET
                // http://arcgis.maps.lt/ArcGIS/rest/services/mapslt/MapServer/tile/7/1162/1684.png
                // http://dc1.maps.lt/cache/mapslt_512/map/_alllayers/L03/R0000001b/C00000029.png
 
-                                  // http://dc1.maps.lt/cache/mapslt/map/_alllayers/L02/R0000001c/C00000029.png
+               // http://dc1.maps.lt/cache/mapslt/map/_alllayers/L02/R0000001c/C00000029.png
                return string.Format("http://dc1.maps.lt/cache/mapslt/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png", zoom, pos.Y, pos.X);
             }
 
@@ -1256,7 +1256,9 @@ namespace GMap.NET
                }
                else
                {
+#if !PocketPC
                   request.Proxy = WebRequest.DefaultWebProxy;
+#endif
                }
                request.UserAgent = UserAgent;
                request.Timeout = Timeout;
@@ -1394,7 +1396,9 @@ namespace GMap.NET
             }
             else
             {
+#if !PocketPC
                request.Proxy = WebRequest.DefaultWebProxy;
+#endif
             }
 
             request.UserAgent = UserAgent;
@@ -1460,7 +1464,9 @@ namespace GMap.NET
                }
                else
                {
+#if !PocketPC
                   request.Proxy = WebRequest.DefaultWebProxy;
+#endif
                }
 
                request.UserAgent = UserAgent;
@@ -1544,7 +1550,9 @@ namespace GMap.NET
                }
                else
                {
+#if !PocketPC
                   request.Proxy = WebRequest.DefaultWebProxy;
+#endif
                }
 
                request.UserAgent = UserAgent;
@@ -1627,7 +1635,9 @@ namespace GMap.NET
                }
                else
                {
+#if !PocketPC
                   request.Proxy = WebRequest.DefaultWebProxy;
+#endif
                }
 
                request.UserAgent = UserAgent;
@@ -1874,7 +1884,11 @@ namespace GMap.NET
                      if(ret == null)
                      {
                         // should never happen ;}
+#if !PocketPC
                         m.Dispose();
+#else
+                        (m as IDisposable).Dispose();
+#endif
                      }
                   }
                }
@@ -1918,7 +1932,9 @@ namespace GMap.NET
                   }
                   else
                   {
+#if !PocketPC
                      request.Proxy = WebRequest.DefaultWebProxy;
+#endif
                   }
                   request.UserAgent = UserAgent;
                   request.Timeout = Timeout;

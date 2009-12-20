@@ -3,6 +3,7 @@ namespace GMap.NET.Internals
 {
    using System.Collections.Generic;
    using System.IO;
+   using System;
 
    /// <summary>
    /// kiber speed memory cache for tiles with history support ;}
@@ -57,7 +58,12 @@ namespace GMap.NET.Internals
             MemoryStream m = base[first];
             base.Remove(first);
             memoryCacheSize -= m.Length;
+#if !PocketPC
             m.Dispose();
+#else
+            (m as IDisposable).Dispose();
+#endif
+
             return true;
          }
          return false;
