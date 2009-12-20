@@ -735,7 +735,11 @@ namespace GMap.NET
                {
                   WaitForCache.Set();
                }
+#if PocketPC
                else if(CacheEngine == null)
+#else
+               else if(CacheEngine == null || CacheEngine.ThreadState == System.Threading.ThreadState.Stopped || CacheEngine.ThreadState == System.Threading.ThreadState.Unstarted)
+#endif
                {
                   CacheEngine = new Thread(new ThreadStart(CacheEngineLoop));
                   CacheEngine.Name = "GMap.NET CacheEngine";
