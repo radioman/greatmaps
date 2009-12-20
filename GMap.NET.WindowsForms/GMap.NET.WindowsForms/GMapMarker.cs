@@ -9,6 +9,15 @@ namespace GMap.NET.WindowsForms
    /// </summary>
    public class GMapMarker : INotifyPropertyChanged
    {
+#if PocketPC
+      System.Drawing.Imaging.ImageAttributes attr = new System.Drawing.Imaging.ImageAttributes();
+
+      public GMapMarker()
+      {
+         attr.SetColorKey(Color.White, Color.White);
+      }
+#endif
+
       public event PropertyChangedEventHandler PropertyChanged;
       void OnPropertyChanged(string name)
       {
@@ -63,7 +72,7 @@ namespace GMap.NET.WindowsForms
          }
          internal set
          {
-            area.Location = value;    
+            area.Location = value;
             OnPropertyChanged("LocalPosition");
 
             if(Overlay != null)
@@ -142,6 +151,13 @@ namespace GMap.NET.WindowsForms
       {
          //
       }
+
+#if PocketPC
+      protected void DrawImageUnscaled(Graphics g, Bitmap inBmp, int x, int y)
+      {
+         g.DrawImage(inBmp, new Rectangle(x, y, inBmp.Width, inBmp.Height), 0, 0, inBmp.Width, inBmp.Height, GraphicsUnit.Pixel, attr);
+      }
+#endif
    }
 
    public delegate void MarkerClick(GMapMarker item);

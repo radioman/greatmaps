@@ -34,17 +34,30 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// font for markers tooltip
       /// </summary>
-      public Font TooltipFont = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold, GraphicsUnit.Point);
+#if !PocketPC
+      public Font TooltipFont = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold, GraphicsUnit.Pixel);
+#else
+      public Font TooltipFont = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold);
+#endif
 
       /// <summary>
       /// tooltip pen
       /// </summary>
+#if !PocketPC
       public Pen TooltipPen = new Pen(Color.FromArgb(140, Color.MidnightBlue));
+#else
+      public Pen TooltipPen = new Pen(Color.MidnightBlue);
+#endif
 
       /// <summary>
       /// tooltip background color
       /// </summary>
+#if !PocketPC
       public Brush TooltipBackground = Brushes.AliceBlue;
+#else
+      public Brush TooltipBackground = new System.Drawing.SolidBrush(Color.AliceBlue);
+      public Brush TooltipForeground = new System.Drawing.SolidBrush(Color.Navy);
+#endif
 
       /// <summary>
       /// tooltip string format
@@ -65,12 +78,16 @@ namespace GMap.NET.WindowsForms
          Markers.CollectionChanged += new NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
          Routes.CollectionChanged += new NotifyCollectionChangedEventHandler(Routes_CollectionChanged);
 
+#if !PocketPC
          RoutePen.LineJoin = LineJoin.Round;
+#endif
          RoutePen.Width = 5;
 
          TooltipPen.Width = 2;
+#if !PocketPC
          TooltipPen.LineJoin = LineJoin.Round;
          TooltipPen.StartCap = LineCap.RoundAnchor;
+#endif
 
          TooltipFormat.Alignment     = StringAlignment.Center;
          TooltipFormat.LineAlignment = StringAlignment.Center;
@@ -115,8 +132,10 @@ namespace GMap.NET.WindowsForms
       /// <param name="y"></param>
       protected virtual void DrawToolTip(Graphics g, GMapMarker m, int x, int y)
       {
+#if !PocketPC
          GraphicsState s = g.Save();
          g.SmoothingMode = SmoothingMode.AntiAlias;
+#endif
 
          System.Drawing.Size st = g.MeasureString(m.ToolTipText, TooltipFont).ToSize();
          System.Drawing.Rectangle rect = new System.Drawing.Rectangle(x, y, st.Width+Control.TooltipTextPadding.Width, st.Height+Control.TooltipTextPadding.Height);
@@ -125,9 +144,16 @@ namespace GMap.NET.WindowsForms
          g.DrawLine(TooltipPen, x, y, rect.X + rect.Width/2, rect.Y + rect.Height/2);
          g.FillRectangle(TooltipBackground, rect);
          g.DrawRectangle(TooltipPen, rect);
-         g.DrawString(m.ToolTipText, TooltipFont, Brushes.Navy, rect, TooltipFormat);
 
+#if !PocketPC
+         g.DrawString(m.ToolTipText, TooltipFont, Brushes.Navy, rect, TooltipFormat);
+#else
+         g.DrawString(m.ToolTipText, TooltipFont, TooltipForeground, rect, TooltipFormat);
+#endif
+
+#if !PocketPC
          g.Restore(s);
+#endif
       }
 
       /// <summary>
@@ -136,6 +162,7 @@ namespace GMap.NET.WindowsForms
       /// <param name="g"></param>
       protected virtual void DrawRoutes(Graphics g)
       {
+#if !PocketPC
          GraphicsState st = g.Save();
          g.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -166,8 +193,25 @@ namespace GMap.NET.WindowsForms
                }
             }
          }
-
          g.Restore(st);
+#else
+         foreach(GMapRoute r in Routes)
+         {
+            RoutePen.Color = r.Color;
+
+            Point[] pnts = new Point[r.LocalPoints.Count];
+            for(int i = 0; i < r.LocalPoints.Count; i++)
+            {
+               Point p2 = new Point(r.LocalPoints[i].X, r.LocalPoints[i].Y);
+               pnts[pnts.Length - 1] = p2;
+            }
+
+            if(pnts.Length > 0)
+            {
+               g.DrawLines(RoutePen, pnts);
+            }
+         }
+#endif
       }
 
       /// <summary>

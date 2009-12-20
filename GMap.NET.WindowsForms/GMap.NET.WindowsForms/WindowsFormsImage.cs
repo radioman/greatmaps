@@ -40,6 +40,7 @@ namespace GMap.NET.WindowsForms
    /// </summary>
    public class WindowsFormsImageProxy : PureImageProxy
    {
+#if !PocketPC
       public ColorMatrix ColorMatrixForGrayScale = new ColorMatrix(new float[][] 
       {
          new float[] {.3f, .3f, .3f, 0, 0},
@@ -47,9 +48,10 @@ namespace GMap.NET.WindowsForms
          new float[] {.11f, .11f, .11f, 0, 0},
          new float[] {0, 0, 0, 1, 0},
          new float[] {0, 0, 0, 0, 1}
-      });     
+      });
 
       public bool GrayScale = false;
+#endif
 
       public override PureImage FromStream(Stream stream)
       {
@@ -58,20 +60,36 @@ namespace GMap.NET.WindowsForms
          {
             if(!GMaps.Instance.IsRunningOnMono)
             {
+#if !PocketPC
                Image m = Image.FromStream(stream, true, true);
+#else
+               Image m = new Bitmap(stream);
+#endif
                if(m != null)
                {
                   ret = new WindowsFormsImage();
+#if !PocketPC
                   ret.Img = GrayScale ? MakeGrayscale(m) : m;
+#else
+                  ret.Img = m;
+#endif
                }
             }
             else // mono yet do not support validation
             {
+#if !PocketPC
                Image m = Image.FromStream(stream);
+#else
+               Image m = new Bitmap(stream);
+#endif
                if(m != null)
                {
                   ret = new WindowsFormsImage();
+#if !PocketPC
                   ret.Img = GrayScale ? MakeGrayscale(m) : m;
+#else
+                  ret.Img = m;
+#endif
                }
             }
          }
@@ -88,7 +106,15 @@ namespace GMap.NET.WindowsForms
 
                if(ret == null)
                {
+#if !PocketPC
                   stream.Dispose();
+#else
+                  IDisposable s = stream as IDisposable;
+                  if(s != null)
+                  {
+                     s.Dispose();
+                  }
+#endif
                }
             }
             catch
@@ -132,6 +158,7 @@ namespace GMap.NET.WindowsForms
          return ok;
       }
 
+#if !PocketPC
       Bitmap MakeGrayscale(Image original)
       {
          // create a blank bitmap the same size as original
@@ -152,5 +179,6 @@ namespace GMap.NET.WindowsForms
 
          return newBitmap;
       }
+#endif
    }
 }

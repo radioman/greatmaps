@@ -65,7 +65,9 @@ namespace GMap.NET
       PointLatLng FromLocalToLatLng(int x, int y);
       Point FromLatLngToLocal(PointLatLng point);
 
+#if !PocketPC
       bool ShowExportDialog();
       bool ShowImportDialog();
+#endif
    }
 }

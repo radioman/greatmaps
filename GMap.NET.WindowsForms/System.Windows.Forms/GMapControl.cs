@@ -66,22 +66,44 @@ namespace System.Windows.Forms
       /// <summary>
       /// pen for empty tile borders
       /// </summary>
+#if !PocketPC
       public Pen EmptyTileBorders = new Pen(Brushes.White, 1);
+#else
+      public Pen EmptyTileBorders = new Pen(Color.White, 1);
+#endif
 
       /// <summary>
       /// pen for scale info
       /// </summary>
+#if !PocketPC
       public Pen ScalePen = new Pen(Brushes.Blue, 1);
+#else
+      public Pen ScalePen = new Pen(Color.Blue, 1);
+#endif
 
       /// <summary>
       /// area selection pen
       /// </summary>
+#if !PocketPC
       public Pen SelectionPen = new Pen(Brushes.Blue, 4);
+#else
+      public Pen SelectionPen = new Pen(Color.Blue, 4);
+#endif
 
       /// <summary>
       /// pen for empty tile background
       /// </summary>
+#if !PocketPC
       public Brush EmptytileBrush = Brushes.Navy;
+#else
+      public Brush EmptytileBrush = new SolidBrush(Color.Navy);
+#endif
+
+#if PocketPC
+      public Brush TileGridLinesTextBrush = new SolidBrush(Color.Red);
+      public Brush TileGridMissingTextBrush = new SolidBrush(Color.White);
+      public Brush CopyrightBrush = new SolidBrush(Color.Navy);
+#endif
 
       /// <summary>
       /// center mouse OnMouseWheel
@@ -142,6 +164,7 @@ namespace System.Windows.Forms
       /// </summary>
       public RectLatLng? BoundsOfMap = null;
 
+#if !PocketPC
       private bool _GrayScale = false;
 
       [Category("GMap.NET")]
@@ -158,9 +181,10 @@ namespace System.Windows.Forms
             {
                (GMaps.Instance.ImageProxy as WindowsFormsImageProxy).GrayScale = value;
                this.ReloadMap();
-            }               
+            }
          }
       }
+#endif
 
       // internal stuff
       internal readonly Core Core = new Core();
@@ -177,19 +201,22 @@ namespace System.Windows.Forms
       /// </summary>
       public GMapControl()
       {
-         if(!DesignModeInConstruct && !DesignMode)
+#if !PocketPC
+		 if (!DesignModeInConstruct && !DesignMode)
+#endif
          {
             WindowsFormsImageProxy wimg = new WindowsFormsImageProxy();
-            {
-               wimg.GrayScale = this.GrayScaleMode;
-            }
-            GMaps.Instance.ImageProxy = wimg;
+
+#if !PocketPC
+            wimg.GrayScale = this.GrayScaleMode;
 
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.Opaque, true);
             ResizeRedraw = true;
+#endif
+            GMaps.Instance.ImageProxy = wimg;
 
             // to know when to invalidate
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
@@ -239,13 +266,21 @@ namespace System.Windows.Forms
          {
             MethodInvoker m = delegate
             {
+#if !PocketPC
                Invalidate(false);
+#else
+               Invalidate();
+#endif
             };
             this.BeginInvoke(m);
          }
          else
          {
+#if !PocketPC
             Invalidate(false);
+#else
+            Invalidate();
+#endif
          }
       }
 
@@ -298,7 +333,11 @@ namespace System.Windows.Forms
                                  if(!found)
                                     found = true;
                                  {
-                                    g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+#if !PocketPC
+									g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+#else
+                                    g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y);
+#endif
                                  }
                               }
                            }
@@ -310,23 +349,40 @@ namespace System.Windows.Forms
 
                            if(Core.tilePoint == Core.centerTileXYLocation)
                            {
-                              g.DrawString("CENTER: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+#if !PocketPC
+						      g.DrawString("CENTER: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+#else
+                              g.DrawString("CENTER: " + Core.tilePoint.ToString(), MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+#endif
                            }
                            else
                            {
-                              g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+#if !PocketPC
+						      g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+#else
+                              g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+#endif
                            }
                         }
 
                         // add text if tile is missing
                         if(!found)
                         {
-                           g.FillRectangle(EmptytileBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+#if !PocketPC
+						   g.FillRectangle(EmptytileBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
                            g.DrawString(EmptyTileText, MissingDataFont, Brushes.White, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+#else
+                           g.FillRectangle(EmptytileBrush, new System.Drawing.Rectangle(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                           g.DrawString(EmptyTileText, MissingDataFont, TileGridMissingTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+#endif
 
                            if(ShowTileGridLines)
                            {
-                              g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
+#if !PocketPC
+						      g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
+#else
+                              g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
+#endif
                            }
 
                            g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
@@ -382,7 +438,7 @@ namespace System.Windows.Forms
                maxZoom = MaxZoom;
             }
 
-            if((int)Zoom != maxZoom)
+            if((int) Zoom != maxZoom)
             {
                Zoom = maxZoom;
             }
@@ -552,7 +608,7 @@ namespace System.Windows.Forms
                            }
                         }
                      }
-                  }                   
+                  }
                }
             }
          }
@@ -627,15 +683,23 @@ namespace System.Windows.Forms
                {
                   using(Graphics gg = this.CreateGraphics())
                   {
-                     g.CopyFromScreen(PointToScreen(new System.Drawing.Point()).X, PointToScreen(new System.Drawing.Point()).Y, 0, 0, new System.Drawing.Size(Width, Height));
+#if !PocketPC
+					 g.CopyFromScreen(PointToScreen(new System.Drawing.Point()).X, PointToScreen(new System.Drawing.Point()).Y, 0, 0, new System.Drawing.Size(Width, Height));
+#else
+                     throw new NotImplementedException("Not implemeted for PocketPC");
+#endif
                   }
                }
 
-               //Convert the Image to a JPG
+               // Convert the Image to a png
                using(MemoryStream ms = new MemoryStream())
                {
                   bitmap.Save(ms, ImageFormat.Png);
+#if !PocketPC
                   ret = Image.FromStream(ms);
+#else
+                  throw new NotImplementedException("Not implemeted for PocketPC");
+#endif
                }
             }
          }
@@ -648,6 +712,7 @@ namespace System.Windows.Forms
 
       #region UserControl Events
 
+#if !PocketPC
       protected bool DesignModeInConstruct
       {
          get
@@ -656,7 +721,6 @@ namespace System.Windows.Forms
          }
       }
 
-#if !PocketPC
       protected override void OnHandleDestroyed(EventArgs e)
       {
          Core.OnMapClose();
@@ -697,14 +761,17 @@ namespace System.Windows.Forms
 
       PointLatLng selectionStart;
       PointLatLng selectionEnd;
-      float? MapRenderTransform = null;
 
+#if !PocketPC
+      float? MapRenderTransform = null;
+#endif
       protected override void OnPaint(PaintEventArgs e)
       {
          {
             // render white background
             e.Graphics.Clear(Color.WhiteSmoke);
 
+#if !PocketPC
             if(MapRenderTransform.HasValue)
             {
                e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
@@ -714,6 +781,7 @@ namespace System.Windows.Forms
                e.Graphics.ResetTransform();
             }
             else
+#endif
             {
                DrawMapGDIplus(e.Graphics);
             }
@@ -727,8 +795,9 @@ namespace System.Windows.Forms
                   {
                      o.Render(e.Graphics);
                   }
-               }    
-               
+               }
+
+#if !PocketPC
                // selection
                if(!SelectedArea.IsEmpty)
                {
@@ -742,6 +811,7 @@ namespace System.Windows.Forms
 
                   e.Graphics.DrawRectangle(SelectionPen, x1, y1, x2 - x1, y2 - y1);
                }
+#endif
             }
 
             #region -- copyright --
@@ -754,7 +824,11 @@ namespace System.Windows.Forms
                case MapType.GoogleTerrain:
                case MapType.GoogleHybrid:
                {
-                  e.Graphics.DrawString(Core.googleCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#if !PocketPC
+				  e.Graphics.DrawString(Core.googleCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#else
+                  e.Graphics.DrawString(Core.googleCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
+#endif
                }
                break;
 
@@ -763,7 +837,11 @@ namespace System.Windows.Forms
                case MapType.OpenStreetMapSurfer:
                case MapType.OpenStreetMapSurferTerrain:
                {
-                  e.Graphics.DrawString(Core.openStreetMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#if !PocketPC
+				  e.Graphics.DrawString(Core.openStreetMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#else
+                  e.Graphics.DrawString(Core.openStreetMapCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
+#endif
                }
                break;
 
@@ -772,7 +850,12 @@ namespace System.Windows.Forms
                case MapType.YahooLabels:
                case MapType.YahooHybrid:
                {
-                  e.Graphics.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+                  //e.Graphics.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#if !PocketPC
+				  e.Graphics.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#else
+                  e.Graphics.DrawString(Core.yahooMapCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
+#endif
                }
                break;
 
@@ -780,7 +863,12 @@ namespace System.Windows.Forms
                case MapType.BingMap:
                case MapType.BingSatellite:
                {
-                  e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+                  //e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#if !PocketPC
+				  e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#else
+                  e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
+#endif
                }
                break;
 
@@ -793,7 +881,12 @@ namespace System.Windows.Forms
                case MapType.ArcGIS_MapsLT_Map_Hybrid:
                case MapType.ArcGIS_MapsLT_Map_Labels:
                {
-                  e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+                  //e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#if !PocketPC
+				  e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#else
+                  e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
+#endif
                }
                break;
             }
@@ -801,6 +894,7 @@ namespace System.Windows.Forms
             #endregion
 
             #region -- draw scale --
+#if !PocketPC
             if(MapScaleInfoEnabled)
             {
                if(Width > Core.pxRes5000km)
@@ -834,6 +928,7 @@ namespace System.Windows.Forms
                   e.Graphics.DrawString("100m", ScaleFont, ScalePen.Brush, Core.pxRes100m + 9, 11);
                }
             }
+#endif
             #endregion
          }
          base.OnPaint(e);
@@ -863,14 +958,14 @@ namespace System.Windows.Forms
       {
          base.OnResize(e);
 
-         if(!DesignMode && !DesignModeInConstruct)
+         if(Core.started)
          {
             Core.OnMapSizeChanged(Width, Height);
 
             // 50px outside control
             Core.CurrentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
 
-            if(Visible && IsHandleCreated)
+            if(Visible) // && IsHandleCreated
             {
                // keep center on same position
                Core.GoToCurrentPosition();
@@ -884,15 +979,25 @@ namespace System.Windows.Forms
       {
          if(!IsMouseOverMarker)
          {
-            if(e.Button == DragButton && CanDragMap)
+#if !PocketPC
+		    if (e.Button == DragButton && CanDragMap)
+#else
+            if(CanDragMap)
+#endif
             {
                Core.mouseDown.X = e.X;
                Core.mouseDown.Y = e.Y;
 
-               this.Cursor = System.Windows.Forms.Cursors.SizeAll;
+#if !PocketPC
+			   this.Cursor = System.Windows.Forms.Cursors.SizeAll;
+#endif
                Core.BeginDrag(Core.mouseDown);
 
-               this.Invalidate(false);
+#if !PocketPC
+		       this.Invalidate(false);
+#else
+               this.Invalidate();
+#endif
             }
             else if(!isSelected)
             {
@@ -918,8 +1023,10 @@ namespace System.Windows.Forms
          if(Core.IsDragging)
          {
             Core.EndDrag();
-            this.Cursor = System.Windows.Forms.Cursors.Default;
 
+#if !PocketPC
+            this.Cursor = System.Windows.Forms.Cursors.Default;
+#endif
             if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
             {
                if(Core.LastLocationInBounds.HasValue)
@@ -930,6 +1037,7 @@ namespace System.Windows.Forms
          }
          else
          {
+#if !PocketPC
             if(!selectionEnd.IsEmpty && !selectionStart.IsEmpty)
             {
                if(!SelectedArea.IsEmpty && Form.ModifierKeys == Keys.Shift)
@@ -937,6 +1045,7 @@ namespace System.Windows.Forms
                   SetZoomToFitRect(SelectedArea);
                }
             }
+#endif
          }
          RaiseEmptyTileError = false;
       }
@@ -992,7 +1101,8 @@ namespace System.Windows.Forms
          }
          else
          {
-            if(isSelected && !selectionStart.IsEmpty && (Form.ModifierKeys == Keys.Alt || Form.ModifierKeys == Keys.Shift))
+#if !PocketPC
+			if(isSelected && !selectionStart.IsEmpty && (Form.ModifierKeys == Keys.Alt || Form.ModifierKeys == Keys.Shift))
             {
                selectionEnd = FromLocalToLatLng(e.X, e.Y);
                {
@@ -1008,6 +1118,7 @@ namespace System.Windows.Forms
                }
             }
             else
+#endif
             {
                for(int i = Overlays.Count-1; i >= 0; i--)
                {
@@ -1020,10 +1131,16 @@ namespace System.Windows.Forms
                         {
                            if(m.LocalArea.Contains(e.X, e.Y))
                            {
+#if !PocketPC
                               this.Cursor = System.Windows.Forms.Cursors.Hand;
+#endif
                               m.IsMouseOver = true;
                               IsMouseOverMarker = true;
-                              Invalidate(false);
+#if !PocketPC
+						      Invalidate(false);
+#else
+                              Invalidate();
+#endif
 
                               if(OnMarkerEnter != null)
                               {
@@ -1032,10 +1149,16 @@ namespace System.Windows.Forms
                            }
                            else if(m.IsMouseOver)
                            {
+#if !PocketPC
                               this.Cursor = System.Windows.Forms.Cursors.Default;
+#endif
                               m.IsMouseOver = false;
                               IsMouseOverMarker = false;
-                              Invalidate(false);
+#if !PocketPC
+						      Invalidate(false);
+#else
+                              Invalidate();
+#endif
 
                               if(OnMarkerLeave != null)
                               {
@@ -1115,6 +1238,7 @@ namespace System.Windows.Forms
       /// <returns></returns>
       public PointLatLng FromLocalToLatLng(int x, int y)
       {
+#if !PocketPC
          if(MapRenderTransform.HasValue)
          {
             // var tp = MapRenderTransform.Inverse.Transform(new System.Windows.Point(x, y));
@@ -1123,7 +1247,7 @@ namespace System.Windows.Forms
             x = (int) (x * MapRenderTransform.Value);
             y = (int) (y * MapRenderTransform.Value);
          }
-
+#endif
          return Core.FromLocalToLatLng(x, y);
       }
 
@@ -1136,16 +1260,18 @@ namespace System.Windows.Forms
       {
          GMap.NET.Point ret = Core.FromLatLngToLocal(point);
 
+#if !PocketPC
          if(MapRenderTransform.HasValue)
          {
             //var tp = MapRenderTransform.Transform(new System.Windows.Point(ret.X, ret.Y));
             ret.X = (int) (ret.X / MapRenderTransform.Value);
             ret.Y = (int) (ret.X / MapRenderTransform.Value);
          }
-
+#endif
          return ret;
       }
 
+#if !PocketPC
       /// <summary>
       /// shows map db export dialog
       /// </summary>
@@ -1235,6 +1361,7 @@ namespace System.Windows.Forms
          }
          return false;
       }
+#endif
 
       [Category("GMap.NET")]
       public double Zoom
@@ -1266,20 +1393,30 @@ namespace System.Windows.Forms
                {
                   float scaleValue = remainder + 1;
                   {
+#if !PocketPC
                      MapRenderTransform = scaleValue;
+#endif
                   }
 
                   ZoomStep = Convert.ToInt32(value - remainder);
 
-                  //Core_OnMapZoomChanged();
-
+#if !PocketPC
                   Invalidate(false);
+#else
+                  Invalidate();
+#endif
                }
                else
                {
+#if !PocketPC
                   MapRenderTransform = null;
+#endif
                   ZoomStep = Convert.ToInt32(value);
+#if !PocketPC
                   Invalidate(false);
+#else
+                  Invalidate();
+#endif
                }
             }
          }
@@ -1316,7 +1453,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// current map center position
       /// </summary>
-      [Browsable(false)]      
+      [Browsable(false)]
       public PointLatLng CurrentPosition
       {
          get
@@ -1332,7 +1469,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// current marker position in pixel coordinates
       /// </summary>
-      [Browsable(false)]       
+      [Browsable(false)]
       public GMap.NET.Point CurrentPositionGPixel
       {
          get
@@ -1361,7 +1498,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// is user dragging map
       /// </summary>
-      [Browsable(false)]       
+      [Browsable(false)]
       public bool IsDragging
       {
          get
@@ -1378,7 +1515,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// gets current map view top/left coordinate, width in Lng, height in Lat
       /// </summary>
-      [Browsable(false)]      
+      [Browsable(false)]
       public RectLatLng CurrentViewArea
       {
          get
@@ -1422,7 +1559,7 @@ namespace System.Windows.Forms
       /// <summary>
       /// map projection
       /// </summary>
-      [Browsable(false)]        
+      [Browsable(false)]
       public PureProjection Projection
       {
          get

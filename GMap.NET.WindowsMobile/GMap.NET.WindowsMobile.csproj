@@ -26,7 +26,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;PocketPC; SQLiteEnabled</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;PocketPC; MONOdisabled; MySQLdisabled; SQLiteEnabled</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -38,7 +38,7 @@
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;PocketPC; SQLiteEnabled</DefineConstants>
+    <DefineConstants>TRACE;PocketPC; MONOdisabled; MySQLdisabled; SQLiteEnabled</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -230,6 +230,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="System.ComponentModel\Attributes.cs" />
     <Compile Include="System.Threading\ReaderWriterLock.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
@@ -253,6 +254,7 @@
     <None Include="Resources\marker.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="DesignTimeAttributes.xmta" />
     <None Include="Resources\shadow50.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />

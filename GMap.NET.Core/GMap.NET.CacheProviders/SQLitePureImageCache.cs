@@ -17,6 +17,7 @@ namespace GMap.NET.CacheProviders
    using System.Text;
    using System;
    using System.Diagnostics;
+   using System.Globalization;
 
    /// <summary>
    /// ultra fast cache system for tiles
@@ -83,7 +84,11 @@ namespace GMap.NET.CacheProviders
                      {
                         using(DbCommand cmd = cn.CreateCommand())
                         {
+#if !PocketPC
                            cmd.CommandText = Properties.Resources.CreateTileDb;
+#else
+                           cmd.CommandText = GMap.NET.WindowsMobile.Properties.Resources.CreateTileDb;
+#endif
                            cmd.ExecuteNonQuery();
                         }
                         tr.Commit();
@@ -211,7 +216,7 @@ namespace GMap.NET.CacheProviders
          try
          {
             StringBuilder dir = new StringBuilder(gtileCache);
-            dir.AppendFormat("{0}{1}", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
+            dir.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
 
             string d = dir.ToString();
 
@@ -301,7 +306,7 @@ namespace GMap.NET.CacheProviders
          try
          {
             StringBuilder dir = new StringBuilder(gtileCache);
-            dir.AppendFormat("{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
+            dir.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
 
             // get
             {

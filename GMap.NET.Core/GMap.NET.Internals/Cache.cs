@@ -7,6 +7,7 @@ namespace GMap.NET.Internals
    using System;
    using System.Diagnostics;
    using GMap.NET.CacheProviders;
+   using System.Globalization;
 
    /// <summary>
    /// cache system for tiles, geocoding, etc...
@@ -89,9 +90,12 @@ namespace GMap.NET.Internals
             }
 
             StringBuilder file = new StringBuilder(geoCache);
-            file.AppendFormat("{0}.geo", urlEnd);
+            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.geo", urlEnd);
 
-            File.WriteAllText(file.ToString(), content, Encoding.UTF8);
+            using(StreamWriter writer = new StreamWriter(file.ToString(), false, Encoding.UTF8))
+            {
+               writer.Write(content);
+            }
          }
          catch
          {
@@ -105,11 +109,14 @@ namespace GMap.NET.Internals
          try
          {
             StringBuilder file = new StringBuilder(geoCache);
-            file.AppendFormat("{0}.geo", urlEnd);
+            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.geo", urlEnd);
 
             if(File.Exists(file.ToString()))
             {
-               ret = File.ReadAllText(file.ToString(), Encoding.UTF8);
+               using(StreamReader r = new StreamReader(file.ToString(), Encoding.UTF8))
+               {
+                  ret= r.ReadToEnd();
+               }
             }
          }
          catch
@@ -131,9 +138,12 @@ namespace GMap.NET.Internals
             }
 
             StringBuilder file = new StringBuilder(placemarkCache);
-            file.AppendFormat("{0}.plc", urlEnd);
+            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.plc", urlEnd);
 
-            File.WriteAllText(file.ToString(), content, Encoding.UTF8);
+            using(StreamWriter writer = new StreamWriter(file.ToString(), false, Encoding.UTF8))
+            {
+               writer.Write(content);
+            }
          }
          catch
          {
@@ -147,11 +157,14 @@ namespace GMap.NET.Internals
          try
          {
             StringBuilder file = new StringBuilder(placemarkCache);
-            file.AppendFormat("{0}.plc", urlEnd);
+            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.plc", urlEnd);
 
             if(File.Exists(file.ToString()))
             {
-               ret = File.ReadAllText(file.ToString(), Encoding.UTF8);
+               using(StreamReader r = new StreamReader(file.ToString(), Encoding.UTF8))
+               {
+                  ret= r.ReadToEnd();
+               }
             }
          }
          catch
@@ -173,9 +186,12 @@ namespace GMap.NET.Internals
             }
 
             StringBuilder file = new StringBuilder(routeCache);
-            file.AppendFormat("{0}.dragdir", urlEnd);
+            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.dragdir", urlEnd);
 
-            File.WriteAllText(file.ToString(), content, Encoding.UTF8);
+            using(StreamWriter writer = new StreamWriter(file.ToString(), false, Encoding.UTF8))
+            {
+               writer.Write(content);
+            }
          }
          catch
          {
@@ -189,11 +205,14 @@ namespace GMap.NET.Internals
          try
          {
             StringBuilder file = new StringBuilder(routeCache);
-            file.AppendFormat("{0}.dragdir", urlEnd);
+            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.dragdir", urlEnd);
 
             if(File.Exists(file.ToString()))
             {
-               ret = File.ReadAllText(file.ToString(), Encoding.UTF8);
+               using(StreamReader r = new StreamReader(file.ToString(), Encoding.UTF8))
+               {
+                  ret= r.ReadToEnd();
+               }
             }
          }
          catch

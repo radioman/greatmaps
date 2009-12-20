@@ -7,9 +7,14 @@ namespace GMap.NET.WindowsForms.Markers
    {
       public Pen Pen;
 
-      public GMapMarkerCross(PointLatLng p) : base(p)
+      public GMapMarkerCross(PointLatLng p)
+         : base(p)
       {
+#if !PocketPC
          Pen = new Pen(Brushes.Red, 1);
+#else
+         Pen = new Pen(Color.Red, 1);
+#endif
       }
 
       public override void OnRender(Graphics g)
@@ -24,8 +29,8 @@ namespace GMap.NET.WindowsForms.Markers
          System.Drawing.Point p4 = new System.Drawing.Point(LocalPosition.X, LocalPosition.Y);
          p4.Offset(10, 0);
 
-         g.DrawLine(Pen, p1, p2);
-         g.DrawLine(Pen, p3, p4);
+         g.DrawLine(Pen, p1.X, p1.Y, p2.X, p2.Y);
+         g.DrawLine(Pen, p3.X, p3.Y, p4.X, p4.Y);
       }
    }
 }
