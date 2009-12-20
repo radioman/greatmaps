@@ -27,6 +27,8 @@ namespace GMap.NET
 
 #if PocketPC
    using OpenNETCF.ComponentModel;
+   using OpenNETCF.Threading;
+   using Thread=OpenNETCF.Threading.Thread2;
 #endif
 
    /// <summary>
@@ -733,7 +735,7 @@ namespace GMap.NET
                {
                   WaitForCache.Set();
                }
-               else if(CacheEngine == null || CacheEngine.ThreadState == System.Threading.ThreadState.Stopped || CacheEngine.ThreadState == System.Threading.ThreadState.Unstarted)
+               else if(CacheEngine == null)
                {
                   CacheEngine = new Thread(new ThreadStart(CacheEngineLoop));
                   CacheEngine.Name = "GMap.NET CacheEngine";
@@ -789,10 +791,12 @@ namespace GMap.NET
                   }
                }
             }
+#if !PocketPC
             catch(AbandonedMutexException)
             {
                break;
             }
+#endif
             catch(Exception ex)
             {
                Debug.WriteLine("CacheEngineLoop: " + ex.ToString());

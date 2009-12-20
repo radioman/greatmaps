@@ -252,7 +252,11 @@ namespace GMap.NET.ObjectModel
       private void InitializeAdd(NotifyCollectionChangedAction action, IList newItems, int newStartingIndex)
       {
          this._action = action;
-         this._newItems = (newItems == null) ? null : ArrayList.ReadOnly(newItems);
+#if !PocketPC
+				 this._newItems = (newItems == null) ? null : ArrayList.ReadOnly(newItems);
+#else
+         this._newItems = (newItems == null) ? null : newItems;
+#endif
          this._newStartingIndex = newStartingIndex;
       }
 
@@ -281,7 +285,11 @@ namespace GMap.NET.ObjectModel
       private void InitializeRemove(NotifyCollectionChangedAction action, IList oldItems, int oldStartingIndex)
       {
          this._action = action;
-         this._oldItems = (oldItems == null) ? null : ArrayList.ReadOnly(oldItems);
+#if !PocketPC
+				 this._oldItems = (oldItems == null) ? null : ArrayList.ReadOnly(oldItems);
+#else
+         this._oldItems = (oldItems == null) ? null : oldItems;
+#endif
          this._oldStartingIndex = oldStartingIndex;
       }
 
