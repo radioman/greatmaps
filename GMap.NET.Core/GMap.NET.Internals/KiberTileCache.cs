@@ -15,7 +15,11 @@ namespace GMap.NET.Internals
       /// <summary>
       /// the amount of tiles in MB to keep in memmory, default: 22MB, if each ~100Kb it's ~222 tiles
       /// </summary>
+#if !PocketPC
       public int MemoryCacheCapacity = 22;
+#else
+      public int MemoryCacheCapacity = 5;
+#endif
 
       long memoryCacheSize = 0;
 

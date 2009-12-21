@@ -107,6 +107,7 @@ namespace GMap.NET.Internals
                   lock(tileLoadQueue)
                   {
                      tileLoadQueue.Clear();
+                     tileLoadQueue.TrimExcess();
                   }
                   Matrix.Clear();
 
@@ -517,6 +518,7 @@ namespace GMap.NET.Internals
             lock(tileLoadQueue)
             {
                tileLoadQueue.Clear();
+               tileLoadQueue.TrimExcess();
             }
 
             Matrix.Clear();
@@ -606,6 +608,7 @@ namespace GMap.NET.Internals
             lock(tileLoadQueue)
             {
                tileLoadQueue.Clear();
+               tileLoadQueue.TrimExcess();
             }
          }
       }
@@ -621,6 +624,7 @@ namespace GMap.NET.Internals
             if(tileLoadQueue.Count > 0)
             {
                task = tileLoadQueue.Dequeue();
+               tileLoadQueue.TrimExcess();
             }
             else
             {
