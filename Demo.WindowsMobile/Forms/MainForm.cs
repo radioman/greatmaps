@@ -751,6 +751,12 @@ namespace Demo.WindowsMobile
          {
             //status.Text = "\n" + ex.ToString();
          }
+      }
+
+      private void menuItemEnableGrid_Click(object sender, EventArgs e)
+      {
+         menuItemEnableGrid.Checked = !menuItemEnableGrid.Checked;
+         MainMap.ShowTileGridLines = menuItemEnableGrid.Checked;
       }    
    }
 }

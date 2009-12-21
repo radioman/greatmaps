@@ -63,6 +63,8 @@
          this.menuItem28 = new System.Windows.Forms.MenuItem();
          this.menuItem3 = new System.Windows.Forms.MenuItem();
          this.MainMap = new System.Windows.Forms.GMapControl();
+         this.menuItem30 = new System.Windows.Forms.MenuItem();
+         this.menuItemEnableGrid = new System.Windows.Forms.MenuItem();
          this.SuspendLayout();
          // 
          // mainMenu1
@@ -80,6 +82,7 @@
          this.menuItem2.MenuItems.Add(this.menuItem8);
          this.menuItem2.MenuItems.Add(this.menuItem7);
          this.menuItem2.MenuItems.Add(this.menuItem29);
+         this.menuItem2.MenuItems.Add(this.menuItem30);
          this.menuItem2.MenuItems.Add(this.menuItem6);
          this.menuItem2.MenuItems.Add(this.menuItem4);
          this.menuItem2.MenuItems.Add(this.menuItem5);
@@ -268,6 +271,16 @@
          this.MainMap.Zoom = 0;
          this.MainMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainMap_MouseDown);
          // 
+         // menuItem30
+         // 
+         this.menuItem30.MenuItems.Add(this.menuItemEnableGrid);
+         this.menuItem30.Text = "Etc";
+         // 
+         // menuItemEnableGrid
+         // 
+         this.menuItemEnableGrid.Text = "EnableGrid";
+         this.menuItemEnableGrid.Click += new System.EventHandler(this.menuItemEnableGrid_Click);
+         // 
          // MainForm
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
@@ -320,6 +333,8 @@
       private System.Windows.Forms.MenuItem menuItemCacheOnly;
       private System.Windows.Forms.MenuItem menuItem29;
       private System.Windows.Forms.MenuItem menuItemGPSenabled;
+      private System.Windows.Forms.MenuItem menuItem30;
+      private System.Windows.Forms.MenuItem menuItemEnableGrid;
    }
 }
 
