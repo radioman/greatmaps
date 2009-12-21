@@ -7,11 +7,7 @@ namespace GMap.NET.Internals
    using System.Diagnostics;
    using System.Threading;
    using GMap.NET.Projections;
-
-#if PocketPC
-   using OpenNETCF.ComponentModel;
-   using OpenNETCF.Threading;  
-#endif
+   using System.IO;
 
    /// <summary>
    /// internal map control core
@@ -19,7 +15,6 @@ namespace GMap.NET.Internals
    internal class Core
    {
       public PointLatLng currentPosition;
-      public Point currentPositionTile;
       public Point currentPositionPixel;
 
       public Point renderOffset;
@@ -344,6 +339,19 @@ namespace GMap.NET.Internals
          if(!started)
          {
             started = true;
+
+#if PocketPC
+            // use sd card if exist for cache
+            string sd = Native.GetRemovableStorageDirectory();
+            if(!string.IsNullOrEmpty(sd))
+            {
+               Cache.Instance.CacheLocation = sd + Path.DirectorySeparatorChar +  "GMap.NET" + Path.DirectorySeparatorChar;
+            }
+            else
+#endif
+            {
+               Cache.Instance.CacheLocation = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+            }
 
             ReloadMap();
             GoToCurrentPosition();

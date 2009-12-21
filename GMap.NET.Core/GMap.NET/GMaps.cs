@@ -288,7 +288,11 @@ namespace GMap.NET
       /// <summary>
       /// try correct versions once
       /// </summary>
+#if !PocketPC
       public bool CorrectGoogleVersions = true;
+#else
+      public bool CorrectGoogleVersions = false;
+#endif
 
       /// <summary>
       /// cache worker
@@ -1296,7 +1300,7 @@ namespace GMap.NET
                               if(!string.IsNullOrEmpty(api))
                               {
                                  int i = 0;
-                                 string[] opts = api.Split(new string[] { "[\"" }, StringSplitOptions.RemoveEmptyEntries);
+                                 string[] opts = api.Split('['); //"[\""
                                  foreach(string opt in opts)
                                  {
                                     if(opt.Contains("http://"))
@@ -1449,6 +1453,7 @@ namespace GMap.NET
       {
          status = GeoCoderStatusCode.Unknow;
          PointLatLng? ret = null;
+#if !PocketPC
          try
          {
             string urlEnd = url.Substring(url.IndexOf("geo?q="));
@@ -1523,6 +1528,7 @@ namespace GMap.NET
             ret = null;
             Debug.WriteLine("GetLatLngFromUrl: " + ex.ToString());
          }
+#endif
          return ret;
       }
 
@@ -1535,6 +1541,7 @@ namespace GMap.NET
       internal Placemark GetPlacemarkFromReverseGeocoderUrl(string url, bool useCache)
       {
          Placemark ret = null;
+#if !PocketPC
          try
          {
             string urlEnd = url.Substring(url.IndexOf("geo?hl="));
@@ -1601,6 +1608,7 @@ namespace GMap.NET
             ret = null;
             Debug.WriteLine("GetPlacemarkReverseGeocoderUrl: " + ex.ToString());
          }
+#endif
          return ret;
       }
 
@@ -1616,6 +1624,7 @@ namespace GMap.NET
       /// <returns></returns>
       internal List<PointLatLng> GetRouteBetweenPointsUrl(string url, int zoom, bool useCache, out string tooltipHtml, out int numLevel, out int zoomFactor)
       {
+#if !PocketPC
          List<PointLatLng> points = new List<PointLatLng>();
          tooltipHtml = string.Empty;
          numLevel = -1;
@@ -1802,7 +1811,7 @@ namespace GMap.NET
                      int l = numLevelsEnd - x;
                      if(l > 0)
                      {
-                        int.TryParse(route.Substring(x, l), out numLevel);
+                        numLevel = int.Parse(route.Substring(x, l));
                      }
                   }
                }
@@ -1819,7 +1828,7 @@ namespace GMap.NET
                      int l = end - x;
                      if(l > 0)
                      {
-                        int.TryParse(route.Substring(x, l), out zoomFactor);
+                        zoomFactor = int.Parse(route.Substring(x, l));
                      }
                   }
                }
@@ -1866,6 +1875,12 @@ namespace GMap.NET
             Debug.WriteLine("GetRouteBetweenPointsUrl: " + ex.ToString());
          }
          return points;
+#endif
+         tooltipHtml = null;
+         numLevel = 0;
+         zoomFactor = 0;
+
+         return null;
       }
 
       /// <summary>

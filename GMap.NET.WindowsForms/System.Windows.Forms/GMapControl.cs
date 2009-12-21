@@ -189,7 +189,11 @@ namespace System.Windows.Forms
       // internal stuff
       internal readonly Core Core = new Core();
       internal readonly Font CopyrightFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
+#if !PocketPC
       internal readonly Font MissingDataFont = new Font(FontFamily.GenericSansSerif, 11, FontStyle.Bold);
+#else
+      internal readonly Font MissingDataFont = new Font(FontFamily.GenericSansSerif, 8, FontStyle.Regular);
+#endif
       Font ScaleFont = new Font(FontFamily.GenericSansSerif, 5, FontStyle.Italic);
       internal readonly StringFormat CenterFormat = new StringFormat();
       internal readonly StringFormat BottomFormat = new StringFormat();
@@ -202,7 +206,7 @@ namespace System.Windows.Forms
       public GMapControl()
       {
 #if !PocketPC
-		 if (!DesignModeInConstruct && !DesignMode)
+         if(!DesignModeInConstruct && !DesignMode)
 #endif
          {
             WindowsFormsImageProxy wimg = new WindowsFormsImageProxy();
@@ -272,7 +276,7 @@ namespace System.Windows.Forms
                Invalidate();
 #endif
             };
-            this.BeginInvoke(m);
+            this.Invoke(m);
          }
          else
          {
@@ -334,7 +338,7 @@ namespace System.Windows.Forms
                                     found = true;
                                  {
 #if !PocketPC
-									g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+                                    g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
 #else
                                     g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y);
 #endif
@@ -350,7 +354,7 @@ namespace System.Windows.Forms
                            if(Core.tilePoint == Core.centerTileXYLocation)
                            {
 #if !PocketPC
-						      g.DrawString("CENTER: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                              g.DrawString("CENTER: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #else
                               g.DrawString("CENTER: " + Core.tilePoint.ToString(), MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #endif
@@ -358,7 +362,7 @@ namespace System.Windows.Forms
                            else
                            {
 #if !PocketPC
-						      g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                              g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #else
                               g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #endif
@@ -369,7 +373,7 @@ namespace System.Windows.Forms
                         if(!found)
                         {
 #if !PocketPC
-						   g.FillRectangle(EmptytileBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                           g.FillRectangle(EmptytileBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
                            g.DrawString(EmptyTileText, MissingDataFont, Brushes.White, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #else
                            g.FillRectangle(EmptytileBrush, new System.Drawing.Rectangle(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
@@ -379,7 +383,7 @@ namespace System.Windows.Forms
                            if(ShowTileGridLines)
                            {
 #if !PocketPC
-						      g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
+                              g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
 #else
                               g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
 #endif
@@ -684,7 +688,7 @@ namespace System.Windows.Forms
                   using(Graphics gg = this.CreateGraphics())
                   {
 #if !PocketPC
-					 g.CopyFromScreen(PointToScreen(new System.Drawing.Point()).X, PointToScreen(new System.Drawing.Point()).Y, 0, 0, new System.Drawing.Size(Width, Height));
+                     g.CopyFromScreen(PointToScreen(new System.Drawing.Point()).X, PointToScreen(new System.Drawing.Point()).Y, 0, 0, new System.Drawing.Size(Width, Height));
 #else
                      throw new NotImplementedException("Not implemeted for PocketPC");
 #endif
@@ -724,7 +728,7 @@ namespace System.Windows.Forms
       protected override void OnHandleDestroyed(EventArgs e)
       {
          Core.OnMapClose();
-         base.OnHandleDestroyed(e);          
+         base.OnHandleDestroyed(e);
       }
 
       protected override void OnLoad(EventArgs e)
@@ -825,7 +829,7 @@ namespace System.Windows.Forms
                case MapType.GoogleHybrid:
                {
 #if !PocketPC
-				  e.Graphics.DrawString(Core.googleCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+                  e.Graphics.DrawString(Core.googleCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
 #else
                   e.Graphics.DrawString(Core.googleCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
 #endif
@@ -838,7 +842,7 @@ namespace System.Windows.Forms
                case MapType.OpenStreetMapSurferTerrain:
                {
 #if !PocketPC
-				  e.Graphics.DrawString(Core.openStreetMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+                  e.Graphics.DrawString(Core.openStreetMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
 #else
                   e.Graphics.DrawString(Core.openStreetMapCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
 #endif
@@ -852,7 +856,7 @@ namespace System.Windows.Forms
                {
                   //e.Graphics.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
 #if !PocketPC
-				  e.Graphics.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+                  e.Graphics.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
 #else
                   e.Graphics.DrawString(Core.yahooMapCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
 #endif
@@ -865,7 +869,7 @@ namespace System.Windows.Forms
                {
                   //e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
 #if !PocketPC
-				  e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+                  e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
 #else
                   e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
 #endif
@@ -883,7 +887,7 @@ namespace System.Windows.Forms
                {
                   //e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
 #if !PocketPC
-				  e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+                  e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
 #else
                   e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
 #endif
@@ -958,13 +962,13 @@ namespace System.Windows.Forms
       {
          base.OnResize(e);
 
+         Core.OnMapSizeChanged(Width, Height);
+
+         // 50px outside control
+         Core.CurrentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
+
          if(Core.started)
          {
-            Core.OnMapSizeChanged(Width, Height);
-
-            // 50px outside control
-            Core.CurrentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
-
             if(Visible) // && IsHandleCreated
             {
                // keep center on same position
@@ -980,7 +984,7 @@ namespace System.Windows.Forms
          if(!IsMouseOverMarker)
          {
 #if !PocketPC
-		    if (e.Button == DragButton && CanDragMap)
+            if(e.Button == DragButton && CanDragMap)
 #else
             if(CanDragMap)
 #endif
@@ -989,12 +993,12 @@ namespace System.Windows.Forms
                Core.mouseDown.Y = e.Y;
 
 #if !PocketPC
-			   this.Cursor = System.Windows.Forms.Cursors.SizeAll;
+               this.Cursor = System.Windows.Forms.Cursors.SizeAll;
 #endif
                Core.BeginDrag(Core.mouseDown);
 
 #if !PocketPC
-		       this.Invalidate(false);
+               this.Invalidate(false);
 #else
                this.Invalidate();
 #endif
@@ -1102,7 +1106,7 @@ namespace System.Windows.Forms
          else
          {
 #if !PocketPC
-			if(isSelected && !selectionStart.IsEmpty && (Form.ModifierKeys == Keys.Alt || Form.ModifierKeys == Keys.Shift))
+            if(isSelected && !selectionStart.IsEmpty && (Form.ModifierKeys == Keys.Alt || Form.ModifierKeys == Keys.Shift))
             {
                selectionEnd = FromLocalToLatLng(e.X, e.Y);
                {
@@ -1137,7 +1141,7 @@ namespace System.Windows.Forms
                               m.IsMouseOver = true;
                               IsMouseOverMarker = true;
 #if !PocketPC
-						      Invalidate(false);
+                              Invalidate(false);
 #else
                               Invalidate();
 #endif
@@ -1155,7 +1159,7 @@ namespace System.Windows.Forms
                               m.IsMouseOver = false;
                               IsMouseOverMarker = false;
 #if !PocketPC
-						      Invalidate(false);
+                              Invalidate(false);
 #else
                               Invalidate();
 #endif
@@ -1399,7 +1403,6 @@ namespace System.Windows.Forms
                   }
 
                   ZoomStep = Convert.ToInt32(value - remainder);
-
 #if !PocketPC
                   Invalidate(false);
 #else
@@ -1412,6 +1415,7 @@ namespace System.Windows.Forms
                   MapRenderTransform = null;
 #endif
                   ZoomStep = Convert.ToInt32(value);
+                  zoomReal = ZoomStep;
 #if !PocketPC
                   Invalidate(false);
 #else

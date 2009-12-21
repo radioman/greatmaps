@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Demo.WindowsMobile")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("GMap.NET")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Universe")]
 [assembly: AssemblyProduct("Demo.WindowsMobile")]

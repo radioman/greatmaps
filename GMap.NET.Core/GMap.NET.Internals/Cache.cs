@@ -74,8 +74,6 @@ namespace GMap.NET.Internals
          // you can use $ms stuff if you like too ;}
          ImageCache = new MsSQLCePureImageCache();
 #endif
-
-         CacheLocation = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
       }
 
       #region -- etc cache --
