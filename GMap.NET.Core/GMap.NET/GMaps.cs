@@ -80,6 +80,15 @@ namespace GMap.NET
       public int Timeout = 30 * 1000;
 
       /// <summary>
+      /// retry count to get tile 
+      /// </summary>
+#if !PocketPC
+      public int RetryLoadTile = 2;
+#else
+      public int RetryLoadTile = 0;
+#endif         
+
+      /// <summary>
       /// proxy for net access
       /// </summary>
       public IWebProxy Proxy;
@@ -310,6 +319,7 @@ namespace GMap.NET
          #endregion
 
          Language = LanguageType.English;
+         ServicePointManager.DefaultConnectionLimit = 444;
       }
 
       #region -- Stuff --

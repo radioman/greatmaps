@@ -677,13 +677,15 @@ namespace GMap.NET.Internals
                         {
                            Debug.WriteLine("ProcessLoadTask: " + task + " -> empty tile, reloading " + retry);
 
-                           retry++;
-                           Thread.Sleep(2222);
+                           if(retry++ > 0)
+                           {
+                              Thread.Sleep(1111);
+                           }
                            break;
                         }
                      }
                   }
-                  while(retry > 0 && retry < 5);
+                  while(retry < GMaps.Instance.RetryLoadTile);
 
                   Matrix[task.Pos] = t;
 

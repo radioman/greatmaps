@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Data.Common;
 using System.Data.SQLite;
 using GMap.NET.Internals;
+using Microsoft.Win32;
 
 namespace Demo.WindowsMobile
 {
@@ -33,8 +34,6 @@ namespace Demo.WindowsMobile
       GMapOverlay routes;
 
       #region -- variables --
-      DateTime LastMove = DateTime.Now;
-
       string LogDb;
       SQLiteConnection cn;
       DbCommand cmd;
@@ -54,18 +53,18 @@ namespace Demo.WindowsMobile
       double? Lat = 0;
       double? Lng = 0;
       double Delta = 0;
-      readonly List<Satellite> Satellites = new List<Satellite>();
-
-      Pen penForSat = new Pen(Color.White, 3.0f);
-      Brush brushForSatOk = new SolidBrush(Color.LimeGreen);
-      Brush brushForSatNo = new SolidBrush(Color.Red);
+      internal readonly List<Satellite> Satellites = new List<Satellite>();
 
       IntPtr gpsPowerHandle = IntPtr.Zero;
+
+      GPS pageGps;
       #endregion
 
       public MainForm()
       {
          InitializeComponent();
+
+         pageGps = new GPS(this);
 
          GMaps.Instance.Mode = AccessMode.CacheOnly;
 
@@ -150,11 +149,6 @@ namespace Demo.WindowsMobile
       private void menuItem3_Click(object sender, EventArgs e)
       {
          this.Close();
-      }
-
-      private void menuItem1_Click(object sender, EventArgs e)
-      {
-         this.Hide();
       }
 
       // zoom in
@@ -266,8 +260,6 @@ namespace Demo.WindowsMobile
                gps.Close();
             }
 
-            //startGpsMenuItem.Enabled = true;
-            //stopGpsMenuItem.Enabled = false;
             count = 0;
             countReal = 0;
             Total = 0;
@@ -282,8 +274,11 @@ namespace Demo.WindowsMobile
                Satellites.Clear();
                Satellites.TrimExcess();
             }
-            //tabControlLog.Height = 688;
-            //panelSignals.Invalidate();
+
+            if(Controls.Contains(pageGps))
+            {
+               pageGps.panelSignals.Invalidate();
+            }
 
             TryCommitData();
 
@@ -303,6 +298,28 @@ namespace Demo.WindowsMobile
       public new void Hide()
       {
          Native.ShowWindow(this.Handle, Native.SW_MINIMIZED);
+         timerKeeperOfLife.Enabled = false;
+         IsVisible = false;
+      }
+
+      object visibleLock = new object();
+      bool visible = true;
+      public bool IsVisible
+      {
+         get
+         {
+            lock(visibleLock)
+            {
+               return visible;
+            }
+         }
+         set
+         {
+            lock(visibleLock)
+            {
+               visible = value;
+            }
+         }
       }
 
       public bool AddToLogCurrentInfo(GpsPosition data)
@@ -537,11 +554,9 @@ namespace Demo.WindowsMobile
          }
 
          center.Pen.Color = Color.Blue;
-      }
 
-      private void MainMap_MouseDown(object sender, MouseEventArgs e)
-      {
-         LastMove = DateTime.Now;
+         timerKeeperOfLife.Interval = ShortestTimeoutInterval() * 1000;
+         timerKeeperOfLife.Enabled = true;
       }
 
       void gps_LocationChanged(object sender, LocationChangedEventArgs args)
@@ -553,11 +568,11 @@ namespace Demo.WindowsMobile
             {
                count++;
 
-               Debug.WriteLine("LocationChanged: " + DateTime.Now.ToLongTimeString() + " -> " + count);
+               //Debug.WriteLine("LocationChanged: " + DateTime.Now.ToLongTimeString() + " -> " + count);
 
                if(position.Time.HasValue && position.Latitude.HasValue && position.Longitude.HasValue)
                {
-                  Debug.WriteLine("Location: " + position.Latitude.Value + "|" + position.Longitude.Value);
+                  //Debug.WriteLine("Location: " + position.Latitude.Value + "|" + position.Longitude.Value);
 
                   // first time
                   if(!TimeUTC.HasValue)
@@ -586,7 +601,7 @@ namespace Demo.WindowsMobile
                }
 
                // do not update if user is idling
-               if((DateTime.Now - LastMove).TotalMinutes < 1)
+               if(IsVisible)
                {
                   lock(Satellites)
                   {
@@ -646,117 +661,210 @@ namespace Demo.WindowsMobile
       {
          try
          {
+            var data = sender as GpsPosition;
+
             // update signals
-            //panelSignals.Invalidate();
+            if(Controls.Contains(pageGps))
             {
-               var data = sender as GpsPosition;
+               pageGps.panelSignals.Invalidate();
+
                string str = "\n";
 
                if(data != null)
                {
+                  if(data.Time.HasValue && data.Longitude.HasValue && data.Longitude.HasValue)
                   {
-                     if(data.Time.HasValue && data.Longitude.HasValue && data.Longitude.HasValue)
-                     {
-                        str += "Time: " + data.Time.Value.ToLongDateString() + " " + data.Time.Value.ToLongTimeString() + "\n";
-                        str += "Delay: " + ((int) (DateTime.UtcNow - data.Time.Value).TotalSeconds) + "s\n";
-                        str += "Delta: " + string.Format("{0:0.00}m, total: {1:0.00m}\n", Delta*1000.0, Total*1000.0);
-                        str += "Latitude: " + data.Latitude.Value + "\n";
-                        str += "Longitude: " + data.Longitude.Value + "\n\n";
+                     str += "Time: " + data.Time.Value.ToLongDateString() + " " + data.Time.Value.ToLongTimeString() + "\n";
+                     str += "Delay: " + ((int) (DateTime.UtcNow - data.Time.Value).TotalSeconds) + "s, Count:  " + count + "|" + countReal + "\n";
+                     str += "Delta: " + string.Format("{0:0.00}m, total: {1:0.00m}\n", Delta*1000.0, Total*1000.0);
+                     str += "Latitude: " + data.Latitude.Value + "\n";
+                     str += "Longitude: " + data.Longitude.Value + "\n\n";
+                  }
+                  else
+                  {
+                     str += "Time: -" + "\n";
+                     str += "Delay: -" + "\n";
+                     str += "Delta: - \n";
+                     str += "Latitude: -" + "\n";
+                     str += "Longitude: -" + "\n\n";
+                  }
 
-                        // center map
-                        if(menuItemGPSenabled.Checked)
-                        {
-                           MainMap.CurrentPosition = new PointLatLng(data.Latitude.Value, data.Longitude.Value);
-                        }
-                     }
-                     else
-                     {
-                        str += "Time: -" + "\n";
-                        str += "Delay: -" + "\n";
-                        str += "Delta: - \n";
-                        str += "Latitude: -" + "\n";
-                        str += "Longitude: -" + "\n\n";
-                     }
+                  if(data.Speed.HasValue)
+                  {
+                     str += "Speed: " + string.Format("{0:0.00} km/h\n", data.Speed);
+                  }
+                  else
+                  {
+                     str += "Speed: -\n";
+                  }
 
-                     if(data.Speed.HasValue)
-                     {
-                        str += "Speed: " + string.Format("{0:0.00} km/h\n", data.Speed);
-                     }
-                     else
-                     {
-                        str += "Speed: -\n";
-                     }
+                  if(data.SeaLevelAltitude.HasValue)
+                  {
+                     str += "SeaLevelAltitude: " + string.Format("{0:0.00}m\n", data.SeaLevelAltitude);
+                  }
+                  else
+                  {
+                     str += "SeaLevelAltitude: -\n";
+                  }
 
-                     if(data.SeaLevelAltitude.HasValue)
-                     {
-                        str += "SeaLevelAltitude: " + string.Format("{0:0.00}m\n", data.SeaLevelAltitude);
-                     }
-                     else
-                     {
-                        str += "SeaLevelAltitude: -\n";
-                     }
+                  if(data.PositionDilutionOfPrecision.HasValue)
+                  {
+                     str += "PositionDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.PositionDilutionOfPrecision);
+                  }
+                  else
+                  {
+                     str += "PositionDilutionOfPrecision: -\n";
+                  }
 
-                     if(data.PositionDilutionOfPrecision.HasValue)
-                     {
-                        str += "PositionDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.PositionDilutionOfPrecision);
-                     }
-                     else
-                     {
-                        str += "PositionDilutionOfPrecision: -\n";
-                     }
+                  if(data.HorizontalDilutionOfPrecision.HasValue)
+                  {
+                     str += "HorizontalDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.HorizontalDilutionOfPrecision);
+                  }
+                  else
+                  {
+                     str += "HorizontalDilutionOfPrecision: -\n";
+                  }
 
-                     if(data.HorizontalDilutionOfPrecision.HasValue)
-                     {
-                        str += "HorizontalDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.HorizontalDilutionOfPrecision);
-                     }
-                     else
-                     {
-                        str += "HorizontalDilutionOfPrecision: -\n";
-                     }
+                  if(data.VerticalDilutionOfPrecision.HasValue)
+                  {
+                     str += "VerticalDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.VerticalDilutionOfPrecision);
+                  }
+                  else
+                  {
+                     str += "VerticalDilutionOfPrecision: -\n";
+                  }
 
-                     if(data.VerticalDilutionOfPrecision.HasValue)
-                     {
-                        str += "VerticalDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.VerticalDilutionOfPrecision);
-                     }
-                     else
-                     {
-                        str += "VerticalDilutionOfPrecision: -\n";
-                     }
+                  if(data.SatellitesInViewCount.HasValue)
+                  {
+                     str += "SatellitesInView: " + data.SatellitesInViewCount + "\n";
+                  }
+                  else
+                  {
+                     str += "SatellitesInView: -" + "\n";
+                  }
 
-                     if(data.SatellitesInViewCount.HasValue)
+                  if(data.SatelliteCount.HasValue)
+                  {
+                     str += "SatelliteCount: " + data.SatelliteCount + "\n";
+                  }
+                  else
+                  {
+                     str += "SatelliteCount: -" + "\n";
+                  }
+               }
+               pageGps.status.Text = str;
+            }
+            else if(Controls.Contains(MainMap))
+            {
+               if(data != null)
+               {
+                  if(data.Time.HasValue && data.Longitude.HasValue && data.Longitude.HasValue)
+                  {
+                     // center map
+                     if(menuItemGPSenabled.Checked)
                      {
-                        str += "SatellitesInView: " + data.SatellitesInViewCount + "\n";
-                     }
-                     else
-                     {
-                        str += "SatellitesInView: -" + "\n";
-                     }
-
-                     if(data.SatelliteCount.HasValue)
-                     {
-                        str += "SatelliteCount: " + data.SatelliteCount + "\n";
-                     }
-                     else
-                     {
-                        str += "SatelliteCount: -" + "\n";
+                        MainMap.CurrentPosition = new PointLatLng(data.Latitude.Value, data.Longitude.Value);
                      }
                   }
                }
-
-               //status.Text = str;
-               this.Text = "GMap.NET: " + count + "|" + countReal;
             }
          }
          catch(Exception ex)
          {
-            //status.Text = "\n" + ex.ToString();
+            pageGps.status.Text = "\n" + ex.ToString();
          }
+      }
+
+      int ShortestTimeoutInterval()
+      {
+         int retVal = 1000;
+
+         try
+         {
+            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"\SYSTEM\CurrentControlSet\Control\Power");
+            object oBatteryTimeout = key.GetValue("BattPowerOff");
+            object oACTimeOut = key.GetValue("ExtPowerOff");
+            object oScreenPowerOff = key.GetValue("ScreenPowerOff");
+            key.Close();
+
+            if(oBatteryTimeout is int)
+            {
+               int v = (int) oBatteryTimeout;
+               if(v>0)
+                  retVal = Math.Min(retVal, v);
+            }
+            if(oACTimeOut is int)
+            {
+               int v = (int) oACTimeOut;
+               if(v>0)
+                  retVal = Math.Min(retVal, v);
+            }
+            if(oScreenPowerOff is int)
+            {
+               int v = (int) oScreenPowerOff;
+               if(v>0)
+                  retVal = Math.Min(retVal, v);
+            }
+         }
+         catch(Exception ex)
+         {
+            Debug.WriteLine("ShortestTimeoutInterval: " + ex.ToString());
+         }
+
+         return retVal*9/10;
       }
 
       private void menuItemEnableGrid_Click(object sender, EventArgs e)
       {
          menuItemEnableGrid.Checked = !menuItemEnableGrid.Checked;
          MainMap.ShowTileGridLines = menuItemEnableGrid.Checked;
-      }    
+      }
+
+      private void timerKeeperOfLife_Tick(object sender, EventArgs e)
+      {
+         Native.SystemIdleTimerReset();
+      }
+
+      private void menuItemDisableAutoSleep_Click(object sender, EventArgs e)
+      {
+         menuItemDisableAutoSleep.Checked = !menuItemDisableAutoSleep.Checked;
+         timerKeeperOfLife.Enabled = menuItemDisableAutoSleep.Checked;
+      }
+
+      private void MainForm_Activated(object sender, EventArgs e)
+      {
+         timerKeeperOfLife.Enabled = menuItemDisableAutoSleep.Checked;
+         IsVisible = true;
+      }
+
+      private void menuItem32_Click(object sender, EventArgs e)
+      {
+         this.Hide();
+      }
+
+      private void menuItemGotoMap_Click(object sender, EventArgs e)
+      {
+         menuItemGotoMap.Checked = true;
+         menuItemGotoGps.Checked = false;
+
+         this.SuspendLayout();
+         this.Controls.Clear();
+         this.Controls.Add(this.MainMap);
+         this.ResumeLayout(false);
+      }
+
+      private void menuItemGotoGps_Click(object sender, EventArgs e)
+      {
+         menuItemGotoMap.Checked = false;
+         menuItemGotoGps.Checked = true;
+
+         this.SuspendLayout();
+         this.Controls.Clear();
+         this.pageGps.Dock = DockStyle.Fill;
+         this.Controls.Add(pageGps);
+         this.ResumeLayout(false);
+
+         pageGps.panelSignals.Invalidate();
+      }
    }
 }

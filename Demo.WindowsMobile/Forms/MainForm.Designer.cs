@@ -31,6 +31,10 @@
       {
          this.mainMenu1 = new System.Windows.Forms.MainMenu();
          this.menuItem1 = new System.Windows.Forms.MenuItem();
+         this.menuItemGotoMap = new System.Windows.Forms.MenuItem();
+         this.menuItemGotoGps = new System.Windows.Forms.MenuItem();
+         this.menuItem34 = new System.Windows.Forms.MenuItem();
+         this.menuItem32 = new System.Windows.Forms.MenuItem();
          this.menuItem2 = new System.Windows.Forms.MenuItem();
          this.menuItem8 = new System.Windows.Forms.MenuItem();
          this.menuItem12 = new System.Windows.Forms.MenuItem();
@@ -56,15 +60,17 @@
          this.menuItemCacheOnly = new System.Windows.Forms.MenuItem();
          this.menuItem29 = new System.Windows.Forms.MenuItem();
          this.menuItemGPSenabled = new System.Windows.Forms.MenuItem();
+         this.menuItem30 = new System.Windows.Forms.MenuItem();
+         this.menuItemEnableGrid = new System.Windows.Forms.MenuItem();
+         this.menuItemDisableAutoSleep = new System.Windows.Forms.MenuItem();
          this.menuItem6 = new System.Windows.Forms.MenuItem();
          this.menuItem4 = new System.Windows.Forms.MenuItem();
          this.menuItem5 = new System.Windows.Forms.MenuItem();
          this.menuItem27 = new System.Windows.Forms.MenuItem();
          this.menuItem28 = new System.Windows.Forms.MenuItem();
          this.menuItem3 = new System.Windows.Forms.MenuItem();
+         this.timerKeeperOfLife = new System.Windows.Forms.Timer();
          this.MainMap = new System.Windows.Forms.GMapControl();
-         this.menuItem30 = new System.Windows.Forms.MenuItem();
-         this.menuItemEnableGrid = new System.Windows.Forms.MenuItem();
          this.SuspendLayout();
          // 
          // mainMenu1
@@ -74,8 +80,31 @@
          // 
          // menuItem1
          // 
-         this.menuItem1.Text = "Hide";
-         this.menuItem1.Click += new System.EventHandler(this.menuItem1_Click);
+         this.menuItem1.MenuItems.Add(this.menuItemGotoMap);
+         this.menuItem1.MenuItems.Add(this.menuItemGotoGps);
+         this.menuItem1.MenuItems.Add(this.menuItem34);
+         this.menuItem1.MenuItems.Add(this.menuItem32);
+         this.menuItem1.Text = "Page";
+         // 
+         // menuItemGotoMap
+         // 
+         this.menuItemGotoMap.Checked = true;
+         this.menuItemGotoMap.Text = "Map";
+         this.menuItemGotoMap.Click += new System.EventHandler(this.menuItemGotoMap_Click);
+         // 
+         // menuItemGotoGps
+         // 
+         this.menuItemGotoGps.Text = "GPS";
+         this.menuItemGotoGps.Click += new System.EventHandler(this.menuItemGotoGps_Click);
+         // 
+         // menuItem34
+         // 
+         this.menuItem34.Text = "-";
+         // 
+         // menuItem32
+         // 
+         this.menuItem32.Text = "Hide";
+         this.menuItem32.Click += new System.EventHandler(this.menuItem32_Click);
          // 
          // menuItem2
          // 
@@ -226,6 +255,23 @@
          this.menuItemGPSenabled.Text = "Enabled";
          this.menuItemGPSenabled.Click += new System.EventHandler(this.menuItemGPSenabled_Click);
          // 
+         // menuItem30
+         // 
+         this.menuItem30.MenuItems.Add(this.menuItemEnableGrid);
+         this.menuItem30.MenuItems.Add(this.menuItemDisableAutoSleep);
+         this.menuItem30.Text = "Etc";
+         // 
+         // menuItemEnableGrid
+         // 
+         this.menuItemEnableGrid.Text = "EnableGrid";
+         this.menuItemEnableGrid.Click += new System.EventHandler(this.menuItemEnableGrid_Click);
+         // 
+         // menuItemDisableAutoSleep
+         // 
+         this.menuItemDisableAutoSleep.Checked = true;
+         this.menuItemDisableAutoSleep.Text = "DisableAutoSleep";
+         this.menuItemDisableAutoSleep.Click += new System.EventHandler(this.menuItemDisableAutoSleep_Click);
+         // 
          // menuItem6
          // 
          this.menuItem6.Text = "-";
@@ -254,6 +300,10 @@
          this.menuItem3.Text = "Exit";
          this.menuItem3.Click += new System.EventHandler(this.menuItem3_Click);
          // 
+         // timerKeeperOfLife
+         // 
+         this.timerKeeperOfLife.Tick += new System.EventHandler(this.timerKeeperOfLife_Tick);
+         // 
          // MainMap
          // 
          this.MainMap.BackColor = System.Drawing.Color.White;
@@ -269,17 +319,6 @@
          this.MainMap.Size = new System.Drawing.Size(480, 696);
          this.MainMap.TabIndex = 0;
          this.MainMap.Zoom = 0;
-         this.MainMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainMap_MouseDown);
-         // 
-         // menuItem30
-         // 
-         this.menuItem30.MenuItems.Add(this.menuItemEnableGrid);
-         this.menuItem30.Text = "Etc";
-         // 
-         // menuItemEnableGrid
-         // 
-         this.menuItemEnableGrid.Text = "EnableGrid";
-         this.menuItemEnableGrid.Click += new System.EventHandler(this.menuItemEnableGrid_Click);
          // 
          // MainForm
          // 
@@ -294,6 +333,7 @@
          this.Text = "GMap.NET";
          this.Load += new System.EventHandler(this.MainForm_Load);
          this.Closed += new System.EventHandler(this.MainForm_Closed);
+         this.Activated += new System.EventHandler(this.MainForm_Activated);
          this.ResumeLayout(false);
 
       }
@@ -335,6 +375,12 @@
       private System.Windows.Forms.MenuItem menuItemGPSenabled;
       private System.Windows.Forms.MenuItem menuItem30;
       private System.Windows.Forms.MenuItem menuItemEnableGrid;
+      private System.Windows.Forms.Timer timerKeeperOfLife;
+      private System.Windows.Forms.MenuItem menuItemDisableAutoSleep;
+      private System.Windows.Forms.MenuItem menuItemGotoMap;
+      private System.Windows.Forms.MenuItem menuItemGotoGps;
+      private System.Windows.Forms.MenuItem menuItem34;
+      private System.Windows.Forms.MenuItem menuItem32;
    }
 }
 
