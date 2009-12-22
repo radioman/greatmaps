@@ -76,6 +76,7 @@ namespace Demo.WindowsMobile
 
          MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
          MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
+         MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
          // add custom layers  
          {
             routes = new GMapOverlay(MainMap, "routes");
@@ -91,6 +92,11 @@ namespace Demo.WindowsMobile
          // map center
          center = new GMapMarkerCross(MainMap.CurrentPosition);
          top.Markers.Add(center);
+      }
+
+      void MainMap_OnMapZoomChanged()
+      {
+         this.Text = "GMap.NET: " + (int)MainMap.Zoom;
       }
 
       void MainMap_OnCurrentPositionChanged(PointLatLng point)
