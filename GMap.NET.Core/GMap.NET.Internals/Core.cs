@@ -685,7 +685,7 @@ namespace GMap.NET.Internals
                         }
                      }
                   }
-                  while(retry < GMaps.Instance.RetryLoadTile);
+                  while(retry != 0 && retry < GMaps.Instance.RetryLoadTile);
 
                   Matrix[task.Pos] = t;
 
