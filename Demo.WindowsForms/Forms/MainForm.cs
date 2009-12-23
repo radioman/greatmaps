@@ -132,7 +132,7 @@ namespace Demo.WindowsForms
                AddLocationLithuania("Šiauliai");
                AddLocationLithuania("Panevėžys");
                AddLocationLithuania("Kaunas");
-            }              
+            }
          }
       }
 
@@ -219,7 +219,7 @@ namespace Demo.WindowsForms
                   routes.Routes.Add(gr);
                }
 
-               track.Clear();  
+               track.Clear();
                track = null;
             }
          }
@@ -314,7 +314,13 @@ namespace Demo.WindowsForms
             progressBar1.Show();
             groupBoxLoading.Invalidate(true);
          };
-         BeginInvoke(m);
+         try
+         {
+            BeginInvoke(m);
+         }
+         catch
+         {
+         }
       }
 
       // loader end loading tiles
@@ -322,10 +328,16 @@ namespace Demo.WindowsForms
       {
          MethodInvoker m = delegate()
          {
-            progressBar1.Hide();     
+            progressBar1.Hide();
             groupBoxLoading.Invalidate(true);
          };
-         BeginInvoke(m);
+         try
+         {
+            BeginInvoke(m);
+         }
+         catch
+         {
+         }
       }
 
       // current point changed

@@ -434,7 +434,13 @@ namespace System.Windows.Controls
       /// </summary>
       void Core_OnNeedInvalidation()
       {
-         this.Dispatcher.BeginInvoke(DispatcherPriority.Input, new MethodInvoker(InvalidateVisual));
+         try
+         {
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Input, new MethodInvoker(InvalidateVisual));
+         }
+         catch
+         {
+         }
       }
 
       /// <summary>
@@ -731,7 +737,7 @@ namespace System.Windows.Controls
                   if(m.Position.Lat < bottom)
                   {
                      bottom = m.Position.Lat;
-                  }                     
+                  }
                }
             }
          }

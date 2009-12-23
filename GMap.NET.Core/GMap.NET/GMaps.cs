@@ -38,14 +38,14 @@ namespace GMap.NET
    {
       // Google version strings
       public string VersionGoogleMap = "m@115";
-      public string VersionGoogleSatellite = "50";
+      public string VersionGoogleSatellite = "51";
       public string VersionGoogleLabels = "h@115";
       public string VersionGoogleTerrain = "w2p.115";
       public string SecGoogleWord = "Galileo";
 
       // Google (china) version strings
       public string VersionGoogleMapChina = "w2.115";
-      public string VersionGoogleSatelliteChina = "50";
+      public string VersionGoogleSatelliteChina = "51";
       public string VersionGoogleLabelsChina = "w2t.115";
       public string VersionGoogleTerrainChina = "w2p.115";
 

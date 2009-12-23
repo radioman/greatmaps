@@ -276,7 +276,13 @@ namespace System.Windows.Forms
                Invalidate();
 #endif
             };
-            this.Invoke(m);
+            try
+            {
+               this.Invoke(m);
+            }
+            catch
+            {
+            }
          }
          else
          {

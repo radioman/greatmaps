@@ -414,7 +414,13 @@ namespace Demo.WindowsPresentation
             progressBar1.Visibility = Visibility.Visible;
          };
 
-         this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, m);
+         try
+         {
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, m);
+         }
+         catch
+         {
+         }
       }
 
       // tile loading stops
@@ -425,7 +431,13 @@ namespace Demo.WindowsPresentation
             progressBar1.Visibility = Visibility.Hidden;
          };
 
-         this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, m);
+         try
+         {
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, m);
+         }
+         catch
+         {
+         }
       }
 
       // current location changed
