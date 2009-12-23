@@ -731,12 +731,6 @@ namespace System.Windows.Forms
          }
       }
 
-      protected override void OnHandleDestroyed(EventArgs e)
-      {
-         Core.OnMapClose();
-         base.OnHandleDestroyed(e);
-      }
-
       protected override void OnLoad(EventArgs e)
       {
          base.OnLoad(e);
@@ -752,6 +746,27 @@ namespace System.Windows.Forms
          }
       }
 
+      protected override void OnPaint(PaintEventArgs e)
+      {
+         // render white background
+         e.Graphics.Clear(Color.WhiteSmoke);
+
+         if(MapRenderTransform.HasValue)
+         {
+            e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
+            {
+               DrawMapGDIplus(e.Graphics);
+            }
+            e.Graphics.ResetTransform();
+         }
+         else
+         {
+            DrawMapGDIplus(e.Graphics);
+         }
+         OnPaintEtc(e.Graphics);
+
+         base.OnPaint(e);
+      }
 #else
       delegate void MethodInvoker();
 
@@ -767,7 +782,33 @@ namespace System.Windows.Forms
             this.BeginInvoke(m);
          }
       }
+
+      protected override void OnPaintBackground(PaintEventArgs e)
+      {
+         // ...
+      }
+
+      protected override void OnPaint(PaintEventArgs e)
+      {
+         if(gxOff != null && backBuffer != null)
+         {
+            // render white background
+            gxOff.Clear(Color.WhiteSmoke);
+
+            DrawMapGDIplus(gxOff);
+            OnPaintEtc(gxOff);
+
+            e.Graphics.DrawImage(backBuffer, 0, 0);
+         }
+         base.OnPaint(e);
+      }
 #endif
+
+      protected override void OnHandleDestroyed(EventArgs e)
+      {
+         Core.OnMapClose();
+         base.OnHandleDestroyed(e);
+      }
 
       PointLatLng selectionStart;
       PointLatLng selectionEnd;
@@ -775,173 +816,145 @@ namespace System.Windows.Forms
 #if !PocketPC
       float? MapRenderTransform = null;
 #endif
-      protected override void OnPaint(PaintEventArgs e)
+
+      void OnPaintEtc(Graphics g)
       {
+         foreach(GMapOverlay o in Overlays)
          {
-            // render white background
-            e.Graphics.Clear(Color.WhiteSmoke);
-
-#if !PocketPC
-            if(MapRenderTransform.HasValue)
+            if(o.IsVisibile)
             {
-               e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
-               {
-                  DrawMapGDIplus(e.Graphics);
-               }
-               e.Graphics.ResetTransform();
+               o.Render(g);
             }
-            else
-#endif
-            {
-               DrawMapGDIplus(e.Graphics);
-            }
-
-            // render objects on each layer
-            //if(false)
-            {
-               foreach(GMapOverlay o in Overlays)
-               {
-                  if(o.IsVisibile)
-                  {
-                     o.Render(e.Graphics);
-                  }
-               }
-
-#if !PocketPC
-               // selection
-               if(!SelectedArea.IsEmpty)
-               {
-                  GMap.NET.Point p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
-                  GMap.NET.Point p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
-
-                  int x1 = p1.X;
-                  int y1 = p1.Y;
-                  int x2 = p2.X;
-                  int y2 = p2.Y;
-
-                  e.Graphics.DrawRectangle(SelectionPen, x1, y1, x2 - x1, y2 - y1);
-               }
-#endif
-            }
-
-            #region -- copyright --
-
-            switch(Core.MapType)
-            {
-               case MapType.GoogleMap:
-               case MapType.GoogleSatellite:
-               case MapType.GoogleLabels:
-               case MapType.GoogleTerrain:
-               case MapType.GoogleHybrid:
-               {
-#if !PocketPC
-                  e.Graphics.DrawString(Core.googleCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#else
-                  e.Graphics.DrawString(Core.googleCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
-#endif
-               }
-               break;
-
-               case MapType.OpenStreetMap:
-               case MapType.OpenStreetOsm:
-               case MapType.OpenStreetMapSurfer:
-               case MapType.OpenStreetMapSurferTerrain:
-               {
-#if !PocketPC
-                  e.Graphics.DrawString(Core.openStreetMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#else
-                  e.Graphics.DrawString(Core.openStreetMapCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
-#endif
-               }
-               break;
-
-               case MapType.YahooMap:
-               case MapType.YahooSatellite:
-               case MapType.YahooLabels:
-               case MapType.YahooHybrid:
-               {
-                  //e.Graphics.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#if !PocketPC
-                  e.Graphics.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#else
-                  e.Graphics.DrawString(Core.yahooMapCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
-#endif
-               }
-               break;
-
-               case MapType.BingHybrid:
-               case MapType.BingMap:
-               case MapType.BingSatellite:
-               {
-                  //e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#if !PocketPC
-                  e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#else
-                  e.Graphics.DrawString(Core.virtualEarthCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
-#endif
-               }
-               break;
-
-               case MapType.ArcGIS_Map:
-               case MapType.ArcGIS_Satellite:
-               case MapType.ArcGIS_ShadedRelief:
-               case MapType.ArcGIS_Terrain:
-               case MapType.ArcGIS_MapsLT_OrtoFoto:
-               case MapType.ArcGIS_MapsLT_Map:
-               case MapType.ArcGIS_MapsLT_Map_Hybrid:
-               case MapType.ArcGIS_MapsLT_Map_Labels:
-               {
-                  //e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#if !PocketPC
-                  e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#else
-                  e.Graphics.DrawString(Core.arcGisCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 5);
-#endif
-               }
-               break;
-            }
-
-            #endregion
-
-            #region -- draw scale --
-#if !PocketPC
-            if(MapScaleInfoEnabled)
-            {
-               if(Width > Core.pxRes5000km)
-               {
-                  e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes5000km, 10);
-                  e.Graphics.DrawString("5000Km", ScaleFont, ScalePen.Brush, Core.pxRes5000km + 10, 11);
-               }
-               if(Width > Core.pxRes1000km)
-               {
-                  e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes1000km, 10);
-                  e.Graphics.DrawString("1000Km", ScaleFont, ScalePen.Brush, Core.pxRes1000km + 10, 11);
-               }
-               if(Width > Core.pxRes100km && Zoom > 2)
-               {
-                  e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes100km, 10);
-                  e.Graphics.DrawString("100Km", ScaleFont, ScalePen.Brush, Core.pxRes100km + 10, 11);
-               }
-               if(Width > Core.pxRes10km && Zoom > 5)
-               {
-                  e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes10km, 10);
-                  e.Graphics.DrawString("10Km", ScaleFont, ScalePen.Brush, Core.pxRes10km + 10, 11);
-               }
-               if(Width > Core.pxRes1000m && Zoom >= 10)
-               {
-                  e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes1000m, 10);
-                  e.Graphics.DrawString("1000m", ScaleFont, ScalePen.Brush, Core.pxRes1000m + 10, 11);
-               }
-               if(Width > Core.pxRes100m && Zoom > 11)
-               {
-                  e.Graphics.DrawRectangle(ScalePen, 10, 10, Core.pxRes100m, 10);
-                  e.Graphics.DrawString("100m", ScaleFont, ScalePen.Brush, Core.pxRes100m + 9, 11);
-               }
-            }
-#endif
-            #endregion
          }
-         base.OnPaint(e);
+
+#if !PocketPC
+         if(!SelectedArea.IsEmpty)
+         {
+            GMap.NET.Point p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
+            GMap.NET.Point p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
+
+            int x1 = p1.X;
+            int y1 = p1.Y;
+            int x2 = p2.X;
+            int y2 = p2.Y;
+
+            g.DrawRectangle(SelectionPen, x1, y1, x2 - x1, y2 - y1);
+         }
+#endif
+
+         #region -- copyright --
+
+         switch(Core.MapType)
+         {
+            case MapType.GoogleMap:
+            case MapType.GoogleSatellite:
+            case MapType.GoogleLabels:
+            case MapType.GoogleTerrain:
+            case MapType.GoogleHybrid:
+            {
+#if !PocketPC
+               g.DrawString(Core.googleCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#else
+               g.DrawString(Core.googleCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+#endif
+            }
+            break;
+
+            case MapType.OpenStreetMap:
+            case MapType.OpenStreetOsm:
+            case MapType.OpenStreetMapSurfer:
+            case MapType.OpenStreetMapSurferTerrain:
+            {
+#if !PocketPC
+               g.DrawString(Core.openStreetMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#else
+               g.DrawString(Core.openStreetMapCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+#endif
+            }
+            break;
+
+            case MapType.YahooMap:
+            case MapType.YahooSatellite:
+            case MapType.YahooLabels:
+            case MapType.YahooHybrid:
+            {
+#if !PocketPC
+               g.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#else
+               g.DrawString(Core.yahooMapCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+#endif
+            }
+            break;
+
+            case MapType.BingHybrid:
+            case MapType.BingMap:
+            case MapType.BingSatellite:
+            {
+#if !PocketPC
+               g.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#else
+               g.DrawString(Core.virtualEarthCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+#endif
+            }
+            break;
+
+            case MapType.ArcGIS_Map:
+            case MapType.ArcGIS_Satellite:
+            case MapType.ArcGIS_ShadedRelief:
+            case MapType.ArcGIS_Terrain:
+            case MapType.ArcGIS_MapsLT_OrtoFoto:
+            case MapType.ArcGIS_MapsLT_Map:
+            case MapType.ArcGIS_MapsLT_Map_Hybrid:
+            case MapType.ArcGIS_MapsLT_Map_Labels:
+            {
+#if !PocketPC
+               g.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#else
+               g.DrawString(Core.arcGisCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+#endif
+            }
+            break;
+         }
+
+         #endregion
+
+         #region -- draw scale --
+#if !PocketPC
+         if(MapScaleInfoEnabled)
+         {
+            if(Width > Core.pxRes5000km)
+            {
+               g.DrawRectangle(ScalePen, 10, 10, Core.pxRes5000km, 10);
+               g.DrawString("5000Km", ScaleFont, ScalePen.Brush, Core.pxRes5000km + 10, 11);
+            }
+            if(Width > Core.pxRes1000km)
+            {
+               g.DrawRectangle(ScalePen, 10, 10, Core.pxRes1000km, 10);
+               g.DrawString("1000Km", ScaleFont, ScalePen.Brush, Core.pxRes1000km + 10, 11);
+            }
+            if(Width > Core.pxRes100km && Zoom > 2)
+            {
+               g.DrawRectangle(ScalePen, 10, 10, Core.pxRes100km, 10);
+               g.DrawString("100Km", ScaleFont, ScalePen.Brush, Core.pxRes100km + 10, 11);
+            }
+            if(Width > Core.pxRes10km && Zoom > 5)
+            {
+               g.DrawRectangle(ScalePen, 10, 10, Core.pxRes10km, 10);
+               g.DrawString("10Km", ScaleFont, ScalePen.Brush, Core.pxRes10km + 10, 11);
+            }
+            if(Width > Core.pxRes1000m && Zoom >= 10)
+            {
+               g.DrawRectangle(ScalePen, 10, 10, Core.pxRes1000m, 10);
+               g.DrawString("1000m", ScaleFont, ScalePen.Brush, Core.pxRes1000m + 10, 11);
+            }
+            if(Width > Core.pxRes100m && Zoom > 11)
+            {
+               g.DrawRectangle(ScalePen, 10, 10, Core.pxRes100m, 10);
+               g.DrawString("100m", ScaleFont, ScalePen.Brush, Core.pxRes100m + 9, 11);
+            }
+         }
+#endif
+         #endregion
       }
 
 #if !PocketPC
@@ -964,9 +977,26 @@ namespace System.Windows.Forms
          }
       }
 #else
+      Bitmap backBuffer;
+      Graphics gxOff;
+
       protected override void OnResize(EventArgs e)
       {
          base.OnResize(e);
+
+         if(backBuffer != null)
+         {
+            backBuffer.Dispose();
+            backBuffer = null;
+         }
+         if(gxOff != null)
+         {
+            gxOff.Dispose();
+            gxOff = null;
+         }
+
+         backBuffer = new Bitmap(Width, Height);
+         gxOff = Graphics.FromImage(backBuffer);
 
          Core.OnMapSizeChanged(Width, Height);
 

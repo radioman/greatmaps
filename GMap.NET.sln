@@ -33,8 +33,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GMap.NET.WindowsMobile", "G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.WindowsMobile", "Demo.WindowsMobile\Demo.WindowsMobile.csproj", "{27C6704C-040E-43BB-91CC-924EE351A6C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GpsSample", "Testing\GPS\GpsSample.csproj", "{3EE8F42C-9902-47AF-B186-D159E90124F2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -162,20 +160,6 @@ Global
 		{27C6704C-040E-43BB-91CC-924EE351A6C7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{27C6704C-040E-43BB-91CC-924EE351A6C7}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
 		{27C6704C-040E-43BB-91CC-924EE351A6C7}.Release|x86.ActiveCfg = Release|Any CPU
-		{3EE8F42C-9902-47AF-B186-D159E90124F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3EE8F42C-9902-47AF-B186-D159E90124F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3EE8F42C-9902-47AF-B186-D159E90124F2}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{3EE8F42C-9902-47AF-B186-D159E90124F2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{3EE8F42C-9902-47AF-B186-D159E90124F2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{3EE8F42C-9902-47AF-B186-D159E90124F2}.Debug|Mixed Platforms.Deploy.0 = Debug|Any CPU
-		{3EE8F42C-9902-47AF-B186-D159E90124F2}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3EE8F42C-9902-47AF-B186-D159E90124F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3EE8F42C-9902-47AF-B186-D159E90124F2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3EE8F42C-9902-47AF-B186-D159E90124F2}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{3EE8F42C-9902-47AF-B186-D159E90124F2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{3EE8F42C-9902-47AF-B186-D159E90124F2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{3EE8F42C-9902-47AF-B186-D159E90124F2}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
-		{3EE8F42C-9902-47AF-B186-D159E90124F2}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -191,6 +175,5 @@ Global
 		{B6E411A2-DFD8-461E-8207-BDBA405264CA} = {A24009F2-84ED-4F0A-BC1C-8B05F474986A}
 		{C7CD6A76-D941-493F-91F8-6222AB87BECA} = {A24009F2-84ED-4F0A-BC1C-8B05F474986A}
 		{A6E9D42C-935B-44D0-9FB0-E2E0319627D1} = {A24009F2-84ED-4F0A-BC1C-8B05F474986A}
-		{3EE8F42C-9902-47AF-B186-D159E90124F2} = {A24009F2-84ED-4F0A-BC1C-8B05F474986A}
 	EndGlobalSection
 EndGlobal
