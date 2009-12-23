@@ -61,7 +61,7 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.3";
 
       // BingMaps
-      public string VersionBingMaps = "387";
+      public string VersionBingMaps = "392";
 
       /// <summary>
       /// Bing Maps Customer Identification, more info here
