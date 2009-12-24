@@ -236,8 +236,6 @@ namespace Demo.WindowsMobile
 
       private void menuItem27_Click(object sender, EventArgs e)
       {
-         MainMap.Zoom = MainMap.MinZoom + 1;
-         MainMap.CurrentPosition = start;
          MainMap.ReloadMap();
       }
 
@@ -882,6 +880,16 @@ namespace Demo.WindowsMobile
          this.ResumeLayout(false);
 
          pageGps.panelSignals.Invalidate();
+      }
+
+      private void menuItem31_Click(object sender, EventArgs e)
+      {
+         MainMap.Zoom = MainMap.MinZoom;
+      }
+
+      private void menuItem33_Click(object sender, EventArgs e)
+      {
+         MainMap.Zoom = MainMap.MaxZoom;
       }
    }
 }

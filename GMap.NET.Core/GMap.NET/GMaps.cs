@@ -85,7 +85,7 @@ namespace GMap.NET
 #if !PocketPC
       public int RetryLoadTile = 2;
 #else
-      public int RetryLoadTile = 0;
+      public int RetryLoadTile = 1;
 #endif
 
       /// <summary>

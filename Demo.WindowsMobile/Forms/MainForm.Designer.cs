@@ -72,6 +72,8 @@
          this.menuItem3 = new System.Windows.Forms.MenuItem();
          this.timerKeeperOfLife = new System.Windows.Forms.Timer();
          this.MainMap = new System.Windows.Forms.GMapControl();
+         this.menuItem31 = new System.Windows.Forms.MenuItem();
+         this.menuItem33 = new System.Windows.Forms.MenuItem();
          this.SuspendLayout();
          // 
          // mainMenu1
@@ -114,8 +116,10 @@
          this.menuItem2.MenuItems.Add(this.menuItem29);
          this.menuItem2.MenuItems.Add(this.menuItem30);
          this.menuItem2.MenuItems.Add(this.menuItem6);
+         this.menuItem2.MenuItems.Add(this.menuItem33);
          this.menuItem2.MenuItems.Add(this.menuItem4);
          this.menuItem2.MenuItems.Add(this.menuItem5);
+         this.menuItem2.MenuItems.Add(this.menuItem31);
          this.menuItem2.MenuItems.Add(this.menuItem27);
          this.menuItem2.MenuItems.Add(this.menuItem28);
          this.menuItem2.MenuItems.Add(this.menuItem3);
@@ -266,7 +270,7 @@
          // 
          this.menuItem30.MenuItems.Add(this.menuItemEnableGrid);
          this.menuItem30.MenuItems.Add(this.menuItemDisableAutoSleep);
-         this.menuItem30.Text = "Etc";
+         this.menuItem30.Text = "Options";
          // 
          // menuItemEnableGrid
          // 
@@ -325,6 +329,16 @@
          this.MainMap.Size = new System.Drawing.Size(480, 696);
          this.MainMap.TabIndex = 0;
          this.MainMap.Zoom = 0;
+         // 
+         // menuItem31
+         // 
+         this.menuItem31.Text = "Zoom Min";
+         this.menuItem31.Click += new System.EventHandler(this.menuItem31_Click);
+         // 
+         // menuItem33
+         // 
+         this.menuItem33.Text = "Zoom Max";
+         this.menuItem33.Click += new System.EventHandler(this.menuItem33_Click);
          // 
          // MainForm
          // 
@@ -388,6 +402,8 @@
       private System.Windows.Forms.MenuItem menuItem34;
       private System.Windows.Forms.MenuItem menuItem32;
       private System.Windows.Forms.MenuItem menuItemServerOnly;
+      private System.Windows.Forms.MenuItem menuItem33;
+      private System.Windows.Forms.MenuItem menuItem31;
    }
 }
 

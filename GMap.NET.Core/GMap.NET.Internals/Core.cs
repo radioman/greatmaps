@@ -618,9 +618,9 @@ namespace GMap.NET.Internals
       }
 
 #if PocketPC
-      Semaphore loaderLimit = new Semaphore(2, 2);
+      Semaphore loaderLimit = new Semaphore(3, 3);
 #else
-      Semaphore loaderLimit = new Semaphore(4, 4);
+      Semaphore loaderLimit = new Semaphore(5, 5);
 #endif
 
       void ProcessLoadTask(object obj)
