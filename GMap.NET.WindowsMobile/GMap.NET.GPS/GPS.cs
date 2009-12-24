@@ -14,6 +14,12 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
+#if PocketPC
+using OpenNETCF.ComponentModel;
+using OpenNETCF.Threading;
+using Thread=OpenNETCF.Threading.Thread2;
+#endif
+
 namespace GMap.NET.GPS
 {
    public delegate void LocationChangedEventHandler(object sender, LocationChangedEventArgs args);
@@ -40,7 +46,7 @@ namespace GMap.NET.GPS
       IntPtr stopHandle = IntPtr.Zero;
 
       // holds our event thread instance
-      System.Threading.Thread gpsEventThread = null;
+      Thread gpsEventThread = null;
 
 
       event LocationChangedEventHandler locationChanged;
@@ -142,9 +148,9 @@ namespace GMap.NET.GPS
          }
 
          // wait exit
-         if(gpsEventThread != null)
+         if(gpsEventThread != null && gpsEventThread.IsAlive)
          {
-            gpsEventThread.Join();
+            //gpsEventThread.Join(4444);
          }
       }
 
@@ -247,7 +253,9 @@ namespace GMap.NET.GPS
          if(gpsEventThread == null && gpsHandle != IntPtr.Zero)
          {
             // Create and start thread to listen for GPS events
-            gpsEventThread = new System.Threading.Thread(new System.Threading.ThreadStart(WaitForGpsEvents));
+            gpsEventThread = new Thread(new System.Threading.ThreadStart(WaitForGpsEvents));
+            gpsEventThread.IsBackground = false;
+            gpsEventThread.Name = "GMap.NET GpsEvents";
             gpsEventThread.Start();
          }
       }

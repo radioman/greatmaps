@@ -72,7 +72,7 @@ namespace GMap.NET
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
       /// </summary>
-      public string UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
+      public string UserAgent = "Opera;";
 
       /// <summary>
       /// timeout for map connections
@@ -86,7 +86,7 @@ namespace GMap.NET
       public int RetryLoadTile = 2;
 #else
       public int RetryLoadTile = 0;
-#endif         
+#endif
 
       /// <summary>
       /// proxy for net access
@@ -1973,7 +1973,6 @@ namespace GMap.NET
                   request.UserAgent = UserAgent;
                   request.Timeout = Timeout;
                   request.ReadWriteTimeout = Timeout * 6;
-                  request.KeepAlive = true;
 
                   switch(type)
                   {
@@ -2038,10 +2037,17 @@ namespace GMap.NET
                      break;
                   }
 
+                  Debug.WriteLine("Starting GetResponse: " + pos);
+
                   using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
                   {
+                     Debug.WriteLine("GetResponse OK: " + pos);
+
+                     Debug.WriteLine("Starting GetResponseStream: " + pos);
                      MemoryStream responseStream = Stuff.CopyStream(response.GetResponseStream(), false);
                      {
+                        Debug.WriteLine("GetResponseStream OK: " + pos);
+
                         if(GMaps.Instance.ImageProxy != null)
                         {
                            ret = GMaps.Instance.ImageProxy.FromStream(responseStream);

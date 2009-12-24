@@ -96,7 +96,7 @@ namespace Demo.WindowsMobile
 
       void MainMap_OnMapZoomChanged()
       {
-         this.Text = "GMap.NET: " + (int)MainMap.Zoom;
+         this.Text = "GMap.NET: " + (int) MainMap.Zoom;
       }
 
       void MainMap_OnCurrentPositionChanged(PointLatLng point)
@@ -246,12 +246,23 @@ namespace Demo.WindowsMobile
          GMaps.Instance.Mode = AccessMode.CacheOnly;
          menuItemCacheOnly.Checked = true;
          menuItemServerAndCache.Checked = false;
+         menuItemServerOnly.Checked = false;
       }
 
       private void menuItemServerAndCache_Click(object sender, EventArgs e)
       {
          GMaps.Instance.Mode = AccessMode.ServerAndCache;
          menuItemServerAndCache.Checked = true;
+         menuItemCacheOnly.Checked = false;
+         menuItemServerOnly.Checked = false;
+
+      }
+
+      private void menuItemServerOnly_Click(object sender, EventArgs e)
+      {
+         GMaps.Instance.Mode = AccessMode.ServerOnly;
+         menuItemServerOnly.Checked = true;
+         menuItemServerAndCache.Checked = false;
          menuItemCacheOnly.Checked = false;
       }
 

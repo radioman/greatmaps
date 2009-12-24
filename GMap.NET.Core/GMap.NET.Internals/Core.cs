@@ -3,11 +3,14 @@ namespace GMap.NET.Internals
 {
    using System;
    using System.Collections.Generic;
-   using System.ComponentModel;
    using System.Diagnostics;
    using System.Threading;
    using GMap.NET.Projections;
    using System.IO;
+
+#if PocketPC
+   using Semaphore=OpenNETCF.Threading.Semaphore;
+#endif
 
    /// <summary>
    /// internal map control core
@@ -36,7 +39,7 @@ namespace GMap.NET.Internals
       public Rectangle CurrentRegion;
 
       public readonly TileMatrix Matrix = new TileMatrix();
-      readonly EventWaitHandle waitOnEmptyTasks = new EventWaitHandle(false, EventResetMode.AutoReset);
+      readonly System.Threading.EventWaitHandle waitOnEmptyTasks = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.AutoReset);
       public List<Point> tileDrawingList = new List<Point>();
       public readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>();
       readonly WaitCallback ProcessLoadTaskCallback;
@@ -259,6 +262,7 @@ namespace GMap.NET.Internals
 
                if(started)
                {
+                  CancelAsyncTasks();
                   OnMapSizeChanged(Width, Height);
                   GoToCurrentPosition();
                   ReloadMap();
@@ -613,120 +617,130 @@ namespace GMap.NET.Internals
          }
       }
 
+#if PocketPC
+      Semaphore loaderLimit = new Semaphore(2, 2);
+#else
+      Semaphore loaderLimit = new Semaphore(4, 4);
+#endif
+
       void ProcessLoadTask(object obj)
       {
-         bool process = true;
-
-         LoadTask task = new LoadTask();
-
-         lock(tileLoadQueue)
+         if(loaderLimit.WaitOne(GMaps.Instance.Timeout, false))
          {
-            if(tileLoadQueue.Count > 0)
-            {
-               task = tileLoadQueue.Dequeue();
-               tileLoadQueue.TrimExcess();
-            }
-            else
-            {
-               process = false;
-            }
-         }
+            bool process = true;
 
-         if(process && Matrix[task.Pos] == null)
-         {
-            lock(loadingLock)
+            LoadTask task = new LoadTask();
+
+            lock(tileLoadQueue)
             {
-               if(tileLoaders++ == 0)
+               if(tileLoadQueue.Count > 0)
                {
-                  if(OnTileLoadStart != null)
-                  {
-                     OnTileLoadStart();
-                  }
+                  task = tileLoadQueue.Dequeue();
+                  tileLoadQueue.TrimExcess();
+               }
+               else
+               {
+                  process = false;
                }
             }
 
-            try
+            if(process && Matrix[task.Pos] == null)
             {
-               //Debug.WriteLine("loader[" + 0 + "]: download => " + task);
-
-               Tile t = new Tile(task.Zoom, task.Pos);
-               {
-                  List<MapType> layers = GMaps.Instance.GetAllLayersOfType(MapType);
-                  int retry = 0;
-
-                  // try get it few times
-                  do
-                  {
-                     lock(t.Overlays)
-                     {
-                        t.Overlays.Clear();
-                     }
-
-                     foreach(MapType tl in layers)
-                     {
-                        PureImage img = GMaps.Instance.GetImageFrom(tl, task.Pos, task.Zoom);
-                        if(img != null)
-                        {
-                           lock(t.Overlays)
-                           {
-                              t.Overlays.Add(img);
-                           }
-                           retry = 0;
-                        }
-                        else
-                        {
-                           Debug.WriteLine("ProcessLoadTask: " + task + " -> empty tile, reloading " + retry);
-
-                           if(retry++ > 0)
-                           {
-                              Thread.Sleep(1111);
-                           }
-                           break;
-                        }
-                     }
-                  }
-                  while(retry != 0 && retry < GMaps.Instance.RetryLoadTile);
-
-                  Matrix[task.Pos] = t;
-
-                  layers.Clear();
-                  layers = null;
-               }
-            }
-            catch(Exception ex)
-            {
-               Debug.WriteLine("ProcessLoadTask: " + ex.ToString());
-            }
-            finally
-            {
-               if(OnNeedInvalidation != null)
-               {
-                  OnNeedInvalidation();
-               }
-
                lock(loadingLock)
                {
-                  // last buddy cleans stuff ;}
-                  if(--tileLoaders <= 0)
+                  if(tileLoaders++ == 0)
                   {
-                     if(OnTileLoadComplete != null)
+                     if(OnTileLoadStart != null)
                      {
-                        OnTileLoadComplete();
+                        OnTileLoadStart();
                      }
+                  }
+               }
 
-                     lock(tileDrawingList)
+               try
+               {
+                  //Debug.WriteLine("loader[" + 0 + "]: download => " + task);
+
+                  Tile t = new Tile(task.Zoom, task.Pos);
+                  {
+                     List<MapType> layers = GMaps.Instance.GetAllLayersOfType(MapType);
+                     int retry = 0;
+
+                     // try get it few times
+                     do
                      {
-                        Matrix.ClearPointsNotIn(ref tileDrawingList);
+                        lock(t.Overlays)
+                        {
+                           t.Overlays.Clear();
+                        }
 
-                        GC.Collect();
-                        GC.WaitForPendingFinalizers();
-                        GC.Collect();
+                        foreach(MapType tl in layers)
+                        {
+                           PureImage img = GMaps.Instance.GetImageFrom(tl, task.Pos, task.Zoom);
+                           if(img != null)
+                           {
+                              lock(t.Overlays)
+                              {
+                                 t.Overlays.Add(img);
+                              }
+                              retry = 0;
+                           }
+                           else
+                           {
+                              Debug.WriteLine("ProcessLoadTask: " + task + " -> empty tile, reloading " + retry);
+
+                              if(retry++ > 0)
+                              {
+                                 Thread.Sleep(1111);
+                              }
+                              break;
+                           }
+                        }
                      }
+                     while(retry != 0 && retry < GMaps.Instance.RetryLoadTile);
 
-                     Debug.WriteLine("MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB - " + tileLoaders);
+                     Matrix[task.Pos] = t;
+
+                     layers.Clear();
+                     layers = null;
+                  }
+               }
+               catch(Exception ex)
+               {
+                  Debug.WriteLine("ProcessLoadTask: " + ex.ToString());
+               }
+               finally
+               {
+                  if(OnNeedInvalidation != null)
+                  {
+                     OnNeedInvalidation();
+                  }
+
+                  lock(loadingLock)
+                  {
+                     // last buddy cleans stuff ;}
+                     if(--tileLoaders <= 0)
+                     {
+                        if(OnTileLoadComplete != null)
+                        {
+                           OnTileLoadComplete();
+                        }
+
+                        lock(tileDrawingList)
+                        {
+                           Matrix.ClearPointsNotIn(ref tileDrawingList);
+
+                           GC.Collect();
+                           GC.WaitForPendingFinalizers();
+                           GC.Collect();
+                        }
+
+                        Debug.WriteLine("MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB - " + tileLoaders);
+                     }
                   }
                }
             }
+            loaderLimit.Release();
          }
       }
 

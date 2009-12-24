@@ -56,8 +56,9 @@
          this.menuItem25 = new System.Windows.Forms.MenuItem();
          this.menuItem26 = new System.Windows.Forms.MenuItem();
          this.menuItem7 = new System.Windows.Forms.MenuItem();
-         this.menuItemServerAndCache = new System.Windows.Forms.MenuItem();
          this.menuItemCacheOnly = new System.Windows.Forms.MenuItem();
+         this.menuItemServerAndCache = new System.Windows.Forms.MenuItem();
+         this.menuItemServerOnly = new System.Windows.Forms.MenuItem();
          this.menuItem29 = new System.Windows.Forms.MenuItem();
          this.menuItemGPSenabled = new System.Windows.Forms.MenuItem();
          this.menuItem30 = new System.Windows.Forms.MenuItem();
@@ -229,20 +230,26 @@
          // 
          // menuItem7
          // 
-         this.menuItem7.MenuItems.Add(this.menuItemServerAndCache);
          this.menuItem7.MenuItems.Add(this.menuItemCacheOnly);
+         this.menuItem7.MenuItems.Add(this.menuItemServerAndCache);
+         this.menuItem7.MenuItems.Add(this.menuItemServerOnly);
          this.menuItem7.Text = "Mode";
-         // 
-         // menuItemServerAndCache
-         // 
-         this.menuItemServerAndCache.Text = "ServerAndCache";
-         this.menuItemServerAndCache.Click += new System.EventHandler(this.menuItemServerAndCache_Click);
          // 
          // menuItemCacheOnly
          // 
          this.menuItemCacheOnly.Checked = true;
          this.menuItemCacheOnly.Text = "CacheOnly";
          this.menuItemCacheOnly.Click += new System.EventHandler(this.menuItemCacheOnly_Click);
+         // 
+         // menuItemServerAndCache
+         // 
+         this.menuItemServerAndCache.Text = "ServerAndCache";
+         this.menuItemServerAndCache.Click += new System.EventHandler(this.menuItemServerAndCache_Click);
+         // 
+         // menuItemServerOnly
+         // 
+         this.menuItemServerOnly.Text = "ServerOnly";
+         this.menuItemServerOnly.Click += new System.EventHandler(this.menuItemServerOnly_Click);
          // 
          // menuItem29
          // 
@@ -380,6 +387,7 @@
       private System.Windows.Forms.MenuItem menuItemGotoGps;
       private System.Windows.Forms.MenuItem menuItem34;
       private System.Windows.Forms.MenuItem menuItem32;
+      private System.Windows.Forms.MenuItem menuItemServerOnly;
    }
 }
 
