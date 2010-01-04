@@ -20,6 +20,7 @@
     </FormFactorID>
     <DeployDirPrefix>%25CSIDL_PROGRAM_FILES%25</DeployDirPrefix>
     <ApplicationIcon>Resources\ImageReady.ico</ApplicationIcon>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -86,6 +87,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.WindowsCE.Forms" />
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Data" />

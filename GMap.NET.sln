@@ -33,6 +33,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GMap.NET.WindowsMobile", "G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.WindowsMobile", "Demo.WindowsMobile\Demo.WindowsMobile.csproj", "{27C6704C-040E-43BB-91CC-924EE351A6C7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Setup", "Setup", "{6FC7B551-03A4-4AE9-9D59-3A70D604AAAE}"
+EndProject
+Project("{B900F1C2-3D47-4FEC-85B3-04AAF18C3634}") = "GMap.NET.WindowsMobile", "Setup\GMap.NET.WindowsMobile.vddproj", "{E47B566B-F503-424F-95CE-32D181760EAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -160,6 +164,18 @@ Global
 		{27C6704C-040E-43BB-91CC-924EE351A6C7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{27C6704C-040E-43BB-91CC-924EE351A6C7}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
 		{27C6704C-040E-43BB-91CC-924EE351A6C7}.Release|x86.ActiveCfg = Release|Any CPU
+		{E47B566B-F503-424F-95CE-32D181760EAF}.Debug|Any CPU.ActiveCfg = Debug
+		{E47B566B-F503-424F-95CE-32D181760EAF}.Debug|Any CPU.Build.0 = Debug
+		{E47B566B-F503-424F-95CE-32D181760EAF}.Debug|Mixed Platforms.ActiveCfg = Debug
+		{E47B566B-F503-424F-95CE-32D181760EAF}.Debug|Mixed Platforms.Build.0 = Debug
+		{E47B566B-F503-424F-95CE-32D181760EAF}.Debug|x86.ActiveCfg = Debug
+		{E47B566B-F503-424F-95CE-32D181760EAF}.Debug|x86.Build.0 = Debug
+		{E47B566B-F503-424F-95CE-32D181760EAF}.Release|Any CPU.ActiveCfg = Release
+		{E47B566B-F503-424F-95CE-32D181760EAF}.Release|Any CPU.Build.0 = Release
+		{E47B566B-F503-424F-95CE-32D181760EAF}.Release|Mixed Platforms.ActiveCfg = Release
+		{E47B566B-F503-424F-95CE-32D181760EAF}.Release|Mixed Platforms.Build.0 = Release
+		{E47B566B-F503-424F-95CE-32D181760EAF}.Release|x86.ActiveCfg = Release
+		{E47B566B-F503-424F-95CE-32D181760EAF}.Release|x86.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -175,5 +191,6 @@ Global
 		{B6E411A2-DFD8-461E-8207-BDBA405264CA} = {A24009F2-84ED-4F0A-BC1C-8B05F474986A}
 		{C7CD6A76-D941-493F-91F8-6222AB87BECA} = {A24009F2-84ED-4F0A-BC1C-8B05F474986A}
 		{A6E9D42C-935B-44D0-9FB0-E2E0319627D1} = {A24009F2-84ED-4F0A-BC1C-8B05F474986A}
+		{E47B566B-F503-424F-95CE-32D181760EAF} = {6FC7B551-03A4-4AE9-9D59-3A70D604AAAE}
 	EndGlobalSection
 EndGlobal

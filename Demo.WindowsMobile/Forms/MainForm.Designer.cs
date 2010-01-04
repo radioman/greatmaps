@@ -65,15 +65,15 @@
          this.menuItemEnableGrid = new System.Windows.Forms.MenuItem();
          this.menuItemDisableAutoSleep = new System.Windows.Forms.MenuItem();
          this.menuItem6 = new System.Windows.Forms.MenuItem();
+         this.menuItem33 = new System.Windows.Forms.MenuItem();
          this.menuItem4 = new System.Windows.Forms.MenuItem();
          this.menuItem5 = new System.Windows.Forms.MenuItem();
+         this.menuItem31 = new System.Windows.Forms.MenuItem();
          this.menuItem27 = new System.Windows.Forms.MenuItem();
          this.menuItem28 = new System.Windows.Forms.MenuItem();
          this.menuItem3 = new System.Windows.Forms.MenuItem();
          this.timerKeeperOfLife = new System.Windows.Forms.Timer();
          this.MainMap = new System.Windows.Forms.GMapControl();
-         this.menuItem31 = new System.Windows.Forms.MenuItem();
-         this.menuItem33 = new System.Windows.Forms.MenuItem();
          this.SuspendLayout();
          // 
          // mainMenu1
@@ -287,6 +287,11 @@
          // 
          this.menuItem6.Text = "-";
          // 
+         // menuItem33
+         // 
+         this.menuItem33.Text = "Zoom Max";
+         this.menuItem33.Click += new System.EventHandler(this.menuItem33_Click);
+         // 
          // menuItem4
          // 
          this.menuItem4.Text = "Zoom In";
@@ -296,6 +301,11 @@
          // 
          this.menuItem5.Text = "Zoom out";
          this.menuItem5.Click += new System.EventHandler(this.menuItem5_Click);
+         // 
+         // menuItem31
+         // 
+         this.menuItem31.Text = "Zoom Min";
+         this.menuItem31.Click += new System.EventHandler(this.menuItem31_Click);
          // 
          // menuItem27
          // 
@@ -322,6 +332,7 @@
          this.MainMap.CanDragMap = true;
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
          this.MainMap.Location = new System.Drawing.Point(0, 0);
+         this.MainMap.MapType = GMap.NET.MapType.GoogleMap;
          this.MainMap.MarkersEnabled = true;
          this.MainMap.Name = "MainMap";
          this.MainMap.RoutesEnabled = true;
@@ -330,16 +341,6 @@
          this.MainMap.TabIndex = 0;
          this.MainMap.Zoom = 0;
          // 
-         // menuItem31
-         // 
-         this.menuItem31.Text = "Zoom Min";
-         this.menuItem31.Click += new System.EventHandler(this.menuItem31_Click);
-         // 
-         // menuItem33
-         // 
-         this.menuItem33.Text = "Zoom Max";
-         this.menuItem33.Click += new System.EventHandler(this.menuItem33_Click);
-         // 
          // MainForm
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
@@ -347,6 +348,7 @@
          this.AutoScroll = true;
          this.ClientSize = new System.Drawing.Size(480, 696);
          this.Controls.Add(this.MainMap);
+         this.KeyPreview = true;
          this.Location = new System.Drawing.Point(0, 52);
          this.Menu = this.mainMenu1;
          this.Name = "MainForm";

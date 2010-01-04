@@ -17,6 +17,7 @@ using System.Data.Common;
 using System.Data.SQLite;
 using GMap.NET.Internals;
 using Microsoft.Win32;
+using Microsoft.WindowsCE.Forms;
 
 namespace Demo.WindowsMobile
 {
@@ -25,7 +26,6 @@ namespace Demo.WindowsMobile
       PointLatLng start = new PointLatLng(54.6961334816182, 25.2985095977783);
 
       // marker
-      GMapMarker currentMarker;
       GMapMarkerCross center;
 
       // layers
@@ -58,6 +58,8 @@ namespace Demo.WindowsMobile
       IntPtr gpsPowerHandle = IntPtr.Zero;
 
       GPS pageGps;
+
+      MsgWindow msgW;
       #endregion
 
       public MainForm()
@@ -77,6 +79,7 @@ namespace Demo.WindowsMobile
          MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
          MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
          MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
+
          // add custom layers  
          {
             routes = new GMapOverlay(MainMap, "routes");
@@ -92,6 +95,12 @@ namespace Demo.WindowsMobile
          // map center
          center = new GMapMarkerCross(MainMap.CurrentPosition);
          top.Markers.Add(center);
+
+         UnregisterFunc1(0, 0x75); // VOLUME UP
+         UnregisterFunc1(0, 0x76); // VOLUME DOWN 
+         msgW = new MsgWindow(this);
+         RegisterHotKey(msgW.Hwnd, 3, 0, 0x75);
+         RegisterHotKey(msgW.Hwnd, 4, 0, 0x76);
       }
 
       void MainMap_OnMapZoomChanged()
@@ -297,11 +306,11 @@ namespace Demo.WindowsMobile
 
             TryCommitData();
 
-            center.Pen.Color = Color.Red;
+            center.Pen.Color = Color.Blue;
          }
          else // start tracking
          {
-            center.Pen.Color = Color.Blue;
+            center.Pen.Color = Color.Red;
 
             if(!gps.Opened)
             {
@@ -568,7 +577,7 @@ namespace Demo.WindowsMobile
             gps.Open();
          }
 
-         center.Pen.Color = Color.Blue;
+         center.Pen.Color = Color.Red;
 
          timerKeeperOfLife.Interval = ShortestTimeoutInterval() * 1000;
          timerKeeperOfLife.Enabled = true;
@@ -890,6 +899,44 @@ namespace Demo.WindowsMobile
       private void menuItem33_Click(object sender, EventArgs e)
       {
          MainMap.Zoom = MainMap.MaxZoom;
+      }
+
+      [DllImport("coredll.dll")]
+      protected static extern uint RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
+      [DllImport("coredll.dll")]
+      protected static extern bool UnregisterFunc1(uint fsModifiers, int id);
+
+      [DllImport("coredll.dll")]
+      protected static extern short GetAsyncKeyState(int vKey);
+
+      public class MsgWindow : MessageWindow
+      {
+         MainForm MainForm;
+
+         public MsgWindow(MainForm f)
+         {
+            MainForm = f;
+         }
+
+         // Override the default WndProc behavior to examine messages.
+         protected override void WndProc(ref Message msg)
+         {
+            if(msg.WParam != IntPtr.Zero)
+            {
+               if(msg.WParam.ToInt32() == 3)
+               {
+                  MainForm.MainMap.Zoom = (int) (MainForm.MainMap.Zoom) + 1;
+               }
+               else if(msg.WParam.ToInt32() == 4)
+               {
+                  MainForm.MainMap.Zoom = (int) (MainForm.MainMap.Zoom) - 1;
+               }
+            }
+
+            // Call the base WndProc method
+            base.WndProc(ref msg);
+         }
       }
    }
 }
