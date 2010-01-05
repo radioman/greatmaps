@@ -233,8 +233,10 @@ namespace System.Windows.Forms
             CenterFormat.LineAlignment = StringAlignment.Center;
 
             BottomFormat.Alignment = StringAlignment.Center;
-            BottomFormat.LineAlignment = StringAlignment.Far;
 
+#if !PocketPC
+            BottomFormat.LineAlignment = StringAlignment.Far;             
+#endif
             MapType = MapType.GoogleMap;
          }
       }
@@ -356,21 +358,11 @@ namespace System.Windows.Forms
                         if(ShowTileGridLines)
                         {
                            g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
-
-                           if(Core.tilePoint == Core.centerTileXYLocation)
                            {
 #if !PocketPC
-                              g.DrawString("CENTER: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                              g.DrawString((Core.tilePoint == Core.centerTileXYLocation? "CENTER: " :"TILE: ") + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #else
-                              g.DrawString("CENTER: " + Core.tilePoint.ToString(), MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
-#endif
-                           }
-                           else
-                           {
-#if !PocketPC
-                              g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
-#else
-                              g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                              g.DrawString((Core.tilePoint == Core.centerTileXYLocation? "" :"TILE: ") + Core.tilePoint.ToString(), MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #endif
                            }
                         }
@@ -383,15 +375,15 @@ namespace System.Windows.Forms
                            g.DrawString(EmptyTileText, MissingDataFont, Brushes.White, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #else
                            g.FillRectangle(EmptytileBrush, new System.Drawing.Rectangle(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
-                           g.DrawString(EmptyTileText, MissingDataFont, TileGridMissingTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                           g.DrawString(EmptyTileText, MissingDataFont, TileGridMissingTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y + Core.tileRect.Width/2 + (ShowTileGridLines? 11 : -22), Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
 #endif
 
                            if(ShowTileGridLines)
                            {
 #if !PocketPC
-                              g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
+                              g.DrawString((Core.tilePoint == Core.centerTileXYLocation? "CENTER: " :"TILE: ") + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
 #else
-                              g.DrawString("TILE: " + Core.tilePoint.ToString(), MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
+                              g.DrawString((Core.tilePoint == Core.centerTileXYLocation? "" :"TILE: ") + Core.tilePoint.ToString(), MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #endif
                            }
 

@@ -759,7 +759,7 @@ namespace GMap.NET
                   CacheEngine = new Thread(new ThreadStart(CacheEngineLoop));
                   CacheEngine.Name = "GMap.NET CacheEngine";
                   CacheEngine.IsBackground = false;
-                  CacheEngine.Priority = ThreadPriority.BelowNormal;
+                  CacheEngine.Priority = ThreadPriority.Lowest;
                   CacheEngine.Start();
                }
             }
