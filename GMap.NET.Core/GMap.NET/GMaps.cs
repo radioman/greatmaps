@@ -785,6 +785,7 @@ namespace GMap.NET
                   if(tileCacheQueue.Count > 0)
                   {
                      task = tileCacheQueue.Dequeue();
+                     tileCacheQueue.TrimExcess();
                   }
                }
 
