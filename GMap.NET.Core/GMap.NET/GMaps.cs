@@ -72,7 +72,7 @@ namespace GMap.NET
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
       /// </summary>
-      public string UserAgent = "Opera;";
+      public string UserAgent = "Mozilla/4.0";
 
       /// <summary>
       /// timeout for map connections
@@ -1972,7 +1972,8 @@ namespace GMap.NET
                   }
                   request.UserAgent = UserAgent;
                   request.Timeout = Timeout;
-                  request.ReadWriteTimeout = Timeout * 6;
+                  request.ReadWriteTimeout = Timeout * 6;  
+                  request.Accept = "*/*";
 
                   switch(type)
                   {
