@@ -345,17 +345,20 @@ namespace GMap.NET.Internals
          {
             started = true;
 
+            if(string.IsNullOrEmpty(Cache.Instance.CacheLocation))
+            {
 #if PocketPC
-            // use sd card if exist for cache
-            string sd = Native.GetRemovableStorageDirectory();
-            if(!string.IsNullOrEmpty(sd))
-            {
-               Cache.Instance.CacheLocation = sd + Path.DirectorySeparatorChar +  "GMap.NET" + Path.DirectorySeparatorChar;
-            }
-            else
+               // use sd card if exist for cache
+               string sd = Native.GetRemovableStorageDirectory();
+               if(!string.IsNullOrEmpty(sd))
+               {
+                  Cache.Instance.CacheLocation = sd + Path.DirectorySeparatorChar +  "GMap.NET" + Path.DirectorySeparatorChar;
+               }
+               else
 #endif
-            {
-               Cache.Instance.CacheLocation = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+               {
+                  Cache.Instance.CacheLocation = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+               }
             }
 
             ReloadMap();
