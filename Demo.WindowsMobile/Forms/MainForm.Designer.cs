@@ -327,7 +327,6 @@
          // MainMap
          // 
          this.MainMap.BackColor = System.Drawing.Color.White;
-         this.MainMap.CacheLocation = "C:\\Users\\radioman\\AppData\\Roaming\\GMap.NET\\";
          this.MainMap.CanDragMap = true;
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
          this.MainMap.Location = new System.Drawing.Point(0, 0);

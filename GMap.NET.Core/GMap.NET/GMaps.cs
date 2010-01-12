@@ -320,6 +320,10 @@ namespace GMap.NET
 
          Language = LanguageType.English;
          ServicePointManager.DefaultConnectionLimit = 444;
+
+#if PocketPC
+         Proxy = GlobalProxySelection.GetEmptyWebProxy();
+#endif
       }
 
       #region -- Stuff --
@@ -1276,12 +1280,16 @@ namespace GMap.NET
                if(Proxy != null)
                {
                   request.Proxy = Proxy;
+#if !PocketPC                     
                   request.PreAuthenticate = true;
+#endif
                }
                else
                {
 #if !PocketPC
                   request.Proxy = WebRequest.DefaultWebProxy;
+#else
+                  request.Proxy = GlobalProxySelection.GetEmptyWebProxy();
 #endif
                }
                request.UserAgent = UserAgent;
@@ -1416,12 +1424,16 @@ namespace GMap.NET
             if(Proxy != null)
             {
                request.Proxy = Proxy;
+#if !PocketPC                     
                request.PreAuthenticate = true;
+#endif
             }
             else
             {
 #if !PocketPC
                request.Proxy = WebRequest.DefaultWebProxy;
+#else
+               request.Proxy = GlobalProxySelection.GetEmptyWebProxy();
 #endif
             }
 
@@ -1963,12 +1975,16 @@ namespace GMap.NET
                   if(Proxy != null)
                   {
                      request.Proxy = Proxy;
+#if !PocketPC                     
                      request.PreAuthenticate = true;
+#endif
                   }
                   else
                   {
 #if !PocketPC
                      request.Proxy = WebRequest.DefaultWebProxy;
+#else
+                     request.Proxy = GlobalProxySelection.GetEmptyWebProxy();
 #endif
                   }
 

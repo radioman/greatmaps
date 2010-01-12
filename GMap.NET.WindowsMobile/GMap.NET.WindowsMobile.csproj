@@ -248,6 +248,7 @@
     <None Include="Resources\marker.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DesignTime.xmta" />
     <None Include="Resources\shadow50.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
