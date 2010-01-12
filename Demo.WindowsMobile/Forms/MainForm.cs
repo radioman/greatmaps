@@ -68,8 +68,15 @@ namespace Demo.WindowsMobile
 
          pageGps = new GPS(this);
 
+#if DEBUG
+         GMaps.Instance.Mode = AccessMode.ServerAndCache;
+         menuItemServerAndCache.Checked = true;
+         menuItemEnableGrid.Checked = true;
+         MainMap.ShowTileGridLines = true;
+#else
          GMaps.Instance.Mode = AccessMode.CacheOnly;
-
+         menuItemCacheOnly.Checked = true;
+#endif
          MainMap.MapType = MapType.ArcGIS_MapsLT_Map;
          MainMap.MaxZoom = 11;
          MainMap.MinZoom = 1;
@@ -262,7 +269,6 @@ namespace Demo.WindowsMobile
          menuItemServerAndCache.Checked = true;
          menuItemCacheOnly.Checked = false;
          menuItemServerOnly.Checked = false;
-
       }
 
       private void menuItemServerOnly_Click(object sender, EventArgs e)

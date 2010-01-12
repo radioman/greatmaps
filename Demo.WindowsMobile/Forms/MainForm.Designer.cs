@@ -241,7 +241,6 @@
          // 
          // menuItemCacheOnly
          // 
-         this.menuItemCacheOnly.Checked = true;
          this.menuItemCacheOnly.Text = "CacheOnly";
          this.menuItemCacheOnly.Click += new System.EventHandler(this.menuItemCacheOnly_Click);
          // 
@@ -332,7 +331,6 @@
          this.MainMap.CanDragMap = true;
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
          this.MainMap.Location = new System.Drawing.Point(0, 0);
-         this.MainMap.MapType = GMap.NET.MapType.GoogleMap;
          this.MainMap.MarkersEnabled = true;
          this.MainMap.Name = "MainMap";
          this.MainMap.RoutesEnabled = true;

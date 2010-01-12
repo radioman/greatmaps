@@ -621,7 +621,7 @@ namespace GMap.NET.Internals
       }
 
 #if PocketPC
-      Semaphore loaderLimit = new Semaphore(3, 3);
+      Semaphore loaderLimit = new Semaphore(2, 2);
 #else
       Semaphore loaderLimit = new Semaphore(5, 5);
 #endif
@@ -640,6 +640,15 @@ namespace GMap.NET.Internals
                {
                   task = tileLoadQueue.Dequeue();
                   tileLoadQueue.TrimExcess();
+                  {
+                     if(Interlocked.Increment(ref tileLoaders) == 1)
+                     {
+                        if(OnTileLoadStart != null)
+                        {
+                           OnTileLoadStart();
+                        }
+                     }
+                  }
                }
                else
                {
@@ -647,19 +656,8 @@ namespace GMap.NET.Internals
                }
             }
 
-            if(process && Matrix[task.Pos] == null)
+            if(process)
             {
-               lock(loadingLock)
-               {
-                  if(tileLoaders++ == 0)
-                  {
-                     if(OnTileLoadStart != null)
-                     {
-                        OnTileLoadStart();
-                     }
-                  }
-               }
-
                try
                {
                   //Debug.WriteLine("loader[" + 0 + "]: download => " + task);
@@ -690,7 +688,7 @@ namespace GMap.NET.Internals
                            }
                            else
                            {
-                              Debug.WriteLine("ProcessLoadTask: " + task + " -> empty tile, reloading " + retry);
+                              Debug.WriteLine("ProcessLoadTask: " + task + " -> empty tile, retry " + retry);
 
                               if(retry++ > 0)
                               {
@@ -719,27 +717,24 @@ namespace GMap.NET.Internals
                      OnNeedInvalidation();
                   }
 
-                  lock(loadingLock)
+                  // last buddy cleans stuff ;}
+                  if(Interlocked.Decrement(ref tileLoaders) <= 0)
                   {
-                     // last buddy cleans stuff ;}
-                     if(--tileLoaders <= 0)
+                     if(OnTileLoadComplete != null)
                      {
-                        if(OnTileLoadComplete != null)
-                        {
-                           OnTileLoadComplete();
-                        }
-
-                        lock(tileDrawingList)
-                        {
-                           Matrix.ClearPointsNotIn(ref tileDrawingList);
-
-                           GC.Collect();
-                           GC.WaitForPendingFinalizers();
-                           GC.Collect();
-                        }
-
-                        Debug.WriteLine("MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB - " + tileLoaders);
+                        OnTileLoadComplete();
                      }
+
+                     lock(tileDrawingList)
+                     {
+                        Matrix.ClearPointsNotIn(ref tileDrawingList);
+
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        GC.Collect();
+                     }
+
+                     Debug.WriteLine("MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB - " + tileLoaders);
                   }
                }
             }
@@ -748,7 +743,6 @@ namespace GMap.NET.Internals
       }
 
       int tileLoaders = 0;
-      object loadingLock = new object();
 
       /// <summary>
       /// updates map bounds

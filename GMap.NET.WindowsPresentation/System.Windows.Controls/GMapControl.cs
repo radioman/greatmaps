@@ -856,11 +856,10 @@ namespace System.Windows.Controls
                System.Windows.Point p = e.GetPosition(this);
                Core.currentPosition = FromLocalToLatLng((int) p.X, (int) p.Y);
             }
-            else
-               if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
-               {
-                  Core.currentPosition = FromLocalToLatLng((int) ActualWidth / 2, (int) ActualHeight / 2);
-               }
+            else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
+            {
+               Core.currentPosition = FromLocalToLatLng((int) ActualWidth / 2, (int) ActualHeight / 2);
+            }
 
             // set mouse position to map center
             if(CenterPositionOnMouseWheel)

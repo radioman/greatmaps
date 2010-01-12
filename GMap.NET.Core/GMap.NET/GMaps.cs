@@ -1971,9 +1971,10 @@ namespace GMap.NET
                      request.Proxy = WebRequest.DefaultWebProxy;
 #endif
                   }
+
                   request.UserAgent = UserAgent;
                   request.Timeout = Timeout;
-                  request.ReadWriteTimeout = Timeout * 6;  
+                  request.ReadWriteTimeout = Timeout * 6;
                   request.Accept = "*/*";
 
                   switch(type)
