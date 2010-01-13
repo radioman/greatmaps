@@ -48,6 +48,8 @@ namespace GMap.NET.WindowsPresentation
             this.type = type;
             this.sleep = sleep;
 
+            GMaps.Instance.UseMemoryCache = false;
+
             worker.RunWorkerAsync();
 
             this.ShowDialog();
@@ -78,6 +80,8 @@ namespace GMap.NET.WindowsPresentation
 
          list.Clear();
 
+         GMaps.Instance.UseMemoryCache = true;
+
          this.Close();
       }
 
@@ -103,7 +107,7 @@ namespace GMap.NET.WindowsPresentation
       {
          int countOk = 0;
 
-         Stuff.Shuffle<GMap.NET.Point>(list); 
+         Stuff.Shuffle<GMap.NET.Point>(list);
          List<MapType> types = GMaps.Instance.GetAllLayersOfType(type);
 
          for(int i = 0; i < all; i++)

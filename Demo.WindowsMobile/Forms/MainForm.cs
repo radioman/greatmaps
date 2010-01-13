@@ -187,7 +187,7 @@ namespace Demo.WindowsMobile
 
       private void menuItem15_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.ArcGIS_MapsLT_Map_Hybrid;
+         MainMap.MapType = MapType.ArcGIS_MapsLT_OrtoFoto;
       }
 
       private void menuItem10_Click(object sender, EventArgs e)

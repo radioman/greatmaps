@@ -45,6 +45,8 @@ namespace GMap.NET
             this.type = type;
             this.sleep = sleep;
 
+            GMaps.Instance.UseMemoryCache = false;
+
             worker.RunWorkerAsync();
 
             this.ShowDialog();
@@ -74,6 +76,8 @@ namespace GMap.NET
          }
 
          list.Clear();
+
+         GMaps.Instance.UseMemoryCache = true;
 
          this.Close();
       }
@@ -108,7 +112,7 @@ namespace GMap.NET
             if(worker.CancellationPending)
                break;
 
-            Point p = list[i]; 
+            Point p = list[i];
             {
                if(CacheTiles(ref types, zoom, p))
                {

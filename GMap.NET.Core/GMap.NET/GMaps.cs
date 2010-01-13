@@ -133,6 +133,11 @@ namespace GMap.NET
       public bool UsePlacemarkCache = true;
 
       /// <summary>
+      /// is map using memory cache for tiles
+      /// </summary>
+      public bool UseMemoryCache = true;
+
+      /// <summary>
       /// max zoom for maps, 17 is max fo many maps
       /// </summary>
       public readonly int MaxZoom = 19;
@@ -1280,7 +1285,7 @@ namespace GMap.NET
                if(Proxy != null)
                {
                   request.Proxy = Proxy;
-#if !PocketPC                     
+#if !PocketPC
                   request.PreAuthenticate = true;
 #endif
                }
@@ -1424,7 +1429,7 @@ namespace GMap.NET
             if(Proxy != null)
             {
                request.Proxy = Proxy;
-#if !PocketPC                     
+#if !PocketPC
                request.PreAuthenticate = true;
 #endif
             }
@@ -1921,6 +1926,7 @@ namespace GMap.NET
          try
          {
             // let't check memmory first
+            if(UseMemoryCache)
             {
                MemoryStream m = GetTileFromMemoryCache(new RawTile(type, pos, zoom));
                if(m != null)
@@ -1950,7 +1956,10 @@ namespace GMap.NET
                      ret = Cache.Instance.ImageCache.GetImageFromCache(type, pos, zoom);
                      if(ret != null)
                      {
-                        AddTileToMemoryCache(new RawTile(type, pos, zoom), ret.Data);
+                        if(UseMemoryCache)
+                        {
+                           AddTileToMemoryCache(new RawTile(type, pos, zoom), ret.Data);
+                        }
                         return ret;
                      }
                   }
@@ -1960,7 +1969,10 @@ namespace GMap.NET
                      ret = Cache.Instance.ImageCacheSecond.GetImageFromCache(type, pos, zoom);
                      if(ret != null)
                      {
-                        AddTileToMemoryCache(new RawTile(type, pos, zoom), ret.Data);
+                        if(UseMemoryCache)
+                        {
+                           AddTileToMemoryCache(new RawTile(type, pos, zoom), ret.Data);
+                        }
                         EnqueueCacheTask(new CacheItemQueue(type, pos, zoom, ret.Data, CacheUsage.First));
                         return ret;
                      }
@@ -1975,7 +1987,7 @@ namespace GMap.NET
                   if(Proxy != null)
                   {
                      request.Proxy = Proxy;
-#if !PocketPC                     
+#if !PocketPC
                      request.PreAuthenticate = true;
 #endif
                   }
@@ -2074,7 +2086,10 @@ namespace GMap.NET
                            // Enqueue Cache
                            if(ret != null)
                            {
-                              AddTileToMemoryCache(new RawTile(type, pos, zoom), responseStream);
+                              if(UseMemoryCache)
+                              {
+                                 AddTileToMemoryCache(new RawTile(type, pos, zoom), responseStream);
+                              }
 
                               if(Mode != AccessMode.ServerOnly)
                               {
