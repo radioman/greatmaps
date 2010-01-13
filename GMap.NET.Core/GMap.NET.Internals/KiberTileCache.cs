@@ -36,12 +36,6 @@ namespace GMap.NET.Internals
 
       public new void Add(RawTile key, MemoryStream value)
       {
-         // clear oldest values
-         if(MemoryCacheSize > MemoryCacheCapacity)
-         {
-            RemoveOldest();
-         }
-
          Queue.Enqueue(key);
          base.Add(key, value);
 
@@ -54,23 +48,27 @@ namespace GMap.NET.Internals
 
       }
 
-      private bool RemoveOldest()
+      internal void RemoveMemoryOverload()
       {
-         if(Keys.Count > 0)
+         while(MemoryCacheSize > MemoryCacheCapacity)
          {
-            RawTile first = Queue.Dequeue();
-            MemoryStream m = base[first];
-            base.Remove(first);
-            memoryCacheSize -= m.Length;
+            if(Keys.Count > 0)
+            {
+               RawTile first = Queue.Dequeue();
+               MemoryStream m = base[first];
+               base.Remove(first);
+               memoryCacheSize -= m.Length;
 #if !PocketPC
-            m.Dispose();
+               m.Dispose();
 #else
-            (m as IDisposable).Dispose();
+               (m as IDisposable).Dispose();
 #endif
-
-            return true;
+            }
+            else
+            {
+               break;
+            }
          }
-         return false;
       }
    }
 }

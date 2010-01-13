@@ -191,12 +191,12 @@ namespace GMap.NET
       /// <summary>
       /// tiles in memmory
       /// </summary>
-      readonly KiberTileCache TilesInMemory = new KiberTileCache();
+      internal readonly KiberTileCache TilesInMemory = new KiberTileCache();
 
       /// <summary>
       /// lock for TilesInMemory
       /// </summary>
-      readonly ReaderWriterLock kiberCacheLock = new ReaderWriterLock();
+      internal readonly ReaderWriterLock kiberCacheLock = new ReaderWriterLock();
 
       /// <summary>
       /// the amount of tiles in MB to keep in memmory, default: 22MB, if each ~100Kb it's ~222 tiles

@@ -43,6 +43,7 @@ namespace GMap.NET.Internals
       public List<Point> tileDrawingList = new List<Point>();
       public readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>();
       readonly WaitCallback ProcessLoadTaskCallback;
+      int tileLoaders = 0;
 
       public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
@@ -718,11 +719,16 @@ namespace GMap.NET.Internals
                   }
 
                   // last buddy cleans stuff ;}
-                  if(Interlocked.Decrement(ref tileLoaders) <= 0)
+                  if(Interlocked.Decrement(ref tileLoaders) == 0)
                   {
-                     if(OnTileLoadComplete != null)
+                     GMaps.Instance.kiberCacheLock.AcquireWriterLock(-1);
+                     try
                      {
-                        OnTileLoadComplete();
+                        GMaps.Instance.TilesInMemory.RemoveMemoryOverload();
+                     }
+                     finally
+                     {
+                        GMaps.Instance.kiberCacheLock.ReleaseWriterLock();
                      }
 
                      lock(tileDrawingList)
@@ -734,15 +740,18 @@ namespace GMap.NET.Internals
                         GC.Collect();
                      }
 
-                     Debug.WriteLine("MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB - " + tileLoaders);
+                     Debug.WriteLine("MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB");
+
+                     if(OnTileLoadComplete != null)
+                     {
+                        OnTileLoadComplete();
+                     }
                   }
                }
             }
             loaderLimit.Release();
          }
       }
-
-      int tileLoaders = 0;
 
       /// <summary>
       /// updates map bounds
