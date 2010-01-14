@@ -72,7 +72,7 @@ namespace GMap.NET
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
       /// </summary>
-      public string UserAgent = "Mozilla/4.0";
+      public string UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.7) Gecko/20091221 Firefox/3.5.7";
 
       /// <summary>
       /// timeout for map connections
