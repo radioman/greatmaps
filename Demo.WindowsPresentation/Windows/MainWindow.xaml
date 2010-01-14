@@ -7,15 +7,63 @@
     WindowState="Maximized"
     xmlns:src="clr-namespace:Demo.WindowsPresentation"
     MinHeight="775" MinWidth="400">
+    <Window.Resources>
+        <Style x:Key="ZoomUpButton" TargetType="Button">
+            <Setter Property="Width" Value="23.5" />
+            <Setter Property="Height" Value="25.5" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Width="23.5" Height="25.5">
+                            <Image Source="/Demo.WindowsPresentation;component/Resources/zoom+.png" Stretch="Fill" />
+                            <ContentPresenter HorizontalAlignment="Center" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect ShadowDepth="2" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ZoomDownButton" TargetType="Button">
+            <Setter Property="Width" Value="23.5" />
+            <Setter Property="Height" Value="25.5" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Width="23.5" Height="25.5">
+                            <Image Source="/Demo.WindowsPresentation;component/Resources/zoom-.png" Stretch="Fill" />
+                            <ContentPresenter HorizontalAlignment="Center" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect ShadowDepth="2" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
       <GroupBox Name="mapgroup"  Header="gmap" Margin="12,7,241,12" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
           <src:Map x:Name="MainMap" />  
       </GroupBox>
       <GroupBox HorizontalAlignment="Right" Margin="0,7,186,12" VerticalAlignment="Stretch" Header="Zoom">
          <Grid>
-            <src:ControlZoomUp x:Name="czuZoomUp" HorizontalAlignment="Center" VerticalAlignment="Top" Width="23.5" Height="25.5" MouseLeftButtonDown="czuZoomUp_MouseLeftButtonDown"/>
+            <Button x:Name="czuZoomUp" Style="{StaticResource ZoomUpButton}" HorizontalAlignment="Center" VerticalAlignment="Top" Width="23.5" Height="25.5" Click="czuZoomUp_Click"/>
             <Slider Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Stretch" Maximum="17" Minimum="12" Value="13" TickPlacement="Both" Margin="0,35,0,35" SmallChange="1" x:Name="sliderZoom" ValueChanged="sliderZoom_ValueChanged" />
-            <src:ControlZoomDown x:Name="czuZoomDown" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="23" Height="25" RenderTransformOrigin="0.391,0.48" MouseLeftButtonDown="czuZoomDown_MouseLeftButtonDown"/>
+            <Button Style="{StaticResource ZoomUpButton}" x:Name="czuZoomDown" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="23" Height="25" Click="czuZoomDown_Click"/>
          </Grid>
       </GroupBox>
       <GroupBox Header="gmap" HorizontalAlignment="Right" Margin="0,158,12,0" Name="groupBox2" Width="169" VerticalAlignment="Top" Height="135">

@@ -89,18 +89,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Windows\Zoom\ControlZoomDown.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Windows\Zoom\ControlZoomUp.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -138,12 +126,6 @@
     <Compile Include="CustomMarkers\Test.xaml.cs">
       <DependentUpon>Test.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\Zoom\ControlZoomDown.xaml.cs">
-      <DependentUpon>ControlZoomDown.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\Zoom\ControlZoomUp.xaml.cs">
-      <DependentUpon>ControlZoomUp.xaml</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -158,8 +140,8 @@
     <Resource Include="CustomMarkers\bigMarkerGreen.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Windows\Zoom\zoom+.png" />
-    <Resource Include="Windows\Zoom\zoom-.png" />
+    <Resource Include="Resources\zoom+.png" />
+    <Resource Include="Resources\zoom-.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GMap.NET.Core\GMap.NET.Core.csproj">

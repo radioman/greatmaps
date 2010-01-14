@@ -256,7 +256,7 @@ namespace Demo.WindowsPresentation
          img.RenderTransform = new ScaleTransform(1.2, 1.2, 12.5, 12.5);
       }
 
-      DispatcherTimer timer = new DispatcherTimer(); 
+      DispatcherTimer timer = new DispatcherTimer();
       #endregion
 
       // add objects and zone around them
@@ -526,13 +526,13 @@ namespace Demo.WindowsPresentation
       }
 
       // zoom up
-      private void czuZoomUp_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+      private void czuZoomUp_Click(object sender, RoutedEventArgs e)
       {
          sliderZoom.Value = ((int) MainMap.Zoom) + 1;
       }
 
       // zoom down
-      private void czuZoomDown_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+      private void czuZoomDown_Click(object sender, RoutedEventArgs e)
       {
          sliderZoom.Value = ((int) (MainMap.Zoom + 0.99)) - 1;
       }
@@ -556,15 +556,15 @@ namespace Demo.WindowsPresentation
                   obj.Start(x, i, MainMap.MapType, 100);
                }
                else
-               if(res == MessageBoxResult.No)
-               {
-                  continue;
-               }
-               else
-               if(res == MessageBoxResult.Cancel)
-               {
-                  break;
-               }
+                  if(res == MessageBoxResult.No)
+                  {
+                     continue;
+                  }
+                  else
+                     if(res == MessageBoxResult.Cancel)
+                     {
+                        break;
+                     }
 
                x.Clear();
             }
