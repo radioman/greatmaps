@@ -106,9 +106,13 @@ namespace System.Windows.Forms
 #endif
 
       /// <summary>
-      /// center mouse OnMouseWheel
+      /// center mouse pointer OnMouseWheel
       /// </summary>
+#if !PocketPC
       public bool CenterPositionOnMouseWheel = true;
+#else
+      public bool CenterPositionOnMouseWheel = false;
+#endif
 
       /// <summary>
       /// show map scale info
@@ -235,7 +239,7 @@ namespace System.Windows.Forms
             BottomFormat.Alignment = StringAlignment.Center;
 
 #if !PocketPC
-            BottomFormat.LineAlignment = StringAlignment.Far;             
+            BottomFormat.LineAlignment = StringAlignment.Far;
 #endif
             MapType = MapType.GoogleMap;
          }
@@ -1661,6 +1665,17 @@ namespace System.Windows.Forms
          internal set
          {
             Core.RenderMode = value;
+         }
+      }
+
+      /// <summary>
+      /// gets map manager
+      /// </summary>
+      public GMaps Manager
+      {
+         get
+         {
+            return GMaps.Instance;
          }
       }
 

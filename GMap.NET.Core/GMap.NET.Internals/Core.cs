@@ -43,7 +43,6 @@ namespace GMap.NET.Internals
       public List<Point> tileDrawingList = new List<Point>();
       public readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>();
       readonly WaitCallback ProcessLoadTaskCallback;
-      int tileLoaders = 0;
 
       public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
@@ -523,6 +522,8 @@ namespace GMap.NET.Internals
       {
          if(started)
          {
+            Debug.WriteLine("------------------");
+
             lock(tileLoadQueue)
             {
                tileLoadQueue.Clear();
@@ -627,11 +628,16 @@ namespace GMap.NET.Internals
       Semaphore loaderLimit = new Semaphore(5, 5);
 #endif
 
+#if DEBUG
+      Stopwatch timer = new Stopwatch();
+#endif
+
       void ProcessLoadTask(object obj)
       {
          if(loaderLimit.WaitOne(GMaps.Instance.Timeout, false))
          {
             bool process = true;
+            bool last = false;
 
             LoadTask task = new LoadTask();
 
@@ -642,13 +648,8 @@ namespace GMap.NET.Internals
                   task = tileLoadQueue.Dequeue();
                   tileLoadQueue.TrimExcess();
                   {
-                     if(Interlocked.Increment(ref tileLoaders) == 1)
-                     {
-                        if(OnTileLoadStart != null)
-                        {
-                           OnTileLoadStart();
-                        }
-                     }
+                     last = tileLoadQueue.Count == 0;
+                     //Debug.WriteLine("TileLoadQueue: " + tileLoadQueue.Count);
                   }
                }
                else
@@ -661,7 +662,7 @@ namespace GMap.NET.Internals
             {
                try
                {
-                  //Debug.WriteLine("loader[" + 0 + "]: download => " + task);
+                  //Debug.WriteLine("ProcessLoadTask: " + task);
 
                   Tile t = new Tile(task.Zoom, task.Pos);
                   {
@@ -713,13 +714,8 @@ namespace GMap.NET.Internals
                }
                finally
                {
-                  if(OnNeedInvalidation != null)
-                  {
-                     OnNeedInvalidation();
-                  }
-
                   // last buddy cleans stuff ;}
-                  if(Interlocked.Decrement(ref tileLoaders) == 0)
+                  if(last)
                   {
                      GMaps.Instance.kiberCacheLock.AcquireWriterLock(-1);
                      try
@@ -734,18 +730,30 @@ namespace GMap.NET.Internals
                      lock(tileDrawingList)
                      {
                         Matrix.ClearPointsNotIn(ref tileDrawingList);
-
-                        GC.Collect();
-                        GC.WaitForPendingFinalizers();
-                        GC.Collect();
                      }
 
-                     Debug.WriteLine("MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB");
+                     GC.Collect();
+                     GC.WaitForPendingFinalizers();
+                     GC.Collect();
 
+#if DEBUG
+                     lock(tileLoadQueue)
+                     {
+                        timer.Stop();
+                     }
+
+                     Debug.WriteLine("OnTileLoadComplete: " + timer.ElapsedMilliseconds + "ms, MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB");
+                     Debug.Flush();
+#endif
                      if(OnTileLoadComplete != null)
                      {
                         OnTileLoadComplete();
                      }
+                  }
+
+                  if(OnNeedInvalidation != null)
+                  {
+                     OnNeedInvalidation();
                   }
                }
             }
@@ -762,33 +770,38 @@ namespace GMap.NET.Internals
          {
             FindTilesAround(ref tileDrawingList);
 
-            Debug.WriteLine(DateTime.Now.TimeOfDay + " UpdateBaunds: total tiles at zoom " + Zoom + " -> " + tileDrawingList.Count.ToString());
+            Debug.WriteLine("OnTileLoadStart: " + tileDrawingList.Count + " tiles to load at zoom " + Zoom + ", time: " + DateTime.Now.TimeOfDay);
+
+            if(OnTileLoadStart != null)
+            {
+               OnTileLoadStart();
+            }
+
+#if DEBUG
+            lock(tileLoadQueue)
+            {
+               timer.Reset();
+               timer.Start();
+            }
+#endif
 
             foreach(Point p in tileDrawingList)
             {
-               EnqueueLoadTask(new LoadTask(p, Zoom));
+               LoadTask task = new LoadTask(p, Zoom);
+               {
+                  lock(tileLoadQueue)
+                  {
+                     if(!tileLoadQueue.Contains(task))
+                     {
+                        tileLoadQueue.Enqueue(task);
+                        ThreadPool.QueueUserWorkItem(ProcessLoadTaskCallback);
+                     }
+                  }
+               }
             }
          }
 
          UpdateGroundResolution();
-      }
-
-      /// <summary>
-      /// enqueueens tile to load
-      /// </summary>
-      /// <param name="task"></param>
-      void EnqueueLoadTask(LoadTask task)
-      {
-         lock(tileLoadQueue)
-         {
-            if(!tileLoadQueue.Contains(task))
-            {
-               //Debug.WriteLine("EnqueueLoadTask: " + task.ToString());
-
-               tileLoadQueue.Enqueue(task);
-               ThreadPool.QueueUserWorkItem(ProcessLoadTaskCallback);
-            }
-         }
       }
 
       /// <summary>

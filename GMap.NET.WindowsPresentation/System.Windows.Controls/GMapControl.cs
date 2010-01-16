@@ -242,6 +242,14 @@ namespace System.Windows.Controls
          }
       }
 
+      public GMaps Manager
+      {
+         get
+         {
+            return GMaps.Instance;
+         }
+      }
+
       public GMapControl()
       {
          if(!DesignModeInConstruct)

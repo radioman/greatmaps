@@ -69,12 +69,12 @@ namespace Demo.WindowsMobile
          pageGps = new GPS(this);
 
 #if DEBUG
-         GMaps.Instance.Mode = AccessMode.ServerAndCache;
+         MainMap.Manager.Mode = AccessMode.ServerAndCache;
          menuItemServerAndCache.Checked = true;
          menuItemEnableGrid.Checked = true;
          MainMap.ShowTileGridLines = true;
 #else
-         GMaps.Instance.Mode = AccessMode.CacheOnly;
+         MainMap.Manager.Mode = AccessMode.CacheOnly;
          menuItemCacheOnly.Checked = true;
 #endif
          MainMap.MapType = MapType.ArcGIS_MapsLT_Map;
@@ -257,7 +257,7 @@ namespace Demo.WindowsMobile
 
       private void menuItemCacheOnly_Click(object sender, EventArgs e)
       {
-         GMaps.Instance.Mode = AccessMode.CacheOnly;
+         MainMap.Manager.Mode = AccessMode.CacheOnly;
          menuItemCacheOnly.Checked = true;
          menuItemServerAndCache.Checked = false;
          menuItemServerOnly.Checked = false;
@@ -265,7 +265,7 @@ namespace Demo.WindowsMobile
 
       private void menuItemServerAndCache_Click(object sender, EventArgs e)
       {
-         GMaps.Instance.Mode = AccessMode.ServerAndCache;
+         MainMap.Manager.Mode = AccessMode.ServerAndCache;
          menuItemServerAndCache.Checked = true;
          menuItemCacheOnly.Checked = false;
          menuItemServerOnly.Checked = false;
@@ -273,7 +273,7 @@ namespace Demo.WindowsMobile
 
       private void menuItemServerOnly_Click(object sender, EventArgs e)
       {
-         GMaps.Instance.Mode = AccessMode.ServerOnly;
+         MainMap.Manager.Mode = AccessMode.ServerOnly;
          menuItemServerOnly.Checked = true;
          menuItemServerAndCache.Checked = false;
          menuItemCacheOnly.Checked = false;

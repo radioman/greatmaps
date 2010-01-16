@@ -18,7 +18,7 @@ namespace GMap.NET.Internals
 #if !PocketPC
       public int MemoryCacheCapacity = 22;
 #else
-      public int MemoryCacheCapacity = 2;
+      public int MemoryCacheCapacity = 5;
 #endif
 
       long memoryCacheSize = 0;
@@ -55,14 +55,17 @@ namespace GMap.NET.Internals
             if(Keys.Count > 0)
             {
                RawTile first = Queue.Dequeue();
-               MemoryStream m = base[first];
-               base.Remove(first);
-               memoryCacheSize -= m.Length;
-#if !PocketPC
-               m.Dispose();
-#else
-               (m as IDisposable).Dispose();
-#endif
+               try
+               {
+                  using(MemoryStream m = base[first])
+                  {
+                     base.Remove(first);
+                     memoryCacheSize -= m.Length;
+                  }
+               }
+               catch
+               {
+               }
             }
             else
             {
