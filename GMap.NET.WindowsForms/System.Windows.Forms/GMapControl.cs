@@ -168,6 +168,16 @@ namespace System.Windows.Forms
       /// </summary>
       public RectLatLng? BoundsOfMap = null;
 
+      /// <summary>
+      /// enables integrated DoubleBuffer for best performance
+      /// if using a lot objets on map or running on windows mobile
+      /// </summary>
+#if !PocketPC
+      public bool ForceDoubleBuffer = false;
+#else
+      readonly bool ForceDoubleBuffer = true;
+#endif
+
 #if !PocketPC
       private bool _GrayScale = false;
 
@@ -203,6 +213,8 @@ namespace System.Windows.Forms
       internal readonly StringFormat BottomFormat = new StringFormat();
       bool RaiseEmptyTileError = false;
       double zoomReal;
+      Bitmap backBuffer;
+      Graphics gxOff;
 
       /// <summary>
       /// construct
@@ -741,28 +753,6 @@ namespace System.Windows.Forms
             this.BeginInvoke(m);
          }
       }
-
-      protected override void OnPaint(PaintEventArgs e)
-      {
-         // render white background
-         e.Graphics.Clear(Color.WhiteSmoke);
-
-         if(MapRenderTransform.HasValue)
-         {
-            e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
-            {
-               DrawMapGDIplus(e.Graphics);
-            }
-            e.Graphics.ResetTransform();
-         }
-         else
-         {
-            DrawMapGDIplus(e.Graphics);
-         }
-         OnPaintEtc(e.Graphics);
-
-         base.OnPaint(e);
-      }
 #else
       delegate void MethodInvoker();
 
@@ -783,21 +773,6 @@ namespace System.Windows.Forms
       {
          // ...
       }
-
-      protected override void OnPaint(PaintEventArgs e)
-      {
-         if(gxOff != null && backBuffer != null)
-         {
-            // render white background
-            gxOff.Clear(Color.WhiteSmoke);
-
-            DrawMapGDIplus(gxOff);
-            OnPaintEtc(gxOff);
-
-            e.Graphics.DrawImage(backBuffer, 0, 0);
-         }
-         base.OnPaint(e);
-      }
 #endif
 
       protected override void OnHandleDestroyed(EventArgs e)
@@ -812,6 +787,58 @@ namespace System.Windows.Forms
 #if !PocketPC
       float? MapRenderTransform = null;
 #endif
+
+      protected override void OnPaint(PaintEventArgs e)
+      {
+         if(ForceDoubleBuffer)
+         {
+            if(gxOff != null && backBuffer != null)
+            {
+               // render white background
+               gxOff.Clear(Color.WhiteSmoke);
+
+#if !PocketPC
+               if(MapRenderTransform.HasValue)
+               {
+                  gxOff.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
+                  {
+                     DrawMapGDIplus(gxOff);
+                  }
+                  gxOff.ResetTransform();
+               }
+               else
+#endif
+               {
+                  DrawMapGDIplus(gxOff);
+               }
+
+               OnPaintEtc(gxOff);
+
+               e.Graphics.DrawImage(backBuffer, 0, 0);
+            }
+         }
+         else
+         {
+            e.Graphics.Clear(Color.WhiteSmoke);
+
+#if !PocketPC
+            if(MapRenderTransform.HasValue)
+            {
+               e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
+               {
+                  DrawMapGDIplus(e.Graphics);
+               }
+               e.Graphics.ResetTransform();
+            }
+            else
+#endif
+            {
+               DrawMapGDIplus(e.Graphics);
+            }
+            OnPaintEtc(e.Graphics);
+         }
+         base.OnPaint(e);
+      }
 
       void OnPaintEtc(Graphics g)
       {
@@ -960,6 +987,23 @@ namespace System.Windows.Forms
 
          if(!DesignMode && !DesignModeInConstruct)
          {
+            if(ForceDoubleBuffer)
+            {
+               if(backBuffer != null)
+               {
+                  backBuffer.Dispose();
+                  backBuffer = null;
+               }
+               if(gxOff != null)
+               {
+                  gxOff.Dispose();
+                  gxOff = null;
+               }
+
+               backBuffer = new Bitmap(Width, Height);
+               gxOff = Graphics.FromImage(backBuffer);
+            }
+
             Core.OnMapSizeChanged(Width, Height);
 
             // 50px outside control
@@ -973,26 +1017,26 @@ namespace System.Windows.Forms
          }
       }
 #else
-      Bitmap backBuffer;
-      Graphics gxOff;
-
       protected override void OnResize(EventArgs e)
       {
          base.OnResize(e);
 
-         if(backBuffer != null)
+         if(ForceDoubleBuffer)
          {
-            backBuffer.Dispose();
-            backBuffer = null;
-         }
-         if(gxOff != null)
-         {
-            gxOff.Dispose();
-            gxOff = null;
-         }
+            if(backBuffer != null)
+            {
+               backBuffer.Dispose();
+               backBuffer = null;
+            }
+            if(gxOff != null)
+            {
+               gxOff.Dispose();
+               gxOff = null;
+            }
 
-         backBuffer = new Bitmap(Width, Height);
-         gxOff = Graphics.FromImage(backBuffer);
+            backBuffer = new Bitmap(Width, Height);
+            gxOff = Graphics.FromImage(backBuffer);
+         }
 
          Core.OnMapSizeChanged(Width, Height);
 

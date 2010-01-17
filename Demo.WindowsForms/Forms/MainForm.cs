@@ -133,8 +133,50 @@ namespace Demo.WindowsForms
                AddLocationLithuania("Panevėžys");
                AddLocationLithuania("Kaunas");
             }
+
+            // test performance
+            if(PerfTestEnabled)
+            {
+               timer.Interval = 44;
+               timer.Tick += new EventHandler(timer_Tick);
+               timer.Start();
+            }
          }
       }
+
+      bool PerfTestEnabled = false;
+
+      #region -- performance test--
+
+      double NextDouble(Random rng, double min, double max)
+      {
+         return min + (rng.NextDouble() * (max - min));
+      }
+
+      Random r = new Random();
+
+      int tt = 0;
+      void timer_Tick(object sender, EventArgs e)
+      {
+         var pos = new PointLatLng(NextDouble(r, MainMap.CurrentViewArea.Top, MainMap.CurrentViewArea.Bottom), NextDouble(r, MainMap.CurrentViewArea.Left, MainMap.CurrentViewArea.Right));
+         GMapMarker m = new GMapMarkerGoogleGreen(pos);
+         {
+            m.ToolTipText = (tt++).ToString();
+            m.TooltipMode = MarkerTooltipMode.Always;            
+            m.Offset = new System.Drawing.Point(-m.Size.Width, -m.Size.Height);
+         }
+         //m.ForceUpdateLocalPosition(MainMap);
+         objects.Markers.Add(m);
+
+         if(tt >= 333)
+         {
+            timer.Stop();
+            tt = 0;
+         }
+      }
+
+      Timer timer = new Timer();
+      #endregion
 
       void MainMap_OnMapTypeChanged(MapType type)
       {

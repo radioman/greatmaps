@@ -108,7 +108,49 @@ namespace Demo.WindowsMobile
          msgW = new MsgWindow(this);
          RegisterHotKey(msgW.Hwnd, 3, 0, 0x75);
          RegisterHotKey(msgW.Hwnd, 4, 0, 0x76);
+
+         // test performance
+         if(PerfTestEnabled)
+         {
+            timer.Interval = 111;
+            timer.Tick += new EventHandler(timer_Tick);
+            timer.Enabled = true;
+         }
       }
+
+      #region -- performance test--
+
+      bool PerfTestEnabled = false;
+
+      double NextDouble(Random rng, double min, double max)
+      {
+         return min + (rng.NextDouble() * (max - min));
+      }
+
+      Random r = new Random();
+
+      int tt = 0;
+      void timer_Tick(object sender, EventArgs e)
+      {
+         var pos = new PointLatLng(NextDouble(r, MainMap.CurrentViewArea.Top, MainMap.CurrentViewArea.Bottom), NextDouble(r, MainMap.CurrentViewArea.Left, MainMap.CurrentViewArea.Right));
+         GMapMarker m = new GMapMarkerGoogleGreen(pos);
+         {
+            m.ToolTipText = (tt++).ToString();
+            m.TooltipMode = MarkerTooltipMode.Always;
+            m.Offset = new System.Drawing.Point(-m.Size.Width, -m.Size.Height);
+         }
+         //m.ForceUpdateLocalPosition(MainMap);
+         objects.Markers.Add(m);
+
+         if(tt >= 44)
+         {
+            timer.Enabled = false;
+            tt = 0;
+         }
+      }
+
+      Timer timer = new Timer();
+      #endregion
 
       void MainMap_OnMapZoomChanged()
       {
