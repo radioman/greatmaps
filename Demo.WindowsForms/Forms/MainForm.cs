@@ -32,12 +32,6 @@ namespace Demo.WindowsForms
 
          if(!DesignMode)
          {
-            // config gmaps
-            GMaps.Instance.UseRouteCache = true;
-            GMaps.Instance.UseGeocoderCache = true;
-            GMaps.Instance.UsePlacemarkCache = true;
-            GMaps.Instance.Mode = AccessMode.ServerAndCache;
-
             // add your custom map db provider
             //MySQLPureImageCache ch = new MySQLPureImageCache();
             //ch.ConnectionString = @"server=sql2008;User Id=trolis;Persist Security Info=True;database=gmapnetcache;password=trolis;";
@@ -48,6 +42,7 @@ namespace Demo.WindowsForms
             //GMaps.Instance.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
             // config map 
+            MainMap.Manager.Mode = AccessMode.ServerAndCache;
             MainMap.MapType = MapType.ArcGIS_MapsLT_Map;
             MainMap.MaxZoom = 11;
             MainMap.MinZoom = 1;
@@ -204,6 +199,15 @@ namespace Demo.WindowsForms
             case MapType.OpenStreetMapSurferTerrain:
             {
                MainMap.MaxZoom = 19;
+            }
+            break;
+
+            case MapType.PergoMap:
+            {
+               MainMap.MinZoom = 0;
+               MainMap.MaxZoom = 17;
+               trackBar1.Minimum = MainMap.MinZoom;
+               MainMap.Zoom = MainMap.MinZoom + 1;
             }
             break;
 

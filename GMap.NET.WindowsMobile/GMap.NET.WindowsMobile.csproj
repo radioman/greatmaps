@@ -116,6 +116,9 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\PlateCarreeProjection.cs">
       <Link>GMap.NET.Projections\PlateCarreeProjection.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\PlateCarreeProjectionPergo.cs">
+      <Link>GMap.NET.Projections\PlateCarreeProjectionPergo.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET\AccessMode.cs">
       <Link>GMap.NET\AccessMode.cs</Link>
     </Compile>

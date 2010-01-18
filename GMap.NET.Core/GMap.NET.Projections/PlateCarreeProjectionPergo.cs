@@ -3,19 +3,18 @@ namespace GMap.NET.Projections
 {
    using System;
 
-#if TESTpjbcoetzer
    /// <summary>
    /// Plate Carrée (literally, “plane square”) projection
    /// PROJCS["WGS 84 / World Equidistant Cylindrical",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],UNIT["Meter",1]]
    /// </summary>
-   public class PlateCarreeProjection2 : PureProjection
+   public class PlateCarreeProjectionPergo : PureProjection
    {
       const double MinLatitude = -85.05112878;
       const double MaxLatitude = 85.05112878;
       const double MinLongitude = -180;
       const double MaxLongitude = 180;
 
-      Size tileSize = new Size(512, 512);
+      Size tileSize = new Size(256, 256);
       public override Size TileSize
       {
          get
@@ -98,5 +97,4 @@ namespace GMap.NET.Projections
          return new Size(0, 0);
       }
    }
-#endif
 }

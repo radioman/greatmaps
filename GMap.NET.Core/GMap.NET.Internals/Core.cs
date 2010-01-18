@@ -246,6 +246,15 @@ namespace GMap.NET.Internals
                   }
                   break;
 
+                  case MapType.PergoMap:
+                  {
+                     if(false == (Projection is PlateCarreeProjectionPergo))
+                     {
+                        Projection = new PlateCarreeProjectionPergo();
+                     }
+                  }
+                  break;
+
                   default:
                   {
                      if(false == (Projection is MercatorProjection))

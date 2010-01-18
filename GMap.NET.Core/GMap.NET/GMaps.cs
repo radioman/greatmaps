@@ -1094,6 +1094,22 @@ namespace GMap.NET
                return string.Format("http://dc1.maps.lt/cache/mapslt_ortofoto_overlay/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png", zoom, pos.Y, pos.X);
             }
             #endregion
+
+            case MapType.PergoMap:
+            {
+               // http://{domain}/{layerName}/{zoomLevel}/{first3LetterOfTileX}/{second3LetterOfTileX}/{third3LetterOfTileX}/{first3LetterOfTileY}/{second3LetterOfTileY}/{third3LetterOfTileXY}.png
+
+               // http://map3.pergo.com.tr/tile/00/000/000/001/000/000/000.png    
+               // That means: Zoom Level: 0 TileX: 1 TileY: 0
+
+               // http://domain/tile/14/000/019/371/000/011/825.png
+               // That means: Zoom Level: 14 TileX: 19371 TileY:11825
+
+               string x = pos.X.ToString("000000000").Insert(3, "/").Insert(7, "/"); // - 000/000/001
+               string y = pos.Y.ToString("000000000").Insert(3, "/").Insert(7, "/"); // - 000/000/000
+
+               return string.Format("http://map{0}.pergo.com.tr/tile/{1:00}/{2}/{3}.png", GetServerNum(pos, 4), zoom, x, y);
+            }
          }
 
          return null;
