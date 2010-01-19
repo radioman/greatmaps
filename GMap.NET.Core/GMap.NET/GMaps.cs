@@ -1928,6 +1928,8 @@ namespace GMap.NET
          return null;
       }
 
+      PureProjection pergoProj = new Projections.PlateCarreeProjectionPergo();
+
       /// <summary>
       /// gets image from tile server
       /// </summary>
@@ -1941,6 +1943,12 @@ namespace GMap.NET
 
          try
          {
+            // very temp hack for pergo maps
+            if(type == MapType.PergoMap)
+            {
+               pos.Y = pergoProj.GetTileMatrixMaxXY(zoom).Height - pos.Y;
+            }
+
             // let't check memmory first
             if(UseMemoryCache)
             {

@@ -55,7 +55,6 @@ namespace Demo.WindowsForms
             MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
             MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
             MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
-            MainMap.OnEmptyTileError += new EmptyTileError(MainMap_OnEmptyTileError);
             MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
             MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
             MainMap.MouseMove += new MouseEventHandler(MainMap_MouseMove);
@@ -337,12 +336,6 @@ namespace Demo.WindowsForms
       void MainMap_OnMapZoomChanged()
       {
          trackBar1.Value = (int) (MainMap.Zoom);
-      }
-
-      // empty tile displayed
-      void MainMap_OnEmptyTileError(int zoom, GMap.NET.Point pos)
-      {
-         MessageBox.Show("OnEmptyTileError, Zoom: " + zoom + ", " + pos.ToString(), "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
 
       // click on some marker

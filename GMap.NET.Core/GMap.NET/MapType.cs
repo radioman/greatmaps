@@ -56,6 +56,6 @@ namespace GMap.NET
       ArcGIS_MapsLT_Map_Labels=1002,
       ArcGIS_MapsLT_Map_Hybrid=1003,
 
-      PergoMap = 2000,
+      PergoMap = 2001,
    }
 }

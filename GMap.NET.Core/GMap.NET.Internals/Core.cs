@@ -796,7 +796,7 @@ namespace GMap.NET.Internals
 
             foreach(Point p in tileDrawingList)
             {
-               LoadTask task = new LoadTask(p, Zoom);
+               LoadTask task = new LoadTask(p, Zoom);                  
                {
                   lock(tileLoadQueue)
                   {
