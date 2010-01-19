@@ -206,7 +206,7 @@ namespace Demo.WindowsForms
                MainMap.MinZoom = 0;
                MainMap.MaxZoom = 17;
                trackBar1.Minimum = MainMap.MinZoom;
-               MainMap.Zoom = MainMap.MinZoom + 1;
+               MainMap.SetZoomToFitRect(new RectLatLng(42.5830078125, 25.48828125, 19.05029296875, 6.83349609375));
             }
             break;
 

@@ -688,7 +688,18 @@ namespace GMap.NET.Internals
 
                         foreach(MapType tl in layers)
                         {
-                           PureImage img = GMaps.Instance.GetImageFrom(tl, task.Pos, task.Zoom);
+                           PureImage img;
+
+                           // tile number inversion(BottomLeft -> TopLeft) for pergo maps
+                           if(tl == MapType.PergoMap)
+                           {
+                              img = GMaps.Instance.GetImageFrom(tl, new Point(task.Pos.X, maxOfTiles.Height - task.Pos.Y), task.Zoom);
+                           }
+                           else // ok
+                           {
+                              img = GMaps.Instance.GetImageFrom(tl, task.Pos, task.Zoom);
+                           }
+
                            if(img != null)
                            {
                               lock(t.Overlays)
@@ -796,7 +807,7 @@ namespace GMap.NET.Internals
 
             foreach(Point p in tileDrawingList)
             {
-               LoadTask task = new LoadTask(p, Zoom);                  
+               LoadTask task = new LoadTask(p, Zoom);
                {
                   lock(tileLoadQueue)
                   {

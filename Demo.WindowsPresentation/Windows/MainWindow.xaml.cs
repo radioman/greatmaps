@@ -59,7 +59,6 @@ namespace Demo.WindowsPresentation
          MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
          MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
          MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
-         MainMap.OnEmptyTileError += new EmptyTileError(MainMap_OnEmptyTileError);
          MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
          MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
          MainMap.MouseMove += new System.Windows.Input.MouseEventHandler(MainMap_MouseMove);
@@ -350,6 +349,15 @@ namespace Demo.WindowsPresentation
             }
             break;
 
+            case MapType.PergoMap:
+            {
+               MainMap.MinZoom = 0;
+               MainMap.MaxZoom = 17;
+               sliderZoom.Minimum = MainMap.MinZoom;
+               MainMap.SetZoomToFitRect(new RectLatLng(42.5830078125, 25.48828125, 19.05029296875, 6.83349609375));
+            }
+            break;
+
             default:
             {
                MainMap.MaxZoom = 17;
@@ -392,12 +400,6 @@ namespace Demo.WindowsPresentation
       private void button13_Click(object sender, RoutedEventArgs e)
       {
          MainMap.ZoomAndCenterMarkers(55);
-      }
-
-      // empty tile displayed
-      void MainMap_OnEmptyTileError(int zoom, GMap.NET.Point pos)
-      {
-         MessageBox.Show("OnEmptyTileError, Zoom: " + zoom + ", " + pos.ToString(), "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
       }
 
       // MapZoomChanged
