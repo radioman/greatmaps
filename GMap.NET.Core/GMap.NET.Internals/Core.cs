@@ -246,7 +246,7 @@ namespace GMap.NET.Internals
                   }
                   break;
 
-                  case MapType.PergoMap:
+                  case MapType.PergoTurkeyMap:
                   {
                      if(false == (Projection is PlateCarreeProjectionPergo))
                      {
@@ -352,28 +352,12 @@ namespace GMap.NET.Internals
       {
          if(!started)
          {
-            started = true;
-
-            if(string.IsNullOrEmpty(Cache.Instance.CacheLocation))
-            {
-#if PocketPC
-               // use sd card if exist for cache
-               string sd = Native.GetRemovableStorageDirectory();
-               if(!string.IsNullOrEmpty(sd))
-               {
-                  Cache.Instance.CacheLocation = sd + Path.DirectorySeparatorChar +  "GMap.NET" + Path.DirectorySeparatorChar;
-               }
-               else
-#endif
-               {
-                  Cache.Instance.CacheLocation = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
-               }
-            }
+            started = true;             
 
             ReloadMap();
             GoToCurrentPosition();
          }
-      }
+      }       
 
       public void UpdateCenterTileXYLocation()
       {
@@ -691,7 +675,7 @@ namespace GMap.NET.Internals
                            PureImage img;
 
                            // tile number inversion(BottomLeft -> TopLeft) for pergo maps
-                           if(tl == MapType.PergoMap)
+                           if(tl == MapType.PergoTurkeyMap)
                            {
                               img = GMaps.Instance.GetImageFrom(tl, new Point(task.Pos.X, maxOfTiles.Height - task.Pos.Y), task.Zoom);
                            }

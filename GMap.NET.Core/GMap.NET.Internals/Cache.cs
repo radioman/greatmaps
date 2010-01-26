@@ -68,6 +68,22 @@ namespace GMap.NET.Internals
          }
          #endregion
 
+         if(string.IsNullOrEmpty(CacheLocation))
+         {
+#if PocketPC
+            // use sd card if exist for cache
+            string sd = Native.GetRemovableStorageDirectory();
+            if(!string.IsNullOrEmpty(sd))
+            {
+               CacheLocation = sd + Path.DirectorySeparatorChar +  "GMap.NET" + Path.DirectorySeparatorChar;
+            }
+            else
+#endif
+            {
+               CacheLocation = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+            }
+         }
+
 #if SQLiteEnabled
          ImageCache = new SQLitePureImageCache();
 #else
@@ -113,7 +129,7 @@ namespace GMap.NET.Internals
             {
                using(StreamReader r = new StreamReader(file.ToString(), Encoding.UTF8))
                {
-                  ret= r.ReadToEnd();
+                  ret = r.ReadToEnd();
                }
             }
          }

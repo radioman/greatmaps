@@ -121,6 +121,7 @@ namespace Demo.WindowsForms
             }
 
             // add some point in lithuania
+            //if(false)
             {
                AddLocationLithuania("Klaipėda");
                AddLocationLithuania("Šiauliai");
@@ -201,12 +202,21 @@ namespace Demo.WindowsForms
             }
             break;
 
-            case MapType.PergoMap:
+            case MapType.PergoTurkeyMap:
             {
                MainMap.MinZoom = 0;
                MainMap.MaxZoom = 17;
                trackBar1.Minimum = MainMap.MinZoom;
                MainMap.SetZoomToFitRect(new RectLatLng(42.5830078125, 25.48828125, 19.05029296875, 6.83349609375));
+            }
+            break;
+
+            case MapType.SigPacSpainMap:
+            {
+               MainMap.MinZoom = 5;
+               MainMap.MaxZoom = 19;
+               trackBar1.Minimum = MainMap.MinZoom;
+               MainMap.SetZoomToFitRect(new RectLatLng(43.8741381814747, -9.700927734375, 14.34814453125, 7.8605775962932));
             }
             break;
 

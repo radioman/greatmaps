@@ -69,6 +69,13 @@ namespace GMap.NET
       /// </summary>
       public string BingMapsClientToken = null;
 
+      readonly string[] levelsForSigPacSpainMap = {"0", "1", "2", "3", "4", 
+                          "MTNSIGPAC", 
+                          "MTN2000", "MTN2000", "MTN2000", "MTN2000", "MTN2000", 
+                          "MTN200", "MTN200", "MTN200", 
+                          "MTN25", "MTN25",
+                          "ORTOFOTOS","ORTOFOTOS","ORTOFOTOS","ORTOFOTOS"};
+
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
       /// </summary>
@@ -1095,7 +1102,8 @@ namespace GMap.NET
             }
             #endregion
 
-            case MapType.PergoMap:
+            #region -- Pergo --
+            case MapType.PergoTurkeyMap:
             {
                // http://{domain}/{layerName}/{zoomLevel}/{first3LetterOfTileX}/{second3LetterOfTileX}/{third3LetterOfTileX}/{first3LetterOfTileY}/{second3LetterOfTileY}/{third3LetterOfTileXY}.png
 
@@ -1109,11 +1117,20 @@ namespace GMap.NET
                string y = pos.Y.ToString("000000000").Insert(3, "/").Insert(7, "/"); // - 000/000/000
 
                return string.Format("http://map{0}.pergo.com.tr/tile/{1:00}/{2}/{3}.png", GetServerNum(pos, 4), zoom, x, y);
+            } 
+            #endregion
+
+            #region -- SigPac --
+            case MapType.SigPacSpainMap:
+            {
+               return string.Format("http://sigpac.mapa.es/kmlserver/raster/{0}@3785/{1}.{2}.{3}.img", levelsForSigPacSpainMap[zoom], zoom, pos.X, ((2 << zoom - 1) - pos.Y - 1));
             }
+            break; 
+            #endregion
          }
 
          return null;
-      }
+      }  
 
       /// <summary>
       /// gets secure google words based on position
