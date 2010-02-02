@@ -68,6 +68,13 @@ namespace GMap.NET.Internals
          }
          #endregion
 
+#if SQLiteEnabled
+         ImageCache = new SQLitePureImageCache();
+#else
+         // you can use $ms stuff if you like too ;}
+         ImageCache = new MsSQLCePureImageCache();
+#endif
+
          if(string.IsNullOrEmpty(CacheLocation))
          {
 #if PocketPC
@@ -83,13 +90,6 @@ namespace GMap.NET.Internals
                CacheLocation = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
             }
          }
-
-#if SQLiteEnabled
-         ImageCache = new SQLitePureImageCache();
-#else
-         // you can use $ms stuff if you like too ;}
-         ImageCache = new MsSQLCePureImageCache();
-#endif
       }
 
       #region -- etc cache --

@@ -113,49 +113,52 @@ namespace Demo.WindowsPresentation
             MainMap.Markers.Add(center);
          }
 
-         // add my city location for demo
-         GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
-
-         PointLatLng? city = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius", out status);
-         if(city != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
+         //if(false)
          {
-            GMapMarker it = new GMapMarker(city.Value);
-            {
-               it.ZIndex = 55;
-               it.Shape = new CustomMarkerDemo(this, it, "Welcome to Lithuania! ;}");
-            }
-            MainMap.Markers.Add(it);
+            // add my city location for demo
+            GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
 
-            #region -- add some markers and zone around them --
+            PointLatLng? city = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius", out status);
+            if(city != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
             {
-               List<PointAndInfo> objects = new List<PointAndInfo>();
+               GMapMarker it = new GMapMarker(city.Value);
                {
-                  string area = "Antakalnis";
-                  PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius, " + area, out status);
-                  if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
-                  {
-                     objects.Add(new PointAndInfo(pos.Value, area));
-                  }
+                  it.ZIndex = 55;
+                  it.Shape = new CustomMarkerDemo(this, it, "Welcome to Lithuania! ;}");
                }
+               MainMap.Markers.Add(it);
+
+               #region -- add some markers and zone around them --
                {
-                  string area = "Senamiestis";
-                  PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius, " + area, out status);
-                  if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
+                  List<PointAndInfo> objects = new List<PointAndInfo>();
                   {
-                     objects.Add(new PointAndInfo(pos.Value, area));
+                     string area = "Antakalnis";
+                     PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius, " + area, out status);
+                     if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
+                     {
+                        objects.Add(new PointAndInfo(pos.Value, area));
+                     }
                   }
-               }
-               {
-                  string area = "Pilaite";
-                  PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius, " + area, out status);
-                  if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
                   {
-                     objects.Add(new PointAndInfo(pos.Value, area));
+                     string area = "Senamiestis";
+                     PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius, " + area, out status);
+                     if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
+                     {
+                        objects.Add(new PointAndInfo(pos.Value, area));
+                     }
                   }
+                  {
+                     string area = "Pilaite";
+                     PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius, " + area, out status);
+                     if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
+                     {
+                        objects.Add(new PointAndInfo(pos.Value, area));
+                     }
+                  }
+                  AddDemoZone(8.8, city.Value, objects);
                }
-               AddDemoZone(8.8, city.Value, objects);
+               #endregion
             }
-            #endregion
          }
 
          // test performance

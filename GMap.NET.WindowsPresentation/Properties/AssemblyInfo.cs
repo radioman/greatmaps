@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Universe")]
 [assembly: AssemblyProduct("GMap.NET.WindowsPresentation")]
-[assembly: AssemblyCopyright("Copyright © Universe 2009")]
+[assembly: AssemblyCopyright("Copyright © Universe 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -215,22 +215,18 @@ namespace GMap.NET.CacheProviders
          bool ret = true;
          try
          {
-            StringBuilder dir = new StringBuilder(gtileCache);
-            dir.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
-
-            string d = dir.ToString();
+            string dir = gtileCache + GMaps.Instance.LanguageStr + Path.DirectorySeparatorChar;
 
             // precrete dir
-            if(!Directory.Exists(d))
+            if(!Directory.Exists(dir))
             {
-               Directory.CreateDirectory(d);
+               Directory.CreateDirectory(dir);
             }
 
             // save
             {
-               dir.Append("Data.gmdb");
-
-               string db = dir.ToString();
+               string db = dir + "Data.gmdb";
+              
                if(!File.Exists(db))
                {
                   ret = CreateEmptyDB(db);
@@ -305,13 +301,10 @@ namespace GMap.NET.CacheProviders
          PureImage ret = null;
          try
          {
-            StringBuilder dir = new StringBuilder(gtileCache);
-            dir.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
+            string db = gtileCache + GMaps.Instance.LanguageStr + Path.DirectorySeparatorChar + "Data.gmdb";
 
             // get
             {
-               string db = dir.ToString();
-               if(File.Exists(db))
                {
                   using(SQLiteConnection cn = new SQLiteConnection())
                   {
@@ -326,7 +319,7 @@ namespace GMap.NET.CacheProviders
                         {
                            com.CommandText = string.Format("SELECT Tile FROM TilesData WHERE id = (SELECT id FROM Tiles WHERE X={0} AND Y={1} AND Zoom={2} AND Type={3})", pos.X, pos.Y, zoom, (int) type);
 
-                           using(DbDataReader rd = com.ExecuteReader())
+                           using(DbDataReader rd = com.ExecuteReader(System.Data.CommandBehavior.SequentialAccess))
                            {
                               if(rd.Read())
                               {
