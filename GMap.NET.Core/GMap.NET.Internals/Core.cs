@@ -528,7 +528,7 @@ namespace GMap.NET.Internals
             if(OnNeedInvalidation != null)
             {
                OnNeedInvalidation();
-            }
+            }               
 
             UpdateBaunds();
          }
@@ -659,8 +659,15 @@ namespace GMap.NET.Internals
 
                   Tile t = new Tile(task.Zoom, task.Pos);
                   {
-                     List<MapType> layers = GMaps.Instance.GetAllLayersOfType(MapType);
+                     var layers = GMaps.Instance.GetAllLayersOfType(MapType);
                      int retry = 0;
+
+                     //var m = Matrix[task.Pos];
+                     //if(m != null)
+                     //{
+                     //   m.Clear();
+                     //   Debug.WriteLine("NotNULL matrix");
+                     //}
 
                      // try get it few times
                      do
@@ -707,9 +714,6 @@ namespace GMap.NET.Internals
                      while(retry != 0 && retry < GMaps.Instance.RetryLoadTile);
 
                      Matrix[task.Pos] = t;
-
-                     layers.Clear();
-                     layers = null;
                   }
                }
                catch(Exception ex)

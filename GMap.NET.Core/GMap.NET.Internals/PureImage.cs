@@ -16,15 +16,9 @@ namespace GMap.NET
    /// <summary>
    /// image abstraction
    /// </summary>
-   public abstract class PureImage : ICloneable, IDisposable
+   public abstract class PureImage : IDisposable
    {
       public MemoryStream Data;
-
-      #region ICloneable Members
-
-      abstract public object Clone();
-
-      #endregion
 
       #region IDisposable Members
 

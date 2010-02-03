@@ -4,6 +4,91 @@ namespace GMap.NET.WindowsPresentation
    using System.Windows.Media;
    using System.Windows.Media.Imaging;
    using GMap.NET.Internals;
+   using System.Windows;
+
+   internal class ImageVisual : FrameworkElement
+   {
+      public readonly ImageSource[] Source;
+      public readonly RawTile Tile;
+
+      public ImageVisual(ImageSource[] src, RawTile tile)
+      {
+         Source = src;
+         Tile = tile;
+         this.Loaded += new RoutedEventHandler(ImageVisual_Loaded);
+      }
+
+      void ImageVisual_Loaded(object sender, RoutedEventArgs e)
+      {
+         UpdateVisual();
+      }
+
+      Visual _child;
+      public virtual Visual Child
+      {
+         get
+         {
+            return _child;
+         }
+         set
+         {
+            if(_child != value)
+            {
+               if(_child != null)
+               {
+                  RemoveLogicalChild(_child);
+                  RemoveVisualChild(_child);
+               }
+
+               if(value != null)
+               {
+                  AddVisualChild(value);
+                  AddLogicalChild(value);
+               }
+
+               // cache the new child
+               _child = value;
+
+               InvalidateVisual();
+            }
+         }
+      }
+
+      public void UpdateVisual()
+      {
+         Child = Create();
+      }
+
+      private DrawingVisual Create()
+      {
+         var square = new DrawingVisual();
+
+         using(DrawingContext dc = square.RenderOpen())
+         {
+            foreach(var img in Source)
+            {
+               dc.DrawImage(img, new Rect(new Size(img.Width + 0.5, img.Height + 0.5)));
+            }
+         }
+
+         return square;
+      }
+
+      #region Necessary Overrides -- Needed by WPF to maintain bookkeeping of our hosted visuals
+      protected override int VisualChildrenCount
+      {
+         get
+         {
+            return (Child == null ? 0 : 1);
+         }
+      }
+
+      protected override Visual GetVisualChild(int index)
+      {
+         return Child;
+      }
+      #endregion
+   }     
 
    /// <summary>
    /// image abstraction
@@ -12,26 +97,17 @@ namespace GMap.NET.WindowsPresentation
    {
       public ImageSource Img;
 
-      public override object Clone()
-      {
-         if(Img != null)
-         {
-            WindowsPresentationImage ret = new WindowsPresentationImage();
-            ret.Img = Img.CloneCurrentValue();
-            if(ret.Img.CanFreeze)
-            {
-               ret.Img.Freeze();
-            }
-            return ret;
-         }
-         return null;
-      }
-
       public override void Dispose()
       {
          if(Img != null)
          {
-            Img = null;
+            Img = null;             
+         }
+
+         if(Data != null)
+         {
+            Data.Dispose();
+            Data = null;
          }
       }
    }
@@ -61,6 +137,9 @@ namespace GMap.NET.WindowsPresentation
                      ret.Img.Freeze();
                   }
                }
+
+               m = null;
+               bitmapDecoder = null;
             }
             catch
             {
@@ -81,6 +160,9 @@ namespace GMap.NET.WindowsPresentation
                         ret.Img.Freeze();
                      }
                   }
+
+                  m = null;
+                  bitmapDecoder = null;                    
                }
                catch
                {

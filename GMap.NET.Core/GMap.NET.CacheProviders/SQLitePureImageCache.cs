@@ -284,6 +284,7 @@ namespace GMap.NET.CacheProviders
                            }
                         }
                      }
+                     cn.Close();
                   }
                }
             }
@@ -340,9 +341,11 @@ namespace GMap.NET.CacheProviders
                                  }
                                  tile = null;
                               }
+                              rd.Close();
                            }
                         }
                      }
+                     cn.Close();
                   }
                }
             }

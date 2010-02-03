@@ -85,7 +85,7 @@ namespace GMap.NET.WindowsPresentation
          this.Close();
       }
 
-      bool CacheTiles(ref List<MapType> types, int zoom, GMap.NET.Point p)
+      bool CacheTiles(ref MapType[] types, int zoom, GMap.NET.Point p)
       {
          foreach(MapType type in types)
          {
@@ -108,7 +108,7 @@ namespace GMap.NET.WindowsPresentation
          int countOk = 0;
 
          Stuff.Shuffle<GMap.NET.Point>(list);
-         List<MapType> types = GMaps.Instance.GetAllLayersOfType(type);
+         var types = GMaps.Instance.GetAllLayersOfType(type);
 
          for(int i = 0; i < all; i++)
          {

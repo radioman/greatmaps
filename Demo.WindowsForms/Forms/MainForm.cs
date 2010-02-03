@@ -191,7 +191,10 @@ namespace Demo.WindowsForms
             case MapType.ArcGIS_MapsLT_Map:
             case MapType.ArcGIS_MapsLT_OrtoFoto:
             {
+               MainMap.MinZoom = 1;
                MainMap.MaxZoom = 11;
+               trackBar1.Minimum = MainMap.MinZoom;
+               MainMap.SetZoomToFitRect(new RectLatLng(56.431489960361, 20.8962105239809, 5.8924169643369, 2.58940626652217));
             }
             break;
 

@@ -409,48 +409,53 @@ namespace GMap.NET
       /// </summary>
       /// <param name="type"></param>
       /// <returns></returns>
-      public List<MapType> GetAllLayersOfType(MapType type)
+      public MapType[] GetAllLayersOfType(MapType type)
       {
-         List<MapType> types = new List<MapType>();
+         MapType[] types = null;
          {
             switch(type)
             {
                case MapType.GoogleHybrid:
                {
-                  types.Add(MapType.GoogleSatellite);
-                  types.Add(MapType.GoogleLabels);
+                  types = new MapType[2];
+                  types[0] = MapType.GoogleSatellite;
+                  types[1] = MapType.GoogleLabels;
                }
                break;
 
                case MapType.GoogleHybridChina:
                {
-                  types.Add(MapType.GoogleSatelliteChina);
-                  types.Add(MapType.GoogleLabelsChina);
+                  types = new MapType[2];
+                  types[0] = MapType.GoogleSatelliteChina;
+                  types[1] = MapType.GoogleLabelsChina;
                }
                break;
 
                case MapType.YahooHybrid:
                {
-                  types.Add(MapType.YahooSatellite);
-                  types.Add(MapType.YahooLabels);
+                  types = new MapType[2];
+                  types[0] = MapType.YahooSatellite;
+                  types[1] = MapType.YahooLabels;
                }
                break;
 
                case MapType.ArcGIS_MapsLT_Map_Hybrid:
                {
-                  types.Add(MapType.ArcGIS_MapsLT_OrtoFoto);
-                  types.Add(MapType.ArcGIS_MapsLT_Map_Labels);
+                  types = new MapType[2];
+                  types[0] = MapType.ArcGIS_MapsLT_OrtoFoto;
+                  types[1] = MapType.ArcGIS_MapsLT_Map_Labels;
                }
                break;
 
                default:
                {
-                  types.Add(type);
+                  types = new MapType[1];
+                  types[0] = type;
                }
                break;
             }
          }
-         types.TrimExcess();
+
          return types;
       }
 

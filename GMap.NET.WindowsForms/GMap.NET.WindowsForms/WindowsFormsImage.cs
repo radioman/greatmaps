@@ -14,17 +14,6 @@ namespace GMap.NET.WindowsForms
    {
       public System.Drawing.Image Img;
 
-      public override object Clone()
-      {
-         if(Img != null)
-         {
-            WindowsFormsImage ret = new WindowsFormsImage();
-            ret.Img = Img.Clone() as Image;
-            return ret;
-         }
-         return null;
-      }
-
       public override void Dispose()
       {
          if(Img != null)

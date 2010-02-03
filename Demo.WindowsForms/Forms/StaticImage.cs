@@ -77,7 +77,7 @@ namespace Demo.WindowsForms
             string bigImage = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + Path.DirectorySeparatorChar + "GMap-" + DateTime.Now.Ticks + ".png";
             e.Result = bigImage;
 
-            List<MapType> types = GMaps.Instance.GetAllLayersOfType(info.Type);
+            var types = GMaps.Instance.GetAllLayersOfType(info.Type);
 
             // current area
             GMap.NET.Point topLeftPx = info.Projection.FromLatLngToPixel(info.Area.LocationTopLeft, info.Zoom);

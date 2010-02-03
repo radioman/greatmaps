@@ -34,19 +34,16 @@ namespace Demo.WindowsPresentation
          this.Background = Brushes.AliceBlue;
 
          // config gmaps
-         GMaps.Instance.UseRouteCache = true;
-         GMaps.Instance.UseGeocoderCache = true;
-         GMaps.Instance.UsePlacemarkCache = true;
-         GMaps.Instance.Mode = AccessMode.ServerAndCache;
+         MainMap.Manager.UseMemoryCache = false;    
 
          // add your custom map db provider
          //MySQLPureImageCache ch = new MySQLPureImageCache();
          //ch.ConnectionString = @"server=sql2008;User Id=trolis;Persist Security Info=True;database=gmapnetcache;password=trolis;";
-         //GMaps.Instance.ImageCacheSecond = ch;
+         //MainMap.Manager.ImageCacheSecond = ch;
 
          // set your proxy here if need
-         //GMaps.Instance.Proxy = new WebProxy("10.2.0.100", 8080);
-         //GMaps.Instance.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
+         //MainMap.Manager.Proxy = new WebProxy("10.2.0.100", 8080);
+         //MainMap.Manager.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
          // config map
          MainMap.MapType = MapType.OpenStreetMap;
@@ -341,7 +338,10 @@ namespace Demo.WindowsPresentation
             case MapType.ArcGIS_MapsLT_Map:
             case MapType.ArcGIS_MapsLT_OrtoFoto:
             {
+               MainMap.MinZoom = 1;
                MainMap.MaxZoom = 11;
+               sliderZoom.Minimum = MainMap.MinZoom;
+               MainMap.SetZoomToFitRect(new RectLatLng(56.431489960361, 20.8962105239809, 5.8924169643369, 2.58940626652217));
             }
             break;
 
@@ -592,7 +592,7 @@ namespace Demo.WindowsPresentation
       // access mode
       private void comboBoxMode_DropDownClosed(object sender, EventArgs e)
       {
-         GMaps.Instance.Mode = (AccessMode) comboBoxMode.SelectedItem;
+         MainMap.Manager.Mode = (AccessMode) comboBoxMode.SelectedItem;
          MainMap.ReloadMap();
       }
 

@@ -1,5 +1,5 @@
 ﻿
-namespace System.Windows.Controls
+namespace GMap.NET.WindowsPresentation
 {
    using System.Collections.Generic;
    using System.Collections.ObjectModel;
@@ -19,11 +19,13 @@ namespace System.Windows.Controls
    using GMap.NET.Internals;
    using GMap.NET.WindowsPresentation;
    using System.Windows.Controls;
+   using System;
+   using System.Diagnostics;
 
    /// <summary>
    /// GMap.NET control for Windows Presentation
    /// </summary>
-   public partial class GMapControl : ItemsControl, IGControl
+   public partial class GMapControlNew : UserControl, IGControl
    {
       readonly Core Core = new Core();
       GMap.NET.Rectangle region;
@@ -230,9 +232,9 @@ namespace System.Windows.Controls
          {
             if(mapCanvas == null)
             {
-               if(this.VisualChildrenCount > 0)
+              // if(ObjectsLayer.VisualChildrenCount > 0)
                {
-                  Border border = VisualTreeHelper.GetChild(this, 0) as Border;
+                  Border border = VisualTreeHelper.GetChild(ObjectsLayer, 0) as Border;
                   ItemsPresenter items = border.Child as ItemsPresenter;
                   DependencyObject target = VisualTreeHelper.GetChild(items, 0);
                   mapCanvas = target as Canvas;
@@ -251,75 +253,27 @@ namespace System.Windows.Controls
          }
       }
 
-      public GMapControl()
+      public GMapControlNew()
       {
+         InitializeComponent();
+
          if(!DesignModeInConstruct)
          {
-            #region -- templates --
-
-            #region -- xaml --
-            //  <ItemsControl Name="figures">
-            //    <ItemsControl.ItemTemplate>
-            //        <DataTemplate>
-            //            <ContentPresenter Content="{Binding Path=Shape}" />
-            //        </DataTemplate>
-            //    </ItemsControl.ItemTemplate>
-            //    <ItemsControl.ItemsPanel>
-            //        <ItemsPanelTemplate>
-            //            <Canvas />
-            //        </ItemsPanelTemplate>
-            //    </ItemsControl.ItemsPanel>
-            //    <ItemsControl.ItemContainerStyle>
-            //        <Style>
-            //            <Setter Property="Canvas.Left" Value="{Binding Path=LocalPositionX}"/>
-            //            <Setter Property="Canvas.Top" Value="{Binding Path=LocalPositionY}"/>
-            //        </Style>
-            //    </ItemsControl.ItemContainerStyle>
-            //</ItemsControl> 
-            #endregion
-
-            DataTemplate dt = new DataTemplate(typeof(GMapMarker));
-            {
-               FrameworkElementFactory fef = new FrameworkElementFactory(typeof(ContentPresenter));
-               fef.SetBinding(ContentPresenter.ContentProperty, new Binding("Shape"));
-               dt.VisualTree = fef;
-            }
-            ItemTemplate = dt;
-
-            FrameworkElementFactory factoryPanel = new FrameworkElementFactory(typeof(Canvas));
-            {
-               factoryPanel.SetValue(Canvas.IsItemsHostProperty, true);
-
-               ItemsPanelTemplate template = new ItemsPanelTemplate();
-               template.VisualTree = factoryPanel;
-               ItemsPanel = template;
-            }
-
-            Style st = new Style();
-            {
-               st.Setters.Add(new Setter(Canvas.LeftProperty, new Binding("LocalPositionX")));
-               st.Setters.Add(new Setter(Canvas.TopProperty, new Binding("LocalPositionY")));
-               st.Setters.Add(new Setter(Canvas.ZIndexProperty, new Binding("ZIndex")));
-            }
-            ItemContainerStyle = st;
-            #endregion
-
-            ClipToBounds = true;
-            SnapsToDevicePixels = true;
+            ObjectsLayer.ItemsSource = Markers;
 
             // removes white lines between tiles!
-            SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+            SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Unspecified);
 
-            GMaps.Instance.ImageProxy = new WindowsPresentationImageProxy();
+            // set image proxy
+            Manager.ImageProxy = new WindowsPresentationImageProxy();
 
-            Core.RenderMode = GMap.NET.RenderMode.WPF;
-            Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
-            Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
+            //Core.RenderMode = GMap.NET.RenderMode.WPF;
+            //Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
+            //Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
+
             Loaded += new RoutedEventHandler(GMapControl_Loaded);
             Unloaded += new RoutedEventHandler(GMapControl_Unloaded);
             SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
-
-            this.ItemsSource = Markers;
 
             googleCopyright = new FormattedText(Core.googleCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             yahooMapCopyright = new FormattedText(Core.yahooMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
@@ -387,13 +341,88 @@ namespace System.Windows.Controls
       /// <param name="e"></param>
       void GMapControl_Loaded(object sender, RoutedEventArgs e)
       {
-         Core.StartSystem();
-         Core_OnMapZoomChanged();
-      }
+         CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
 
+         //Core.StartSystem();
+         //Core_OnMapZoomChanged();
+      }
       void GMapControl_Unloaded(object sender, RoutedEventArgs e)
       {
-         Core.OnMapClose();
+         //Core.OnMapClose();
+      }
+
+
+
+
+      bool update = true;
+      Dictionary<RawTile, ImageVisual> images = new Dictionary<RawTile, ImageVisual>();
+      Rect maparea = new Rect();
+
+      private void CompositionTarget_Rendering(object sender, EventArgs e)
+      {
+         if(this.update)
+         {
+            Tile t = Core.Matrix[Core.tilePoint];
+            if(t != null)
+            {
+               {
+                  bool found = false;
+
+                  lock(t.Overlays)
+                  {
+                     foreach(WindowsPresentationImage img in t.Overlays)
+                     {
+                        if(img != null && img.Img != null)
+                        {
+                           if(!found)
+                              found = true;
+
+                           var pos = new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+
+                           #region -- add image --
+                           if(false)
+                           {
+                              ImageVisual image = null;
+                              //if(!images.TryGetValue(new RawTile(t.Pos, t.Zoom), out image))
+                              {
+                                 //image = new ImageVisual(img.Img, new LoadTask(t.Pos, t.Zoom));
+                                 //images.Add(image.Task, image);
+
+                                 //Canvas.SetZIndex(image, tile.Key.Level);
+                                 //image.Opacity = 0.5;
+                                 //AnimateOpacity(image, 0, 1, 600);
+
+                                 if(!TilesLayer.Children.Contains(image))
+                                 {
+                                    TilesLayer.Children.Add(image);
+                                 }
+
+                                 image.Visibility = Visibility.Visible;
+                              }
+
+                              Canvas.SetLeft(image, Math.Round(pos.X) - 0.5);
+                              Canvas.SetTop(image, Math.Round(pos.Y) - 0.5);
+                           }
+                           #endregion
+                        }
+                     }
+                  }
+               }
+            }
+
+            this.update = false;
+         }
+      }
+
+      private void Refresh()
+      {
+         // update data
+         {
+            // ...
+         }
+
+         this.update = true;
+         this.InvalidateVisual();
       }
 
       /// <summary>
@@ -403,29 +432,20 @@ namespace System.Windows.Controls
       /// <param name="e"></param>
       void GMapControl_SizeChanged(object sender, SizeChangedEventArgs e)
       {
-         System.Windows.Size constraint = e.NewSize;
+         var size = Projection.GetTileMatrixSizePixel(ZoomStep);
+         TilesLayer.Width = size.Width;
+         TilesLayer.Height = size.Height;
 
-         // 50px outside control
-         region = new GMap.NET.Rectangle(-50, -50, (int) constraint.Width + 100, (int) constraint.Height + 100);
-
-         Core.OnMapSizeChanged((int) constraint.Width, (int) constraint.Height);
-
-         // keep center on same position
-         if(IsLoaded)
-         {
-            Core.GoToCurrentPosition();
-
-            UpdateMarkersOffset();
-         }
+         maparea = new Rect();
       }
 
       void Core_OnMapZoomChanged()
       {
-         UpdateMarkersOffset();
+         //UpdateMarkersOffset();
 
          foreach(var i in Markers)
          {
-            i.ForceUpdateLocalPosition(this);
+            //i.ForceUpdateLocalPosition(this);
          }
 
          var routes = Markers.Where(p => p != null && p.Route.Count > 1);
@@ -433,7 +453,7 @@ namespace System.Windows.Controls
          {
             foreach(var i in routes)
             {
-               i.RegenerateRouteShape(this);
+               //i.RegenerateRouteShape(this);
             }
          }
       }
@@ -445,7 +465,7 @@ namespace System.Windows.Controls
       {
          try
          {
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Input, new MethodInvoker(InvalidateVisual));
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Render, new MethodInvoker(Refresh));
          }
          catch
          {
@@ -500,19 +520,19 @@ namespace System.Windows.Controls
                   {
                      bool found = false;
 
-                     lock(t.Overlays)
-                     {
-                        foreach(WindowsPresentationImage img in t.Overlays)
-                        {
-                           if(img != null && img.Img != null)
-                           {
-                              if(!found)
-                                 found = true;
+                     //lock(t.Overlays)
+                     //{
+                     //   foreach(WindowsPresentationImage img in t.Overlays)
+                     //   {
+                     //      if(img != null && img.Img != null)
+                     //      {
+                     //         if(!found)
+                     //            found = true;
 
-                              g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
-                           }
-                        }
-                     }
+                     //         g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                     //      }
+                     //   }
+                     //}
 
                      if(ShowTileGridLines)
                      {
@@ -763,7 +783,7 @@ namespace System.Windows.Controls
       }
 
       #region UserControl Events
-      protected override void OnRender(DrawingContext drawingContext)
+      protected void OnRenderFalse(DrawingContext drawingContext)
       {
          if(MapRenderTransform != null)
          {
@@ -861,6 +881,8 @@ namespace System.Windows.Controls
       {
          base.OnMouseWheel(e);
 
+         return;
+
          if(IsMouseDirectlyOver && !IsDragging)
          {
             if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
@@ -890,31 +912,37 @@ namespace System.Windows.Controls
                   Zoom -= ZoomIncrement;
                }
          }
-
-         base.OnMouseWheel(e);
       }
 
       bool isSelected = false;
+
+      System.Windows.Point? mouseDown = null;
+      System.Windows.Point Empty = new System.Windows.Point();
+
       protected override void OnMouseDown(MouseButtonEventArgs e)
       {
          if(CanDragMap && e.ChangedButton == DragButton && e.ButtonState == MouseButtonState.Pressed)
          {
-            System.Windows.Point p = e.GetPosition(this);
+            System.Windows.Point p = e.GetPosition(TilesLayer);
 
-            if(MapRenderTransform != null)
-            {
-               p = MapRenderTransform.Inverse.Transform(p);
-            }
+            Mouse.Capture(TilesLayer);
 
-            Core.mouseDown.X = (int) p.X;
-            Core.mouseDown.Y = (int) p.Y;
-            {
-               Cursor = Cursors.SizeAll;
-               Core.BeginDrag(Core.mouseDown);
-            }
-            InvalidateVisual();
+            mouseDown = p;
+
+            //if(MapRenderTransform != null)
+            //{
+            //   p = MapRenderTransform.Inverse.Transform(p);
+            //}
+
+            //Core.mouseDown.X = (int) p.X;
+            //Core.mouseDown.Y = (int) p.Y;
+            //{
+            //   Cursor = Cursors.SizeAll;
+            //   Core.BeginDrag(Core.mouseDown);
+            //}
          }
          else
+         {
             if(!isSelected)
             {
                System.Windows.Point p = e.GetPosition(this);
@@ -923,12 +951,20 @@ namespace System.Windows.Controls
                selectionEnd = PointLatLng.Empty;
                selectionStart = FromLocalToLatLng((int) p.X, (int) p.Y);
             }
+         }
 
          base.OnMouseDown(e);
       }
 
       protected override void OnMouseUp(MouseButtonEventArgs e)
       {
+         base.OnMouseUp(e);
+
+         mouseDown = null;
+         Mouse.Capture(null);
+
+         return;
+
          if(isSelected)
          {
             isSelected = false;
@@ -962,12 +998,21 @@ namespace System.Windows.Controls
             }
          }
          RaiseEmptyTileError = false;
-
-         base.OnMouseUp(e);
       }
 
       protected override void OnMouseMove(MouseEventArgs e)
       {
+         base.OnMouseMove(e);
+
+         if(mouseDown.HasValue)
+         {
+            System.Windows.Point p = e.GetPosition(TilesLayer);
+            TileOffset.Y += p.Y - mouseDown.Value.Y;
+            TileOffset.X += p.X - mouseDown.Value.X;
+         }
+
+         return;
+
          if(Core.IsDragging)
          {
             if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
@@ -977,6 +1022,9 @@ namespace System.Windows.Controls
             else
             {
                System.Windows.Point p = e.GetPosition(this);
+
+               TileOffset.Y = p.Y - mouseDown.Value.Y;
+               TileOffset.X = p.X - mouseDown.Value.X;
 
                if(MapRenderTransform != null)
                {
@@ -1011,8 +1059,6 @@ namespace System.Windows.Controls
                }
             }
          }
-
-         base.OnMouseMove(e);
       }
 
       #endregion

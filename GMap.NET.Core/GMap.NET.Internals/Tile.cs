@@ -22,6 +22,11 @@ namespace GMap.NET.Internals
       {
          lock(Overlays)
          {
+            foreach(PureImage i in Overlays)
+            {
+               i.Dispose();
+            }
+
             Overlays.Clear();
             Overlays.TrimExcess();
          }

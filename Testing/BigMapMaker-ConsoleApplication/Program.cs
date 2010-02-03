@@ -32,7 +32,7 @@ namespace BigMapMaker_ConsoleApplication
                Console.WriteLine("Type: " + type.ToString());
                Console.WriteLine("Area: " + area);
 
-               List<MapType> types = GMaps.Instance.GetAllLayersOfType(type);
+               var types = GMaps.Instance.GetAllLayersOfType(type);
 
                // current area
                GMap.NET.Point topLeftPx = prj.FromLatLngToPixel(area.LocationTopLeft, zoom);
