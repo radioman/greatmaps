@@ -37,17 +37,17 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "m@116";
+      public string VersionGoogleMap = "m@117";
       public string VersionGoogleSatellite = "54";
-      public string VersionGoogleLabels = "h@116";
-      public string VersionGoogleTerrain = "w2p.116";
+      public string VersionGoogleLabels = "h@117";
+      public string VersionGoogleTerrain = "w2p.117";
       public string SecGoogleWord = "Galileo";
 
       // Google (china) version strings
-      public string VersionGoogleMapChina = "w2.116";
+      public string VersionGoogleMapChina = "w2.117";
       public string VersionGoogleSatelliteChina = "54";
-      public string VersionGoogleLabelsChina = "w2t.116";
-      public string VersionGoogleTerrainChina = "w2p.116";
+      public string VersionGoogleLabelsChina = "w2t.117";
+      public string VersionGoogleTerrainChina = "w2p.117";
 
       /// <summary>
       /// Google Maps API generated using http://greatmaps.codeplex.com/
@@ -61,7 +61,7 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.3";
 
       // BingMaps
-      public string VersionBingMaps = "394";
+      public string VersionBingMaps = "409";
 
       /// <summary>
       /// Bing Maps Customer Identification, more info here
