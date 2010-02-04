@@ -1,9 +1,11 @@
 ﻿<UserControl x:Class="GMap.NET.WindowsPresentation.GMapControlNew"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:GMap.NET.WindowsPresentation"
+             SnapsToDevicePixels="True"
              mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="826" d:DesignWidth="863">
     <Grid Background="Black" ClipToBounds="True">
-        <Canvas Name="TilesLayer" Background="Navy" ClipToBounds="False" SnapsToDevicePixels="True" Width="512" Height="512">
+        <Canvas Name="TilesLayer" Background="Navy" ClipToBounds="False" Width="512" Height="512">
             <Canvas.RenderTransform>
                 <TransformGroup>
                     <TransformGroup>
@@ -13,11 +15,6 @@
                     </TransformGroup>
                 </TransformGroup>
             </Canvas.RenderTransform>
-            
-            <Rectangle Canvas.Left="0" Canvas.Top="0" Width="256" Height="256" StrokeThickness="2" Stroke="Green"/>
-            <Rectangle Canvas.Left="256" Canvas.Top="0" Width="256" Height="256" StrokeThickness="2" Stroke="Green"/>
-            <Rectangle Canvas.Left="0" Canvas.Top="256" Width="256" Height="256" StrokeThickness="2" Stroke="Green"/>
-            <Rectangle Canvas.Left="256" Canvas.Top="256" Width="256" Height="256" StrokeThickness="2" Stroke="Green"/>
 
             <ItemsControl Name="ObjectsLayer" ClipToBounds="False" Width="Auto" Height="Auto">
                 <ItemsControl.ItemTemplate>

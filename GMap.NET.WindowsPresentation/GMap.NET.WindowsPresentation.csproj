@@ -8,7 +8,7 @@
     <ProjectGuid>{644FE7D4-0184-400F-B2D7-99CB41360658}</ProjectGuid>
     <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>System.Windows.Controls</RootNamespace>
+    <RootNamespace>GMap.NET.WindowsPresentation</RootNamespace>
     <AssemblyName>GMap.NET.WindowsPresentation</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

@@ -232,7 +232,7 @@ namespace GMap.NET.WindowsPresentation
          {
             if(mapCanvas == null)
             {
-              // if(ObjectsLayer.VisualChildrenCount > 0)
+               // if(ObjectsLayer.VisualChildrenCount > 0)
                {
                   Border border = VisualTreeHelper.GetChild(ObjectsLayer, 0) as Border;
                   ItemsPresenter items = border.Child as ItemsPresenter;
@@ -334,6 +334,13 @@ namespace GMap.NET.WindowsPresentation
          mapFadeStoryboard.Begin(this);
       }
 
+      private void AnimateOpacity(ImageVisual target)
+      {
+         target.Opacity = 0;   
+         Storyboard.SetTarget(animation, target);       
+         storyBoard.Begin();
+      }
+
       /// <summary>
       /// inits core system
       /// </summary>
@@ -341,76 +348,81 @@ namespace GMap.NET.WindowsPresentation
       /// <param name="e"></param>
       void GMapControl_Loaded(object sender, RoutedEventArgs e)
       {
+         animation.From = 0;
+         animation.To = 1;
+         animation.Duration = TimeSpan.FromMilliseconds(2222);
+
+         Storyboard.SetTargetProperty(animation, OpacityPropertyPath);
+         storyBoard.Children.Add(animation);
+
          CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
+         Refresh();
 
          //Core.StartSystem();
          //Core_OnMapZoomChanged();
       }
+
       void GMapControl_Unloaded(object sender, RoutedEventArgs e)
       {
          //Core.OnMapClose();
       }
 
 
-
+      DoubleAnimation animation = new DoubleAnimation();
+      Storyboard storyBoard = new Storyboard();
+      PropertyPath OpacityPropertyPath = new PropertyPath("Opacity");
 
       bool update = true;
       Dictionary<RawTile, ImageVisual> images = new Dictionary<RawTile, ImageVisual>();
       Rect maparea = new Rect();
+      System.Windows.Size TilesSize = new System.Windows.Size();
 
       private void CompositionTarget_Rendering(object sender, EventArgs e)
       {
          if(this.update)
          {
-            Tile t = Core.Matrix[Core.tilePoint];
-            if(t != null)
+            this.update = false;              
+
+            #region -- add image --
+            for(int x = 0; x < TilesSize.Width; x++)
             {
+               for(int y = 0; y < TilesSize.Height; y++)
                {
-                  bool found = false;
+                  var tile = new RawTile(MapType.GoogleHybrid, new GMap.NET.Point(x, y), ZoomStep);
 
-                  lock(t.Overlays)
+                  ImageVisual image = null;
+                  if(!images.TryGetValue(tile, out image))
                   {
-                     foreach(WindowsPresentationImage img in t.Overlays)
+                     var layers = GMaps.Instance.GetAllLayersOfType(tile.Type);
+                    
+                     ImageSource[] imgs = new ImageSource[layers.Length];
+
+                     // get tiles
+                     for(int i = 0; i < layers.Length; i++)
                      {
-                        if(img != null && img.Img != null)
-                        {
-                           if(!found)
-                              found = true;
-
-                           var pos = new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
-
-                           #region -- add image --
-                           if(false)
-                           {
-                              ImageVisual image = null;
-                              //if(!images.TryGetValue(new RawTile(t.Pos, t.Zoom), out image))
-                              {
-                                 //image = new ImageVisual(img.Img, new LoadTask(t.Pos, t.Zoom));
-                                 //images.Add(image.Task, image);
-
-                                 //Canvas.SetZIndex(image, tile.Key.Level);
-                                 //image.Opacity = 0.5;
-                                 //AnimateOpacity(image, 0, 1, 600);
-
-                                 if(!TilesLayer.Children.Contains(image))
-                                 {
-                                    TilesLayer.Children.Add(image);
-                                 }
-
-                                 image.Visibility = Visibility.Visible;
-                              }
-
-                              Canvas.SetLeft(image, Math.Round(pos.X) - 0.5);
-                              Canvas.SetTop(image, Math.Round(pos.Y) - 0.5);
-                           }
-                           #endregion
-                        }
+                        imgs[i] = (GMaps.Instance.GetImageFrom(layers[i], tile.Pos, tile.Zoom) as WindowsPresentationImage).Img;
                      }
+
+                     // combine visual
+                     image = new ImageVisual(imgs, tile);
+                     images.Add(tile, image);                  
+                  }
+
+                  if(!TilesLayer.Children.Contains(image))
+                  {
+                     var pos = new Rect(x*Projection.TileSize.Width, y*Projection.TileSize.Height, Projection.TileSize.Width, Projection.TileSize.Height);
+
+                     Canvas.SetLeft(image, Math.Round(pos.X) - 0.5);
+                     Canvas.SetTop(image, Math.Round(pos.Y) - 0.5);
+                     Canvas.SetZIndex(image, -1);
+
+                     AnimateOpacity(image);  
+
+                     TilesLayer.Children.Add(image);  
                   }
                }
             }
-
-            this.update = false;
+            #endregion
          }
       }
 
@@ -423,7 +435,7 @@ namespace GMap.NET.WindowsPresentation
 
          this.update = true;
          this.InvalidateVisual();
-      }
+      }       
 
       /// <summary>
       /// recalculates size
@@ -432,11 +444,18 @@ namespace GMap.NET.WindowsPresentation
       /// <param name="e"></param>
       void GMapControl_SizeChanged(object sender, SizeChangedEventArgs e)
       {
-         var size = Projection.GetTileMatrixSizePixel(ZoomStep);
-         TilesLayer.Width = size.Width;
-         TilesLayer.Height = size.Height;
+         var sizeInPx = Projection.GetTileMatrixSizePixel(ZoomStep);
+         TilesLayer.Width = sizeInPx.Width;
+         TilesLayer.Height = sizeInPx.Height;
 
-         maparea = new Rect();
+         var sizeinTiles = Projection.GetTileMatrixSizeXY(ZoomStep);
+         TilesSize.Width = sizeinTiles.Width;
+         TilesSize.Height = sizeinTiles.Height;
+
+         if(IsLoaded)
+         {
+            //Refresh();
+         }
       }
 
       void Core_OnMapZoomChanged()
