@@ -58,5 +58,10 @@ namespace GMap.NET
 
       PergoTurkeyMap = 2001, 
       SigPacSpainMap = 3001,
+
+      GoogleMapKorea=4001,
+      GoogleSatelliteKorea=4002,
+      GoogleLabelsKorea=4003,
+      GoogleHybridKorea=4005,
    }
 }

@@ -282,63 +282,55 @@ namespace GMap.NET.WindowsPresentation
             arcGisMapCopyright = new FormattedText(Core.arcGisCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
 
             MapType = MapType.GoogleMap;
+
+            OpacityAnimation = CreateOpacityAnimation(1);
+            ZoomAnimation = CreateZoomAnimation(2);
+            MoveAnimation = CreateMoveAnimation(2);
          }
       }
 
-      // testing smooth zoom
-      Storyboard mapFadeStoryboard;
-      DoubleAnimation oMapFadeAnimation;
-      public Image FadeImage = new Image();
-
-      private void SetFadeStoryBoard(int duration)
+      DoubleAnimation CreateZoomAnimation(double toValue)
       {
-         mapFadeStoryboard = null;
-         oMapFadeAnimation = null;
-
-         mapFadeStoryboard = new Storyboard();
-         oMapFadeAnimation = new DoubleAnimation();
-
-         oMapFadeAnimation.From = 1;
-         oMapFadeAnimation.To = 0;
-         oMapFadeAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(duration));
-
-         mapFadeStoryboard.Children.Add(oMapFadeAnimation);
-         Storyboard.SetTarget(oMapFadeAnimation, FadeImage);
-         Storyboard.SetTargetProperty(oMapFadeAnimation, new PropertyPath(UIElement.OpacityProperty));
+         var da = new DoubleAnimation(toValue, new Duration(TimeSpan.FromMilliseconds(555)));
+         da.AccelerationRatio = 0.1;
+         da.DecelerationRatio = 0.9;
+         da.FillBehavior = FillBehavior.HoldEnd;
+         da.Freeze();
+         return da;
       }
 
-      public void DisplayZoomInFadeImage()
+      DoubleAnimation CreateMoveAnimation(double toValue)
       {
-         ImageSource iSrc = ToImageSource();
-         FadeImage.Source = iSrc;
-
-         if(!CurrentPosition.IsEmpty)
-         {
-            GMap.NET.Point p = FromLatLngToLocal(CurrentPosition);
-            ScaleTransform scaleTransform = new ScaleTransform(2, 2, p.X, p.Y);
-            FadeImage.RenderTransform = scaleTransform;
-         }
-         mapFadeStoryboard.Begin(this);
+         var da = new DoubleAnimation(toValue, new Duration(TimeSpan.FromMilliseconds(555)));
+         da.AccelerationRatio = 0.1;
+         da.DecelerationRatio = 0.9;
+         da.FillBehavior = FillBehavior.HoldEnd;
+         da.Freeze();
+         return da;
       }
 
-      public void DisplayZoomOutFadeImage()
+      DoubleAnimation CreateOpacityAnimation(double toValue)
       {
-         ImageSource iSrc = ToImageSource();
-         FadeImage.Source = iSrc;
-         if(!CurrentPosition.IsEmpty)
-         {
-            GMap.NET.Point p = FromLatLngToLocal(CurrentPosition);
-            ScaleTransform scaleTransform = new ScaleTransform(0.5, 0.5, p.X, p.Y);
-            FadeImage.RenderTransform = scaleTransform;
-         }
-         mapFadeStoryboard.Begin(this);
+         var da = new DoubleAnimation(toValue, new Duration(TimeSpan.FromMilliseconds(2222)));
+         da.AccelerationRatio = 0.1;
+         da.DecelerationRatio = 0.9;
+         da.FillBehavior = FillBehavior.HoldEnd;
+         da.Freeze();
+         return da;
       }
 
-      private void AnimateOpacity(ImageVisual target)
+      void BeginAnimateOpacity(ImageVisual target)
       {
-         target.Opacity = 0;   
-         Storyboard.SetTarget(animation, target);       
-         storyBoard.Begin();
+         target.Opacity = 0;
+         target.BeginAnimation(ImageVisual.OpacityProperty, OpacityAnimation, HandoffBehavior.Compose);
+      }
+
+      void BeginAnimateZoom(ImageVisual target)
+      {
+         //target.TranslateTransform.BeginAnimation(TranslateTransform.XProperty, MoveAnimation, HandoffBehavior.Compose);
+         //target.TranslateTransform.BeginAnimation(TranslateTransform.YProperty, MoveAnimation, HandoffBehavior.Compose);
+         target.ScaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, ZoomAnimation, HandoffBehavior.Compose);
+         target.ScaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, ZoomAnimation, HandoffBehavior.Compose);
       }
 
       /// <summary>
@@ -348,13 +340,6 @@ namespace GMap.NET.WindowsPresentation
       /// <param name="e"></param>
       void GMapControl_Loaded(object sender, RoutedEventArgs e)
       {
-         animation.From = 0;
-         animation.To = 1;
-         animation.Duration = TimeSpan.FromMilliseconds(2222);
-
-         Storyboard.SetTargetProperty(animation, OpacityPropertyPath);
-         storyBoard.Children.Add(animation);
-
          CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
          Refresh();
 
@@ -365,12 +350,11 @@ namespace GMap.NET.WindowsPresentation
       void GMapControl_Unloaded(object sender, RoutedEventArgs e)
       {
          //Core.OnMapClose();
-      }
+      }         
 
-
-      DoubleAnimation animation = new DoubleAnimation();
-      Storyboard storyBoard = new Storyboard();
-      PropertyPath OpacityPropertyPath = new PropertyPath("Opacity");
+      DoubleAnimation OpacityAnimation;
+      DoubleAnimation ZoomAnimation;
+      DoubleAnimation MoveAnimation; 
 
       bool update = true;
       Dictionary<RawTile, ImageVisual> images = new Dictionary<RawTile, ImageVisual>();
@@ -405,7 +389,7 @@ namespace GMap.NET.WindowsPresentation
 
                      // combine visual
                      image = new ImageVisual(imgs, tile);
-                     images.Add(tile, image);                  
+                     images.Add(tile, image);                     
                   }
 
                   if(!TilesLayer.Children.Contains(image))
@@ -416,9 +400,13 @@ namespace GMap.NET.WindowsPresentation
                      Canvas.SetTop(image, Math.Round(pos.Y) - 0.5);
                      Canvas.SetZIndex(image, -1);
 
-                     AnimateOpacity(image);  
+                     BeginAnimateOpacity(image);
 
-                     TilesLayer.Children.Add(image);  
+                     TilesLayer.Children.Add(image);
+                  }
+                  else
+                  {
+                     BeginAnimateZoom(image);
                   }
                }
             }
@@ -457,6 +445,101 @@ namespace GMap.NET.WindowsPresentation
             //Refresh();
          }
       }
+
+      protected override System.Windows.Size ArrangeOverride(System.Windows.Size arrangeBounds)
+      {
+         return base.ArrangeOverride(arrangeBounds);
+      }
+
+      protected override System.Windows.Size MeasureOverride(System.Windows.Size constraint)
+      {
+         return base.MeasureOverride(constraint);
+      }
+
+     //rotected override System.Windows.Size ArrangeOverride(System.Windows.Size finalSize)
+      ///
+         //MapBase parentMap = this.ParentMap;
+         //foreach(UIElement element in base.Children)
+         //{
+         //   Rect finalRect = new Rect(0.0, 0.0, parentMap.ViewportSize.Width, parentMap.ViewportSize.Height);
+         //   LocationRect positionRectangle = GetPositionRectangle(element);
+         //   if(positionRectangle != null)
+         //   {
+         //      finalRect = parentMap.Mode.LocationToViewportPoint(positionRectangle);
+         //   }
+         //   else
+         //   {
+         //      Point point;
+         //      Location position = GetPosition(element);
+         //      if((position != null) && parentMap.TryLocationToViewportPoint(position, out point))
+         //      {
+         //         PositionOrigin positionOrigin = GetPositionOrigin(element);
+         //         point.X -= positionOrigin.X * element.DesiredSize.Width;
+         //         point.Y -= positionOrigin.Y * element.DesiredSize.Height;
+         //         finalRect = new Rect(point.X, point.Y, element.DesiredSize.Width, element.DesiredSize.Height);
+         //      }
+         //   }
+         //   Point positionOffset = GetPositionOffset(element);
+         //   finalRect.X += positionOffset.X;
+         //   finalRect.Y += positionOffset.Y;
+         //   element.Arrange(finalRect);
+         //}
+         //return parentMap.ViewportSize;
+      //
+
+      //protected override Size MeasureOverride(Size availableSize)
+      //{
+      //   MapBase parentMap = this.ParentMap;
+      //   Guid lastProjectPassTag = this.lastProjectPassTag;
+      //   this.lastProjectPassTag = Guid.NewGuid();
+      //   foreach(UIElement element in base.Children)
+      //   {
+      //      IProjectable projectable = element as IProjectable;
+      //      if(projectable != null)
+      //      {
+      //         ProjectionUpdateLevel pendingUpdate = this.pendingUpdate;
+      //         if(((Guid) element.GetValue(ProjectionUpdatedTag)) != lastProjectPassTag)
+      //         {
+      //            pendingUpdate = ProjectionUpdateLevel.Full;
+      //         }
+      //         if(pendingUpdate != ProjectionUpdateLevel.None)
+      //         {
+      //            projectable.ProjectionUpdated(pendingUpdate);
+      //         }
+      //         element.SetValue(ProjectionUpdatedTag, this.lastProjectPassTag);
+      //      }
+      //   }
+      //   this.pendingUpdate = ProjectionUpdateLevel.None;
+      //   foreach(UIElement element2 in base.Children)
+      //   {
+      //      LocationRect positionRectangle = GetPositionRectangle(element2);
+      //      if(positionRectangle != null)
+      //      {
+      //         Rect rect2 = parentMap.Mode.LocationToViewportPoint(positionRectangle);
+      //         element2.Measure(new Size(rect2.Width, rect2.Height));
+      //      }
+      //      else
+      //      {
+      //         if((element2 is ContentPresenter) && (VisualTreeHelper.GetChildrenCount(element2) > 0))
+      //         {
+      //            IProjectable child = VisualTreeHelper.GetChild(element2, 0) as IProjectable;
+      //            if(child != null)
+      //            {
+      //               child.ProjectionUpdated(ProjectionUpdateLevel.Full);
+      //               UIElement element3 = child as UIElement;
+      //               if(element3 != null)
+      //               {
+      //                  element3.InvalidateMeasure();
+      //               }
+      //            }
+      //         }
+      //         element2.Measure(parentMap.ViewportSize);
+      //      }
+      //   }
+      //   return parentMap.ViewportSize;
+      //}
+
+
 
       void Core_OnMapZoomChanged()
       {
@@ -896,9 +979,24 @@ namespace GMap.NET.WindowsPresentation
          base.OnRender(drawingContext);
       }
 
+      double zoom = 1;
       protected override void OnMouseWheel(MouseWheelEventArgs e)
       {
          base.OnMouseWheel(e);
+
+         if(e.Delta > 0)
+         {
+            zoom += 0.2;
+            ZoomAnimation = CreateZoomAnimation(zoom);
+            MoveAnimation = CreateMoveAnimation(-Projection.TileSize.Width);               
+         }
+         else
+         {
+            zoom -= 0.2;
+            ZoomAnimation = CreateZoomAnimation(zoom);
+            MoveAnimation = CreateMoveAnimation(Projection.TileSize.Width);
+         }
+         Refresh();
 
          return;
 

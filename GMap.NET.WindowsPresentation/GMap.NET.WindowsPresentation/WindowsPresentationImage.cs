@@ -8,14 +8,24 @@ namespace GMap.NET.WindowsPresentation
 
    internal class ImageVisual : FrameworkElement
    {
+      public readonly TransformGroup TransformGroup = new TransformGroup();
+      public readonly TranslateTransform TranslateTransform = new TranslateTransform();
+      public readonly ScaleTransform ScaleTransform = new ScaleTransform();       
+
       public readonly ImageSource[] Source;
       public readonly RawTile Tile;
 
       public ImageVisual(ImageSource[] src, RawTile tile)
       {
+         Opacity = 0;
          Source = src;
          Tile = tile;
-         this.Loaded += new RoutedEventHandler(ImageVisual_Loaded);
+
+         TransformGroup.Children.Add(ScaleTransform);
+         TransformGroup.Children.Add(TranslateTransform);
+         RenderTransform = TransformGroup;
+
+         this.Loaded += new RoutedEventHandler(ImageVisual_Loaded);           
       }
 
       void ImageVisual_Loaded(object sender, RoutedEventArgs e)

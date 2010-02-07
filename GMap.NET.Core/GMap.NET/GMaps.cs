@@ -43,11 +43,16 @@ namespace GMap.NET
       public string VersionGoogleTerrain = "w2p.117";
       public string SecGoogleWord = "Galileo";
 
-      // Google (china) version strings
+      // Google (China) version strings
       public string VersionGoogleMapChina = "w2.117";
       public string VersionGoogleSatelliteChina = "54";
       public string VersionGoogleLabelsChina = "w2t.117";
       public string VersionGoogleTerrainChina = "w2p.117";
+
+      // Google (Korea) version strings
+      public string VersionGoogleMapKorea = "kr1.11";
+      public string VersionGoogleSatelliteKorea = "54";
+      public string VersionGoogleLabelsKorea = "kr1t.11";
 
       /// <summary>
       /// Google Maps API generated using http://greatmaps.codeplex.com/
@@ -428,6 +433,14 @@ namespace GMap.NET
                   types = new MapType[2];
                   types[0] = MapType.GoogleSatelliteChina;
                   types[1] = MapType.GoogleLabelsChina;
+               }
+               break;
+
+               case MapType.GoogleHybridKorea:
+               {
+                  types = new MapType[2];
+                  types[0] = MapType.GoogleSatelliteKorea;
+                  types[1] = MapType.GoogleLabelsKorea;
                }
                break;
 
@@ -965,6 +978,48 @@ namespace GMap.NET
                // http://mt0.google.cn/vt/v=w2p.110&hl=zh-CN&gl=cn&x=12&y=6&z=4&s=Ga
 
                return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
+            }
+            #endregion
+
+            #region -- Google (Korea) version --
+            case MapType.GoogleMapKorea:
+            {
+               string server = "mt";
+               string request = "mt";
+               string sec1 = ""; // after &x=...
+               string sec2 = ""; // after &zoom=...
+               GetSecGoogleWords(pos, out sec1, out sec2);
+
+               //http://mt3.gmaptiles.co.kr/mt/v=kr1.11&hl=lt&x=109&y=49&z=7&s=
+
+               var ret = string.Format("http://{0}{1}.gmaptiles.co.kr/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapKorea, language, pos.X, sec1, pos.Y, zoom, sec2);
+               return ret; 
+            }
+
+            case MapType.GoogleSatelliteKorea:
+            {
+               string server = "khm";
+               string request = "kh";
+               string sec1 = ""; // after &x=...
+               string sec2 = ""; // after &zoom=...
+               GetSecGoogleWords(pos, out sec1, out sec2);
+
+               http://khm1.google.co.kr/kh/v=54&x=109&y=49&z=7&s=
+
+               return string.Format("http://{0}{1}.google.co.kr/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteKorea, pos.X, sec1, pos.Y, zoom, sec2);
+            }
+
+            case MapType.GoogleLabelsKorea:
+            {
+               string server = "mt";
+               string request = "mt";
+               string sec1 = ""; // after &x=...
+               string sec2 = ""; // after &zoom=...
+               GetSecGoogleWords(pos, out sec1, out sec2);
+
+               http://mt1.gmaptiles.co.kr/mt/v=kr1t.11&hl=lt&x=109&y=50&z=7&s=G
+
+               return string.Format("http://{0}{1}.gmaptiles.co.kr/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsKorea, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
             #endregion
 

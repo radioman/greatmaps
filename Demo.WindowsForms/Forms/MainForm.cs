@@ -223,6 +223,18 @@ namespace Demo.WindowsForms
             }
             break;
 
+            case MapType.GoogleMapKorea:
+            case MapType.GoogleLabelsKorea:
+            case MapType.GoogleHybridKorea:
+            case MapType.GoogleSatelliteKorea:
+            {
+               MainMap.MinZoom = 1;
+               MainMap.MaxZoom = 19;
+               trackBar1.Minimum = MainMap.MinZoom;
+               MainMap.SetZoomToFitRect(new RectLatLng(38.6597777307125, 125.738525390625, 4.02099609375, 4.42072406219614));
+            }
+            break;
+
             default:
             {
                MainMap.MaxZoom = 17;

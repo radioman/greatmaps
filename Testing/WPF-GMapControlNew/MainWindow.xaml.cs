@@ -29,6 +29,7 @@ namespace WpfApplication1
             GMapMarker m = new GMapMarker();
             {
                var b = new Button();
+               b.Click += new RoutedEventHandler(b_Click);
                b.Width = 55;
                b.Content = "test";
 
@@ -40,6 +41,11 @@ namespace WpfApplication1
          MainMap.MinZoom = 1;
          MainMap.MaxZoom = 17;
          MainMap.Zoom = 2;
+      }
+
+      void b_Click(object sender, RoutedEventArgs e)
+      {
+         MessageBox.Show("click");
       }
    }
 }

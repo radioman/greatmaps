@@ -7,12 +7,9 @@
     <Grid Background="Black" ClipToBounds="True">
         <Canvas Name="TilesLayer" Background="Navy" ClipToBounds="False" Width="512" Height="512">
             <Canvas.RenderTransform>
-                <TransformGroup>
-                    <TransformGroup>
-                        <TranslateTransform x:Name="TileOffset" />
-                        <RotateTransform x:Name="TileRotate" />
-                        <ScaleTransform x:Name="TileScale" />                                             
-                    </TransformGroup>
+                <TransformGroup x:Name="TileTransform">
+                        <ScaleTransform x:Name="TileScale" />
+                        <TranslateTransform x:Name="TileOffset" />                                                                     
                 </TransformGroup>
             </Canvas.RenderTransform>
 
@@ -34,6 +31,6 @@
                     </Style>
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>
-        </Canvas>        
+        </Canvas> 
     </Grid>
 </UserControl>
