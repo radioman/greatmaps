@@ -327,8 +327,8 @@ namespace GMap.NET.WindowsPresentation
 
       void BeginAnimateZoom(ImageVisual target)
       {
-         //target.TranslateTransform.BeginAnimation(TranslateTransform.XProperty, MoveAnimation, HandoffBehavior.Compose);
-         //target.TranslateTransform.BeginAnimation(TranslateTransform.YProperty, MoveAnimation, HandoffBehavior.Compose);
+         target.TranslateTransform.BeginAnimation(TranslateTransform.XProperty, MoveAnimation, HandoffBehavior.Compose);
+         target.TranslateTransform.BeginAnimation(TranslateTransform.YProperty, MoveAnimation, HandoffBehavior.Compose);
          target.ScaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, ZoomAnimation, HandoffBehavior.Compose);
          target.ScaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, ZoomAnimation, HandoffBehavior.Compose);
       }
@@ -980,21 +980,26 @@ namespace GMap.NET.WindowsPresentation
       }
 
       double zoom = 1;
+      double move;
       protected override void OnMouseWheel(MouseWheelEventArgs e)
       {
          base.OnMouseWheel(e);
 
          if(e.Delta > 0)
          {
-            zoom += 0.2;
+            zoom += 2;     
             ZoomAnimation = CreateZoomAnimation(zoom);
-            MoveAnimation = CreateMoveAnimation(-Projection.TileSize.Width);               
+
+            move -= Projection.TileSize.Width*2;
+            MoveAnimation = CreateMoveAnimation(move);               
          }
          else
          {
-            zoom -= 0.2;
+            zoom -= 2;
             ZoomAnimation = CreateZoomAnimation(zoom);
-            MoveAnimation = CreateMoveAnimation(Projection.TileSize.Width);
+
+            move += Projection.TileSize.Width*2;
+            MoveAnimation = CreateMoveAnimation(move);
          }
          Refresh();
 

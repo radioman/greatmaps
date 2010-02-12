@@ -37,21 +37,21 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "m@117";
-      public string VersionGoogleSatellite = "54";
-      public string VersionGoogleLabels = "h@117";
-      public string VersionGoogleTerrain = "w2p.117";
+      public string VersionGoogleMap = "m@118";
+      public string VersionGoogleSatellite = "55";
+      public string VersionGoogleLabels = "h@118";
+      public string VersionGoogleTerrain = "w2p.118";
       public string SecGoogleWord = "Galileo";
 
       // Google (China) version strings
-      public string VersionGoogleMapChina = "w2.117";
-      public string VersionGoogleSatelliteChina = "54";
-      public string VersionGoogleLabelsChina = "w2t.117";
-      public string VersionGoogleTerrainChina = "w2p.117";
+      public string VersionGoogleMapChina = "w2.118";
+      public string VersionGoogleSatelliteChina = "55";
+      public string VersionGoogleLabelsChina = "w2t.118";
+      public string VersionGoogleTerrainChina = "w2p.118";
 
       // Google (Korea) version strings
       public string VersionGoogleMapKorea = "kr1.11";
-      public string VersionGoogleSatelliteKorea = "54";
+      public string VersionGoogleSatelliteKorea = "55";
       public string VersionGoogleLabelsKorea = "kr1t.11";
 
       /// <summary>
