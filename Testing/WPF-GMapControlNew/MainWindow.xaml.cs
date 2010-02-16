@@ -39,7 +39,7 @@ namespace WpfApplication1
          }
 
          MainMap.MinZoom = 1;
-         MainMap.MaxZoom = 17;
+         MainMap.MaxZoom = 4;
          MainMap.Zoom = 2;
       }
 

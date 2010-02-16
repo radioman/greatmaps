@@ -1255,19 +1255,26 @@ namespace System.Windows.Forms
       }
 
 #if !PocketPC
+
+      System.Drawing.Point lastMousePos;
+
       protected override void OnMouseWheel(MouseEventArgs e)
       {
          base.OnMouseWheel(e);
 
          if(!IsMouseOverMarker && !IsDragging)
          {
-            if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
+            if(lastMousePos != Form.MousePosition)
             {
-               Core.currentPosition = FromLocalToLatLng(e.X, e.Y);
-            }
-            else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
-            {
-               Core.currentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
+               if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
+               {
+                  Core.currentPosition = FromLocalToLatLng(e.X, e.Y);
+               }
+               else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
+               {
+                  Core.currentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
+               }
+               lastMousePos = Form.MousePosition;
             }
 
             // set mouse position to map center

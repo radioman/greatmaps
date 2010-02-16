@@ -74,7 +74,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GMap.NET.WindowsPresentation\CompositionTargetEx.cs" />
     <Compile Include="GMap.NET.WindowsPresentation\GMapMarker.cs" />
+    <Compile Include="GMap.NET.WindowsPresentation\PerfTimer.cs" />
+    <Compile Include="GMap.NET.WindowsPresentation\QuadTree.cs" />
     <Compile Include="GMap.NET.WindowsPresentation\WindowsPresentationImage.cs" />
     <Compile Include="System.Windows.Controls\GMapControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -108,6 +111,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

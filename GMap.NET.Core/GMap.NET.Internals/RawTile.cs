@@ -17,5 +17,10 @@
          this.Pos = Pos;
          this.Zoom = Zoom;
       }
+
+      public override string ToString()
+      {
+         return Type + " at zoom " + Zoom + ", pos: " + Pos;
+      }
    }
 }

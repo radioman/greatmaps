@@ -5,27 +5,26 @@ namespace GMap.NET.WindowsPresentation
    using System.Windows.Media.Imaging;
    using GMap.NET.Internals;
    using System.Windows;
+   using System.Diagnostics;
 
-   internal class ImageVisual : FrameworkElement
+   internal class TileVisual : FrameworkElement
    {
-      public readonly TransformGroup TransformGroup = new TransformGroup();
-      public readonly TranslateTransform TranslateTransform = new TranslateTransform();
-      public readonly ScaleTransform ScaleTransform = new ScaleTransform();       
-
       public readonly ImageSource[] Source;
       public readonly RawTile Tile;
 
-      public ImageVisual(ImageSource[] src, RawTile tile)
+      public TileVisual(ImageSource[] src, RawTile tile)
       {
          Opacity = 0;
          Source = src;
          Tile = tile;
 
-         TransformGroup.Children.Add(ScaleTransform);
-         TransformGroup.Children.Add(TranslateTransform);
-         RenderTransform = TransformGroup;
+         this.Loaded += new RoutedEventHandler(ImageVisual_Loaded);
+         this.Unloaded += new RoutedEventHandler(ImageVisual_Unloaded);       
+      }
 
-         this.Loaded += new RoutedEventHandler(ImageVisual_Loaded);           
+      void ImageVisual_Unloaded(object sender, RoutedEventArgs e)
+      {
+         Child = null;
       }
 
       void ImageVisual_Loaded(object sender, RoutedEventArgs e)
@@ -95,6 +94,7 @@ namespace GMap.NET.WindowsPresentation
 
       protected override Visual GetVisualChild(int index)
       {
+         Debug.Assert(index == 0);
          return Child;
       }
       #endregion

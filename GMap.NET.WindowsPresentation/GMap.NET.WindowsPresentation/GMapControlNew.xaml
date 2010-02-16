@@ -5,7 +5,7 @@
              SnapsToDevicePixels="True"
              mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="826" d:DesignWidth="863">
     <Grid Background="Black" ClipToBounds="True">
-        <Canvas Name="TilesLayer" Background="Navy" ClipToBounds="False" Width="512" Height="512">
+        <Canvas x:Name="TilesLayer" Background="Navy" ClipToBounds="False" Width="512" Height="512">
             <Canvas.RenderTransform>
                 <TransformGroup x:Name="TileTransform">
                         <ScaleTransform x:Name="TileScale" />
@@ -31,6 +31,7 @@
                     </Style>
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>
-        </Canvas> 
+        </Canvas>
+        <TextBlock Height="30" Margin="12,12,12,0" Name="perfInfo" Text="FPS: -" FontSize="20" VerticalAlignment="Top" Foreground="AliceBlue" />
     </Grid>
 </UserControl>
