@@ -857,27 +857,34 @@ namespace System.Windows.Controls
          base.OnRender(drawingContext);
       }
 
+      System.Windows.Point lastMousePos; 
+
       protected override void OnMouseWheel(MouseWheelEventArgs e)
       {
          base.OnMouseWheel(e);
 
          if(IsMouseDirectlyOver && !IsDragging)
          {
-            if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
+            System.Windows.Point p = e.GetPosition(this);
+
+            if(lastMousePos != p)
             {
-               System.Windows.Point p = e.GetPosition(this);
-               Core.currentPosition = FromLocalToLatLng((int) p.X, (int) p.Y);
-            }
-            else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
-            {
-               Core.currentPosition = FromLocalToLatLng((int) ActualWidth / 2, (int) ActualHeight / 2);
+               if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
+               {
+                  Core.currentPosition = FromLocalToLatLng((int) p.X, (int) p.Y);
+               }
+               else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
+               {
+                  Core.currentPosition = FromLocalToLatLng((int) ActualWidth / 2, (int) ActualHeight / 2);
+               }
+               lastMousePos = p;
             }
 
             // set mouse position to map center
             if(CenterPositionOnMouseWheel)
             {
-               System.Windows.Point p = PointToScreen(new System.Windows.Point(ActualWidth / 2, ActualHeight / 2));
-               Stuff.SetCursorPos((int) p.X, (int) p.Y);
+               System.Windows.Point ps = PointToScreen(new System.Windows.Point(ActualWidth / 2, ActualHeight / 2));
+               Stuff.SetCursorPos((int) ps.X, (int) ps.Y);
             }
 
             if(e.Delta > 0)
