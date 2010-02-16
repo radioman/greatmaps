@@ -56,7 +56,19 @@ namespace System.Windows.Forms
       /// <summary>
       /// map zooming type for mouse wheel
       /// </summary>
-      public MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePosition;
+      [Category("GMap.NET")]
+      [Description("map zooming type for mouse wheel")]
+      public MouseWheelZoomType MouseWheelZoomType
+      {
+         get
+         {
+            return Core.MouseWheelZoomType;
+         }
+         set
+         {
+            Core.MouseWheelZoomType = value;
+         }
+      }
 
       /// <summary>
       /// text on empty tiles
@@ -103,15 +115,6 @@ namespace System.Windows.Forms
       public Brush TileGridLinesTextBrush = new SolidBrush(Color.Red);
       public Brush TileGridMissingTextBrush = new SolidBrush(Color.White);
       public Brush CopyrightBrush = new SolidBrush(Color.Navy);
-#endif
-
-      /// <summary>
-      /// center mouse pointer OnMouseWheel
-      /// </summary>
-#if !PocketPC
-      public bool CenterPositionOnMouseWheel = true;
-#else
-      public bool CenterPositionOnMouseWheel = false;
 #endif
 
       /// <summary>
@@ -254,6 +257,12 @@ namespace System.Windows.Forms
             BottomFormat.LineAlignment = StringAlignment.Far;
 #endif
             MapType = MapType.GoogleMap;
+
+            if(GMaps.Instance.IsRunningOnMono)
+            {
+               // no imports to move pointer
+               MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionWithoutCenter;
+            }
          }
       }
 
@@ -1256,17 +1265,15 @@ namespace System.Windows.Forms
 
 #if !PocketPC
 
-      System.Drawing.Point lastMousePos;
-
       protected override void OnMouseWheel(MouseEventArgs e)
       {
          base.OnMouseWheel(e);
 
          if(!IsMouseOverMarker && !IsDragging)
          {
-            if(lastMousePos != Form.MousePosition)
+            if(Core.mouseLastZoom.X != e.X && Core.mouseLastZoom.Y != e.Y)
             {
-               if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
+               if(MouseWheelZoomType == MouseWheelZoomType.MousePositionAndCenter)
                {
                   Core.currentPosition = FromLocalToLatLng(e.X, e.Y);
                }
@@ -1274,15 +1281,26 @@ namespace System.Windows.Forms
                {
                   Core.currentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
                }
-               lastMousePos = Form.MousePosition;
+               else if(MouseWheelZoomType == MouseWheelZoomType.MousePositionWithoutCenter)
+               {
+                  Core.currentPosition = FromLocalToLatLng(e.X, e.Y);
+               }
+
+               Core.mouseLastZoom.X = e.X;
+               Core.mouseLastZoom.Y = e.Y;
             }
 
             // set mouse position to map center
-            if(CenterPositionOnMouseWheel && !GMaps.Instance.IsRunningOnMono)
+            if(MouseWheelZoomType != MouseWheelZoomType.MousePositionWithoutCenter)
             {
-               System.Drawing.Point p = PointToScreen(new System.Drawing.Point(Width/2, Height/2));
-               Stuff.SetCursorPos((int) p.X, (int) p.Y);
+               if(!GMaps.Instance.IsRunningOnMono)
+               {
+                  System.Drawing.Point p = PointToScreen(new System.Drawing.Point(Width/2, Height/2));
+                  Stuff.SetCursorPos((int) p.X, (int) p.Y);
+               }
             }
+
+            Core.MouseWheelZooming = true;
 
             if(e.Delta > 0)
             {
@@ -1292,6 +1310,8 @@ namespace System.Windows.Forms
             {
                Zoom--;
             }
+
+            Core.MouseWheelZooming = false;
          }
       }
 #endif

@@ -35,11 +35,11 @@ namespace Demo.WindowsForms
             // add your custom map db provider
             //MySQLPureImageCache ch = new MySQLPureImageCache();
             //ch.ConnectionString = @"server=sql2008;User Id=trolis;Persist Security Info=True;database=gmapnetcache;password=trolis;";
-            //GMaps.Instance.ImageCacheSecond = ch;
+            //MainMap.Manager.ImageCacheSecond = ch;
 
             // set your proxy here if need
-            //GMaps.Instance.Proxy = new WebProxy("10.2.0.100", 8080);
-            //GMaps.Instance.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
+            //MainMap.Manager.Proxy = new WebProxy("10.2.0.100", 8080);
+            //MainMap.Manager.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
             // config map 
             MainMap.Manager.Mode = AccessMode.ServerAndCache;
@@ -48,7 +48,6 @@ namespace Demo.WindowsForms
             MainMap.MinZoom = 1;
             MainMap.Zoom = MainMap.MinZoom + 1;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
-            //MainMap.CurrentPosition = new PointLatLng(29.8741410626414, 121.563806533813); // china test
 
             // map events
             MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
@@ -724,6 +723,12 @@ namespace Demo.WindowsForms
       {
          MainMap.ZoomAndCenterMarkers(null);
          trackBar1.Value = (int) MainMap.Zoom;
+      }
+
+      // ensure focus on map, trackbar can have it too
+      private void MainMap_MouseEnter(object sender, EventArgs e)
+      {
+         MainMap.Focus();
       }
    }
 }

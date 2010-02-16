@@ -295,6 +295,7 @@ namespace Demo.WindowsPresentation
                c.Center = center;
                c.Bound = maxDistObject.Obj.Point;
                c.Tag = it;
+               c.IsHitTestVisible = false;
 
                UpdateCircle(c);
                Circles.Add(it);

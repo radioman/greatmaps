@@ -80,22 +80,24 @@ namespace System.Windows.Controls
       /// <summary>
       /// map zooming type for mouse wheel
       /// </summary>
-      public MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePosition;
-
-      /// <summary>
-      /// center mouse OnMouseWheel
-      /// </summary>
-      public bool CenterPositionOnMouseWheel = true;
+      [Category("GMap.NET")]
+      [Description("map zooming type for mouse wheel")]
+      public MouseWheelZoomType MouseWheelZoomType
+      {
+         get
+         {
+            return Core.MouseWheelZoomType;
+         }
+         set
+         {
+            Core.MouseWheelZoomType = value;
+         }
+      }
 
       /// <summary>
       /// map dragg button
       /// </summary>
       public MouseButton DragButton = MouseButton.Right;
-
-      /// <summary>
-      /// zoom increment on mouse wheel
-      /// </summary>
-      public double ZoomIncrement = 1.0;
 
       /// <summary>
       /// shows tile gridlines
@@ -857,8 +859,6 @@ namespace System.Windows.Controls
          base.OnRender(drawingContext);
       }
 
-      System.Windows.Point lastMousePos; 
-
       protected override void OnMouseWheel(MouseWheelEventArgs e)
       {
          base.OnMouseWheel(e);
@@ -867,9 +867,14 @@ namespace System.Windows.Controls
          {
             System.Windows.Point p = e.GetPosition(this);
 
-            if(lastMousePos != p)
+            if(MapRenderTransform != null)
             {
-               if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
+               //p = MapRenderTransform.Inverse.Transform(p);
+            }
+
+            if(Core.mouseLastZoom.X != (int) p.X && Core.mouseLastZoom.Y != (int) p.Y)
+            {
+               if(MouseWheelZoomType == MouseWheelZoomType.MousePositionAndCenter)
                {
                   Core.currentPosition = FromLocalToLatLng((int) p.X, (int) p.Y);
                }
@@ -877,25 +882,37 @@ namespace System.Windows.Controls
                {
                   Core.currentPosition = FromLocalToLatLng((int) ActualWidth / 2, (int) ActualHeight / 2);
                }
-               lastMousePos = p;
+               else if(MouseWheelZoomType == MouseWheelZoomType.MousePositionWithoutCenter)
+               {
+                  Core.currentPosition = FromLocalToLatLng((int) p.X, (int) p.Y);
+               }
+
+               Core.mouseLastZoom.X = (int) p.X;
+               Core.mouseLastZoom.Y = (int) p.Y;
             }
 
             // set mouse position to map center
-            if(CenterPositionOnMouseWheel)
+            if(MouseWheelZoomType != MouseWheelZoomType.MousePositionWithoutCenter)
             {
                System.Windows.Point ps = PointToScreen(new System.Windows.Point(ActualWidth / 2, ActualHeight / 2));
                Stuff.SetCursorPos((int) ps.X, (int) ps.Y);
             }
 
+            Core.MouseWheelZooming = true;
+
             if(e.Delta > 0)
             {
-               Zoom += ZoomIncrement;
+               Zoom = ((int) Zoom) + 1;
             }
             else
+            {
                if(e.Delta < 0)
                {
-                  Zoom -= ZoomIncrement;
+                  Zoom = ((int) (Zoom + 0.99)) - 1;
                }
+            }
+
+            Core.MouseWheelZooming = false;
          }
 
          base.OnMouseWheel(e);

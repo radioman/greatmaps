@@ -133,12 +133,14 @@
          this.MainMap.Location = new System.Drawing.Point(4, 19);
          this.MainMap.MapType = GMap.NET.MapType.ArcGIS_MapsLT_Map;
          this.MainMap.MarkersEnabled = true;
+         this.MainMap.MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionAndCenter;
          this.MainMap.Name = "MainMap";
          this.MainMap.RoutesEnabled = true;
          this.MainMap.ShowTileGridLines = false;
          this.MainMap.Size = new System.Drawing.Size(847, 884);
          this.MainMap.TabIndex = 0;
-         this.MainMap.Zoom = 0;
+         this.MainMap.Zoom = 0D;
+         this.MainMap.MouseEnter += new System.EventHandler(this.MainMap_MouseEnter);
          // 
          // groupBox3
          // 

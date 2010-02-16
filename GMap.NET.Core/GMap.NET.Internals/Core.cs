@@ -27,6 +27,10 @@ namespace GMap.NET.Internals
 
       public Point mouseDown;
       public Point mouseCurrent;
+      public Point mouseLastZoom;
+
+      public MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePositionAndCenter;
+
       public PointLatLng? LastLocationInBounds = null;
 
       public Size sizeOfMapArea;
@@ -352,12 +356,12 @@ namespace GMap.NET.Internals
       {
          if(!started)
          {
-            started = true;             
+            started = true;
 
             ReloadMap();
             GoToCurrentPosition();
          }
-      }       
+      }
 
       public void UpdateCenterTileXYLocation()
       {
@@ -528,7 +532,7 @@ namespace GMap.NET.Internals
             if(OnNeedInvalidation != null)
             {
                OnNeedInvalidation();
-            }               
+            }
 
             UpdateBaunds();
          }
@@ -548,6 +552,8 @@ namespace GMap.NET.Internals
          this.Drag(new Point(-(CurrentPositionGPixel.X - Width/2), -(CurrentPositionGPixel.Y - Height/2)));
       }
 
+      public bool MouseWheelZooming = false;
+
       /// <summary>
       /// moves current position into map center
       /// </summary>
@@ -558,10 +564,30 @@ namespace GMap.NET.Internals
          centerTileXYLocationLast = Point.Empty;
          dragPoint = Point.Empty;
 
-         // goto location
-         Point pt = new Point(-(CurrentPositionGPixel.X - Width/2), -(CurrentPositionGPixel.Y - Height/2));
-         renderOffset.X = pt.X - dragPoint.X;
-         renderOffset.Y = pt.Y - dragPoint.Y;
+         // goto location and centering
+         if(MouseWheelZooming)
+         {
+            if(MouseWheelZoomType != MouseWheelZoomType.MousePositionWithoutCenter)
+            {
+               Point pt = new Point(-(CurrentPositionGPixel.X - Width/2), -(CurrentPositionGPixel.Y - Height/2));
+               renderOffset.X = pt.X - dragPoint.X;
+               renderOffset.Y = pt.Y - dragPoint.Y;
+            }
+            else // without centering
+            {
+               renderOffset.X = -CurrentPositionGPixel.X - dragPoint.X;
+               renderOffset.Y = -CurrentPositionGPixel.Y - dragPoint.Y;
+               renderOffset.Offset(mouseLastZoom);
+            }
+         }
+         else // use current map center
+         {
+            mouseLastZoom = Point.Empty;
+
+            Point pt = new Point(-(CurrentPositionGPixel.X - Width/2), -(CurrentPositionGPixel.Y - Height/2));
+            renderOffset.X = pt.X - dragPoint.X;
+            renderOffset.Y = pt.Y - dragPoint.Y; 
+         }
 
          UpdateCenterTileXYLocation();
       }

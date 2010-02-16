@@ -7,13 +7,19 @@ namespace GMap.NET
    public enum MouseWheelZoomType
    {
       /// <summary>
-      /// zooms map to current mouse position
+      /// zooms map to current mouse position and makes it map center
       /// </summary>
-      MousePosition,
+      MousePositionAndCenter,
+
+      /// <summary>
+      /// zooms to current mouse position, but doesn't make it map center,
+      /// google/bing style ;}
+      /// </summary>
+      MousePositionWithoutCenter,
 
       /// <summary>
       /// zooms map to current view center
       /// </summary>
-      ViewCenter,
+      ViewCenter,        
    }
 }

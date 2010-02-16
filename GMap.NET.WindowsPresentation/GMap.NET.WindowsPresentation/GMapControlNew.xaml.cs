@@ -82,7 +82,7 @@ namespace GMap.NET.WindowsPresentation
       /// <summary>
       /// map zooming type for mouse wheel
       /// </summary>
-      public MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePosition;
+      public MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePositionAndCenter;
 
       /// <summary>
       /// center mouse OnMouseWheel
@@ -1038,7 +1038,7 @@ namespace GMap.NET.WindowsPresentation
 
          if(IsMouseDirectlyOver && !IsDragging)
          {
-            if(MouseWheelZoomType == MouseWheelZoomType.MousePosition)
+            if(MouseWheelZoomType == MouseWheelZoomType.MousePositionAndCenter)
             {
                System.Windows.Point p = e.GetPosition(this);
                Core.currentPosition = FromLocalToLatLng((int) p.X, (int) p.Y);
