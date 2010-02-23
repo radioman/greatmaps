@@ -923,6 +923,8 @@ namespace System.Windows.Controls
       {
          if(CanDragMap && e.ChangedButton == DragButton && e.ButtonState == MouseButtonState.Pressed)
          {
+            Mouse.Capture(this);
+
             System.Windows.Point p = e.GetPosition(this);
 
             if(MapRenderTransform != null)
@@ -960,6 +962,8 @@ namespace System.Windows.Controls
 
          if(Core.IsDragging)
          {
+            Mouse.Capture(null);
+
             Core.EndDrag();
             Cursor = Cursors.Arrow;
 
