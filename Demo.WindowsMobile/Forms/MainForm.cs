@@ -629,6 +629,40 @@ namespace Demo.WindowsMobile
 
          timerKeeperOfLife.Interval = ShortestTimeoutInterval() * 1000;
          timerKeeperOfLife.Enabled = true;
+
+         try
+         {
+            // Config AutoRotate
+            {
+               using(RegistryKey Config = Registry.CurrentUser.OpenSubKey(@"Software\HTC\HTCSENSOR\GSensor\ModuleName", true))
+               {
+                  if(Config != null)
+                  {
+                     string gmapnet = Config.GetValue("GMapNET", null) as string;
+                     if(string.IsNullOrEmpty(gmapnet))
+                     {
+                        Config.SetValue("GMapNET", @"\Program files\gmap.net\GMap.NET.exe");
+                     }
+                  }
+               }
+
+               using(RegistryKey Config = Registry.CurrentUser.OpenSubKey(@"Software\HTC\HTCSENSOR\GSensor\WhiteList", true))
+               {
+                  if(Config != null)
+                  {
+                     string gmapnet = Config.GetValue("GMapNET", null) as string;
+                     if(string.IsNullOrEmpty(gmapnet))
+                     {
+                        Config.SetValue("GMapNET", "#NETCF_AGL_BASE_");
+                     }
+                  }
+               }
+            }
+         }
+         catch(Exception ex)
+         {
+            Debug.WriteLine(ex.ToString());
+         }
       }
 
       void gps_LocationChanged(object sender, LocationChangedEventArgs args)
