@@ -30,12 +30,6 @@ namespace Demo.WindowsPresentation
       {
          InitializeComponent();
 
-         // config form and add map
-         this.Background = Brushes.AliceBlue;
-
-         // config gmaps
-         MainMap.Manager.UseMemoryCache = false;    
-
          // add your custom map db provider
          //MySQLPureImageCache ch = new MySQLPureImageCache();
          //ch.ConnectionString = @"server=sql2008;User Id=trolis;Persist Security Info=True;database=gmapnetcache;password=trolis;";
