@@ -61,11 +61,11 @@ namespace Demo.WindowsPresentation
 
          // acccess mode
          comboBoxMode.ItemsSource = Enum.GetValues(typeof(AccessMode));
-         comboBoxMode.SelectedItem = GMaps.Instance.Mode;
+         comboBoxMode.SelectedItem = MainMap.Manager.Mode;
 
          // get cache modes
-         checkBoxCacheRoute.IsChecked = GMaps.Instance.UseRouteCache;
-         checkBoxGeoCache.IsChecked = GMaps.Instance.UseGeocoderCache;
+         checkBoxCacheRoute.IsChecked = MainMap.Manager.UseRouteCache;
+         checkBoxGeoCache.IsChecked = MainMap.Manager.UseGeocoderCache;
 
          // setup zoom slider
          sliderZoom.Maximum = MainMap.MaxZoom;

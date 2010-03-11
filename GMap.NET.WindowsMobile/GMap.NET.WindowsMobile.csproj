@@ -221,6 +221,8 @@
     <Compile Include="GMap.NET.GPS\LocationChangedEventArgs.cs" />
     <Compile Include="GMap.NET.GPS\Utils.cs" />
     <Compile Include="GMap.NET.Internals\Native.cs" />
+    <Compile Include="GMap.NET.WindowsForms.Markers\GMapMarkerTransparent.cs" />
+    <Compile Include="GMap.NET.WindowsForms.Markers\GMapMarkerTransparentGoogleGreen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -242,7 +244,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\bigMarkerGreen.png" />
+    <EmbeddedResource Include="Resources\bigMarkerGreen.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\drag_cross_67_16.png" />
@@ -252,7 +254,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DesignTime.xmta" />
-    <None Include="Resources\shadow50.png" />
+    <EmbeddedResource Include="Resources\shadow50.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
   <ProjectExtensions>

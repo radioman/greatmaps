@@ -72,6 +72,7 @@ namespace Demo.WindowsMobile
          MainMap.Manager.Mode = AccessMode.ServerAndCache;
          menuItemServerAndCache.Checked = true;
          menuItemEnableGrid.Checked = true;
+         menuItemGPSenabled.Checked = false;
          MainMap.ShowTileGridLines = true;
 #else
          MainMap.Manager.Mode = AccessMode.CacheOnly;
@@ -102,6 +103,14 @@ namespace Demo.WindowsMobile
          // map center
          center = new GMapMarkerCross(MainMap.CurrentPosition);
          top.Markers.Add(center);
+
+#if DEBUG
+         // transparent marker test
+         GMapMarkerTransparentGoogleGreen goo = new GMapMarkerTransparentGoogleGreen(MainMap.CurrentPosition);
+         goo.TooltipMode = MarkerTooltipMode.Always;
+         goo.ToolTipText = "Welcome to Lithuania! ;}";
+         objects.Markers.Add(goo);
+#endif
 
          UnregisterFunc1(0, 0x75); // VOLUME UP
          UnregisterFunc1(0, 0x76); // VOLUME DOWN 
@@ -620,12 +629,18 @@ namespace Demo.WindowsMobile
             }
          }
 
-         if(!gps.Opened)
+         if(menuItemGPSenabled.Checked)
          {
-            gps.Open();
+            if(!gps.Opened)
+            {
+               gps.Open();
+               center.Pen.Color = Color.Red;
+            }
          }
-
-         center.Pen.Color = Color.Red;
+         else
+         {
+            center.Pen.Color = Color.Blue;
+         }
 
          timerKeeperOfLife.Interval = ShortestTimeoutInterval() * 1000;
          timerKeeperOfLife.Enabled = true;

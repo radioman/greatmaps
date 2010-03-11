@@ -37,7 +37,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
       public Font TooltipFont = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold, GraphicsUnit.Pixel);
 #else
-      public Font TooltipFont = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold);
+      public Font TooltipFont = new Font(FontFamily.GenericSansSerif, 6, FontStyle.Bold);
 #endif
 
       /// <summary>
