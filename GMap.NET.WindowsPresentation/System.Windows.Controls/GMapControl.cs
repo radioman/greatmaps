@@ -67,15 +67,43 @@ namespace System.Windows.Controls
       /// </summary>
       public FormattedText EmptyTileText = new FormattedText("We are sorry, but we don't\nhave imagery at this zoom\n     level for this region.", System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("Arial"), 16, Brushes.White);
 
+      private int maxZoom = 2;
+
       /// <summary>
       /// max zoom
-      /// </summary>
-      public int MaxZoom = 2;
+      /// </summary>         
+      [Category("GMap.NET")]
+      [Description("maximum zoom level of map")]
+      public int MaxZoom
+      {
+         get
+         {
+            return maxZoom;
+         }
+         set
+         {
+            maxZoom = value;
+         }
+      }
+
+      private int minZoom = 2;
 
       /// <summary>
       /// min zoom
-      /// </summary>
-      public int MinZoom = 2;
+      /// </summary>      
+      [Category("GMap.NET")]
+      [Description("minimum zoom level of map")]
+      public int MinZoom
+      {
+         get
+         {
+            return minZoom;
+         }
+         set
+         {
+            minZoom = value;
+         }
+      }
 
       /// <summary>
       /// map zooming type for mouse wheel
