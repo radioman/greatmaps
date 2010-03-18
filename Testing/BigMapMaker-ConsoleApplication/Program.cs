@@ -18,6 +18,7 @@ namespace BigMapMaker_ConsoleApplication
 
          MapType type = MapType.GoogleMap;
          PureProjection prj = new MercatorProjection();
+
          int zoom = 12;
          RectLatLng area = RectLatLng.FromLTRB(25.013809204101563, 54.832138557519563, 25.506134033203125, 54.615623046071839);
          if(!area.IsEmpty)

@@ -37,17 +37,17 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "m@119";
+      public string VersionGoogleMap = "m@120";
       public string VersionGoogleSatellite = "57";
-      public string VersionGoogleLabels = "h@119";
-      public string VersionGoogleTerrain = "w2p.119";
+      public string VersionGoogleLabels = "h@120";
+      public string VersionGoogleTerrain = "t@108,r@120";
       public string SecGoogleWord = "Galileo";
 
       // Google (China) version strings
-      public string VersionGoogleMapChina = "w2.119";
+      public string VersionGoogleMapChina = "w2.120";
       public string VersionGoogleSatelliteChina = "57";
-      public string VersionGoogleLabelsChina = "w2t.119";
-      public string VersionGoogleTerrainChina = "w2p.119";
+      public string VersionGoogleLabelsChina = "w2t.120";
+      public string VersionGoogleTerrainChina = "w2p.120";
 
       // Google (Korea) version strings
       public string VersionGoogleMapKorea = "kr1.12";
@@ -66,7 +66,7 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.3";
 
       // BingMaps
-      public string VersionBingMaps = "414";
+      public string VersionBingMaps = "426";
 
       /// <summary>
       /// Bing Maps Customer Identification, more info here
@@ -1474,8 +1474,8 @@ namespace GMap.NET
                                                    else
                                                       if(i == 3)
                                                       {
-                                                         // w2p.106
-                                                         if(u.StartsWith("w2p"))
+                                                         // t@108,r@120
+                                                         if(u.StartsWith("t@"))
                                                          {
                                                             Debug.WriteLine("TryCorrectGoogleVersions[terrain]: " + u);
                                                             VersionGoogleTerrain = u;
