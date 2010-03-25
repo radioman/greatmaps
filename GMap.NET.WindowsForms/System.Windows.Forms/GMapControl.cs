@@ -253,7 +253,7 @@ namespace System.Windows.Forms
       public GMapControl()
       {
 #if !PocketPC
-         if(!DesignModeInConstruct && !DesignMode)
+         if(!DesignModeInConstruct && !IsDesignerHosted)
 #endif
          {
             WindowsFormsImageProxy wimg = new WindowsFormsImageProxy();
@@ -774,13 +774,52 @@ namespace System.Windows.Forms
          {
             return (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
          }
+      }         
+
+      public bool IsDesignerHosted
+      {   
+         get
+         {  
+            return IsControlDesignerHosted(this); 
+         } 
+      }
+
+      public bool IsControlDesignerHosted(Control ctrl)
+      {   
+         if(ctrl != null)
+         { 
+            if(ctrl.Site != null)
+            {
+
+               if(ctrl.Site.DesignMode == true) 
+                  return true;
+
+               else
+               {  
+                  if(IsControlDesignerHosted(ctrl.Parent))
+                     return true;
+
+                  else 
+                     return false; 
+               }  
+            }  
+            else
+            {   
+               if(IsControlDesignerHosted(ctrl.Parent))
+                  return true; 
+               else    
+                  return false; 
+            }  
+         }  
+         else  
+            return false; 
       }
 
       protected override void OnLoad(EventArgs e)
       {
          base.OnLoad(e);
 
-         if(!DesignMode)
+         if(!IsDesignerHosted)
          {
             MethodInvoker m = delegate
             {
@@ -1022,7 +1061,7 @@ namespace System.Windows.Forms
       {
          base.OnSizeChanged(e);
 
-         if(!DesignMode && !DesignModeInConstruct)
+         if(!IsDesignerHosted && !DesignModeInConstruct)
          {
             if(ForceDoubleBuffer)
             {
