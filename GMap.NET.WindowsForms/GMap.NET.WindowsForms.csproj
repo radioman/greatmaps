@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GMap.NET.WindowsForms\GMapPolygon.cs" />
     <Compile Include="GMap.NET.WindowsForms\TilePrefetcher.cs">
       <SubType>Form</SubType>
     </Compile>

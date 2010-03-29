@@ -25,6 +25,7 @@ namespace Demo.WindowsForms
       GMapOverlay top;
       GMapOverlay objects;
       GMapOverlay routes;
+      GMapOverlay polygons;
 
       public MainForm()
       {
@@ -86,6 +87,9 @@ namespace Demo.WindowsForms
 
             // add custom layers  
             {
+               polygons = new GMapOverlay(MainMap, "polygons");
+               MainMap.Overlays.Add(polygons);
+
                routes = new GMapOverlay(MainMap, "routes");
                MainMap.Overlays.Add(routes);
 
@@ -122,10 +126,21 @@ namespace Demo.WindowsForms
             // add some point in lithuania
             //if(false)
             {
+               AddLocationLithuania("Kaunas");
                AddLocationLithuania("Klaipėda");
                AddLocationLithuania("Šiauliai");
                AddLocationLithuania("Panevėžys");
-               AddLocationLithuania("Kaunas");
+
+               // add polygon around all cities
+               {
+                  List<PointLatLng> polygonPoints = new List<PointLatLng>();
+                  foreach(GMapMarker m in objects.Markers)
+                  {
+                     polygonPoints.Add(m.Position);
+                  }
+                  GMapPolygon polygon = new GMapPolygon(polygonPoints, "polygon test");
+                  polygons.Polygons.Add(polygon);
+               }
             }
 
             // test performance
@@ -156,7 +171,7 @@ namespace Demo.WindowsForms
          GMapMarker m = new GMapMarkerGoogleGreen(pos);
          {
             m.ToolTipText = (tt++).ToString();
-            m.TooltipMode = MarkerTooltipMode.Always;            
+            m.TooltipMode = MarkerTooltipMode.Always;
             m.Offset = new System.Drawing.Point(-m.Size.Width, -m.Size.Height);
          }
          //m.ForceUpdateLocalPosition(MainMap);
@@ -544,6 +559,12 @@ namespace Demo.WindowsForms
       private void button6_Click(object sender, EventArgs e)
       {
          routes.Routes.Clear();
+      }
+
+      // clear polygons
+      private void button15_Click(object sender, EventArgs e)
+      {
+         polygons.Polygons.Clear();
       }
 
       // clear markers

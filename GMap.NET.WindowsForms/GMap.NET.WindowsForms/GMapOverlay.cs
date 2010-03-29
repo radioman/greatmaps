@@ -29,7 +29,12 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// list of routes, should be thread safe
       /// </summary>
-      public readonly ObservableCollectionThreadSafe<MapRoute> Routes = new ObservableCollectionThreadSafe<MapRoute>();
+      public readonly ObservableCollectionThreadSafe<GMapRoute> Routes = new ObservableCollectionThreadSafe<GMapRoute>();
+
+      /// <summary>
+      /// list of polygons, should be thread safe
+      /// </summary>
+      public readonly ObservableCollectionThreadSafe<GMapPolygon> Polygons = new ObservableCollectionThreadSafe<GMapPolygon>();
 
       /// <summary>
       /// font for markers tooltip
@@ -60,6 +65,15 @@ namespace GMap.NET.WindowsForms
 #endif
 
       /// <summary>
+      /// Polygon background color
+      /// </summary>
+#if !PocketPC
+      public Brush PolygonBackground = new SolidBrush(Color.FromArgb(155, Color.AliceBlue));
+#else
+      public Brush PolygonBackground = new System.Drawing.SolidBrush(Color.AliceBlue);
+#endif
+
+      /// <summary>
       /// tooltip string format
       /// </summary>
       public StringFormat TooltipFormat = new StringFormat();
@@ -77,6 +91,7 @@ namespace GMap.NET.WindowsForms
          Id = id;
          Markers.CollectionChanged += new NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
          Routes.CollectionChanged += new NotifyCollectionChangedEventHandler(Routes_CollectionChanged);
+         Polygons.CollectionChanged += new NotifyCollectionChangedEventHandler(Polygons_CollectionChanged);
 
 #if !PocketPC
          RoutePen.LineJoin = LineJoin.Round;
@@ -91,6 +106,19 @@ namespace GMap.NET.WindowsForms
 
          TooltipFormat.Alignment     = StringAlignment.Center;
          TooltipFormat.LineAlignment = StringAlignment.Center;
+      }
+
+      void Polygons_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+      {
+         if(e.NewItems != null)
+         {
+            foreach(GMapPolygon obj in e.NewItems)
+            {
+               Control.UpdatePolygonLocalPosition(obj);
+            }
+         }
+
+         Control.Core_OnNeedInvalidation();
       }
 
       void Routes_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -215,11 +243,79 @@ namespace GMap.NET.WindowsForms
       }
 
       /// <summary>
+      /// draw polygons, override to draw custom
+      /// </summary>
+      /// <param name="g"></param>
+      protected virtual void DrawPolygons(Graphics g)
+      {
+#if !PocketPC
+         GraphicsState st = g.Save();
+         g.SmoothingMode = SmoothingMode.AntiAlias;
+
+         foreach(GMapPolygon r in Polygons)
+         {
+            RoutePen.Color = r.Color;
+
+            using(GraphicsPath rp = new GraphicsPath())
+            {
+               for(int i = 0; i < r.LocalPoints.Count; i++)
+               {
+                  GMap.NET.Point p2 = r.LocalPoints[i];
+
+                  if(i == 0)
+                  {
+                     rp.AddLine(p2.X, p2.Y, p2.X, p2.Y);
+                  }
+                  else
+                  {
+                     System.Drawing.PointF p = rp.GetLastPoint();
+                     rp.AddLine(p.X, p.Y, p2.X, p2.Y);
+                  }
+               }
+
+               if(rp.PointCount > 0)
+               {
+                  rp.CloseFigure();
+
+                  g.FillPath(PolygonBackground, rp);
+
+                  g.DrawPath(RoutePen, rp);
+               }
+            }
+         }
+         g.Restore(st);
+#else
+         foreach(GMapPolygon r in Polygons)
+         {
+            RoutePen.Color = r.Color;
+
+            Point[] pnts = new Point[r.LocalPoints.Count];
+            for(int i = 0; i < r.LocalPoints.Count; i++)
+            {
+               Point p2 = new Point(r.LocalPoints[i].X, r.LocalPoints[i].Y);
+               pnts[pnts.Length - 1 - i] = p2;
+            }
+
+            if(pnts.Length > 0)
+            {
+               g.FillPolygon(PolygonBackground, pnts);
+               g.DrawPolygon(RoutePen, pnts);
+            }
+         }
+#endif
+      }
+
+      /// <summary>
       /// renders objects and routes
       /// </summary>
       /// <param name="g"></param>
       public virtual void Render(Graphics g)
       {
+         if(Control.PolygonsEnabled)
+         {
+            DrawPolygons(g);
+         }
+
          if(Control.RoutesEnabled)
          {
             DrawRoutes(g);

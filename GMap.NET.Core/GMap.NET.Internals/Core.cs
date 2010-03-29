@@ -290,6 +290,11 @@ namespace GMap.NET.Internals
       }
 
       /// <summary>
+      /// is polygons enabled
+      /// </summary>
+      public bool PolygonsEnabled = true;
+
+      /// <summary>
       /// is routes enabled
       /// </summary>
       public bool RoutesEnabled = true;

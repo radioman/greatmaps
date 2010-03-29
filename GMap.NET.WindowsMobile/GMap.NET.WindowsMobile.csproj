@@ -203,6 +203,9 @@
     <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\GMapOverlay.cs">
       <Link>GMap.NET.WindowsForms\GMapOverlay.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\GMapPolygon.cs">
+      <Link>GMap.NET.WindowsForms\GMapPolygon.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\GMapRoute.cs">
       <Link>GMap.NET.WindowsForms\GMapRoute.cs</Link>
     </Compile>

@@ -77,6 +77,8 @@
          this.groupBox8 = new System.Windows.Forms.GroupBox();
          this.button7 = new System.Windows.Forms.Button();
          this.checkBoxPlacemarkInfo = new System.Windows.Forms.CheckBox();
+         this.button15 = new System.Windows.Forms.Button();
+         this.label3 = new System.Windows.Forms.Label();
          this.groupBox4.SuspendLayout();
          this.groupBox3.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize) (this.trackBar1)).BeginInit();
@@ -133,8 +135,11 @@
          this.MainMap.Location = new System.Drawing.Point(4, 19);
          this.MainMap.MapType = GMap.NET.MapType.ArcGIS_MapsLT_Map;
          this.MainMap.MarkersEnabled = true;
+         this.MainMap.MaxZoom = 2;
+         this.MainMap.MinZoom = 2;
          this.MainMap.MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionAndCenter;
          this.MainMap.Name = "MainMap";
+         this.MainMap.PolygonsEnabled = true;
          this.MainMap.RoutesEnabled = true;
          this.MainMap.ShowTileGridLines = false;
          this.MainMap.Size = new System.Drawing.Size(847, 884);
@@ -249,7 +254,7 @@
          this.button5.Location = new System.Drawing.Point(125, 55);
          this.button5.Margin = new System.Windows.Forms.Padding(4);
          this.button5.Name = "button5";
-         this.button5.Size = new System.Drawing.Size(87, 30);
+         this.button5.Size = new System.Drawing.Size(84, 30);
          this.button5.TabIndex = 13;
          this.button5.Text = "Clear All";
          this.button5.UseVisualStyleBackColor = true;
@@ -345,7 +350,7 @@
          this.button12.Location = new System.Drawing.Point(125, 144);
          this.button12.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.button12.Name = "button12";
-         this.button12.Size = new System.Drawing.Size(93, 30);
+         this.button12.Size = new System.Drawing.Size(86, 30);
          this.button12.TabIndex = 39;
          this.button12.Text = "Save View";
          this.button12.UseVisualStyleBackColor = true;
@@ -461,7 +466,7 @@
          this.button11.Location = new System.Drawing.Point(116, 80);
          this.button11.Margin = new System.Windows.Forms.Padding(4);
          this.button11.Name = "button11";
-         this.button11.Size = new System.Drawing.Size(101, 25);
+         this.button11.Size = new System.Drawing.Size(95, 25);
          this.button11.TabIndex = 38;
          this.button11.Text = "Prefetch";
          this.button11.UseVisualStyleBackColor = true;
@@ -472,7 +477,7 @@
          this.button10.Location = new System.Drawing.Point(116, 48);
          this.button10.Margin = new System.Windows.Forms.Padding(4);
          this.button10.Name = "button10";
-         this.button10.Size = new System.Drawing.Size(101, 25);
+         this.button10.Size = new System.Drawing.Size(95, 25);
          this.button10.TabIndex = 5;
          this.button10.Text = "Import";
          this.button10.UseVisualStyleBackColor = true;
@@ -480,10 +485,10 @@
          // 
          // button9
          // 
-         this.button9.Location = new System.Drawing.Point(8, 48);
+         this.button9.Location = new System.Drawing.Point(10, 48);
          this.button9.Margin = new System.Windows.Forms.Padding(4);
          this.button9.Name = "button9";
-         this.button9.Size = new System.Drawing.Size(100, 25);
+         this.button9.Size = new System.Drawing.Size(98, 25);
          this.button9.TabIndex = 4;
          this.button9.Text = "Export";
          this.button9.UseVisualStyleBackColor = true;
@@ -495,7 +500,7 @@
          this.checkBoxUseGeoCache.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
          this.checkBoxUseGeoCache.Checked = true;
          this.checkBoxUseGeoCache.CheckState = System.Windows.Forms.CheckState.Checked;
-         this.checkBoxUseGeoCache.Location = new System.Drawing.Point(120, 23);
+         this.checkBoxUseGeoCache.Location = new System.Drawing.Point(115, 23);
          this.checkBoxUseGeoCache.Margin = new System.Windows.Forms.Padding(4);
          this.checkBoxUseGeoCache.Name = "checkBoxUseGeoCache";
          this.checkBoxUseGeoCache.Size = new System.Drawing.Size(96, 21);
@@ -521,10 +526,10 @@
          // 
          // button2
          // 
-         this.button2.Location = new System.Drawing.Point(8, 80);
+         this.button2.Location = new System.Drawing.Point(10, 80);
          this.button2.Margin = new System.Windows.Forms.Padding(4);
          this.button2.Name = "button2";
-         this.button2.Size = new System.Drawing.Size(100, 25);
+         this.button2.Size = new System.Drawing.Size(98, 25);
          this.button2.TabIndex = 0;
          this.button2.Text = "Clear All";
          this.button2.UseVisualStyleBackColor = true;
@@ -561,6 +566,8 @@
          // groupBox7
          // 
          this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+         this.groupBox7.Controls.Add(this.label3);
+         this.groupBox7.Controls.Add(this.button15);
          this.groupBox7.Controls.Add(this.dateTimePickerMobileLog);
          this.groupBox7.Controls.Add(this.button14);
          this.groupBox7.Controls.Add(this.buttonSetEnd);
@@ -591,7 +598,7 @@
          this.button14.Location = new System.Drawing.Point(113, 64);
          this.button14.Margin = new System.Windows.Forms.Padding(4);
          this.button14.Name = "button14";
-         this.button14.Size = new System.Drawing.Size(98, 30);
+         this.button14.Size = new System.Drawing.Size(99, 30);
          this.button14.TabIndex = 43;
          this.button14.Text = "Mobile log...";
          this.button14.UseVisualStyleBackColor = true;
@@ -622,12 +629,12 @@
          // button6
          // 
          this.button6.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button6.Location = new System.Drawing.Point(10, 130);
+         this.button6.Location = new System.Drawing.Point(56, 130);
          this.button6.Margin = new System.Windows.Forms.Padding(4);
          this.button6.Name = "button6";
-         this.button6.Size = new System.Drawing.Size(202, 30);
+         this.button6.Size = new System.Drawing.Size(73, 30);
          this.button6.TabIndex = 34;
-         this.button6.Text = "Clear All";
+         this.button6.Text = "Routes";
          this.button6.UseVisualStyleBackColor = true;
          this.button6.Click += new System.EventHandler(this.button6_Click);
          // 
@@ -696,6 +703,28 @@
          this.checkBoxPlacemarkInfo.Text = "place info";
          this.checkBoxPlacemarkInfo.UseVisualStyleBackColor = true;
          // 
+         // button15
+         // 
+         this.button15.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+         this.button15.Location = new System.Drawing.Point(134, 130);
+         this.button15.Margin = new System.Windows.Forms.Padding(4);
+         this.button15.Name = "button15";
+         this.button15.Size = new System.Drawing.Size(77, 30);
+         this.button15.TabIndex = 45;
+         this.button15.Text = "Polygons";
+         this.button15.UseVisualStyleBackColor = true;
+         this.button15.Click += new System.EventHandler(this.button15_Click);
+         // 
+         // label3
+         // 
+         this.label3.AutoSize = true;
+         this.label3.Location = new System.Drawing.Point(8, 137);
+         this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+         this.label3.Name = "label3";
+         this.label3.Size = new System.Drawing.Size(45, 17);
+         this.label3.TabIndex = 46;
+         this.label3.Text = "Clear:";
+         // 
          // MainForm
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -731,6 +760,7 @@
          this.groupBox6.ResumeLayout(false);
          this.groupBox6.PerformLayout();
          this.groupBox7.ResumeLayout(false);
+         this.groupBox7.PerformLayout();
          this.groupBoxLoading.ResumeLayout(false);
          this.groupBox8.ResumeLayout(false);
          this.groupBox8.PerformLayout();
@@ -789,6 +819,8 @@
       private System.Windows.Forms.Button button13;
       private System.Windows.Forms.Button button14;
       private System.Windows.Forms.DateTimePicker dateTimePickerMobileLog;
+      private System.Windows.Forms.Label label3;
+      private System.Windows.Forms.Button button15;
    }
 }
 

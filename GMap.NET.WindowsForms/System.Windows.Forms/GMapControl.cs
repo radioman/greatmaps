@@ -308,6 +308,11 @@ namespace System.Windows.Forms
                   obj.Position = obj.Position;
                }
 
+               foreach(GMapPolygon obj in o.Polygons)
+               {
+                  UpdatePolygonLocalPosition(obj);
+               }
+
                foreach(GMapRoute obj in o.Routes)
                {
                   UpdateRouteLocalPosition(obj);
@@ -460,10 +465,26 @@ namespace System.Windows.Forms
       }
 
       /// <summary>
-      /// updates route local position
+      /// updates routes local position
       /// </summary>
       /// <param name="route"></param>
-      public void UpdateRouteLocalPosition(GMapRoute route)
+      internal void UpdateRouteLocalPosition(GMapRoute route)
+      {
+         route.LocalPoints.Clear();
+
+         foreach(GMap.NET.PointLatLng pg in route.Points)
+         {
+            GMap.NET.Point p = Projection.FromLatLngToPixel(pg, Core.Zoom);
+            p.Offset(Core.renderOffset);
+            route.LocalPoints.Add(p);
+         }
+      }
+
+      /// <summary>
+      /// updates polygons local position
+      /// </summary>
+      /// <param name="route"></param>
+      internal void UpdatePolygonLocalPosition(GMapPolygon route)
       {
          route.LocalPoints.Clear();
 
@@ -1755,6 +1776,22 @@ namespace System.Windows.Forms
          set
          {
             Core.RoutesEnabled = value;
+         }
+      }
+
+      /// <summary>
+      /// is polygons enabled
+      /// </summary>
+      [Category("GMap.NET")]
+      public bool PolygonsEnabled
+      {
+         get
+         {
+            return Core.PolygonsEnabled;
+         }
+         set
+         {
+            Core.PolygonsEnabled = value;
          }
       }
 
