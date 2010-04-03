@@ -591,7 +591,7 @@ namespace GMap.NET.Internals
 
             Point pt = new Point(-(CurrentPositionGPixel.X - Width/2), -(CurrentPositionGPixel.Y - Height/2));
             renderOffset.X = pt.X - dragPoint.X;
-            renderOffset.Y = pt.Y - dragPoint.Y; 
+            renderOffset.Y = pt.Y - dragPoint.Y;
          }
 
          UpdateCenterTileXYLocation();
@@ -686,29 +686,19 @@ namespace GMap.NET.Internals
             {
                try
                {
-                  //Debug.WriteLine("ProcessLoadTask: " + task);
+                  var m = Matrix[task.Pos];
 
-                  Tile t = new Tile(task.Zoom, task.Pos);
+                  if(m == null || m.Overlays.Count == 0)
                   {
+                     Debug.WriteLine("Fill empty TileMatrix: " + task);
+
+                     Tile t = new Tile(task.Zoom, task.Pos);
                      var layers = GMaps.Instance.GetAllLayersOfType(MapType);
-                     int retry = 0;
 
-                     //var m = Matrix[task.Pos];
-                     //if(m != null)
-                     //{
-                     //   m.Clear();
-                     //   Debug.WriteLine("NotNULL matrix");
-                     //}
-
-                     // try get it few times
-                     do
+                     foreach(MapType tl in layers)
                      {
-                        lock(t.Overlays)
-                        {
-                           t.Overlays.Clear();
-                        }
-
-                        foreach(MapType tl in layers)
+                        int retry = 0;
+                        do
                         {
                            PureImage img;
 
@@ -728,23 +718,30 @@ namespace GMap.NET.Internals
                               {
                                  t.Overlays.Add(img);
                               }
-                              retry = 0;
+                              break;
                            }
                            else
                            {
                               Debug.WriteLine("ProcessLoadTask: " + task + " -> empty tile, retry " + retry);
-
-                              if(retry++ > 0)
                               {
                                  Thread.Sleep(1111);
                               }
-                              break;
                            }
                         }
+                        while(++retry < GMaps.Instance.RetryLoadTile);
                      }
-                     while(retry != 0 && retry < GMaps.Instance.RetryLoadTile);
 
-                     Matrix[task.Pos] = t;
+                     if(t.Overlays.Count > 0)
+                     {
+                        Matrix[task.Pos] = t;
+                     }
+                     else
+                     {
+                        t.Clear();
+                        t = null;
+                     }
+
+                     layers = null;
                   }
                }
                catch(Exception ex)
