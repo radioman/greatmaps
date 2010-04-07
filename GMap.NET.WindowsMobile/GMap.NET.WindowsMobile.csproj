@@ -113,6 +113,9 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\MercatorProjection.cs">
       <Link>GMap.NET.Projections\MercatorProjection.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\MercatorProjectionYandex.cs">
+      <Link>GMap.NET.Projections\MercatorProjectionYandex.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\PlateCarreeProjection.cs">
       <Link>GMap.NET.Projections\PlateCarreeProjection.cs</Link>
     </Compile>
