@@ -63,5 +63,7 @@ namespace GMap.NET
       GoogleSatelliteKorea=4002,
       GoogleLabelsKorea=4003,
       GoogleHybridKorea=4005,
+
+      YandexMapRu = 5000,
    }
 }

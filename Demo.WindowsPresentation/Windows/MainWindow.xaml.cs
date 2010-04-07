@@ -365,6 +365,12 @@ namespace Demo.WindowsPresentation
             }
             break;
 
+            case MapType.YandexMapRu:
+            {
+               MainMap.MaxZoom = 13;
+            }
+            break;
+
             case MapType.GoogleMapKorea:
             case MapType.GoogleLabelsKorea:
             case MapType.GoogleHybridKorea:

@@ -68,6 +68,9 @@ namespace GMap.NET
       // BingMaps
       public string VersionBingMaps = "426";
 
+      // YandexMap
+      public string VersionYandexMap = "2.10.2";
+
       /// <summary>
       /// Bing Maps Customer Identification, more info here
       /// http://msdn.microsoft.com/en-us/library/bb924353.aspx
@@ -993,7 +996,7 @@ namespace GMap.NET
                //http://mt3.gmaptiles.co.kr/mt/v=kr1.11&hl=lt&x=109&y=49&z=7&s=
 
                var ret = string.Format("http://{0}{1}.gmaptiles.co.kr/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapKorea, language, pos.X, sec1, pos.Y, zoom, sec2);
-               return ret; 
+               return ret;
             }
 
             case MapType.GoogleSatelliteKorea:
@@ -1177,7 +1180,7 @@ namespace GMap.NET
                string y = pos.Y.ToString("000000000").Insert(3, "/").Insert(7, "/"); // - 000/000/000
 
                return string.Format("http://map{0}.pergo.com.tr/tile/{1:00}/{2}/{3}.png", GetServerNum(pos, 4), zoom, x, y);
-            } 
+            }
             #endregion
 
             #region -- SigPac --
@@ -1185,12 +1188,23 @@ namespace GMap.NET
             {
                return string.Format("http://sigpac.mapa.es/kmlserver/raster/{0}@3785/{1}.{2}.{3}.img", levelsForSigPacSpainMap[zoom], zoom, pos.X, ((2 << zoom - 1) - pos.Y - 1));
             }
-            break; 
+            break;
+            #endregion
+
+            #region -- YandexMap --
+            case MapType.YandexMapRu:
+            {
+               string server = "vec";                 
+
+               //http://vec01.maps.yandex.ru/tiles?l=map&v=2.10.2&x=1494&y=650&z=11
+
+               return string.Format("http://{0}0{1}.maps.yandex.ru/tiles?l=map&v={2}&x={3}&y={4}&z={5}", server, GetServerNum(pos, 4)+1, VersionYandexMap, pos.X, pos.Y, zoom);
+            } 
             #endregion
          }
 
          return null;
-      }  
+      }
 
       /// <summary>
       /// gets secure google words based on position
@@ -2159,6 +2173,12 @@ namespace GMap.NET
                         request.Referer = "http://www.openstreetmap.org/";
                      }
                      break;
+
+                     case MapType.YandexMapRu:
+                     {
+                        request.Referer = "http://maps.yandex.ru/";
+                     }
+                     break; 
                   }
 
                   Debug.WriteLine("Starting GetResponse: " + pos);

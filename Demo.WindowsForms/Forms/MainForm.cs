@@ -228,6 +228,12 @@ namespace Demo.WindowsForms
             }
             break;
 
+            case MapType.YandexMapRu:
+            {
+               MainMap.MaxZoom = 13;
+            }
+            break;
+
             case MapType.SigPacSpainMap:
             {
                MainMap.MinZoom = 5;

@@ -259,6 +259,15 @@ namespace GMap.NET.Internals
                   }
                   break;
 
+                  case MapType.YandexMapRu:
+                  {
+                     if(false == (Projection is MercatorProjectionYandex))
+                     {
+                        Projection = new MercatorProjectionYandex();
+                     }
+                  }
+                  break;
+
                   default:
                   {
                      if(false == (Projection is MercatorProjection))
