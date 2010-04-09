@@ -118,7 +118,7 @@ namespace GMap.NET.Internals
                   Matrix.Clear();
 
                   GoToCurrentPositionOnZoom();
-                  UpdateBaunds();
+                  UpdateBounds();
 
                   if(OnNeedInvalidation != null)
                   {
@@ -395,7 +395,7 @@ namespace GMap.NET.Internals
 
          if(started)
          {
-            UpdateBaunds();
+            UpdateBounds();
 
             if(OnCurrentPositionChanged != null)
                OnCurrentPositionChanged(currentPosition);
@@ -546,7 +546,7 @@ namespace GMap.NET.Internals
                OnNeedInvalidation();
             }
 
-            UpdateBaunds();
+            UpdateBounds();
          }
       }
 
@@ -618,7 +618,7 @@ namespace GMap.NET.Internals
          if(centerTileXYLocation != centerTileXYLocationLast)
          {
             centerTileXYLocationLast = centerTileXYLocation;
-            UpdateBaunds();
+            UpdateBounds();
          }
 
          if(IsDragging)
@@ -800,7 +800,7 @@ namespace GMap.NET.Internals
       /// <summary>
       /// updates map bounds
       /// </summary>
-      void UpdateBaunds()
+      void UpdateBounds()
       {
          lock(tileDrawingList)
          {
