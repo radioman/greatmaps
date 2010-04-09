@@ -781,6 +781,7 @@ namespace GMap.NET
                Debug.WriteLine("EnqueueCacheTask: " + task.Pos.ToString());
 
                tileCacheQueue.Enqueue(task);
+               tileCacheQueue.TrimExcess();
 
                if(CacheEngine != null && CacheEngine.IsAlive)
                {
