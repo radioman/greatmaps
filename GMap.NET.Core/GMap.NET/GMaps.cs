@@ -781,7 +781,6 @@ namespace GMap.NET
                Debug.WriteLine("EnqueueCacheTask: " + task.Pos.ToString());
 
                tileCacheQueue.Enqueue(task);
-               tileCacheQueue.TrimExcess();
 
                if(CacheEngine != null && CacheEngine.IsAlive)
                {
@@ -823,7 +822,6 @@ namespace GMap.NET
                   if(tileCacheQueue.Count > 0)
                   {
                      task = tileCacheQueue.Dequeue();
-                     tileCacheQueue.TrimExcess();
                   }
                }
 
@@ -1195,12 +1193,12 @@ namespace GMap.NET
             #region -- YandexMap --
             case MapType.YandexMapRu:
             {
-               string server = "vec";                 
+               string server = "vec";
 
                //http://vec01.maps.yandex.ru/tiles?l=map&v=2.10.2&x=1494&y=650&z=11
 
                return string.Format("http://{0}0{1}.maps.yandex.ru/tiles?l=map&v={2}&x={3}&y={4}&z={5}", server, GetServerNum(pos, 4)+1, VersionYandexMap, pos.X, pos.Y, zoom);
-            } 
+            }
             #endregion
          }
 
@@ -2179,7 +2177,7 @@ namespace GMap.NET
                      {
                         request.Referer = "http://maps.yandex.ru/";
                      }
-                     break; 
+                     break;
                   }
 
                   Debug.WriteLine("Starting GetResponse: " + pos);

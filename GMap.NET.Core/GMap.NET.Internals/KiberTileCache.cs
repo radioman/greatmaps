@@ -10,7 +10,7 @@ namespace GMap.NET.Internals
    /// </summary>
    internal class KiberTileCache : Dictionary<RawTile, MemoryStream>
    {
-      Queue<RawTile> Queue = new Queue<RawTile>();
+      readonly Queue<RawTile> Queue = new Queue<RawTile>();
 
       /// <summary>
       /// the amount of tiles in MB to keep in memmory, default: 22MB, if each ~100Kb it's ~222 tiles
@@ -52,7 +52,7 @@ namespace GMap.NET.Internals
       {
          while(MemoryCacheSize > MemoryCacheCapacity)
          {
-            if(Keys.Count > 0)
+            if(Keys.Count > 0 && Queue.Count > 0)
             {
                RawTile first = Queue.Dequeue();
                try

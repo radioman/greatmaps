@@ -114,7 +114,6 @@ namespace GMap.NET.Internals
                   lock(tileLoadQueue)
                   {
                      tileLoadQueue.Clear();
-                     tileLoadQueue.TrimExcess();
                   }
                   Matrix.Clear();
 
@@ -538,7 +537,6 @@ namespace GMap.NET.Internals
             lock(tileLoadQueue)
             {
                tileLoadQueue.Clear();
-               tileLoadQueue.TrimExcess();
             }
 
             Matrix.Clear();
@@ -650,7 +648,6 @@ namespace GMap.NET.Internals
             lock(tileLoadQueue)
             {
                tileLoadQueue.Clear();
-               tileLoadQueue.TrimExcess();
             }
          }
       }
@@ -669,39 +666,33 @@ namespace GMap.NET.Internals
       {
          if(loaderLimit.WaitOne(GMaps.Instance.Timeout, false))
          {
-            bool process = true;
             bool last = false;
 
-            LoadTask task = new LoadTask();
+            LoadTask? task = null;
 
             lock(tileLoadQueue)
             {
                if(tileLoadQueue.Count > 0)
                {
                   task = tileLoadQueue.Dequeue();
-                  tileLoadQueue.TrimExcess();
                   {
                      last = tileLoadQueue.Count == 0;
                      //Debug.WriteLine("TileLoadQueue: " + tileLoadQueue.Count);
                   }
                }
-               else
-               {
-                  process = false;
-               }
             }
 
-            if(process)
+            if(task.HasValue)
             {
                try
                {
-                  var m = Matrix[task.Pos];
+                  var m = Matrix[task.Value.Pos];
 
                   if(m == null || m.Overlays.Count == 0)
                   {
                      Debug.WriteLine("Fill empty TileMatrix: " + task);
 
-                     Tile t = new Tile(task.Zoom, task.Pos);
+                     Tile t = new Tile(task.Value.Zoom, task.Value.Pos);
                      var layers = GMaps.Instance.GetAllLayersOfType(MapType);
 
                      foreach(MapType tl in layers)
@@ -714,11 +705,11 @@ namespace GMap.NET.Internals
                            // tile number inversion(BottomLeft -> TopLeft) for pergo maps
                            if(tl == MapType.PergoTurkeyMap)
                            {
-                              img = GMaps.Instance.GetImageFrom(tl, new Point(task.Pos.X, maxOfTiles.Height - task.Pos.Y), task.Zoom);
+                              img = GMaps.Instance.GetImageFrom(tl, new Point(task.Value.Pos.X, maxOfTiles.Height - task.Value.Pos.Y), task.Value.Zoom);
                            }
                            else // ok
                            {
-                              img = GMaps.Instance.GetImageFrom(tl, task.Pos, task.Zoom);
+                              img = GMaps.Instance.GetImageFrom(tl, task.Value.Pos, task.Value.Zoom);
                            }
 
                            if(img != null)
@@ -742,7 +733,7 @@ namespace GMap.NET.Internals
 
                      if(t.Overlays.Count > 0)
                      {
-                        Matrix[task.Pos] = t;
+                        Matrix[task.Value.Pos] = t;
                      }
                      else
                      {
