@@ -430,7 +430,11 @@ namespace Demo.WindowsForms
 
                currentMarker.Position = pnew;
                CurentRectMarker.Position = pnew;
-               CurentRectMarker.InnerMarker.Position = pnew;
+
+               if(CurentRectMarker.InnerMarker != null)
+               {
+                  CurentRectMarker.InnerMarker.Position = pnew;
+               }
             }
          }
       }
@@ -606,9 +610,12 @@ namespace Demo.WindowsForms
       // add marker on current position
       private void button4_Click(object sender, EventArgs e)
       {
-         GMapMarker m = new GMapMarkerGoogleGreen(currentMarker.Position);
+         GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(currentMarker.Position);
          GMapMarkerRect mBorders = new GMapMarkerRect(currentMarker.Position);
-         mBorders.Size = new System.Drawing.Size(100, 100);
+         {
+            mBorders.InnerMarker = m;
+            mBorders.Size = new System.Drawing.Size(100, 100);
+         }
 
          Placemark p = null;
          if(checkBoxPlacemarkInfo.Checked)
