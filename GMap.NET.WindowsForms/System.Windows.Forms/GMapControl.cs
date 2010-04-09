@@ -468,7 +468,7 @@ namespace System.Windows.Forms
       /// updates routes local position
       /// </summary>
       /// <param name="route"></param>
-      internal void UpdateRouteLocalPosition(GMapRoute route)
+      public void UpdateRouteLocalPosition(GMapRoute route)
       {
          route.LocalPoints.Clear();
 
@@ -483,16 +483,16 @@ namespace System.Windows.Forms
       /// <summary>
       /// updates polygons local position
       /// </summary>
-      /// <param name="route"></param>
-      internal void UpdatePolygonLocalPosition(GMapPolygon route)
+      /// <param name="polygon"></param>
+      public void UpdatePolygonLocalPosition(GMapPolygon polygon)
       {
-         route.LocalPoints.Clear();
+         polygon.LocalPoints.Clear();
 
-         foreach(GMap.NET.PointLatLng pg in route.Points)
+         foreach(GMap.NET.PointLatLng pg in polygon.Points)
          {
             GMap.NET.Point p = Projection.FromLatLngToPixel(pg, Core.Zoom);
             p.Offset(Core.renderOffset);
-            route.LocalPoints.Add(p);
+            polygon.LocalPoints.Add(p);
          }
       }
 

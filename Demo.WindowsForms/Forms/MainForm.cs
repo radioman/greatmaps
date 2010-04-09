@@ -21,6 +21,9 @@ namespace Demo.WindowsForms
       GMapMarker currentMarker;
       GMapMarker center;
 
+      // polygons
+      GMapPolygon polygon;
+
       // layers
       GMapOverlay top;
       GMapOverlay objects;
@@ -60,6 +63,8 @@ namespace Demo.WindowsForms
             MainMap.MouseMove += new MouseEventHandler(MainMap_MouseMove);
             MainMap.MouseDown += new MouseEventHandler(MainMap_MouseDown);
             MainMap.MouseUp += new MouseEventHandler(MainMap_MouseUp);
+            MainMap.OnMarkerEnter += new MarkerEnter(MainMap_OnMarkerEnter);
+            MainMap.OnMarkerLeave += new MarkerLeave(MainMap_OnMarkerLeave);
 
             // get map type
             comboBoxMapType.DataSource = Enum.GetValues(typeof(MapType));
@@ -126,19 +131,24 @@ namespace Demo.WindowsForms
             // add some point in lithuania
             //if(false)
             {
-               AddLocationLithuania("Kaunas");
-               AddLocationLithuania("Klaipėda");
-               AddLocationLithuania("Šiauliai");
-               AddLocationLithuania("Panevėžys");
+               AddLocationLithuania("Kaunas", 1);
+               AddLocationLithuania("Klaipėda", 2);
+               AddLocationLithuania("Šiauliai", 3);
+               AddLocationLithuania("Panevėžys", 4);
 
                // add polygon around all cities
                {
                   List<PointLatLng> polygonPoints = new List<PointLatLng>();
+                  polygonPoints.Add(currentMarker.Position); // vilnius, 0
+
                   foreach(GMapMarker m in objects.Markers)
                   {
-                     polygonPoints.Add(m.Position);
+                     if(m is GMapMarkerRect)
+                     {
+                        polygonPoints.Add(m.Position);
+                     }
                   }
-                  GMapPolygon polygon = new GMapPolygon(polygonPoints, "polygon test");
+                  polygon = new GMapPolygon(polygonPoints, "polygon test");
                   polygons.Polygons.Add(polygon);
                }
             }
@@ -150,6 +160,32 @@ namespace Demo.WindowsForms
                timer.Tick += new EventHandler(timer_Tick);
                timer.Start();
             }
+         }
+      }
+
+      GMapMarkerRect CurentRectMarker = null;
+
+      void MainMap_OnMarkerLeave(GMapMarker item)
+      {
+         if(item is GMapMarkerRect)
+         {
+            CurentRectMarker = null;
+
+            GMapMarkerRect rc = item as GMapMarkerRect;
+            rc.Pen.Color = Color.Blue;
+            MainMap.Invalidate(false);
+         }
+      }
+
+      void MainMap_OnMarkerEnter(GMapMarker item)
+      {
+         if(item is GMapMarkerRect)
+         {
+            GMapMarkerRect rc = item as GMapMarkerRect;
+            rc.Pen.Color = Color.Red;
+            MainMap.Invalidate(false);
+
+            CurentRectMarker = rc;
          }
       }
 
@@ -323,18 +359,19 @@ namespace Demo.WindowsForms
       /// adds marker using geocoder
       /// </summary>
       /// <param name="place"></param>
-      void AddLocationLithuania(string place)
+      void AddLocationLithuania(string place, int? pulygonId)
       {
          GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
          PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, " + place, out status);
          if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
          {
-            GMapMarker m = new GMapMarkerGoogleGreen(pos.Value);
+            GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(pos.Value);
             GMapMarkerRect mBorders = new GMapMarkerRect(pos.Value);
-            mBorders.Size = new System.Drawing.Size(100, 100);
             {
+               mBorders.InnerMarker = m;
                mBorders.ToolTipText = place;
                mBorders.TooltipMode = MarkerTooltipMode.Always;
+               mBorders.Tag = pulygonId;
             }
 
             objects.Markers.Add(m);
@@ -372,8 +409,29 @@ namespace Demo.WindowsForms
       {
          if(e.Button == MouseButtons.Left && isMouseDown)
          {
-            currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
-            UpdateCurrentMarkerPositionText();
+            if(CurentRectMarker == null)
+            {
+               currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
+               UpdateCurrentMarkerPositionText();
+            }
+            else // move rect marker
+            {
+               PointLatLng pnew = MainMap.FromLocalToLatLng(e.X, e.Y);
+
+               int? pIndex = (int?) CurentRectMarker.Tag;
+               if(pIndex.HasValue)
+               {
+                  if(pIndex < polygon.Points.Count)
+                  {
+                     polygon.Points[pIndex.Value] = pnew;
+                     MainMap.UpdatePolygonLocalPosition(polygon);
+                  }
+               }
+
+               currentMarker.Position = pnew;
+               CurentRectMarker.Position = pnew;
+               CurentRectMarker.InnerMarker.Position = pnew;
+            }
          }
       }
 
@@ -386,8 +444,18 @@ namespace Demo.WindowsForms
       // click on some marker
       void MainMap_OnMarkerClick(GMapMarker item)
       {
-         MainMap.CurrentPosition = item.Position;
-         MainMap.Zoom = 5;
+         if(item is GMapMarkerRect)
+         {
+            Placemark pos = GMaps.Instance.GetPlacemarkFromGeocoder(item.Position);
+            if(pos != null)
+            {
+               GMapMarkerRect v = item as GMapMarkerRect;
+               {
+                  v.ToolTipText = pos.Address;
+               }
+               MainMap.Invalidate(false);
+            }
+         }
       }
 
       // loader start loading tiles
