@@ -832,5 +832,27 @@ namespace Demo.WindowsForms
       {
          MainMap.Focus();
       }
+
+      private void MainForm_KeyUp(object sender, KeyEventArgs e)
+      {
+         int offset = 22;
+
+         if(e.KeyCode == Keys.Left)
+         {
+            MainMap.Offset(-offset, 0);
+         }
+         else if(e.KeyCode == Keys.Right)
+         {
+            MainMap.Offset(offset, 0);
+         }
+         else if(e.KeyCode == Keys.Up)
+         {
+            MainMap.Offset(0, -offset);
+         }
+         else if(e.KeyCode == Keys.Down)
+         {
+            MainMap.Offset(0, offset);
+         }
+      }
    }
 }

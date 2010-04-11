@@ -605,6 +605,38 @@ namespace GMap.NET.Internals
       }
 
       /// <summary>
+      /// darg map by offset in pixels
+      /// </summary>
+      /// <param name="offset"></param>
+      public void DragOffset(Point offset)
+      {
+         renderOffset.Offset(offset);
+
+         UpdateCenterTileXYLocation();
+
+         if(centerTileXYLocation != centerTileXYLocationLast)
+         {
+            centerTileXYLocationLast = centerTileXYLocation;
+            UpdateBounds();
+         }
+
+         {
+            LastLocationInBounds = CurrentPosition;
+            CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
+         }
+
+         if(OnNeedInvalidation != null)
+         {
+            OnNeedInvalidation();
+         }
+
+         if(OnMapDrag != null)
+         {
+            OnMapDrag();
+         }
+      }
+
+      /// <summary>
       /// drag map
       /// </summary>
       /// <param name="pt"></param>

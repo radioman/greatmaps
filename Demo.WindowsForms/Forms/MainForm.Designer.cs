@@ -67,6 +67,8 @@
          this.button3 = new System.Windows.Forms.Button();
          this.groupBox6 = new System.Windows.Forms.GroupBox();
          this.groupBox7 = new System.Windows.Forms.GroupBox();
+         this.label3 = new System.Windows.Forms.Label();
+         this.button15 = new System.Windows.Forms.Button();
          this.dateTimePickerMobileLog = new System.Windows.Forms.DateTimePicker();
          this.button14 = new System.Windows.Forms.Button();
          this.buttonSetEnd = new System.Windows.Forms.Button();
@@ -77,8 +79,6 @@
          this.groupBox8 = new System.Windows.Forms.GroupBox();
          this.button7 = new System.Windows.Forms.Button();
          this.checkBoxPlacemarkInfo = new System.Windows.Forms.CheckBox();
-         this.button15 = new System.Windows.Forms.Button();
-         this.label3 = new System.Windows.Forms.Label();
          this.groupBox4.SuspendLayout();
          this.groupBox3.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize) (this.trackBar1)).BeginInit();
@@ -583,6 +583,28 @@
          this.groupBox7.TabStop = false;
          this.groupBox7.Text = "routing";
          // 
+         // label3
+         // 
+         this.label3.AutoSize = true;
+         this.label3.Location = new System.Drawing.Point(8, 137);
+         this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+         this.label3.Name = "label3";
+         this.label3.Size = new System.Drawing.Size(45, 17);
+         this.label3.TabIndex = 46;
+         this.label3.Text = "Clear:";
+         // 
+         // button15
+         // 
+         this.button15.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+         this.button15.Location = new System.Drawing.Point(134, 130);
+         this.button15.Margin = new System.Windows.Forms.Padding(4);
+         this.button15.Name = "button15";
+         this.button15.Size = new System.Drawing.Size(77, 30);
+         this.button15.TabIndex = 45;
+         this.button15.Text = "Polygons";
+         this.button15.UseVisualStyleBackColor = true;
+         this.button15.Click += new System.EventHandler(this.button15_Click);
+         // 
          // dateTimePickerMobileLog
          // 
          this.dateTimePickerMobileLog.Checked = false;
@@ -703,28 +725,6 @@
          this.checkBoxPlacemarkInfo.Text = "place info";
          this.checkBoxPlacemarkInfo.UseVisualStyleBackColor = true;
          // 
-         // button15
-         // 
-         this.button15.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button15.Location = new System.Drawing.Point(134, 130);
-         this.button15.Margin = new System.Windows.Forms.Padding(4);
-         this.button15.Name = "button15";
-         this.button15.Size = new System.Drawing.Size(77, 30);
-         this.button15.TabIndex = 45;
-         this.button15.Text = "Polygons";
-         this.button15.UseVisualStyleBackColor = true;
-         this.button15.Click += new System.EventHandler(this.button15_Click);
-         // 
-         // label3
-         // 
-         this.label3.AutoSize = true;
-         this.label3.Location = new System.Drawing.Point(8, 137);
-         this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-         this.label3.Name = "label3";
-         this.label3.Size = new System.Drawing.Size(45, 17);
-         this.label3.TabIndex = 46;
-         this.label3.Text = "Clear:";
-         // 
          // MainForm
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -740,6 +740,7 @@
          this.Controls.Add(this.groupBox3);
          this.Controls.Add(this.groupBox2);
          this.Controls.Add(this.groupBox4);
+         this.KeyPreview = true;
          this.Margin = new System.Windows.Forms.Padding(4);
          this.MinimumSize = new System.Drawing.Size(735, 974);
          this.Name = "MainForm";
@@ -747,6 +748,7 @@
          this.Text = "GMap.NET - Great Maps for Windows Forms";
          this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
          this.Load += new System.EventHandler(this.MainForm_Load);
+         this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
          this.groupBox4.ResumeLayout(false);
          this.groupBox3.ResumeLayout(false);
          this.groupBox3.PerformLayout();

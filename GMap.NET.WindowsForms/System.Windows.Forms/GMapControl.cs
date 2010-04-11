@@ -786,6 +786,19 @@ namespace System.Windows.Forms
          return ret;
       }
 
+      /// <summary>
+      /// offset position in pixels
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="y"></param>
+      public void Offset(int x, int y)
+      {
+         if(IsHandleCreated)
+         {
+            Core.DragOffset(new GMap.NET.Point(x, y));
+         }
+      }
+
       #region UserControl Events
 
 #if !PocketPC
@@ -795,45 +808,45 @@ namespace System.Windows.Forms
          {
             return (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
          }
-      }         
+      }
 
       public bool IsDesignerHosted
-      {   
+      {
          get
-         {  
-            return IsControlDesignerHosted(this); 
-         } 
+         {
+            return IsControlDesignerHosted(this);
+         }
       }
 
       public bool IsControlDesignerHosted(Control ctrl)
-      {   
+      {
          if(ctrl != null)
-         { 
+         {
             if(ctrl.Site != null)
             {
 
-               if(ctrl.Site.DesignMode == true) 
+               if(ctrl.Site.DesignMode == true)
                   return true;
 
                else
-               {  
+               {
                   if(IsControlDesignerHosted(ctrl.Parent))
                      return true;
 
-                  else 
-                     return false; 
-               }  
-            }  
+                  else
+                     return false;
+               }
+            }
             else
-            {   
+            {
                if(IsControlDesignerHosted(ctrl.Parent))
-                  return true; 
-               else    
-                  return false; 
-            }  
-         }  
-         else  
-            return false; 
+                  return true;
+               else
+                  return false;
+            }
+         }
+         else
+            return false;
       }
 
       protected override void OnLoad(EventArgs e)

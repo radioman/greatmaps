@@ -6,7 +6,7 @@
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     xmlns:src="clr-namespace:Demo.WindowsPresentation"
-    MinHeight="775" MinWidth="400">
+    MinHeight="775" MinWidth="400" KeyUp="Window_KeyUp">
     <Window.Resources>
         <Style x:Key="ZoomUpButton" TargetType="Button">
             <Setter Property="Width" Value="23.5" />

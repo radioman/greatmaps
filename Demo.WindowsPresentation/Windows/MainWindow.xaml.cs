@@ -11,6 +11,7 @@ using GMap.NET.WindowsPresentation;
 using System.Collections.Generic;
 using System.Windows.Threading;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Demo.WindowsPresentation
 {
@@ -784,6 +785,28 @@ namespace Demo.WindowsPresentation
       private void checkBox1_Unchecked(object sender, RoutedEventArgs e)
       {
          MainMap.ShowTileGridLines = false;
+      }
+
+      private void Window_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+      {
+         int offset = 22;
+
+         if(e.Key == Key.Left)
+         {
+            MainMap.Offset(-offset, 0);
+         }
+         else if(e.Key == Key.Right)
+         {
+            MainMap.Offset(offset, 0);
+         }
+         else if(e.Key == Key.Up)
+         {
+            MainMap.Offset(0, -offset);
+         }
+         else if(e.Key == Key.Down)
+         {
+            MainMap.Offset(0, offset);
+         }
       }
    }
 }

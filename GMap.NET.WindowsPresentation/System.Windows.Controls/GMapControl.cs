@@ -349,7 +349,7 @@ namespace System.Windows.Controls
             Unloaded += new RoutedEventHandler(GMapControl_Unloaded);
             SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
 
-			Markers.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
+            Markers.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
             this.ItemsSource = Markers;
 
             googleCopyright = new FormattedText(Core.googleCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
@@ -362,13 +362,15 @@ namespace System.Windows.Controls
          }
       }
 
-	  void Markers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+      void Markers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
       {
-          if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
-          {
-              foreach (GMapMarker marker in e.NewItems)
-                  marker.ForceUpdateLocalPosition(this);
-          }
+         if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+         {
+            foreach(GMapMarker marker in e.NewItems)
+            {
+               marker.ForceUpdateLocalPosition(this);
+            }
+         }
       }
 
       // testing smooth zoom
@@ -800,6 +802,20 @@ namespace System.Windows.Controls
          }
 
          return ret;
+      }
+
+      /// <summary>
+      /// offset position in pixels
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="y"></param>
+      public void Offset(int x, int y)
+      {
+         if(IsLoaded)
+         {
+            Core.DragOffset(new GMap.NET.Point(x, y));
+            UpdateMarkersOffset();
+         }
       }
 
       #region UserControl Events
