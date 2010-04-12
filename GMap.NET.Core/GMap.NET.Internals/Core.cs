@@ -118,12 +118,7 @@ namespace GMap.NET.Internals
                   Matrix.Clear();
 
                   GoToCurrentPositionOnZoom();
-                  UpdateBounds();
-
-                  if(OnNeedInvalidation != null)
-                  {
-                     OnNeedInvalidation();
-                  }
+                  UpdateBounds();                   
 
                   if(OnMapDrag != null)
                   {
@@ -131,10 +126,14 @@ namespace GMap.NET.Internals
                   }
 
                   if(OnMapZoomChanged != null)
+                  {
                      OnMapZoomChanged();
+                  }
 
-                  if(OnCurrentPositionChanged != null)
-                     OnCurrentPositionChanged(currentPosition);
+                  if(OnNeedInvalidation != null)
+                  {
+                     OnNeedInvalidation();
+                  }
                }
             }
          }
