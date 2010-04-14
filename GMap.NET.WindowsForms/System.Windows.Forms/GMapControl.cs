@@ -865,6 +865,7 @@ namespace System.Windows.Forms
       }
 #else
       delegate void MethodInvoker();
+      bool IsHandleCreated = false;
 
       protected override void OnHandleCreated(EventArgs e)
       {
@@ -877,6 +878,7 @@ namespace System.Windows.Forms
             };
             this.BeginInvoke(m);
          }
+         IsHandleCreated = true;
       }
 
       protected override void OnPaintBackground(PaintEventArgs e)
