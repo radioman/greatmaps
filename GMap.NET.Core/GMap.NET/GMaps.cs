@@ -1586,85 +1586,108 @@ namespace GMap.NET
       /// <returns></returns>
       internal PointLatLng? GetLatLngFromGeocoderUrl(string url, bool useCache, out GeoCoderStatusCode status)
       {
-         status = GeoCoderStatusCode.Unknow;
-         PointLatLng? ret = null;
+          status = GeoCoderStatusCode.Unknow;
+          PointLatLng? ret = null;
+          try
+          {
+              string urlEnd = url.Substring(url.IndexOf("geo?q="));
+
 #if !PocketPC
-         try
-         {
-            string urlEnd = url.Substring(url.IndexOf("geo?q="));
+              char[] ilg = Path.GetInvalidFileNameChars();
+#else
+             char[] ilg = new char[41];
+             for (int i = 0; i < 32; i++)
+                 ilg[i] = (char)i;
 
-            char[] ilg = Path.GetInvalidFileNameChars();
-            foreach(char c in ilg)
-            {
-               urlEnd = urlEnd.Replace(c, '_');
-            }
+             ilg[32] = '"';
+             ilg[33] = '<';
+             ilg[34] = '>';
+             ilg[35] = '|';
+             ilg[36] = '?';
+             ilg[37] = ':';
+             ilg[38] = '/';
+             ilg[39] = '\\';
+             ilg[39] = '*';
+#endif
 
-            string geo = useCache ? Cache.Instance.GetGeocoderFromCache(urlEnd) : string.Empty;
+              foreach (char c in ilg)
+              {
+                  urlEnd = urlEnd.Replace(c, '_');
+              }
 
-            if(string.IsNullOrEmpty(geo))
-            {
-               HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-               request.ServicePoint.ConnectionLimit = 50;
-               if(Proxy != null)
-               {
-                  request.Proxy = Proxy;
-                  request.PreAuthenticate = true;
-               }
-               else
-               {
+              string geo = useCache ? Cache.Instance.GetGeocoderFromCache(urlEnd) : string.Empty;
+
+              if (string.IsNullOrEmpty(geo))
+              {
+                  HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 #if !PocketPC
-                  request.Proxy = WebRequest.DefaultWebProxy;
+                  request.ServicePoint.ConnectionLimit = 50;
 #endif
-               }
 
-               request.UserAgent = UserAgent;
-               request.Timeout = Timeout;
-               request.ReadWriteTimeout = Timeout * 6;
-               request.KeepAlive = false;
-
-               using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-               {
-                  using(Stream responseStream = response.GetResponseStream())
+                  if (Proxy != null)
                   {
-                     using(StreamReader read = new StreamReader(responseStream))
-                     {
-                        geo = read.ReadToEnd();
-                     }
-                  }
-               }
-
-               // cache geocoding
-               if(useCache && geo.StartsWith("200"))
-               {
-                  Cache.Instance.CacheGeocoder(urlEnd, geo);
-               }
-            }
-
-            // parse values
-            // true : 200,4,56.1451640,22.0681787
-            // false: 602,0,0,0
-            {
-               string[] values = geo.Split(',');
-               if(values.Length == 4)
-               {
-                  status = (GeoCoderStatusCode) int.Parse(values[0]);
-                  if(status == GeoCoderStatusCode.G_GEO_SUCCESS)
-                  {
-                     double lat = double.Parse(values[2], CultureInfo.InvariantCulture);
-                     double lng = double.Parse(values[3], CultureInfo.InvariantCulture);
-
-                     ret = new PointLatLng(lat, lng);
-                  }
-               }
-            }
-         }
-         catch(Exception ex)
-         {
-            ret = null;
-            Debug.WriteLine("GetLatLngFromUrl: " + ex.ToString());
-         }
+                      request.Proxy = Proxy;
+#if !PocketPC
+                      request.PreAuthenticate = true;
 #endif
-         return ret;
+                  }
+                  else
+                  {
+#if !PocketPC
+                      request.Proxy = WebRequest.DefaultWebProxy;
+#else
+                     request.Proxy = GlobalProxySelection.GetEmptyWebProxy();
+#endif
+                  }
+
+                  request.UserAgent = UserAgent;
+                  request.Timeout = Timeout;
+                  request.ReadWriteTimeout = Timeout * 6;
+                  request.KeepAlive = false;
+
+                  using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                  {
+                      using (Stream responseStream = response.GetResponseStream())
+                      {
+                          using (StreamReader read = new StreamReader(responseStream))
+                          {
+                              geo = read.ReadToEnd();
+                          }
+                      }
+                  }
+
+                  // cache geocoding
+                  if (useCache && geo.StartsWith("200"))
+                  {
+                      Cache.Instance.CacheGeocoder(urlEnd, geo);
+                  }
+              }
+
+              // parse values
+              // true : 200,4,56.1451640,22.0681787
+              // false: 602,0,0,0
+              {
+                  string[] values = geo.Split(',');
+                  if (values.Length == 4)
+                  {
+                      status = (GeoCoderStatusCode)int.Parse(values[0]);
+                      if (status == GeoCoderStatusCode.G_GEO_SUCCESS)
+                      {
+                          double lat = double.Parse(values[2], CultureInfo.InvariantCulture);
+                          double lng = double.Parse(values[3], CultureInfo.InvariantCulture);
+
+                          ret = new PointLatLng(lat, lng);
+                      }
+                  }
+              }
+          }
+          catch (Exception ex)
+          {
+              ret = null;
+              Debug.WriteLine("GetLatLngFromUrl: " + ex.ToString());
+          }
+
+          return ret;
       }
 
       /// <summary>
