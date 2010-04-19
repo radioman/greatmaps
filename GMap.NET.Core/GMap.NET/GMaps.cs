@@ -17,6 +17,7 @@ namespace GMap.NET
 
 #if !MONO
    using System.Data.SQLite;
+   using System.Xml;
 #else
    using SQLiteConnection=Mono.Data.SqliteClient.SqliteConnection;
    using SQLiteTransaction=Mono.Data.SqliteClient.SqliteTransaction;
@@ -2242,6 +2243,152 @@ namespace GMap.NET
 
          return ret;
       }
+
+      /// <summary>
+      /// gets realtime data from public transport in city vilnius of lithuania
+      /// </summary>
+      /// <param name="type">type of transport</param>
+      /// <param name="line">linenum or null to get all</param>
+      /// <param name="ret"></param>
+      public void GetVilniusTransportData(TransportType type, string line, List<VehicleData> ret)
+      {
+         ret.Clear();
+
+         string url = "http://www.troleibusai.lt/puslapiai/services/vehiclestate.php?type=";
+
+         switch(type)
+         {
+            case TransportType.Bus:
+            {
+               url += "bus";
+            }
+            break;
+
+            case TransportType.TrolleyBus:
+            {
+               url += "trolley";
+            }
+            break;
+         }
+
+         if(!string.IsNullOrEmpty(line))
+         {
+            url += "&line=" + line;
+         }
+
+#if !PocketPC
+         url += "&app=GMap.NET.Desktop";
+#else
+         url += "&app=GMap.NET.WindowsMobile";
+#endif
+
+         HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+         {
+#if !PocketPC
+            request.Proxy = WebRequest.DefaultWebProxy;
+#else
+            request.Proxy = GlobalProxySelection.GetEmptyWebProxy();
+#endif
+         }
+
+         request.Timeout = Timeout;
+         request.ReadWriteTimeout = request.Timeout;
+         request.Accept = "*/*";
+         request.KeepAlive = false;
+
+         string xml = string.Empty;
+
+         using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+         {
+            using(Stream responseStream = response.GetResponseStream())
+            {
+               using(StreamReader read = new StreamReader(responseStream))
+               {
+                  xml = read.ReadToEnd();
+               }
+            }
+         }
+
+         XmlDocument doc = new XmlDocument();
+         {
+            doc.LoadXml(xml);
+
+            XmlNodeList devices = doc.GetElementsByTagName("Device");
+            foreach(XmlNode dev in devices)
+            {
+               VehicleData d = new VehicleData();
+               d.Id = int.Parse(dev.Attributes["ID"].InnerText);
+
+               foreach(XmlElement elem in dev.ChildNodes)
+               {
+                  // Debug.WriteLine(d.Id + "->" + elem.Name + ": " + elem.InnerText);
+
+                  switch(elem.Name)
+                  {
+                     case "Lat":
+                     {
+                        d.Lat = double.Parse(elem.InnerText);
+                     }
+                     break;
+
+                     case "Lng":
+                     {
+                        d.Lng = double.Parse(elem.InnerText);
+                     }
+                     break;
+
+                     case "Bearing":
+                     {
+                        if(!string.IsNullOrEmpty(elem.InnerText))
+                        {
+                           d.Bearing = double.Parse(elem.InnerText);
+                        }
+                     }
+                     break;
+
+                     case "LineNum":
+                     {
+                        d.Line = elem.InnerText;
+                     }
+                     break;
+
+                     case "AreaName":
+                     {
+                        d.AreaName = elem.InnerText;
+                     }
+                     break;
+
+                     case "StreetName":
+                     {
+                        d.StreetName = elem.InnerText;
+                     }
+                     break;
+
+                     case "TrackType":
+                     {
+                        d.TrackType = elem.InnerText;
+                     }
+                     break;
+
+                     case "LastStop":
+                     {
+                        d.LastStop = elem.InnerText;
+                     }
+                     break;
+
+                     case "Time":
+                     {
+                        d.Time = elem.InnerText;
+                     }
+                     break;
+                  }
+               }
+               ret.Add(d);
+            }
+         }
+         doc = null;
+      }
+
       #endregion
    }
 }

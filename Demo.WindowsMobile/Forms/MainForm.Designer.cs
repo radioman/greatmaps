@@ -33,6 +33,7 @@
          this.menuItem1 = new System.Windows.Forms.MenuItem();
          this.menuItemGotoMap = new System.Windows.Forms.MenuItem();
          this.menuItemGotoGps = new System.Windows.Forms.MenuItem();
+         this.menuItemGotoTransport = new System.Windows.Forms.MenuItem();
          this.menuItem34 = new System.Windows.Forms.MenuItem();
          this.menuItem32 = new System.Windows.Forms.MenuItem();
          this.menuItem2 = new System.Windows.Forms.MenuItem();
@@ -65,6 +66,7 @@
          this.menuItemEnableGrid = new System.Windows.Forms.MenuItem();
          this.menuItemDisableAutoSleep = new System.Windows.Forms.MenuItem();
          this.menuItem6 = new System.Windows.Forms.MenuItem();
+         this.menuItem35 = new System.Windows.Forms.MenuItem();
          this.menuItem33 = new System.Windows.Forms.MenuItem();
          this.menuItem4 = new System.Windows.Forms.MenuItem();
          this.menuItem5 = new System.Windows.Forms.MenuItem();
@@ -85,6 +87,7 @@
          // 
          this.menuItem1.MenuItems.Add(this.menuItemGotoMap);
          this.menuItem1.MenuItems.Add(this.menuItemGotoGps);
+         this.menuItem1.MenuItems.Add(this.menuItemGotoTransport);
          this.menuItem1.MenuItems.Add(this.menuItem34);
          this.menuItem1.MenuItems.Add(this.menuItem32);
          this.menuItem1.Text = "Page";
@@ -99,6 +102,11 @@
          // 
          this.menuItemGotoGps.Text = "GPS";
          this.menuItemGotoGps.Click += new System.EventHandler(this.menuItemGotoGps_Click);
+         // 
+         // menuItemGotoTrolis
+         // 
+         this.menuItemGotoTransport.Text = "Vilnius Transport";
+         this.menuItemGotoTransport.Click += new System.EventHandler(this.menuItemGotoTransport_Click);
          // 
          // menuItem34
          // 
@@ -116,6 +124,7 @@
          this.menuItem2.MenuItems.Add(this.menuItem29);
          this.menuItem2.MenuItems.Add(this.menuItem30);
          this.menuItem2.MenuItems.Add(this.menuItem6);
+         this.menuItem2.MenuItems.Add(this.menuItem35);
          this.menuItem2.MenuItems.Add(this.menuItem33);
          this.menuItem2.MenuItems.Add(this.menuItem4);
          this.menuItem2.MenuItems.Add(this.menuItem5);
@@ -286,6 +295,11 @@
          // 
          this.menuItem6.Text = "-";
          // 
+         // menuItem35
+         // 
+         this.menuItem35.Text = "FitAllMarkers";
+         this.menuItem35.Click += new System.EventHandler(this.menuItem35_Click);
+         // 
          // menuItem33
          // 
          this.menuItem33.Text = "Zoom Max";
@@ -330,7 +344,6 @@
          this.MainMap.CanDragMap = true;
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
          this.MainMap.Location = new System.Drawing.Point(0, 0);
-         this.MainMap.MapType = GMap.NET.MapType.GoogleMap;
          this.MainMap.MarkersEnabled = true;
          this.MainMap.Name = "MainMap";
          this.MainMap.RoutesEnabled = true;
@@ -360,7 +373,7 @@
 
       #endregion
 
-      private System.Windows.Forms.GMapControl MainMap;
+      internal System.Windows.Forms.GMapControl MainMap;
       private System.Windows.Forms.MenuItem menuItem1;
       private System.Windows.Forms.MenuItem menuItem2;
       private System.Windows.Forms.MenuItem menuItem3;
@@ -404,6 +417,8 @@
       private System.Windows.Forms.MenuItem menuItemServerOnly;
       private System.Windows.Forms.MenuItem menuItem33;
       private System.Windows.Forms.MenuItem menuItem31;
+      private System.Windows.Forms.MenuItem menuItemGotoTransport;
+      private System.Windows.Forms.MenuItem menuItem35;
    }
 }
 

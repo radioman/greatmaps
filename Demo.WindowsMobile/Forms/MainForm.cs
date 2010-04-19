@@ -30,8 +30,8 @@ namespace Demo.WindowsMobile
 
       // layers
       GMapOverlay top;
-      GMapOverlay objects;
-      GMapOverlay routes;
+      internal GMapOverlay objects;
+      internal GMapOverlay routes;
 
       #region -- variables --
       string LogDb;
@@ -58,6 +58,7 @@ namespace Demo.WindowsMobile
       IntPtr gpsPowerHandle = IntPtr.Zero;
 
       GPS pageGps;
+      Transport pageTransport;
 
       MsgWindow msgW;
       #endregion
@@ -67,6 +68,7 @@ namespace Demo.WindowsMobile
          InitializeComponent();
 
          pageGps = new GPS(this);
+         pageTransport = new Transport(this);
 
 #if DEBUG
          MainMap.Manager.Mode = AccessMode.ServerAndCache;
@@ -160,6 +162,18 @@ namespace Demo.WindowsMobile
 
       Timer timer = new Timer();
       #endregion
+
+      public void ZoomToFitMarkers()
+      {
+         if(objects.Markers.Count > 0)
+         {
+            RectLatLng? m = MainMap.GetRectOfAllMarkers(null);
+            if(m.HasValue)
+            {
+               MainMap.SetZoomToFitRect(m.Value);
+            }
+         }
+      }
 
       void MainMap_OnMapZoomChanged()
       {
@@ -963,10 +977,11 @@ namespace Demo.WindowsMobile
          this.Hide();
       }
 
-      private void menuItemGotoMap_Click(object sender, EventArgs e)
+      internal void menuItemGotoMap_Click(object sender, EventArgs e)
       {
          menuItemGotoMap.Checked = true;
          menuItemGotoGps.Checked = false;
+         menuItemGotoTransport.Checked = false;
 
          this.SuspendLayout();
          this.Controls.Clear();
@@ -976,8 +991,9 @@ namespace Demo.WindowsMobile
 
       private void menuItemGotoGps_Click(object sender, EventArgs e)
       {
-         menuItemGotoMap.Checked = false;
          menuItemGotoGps.Checked = true;
+         menuItemGotoTransport.Checked = false;
+         menuItemGotoMap.Checked = false;
 
          this.SuspendLayout();
          this.Controls.Clear();
@@ -986,6 +1002,24 @@ namespace Demo.WindowsMobile
          this.ResumeLayout(false);
 
          pageGps.panelSignals.Invalidate();
+      }
+
+      internal void menuItemGotoTransport_Click(object sender, EventArgs e)
+      {
+         menuItemGotoTransport.Checked = true;
+         menuItemGotoMap.Checked = false;
+         menuItemGotoGps.Checked = false;
+
+         this.SuspendLayout();
+         this.Controls.Clear();
+         this.pageTransport.Dock = DockStyle.Fill;
+         this.Controls.Add(pageTransport);
+         this.ResumeLayout(false);
+      }
+
+      private void menuItem35_Click(object sender, EventArgs e)
+      {
+         ZoomToFitMarkers();
       }
 
       private void menuItem31_Click(object sender, EventArgs e)

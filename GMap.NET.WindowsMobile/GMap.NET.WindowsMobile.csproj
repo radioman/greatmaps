@@ -189,6 +189,9 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET\SizeLatLng.cs">
       <Link>GMap.NET\SizeLatLng.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\VehicleData.cs">
+      <Link>GMap.NET\VehicleData.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.ObjectModel\ObservableCollection.cs">
       <Link>GMap.NET.ObjectModel\ObservableCollection.cs</Link>
     </Compile>
