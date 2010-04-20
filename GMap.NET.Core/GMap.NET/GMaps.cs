@@ -38,21 +38,21 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "m@121";
-      public string VersionGoogleSatellite = "58";
-      public string VersionGoogleLabels = "h@121";
-      public string VersionGoogleTerrain = "t@108,r@121";
+      public string VersionGoogleMap = "m@123";
+      public string VersionGoogleSatellite = "59";
+      public string VersionGoogleLabels = "h@123";
+      public string VersionGoogleTerrain = "t@108,r@123";
       public string SecGoogleWord = "Galileo";
 
       // Google (China) version strings
-      public string VersionGoogleMapChina = "w2.121";
-      public string VersionGoogleSatelliteChina = "58";
-      public string VersionGoogleLabelsChina = "w2t.121";
-      public string VersionGoogleTerrainChina = "w2p.121";
+      public string VersionGoogleMapChina = "m@123";
+      public string VersionGoogleSatelliteChina = "s@59";
+      public string VersionGoogleLabelsChina = "h@123";
+      public string VersionGoogleTerrainChina = "t@108,r@123";
 
       // Google (Korea) version strings
       public string VersionGoogleMapKorea = "kr1.12";
-      public string VersionGoogleSatelliteKorea = "58";
+      public string VersionGoogleSatelliteKorea = "59";
       public string VersionGoogleLabelsKorea = "kr1t.12";
 
       /// <summary>
@@ -67,7 +67,7 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.3";
 
       // BingMaps
-      public string VersionBingMaps = "426";
+      public string VersionBingMaps = "452";
 
       // YandexMap
       public string VersionYandexMap = "2.10.2";
@@ -939,22 +939,23 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
                TryCorrectGoogleVersions();
-               // http://mt0.google.cn/vt/v=w2.101&hl=zh-CN&gl=cn&x=12&y=6&z=4&s=Ga
 
-               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
+               // http://mt3.google.cn/vt/lyrs=m@123&hl=zh-CN&gl=cn&x=3419&y=1720&z=12&s=G
+
+               return string.Format("http://{0}{1}.google.cn/{2}/lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
 
             case MapType.GoogleSatelliteChina:
             {
-               string server = "khm";
-               string request = "kh";
+               string server = "mt";
+               string request = "vt";
                string sec1 = ""; // after &x=...
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
-               TryCorrectGoogleVersions();
-               // http://khm0.google.cn/kh/v=46&x=12&y=6&z=4&s=Ga
 
-               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteChina, pos.X, sec1, pos.Y, zoom, sec2);
+               // http://mt1.google.cn/vt/lyrs=s@59&gl=cn&x=3417&y=1720&z=12&s=Gal
+
+               return string.Format("http://{0}{1}.google.cn/{2}/lyrs={3}&gl=cn&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteChina, pos.X, sec1, pos.Y, zoom, sec2);
             }
 
             case MapType.GoogleLabelsChina:
@@ -965,9 +966,10 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
                TryCorrectGoogleVersions();
-               // http://mt0.google.cn/vt/v=w2t.110&hl=zh-CN&gl=cn&x=12&y=6&z=4&s=Ga
 
-               return string.Format("http://{0}{1}.google.cn/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
+               // http://mt1.google.cn/vt/imgtp=png32&lyrs=h@123&hl=zh-CN&gl=cn&x=3417&y=1720&z=12&s=Gal
+
+               return string.Format("http://{0}{1}.google.cn/{2}/imgtp=png32&lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
 
             case MapType.GoogleTerrainChina:
@@ -977,10 +979,11 @@ namespace GMap.NET
                string sec1 = ""; // after &x=...
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
+               TryCorrectGoogleVersions();
 
-               // http://mt0.google.cn/vt/v=w2p.110&hl=zh-CN&gl=cn&x=12&y=6&z=4&s=Ga
+               // http://mt2.google.cn/vt/lyrs=t@108,r@123&hl=zh-CN&gl=cn&x=3418&y=1718&z=12&s=Gali
 
-               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.google.com/{2}/lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
             }
             #endregion
 
@@ -993,7 +996,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               //http://mt3.gmaptiles.co.kr/mt/v=kr1.11&hl=lt&x=109&y=49&z=7&s=
+               // http://mt0.gmaptiles.co.kr/mt/v=kr1.12&hl=lt&x=876&y=400&z=10&s=Gali
 
                var ret = string.Format("http://{0}{1}.gmaptiles.co.kr/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapKorea, language, pos.X, sec1, pos.Y, zoom, sec2);
                return ret;
@@ -1007,7 +1010,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               http://khm1.google.co.kr/kh/v=54&x=109&y=49&z=7&s=
+               // http://khm1.google.co.kr/kh/v=59&x=873&y=401&z=10&s=Gali
 
                return string.Format("http://{0}{1}.google.co.kr/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteKorea, pos.X, sec1, pos.Y, zoom, sec2);
             }
@@ -1020,7 +1023,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               http://mt1.gmaptiles.co.kr/mt/v=kr1t.11&hl=lt&x=109&y=50&z=7&s=G
+               // http://mt3.gmaptiles.co.kr/mt/v=kr1t.12&hl=lt&x=873&y=401&z=10&s=Gali
 
                return string.Format("http://{0}{1}.gmaptiles.co.kr/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsKorea, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
@@ -1029,16 +1032,22 @@ namespace GMap.NET
             #region -- Yahoo --
             case MapType.YahooMap:
             {
+               // http://maps1.yimg.com/hx/tl?b=1&v=4.3&.intl=en&x=12&y=7&z=7&r=1
+
                return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&.intl={2}&x={3}&y={4}&z={5}&r=1", ((GetServerNum(pos, 2)) + 1), VersionYahooMap, language, pos.X, (((1 << zoom) >> 1) - 1 - pos.Y), (zoom + 1));
             }
 
             case MapType.YahooSatellite:
             {
+               // http://maps3.yimg.com/ae/ximg?v=1.9&t=a&s=256&.intl=en&x=15&y=7&z=7&r=1
+
                return string.Format("http://maps{0}.yimg.com/ae/ximg?v={1}&t=a&s=256&.intl={2}&x={3}&y={4}&z={5}&r=1", 3, VersionYahooSatellite, language, pos.X, (((1 << zoom) >> 1) - 1 - pos.Y), (zoom + 1));
             }
 
             case MapType.YahooLabels:
             {
+               // http://maps1.yimg.com/hx/tl?b=1&v=4.3&t=h&.intl=en&x=14&y=5&z=7&r=1
+
                return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&t=h&.intl={2}&x={3}&y={4}&z={5}&r=1", 1, VersionYahooLabels, language, pos.X, (((1 << zoom) >> 1) - 1 - pos.Y), (zoom + 1));
             }
             #endregion
