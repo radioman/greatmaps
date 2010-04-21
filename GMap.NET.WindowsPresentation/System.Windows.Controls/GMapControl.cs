@@ -211,8 +211,8 @@ namespace System.Windows.Controls
                      zoomReal = value;
                   }
 
-               double remainder = (double) System.Decimal.Remainder((Decimal) value, (Decimal) 1);
-               if(remainder != 0)
+              double remainder = value % 1;
+              if ((remainder != 0) && (ActualWidth > 0))
                {
                   double scaleValue = remainder + 1;
                   {
