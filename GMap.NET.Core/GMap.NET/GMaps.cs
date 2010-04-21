@@ -14,10 +14,10 @@ namespace GMap.NET
    using GMap.NET.CacheProviders;
    using GMap.NET.Internals;
    using System.Data.Common;
+   using System.Xml;
 
 #if !MONO
-   using System.Data.SQLite;
-   using System.Xml;
+   using System.Data.SQLite;    
 #else
    using SQLiteConnection=Mono.Data.SqliteClient.SqliteConnection;
    using SQLiteTransaction=Mono.Data.SqliteClient.SqliteTransaction;
