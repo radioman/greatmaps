@@ -9,6 +9,8 @@ using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using System.IO;
 using System.Diagnostics;
+using System.ComponentModel;
+using System.Threading;
 
 namespace Demo.WindowsForms
 {
@@ -90,6 +92,12 @@ namespace Demo.WindowsForms
             checkBoxDebug.Checked = true;
 #endif
 
+            // transport demo
+            transport.DoWork += new DoWorkEventHandler(transport_DoWork);
+            transport.ProgressChanged += new ProgressChangedEventHandler(transport_ProgressChanged);
+            transport.WorkerSupportsCancellation = true;
+            transport.WorkerReportsProgress = true;
+
             // add custom layers  
             {
                polygons = new GMapOverlay(MainMap, "polygons");
@@ -152,14 +160,6 @@ namespace Demo.WindowsForms
                   polygons.Polygons.Add(polygon);
                }
             }
-
-            // test performance
-            if(PerfTestEnabled)
-            {
-               timer.Interval = 44;
-               timer.Tick += new EventHandler(timer_Tick);
-               timer.Start();
-            }
          }
       }
 
@@ -189,9 +189,7 @@ namespace Demo.WindowsForms
          }
       }
 
-      bool PerfTestEnabled = false;
-
-      #region -- performance test--
+      #region -- performance test --
 
       double NextDouble(Random rng, double min, double max)
       {
@@ -210,17 +208,131 @@ namespace Demo.WindowsForms
             m.TooltipMode = MarkerTooltipMode.Always;
             m.Offset = new System.Drawing.Point(-m.Size.Width, -m.Size.Height);
          }
-         //m.ForceUpdateLocalPosition(MainMap);
+
          objects.Markers.Add(m);
 
          if(tt >= 333)
          {
-            timer.Stop();
+            timerPerf.Stop();
             tt = 0;
          }
       }
 
-      Timer timer = new Timer();
+      System.Windows.Forms.Timer timerPerf = new System.Windows.Forms.Timer();
+      #endregion
+
+      #region -- transport demo --
+      BackgroundWorker transport = new BackgroundWorker();
+     
+      readonly List<VehicleData> trolleybus = new List<VehicleData>();
+      readonly List<GMapMarker> trolleybusMarkers = new List<GMapMarker>();
+
+      readonly List<VehicleData> bus = new List<VehicleData>();
+      readonly List<GMapMarker> busMarkers = new List<GMapMarker>();
+
+      bool firstLoadTrasport = true;
+
+      void transport_ProgressChanged(object sender, ProgressChangedEventArgs e)
+      {
+         lock(trolleybus)
+         {
+            foreach(VehicleData d in trolleybus)
+            {
+               GMapMarker marker = null;
+               foreach(GMapMarker t in trolleybusMarkers)
+               {
+                  int id = (int) t.Tag;
+                  if(id == d.Id)
+                  {
+                     marker = t;
+                     break;
+                  }
+               }
+
+               if(marker == null)
+               {
+                  marker = new GMapMarkerGoogleRed(new PointLatLng(d.Lat, d.Lng));
+                  marker.Tag = d.Id;
+                  marker.TooltipMode = MarkerTooltipMode.Always;
+
+                  trolleybusMarkers.Add(marker);
+                  objects.Markers.Add(marker);
+               }
+               else
+               {
+                  marker.Position = new PointLatLng(d.Lat, d.Lng);
+               }
+               marker.ToolTipText = d.Line;
+            }
+         }
+
+         lock(bus)
+         {
+            foreach(VehicleData d in bus)
+            {
+               GMapMarker marker = null;
+               foreach(GMapMarker t in busMarkers)
+               {
+                  int id = (int) t.Tag;
+                  if(id == d.Id)
+                  {
+                     marker = t;
+                     break;
+                  }
+               }
+
+               if(marker == null)
+               {
+                  marker = new GMapMarkerGoogleGreen(new PointLatLng(d.Lat, d.Lng));
+                  marker.Tag = d.Id;
+                  marker.TooltipMode = MarkerTooltipMode.Always;
+
+                  busMarkers.Add(marker);
+                  objects.Markers.Add(marker);
+               }
+               else
+               {
+                  marker.Position = new PointLatLng(d.Lat, d.Lng);
+               }
+               marker.ToolTipText = d.Line;
+            }
+         }
+
+         if(firstLoadTrasport)
+         {
+            MainMap.ZoomAndCenterMarkers("objects");
+            firstLoadTrasport = false;
+         }
+      }
+
+      void transport_DoWork(object sender, DoWorkEventArgs e)
+      {
+         while(!transport.CancellationPending)
+         {
+            try
+            {
+               lock(trolleybus)
+               {
+                  MainMap.Manager.GetVilniusTransportData(TransportType.TrolleyBus, string.Empty, trolleybus);
+               }
+
+               lock(bus)
+               {
+                  MainMap.Manager.GetVilniusTransportData(TransportType.Bus, string.Empty, bus);
+               }
+
+               transport.ReportProgress(100);
+            }
+            catch(Exception ex)
+            {
+               Debug.WriteLine("transport_DoWork: " + ex.ToString());
+            }
+            Thread.Sleep(3333);
+         }
+         trolleybusMarkers.Clear();
+         busMarkers.Clear();      
+      }
+
       #endregion
 
       void MainMap_OnMapTypeChanged(MapType type)
@@ -308,6 +420,11 @@ namespace Demo.WindowsForms
          {
             MainMap.ZoomAndCenterRoutes(null);
          }
+
+         if(radioButtonTransport.Checked)
+         {
+            MainMap.ZoomAndCenterMarkers("objects");
+         }
       }
 
       // testing my mobile gp log
@@ -388,19 +505,12 @@ namespace Demo.WindowsForms
          }
       }
 
-      void UpdateCurrentMarkerPositionText()
-      {
-         textBoxCurrLat.Text = currentMarker.Position.Lat.ToString(CultureInfo.InvariantCulture);
-         textBoxCurrLng.Text = currentMarker.Position.Lng.ToString(CultureInfo.InvariantCulture);
-      }
-
       void MainMap_MouseDown(object sender, MouseEventArgs e)
       {
          if(e.Button == MouseButtons.Left)
          {
             isMouseDown = true;
             currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
-            UpdateCurrentMarkerPositionText();
          }
       }
 
@@ -412,7 +522,6 @@ namespace Demo.WindowsForms
             if(CurentRectMarker == null)
             {
                currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
-               UpdateCurrentMarkerPositionText();
             }
             else // move rect marker
             {
@@ -467,8 +576,8 @@ namespace Demo.WindowsForms
       {
          MethodInvoker m = delegate()
          {
-            progressBar1.Show();
-            groupBoxLoading.Invalidate(true);
+            progressBar1.Visible = true;
+            toolStripStatusLabelLoading.Visible = true;
          };
          try
          {
@@ -484,8 +593,8 @@ namespace Demo.WindowsForms
       {
          MethodInvoker m = delegate()
          {
-            progressBar1.Hide();
-            groupBoxLoading.Invalidate(true);
+            progressBar1.Visible = false;
+            toolStripStatusLabelLoading.Visible = false;
          };
          try
          {
@@ -500,6 +609,7 @@ namespace Demo.WindowsForms
       void MainMap_OnCurrentPositionChanged(PointLatLng point)
       {
          center.Position = point;
+         toolStripStatusLabelCurrentPosition.Text = "CurrentPosition: " + point;
       }
 
       // change map type
@@ -852,6 +962,43 @@ namespace Demo.WindowsForms
          else if(e.KeyCode == Keys.Down)
          {
             MainMap.Offset(0, offset);
+         }
+      }
+
+      private void RealTimeChanged(object sender, EventArgs e)
+      {
+         objects.Markers.Clear();
+         objects.Routes.Clear();
+         polygons.Polygons.Clear();
+
+         // start performance test
+         if(radioButtonPerf.Checked)
+         {
+            timerPerf.Interval = 44;
+            timerPerf.Tick += new EventHandler(timer_Tick);
+            timerPerf.Start();
+         }
+         else
+         {
+            // stop performance test
+            timerPerf.Stop();
+         }
+
+         // start realtime transport tracking demo
+         if(radioButtonTransport.Checked)
+         {
+            if(!transport.IsBusy)
+            {
+               firstLoadTrasport = true;
+               transport.RunWorkerAsync();
+            }
+         }
+         else
+         {
+            if(transport.IsBusy)
+            {
+               transport.CancelAsync();
+            }
          }
       }
    }
