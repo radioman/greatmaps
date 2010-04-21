@@ -17,7 +17,7 @@ namespace GMap.NET
    using System.Xml;
 
 #if !MONO
-   using System.Data.SQLite;    
+   using System.Data.SQLite;
 #else
    using SQLiteConnection=Mono.Data.SqliteClient.SqliteConnection;
    using SQLiteTransaction=Mono.Data.SqliteClient.SqliteTransaction;
@@ -2336,13 +2336,13 @@ namespace GMap.NET
                   {
                      case "Lat":
                      {
-                        d.Lat = double.Parse(elem.InnerText);
+                        d.Lat = double.Parse(elem.InnerText, CultureInfo.InvariantCulture);
                      }
                      break;
 
                      case "Lng":
                      {
-                        d.Lng = double.Parse(elem.InnerText);
+                        d.Lng = double.Parse(elem.InnerText, CultureInfo.InvariantCulture);
                      }
                      break;
 
@@ -2350,7 +2350,7 @@ namespace GMap.NET
                      {
                         if(!string.IsNullOrEmpty(elem.InnerText))
                         {
-                           d.Bearing = double.Parse(elem.InnerText);
+                           d.Bearing = double.Parse(elem.InnerText, CultureInfo.InvariantCulture);
                         }
                      }
                      break;
