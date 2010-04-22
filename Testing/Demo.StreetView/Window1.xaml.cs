@@ -1,23 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
+using System.IO;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Net;
-using System.IO;
-using System.ComponentModel;
-using System.Windows.Media.Media3D;
-using System.Diagnostics;
 
-namespace Street_WpfApplication
+namespace Demo.StreetView
 {
    /// <summary>
    /// Interaction logic for Window1.xaml
@@ -50,8 +41,8 @@ namespace Street_WpfApplication
 
          Canvas canvas = new Canvas();
          canvas.Children.Add(buff);
-         canvas.Width = 2130;
-         canvas.Height = 1144;
+         canvas.Width = 512*13;
+         canvas.Height = 512*7;
 
          canvas.UpdateLayout();
 
@@ -63,17 +54,18 @@ namespace Street_WpfApplication
          RenderTargetBitmap _RenderTargetBitmap = new RenderTargetBitmap(Width, Height, 96, 96, PixelFormats.Pbgra32);
          _RenderTargetBitmap.Render(buff);
 
-         Image img = new Image();              
+         Image img = new Image();
          img.Source = _RenderTargetBitmap;
 
          Viewer.PanoramaImage = _RenderTargetBitmap;
+
+         Title = "Demo.StreetView, enjoy! ;}";
       }
 
       Vector RotationVector = new Vector();
       Point DownPoint = new Point();
       void Viewer_MouseMove(object sender, MouseEventArgs e)
       {
-
          if(e.LeftButton == MouseButtonState.Released)
             return;
          Vector Offset = Point.Subtract(e.GetPosition(Viewer), DownPoint) * 0.25;
@@ -101,21 +93,25 @@ namespace Street_WpfApplication
          {
             Pass p = e.UserState as Pass;
 
+            Title = "Demo.StreetView, please wait on first time loading: " + p.X + "|" + p.Y + " of 13";
             Image i = new Image();
+
             i.Source = p.src;
-            (buff.Children[buff.Children.Count-1] as StackPanel).Children.Add(i);            
+            (buff.Children[buff.Children.Count-1] as StackPanel).Children.Add(i);
          }
          else if(e.ProgressPercentage == 0)
          {
+            Title = "Demo.StreetView, please wait on first time loading: zooming...";
+
             StackPanel ph = new StackPanel();
             ph.Orientation = Orientation.Horizontal;
             buff.Children.Add(ph);
-         }         
+         }
       }
 
       void loader_DoWork(object sender, DoWorkEventArgs e)
       {
-         string panoId = "4fe6hEN9GJC6thoQBcgv0Q";
+         string panoId = "rIcDg5NpZyolFR3i98C_3Q";
          int zoom = 4;
 
          //0, 1
@@ -135,7 +131,7 @@ namespace Street_WpfApplication
                p.Y = y;
                p.X = x;
 
-               string fl = "Tiles\\" + zoom + "\\img_" + x + "_" + y + ".jpg";
+               string fl = "Tiles\\" + zoom + "\\" + panoId + "\\img_" + x + "_" + y + ".jpg";
                string dr = System.IO.Path.GetDirectoryName(fl);
                if(!Directory.Exists(dr))
                {
@@ -156,10 +152,12 @@ namespace Street_WpfApplication
                }
 
                loader.ReportProgress(100, p);
-            }            
+            }
          }
+
          GC.Collect();
          GC.WaitForPendingFinalizers();
+         GC.Collect();
       }
 
       void SaveImg(ImageSource src, string file)
@@ -249,26 +247,21 @@ namespace Street_WpfApplication
          ImageSource ret = null;
          try
          {
+            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+            request.ServicePoint.ConnectionLimit = 50;
+            request.Proxy = WebRequest.DefaultWebProxy;
+
+            request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
+            request.Timeout = 10*1000;
+            request.ReadWriteTimeout = request.Timeout*6;
+            request.Referer = "http://maps.google.com/";
+            request.KeepAlive = true;
+
+            using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
             {
-               HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-               request.ServicePoint.ConnectionLimit = 50;
-               request.Proxy = WebRequest.DefaultWebProxy;
-               
-               request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
-               request.Timeout = 10*1000;
-               request.ReadWriteTimeout = request.Timeout*6;
-
-               //request.Accept = "text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1";
-               //request.Headers["Accept-Encoding"] = "deflate, gzip, x-gzip, identity, *;q=0";
-               request.Referer = "http://maps.google.com/";
-               request.KeepAlive = true;
-
-               using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+               using(Stream responseStream = CopyStream(response.GetResponseStream()))
                {
-                  using(Stream responseStream = CopyStream(response.GetResponseStream()))
-                  {
-                     ret = FromStream(responseStream);
-                  }
+                  ret = FromStream(responseStream);
                }
             }
          }
@@ -277,7 +270,7 @@ namespace Street_WpfApplication
             ret = null;
          }
          return ret;
-      }       
+      }
    }
 
    class Pass

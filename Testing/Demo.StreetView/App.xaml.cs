@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 
-namespace Street_WpfApplication
+namespace Demo.StreetView
 {
    /// <summary>
    /// Interaction logic for App.xaml

@@ -6,7 +6,7 @@ using GMap.NET;
 using GMap.NET.Projections;
 using GMap.NET.WindowsForms;
 
-namespace BigMapMaker_ConsoleApplication
+namespace BigMapMaker
 {
    class Program
    {
