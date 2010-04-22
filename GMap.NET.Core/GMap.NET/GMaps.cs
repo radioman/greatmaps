@@ -1704,76 +1704,96 @@ namespace GMap.NET
       /// <returns></returns>
       internal Placemark GetPlacemarkFromReverseGeocoderUrl(string url, bool useCache)
       {
-         Placemark ret = null;
-#if !PocketPC
-         try
-         {
+          Placemark ret = null;
+
+          try
+          {
             string urlEnd = url.Substring(url.IndexOf("geo?hl="));
 
-            char[] ilg = Path.GetInvalidFileNameChars();
-            foreach(char c in ilg)
-            {
-               urlEnd = urlEnd.Replace(c, '_');
-            }
-
-            string reverse = useCache ? Cache.Instance.GetPlacemarkFromCache(urlEnd) : string.Empty;
-
-            if(string.IsNullOrEmpty(reverse))
-            {
-               HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-               request.ServicePoint.ConnectionLimit = 50;
-               if(Proxy != null)
-               {
-                  request.Proxy = Proxy;
-                  request.PreAuthenticate = true;
-               }
-               else
-               {
 #if !PocketPC
-                  request.Proxy = WebRequest.DefaultWebProxy;
+              char[] ilg = Path.GetInvalidFileNameChars();
+#else
+              char[] ilg = new char[41];
+              for(int i = 0; i < 32; i++)
+                 ilg[i] = (char) i;
+
+              ilg[32] = '"';
+              ilg[33] = '<';
+              ilg[34] = '>';
+              ilg[35] = '|';
+              ilg[36] = '?';
+              ilg[37] = ':';
+              ilg[38] = '/';
+              ilg[39] = '\\';
+              ilg[39] = '*';
 #endif
-               }
 
-               request.UserAgent = UserAgent;
-               request.Timeout = Timeout;
-               request.ReadWriteTimeout = Timeout * 6;
-               request.KeepAlive = false;
+              foreach (char c in ilg)
+              {
+                  urlEnd = urlEnd.Replace(c, '_');
+              }
 
-               using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-               {
-                  using(Stream responseStream = response.GetResponseStream())
+              string reverse = useCache ? Cache.Instance.GetPlacemarkFromCache(urlEnd) : string.Empty;
+
+              if (string.IsNullOrEmpty(reverse))
+              {
+                  HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                  if (Proxy != null)
                   {
-                     using(StreamReader read = new StreamReader(responseStream))
-                     {
-                        reverse = read.ReadToEnd();
-                     }
-                  }
-               }
-
-               // cache geocoding
-               if(useCache)
-               {
-                  Cache.Instance.CachePlacemark(urlEnd, reverse);
-               }
-            }
-
-            // parse
-            {
-               if(reverse.StartsWith("200"))
-               {
-                  string acc = reverse.Substring(0, reverse.IndexOf('\"'));
-                  ret = new Placemark(reverse.Substring(reverse.IndexOf('\"')));
-                  ret.Accuracy = int.Parse(acc.Split(',').GetValue(1) as string);
-               }
-            }
-         }
-         catch(Exception ex)
-         {
-            ret = null;
-            Debug.WriteLine("GetPlacemarkReverseGeocoderUrl: " + ex.ToString());
-         }
+                      request.Proxy = Proxy;
+#if !PocketPC
+                      request.PreAuthenticate = true;
 #endif
-         return ret;
+                  }
+                  else
+                  {
+#if !PocketPC
+                      request.Proxy = WebRequest.DefaultWebProxy;
+#else
+                      request.Proxy = GlobalProxySelection.GetEmptyWebProxy();
+#endif
+                  }
+
+                  request.UserAgent = UserAgent;
+                  request.Timeout = Timeout;
+                  request.ReadWriteTimeout = Timeout * 6;
+                  request.KeepAlive = false;
+
+                  using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                  {
+                      using (Stream responseStream = response.GetResponseStream())
+                      {
+                          using (StreamReader read = new StreamReader(responseStream))
+                          {
+                              reverse = read.ReadToEnd();
+                          }
+                      }
+                  }
+
+                  // cache geocoding
+                  if (useCache)
+                  {
+                      Cache.Instance.CachePlacemark(urlEnd, reverse);
+                  }
+              }
+
+              // parse
+              {
+                  if (reverse.StartsWith("200"))
+                  {
+                      string acc = reverse.Substring(0, reverse.IndexOf('\"'));
+                      ret = new Placemark(reverse.Substring(reverse.IndexOf('\"')));
+                      ret.Accuracy = int.Parse(acc.Split(',').GetValue(1) as string);
+                  }
+              }
+          }
+          catch (Exception ex)
+          {
+              ret = null;
+              Debug.WriteLine("GetPlacemarkReverseGeocoderUrl: " + ex.ToString());
+          }
+
+          return ret;
       }
 
       /// <summary>
