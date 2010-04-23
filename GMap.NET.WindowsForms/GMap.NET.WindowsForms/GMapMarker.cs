@@ -109,19 +109,6 @@ namespace GMap.NET.WindowsForms
       public string ToolTipText;
       public bool Visible;
 
-      private bool isDragging;
-      public bool IsDragging
-      {
-         get
-         {
-            return isDragging;
-         }
-         internal set
-         {
-            isDragging = value;
-         }
-      }
-
       private bool isMouseOver;
       public bool IsMouseOver
       {
@@ -138,7 +125,6 @@ namespace GMap.NET.WindowsForms
       public GMapMarker(PointLatLng pos)
       {
          this.Position = pos;
-         this.IsDragging = false;
          this.ToolTipText = string.Empty;
          this.TooltipMode = MarkerTooltipMode.OnMouseOver;
          this.Visible = true;
