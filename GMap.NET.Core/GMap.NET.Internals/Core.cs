@@ -118,7 +118,7 @@ namespace GMap.NET.Internals
                   Matrix.Clear();
 
                   GoToCurrentPositionOnZoom();
-                  UpdateBounds();                   
+                  UpdateBounds();
 
                   if(OnMapDrag != null)
                   {
@@ -799,9 +799,11 @@ namespace GMap.NET.Internals
                         Matrix.ClearPointsNotIn(ref tileDrawingList);
                      }
 
+#if UseGC
                      GC.Collect();
                      GC.WaitForPendingFinalizers();
                      GC.Collect();
+#endif
 
 #if DEBUG
                      lock(tileLoadQueue)

@@ -595,6 +595,8 @@ namespace Demo.WindowsForms
          {
             progressBar1.Visible = false;
             toolStripStatusLabelLoading.Visible = false;
+
+            toolStripStatusLabelMemoryCache.Text = string.Format("MemoryCache: {0:0.00}MB of {1:0.00}MB", MainMap.Manager.MemoryCacheSize, MainMap.Manager.MemoryCacheCapacity);
          };
          try
          {
