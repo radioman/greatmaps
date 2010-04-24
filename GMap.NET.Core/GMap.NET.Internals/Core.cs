@@ -695,24 +695,24 @@ namespace GMap.NET.Internals
 
       void ProcessLoadTask(object obj)
       {
-         if(loaderLimit.WaitOne(GMaps.Instance.Timeout, false))
+         bool last = false;
+
+         LoadTask? task = null;
+
+         lock(tileLoadQueue)
          {
-            bool last = false;
-
-            LoadTask? task = null;
-
-            lock(tileLoadQueue)
+            if(tileLoadQueue.Count > 0)
             {
-               if(tileLoadQueue.Count > 0)
+               task = tileLoadQueue.Dequeue();
                {
-                  task = tileLoadQueue.Dequeue();
-                  {
-                     last = tileLoadQueue.Count == 0;
-                     //Debug.WriteLine("TileLoadQueue: " + tileLoadQueue.Count);
-                  }
+                  last = tileLoadQueue.Count == 0;
+                  //Debug.WriteLine("TileLoadQueue: " + tileLoadQueue.Count);
                }
             }
+         }
 
+         if(loaderLimit.WaitOne(GMaps.Instance.Timeout, false))
+         {
             if(task.HasValue)
             {
                try
@@ -751,7 +751,7 @@ namespace GMap.NET.Internals
                               }
                               break;
                            }
-                           else
+                           else if(GMaps.Instance.RetryLoadTile > 0)
                            {
                               Debug.WriteLine("ProcessLoadTask: " + task + " -> empty tile, retry " + retry);
                               {
