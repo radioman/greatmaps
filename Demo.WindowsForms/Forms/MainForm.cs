@@ -47,8 +47,18 @@ namespace Demo.WindowsForms
             //MainMap.Manager.Proxy = new WebProxy("10.2.0.100", 8080);
             //MainMap.Manager.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
-            // config map 
-            MainMap.Manager.Mode = AccessMode.ServerAndCache;
+            // set cache mode only if no internet avaible
+            try
+            {
+               System.Net.IPHostEntry e = System.Net.Dns.GetHostEntry("www.google.com");
+            }
+            catch
+            {
+               MainMap.Manager.Mode = AccessMode.CacheOnly;
+               MessageBox.Show("No internet connection avaible, going to CacheOnly mode.", "GMap.NET - Demo.WindowsForms", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+            // config map             
             MainMap.MapType = MapType.ArcGIS_MapsLT_Map;
             MainMap.MaxZoom = 11;
             MainMap.MinZoom = 1;
@@ -223,7 +233,7 @@ namespace Demo.WindowsForms
 
       #region -- transport demo --
       BackgroundWorker transport = new BackgroundWorker();
-     
+
       readonly List<VehicleData> trolleybus = new List<VehicleData>();
       readonly List<GMapMarker> trolleybusMarkers = new List<GMapMarker>();
 
@@ -330,7 +340,7 @@ namespace Demo.WindowsForms
             Thread.Sleep(3333);
          }
          trolleybusMarkers.Clear();
-         busMarkers.Clear();      
+         busMarkers.Clear();
       }
 
       #endregion

@@ -40,6 +40,17 @@ namespace Demo.WindowsPresentation
          //MainMap.Manager.Proxy = new WebProxy("10.2.0.100", 8080);
          //MainMap.Manager.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
 
+         // set cache mode only if no internet avaible
+         try
+         {
+            System.Net.IPHostEntry e = System.Net.Dns.GetHostEntry("www.google.com");
+         }
+         catch
+         {
+            MainMap.Manager.Mode = AccessMode.CacheOnly;
+            MessageBox.Show("No internet connection avaible, going to CacheOnly mode.", "GMap.NET - Demo.WindowsPresentation", MessageBoxButton.OK, MessageBoxImage.Warning);
+         }
+
          // config map
          MainMap.MapType = MapType.OpenStreetMap;
          MainMap.MaxZoom = 17;
