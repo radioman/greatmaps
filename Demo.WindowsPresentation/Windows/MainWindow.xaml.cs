@@ -175,9 +175,6 @@ namespace Demo.WindowsPresentation
          transport.ProgressChanged += new ProgressChangedEventHandler(transport_ProgressChanged);
          transport.WorkerSupportsCancellation = true;
          transport.WorkerReportsProgress = true;
-
-         // force anti-Aliased
-         MainMap.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Unspecified);
       }
 
       #region -- performance test--

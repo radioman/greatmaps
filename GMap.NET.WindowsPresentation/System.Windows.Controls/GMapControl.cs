@@ -330,9 +330,6 @@ namespace System.Windows.Controls
             ClipToBounds = true;
             SnapsToDevicePixels = true;
 
-            // removes white lines between tiles!
-            SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
-
             GMaps.Instance.ImageProxy = new WindowsPresentationImageProxy();
 
             Core.RenderMode = GMap.NET.RenderMode.WPF;
@@ -495,7 +492,7 @@ namespace System.Windows.Controls
                               if(!found)
                                  found = true;
 
-                              g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                              g.DrawImage(img.Img, new Rect(Core.tileRect.X+0.5, Core.tileRect.Y+0.5, Core.tileRect.Width+0.5, Core.tileRect.Height+0.5));
                            }
                         }
                      }
