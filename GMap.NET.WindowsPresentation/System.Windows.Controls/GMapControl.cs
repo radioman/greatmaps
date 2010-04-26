@@ -201,27 +201,21 @@ namespace System.Windows.Controls
                {
                   zoomReal = MaxZoom;
                }
+               else if(value < MinZoom)
+               {
+                  zoomReal = MinZoom;
+               }
                else
-                  if(value < MinZoom)
-                  {
-                     zoomReal = MinZoom;
-                  }
-                  else
-                  {
-                     zoomReal = value;
-                  }
+               {
+                  zoomReal = value;
+               }
 
-              double remainder = value % 1;
-              if ((remainder != 0) && (ActualWidth > 0))
+               double remainder = value % 1;
+               if(remainder != 0 && ActualWidth > 0)
                {
                   double scaleValue = remainder + 1;
                   {
                      MapRenderTransform = new ScaleTransform(scaleValue, scaleValue, ActualWidth / 2, ActualHeight / 2);
-                  }
-
-                  if(IsLoaded)
-                  {
-                     //DisplayZoomInFadeImage();
                   }
 
                   ZoomStep = Convert.ToInt32(value - remainder);
@@ -244,7 +238,6 @@ namespace System.Windows.Controls
       {
          get
          {
-            //Are we in Visual Studio Designer?
             return System.ComponentModel.DesignerProperties.GetIsInDesignMode(this);
          }
       }
@@ -371,55 +364,6 @@ namespace System.Windows.Controls
                marker.ForceUpdateLocalPosition(this);
             }
          }
-      }
-
-      // testing smooth zoom
-      Storyboard mapFadeStoryboard;
-      DoubleAnimation oMapFadeAnimation;
-      public Image FadeImage = new Image();
-
-      private void SetFadeStoryBoard(int duration)
-      {
-         mapFadeStoryboard = null;
-         oMapFadeAnimation = null;
-
-         mapFadeStoryboard = new Storyboard();
-         oMapFadeAnimation = new DoubleAnimation();
-
-         oMapFadeAnimation.From = 1;
-         oMapFadeAnimation.To = 0;
-         oMapFadeAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(duration));
-
-         mapFadeStoryboard.Children.Add(oMapFadeAnimation);
-         Storyboard.SetTarget(oMapFadeAnimation, FadeImage);
-         Storyboard.SetTargetProperty(oMapFadeAnimation, new PropertyPath(UIElement.OpacityProperty));
-      }
-
-      public void DisplayZoomInFadeImage()
-      {
-         ImageSource iSrc = ToImageSource();
-         FadeImage.Source = iSrc;
-
-         if(!CurrentPosition.IsEmpty)
-         {
-            GMap.NET.Point p = FromLatLngToLocal(CurrentPosition);
-            ScaleTransform scaleTransform = new ScaleTransform(2, 2, p.X, p.Y);
-            FadeImage.RenderTransform = scaleTransform;
-         }
-         mapFadeStoryboard.Begin(this);
-      }
-
-      public void DisplayZoomOutFadeImage()
-      {
-         ImageSource iSrc = ToImageSource();
-         FadeImage.Source = iSrc;
-         if(!CurrentPosition.IsEmpty)
-         {
-            GMap.NET.Point p = FromLatLngToLocal(CurrentPosition);
-            ScaleTransform scaleTransform = new ScaleTransform(0.5, 0.5, p.X, p.Y);
-            FadeImage.RenderTransform = scaleTransform;
-         }
-         mapFadeStoryboard.Begin(this);
       }
 
       /// <summary>
