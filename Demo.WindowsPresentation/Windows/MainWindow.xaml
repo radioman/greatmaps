@@ -105,12 +105,11 @@
                 <CheckBox Height="15" HorizontalAlignment="Right" Margin="0,7,0,0" Name="checkBoxGeoCache" VerticalAlignment="Top" Width="78" Checked="checkBoxGeoCache_Checked">geocoding</CheckBox>
             </Grid>
         </GroupBox>
-        <GroupBox Header="current location" Height="81" HorizontalAlignment="Right" Margin="0,0,12,178" Name="groupBox5" VerticalAlignment="Bottom" Width="169">
+        <GroupBox Header="Real Time" Height="74" HorizontalAlignment="Right" Margin="0,471,12,0" Name="groupBox5" VerticalAlignment="Top" Width="169">
             <Grid>
-                <TextBox Margin="7,6,35,0" Name="textBoxCurrLat" Height="23" VerticalAlignment="Top" IsReadOnly="True" />
-                <TextBox Margin="7,0,35,5" Name="textBoxCurrLng" Height="23" VerticalAlignment="Bottom" IsReadOnly="True" />
-                <Label HorizontalAlignment="Right" Margin="0,6,11,0" Name="label6" VerticalContentAlignment="Center" Width="27" VerticalAlignment="Top" Height="23.277">lat</Label>
-                <Label HorizontalAlignment="Right" Margin="0,0,11,6" Name="label7" VerticalContentAlignment="Center" Width="27" Height="23" VerticalAlignment="Bottom">lng</Label>
+                <RadioButton Height="16" Margin="7,6,36,0" Name="radioButtonTransport" VerticalAlignment="Top" Checked="realTimeChanged">Transport demo</RadioButton>
+                <RadioButton Margin="6,28,56,0" Name="radioButtonPerformance" Checked="realTimeChanged" Height="17.04" VerticalAlignment="Top">Performance</RadioButton>
+                <RadioButton HorizontalAlignment="Right" Margin="0,0,-6,7" Name="radioButtonNone" Width="56" Height="16.04" VerticalAlignment="Bottom" IsChecked="True" Checked="realTimeChanged">None</RadioButton>
             </Grid>
         </GroupBox>
       <GroupBox Header="markers" HorizontalAlignment="Right" Name="markers" Width="169" Margin="0,299,11,283" Height="80" VerticalAlignment="Top">
@@ -125,7 +124,7 @@
          <Grid>
             <Button Margin="7,6,0,0" Name="button11" Height="21.04" VerticalAlignment="Top" HorizontalAlignment="Left" Width="65" Click="button11_Click">set start</Button>
             <Button HorizontalAlignment="Right" Margin="0,6,5,0" Name="button9" Width="65" Height="21.04" VerticalAlignment="Top" Click="button9_Click">set end</Button>
-            <Button Margin="46,0,46,6" Name="button12" Height="21.04" VerticalAlignment="Bottom" Click="button12_Click">Add route</Button>
+            <Button Margin="7,0,6,6" Name="button12" Height="21.04" VerticalAlignment="Bottom" Click="button12_Click">Add route</Button>
          </Grid>
       </GroupBox>
     </Grid>

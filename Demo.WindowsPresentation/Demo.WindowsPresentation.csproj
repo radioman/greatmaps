@@ -64,6 +64,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\TrolleyTooltip.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="CustomMarkers\Circle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -106,9 +110,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\TrolleyTooltip.xaml.cs">
+      <DependentUpon>TrolleyTooltip.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomMarkers\Circle.xaml.cs">
       <DependentUpon>Circle.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomMarkers\CircleVisual.cs" />
     <Compile Include="CustomMarkers\CustomMarkerRed.xaml.cs">
       <DependentUpon>CustomMarkerRed.xaml</DependentUpon>
     </Compile>

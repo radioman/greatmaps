@@ -235,10 +235,10 @@ namespace Demo.WindowsForms
       BackgroundWorker transport = new BackgroundWorker();
 
       readonly List<VehicleData> trolleybus = new List<VehicleData>();
-      readonly List<GMapMarker> trolleybusMarkers = new List<GMapMarker>();
+      readonly Dictionary<int, GMapMarker> trolleybusMarkers = new Dictionary<int, GMapMarker>();
 
       readonly List<VehicleData> bus = new List<VehicleData>();
-      readonly List<GMapMarker> busMarkers = new List<GMapMarker>();
+      readonly Dictionary<int, GMapMarker> busMarkers = new Dictionary<int, GMapMarker>();
 
       bool firstLoadTrasport = true;
 
@@ -248,24 +248,15 @@ namespace Demo.WindowsForms
          {
             foreach(VehicleData d in trolleybus)
             {
-               GMapMarker marker = null;
-               foreach(GMapMarker t in trolleybusMarkers)
-               {
-                  int id = (int) t.Tag;
-                  if(id == d.Id)
-                  {
-                     marker = t;
-                     break;
-                  }
-               }
+               GMapMarker marker;
 
-               if(marker == null)
+               if(!trolleybusMarkers.TryGetValue(d.Id, out marker))
                {
                   marker = new GMapMarkerGoogleRed(new PointLatLng(d.Lat, d.Lng));
                   marker.Tag = d.Id;
                   marker.TooltipMode = MarkerTooltipMode.Always;
 
-                  trolleybusMarkers.Add(marker);
+                  trolleybusMarkers[d.Id] = marker;
                   objects.Markers.Add(marker);
                }
                else
@@ -280,24 +271,15 @@ namespace Demo.WindowsForms
          {
             foreach(VehicleData d in bus)
             {
-               GMapMarker marker = null;
-               foreach(GMapMarker t in busMarkers)
-               {
-                  int id = (int) t.Tag;
-                  if(id == d.Id)
-                  {
-                     marker = t;
-                     break;
-                  }
-               }
+               GMapMarker marker;
 
-               if(marker == null)
+               if(!busMarkers.TryGetValue(d.Id, out marker))
                {
                   marker = new GMapMarkerGoogleGreen(new PointLatLng(d.Lat, d.Lng));
                   marker.Tag = d.Id;
                   marker.TooltipMode = MarkerTooltipMode.Always;
 
-                  busMarkers.Add(marker);
+                  busMarkers[d.Id] = marker;
                   objects.Markers.Add(marker);
                }
                else

@@ -27,7 +27,6 @@ namespace Demo.WindowsPresentation.CustomMarkers
          Popup = new Popup();
          Label = new Label();
 
-         this.Unloaded += new RoutedEventHandler(CustomMarkerDemo_Unloaded);
          this.Loaded += new RoutedEventHandler(CustomMarkerDemo_Loaded);
          this.SizeChanged += new SizeChangedEventHandler(CustomMarkerDemo_SizeChanged);
          this.MouseEnter += new MouseEventHandler(MarkerControl_MouseEnter);
@@ -55,24 +54,6 @@ namespace Demo.WindowsPresentation.CustomMarkers
          {
             icon.Source.Freeze();
          }
-      }
-
-      void CustomMarkerDemo_Unloaded(object sender, RoutedEventArgs e)
-      {
-         this.Unloaded -= new RoutedEventHandler(CustomMarkerDemo_Unloaded);
-         this.Loaded -= new RoutedEventHandler(CustomMarkerDemo_Loaded);
-         this.SizeChanged-= new SizeChangedEventHandler(CustomMarkerDemo_SizeChanged);
-         this.MouseEnter -= new MouseEventHandler(MarkerControl_MouseEnter);
-         this.MouseLeave -= new MouseEventHandler(MarkerControl_MouseLeave);
-         this.MouseMove -= new MouseEventHandler(CustomMarkerDemo_MouseMove);
-         this.MouseLeftButtonUp -= new MouseButtonEventHandler(CustomMarkerDemo_MouseLeftButtonUp);
-         this.MouseLeftButtonDown -= new MouseButtonEventHandler(CustomMarkerDemo_MouseLeftButtonDown);
-
-         Marker.Shape = null;
-         icon.Source = null;
-         icon = null;
-         Popup = null;
-         Label = null;         
       }
 
       void CustomMarkerDemo_SizeChanged(object sender, SizeChangedEventArgs e)

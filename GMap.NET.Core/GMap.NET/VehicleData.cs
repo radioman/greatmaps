@@ -12,7 +12,7 @@ namespace GMap.NET
       public string AreaName;
       public string StreetName;
       public string Time;
-      public double Bearing;
+      public double? Bearing;
    }
 
    public enum TransportType
