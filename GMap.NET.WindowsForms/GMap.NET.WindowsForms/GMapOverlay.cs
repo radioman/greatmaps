@@ -150,7 +150,13 @@ namespace GMap.NET.WindowsForms
 
          if(e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Reset)
          {
-            Control.IsMouseOverMarker = false;
+#if !PocketPC
+            if(Control.IsMouseOverMarker)
+            {
+               Control.IsMouseOverMarker = false;
+               Control.Cursor = Cursors.Default;
+            }
+#endif
          }
 
          Control.Core_OnNeedInvalidation();
