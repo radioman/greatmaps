@@ -492,7 +492,7 @@ namespace System.Windows.Controls
                               if(!found)
                                  found = true;
 
-                              g.DrawImage(img.Img, new Rect(Core.tileRect.X+0.5, Core.tileRect.Y+0.5, Core.tileRect.Width+0.5, Core.tileRect.Height+0.5));
+                              g.DrawImage(img.Img, new Rect(Core.tileRect.X+0.6, Core.tileRect.Y+0.6, Core.tileRect.Width+0.6, Core.tileRect.Height+0.6));
                            }
                         }
                      }
