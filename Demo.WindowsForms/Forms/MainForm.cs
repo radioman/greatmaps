@@ -975,6 +975,19 @@ namespace Demo.WindowsForms
          {
             MainMap.Offset(0, offset);
          }
+         else if(e.KeyCode == Keys.Delete)
+         {
+            if(CurentRectMarker != null)
+            {
+               objects.Markers.Remove(CurentRectMarker);
+
+               if(CurentRectMarker.InnerMarker != null)
+               {
+                  objects.Markers.Remove(CurentRectMarker.InnerMarker);
+               }
+               CurentRectMarker = null;
+            }
+         }
       }
 
       private void RealTimeChanged(object sender, EventArgs e)

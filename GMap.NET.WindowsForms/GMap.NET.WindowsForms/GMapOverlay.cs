@@ -148,6 +148,11 @@ namespace GMap.NET.WindowsForms
             }
          }
 
+         if(e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Reset)
+         {
+            Control.IsMouseOverMarker = false;
+         }
+
          Control.Core_OnNeedInvalidation();
       }
 

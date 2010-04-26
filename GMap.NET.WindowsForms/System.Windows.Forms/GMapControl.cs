@@ -1327,7 +1327,6 @@ namespace System.Windows.Forms
                               this.Cursor = System.Windows.Forms.Cursors.Hand;
 #endif
                               m.IsMouseOver = true;
-                              IsMouseOverMarker = true;
 #if !PocketPC
                               Invalidate(false);
 #else
@@ -1345,7 +1344,6 @@ namespace System.Windows.Forms
                               this.Cursor = System.Windows.Forms.Cursors.Default;
 #endif
                               m.IsMouseOver = false;
-                              IsMouseOverMarker = false;
 #if !PocketPC
                               Invalidate(false);
 #else
@@ -1717,10 +1715,22 @@ namespace System.Windows.Forms
          }
       }
 
+      bool isMouseOverMarker;
+
       /// <summary>
       /// is mouse over marker
       /// </summary>
-      public bool IsMouseOverMarker;
+      public bool IsMouseOverMarker
+      {
+         get
+         {
+            return isMouseOverMarker;
+         }
+         internal set
+         {
+            isMouseOverMarker = value;
+         }
+      }
 
       /// <summary>
       /// gets current map view top/left coordinate, width in Lng, height in Lat
