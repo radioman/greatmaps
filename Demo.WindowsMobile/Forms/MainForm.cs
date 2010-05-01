@@ -59,6 +59,7 @@ namespace Demo.WindowsMobile
 
       GPS pageGps;
       Transport pageTransport;
+      Search pageSearch;
 
       MsgWindow msgW;
       #endregion
@@ -69,6 +70,7 @@ namespace Demo.WindowsMobile
 
          pageGps = new GPS(this);
          pageTransport = new Transport(this);
+         pageSearch = new Search(this);
 
 #if DEBUG
          MainMap.Manager.Mode = AccessMode.ServerAndCache;
@@ -982,6 +984,7 @@ namespace Demo.WindowsMobile
          menuItemGotoMap.Checked = true;
          menuItemGotoGps.Checked = false;
          menuItemGotoTransport.Checked = false;
+         menuItemSearch.Checked = false;
 
          this.SuspendLayout();
          this.Controls.Clear();
@@ -994,6 +997,7 @@ namespace Demo.WindowsMobile
          menuItemGotoGps.Checked = true;
          menuItemGotoTransport.Checked = false;
          menuItemGotoMap.Checked = false;
+         menuItemSearch.Checked = false;
 
          this.SuspendLayout();
          this.Controls.Clear();
@@ -1009,11 +1013,26 @@ namespace Demo.WindowsMobile
          menuItemGotoTransport.Checked = true;
          menuItemGotoMap.Checked = false;
          menuItemGotoGps.Checked = false;
+         menuItemSearch.Checked = false;
 
          this.SuspendLayout();
          this.Controls.Clear();
          this.pageTransport.Dock = DockStyle.Fill;
          this.Controls.Add(pageTransport);
+         this.ResumeLayout(false);
+      }
+
+      private void menuItemSearch_Click(object sender, EventArgs e)
+      {
+         menuItemSearch.Checked = true;
+         menuItemGotoTransport.Checked = false;
+         menuItemGotoMap.Checked = false;
+         menuItemGotoGps.Checked = false;
+
+         this.SuspendLayout();
+         this.Controls.Clear();
+         this.pageSearch.Dock = DockStyle.Fill;
+         this.Controls.Add(pageSearch);
          this.ResumeLayout(false);
       }
 
@@ -1068,6 +1087,12 @@ namespace Demo.WindowsMobile
             // Call the base WndProc method
             base.WndProc(ref msg);
          }
+      }
+
+      // clear markers
+      private void menuItem37_Click(object sender, EventArgs e)
+      {
+         objects.Markers.Clear();
       }
    }
 }

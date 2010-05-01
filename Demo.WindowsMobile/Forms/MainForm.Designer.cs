@@ -33,6 +33,7 @@
          this.menuItem1 = new System.Windows.Forms.MenuItem();
          this.menuItemGotoMap = new System.Windows.Forms.MenuItem();
          this.menuItemGotoGps = new System.Windows.Forms.MenuItem();
+         this.menuItemSearch = new System.Windows.Forms.MenuItem();
          this.menuItemGotoTransport = new System.Windows.Forms.MenuItem();
          this.menuItem34 = new System.Windows.Forms.MenuItem();
          this.menuItem32 = new System.Windows.Forms.MenuItem();
@@ -65,8 +66,10 @@
          this.menuItem30 = new System.Windows.Forms.MenuItem();
          this.menuItemEnableGrid = new System.Windows.Forms.MenuItem();
          this.menuItemDisableAutoSleep = new System.Windows.Forms.MenuItem();
-         this.menuItem6 = new System.Windows.Forms.MenuItem();
+         this.menuItem36 = new System.Windows.Forms.MenuItem();
+         this.menuItem37 = new System.Windows.Forms.MenuItem();
          this.menuItem35 = new System.Windows.Forms.MenuItem();
+         this.menuItem6 = new System.Windows.Forms.MenuItem();
          this.menuItem33 = new System.Windows.Forms.MenuItem();
          this.menuItem4 = new System.Windows.Forms.MenuItem();
          this.menuItem5 = new System.Windows.Forms.MenuItem();
@@ -87,6 +90,7 @@
          // 
          this.menuItem1.MenuItems.Add(this.menuItemGotoMap);
          this.menuItem1.MenuItems.Add(this.menuItemGotoGps);
+         this.menuItem1.MenuItems.Add(this.menuItemSearch);
          this.menuItem1.MenuItems.Add(this.menuItemGotoTransport);
          this.menuItem1.MenuItems.Add(this.menuItem34);
          this.menuItem1.MenuItems.Add(this.menuItem32);
@@ -103,7 +107,12 @@
          this.menuItemGotoGps.Text = "GPS";
          this.menuItemGotoGps.Click += new System.EventHandler(this.menuItemGotoGps_Click);
          // 
-         // menuItemGotoTrolis
+         // menuItemSearch
+         // 
+         this.menuItemSearch.Text = "Search";
+         this.menuItemSearch.Click += new System.EventHandler(this.menuItemSearch_Click);
+         // 
+         // menuItemGotoTransport
          // 
          this.menuItemGotoTransport.Text = "Vilnius Transport";
          this.menuItemGotoTransport.Click += new System.EventHandler(this.menuItemGotoTransport_Click);
@@ -123,8 +132,8 @@
          this.menuItem2.MenuItems.Add(this.menuItem7);
          this.menuItem2.MenuItems.Add(this.menuItem29);
          this.menuItem2.MenuItems.Add(this.menuItem30);
+         this.menuItem2.MenuItems.Add(this.menuItem36);
          this.menuItem2.MenuItems.Add(this.menuItem6);
-         this.menuItem2.MenuItems.Add(this.menuItem35);
          this.menuItem2.MenuItems.Add(this.menuItem33);
          this.menuItem2.MenuItems.Add(this.menuItem4);
          this.menuItem2.MenuItems.Add(this.menuItem5);
@@ -291,14 +300,24 @@
          this.menuItemDisableAutoSleep.Text = "DisableAutoSleep";
          this.menuItemDisableAutoSleep.Click += new System.EventHandler(this.menuItemDisableAutoSleep_Click);
          // 
-         // menuItem6
+         // menuItem36
          // 
-         this.menuItem6.Text = "-";
+         this.menuItem36.MenuItems.Add(this.menuItem37);
+         this.menuItem36.MenuItems.Add(this.menuItem35);
+         this.menuItem36.Text = "Markers";
+         // 
+         // menuItem37
+         // 
+         this.menuItem37.Text = "Clear";
+         this.menuItem37.Click += new System.EventHandler(this.menuItem37_Click);
          // 
          // menuItem35
          // 
-         this.menuItem35.Text = "FitAllMarkers";
-         this.menuItem35.Click += new System.EventHandler(this.menuItem35_Click);
+         this.menuItem35.Text = "Fit to All";
+         // 
+         // menuItem6
+         // 
+         this.menuItem6.Text = "-";
          // 
          // menuItem33
          // 
@@ -345,7 +364,11 @@
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
          this.MainMap.Location = new System.Drawing.Point(0, 0);
          this.MainMap.MarkersEnabled = true;
+         this.MainMap.MaxZoom = 2;
+         this.MainMap.MinZoom = 2;
+         this.MainMap.MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionAndCenter;
          this.MainMap.Name = "MainMap";
+         this.MainMap.PolygonsEnabled = true;
          this.MainMap.RoutesEnabled = true;
          this.MainMap.ShowTileGridLines = false;
          this.MainMap.Size = new System.Drawing.Size(480, 696);
@@ -418,7 +441,10 @@
       private System.Windows.Forms.MenuItem menuItem33;
       private System.Windows.Forms.MenuItem menuItem31;
       private System.Windows.Forms.MenuItem menuItemGotoTransport;
+      private System.Windows.Forms.MenuItem menuItem36;
+      private System.Windows.Forms.MenuItem menuItem37;
       private System.Windows.Forms.MenuItem menuItem35;
+      private System.Windows.Forms.MenuItem menuItemSearch;
    }
 }
 

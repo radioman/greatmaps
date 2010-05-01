@@ -143,7 +143,7 @@ namespace GMap.NET.WindowsForms
                if(obj != null)
                {
                   obj.Overlay = this;
-                  obj.Position = obj.Position;
+                  obj.ForceUpdateLocalPosition();
                }
             }
          }

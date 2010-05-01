@@ -356,10 +356,28 @@ namespace GMap.NET.Internals
       /// </summary>
       public event MapTypeChanged OnMapTypeChanged;
 
+      Semaphore loaderLimit;
+
+#if DEBUG
+      Stopwatch timer;
+#endif
+
+#if !DESIGN
       public Core()
       {
          ProcessLoadTaskCallback = new WaitCallback(ProcessLoadTask);
+
+#if PocketPC
+         loaderLimit = new Semaphore(2, 2);
+#else
+         loaderLimit = new Semaphore(5, 5);
+#endif
+
+#if DEBUG
+         timer = new Stopwatch();
+#endif
       }
+#endif
 
       /// <summary>
       /// starts core system
@@ -682,16 +700,6 @@ namespace GMap.NET.Internals
             }
          }
       }
-
-#if PocketPC
-      Semaphore loaderLimit = new Semaphore(2, 2);
-#else
-      Semaphore loaderLimit = new Semaphore(5, 5);
-#endif
-
-#if DEBUG
-      Stopwatch timer = new Stopwatch();
-#endif
 
       void ProcessLoadTask(object obj)
       {

@@ -1,33 +1,21 @@
 ﻿
 namespace GMap.NET.WindowsForms
 {
-   using System.ComponentModel;
    using System.Drawing;
 
    /// <summary>
    /// GMap.NET marker
    /// </summary>
-   public class GMapMarker : INotifyPropertyChanged
+   public class GMapMarker
    {
 #if PocketPC
-      System.Drawing.Imaging.ImageAttributes attr = new System.Drawing.Imaging.ImageAttributes();
+      static System.Drawing.Imaging.ImageAttributes attr = new System.Drawing.Imaging.ImageAttributes();
 
-      public GMapMarker()
+      static GMapMarker()
       {
          attr.SetColorKey(Color.White, Color.White);
       }
 #endif
-
-      public event PropertyChangedEventHandler PropertyChanged;
-      void OnPropertyChanged(string name)
-      {
-         PropertyChangedEventHandler handler = PropertyChanged;
-         if(handler != null)
-         {
-            handler(this, new PropertyChangedEventArgs(name));
-         }
-      }
-
       internal GMapOverlay Overlay;
 
       private PointLatLng position;
@@ -43,11 +31,21 @@ namespace GMap.NET.WindowsForms
 
             if(Overlay != null)
             {
-               GMap.NET.Point p = Overlay.Control.FromLatLngToLocal(value);
+               GMap.NET.Point p = Overlay.Control.FromLatLngToLocal(Position);
                LocalPosition = new Point(p.X + Offset.X, p.Y  + Offset.Y);
             }
          }
       }
+
+      internal void ForceUpdateLocalPosition()
+      {
+         if(Overlay != null)
+         {
+            GMap.NET.Point p = Overlay.Control.FromLatLngToLocal(Position);
+            area.Location = new Point(p.X + Offset.X, p.Y  + Offset.Y);
+         }
+      }
+
       public object Tag;
 
       Point offset;
@@ -72,12 +70,14 @@ namespace GMap.NET.WindowsForms
          }
          internal set
          {
-            area.Location = value;
-            OnPropertyChanged("LocalPosition");
-
-            if(Overlay != null)
+            if(area.Location != value)
             {
-               Overlay.Control.Core_OnNeedInvalidation();
+               area.Location = value;
+
+               if(Overlay != null)
+               {
+                  Overlay.Control.Core_OnNeedInvalidation();
+               }
             }
          }
       }
@@ -94,7 +94,7 @@ namespace GMap.NET.WindowsForms
          }
       }
 
-      internal Rectangle LocalArea
+      public Rectangle LocalArea
       {
          get
          {
@@ -127,7 +127,7 @@ namespace GMap.NET.WindowsForms
       public GMapMarker(PointLatLng pos)
       {
          this.Position = pos;
-         this.ToolTipText = string.Empty; 
+         this.ToolTipText = string.Empty;
          this.ToolTipOffset = new Point(14, -44);
       }
 

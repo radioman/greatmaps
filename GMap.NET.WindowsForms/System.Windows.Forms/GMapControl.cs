@@ -247,6 +247,7 @@ namespace System.Windows.Forms
       Bitmap backBuffer;
       Graphics gxOff;
 
+#if !DESIGN
       /// <summary>
       /// construct
       /// </summary>
@@ -293,6 +294,7 @@ namespace System.Windows.Forms
             }
          }
       }
+#endif
 
       /// <summary>
       /// update objects when map is draged
@@ -305,7 +307,7 @@ namespace System.Windows.Forms
             {
                foreach(GMapMarker obj in o.Markers)
                {
-                  obj.Position = obj.Position;
+                  obj.ForceUpdateLocalPosition();
                }
 
                foreach(GMapPolygon obj in o.Polygons)
@@ -1129,6 +1131,7 @@ namespace System.Windows.Forms
          }
       }
 #else
+#if !DESIGN
       protected override void OnResize(EventArgs e)
       {
          base.OnResize(e);
@@ -1164,6 +1167,7 @@ namespace System.Windows.Forms
             }
          }
       }
+#endif
 #endif
 
       bool isSelected = false;
