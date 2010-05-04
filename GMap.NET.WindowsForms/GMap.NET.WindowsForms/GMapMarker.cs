@@ -104,10 +104,25 @@ namespace GMap.NET.WindowsForms
          }
       }
 
-      public MarkerTooltipMode TooltipMode = MarkerTooltipMode.OnMouseOver;
-      public Point ToolTipOffset;
-      public string ToolTipText;
-      public bool Visible = true;
+      public GMapToolTip ToolTip = null;
+      public MarkerTooltipMode ToolTipMode = MarkerTooltipMode.OnMouseOver;
+      public string ToolTipText
+      {
+          get
+          {
+              if (ToolTip != null)
+                  return ToolTip.ToolTipText;
+              return "";
+          }
+
+          set
+          {
+              if (ToolTip != null)
+                  ToolTip.ToolTipText = value;
+          }
+      }
+
+       public bool Visible = true;
 
       private bool isMouseOver = false;
       public bool IsMouseOver
@@ -126,9 +141,13 @@ namespace GMap.NET.WindowsForms
 
       public GMapMarker(PointLatLng pos)
       {
-         this.Position = pos;
-         this.ToolTipText = string.Empty;
-         this.ToolTipOffset = new Point(14, -44);
+          this.Position = pos;
+          this.ToolTip = CreateAndAttachToolTip();
+      }
+
+      public virtual GMapToolTip CreateAndAttachToolTip()
+      {
+          return new GMapToolTip(this);
       }
 
       public virtual void OnRender(Graphics g)

@@ -125,6 +125,10 @@ namespace Demo.WindowsForms
 
             // set current marker
             currentMarker = new GMapMarkerGoogleRed(MainMap.CurrentPosition);
+            currentMarker.ToolTip = new GMapBaloonToolTip(currentMarker);
+            currentMarker.ToolTipText = "Test of Baloon ToolTip\n\rDoes it work ?\n\rYes, it's great !!!";
+            currentMarker.ToolTipMode = MarkerTooltipMode.Always;
+
             top.Markers.Add(currentMarker);
 
             // map center
@@ -140,8 +144,8 @@ namespace Demo.WindowsForms
                   currentMarker.Position = pos.Value;
 
                   GMapMarker myCity = new GMapMarkerGoogleGreen(pos.Value);
-                  myCity.TooltipMode = MarkerTooltipMode.Always;
-                  myCity.ToolTipText = "Welcome to Lithuania! ;}";
+                  myCity.ToolTipMode = MarkerTooltipMode.Always;
+                  myCity.ToolTip.ToolTipText = "Welcome to Lithuania! ;}";
                   objects.Markers.Add(myCity);
                }
             }
@@ -214,8 +218,8 @@ namespace Demo.WindowsForms
          var pos = new PointLatLng(NextDouble(r, MainMap.CurrentViewArea.Top, MainMap.CurrentViewArea.Bottom), NextDouble(r, MainMap.CurrentViewArea.Left, MainMap.CurrentViewArea.Right));
          GMapMarker m = new GMapMarkerGoogleGreen(pos);
          {
-            m.ToolTipText = (tt++).ToString();
-            m.TooltipMode = MarkerTooltipMode.Always;
+            m.ToolTip.ToolTipText = (tt++).ToString();
+            m.ToolTipMode = MarkerTooltipMode.Always;
             m.Offset = new System.Drawing.Point(-m.Size.Width, -m.Size.Height);
          }
 
@@ -254,7 +258,7 @@ namespace Demo.WindowsForms
                {
                   marker = new GMapMarkerGoogleRed(new PointLatLng(d.Lat, d.Lng));
                   marker.Tag = d.Id;
-                  marker.TooltipMode = MarkerTooltipMode.Always;
+                  marker.ToolTipMode = MarkerTooltipMode.Always;
 
                   trolleybusMarkers[d.Id] = marker;
                   objects.Markers.Add(marker);
@@ -277,7 +281,7 @@ namespace Demo.WindowsForms
                {
                   marker = new GMapMarkerGoogleGreen(new PointLatLng(d.Lat, d.Lng));
                   marker.Tag = d.Id;
-                  marker.TooltipMode = MarkerTooltipMode.Always;
+                  marker.ToolTipMode = MarkerTooltipMode.Always;
 
                   busMarkers[d.Id] = marker;
                   objects.Markers.Add(marker);
@@ -475,11 +479,14 @@ namespace Demo.WindowsForms
          if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
          {
             GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(pos.Value);
+            m.ToolTip = new GMapRoundedToolTip(m);
+
+
             GMapMarkerRect mBorders = new GMapMarkerRect(pos.Value);
             {
                mBorders.InnerMarker = m;
                mBorders.ToolTipText = place;
-               mBorders.TooltipMode = MarkerTooltipMode.Always;
+               mBorders.ToolTipMode = MarkerTooltipMode.Always;
                mBorders.Tag = pulygonId;
             }
 
@@ -691,11 +698,11 @@ namespace Demo.WindowsForms
             // add route start/end marks
             GMapMarker m1 = new GMapMarkerGoogleRed(start);
             m1.ToolTipText = "Start: " + route.Name;
-            m1.TooltipMode = MarkerTooltipMode.Always;
+            m1.ToolTipMode = MarkerTooltipMode.Always;
 
             GMapMarker m2 = new GMapMarkerGoogleGreen(end);
             m2.ToolTipText = "End: " + end.ToString();
-            m2.TooltipMode = MarkerTooltipMode.Always;
+            m2.ToolTipMode = MarkerTooltipMode.Always;
 
             objects.Markers.Add(m1);
             objects.Markers.Add(m2);

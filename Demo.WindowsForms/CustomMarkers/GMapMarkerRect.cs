@@ -18,7 +18,7 @@ namespace GMap.NET.WindowsForms.Markers
          // do not forget set Size of the marker
          // if so, you shall have no event on it ;}
          Size = new Size(111, 111);           
-      }        
+      }
 
       public override void OnRender(Graphics g)
       {

@@ -37,34 +37,6 @@ namespace GMap.NET.WindowsForms
       public readonly ObservableCollectionThreadSafe<GMapPolygon> Polygons = new ObservableCollectionThreadSafe<GMapPolygon>();
 
       /// <summary>
-      /// font for markers tooltip
-      /// </summary>
-#if !PocketPC
-      public Font TooltipFont = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold, GraphicsUnit.Pixel);
-#else
-      public Font TooltipFont = new Font(FontFamily.GenericSansSerif, 6, FontStyle.Bold);
-#endif
-
-      /// <summary>
-      /// tooltip pen
-      /// </summary>
-#if !PocketPC
-      public Pen TooltipPen = new Pen(Color.FromArgb(140, Color.MidnightBlue));
-#else
-      public Pen TooltipPen = new Pen(Color.MidnightBlue);
-#endif
-
-      /// <summary>
-      /// tooltip background color
-      /// </summary>
-#if !PocketPC
-      public Brush TooltipBackground = Brushes.AliceBlue;
-#else
-      public Brush TooltipBackground = new System.Drawing.SolidBrush(Color.AliceBlue);
-      public Brush TooltipForeground = new System.Drawing.SolidBrush(Color.Navy);
-#endif
-
-      /// <summary>
       /// Polygon background color
       /// </summary>
 #if !PocketPC
@@ -72,11 +44,6 @@ namespace GMap.NET.WindowsForms
 #else
       public Brush PolygonBackground = new System.Drawing.SolidBrush(Color.AliceBlue);
 #endif
-
-      /// <summary>
-      /// tooltip string format
-      /// </summary>
-      public StringFormat TooltipFormat = new StringFormat();
 
       /// <summary>
       /// pen for routes, be aware that the color is adjusted in each GMapRoute
@@ -97,15 +64,6 @@ namespace GMap.NET.WindowsForms
          RoutePen.LineJoin = LineJoin.Round;
 #endif
          RoutePen.Width = 5;
-
-         TooltipPen.Width = 2;
-#if !PocketPC
-         TooltipPen.LineJoin = LineJoin.Round;
-         TooltipPen.StartCap = LineCap.RoundAnchor;
-#endif
-
-         TooltipFormat.Alignment     = StringAlignment.Center;
-         TooltipFormat.LineAlignment = StringAlignment.Center;
       }
 
       void Polygons_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -175,21 +133,10 @@ namespace GMap.NET.WindowsForms
          GraphicsState s = g.Save();
          g.SmoothingMode = SmoothingMode.AntiAlias;
 #endif
-
-         System.Drawing.Size st = g.MeasureString(m.ToolTipText, TooltipFont).ToSize();
-         System.Drawing.Rectangle rect = new System.Drawing.Rectangle(x, y, st.Width+Control.TooltipTextPadding.Width, st.Height+Control.TooltipTextPadding.Height);
-         rect.Offset(m.ToolTipOffset.X, m.ToolTipOffset.Y);
-
-         g.DrawLine(TooltipPen, x, y, rect.X + rect.Width/2, rect.Y + rect.Height/2);
-         g.FillRectangle(TooltipBackground, rect);
-         g.DrawRectangle(TooltipPen, rect);
-
-#if !PocketPC
-         g.DrawString(m.ToolTipText, TooltipFont, Brushes.Navy, rect, TooltipFormat);
-#else
-         g.DrawString(m.ToolTipText, TooltipFont, TooltipForeground, rect, TooltipFormat);
-#endif
-
+         if (m.ToolTip != null)
+         {
+             m.ToolTip.DrawToolTip(g, m, x, y);
+         }
 #if !PocketPC
          g.Restore(s);
 #endif
@@ -344,17 +291,20 @@ namespace GMap.NET.WindowsForms
             }
 
             // tooltips above
-            foreach(GMapMarker m in Markers)
+            foreach (GMapMarker m in Markers)
             {
-               if(m.Visible && Control.Core.CurrentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
+               if (m.Visible && Control.Core.CurrentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
                {
-                  if(!string.IsNullOrEmpty(m.ToolTipText))
-                  {
-                     if(m.TooltipMode == MarkerTooltipMode.Always || (m.TooltipMode == MarkerTooltipMode.OnMouseOver && m.IsMouseOver))
-                     {
-                        DrawToolTip(g, m, m.LocalPosition.X, m.LocalPosition.Y);
-                     }
-                  }
+                   if (m.ToolTip != null)
+                   {
+                       if (!string.IsNullOrEmpty(m.ToolTip.ToolTipText))
+                       {
+                           if (m.ToolTipMode == MarkerTooltipMode.Always || (m.ToolTipMode == MarkerTooltipMode.OnMouseOver && m.IsMouseOver))
+                           {
+                               DrawToolTip(g, m, m.LocalPosition.X, m.LocalPosition.Y);
+                           }
+                       }
+                   }
                }
             }
          }
