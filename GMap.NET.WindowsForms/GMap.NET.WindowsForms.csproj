@@ -49,17 +49,17 @@
     <Compile Include="GMap.NET.WindowsForms\GMapPolygon.cs" />
     <Compile Include="GMap.NET.WindowsForms\ToolTips\GMapBaloonToolTip.cs" />
     <Compile Include="GMap.NET.WindowsForms\ToolTips\GMapRoundedToolTip.cs" />
-    <Compile Include="GMap.NET.WindowsForms\ToolTips\GMapToolTip.cs" />
+    <Compile Include="GMap.NET.WindowsForms\GMapToolTip.cs" />
     <Compile Include="GMap.NET.WindowsForms\TilePrefetcher.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GMap.NET.WindowsForms\TilePrefetcher.Designer.cs">
       <DependentUpon>TilePrefetcher.cs</DependentUpon>
     </Compile>
-    <Compile Include="GMap.NET.WindowsForms.Markers\GMapMarkerGoogleGreen.cs" />
+    <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerGoogleGreen.cs" />
     <Compile Include="GMap.NET.WindowsForms\GMapMarker.cs" />
-    <Compile Include="GMap.NET.WindowsForms.Markers\GMapMarkerGoogleRed.cs" />
-    <Compile Include="GMap.NET.WindowsForms.Markers\GMapMarkerCross.cs" />
+    <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerGoogleRed.cs" />
+    <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerCross.cs" />
     <Compile Include="GMap.NET.WindowsForms\GMapOverlay.cs" />
     <Compile Include="GMap.NET.WindowsForms\WindowsFormsImage.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -72,7 +72,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GMap.NET.ObjectModel\ObservableCollectionThreadSafe.cs" />
-    <Compile Include="System.Windows.Forms\GMapControl.cs">
+    <Compile Include="GMap.NET.WindowsForms\GMapControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

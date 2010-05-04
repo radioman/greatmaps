@@ -111,7 +111,7 @@ namespace Demo.WindowsMobile
 #if DEBUG
          // transparent marker test
          GMapMarkerTransparentGoogleGreen goo = new GMapMarkerTransparentGoogleGreen(MainMap.CurrentPosition);
-         goo.TooltipMode = MarkerTooltipMode.Always;
+         goo.ToolTipMode = MarkerTooltipMode.Always;
          goo.ToolTipText = "Welcome to Lithuania! ;}";
          objects.Markers.Add(goo);
 #endif
@@ -149,10 +149,10 @@ namespace Demo.WindowsMobile
          GMapMarker m = new GMapMarkerGoogleGreen(pos);
          {
             m.ToolTipText = (tt++).ToString();
-            m.TooltipMode = MarkerTooltipMode.Always;
+            m.ToolTipMode = MarkerTooltipMode.Always;
             m.Offset = new System.Drawing.Point(-m.Size.Width, -m.Size.Height);
          }
-         //m.ForceUpdateLocalPosition(MainMap);
+
          objects.Markers.Add(m);
 
          if(tt >= 44)

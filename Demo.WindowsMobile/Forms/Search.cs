@@ -27,7 +27,7 @@ namespace Demo.WindowsMobile
                if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
                {
                   GMapMarker address = new GMapMarkerTransparentGoogleGreen(pos.Value);
-                  address.TooltipMode = MarkerTooltipMode.Always;
+                  address.ToolTipMode = MarkerTooltipMode.Always;
                   address.ToolTipText = textAddress.Text;
                   Main.objects.Markers.Add(address);
 

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{421813B1-A007-44B2-8C53-32751C45113E}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -198,14 +198,9 @@
     <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.ObjectModel\ObservableCollectionThreadSafe.cs">
       <Link>GMap.NET.ObjectModel\ObservableCollectionThreadSafe.cs</Link>
     </Compile>
-    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms.Markers\GMapMarkerCross.cs">
-      <Link>GMap.NET.WindowsForms.Markers\GMapMarkerCross.cs</Link>
-    </Compile>
-    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms.Markers\GMapMarkerGoogleGreen.cs">
-      <Link>GMap.NET.WindowsForms.Markers\GMapMarkerGoogleGreen.cs</Link>
-    </Compile>
-    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms.Markers\GMapMarkerGoogleRed.cs">
-      <Link>GMap.NET.WindowsForms.Markers\GMapMarkerGoogleRed.cs</Link>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\GMapControl.cs">
+      <Link>GMap.NET.WindowsForms\GMapControl.cs</Link>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\GMapMarker.cs">
       <Link>GMap.NET.WindowsForms\GMapMarker.cs</Link>
@@ -219,12 +214,26 @@
     <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\GMapRoute.cs">
       <Link>GMap.NET.WindowsForms\GMapRoute.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\GMapToolTip.cs">
+      <Link>GMap.NET.WindowsForms\GMapToolTip.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\Markers\GMapMarkerCross.cs">
+      <Link>GMap.NET.WindowsForms\Markers\GMapMarkerCross.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\Markers\GMapMarkerGoogleGreen.cs">
+      <Link>GMap.NET.WindowsForms\Markers\GMapMarkerGoogleGreen.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\Markers\GMapMarkerGoogleRed.cs">
+      <Link>GMap.NET.WindowsForms\Markers\GMapMarkerGoogleRed.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\ToolTips\GMapBaloonToolTip.cs">
+      <Link>GMap.NET.WindowsForms\ToolTips\GMapBaloonToolTip.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\ToolTips\GMapRoundedToolTip.cs">
+      <Link>GMap.NET.WindowsForms\ToolTips\GMapRoundedToolTip.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\WindowsFormsImage.cs">
       <Link>GMap.NET.WindowsForms\WindowsFormsImage.cs</Link>
-    </Compile>
-    <Compile Include="..\GMap.NET.WindowsForms\System.Windows.Forms\GMapControl.cs">
-      <Link>System.Windows.Forms\GMapControl.cs</Link>
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="GMap.NET.GPS\DegreesMinutesSeconds.cs" />
     <Compile Include="GMap.NET.GPS\DeviceStateChangedEventArgs.cs" />
@@ -234,8 +243,8 @@
     <Compile Include="GMap.NET.GPS\LocationChangedEventArgs.cs" />
     <Compile Include="GMap.NET.GPS\Utils.cs" />
     <Compile Include="GMap.NET.Internals\Native.cs" />
-    <Compile Include="GMap.NET.WindowsForms.Markers\GMapMarkerTransparent.cs" />
-    <Compile Include="GMap.NET.WindowsForms.Markers\GMapMarkerTransparentGoogleGreen.cs" />
+    <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerTransparent.cs" />
+    <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerTransparentGoogleGreen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

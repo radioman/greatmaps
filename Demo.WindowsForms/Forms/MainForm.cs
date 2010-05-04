@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.Threading;
 using System.Windows.Forms;
 using GMap.NET;
-using GMap.NET.CacheProviders;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
-using System.IO;
-using System.Diagnostics;
-using System.ComponentModel;
-using System.Threading;
+using GMap.NET.WindowsForms.ToolTips;
 
 namespace Demo.WindowsForms
 {
@@ -125,10 +124,6 @@ namespace Demo.WindowsForms
 
             // set current marker
             currentMarker = new GMapMarkerGoogleRed(MainMap.CurrentPosition);
-            currentMarker.ToolTip = new GMapBaloonToolTip(currentMarker);
-            currentMarker.ToolTipText = "Test of Baloon ToolTip\n\rDoes it work ?\n\rYes, it's great !!!";
-            currentMarker.ToolTipMode = MarkerTooltipMode.Always;
-
             top.Markers.Add(currentMarker);
 
             // map center
@@ -145,7 +140,7 @@ namespace Demo.WindowsForms
 
                   GMapMarker myCity = new GMapMarkerGoogleGreen(pos.Value);
                   myCity.ToolTipMode = MarkerTooltipMode.Always;
-                  myCity.ToolTip.ToolTipText = "Welcome to Lithuania! ;}";
+                  myCity.ToolTipText = "Welcome to Lithuania! ;}";
                   objects.Markers.Add(myCity);
                }
             }
@@ -218,7 +213,7 @@ namespace Demo.WindowsForms
          var pos = new PointLatLng(NextDouble(r, MainMap.CurrentViewArea.Top, MainMap.CurrentViewArea.Bottom), NextDouble(r, MainMap.CurrentViewArea.Left, MainMap.CurrentViewArea.Right));
          GMapMarker m = new GMapMarkerGoogleGreen(pos);
          {
-            m.ToolTip.ToolTipText = (tt++).ToString();
+            m.ToolTipText = (tt++).ToString();
             m.ToolTipMode = MarkerTooltipMode.Always;
             m.Offset = new System.Drawing.Point(-m.Size.Width, -m.Size.Height);
          }
@@ -248,6 +243,10 @@ namespace Demo.WindowsForms
 
       void transport_ProgressChanged(object sender, ProgressChangedEventArgs e)
       {
+         // stops immediate marker/route/polygon invalidations;
+         // call Refresh to perform single refresh and reset invalidation state
+         MainMap.HoldInvalidation = true;
+
          lock(trolleybus)
          {
             foreach(VehicleData d in trolleybus)
@@ -299,6 +298,7 @@ namespace Demo.WindowsForms
             MainMap.ZoomAndCenterMarkers("objects");
             firstLoadTrasport = false;
          }
+         MainMap.Refresh();
       }
 
       void transport_DoWork(object sender, DoWorkEventArgs e)
@@ -480,7 +480,6 @@ namespace Demo.WindowsForms
          {
             GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(pos.Value);
             m.ToolTip = new GMapRoundedToolTip(m);
-
 
             GMapMarkerRect mBorders = new GMapMarkerRect(pos.Value);
             {

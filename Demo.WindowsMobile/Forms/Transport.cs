@@ -75,7 +75,7 @@ namespace Demo.WindowsMobile
                   {
                      var r = new GMapMarkerTransparent(new PointLatLng(t.Lat, t.Lng));
                      {
-                        r.TooltipMode = MarkerTooltipMode.Always;
+                        r.ToolTipMode = MarkerTooltipMode.Always;
                         r.ToolTipText = "Bus " + t.Line + ", " + t.LastStop + ", " + t.Time;
                         r.Data = t;
                      }
@@ -97,7 +97,7 @@ namespace Demo.WindowsMobile
                   {
                      var r = new GMapMarkerTransparent(new PointLatLng(t.Lat, t.Lng));
                      {
-                        r.TooltipMode = MarkerTooltipMode.Always;
+                        r.ToolTipMode = MarkerTooltipMode.Always;
                         r.ToolTipText = "Trolley " + t.Line + ", " + t.LastStop + ", " + t.Time;
                         r.Data = t;
                      }

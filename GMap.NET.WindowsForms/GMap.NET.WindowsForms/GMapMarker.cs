@@ -2,6 +2,7 @@
 namespace GMap.NET.WindowsForms
 {
    using System.Drawing;
+   using GMap.NET.WindowsForms.ToolTips;
 
    /// <summary>
    /// GMap.NET marker
@@ -76,7 +77,10 @@ namespace GMap.NET.WindowsForms
 
                if(Overlay != null)
                {
-                  Overlay.Control.Core_OnNeedInvalidation();
+                  if(!Overlay.Control.HoldInvalidation)
+                  {
+                     Overlay.Control.Core_OnNeedInvalidation();
+                  }
                }
             }
          }
@@ -104,25 +108,33 @@ namespace GMap.NET.WindowsForms
          }
       }
 
-      public GMapToolTip ToolTip = null;
+      public GMapToolTip ToolTip;
+
       public MarkerTooltipMode ToolTipMode = MarkerTooltipMode.OnMouseOver;
+
+      string toolTipText;
       public string ToolTipText
       {
-          get
-          {
-              if (ToolTip != null)
-                  return ToolTip.ToolTipText;
-              return "";
-          }
+         get
+         {
+            return toolTipText;
+         }
 
-          set
-          {
-              if (ToolTip != null)
-                  ToolTip.ToolTipText = value;
-          }
+         set
+         {
+            if(ToolTip == null)
+            {
+#if !PocketPC
+               ToolTip = new GMapRoundedToolTip(this);
+#else
+               ToolTip = new GMapToolTip(this);
+#endif
+            }
+            toolTipText = value;
+         }
       }
 
-       public bool Visible = true;
+      public bool Visible = true;
 
       private bool isMouseOver = false;
       public bool IsMouseOver
@@ -141,13 +153,7 @@ namespace GMap.NET.WindowsForms
 
       public GMapMarker(PointLatLng pos)
       {
-          this.Position = pos;
-          this.ToolTip = CreateAndAttachToolTip();
-      }
-
-      public virtual GMapToolTip CreateAndAttachToolTip()
-      {
-          return new GMapToolTip(this);
+         this.Position = pos;
       }
 
       public virtual void OnRender(Graphics g)

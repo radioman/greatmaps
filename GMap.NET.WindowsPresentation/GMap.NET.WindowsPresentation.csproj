@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.20506</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{644FE7D4-0184-400F-B2D7-99CB41360658}</ProjectGuid>
     <OutputType>library</OutputType>
@@ -63,7 +63,7 @@
     <Compile Include="GMap.NET.WindowsPresentation\PerfTimer.cs" />
     <Compile Include="GMap.NET.WindowsPresentation\QuadTree.cs" />
     <Compile Include="GMap.NET.WindowsPresentation\WindowsPresentationImage.cs" />
-    <Compile Include="System.Windows.Controls\GMapControl.cs" />
+    <Compile Include="GMap.NET.WindowsPresentation\GMapControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

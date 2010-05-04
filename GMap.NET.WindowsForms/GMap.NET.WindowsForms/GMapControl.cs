@@ -12,6 +12,7 @@ namespace System.Windows.Forms
    using System.Diagnostics;
    using System.Collections.Generic;
    using System.Threading;
+   using System.Drawing.Drawing2D;
 
    /// <summary>
    /// GMap.NET control for Windows Forms
@@ -208,6 +209,24 @@ namespace System.Windows.Forms
 #else
       readonly bool ForceDoubleBuffer = true;
 #endif
+
+      /// <summary>
+      /// stops immediate marker/route/polygon invalidations;
+      /// call Refresh to perform single refresh and reset invalidation state
+      /// </summary>
+      public bool HoldInvalidation = false;
+
+      /// <summary>
+      /// call this to stop HoldInvalidation and perform single refresh 
+      /// </summary>
+      public override void Refresh()
+      {
+         if(HoldInvalidation)
+         {
+            HoldInvalidation = false;
+         }
+         base.Refresh();
+      }
 
 #if !PocketPC
       private bool _GrayScale = false;
@@ -956,6 +975,10 @@ namespace System.Windows.Forms
 
       void OnPaintEtc(Graphics g)
       {
+#if !PocketPC
+         GraphicsState s = g.Save();
+         g.SmoothingMode = SmoothingMode.AntiAlias;
+#endif
          foreach(GMapOverlay o in Overlays)
          {
             if(o.IsVisibile)
@@ -963,6 +986,10 @@ namespace System.Windows.Forms
                o.Render(g);
             }
          }
+
+#if !PocketPC
+         g.Restore(s);
+#endif
 
 #if !PocketPC
          if(!SelectedArea.IsEmpty)

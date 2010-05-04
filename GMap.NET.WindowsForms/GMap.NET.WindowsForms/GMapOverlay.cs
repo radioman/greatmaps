@@ -50,9 +50,9 @@ namespace GMap.NET.WindowsForms
       /// </summary>
       public Pen RoutePen = new Pen(Color.MidnightBlue);
 
-      internal System.Windows.Forms.GMapControl Control;
+      internal GMapControl Control;
 
-      public GMapOverlay(System.Windows.Forms.GMapControl control, string id)
+      public GMapOverlay(GMapControl control, string id)
       {
          Control = control;
          Id = id;
@@ -76,7 +76,10 @@ namespace GMap.NET.WindowsForms
             }
          }
 
-         Control.Core_OnNeedInvalidation();
+         if(!Control.HoldInvalidation)
+         {
+            Control.Core_OnNeedInvalidation();
+         }
       }
 
       void Routes_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -89,7 +92,10 @@ namespace GMap.NET.WindowsForms
             }
          }
 
-         Control.Core_OnNeedInvalidation();
+         if(!Control.HoldInvalidation)
+         {
+            Control.Core_OnNeedInvalidation();
+         }
       }
 
       void Markers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -117,29 +123,10 @@ namespace GMap.NET.WindowsForms
 #endif
          }
 
-         Control.Core_OnNeedInvalidation();
-      }
-
-      /// <summary>
-      /// draws tooltip, override to draw custom
-      /// </summary>
-      /// <param name="g"></param>
-      /// <param name="m"></param>
-      /// <param name="x"></param>
-      /// <param name="y"></param>
-      protected virtual void DrawToolTip(Graphics g, GMapMarker m, int x, int y)
-      {
-#if !PocketPC
-         GraphicsState s = g.Save();
-         g.SmoothingMode = SmoothingMode.AntiAlias;
-#endif
-         if (m.ToolTip != null)
+         if(!Control.HoldInvalidation)
          {
-             m.ToolTip.DrawToolTip(g, m, x, y);
+            Control.Core_OnNeedInvalidation();
          }
-#if !PocketPC
-         g.Restore(s);
-#endif
       }
 
       /// <summary>
@@ -149,9 +136,6 @@ namespace GMap.NET.WindowsForms
       protected virtual void DrawRoutes(Graphics g)
       {
 #if !PocketPC
-         GraphicsState st = g.Save();
-         g.SmoothingMode = SmoothingMode.AntiAlias;
-
          foreach(GMapRoute r in Routes)
          {
             RoutePen.Color = r.Color;
@@ -179,7 +163,6 @@ namespace GMap.NET.WindowsForms
                }
             }
          }
-         g.Restore(st);
 #else
          foreach(GMapRoute r in Routes)
          {
@@ -207,9 +190,6 @@ namespace GMap.NET.WindowsForms
       protected virtual void DrawPolygons(Graphics g)
       {
 #if !PocketPC
-         GraphicsState st = g.Save();
-         g.SmoothingMode = SmoothingMode.AntiAlias;
-
          foreach(GMapPolygon r in Polygons)
          {
             RoutePen.Color = r.Color;
@@ -241,7 +221,6 @@ namespace GMap.NET.WindowsForms
                }
             }
          }
-         g.Restore(st);
 #else
          foreach(GMapPolygon r in Polygons)
          {
@@ -291,20 +270,14 @@ namespace GMap.NET.WindowsForms
             }
 
             // tooltips above
-            foreach (GMapMarker m in Markers)
+            foreach(GMapMarker m in Markers)
             {
-               if (m.Visible && Control.Core.CurrentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
+               if(m.ToolTip != null && m.Visible && Control.Core.CurrentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
                {
-                   if (m.ToolTip != null)
-                   {
-                       if (!string.IsNullOrEmpty(m.ToolTip.ToolTipText))
-                       {
-                           if (m.ToolTipMode == MarkerTooltipMode.Always || (m.ToolTipMode == MarkerTooltipMode.OnMouseOver && m.IsMouseOver))
-                           {
-                               DrawToolTip(g, m, m.LocalPosition.X, m.LocalPosition.Y);
-                           }
-                       }
-                   }
+                  if(!string.IsNullOrEmpty(m.ToolTipText) && (m.ToolTipMode == MarkerTooltipMode.Always || (m.ToolTipMode == MarkerTooltipMode.OnMouseOver && m.IsMouseOver)))
+                  {
+                     m.ToolTip.Draw(g);
+                  }
                }
             }
          }
