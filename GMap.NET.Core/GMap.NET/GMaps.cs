@@ -1210,10 +1210,30 @@ namespace GMap.NET
                return string.Format("http://{0}0{1}.maps.yandex.ru/tiles?l=map&v={2}&x={3}&y={4}&z={5}", server, GetServerNum(pos, 4)+1, VersionYandexMap, pos.X, pos.Y, zoom);
             }
             #endregion
+
+            #region -- WMS demo --
+            case MapType.MapBenderWMS:
+            {
+               var px1 = ProjectionForWMS.FromTileXYToPixel(pos);
+               var px2 = px1;
+
+               px1.Offset(0, ProjectionForWMS.TileSize.Height);
+               PointLatLng p1 = ProjectionForWMS.FromPixelToLatLng(px1, zoom);
+
+               px2.Offset(ProjectionForWMS.TileSize.Width, 0);
+               PointLatLng p2 = ProjectionForWMS.FromPixelToLatLng(px2, zoom);
+
+               var ret = string.Format(CultureInfo.InvariantCulture, "http://mapbender.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&VERSION=1.1.1&REQUEST=GetMap&SERVICE=WMS&LAYERS=OSM_Basic&styles=&bbox={0},{1},{2},{3}&width={4}&height={5}&srs=EPSG:4326&format=image/png", p1.Lng, p1.Lat, p2.Lng, p2.Lat, ProjectionForWMS.TileSize.Width, ProjectionForWMS.TileSize.Height);
+
+               return ret;
+            } 
+            #endregion
          }
 
          return null;
       }
+
+      Projections.MercatorProjection ProjectionForWMS = new Projections.MercatorProjection();
 
       /// <summary>
       /// gets secure google words based on position

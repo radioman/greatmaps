@@ -65,5 +65,7 @@ namespace GMap.NET
       GoogleHybridKorea=4005,
 
       YandexMapRu = 5000,
+
+      MapBenderWMS = 6000,
    }
 }
