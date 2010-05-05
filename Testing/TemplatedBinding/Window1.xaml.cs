@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Controls;
 using System.ComponentModel;
+using System.Windows;
+using GMap.NET.WindowsPresentation;
 
 namespace TemplatedBinding
 {

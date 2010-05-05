@@ -78,7 +78,7 @@
          this.menuItem28 = new System.Windows.Forms.MenuItem();
          this.menuItem3 = new System.Windows.Forms.MenuItem();
          this.timerKeeperOfLife = new System.Windows.Forms.Timer();
-         this.MainMap = new System.Windows.Forms.GMapControl();
+         this.MainMap = new GMap.NET.WindowsForms.GMapControl();
          this.SuspendLayout();
          // 
          // mainMenu1
@@ -396,7 +396,7 @@
 
       #endregion
 
-      internal System.Windows.Forms.GMapControl MainMap;
+      internal GMap.NET.WindowsForms.GMapControl MainMap;
       private System.Windows.Forms.MenuItem menuItem1;
       private System.Windows.Forms.MenuItem menuItem2;
       private System.Windows.Forms.MenuItem menuItem3;

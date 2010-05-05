@@ -1,18 +1,17 @@
 ﻿
-namespace System.Windows.Forms
+namespace GMap.NET.WindowsForms
 {
+   using System;
    using System.ComponentModel;
    using System.Drawing;
+   using System.Drawing.Drawing2D;
+   using System.Drawing.Imaging;
+   using System.IO;
+   using System.Threading;
+   using System.Windows.Forms;
    using GMap.NET;
    using GMap.NET.Internals;
    using GMap.NET.ObjectModel;
-   using GMap.NET.WindowsForms;
-   using System.IO;
-   using System.Drawing.Imaging;
-   using System.Diagnostics;
-   using System.Collections.Generic;
-   using System.Threading;
-   using System.Drawing.Drawing2D;
 
    /// <summary>
    /// GMap.NET control for Windows Forms
