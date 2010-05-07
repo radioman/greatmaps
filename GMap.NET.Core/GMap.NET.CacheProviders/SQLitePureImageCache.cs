@@ -111,6 +111,38 @@ namespace GMap.NET.CacheProviders
          return ret;
       }
 
+      public static bool VacuumDb(string file)
+      {
+         bool ret = true;
+
+         try
+         {
+            using(SQLiteConnection cn = new SQLiteConnection())
+            {
+#if !MONO
+               cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=True;", file);
+#else
+               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True", file);
+#endif
+               cn.Open();
+               {
+                  using(DbCommand cmd = cn.CreateCommand())
+                  {
+                     cmd.CommandText = "vacuum;";
+                     cmd.ExecuteNonQuery();
+                  }
+                  cn.Close();
+               }
+            }
+         }
+         catch(Exception ex)
+         {
+            Debug.WriteLine("VacuumDb: " + ex.ToString());
+            ret = false;
+         }
+         return ret;
+      }
+
       public static bool ExportMapDataToDB(string sourceFile, string destFile)
       {
          bool ret = true;
@@ -226,7 +258,7 @@ namespace GMap.NET.CacheProviders
             // save
             {
                string db = dir + "Data.gmdb";
-              
+
                if(!File.Exists(db))
                {
                   ret = CreateEmptyDB(db);

@@ -645,6 +645,34 @@ namespace GMap.NET
          return false;
       }
 
+#if SQLiteEnabled
+
+      /// <summary>
+      /// optimizes map database, *.gmdb
+      /// </summary>
+      /// <param name="file">database file name or null to optimize current user db</param>
+      /// <returns></returns>
+      public bool OptimizeMapDb(string file)
+      {
+         if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
+         {
+            if(string.IsNullOrEmpty(file))
+            {
+               StringBuilder db = new StringBuilder((Cache.Instance.ImageCache as SQLitePureImageCache).GtileCache);
+               db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
+
+               return SQLitePureImageCache.VacuumDb(db.ToString());
+            }
+            else
+            {
+               return SQLitePureImageCache.VacuumDb(file);
+            }
+         }
+
+         return false;
+      }
+#endif
+
       /// <summary>
       /// gets routes from gpsd log file
       /// </summary>
