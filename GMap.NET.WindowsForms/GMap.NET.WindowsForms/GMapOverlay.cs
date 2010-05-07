@@ -36,20 +36,6 @@ namespace GMap.NET.WindowsForms
       /// </summary>
       public readonly ObservableCollectionThreadSafe<GMapPolygon> Polygons = new ObservableCollectionThreadSafe<GMapPolygon>();
 
-      /// <summary>
-      /// Polygon background color
-      /// </summary>
-#if !PocketPC
-      public Brush PolygonBackground = new SolidBrush(Color.FromArgb(155, Color.AliceBlue));
-#else
-      public Brush PolygonBackground = new System.Drawing.SolidBrush(Color.AliceBlue);
-#endif
-
-      /// <summary>
-      /// pen for routes, be aware that the color is adjusted in each GMapRoute
-      /// </summary>
-      public Pen RoutePen = new Pen(Color.MidnightBlue);
-
       internal GMapControl Control;
 
       public GMapOverlay(GMapControl control, string id)
@@ -59,11 +45,6 @@ namespace GMap.NET.WindowsForms
          Markers.CollectionChanged += new NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
          Routes.CollectionChanged += new NotifyCollectionChangedEventHandler(Routes_CollectionChanged);
          Polygons.CollectionChanged += new NotifyCollectionChangedEventHandler(Polygons_CollectionChanged);
-
-#if !PocketPC
-         RoutePen.LineJoin = LineJoin.Round;
-#endif
-         RoutePen.Width = 5;
       }
 
       void Polygons_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -138,8 +119,6 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
          foreach(GMapRoute r in Routes)
          {
-            RoutePen.Color = r.Color;
-
             using(GraphicsPath rp = new GraphicsPath())
             {
                for(int i = 0; i < r.LocalPoints.Count; i++)
@@ -159,15 +138,13 @@ namespace GMap.NET.WindowsForms
 
                if(rp.PointCount > 0)
                {
-                  g.DrawPath(RoutePen, rp);
+                  g.DrawPath(r.Stroke, rp);
                }
             }
          }
 #else
          foreach(GMapRoute r in Routes)
          {
-            RoutePen.Color = r.Color;
-
             Point[] pnts = new Point[r.LocalPoints.Count];
             for(int i = 0; i < r.LocalPoints.Count; i++)
             {
@@ -177,7 +154,7 @@ namespace GMap.NET.WindowsForms
 
             if(pnts.Length > 0)
             {
-               g.DrawLines(RoutePen, pnts);
+               g.DrawLines(r.Stroke, pnts);
             }
          }
 #endif
@@ -192,8 +169,6 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
          foreach(GMapPolygon r in Polygons)
          {
-            RoutePen.Color = r.Color;
-
             using(GraphicsPath rp = new GraphicsPath())
             {
                for(int i = 0; i < r.LocalPoints.Count; i++)
@@ -215,17 +190,15 @@ namespace GMap.NET.WindowsForms
                {
                   rp.CloseFigure();
 
-                  g.FillPath(PolygonBackground, rp);
+                  g.FillPath(r.Fill, rp);
 
-                  g.DrawPath(RoutePen, rp);
+                  g.DrawPath(r.Stroke, rp);
                }
             }
          }
 #else
          foreach(GMapPolygon r in Polygons)
          {
-            RoutePen.Color = r.Color;
-
             Point[] pnts = new Point[r.LocalPoints.Count];
             for(int i = 0; i < r.LocalPoints.Count; i++)
             {
@@ -235,8 +208,8 @@ namespace GMap.NET.WindowsForms
 
             if(pnts.Length > 0)
             {
-               g.FillPolygon(PolygonBackground, pnts);
-               g.DrawPolygon(RoutePen, pnts);
+               g.FillPolygon(r.Fill, pnts);
+               g.DrawPolygon(r.Stroke, pnts);
             }
          }
 #endif

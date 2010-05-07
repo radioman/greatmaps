@@ -452,9 +452,7 @@ namespace Demo.WindowsForms
                   }
 
                   GMapRoute gr = new GMapRoute(track, "");
-                  {
-                     gr.Color = Color.Blue;
-                  }
+
                   routes.Routes.Add(gr);
                }
 
@@ -691,7 +689,6 @@ namespace Demo.WindowsForms
          {
             // add route
             GMapRoute r = new GMapRoute(route.Points, route.Name);
-            r.Color = Color.Blue;
             routes.Routes.Add(r);
 
             // add route start/end marks

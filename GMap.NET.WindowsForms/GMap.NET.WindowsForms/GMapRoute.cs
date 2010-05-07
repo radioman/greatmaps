@@ -4,6 +4,7 @@ namespace GMap.NET.WindowsForms
    using GMap.NET;
    using System.Collections.Generic;
    using System.Drawing;
+   using System.Drawing.Drawing2D;
 
    /// <summary>
    /// GMap.NET route
@@ -11,12 +12,12 @@ namespace GMap.NET.WindowsForms
    public class GMapRoute : MapRoute
    {
       /// <summary>
-      /// the color of route
+      /// specifies how the outline is painted
       /// </summary>
 #if !PocketPC
-      public Color Color = Color.FromArgb(140, Color.MidnightBlue);
+      public Pen Stroke = new Pen(Color.FromArgb(144, Color.MidnightBlue));
 #else
-      public Color Color = Color.MidnightBlue;
+      public Pen Stroke = new Pen(Color.MidnightBlue);
 #endif
 
       public readonly List<GMap.NET.Point> LocalPoints = new List<GMap.NET.Point>();
@@ -25,6 +26,11 @@ namespace GMap.NET.WindowsForms
          : base(points, name)
       {
          LocalPoints.Capacity = Points.Count;
+
+#if !PocketPC
+         Stroke.LineJoin = LineJoin.Round;
+#endif
+         Stroke.Width = 5;
       }
    }
 }

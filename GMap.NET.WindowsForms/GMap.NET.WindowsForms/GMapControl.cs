@@ -764,6 +764,7 @@ namespace GMap.NET.WindowsForms
          return ret;
       }
 
+#if !PocketPC
       /// <summary>
       /// gets image of the current view
       /// </summary>
@@ -805,6 +806,7 @@ namespace GMap.NET.WindowsForms
          }
          return ret;
       }
+#endif
 
       /// <summary>
       /// offset position in pixels

@@ -1225,7 +1225,6 @@ namespace GMap.NET
             {
                return string.Format("http://sigpac.mapa.es/kmlserver/raster/{0}@3785/{1}.{2}.{3}.img", levelsForSigPacSpainMap[zoom], zoom, pos.X, ((2 << zoom - 1) - pos.Y - 1));
             }
-            break;
             #endregion
 
             #region -- YandexMap --

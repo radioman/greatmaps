@@ -15,22 +15,22 @@ namespace GMap.NET.WindowsForms.ToolTips
       public GMapBaloonToolTip(GMapMarker marker)
          : base(marker)
       {
-         ToolTipPen = new Pen(Color.FromArgb(140, Color.Navy));
-         ToolTipPen.Width = 3;
+         Stroke = new Pen(Color.FromArgb(140, Color.Navy));
+         Stroke.Width = 3;
 #if !PocketPC
-         this.ToolTipPen.LineJoin = LineJoin.Round;
-         this.ToolTipPen.StartCap = LineCap.RoundAnchor;
+         this.Stroke.LineJoin = LineJoin.Round;
+         this.Stroke.StartCap = LineCap.RoundAnchor;
 #endif
 
-         ToolTipBackground = Brushes.Yellow;
+         Fill = Brushes.Yellow;
       }
 
       public override void Draw(Graphics g)
       {
 
-         System.Drawing.Size st = g.MeasureString(Marker.ToolTipText, ToolTipFont).ToSize();
+         System.Drawing.Size st = g.MeasureString(Marker.ToolTipText, Font).ToSize();
          System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.LocalPosition.X, Marker.LocalPosition.Y, st.Width + Marker.Overlay.Control.TooltipTextPadding.Width, st.Height + Marker.Overlay.Control.TooltipTextPadding.Height);
-         rect.Offset(ToolTipOffset.X, ToolTipOffset.Y);
+         rect.Offset(Offset.X, Offset.Y);
 
          using(GraphicsPath objGP = new GraphicsPath())
          {
@@ -47,12 +47,12 @@ namespace GMap.NET.WindowsForms.ToolTips
             
             objGP.CloseFigure();
             
-            g.FillPath(ToolTipBackground, objGP);
-            g.DrawPath(ToolTipPen, objGP);            
+            g.FillPath(Fill, objGP);
+            g.DrawPath(Stroke, objGP);            
          }
 
 #if !PocketPC
-         g.DrawString(Marker.ToolTipText, ToolTipFont, Brushes.Navy, rect, ToolTipFormat);
+         g.DrawString(Marker.ToolTipText, Font, Brushes.Navy, rect, Format);
 #else
          g.DrawString(ToolTipText, ToolTipFont, TooltipForeground, rect, ToolTipFormat);
 #endif
