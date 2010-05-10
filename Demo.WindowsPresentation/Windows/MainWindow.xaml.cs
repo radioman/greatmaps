@@ -885,7 +885,7 @@ namespace Demo.WindowsPresentation
             {
                mRoute.Route.AddRange(route.Points);
                mRoute.RegenerateRouteShape(MainMap);
-               mRoute.ZIndex = -1;
+               mRoute.ZIndex = -1;                 
             }
 
             MainMap.Markers.Add(m1);

@@ -10,6 +10,8 @@ using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms.ToolTips;
+using System.IO;
+using System.Text;
 
 namespace Demo.WindowsForms
 {
@@ -92,6 +94,9 @@ namespace Demo.WindowsForms
             // get cache modes
             checkBoxUseRouteCache.Checked = GMaps.Instance.UseRouteCache;
             checkBoxUseGeoCache.Checked = GMaps.Instance.UseGeocoderCache;
+
+            MobileLogFrom.Value = DateTime.Today;
+            MobileLogTo.Value = DateTime.Now;
 
             // get zoom  
             trackBar1.Minimum = MainMap.MinZoom;
@@ -423,6 +428,8 @@ namespace Demo.WindowsForms
          }
       }
 
+      string mobileGpsLog = string.Empty;
+
       // testing my mobile gp log
       void AddGpsMobileLogRoutes(string file)
       {
@@ -430,10 +437,15 @@ namespace Demo.WindowsForms
          {
             DateTime? date = null;
             DateTime? dateEnd = null;
-            if(dateTimePickerMobileLog.Checked)
+
+            if(MobileLogFrom.Checked)
             {
-               date = dateTimePickerMobileLog.Value.Date.ToUniversalTime();
-               dateEnd = date.Value.AddDays(1);
+               date = MobileLogFrom.Value.ToUniversalTime();
+            }
+
+            if(MobileLogTo.Checked)
+            {
+               dateEnd = MobileLogTo.Value.ToUniversalTime();
             }
 
             var log = GMaps.Instance.GetRoutesFromMobileLog(file, date, dateEnd, 3.3);
@@ -442,19 +454,24 @@ namespace Demo.WindowsForms
             {
                List<PointLatLng> track = new List<PointLatLng>();
 
-               foreach(var session in log)
+               var sessions = new List<List<GpsLog>>(log);
+
+               foreach(var session in sessions)
                {
                   track.Clear();
 
-                  foreach(var points in session)
+                  foreach(var point in session)
                   {
-                     track.Add(points.Position);
+                     track.Add(point.Position);
                   }
 
                   GMapRoute gr = new GMapRoute(track, "");
 
                   routes.Routes.Add(gr);
                }
+
+               sessions.Clear();
+               sessions = null;
 
                track.Clear();
                track = null;
@@ -917,6 +934,8 @@ namespace Demo.WindowsForms
             {
                routes.Routes.Clear();
 
+               mobileGpsLog = dlg.FileName;
+
                // test
                AddGpsMobileLogRoutes(dlg.FileName);
 
@@ -1009,6 +1028,52 @@ namespace Demo.WindowsForms
             {
                transport.CancelAsync();
             }
+         }
+      }
+
+      // export mobile gps log to gpx file
+      private void buttonExportToGpx_Click(object sender, EventArgs e)
+      {
+         try
+         {
+            using(SaveFileDialog sfd = new SaveFileDialog())
+            {
+               sfd.Filter = "GPX (*.gpx)|*.gpx";
+               sfd.FileName = "mobile gps log";
+
+               DateTime? date = null;
+               DateTime? dateEnd = null;
+
+               if(MobileLogFrom.Checked)
+               {
+                  date = MobileLogFrom.Value.ToUniversalTime();
+
+                  sfd.FileName += " from " + MobileLogFrom.Value.ToString("yyyy-MM-dd HH-mm");
+               }
+
+               if(MobileLogTo.Checked)
+               {
+                  dateEnd = MobileLogTo.Value.ToUniversalTime();
+
+                  sfd.FileName += " to " + MobileLogTo.Value.ToString("yyyy-MM-dd HH-mm");
+               }
+
+               if(sfd.ShowDialog() == DialogResult.OK)
+               {
+                  var log = GMaps.Instance.GetRoutesFromMobileLog(mobileGpsLog, date, dateEnd, 3.3);
+                  if(log != null)
+                  {
+                     if(MainMap.Manager.ExportGPX(log, sfd.FileName))
+                     {
+                        MessageBox.Show("GPX saved: " + sfd.FileName, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                     }
+                  }
+               }
+            }
+         }
+         catch(Exception ex)
+         {
+            MessageBox.Show("GPX failed to save: " + ex.Message, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Error);
          }
       }
    }

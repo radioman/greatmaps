@@ -1,7 +1,8 @@
-﻿using System;
-
+﻿
 namespace GMap.NET
 {
+   using System;
+
    public struct GpsLog
    {
       public DateTime TimeUTC;

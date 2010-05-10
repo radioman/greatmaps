@@ -751,8 +751,8 @@ namespace GMap.NET
                            log.Speed = rd["Speed"] as double?;
                            log.SeaLevelAltitude = rd["SeaLevelAltitude"] as double?;
                            log.EllipsoidAltitude = rd["EllipsoidAltitude"] as double?;
-                           log.SatellitesInView = rd["SatellitesInView"] as short?;
-                           log.SatelliteCount = rd["SatelliteCount"] as short?;
+                           log.SatellitesInView = rd["SatellitesInView"] as System.Byte?;
+                           log.SatelliteCount = rd["SatelliteCount"] as System.Byte?;
                            log.Position = new PointLatLng((double) rd["Lat"], (double) rd["Lng"]);
                            log.PositionDilutionOfPrecision = rd["PositionDilutionOfPrecision"] as double?;
                            log.HorizontalDilutionOfPrecision = rd["HorizontalDilutionOfPrecision"] as double?;
@@ -888,6 +888,151 @@ namespace GMap.NET
             }
          }
          Debug.WriteLine("CacheEngine: stop");
+      }
+
+      class StringWriterExt : StringWriter
+      {
+         public StringWriterExt(IFormatProvider info)
+            : base(info)
+         {
+
+         }
+
+         public override Encoding Encoding
+         {
+            get
+            {
+               return Encoding.UTF8;
+            }
+         }
+      }
+
+      public string SerializeGPX(gpxType targetInstance)
+      {
+         string retVal = string.Empty;
+         StringWriterExt writer = new StringWriterExt(CultureInfo.InvariantCulture);
+         XmlSerializer serializer = new XmlSerializer(targetInstance.GetType());
+         serializer.Serialize(writer, targetInstance);
+         retVal = writer.ToString();
+         return retVal;
+      }
+
+      public gpxType DeserializeGPX(string objectXml)
+      {
+         object retVal = null;
+         XmlSerializer serializer = new XmlSerializer(typeof(gpxType));
+         StringReader stringReader = new StringReader(objectXml);
+         XmlTextReader xmlReader = new XmlTextReader(stringReader);
+         retVal = serializer.Deserialize(xmlReader);
+         return retVal as gpxType;
+      }
+
+      /// <summary>
+      /// exports gps data to gpx file
+      /// </summary>
+      /// <param name="log">gps data</param>
+      /// <param name="gpxFile">file to export</param>
+      /// <returns>true if success</returns>
+      public bool ExportGPX(IEnumerable<List<GpsLog>> log, string gpxFile)
+      {
+         try
+         {
+            gpxType gpx = new gpxType();
+            {
+               gpx.creator = "GMap.NET - http://greatmaps.codeplex.com";
+               gpx.trk = new trkType[1];
+               gpx.trk[0] = new trkType();
+            }
+
+            var sessions = new List<List<GpsLog>>(log);
+            gpx.trk[0].trkseg = new trksegType[sessions.Count];
+
+            int sesid = 0;
+
+            foreach(var session in sessions)
+            {
+               trksegType seg = new trksegType();
+               {
+                  seg.trkpt = new wptType[session.Count];
+               }
+               gpx.trk[0].trkseg[sesid++] = seg;
+
+               for(int i = 0; i < session.Count; i++)
+               {
+                  var point = session[i];
+
+                  wptType t = new wptType();
+                  {
+                     #region -- set values --
+                     t.lat = new decimal(point.Position.Lat);
+                     t.lon = new decimal(point.Position.Lng);
+
+                     t.time = point.TimeUTC;
+                     t.timeSpecified = true;
+
+                     if(point.FixType != FixType.Unknown)
+                     {
+                        t.fix = (point.FixType == FixType.XyD ? fixType.Item2d : fixType.Item3d);
+                        t.fixSpecified = true;
+                     }
+
+                     if(point.SeaLevelAltitude.HasValue)
+                     {
+                        t.ele = new decimal(point.SeaLevelAltitude.Value);
+                        t.eleSpecified = true;
+                     }
+
+                     if(point.EllipsoidAltitude.HasValue)
+                     {
+                        t.geoidheight = new decimal(point.EllipsoidAltitude.Value);
+                        t.geoidheightSpecified = true;
+                     }
+
+                     if(point.VerticalDilutionOfPrecision.HasValue)
+                     {
+                        t.vdopSpecified = true;
+                        t.vdop = new decimal(point.VerticalDilutionOfPrecision.Value);
+                     }
+
+                     if(point.HorizontalDilutionOfPrecision.HasValue)
+                     {
+                        t.hdopSpecified = true;
+                        t.hdop = new decimal(point.HorizontalDilutionOfPrecision.Value);
+                     }
+
+                     if(point.PositionDilutionOfPrecision.HasValue)
+                     {
+                        t.pdopSpecified = true;
+                        t.pdop = new decimal(point.PositionDilutionOfPrecision.Value);
+                     }
+
+                     if(point.SatelliteCount.HasValue)
+                     {
+                        t.sat = point.SatelliteCount.Value.ToString();
+                     }
+                     #endregion
+                  }
+                  seg.trkpt[i] = t;
+               }
+            }
+            sessions.Clear();
+
+#if !PocketPC
+            File.WriteAllText(gpxFile, SerializeGPX(gpx), Encoding.UTF8);
+#else
+            using(StreamWriter w = File.CreateText(gpxFile))
+            {
+               w.Write(SerializeGPX(gpx));
+               w.Close();
+            }
+#endif
+         }
+         catch(Exception ex)
+         {
+            Debug.WriteLine("ExportGPX: " + ex.ToString());
+            return false;
+         }
+         return true;
       }
 
       #endregion
@@ -1253,7 +1398,7 @@ namespace GMap.NET
                var ret = string.Format(CultureInfo.InvariantCulture, "http://mapbender.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&VERSION=1.1.1&REQUEST=GetMap&SERVICE=WMS&LAYERS=OSM_Basic&styles=&bbox={0},{1},{2},{3}&width={4}&height={5}&srs=EPSG:4326&format=image/png", p1.Lng, p1.Lat, p2.Lng, p2.Lat, ProjectionForWMS.TileSize.Width, ProjectionForWMS.TileSize.Height);
 
                return ret;
-            } 
+            }
             #endregion
          }
 
