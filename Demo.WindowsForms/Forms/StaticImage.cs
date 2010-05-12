@@ -71,20 +71,20 @@ namespace Demo.WindowsForms
 
       void bg_DoWork(object sender, DoWorkEventArgs e)
       {
-         MapInfo info = e.Argument as MapInfo;
+         MapInfo info = (MapInfo) e.Argument;
          if(!info.Area.IsEmpty)
          {
-            string bigImage = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + Path.DirectorySeparatorChar + "GMap-" + DateTime.Now.Ticks + ".png";
-            e.Result = bigImage;
-
             var types = GMaps.Instance.GetAllLayersOfType(info.Type);
+
+            string bigImage = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + Path.DirectorySeparatorChar + "GMap-" + types[0] + "-" + DateTime.Now.Ticks + ".png";
+            e.Result = bigImage;
 
             // current area
             GMap.NET.Point topLeftPx = info.Projection.FromLatLngToPixel(info.Area.LocationTopLeft, info.Zoom);
             GMap.NET.Point rightButtomPx = info.Projection.FromLatLngToPixel(info.Area.Bottom, info.Area.Right, info.Zoom);
             GMap.NET.Point pxDelta = new GMap.NET.Point(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
 
-            int padding = 22;
+            int padding = info.MakeWorldFile ? 0 : 22;
             {
                using(Bitmap bmpDestination = new Bitmap(pxDelta.X + padding*2, pxDelta.Y + padding*2))
                {
@@ -134,7 +134,7 @@ namespace Demo.WindowsForms
                         rect.Location = new System.Drawing.Point(padding, padding);
                         rect.Size = new System.Drawing.Size(pxDelta.X, pxDelta.Y);
                      }
-                     using(Font f = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold))                        
+                     using(Font f = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold))
                      using(Graphics gfx = Graphics.FromImage(bmpDestination))
                      {
                         gfx.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -177,6 +177,30 @@ namespace Demo.WindowsForms
                   bmpDestination.Save(bigImage, ImageFormat.Png);
                }
             }
+
+            //The worldfile for the original image is:
+
+            //0.000067897543      // the horizontal size of a pixel in coordinate units (longitude degrees in this case);
+            //0.0000000
+            //0.0000000
+            //-0.0000554613012    // the comparable vertical pixel size in latitude degrees, negative because latitude decreases as you go from top to bottom in the image.
+            //-111.743323868834   // longitude of the pixel in the upper-left-hand corner.
+            //35.1254392635083    // latitude of the pixel in the upper-left-hand corner.
+
+            // generate world file
+            {
+               string wf = bigImage + "w";
+               using(StreamWriter world = File.CreateText(wf))
+               {
+                  world.WriteLine("{0:0.000000000000}", (info.Area.WidthLng / pxDelta.X));
+                  world.WriteLine("0.0000000");
+                  world.WriteLine("0.0000000");
+                  world.WriteLine("{0:0.000000000000}", (-info.Area.HeightLat / pxDelta.Y));
+                  world.WriteLine("{0:0.000000000000}", info.Area.Left);
+                  world.WriteLine("{0:0.000000000000}", info.Area.Top);
+                  world.Close();
+               }
+            }
          }
       }        
 
@@ -198,7 +222,7 @@ namespace Demo.WindowsForms
                progressBar1.Value = 0;
                button1.Enabled = false;
 
-               bg.RunWorkerAsync(new MapInfo(MainMap.Projection, area, (int)numericUpDown1.Value, MainMap.MapType));
+               bg.RunWorkerAsync(new MapInfo(MainMap.Projection, area, (int)numericUpDown1.Value, MainMap.MapType, checkBoxWorldFile.Checked));
             }
          }
          else
@@ -216,19 +240,21 @@ namespace Demo.WindowsForms
       }
    }
 
-   public class MapInfo
+   public struct MapInfo
    {
       public PureProjection Projection;
       public RectLatLng Area;
       public int Zoom;
       public MapType Type;
+      public bool MakeWorldFile;
 
-      public MapInfo(PureProjection Projection, RectLatLng Area, int Zoom, MapType Type)
+      public MapInfo(PureProjection Projection, RectLatLng Area, int Zoom, MapType Type, bool makeWorldFile)
       {
          this.Projection = Projection;
          this.Area = Area;
          this.Zoom = Zoom;
          this.Type = Type;
+         this.MakeWorldFile = makeWorldFile;
       }
    }
 }
