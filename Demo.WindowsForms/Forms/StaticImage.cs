@@ -188,6 +188,7 @@ namespace Demo.WindowsForms
             //35.1254392635083    // latitude of the pixel in the upper-left-hand corner.
 
             // generate world file
+            if(info.MakeWorldFile)
             {
                string wf = bigImage + "w";
                using(StreamWriter world = File.CreateText(wf))
@@ -202,7 +203,7 @@ namespace Demo.WindowsForms
                }
             }
          }
-      }        
+      }
 
       private void button1_Click(object sender, EventArgs e)
       {
@@ -222,7 +223,7 @@ namespace Demo.WindowsForms
                progressBar1.Value = 0;
                button1.Enabled = false;
 
-               bg.RunWorkerAsync(new MapInfo(MainMap.Projection, area, (int)numericUpDown1.Value, MainMap.MapType, checkBoxWorldFile.Checked));
+               bg.RunWorkerAsync(new MapInfo(MainMap.Projection, area, (int) numericUpDown1.Value, MainMap.MapType, checkBoxWorldFile.Checked));
             }
          }
          else
