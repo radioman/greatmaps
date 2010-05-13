@@ -6,12 +6,11 @@ using System.Drawing;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
+using Demo.WindowsForms.CustomMarkers;
 using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms.ToolTips;
-using System.IO;
-using System.Text;
 
 namespace Demo.WindowsForms
 {
@@ -430,7 +429,7 @@ namespace Demo.WindowsForms
 
       string mobileGpsLog = string.Empty;
 
-      // testing my mobile gp log
+      // testing my mobile gps log
       void AddGpsMobileLogRoutes(string file)
       {
          try
@@ -487,7 +486,7 @@ namespace Demo.WindowsForms
       /// adds marker using geocoder
       /// </summary>
       /// <param name="place"></param>
-      void AddLocationLithuania(string place, int? pulygonId)
+      void AddLocationLithuania(string place, int? polygonId)
       {
          GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
          PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, " + place, out status);
@@ -501,7 +500,7 @@ namespace Demo.WindowsForms
                mBorders.InnerMarker = m;
                mBorders.ToolTipText = place;
                mBorders.ToolTipMode = MarkerTooltipMode.Always;
-               mBorders.Tag = pulygonId;
+               mBorders.Tag = polygonId;
             }
 
             objects.Markers.Add(m);

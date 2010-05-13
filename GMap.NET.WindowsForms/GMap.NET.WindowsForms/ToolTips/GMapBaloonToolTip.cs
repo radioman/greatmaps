@@ -27,9 +27,8 @@ namespace GMap.NET.WindowsForms.ToolTips
 
       public override void Draw(Graphics g)
       {
-
          System.Drawing.Size st = g.MeasureString(Marker.ToolTipText, Font).ToSize();
-         System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.LocalPosition.X, Marker.LocalPosition.Y, st.Width + Marker.Overlay.Control.TooltipTextPadding.Width, st.Height + Marker.Overlay.Control.TooltipTextPadding.Height);
+         System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.LocalPosition.X, Marker.LocalPosition.Y - st.Height, st.Width + Marker.Overlay.Control.TooltipTextPadding.Width, st.Height + Marker.Overlay.Control.TooltipTextPadding.Height);
          rect.Offset(Offset.X, Offset.Y);
 
          using(GraphicsPath objGP = new GraphicsPath())
@@ -44,11 +43,11 @@ namespace GMap.NET.WindowsForms.ToolTips
             objGP.AddArc(rect.X + rect.Width - (Radius * 2), rect.Y, Radius * 2, Radius * 2, 270, 90);
             objGP.AddLine(rect.X + rect.Width, rect.Y + Radius, rect.X + rect.Width, rect.Y + rect.Height - (Radius * 2));
             objGP.AddArc(rect.X + rect.Width - (Radius * 2), rect.Y + rect.Height - (Radius * 2), Radius * 2, Radius * 2, 0, 90); // Corner
-            
+
             objGP.CloseFigure();
-            
+
             g.FillPath(Fill, objGP);
-            g.DrawPath(Stroke, objGP);            
+            g.DrawPath(Stroke, objGP);
          }
 
 #if !PocketPC
