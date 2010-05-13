@@ -331,6 +331,9 @@ namespace GMap.NET.WindowsPresentation
 
             GMaps.Instance.ImageProxy = new WindowsPresentationImageProxy();
 
+            Core.SystemType = new Guid("9C671CDB-7B6B-443A-9F29-AFEA0D543129");
+            Core.SystemName = "GMap.NET.WindowsPresentation";
+
             Core.RenderMode = GMap.NET.RenderMode.WPF;
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
             Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);

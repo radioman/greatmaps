@@ -176,7 +176,7 @@ namespace Demo.WindowsForms
          }
       }
 
-      GMapMarkerRect CurentRectMarker = null;
+     GMapMarkerRect CurentRectMarker = null;
 
       void MainMap_OnMarkerLeave(GMapMarker item)
       {

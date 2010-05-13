@@ -379,6 +379,10 @@ namespace GMap.NET.Internals
       }
 #endif
 
+      // windows forms or wpf
+      internal Guid SystemType;
+      internal string SystemName;
+
       /// <summary>
       /// starts core system
       /// </summary>
@@ -390,6 +394,36 @@ namespace GMap.NET.Internals
 
             ReloadMap();
             GoToCurrentPosition();
+
+#if !DEBUG
+#if !PocketPC
+            using(Analytics.MessagingServiceV2 s = new Analytics.MessagingServiceV2())
+            {
+               if(GMaps.Instance.Proxy != null)
+               {
+                  s.Proxy = GMaps.Instance.Proxy;
+                  s.PreAuthenticate = true;
+               }
+
+               Analytics.MessageCache info = new Analytics.MessageCache();
+               {
+                  info.Id = new Guid("797DCA7D-FB9F-49A2-87B6-5C9F26BDEF25");
+                  info.TimeSentUtc = DateTime.UtcNow;
+                  info.ApiVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                  info.ApiLanguage = GMaps.Instance.LanguageStr;
+
+                  info.Application = new Analytics.ApplicationInformation();
+                  info.Application.Id = SystemType;
+                  info.Application.Name = SystemName;
+                  info.Application.Version = System.Reflection.Assembly.GetCallingAssembly().GetName().Version.ToString();
+
+                  System.Reflection.AssemblyName app = System.Reflection.Assembly.GetEntryAssembly().GetName();
+                  info.InstanceId = app.Name + ", v" + app.Version.ToString();
+               }
+               s.PublishAsync(info);
+            }
+#endif
+#endif
          }
       }
 
