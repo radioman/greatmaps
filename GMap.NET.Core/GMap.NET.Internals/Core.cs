@@ -400,7 +400,7 @@ namespace GMap.NET.Internals
             GoToCurrentPosition();
 
 #if !DEBUG
-#if !PocketPC      
+#if !PocketPC
             // in case there a few controls in one app
             if(!AnalyticsStartDone)
             {
@@ -433,6 +433,13 @@ namespace GMap.NET.Internals
                            {
                               alc.Event.Code = "Application.Start";
                               alc.Event.PrivacySetting = GMap.NET.Analytics.PrivacySettings.SupportOptout;
+                           }
+
+                           alc.Binary = new Analytics.BinaryInformation();
+                           {
+                              System.Reflection.AssemblyName app = System.Reflection.Assembly.GetEntryAssembly().GetName();
+                              alc.Binary.Name = app.Name;
+                              alc.Binary.Version = app.Version.ToString();
                            }
 
                            alc.Host = new GMap.NET.Analytics.HostInfo();
@@ -523,6 +530,13 @@ namespace GMap.NET.Internals
                            alc.Event.PrivacySetting = GMap.NET.Analytics.PrivacySettings.SupportOptout;
                         }
 
+                        alc.Binary = new Analytics.BinaryInformation();
+                        {
+                           System.Reflection.AssemblyName app = System.Reflection.Assembly.GetEntryAssembly().GetName();
+                           alc.Binary.Name = app.Name;
+                           alc.Binary.Version = app.Version.ToString();
+                        }
+
                         alc.Host = new GMap.NET.Analytics.HostInfo();
                         {
                            alc.Host.RuntimeVersion = Environment.Version.ToString();
@@ -561,17 +575,14 @@ namespace GMap.NET.Internals
 
          info.TimeSentUtc = DateTime.UtcNow;
 
-         info.ApiVersion = ".NET CLR";
-         info.ApiVersion = "2.2.0.0";
+         info.ApiLanguage = ".NET CLR";
+         info.ApiVersion = "2.1.4.0";
 
          info.Application = new Analytics.ApplicationInformation();
          info.Application.Id = ApplicationIdGuid;
          info.Application.Name = "GMap.NET";
          info.Application.ApplicationType = SystemType;
          info.Application.Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
-         System.Reflection.AssemblyName app = System.Reflection.Assembly.GetEntryAssembly().GetName();
-         info.InstanceId = app.Name + ", v" + app.Version.ToString();
       }
 #endif
 
