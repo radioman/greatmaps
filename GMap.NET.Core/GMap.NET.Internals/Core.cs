@@ -380,8 +380,7 @@ namespace GMap.NET.Internals
 #endif
 
       // windows forms or wpf
-      internal Guid SystemType;
-      internal string SystemName;
+      internal string SystemType;
 
       /// <summary>
       /// starts core system
@@ -410,16 +409,23 @@ namespace GMap.NET.Internals
 
                   Analytics.MessageCache info = new Analytics.MessageCache();
                   {
-                     info.Id = new Guid("797DCA7D-FB9F-49A2-87B6-5C9F26BDEF25");
-                     info.ApplicationGroupId = new Guid("612F55CF-CAEC-4cbe-9D5B-29FB0D27E6BF");
+                     Guid id = new Guid("797dca7d-fb9f-49a2-87b6-5c9f26bdef25");
+
+                     // i wonder which do we really need ;]
+                     info.Id = id;
+                     info.ApplicationGroupId = id;
+
+                     info.Business = new GMap.NET.Analytics.BusinessInformation();
+                     info.Business.CompanyId = id;
+                     info.Business.CompanyName = "email@radioman.lt";
 
                      info.TimeSentUtc = DateTime.UtcNow;
-                     info.ApiVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                     info.ApiLanguage = GMaps.Instance.LanguageStr;
 
                      info.Application = new Analytics.ApplicationInformation();
-                     info.Application.Id = SystemType;
-                     info.Application.Name = SystemName;
+                     info.Application.Id = id;
+                     info.Application.Name = "GMap.NET";
+                     info.Application.ApplicationType = SystemType;
+                     info.Application.Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
                      System.Reflection.AssemblyName app = System.Reflection.Assembly.GetEntryAssembly().GetName();
                      info.InstanceId = app.Name + ", v" + app.Version.ToString();

@@ -292,8 +292,7 @@ namespace GMap.NET.WindowsForms
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
             Core.OnMapDrag += new MapDrag(GMap_OnMapDrag);
 
-            Core.SystemType = new Guid("D8ADF5C5-BF9A-4BD5-A630-D0D0A99A264E");
-            Core.SystemName = "GMap.NET.WindowsForms";
+            Core.SystemType = "WindowsForms";
 
             RenderMode = RenderMode.GDI_PLUS;
             Core.CurrentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
