@@ -914,6 +914,8 @@ namespace GMap.NET.WindowsForms
       protected override void OnHandleDestroyed(EventArgs e)
       {
          Core.OnMapClose();
+         Core.ApplicationExit();
+
          base.OnHandleDestroyed(e);
       }
 

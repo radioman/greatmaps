@@ -340,6 +340,8 @@ namespace GMap.NET.WindowsPresentation
             Unloaded += new RoutedEventHandler(GMapControl_Unloaded);
             SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
 
+            Application.Current.Exit += new ExitEventHandler(Current_Exit);
+
             Markers.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
             this.ItemsSource = Markers;
 
@@ -351,6 +353,11 @@ namespace GMap.NET.WindowsPresentation
 
             MapType = MapType.GoogleMap;
          }
+      }
+
+      void Current_Exit(object sender, ExitEventArgs e)
+      {
+         Core.ApplicationExit();
       }
 
       void Markers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
