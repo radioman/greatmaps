@@ -382,7 +382,7 @@ namespace GMap.NET.Internals
       // windows forms or wpf
       internal string SystemType;
       internal static readonly Guid SessionIdGuid = Guid.NewGuid();
-      internal static readonly Guid CompanyIdGuid = new Guid("128EEF58-21FA-44a2-9802-7490F886D0A0");
+      internal static readonly Guid CompanyIdGuid = new Guid("3E35F098-CE43-4F82-9E9D-05C8B1046A45");
       internal static readonly Guid ApplicationIdGuid = new Guid("797dca7d-fb9f-49a2-87b6-5c9f26bdef25");
 
       /// <summary>
