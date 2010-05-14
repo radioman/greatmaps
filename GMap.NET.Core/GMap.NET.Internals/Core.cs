@@ -397,31 +397,36 @@ namespace GMap.NET.Internals
 
 #if !DEBUG
 #if !PocketPC
-            using(Analytics.MessagingServiceV2 s = new Analytics.MessagingServiceV2())
+            // send ping to codeplex Analytics service
+            ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object o)
             {
-               if(GMaps.Instance.Proxy != null)
+               using(Analytics.MessagingServiceV2 s = new Analytics.MessagingServiceV2())
                {
-                  s.Proxy = GMaps.Instance.Proxy;
-                  s.PreAuthenticate = true;
+                  if(GMaps.Instance.Proxy != null)
+                  {
+                     s.Proxy = GMaps.Instance.Proxy;
+                     s.PreAuthenticate = true;
+                  }
+
+                  Analytics.MessageCache info = new Analytics.MessageCache();
+                  {
+                     info.Id = new Guid("797DCA7D-FB9F-49A2-87B6-5C9F26BDEF25");
+                     info.ApplicationGroupId = new Guid("612F55CF-CAEC-4cbe-9D5B-29FB0D27E6BF");
+
+                     info.TimeSentUtc = DateTime.UtcNow;
+                     info.ApiVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                     info.ApiLanguage = GMaps.Instance.LanguageStr;
+
+                     info.Application = new Analytics.ApplicationInformation();
+                     info.Application.Id = SystemType;
+                     info.Application.Name = SystemName;
+
+                     System.Reflection.AssemblyName app = System.Reflection.Assembly.GetEntryAssembly().GetName();
+                     info.InstanceId = app.Name + ", v" + app.Version.ToString();
+                  }
+                  s.Publish(info);
                }
-
-               Analytics.MessageCache info = new Analytics.MessageCache();
-               {
-                  info.Id = new Guid("797DCA7D-FB9F-49A2-87B6-5C9F26BDEF25");
-                  info.TimeSentUtc = DateTime.UtcNow;
-                  info.ApiVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                  info.ApiLanguage = GMaps.Instance.LanguageStr;
-
-                  info.Application = new Analytics.ApplicationInformation();
-                  info.Application.Id = SystemType;
-                  info.Application.Name = SystemName;
-                  info.Application.Version = System.Reflection.Assembly.GetCallingAssembly().GetName().Version.ToString();
-
-                  System.Reflection.AssemblyName app = System.Reflection.Assembly.GetEntryAssembly().GetName();
-                  info.InstanceId = app.Name + ", v" + app.Version.ToString();
-               }
-               s.PublishAsync(info);
-            }
+            }));
 #endif
 #endif
          }
