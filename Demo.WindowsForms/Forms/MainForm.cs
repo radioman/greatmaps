@@ -32,8 +32,6 @@ namespace Demo.WindowsForms
       GMapOverlay routes;
       GMapOverlay polygons;
 
-      Toolbox Tools;
-
       public MainForm()
       {
          InitializeComponent();
@@ -79,8 +77,6 @@ namespace Demo.WindowsForms
             MainMap.MouseUp += new MouseEventHandler(MainMap_MouseUp);
             MainMap.OnMarkerEnter += new MarkerEnter(MainMap_OnMarkerEnter);
             MainMap.OnMarkerLeave += new MarkerLeave(MainMap_OnMarkerLeave);
-
-            Tools = new Toolbox(this);
 
             // get map type
             comboBoxMapType.DataSource = Enum.GetValues(typeof(MapType));
@@ -954,9 +950,6 @@ namespace Demo.WindowsForms
       {
          MainMap.ZoomAndCenterMarkers(null);
          trackBar1.Value = (int) MainMap.Zoom;
-
-         //Tools.Location = new System.Drawing.Point(this.Width - Tools.Width - 100, 111);
-         //Tools.Show(this);
       }
 
       // ensure focus on map, trackbar can have it too

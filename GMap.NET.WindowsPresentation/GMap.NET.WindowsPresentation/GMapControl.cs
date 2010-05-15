@@ -529,7 +529,7 @@ namespace GMap.NET.WindowsPresentation
                            }
                         }
                      }
-                  }                    
+                  }
 
                   // add text if tile is missing
                   if(!found)
