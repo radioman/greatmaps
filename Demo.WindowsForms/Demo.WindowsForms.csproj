@@ -68,18 +68,13 @@
     <Compile Include="Forms\StaticImage.Designer.cs">
       <DependentUpon>StaticImage.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Toolbox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Toolbox.Designer.cs">
-      <DependentUpon>Toolbox.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Source\Map.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Source\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -92,9 +87,6 @@
     <EmbeddedResource Include="Forms\StaticImage.resx">
       <DependentUpon>StaticImage.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Toolbox.resx">
-      <DependentUpon>Toolbox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
