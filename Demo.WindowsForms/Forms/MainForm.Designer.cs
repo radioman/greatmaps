@@ -62,6 +62,7 @@
          this.button2 = new System.Windows.Forms.Button();
          this.button3 = new System.Windows.Forms.Button();
          this.groupBox7 = new System.Windows.Forms.GroupBox();
+         this.buttonExportToGpx = new System.Windows.Forms.Button();
          this.MobileLogTo = new System.Windows.Forms.DateTimePicker();
          this.label3 = new System.Windows.Forms.Label();
          this.button15 = new System.Windows.Forms.Button();
@@ -82,7 +83,6 @@
          this.radioButtonNone = new System.Windows.Forms.RadioButton();
          this.radioButtonPerf = new System.Windows.Forms.RadioButton();
          this.radioButtonTransport = new System.Windows.Forms.RadioButton();
-         this.buttonExportToGpx = new System.Windows.Forms.Button();
          this.groupMap.SuspendLayout();
          this.groupBox3.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize) (this.trackBar1)).BeginInit();
@@ -534,6 +534,16 @@
          this.groupBox7.TabStop = false;
          this.groupBox7.Text = "routing";
          // 
+         // buttonExportToGpx
+         // 
+         this.buttonExportToGpx.Location = new System.Drawing.Point(163, 97);
+         this.buttonExportToGpx.Name = "buttonExportToGpx";
+         this.buttonExportToGpx.Size = new System.Drawing.Size(49, 46);
+         this.buttonExportToGpx.TabIndex = 48;
+         this.buttonExportToGpx.Text = "to GPX";
+         this.buttonExportToGpx.UseVisualStyleBackColor = true;
+         this.buttonExportToGpx.Click += new System.EventHandler(this.buttonExportToGpx_Click);
+         // 
          // MobileLogTo
          // 
          this.MobileLogTo.CustomFormat = "yyyy\'.\'MM\'.\'dd HH\':\'mm";
@@ -757,16 +767,6 @@
          this.radioButtonTransport.UseVisualStyleBackColor = true;
          this.radioButtonTransport.CheckedChanged += new System.EventHandler(this.RealTimeChanged);
          // 
-         // buttonExportToGpx
-         // 
-         this.buttonExportToGpx.Location = new System.Drawing.Point(163, 97);
-         this.buttonExportToGpx.Name = "buttonExportToGpx";
-         this.buttonExportToGpx.Size = new System.Drawing.Size(49, 46);
-         this.buttonExportToGpx.TabIndex = 48;
-         this.buttonExportToGpx.Text = "to GPX";
-         this.buttonExportToGpx.UseVisualStyleBackColor = true;
-         this.buttonExportToGpx.Click += new System.EventHandler(this.buttonExportToGpx_Click);
-         // 
          // MainForm
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -869,8 +869,8 @@
       private System.Windows.Forms.RadioButton radioButtonTransport;
       private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelMemoryCache;
       private System.Windows.Forms.DateTimePicker MobileLogTo;
-      private Map MainMap;
       private System.Windows.Forms.Button buttonExportToGpx;
+      private Map MainMap;
    }
 }
 

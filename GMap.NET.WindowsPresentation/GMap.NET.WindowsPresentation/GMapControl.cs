@@ -26,7 +26,6 @@ namespace GMap.NET.WindowsPresentation
    {
       readonly Core Core = new Core();
       GMap.NET.Rectangle region;
-      bool RaiseEmptyTileError = false;
       delegate void MethodInvoker();
       PointLatLng selectionStart;
       PointLatLng selectionEnd;
@@ -57,14 +56,9 @@ namespace GMap.NET.WindowsPresentation
       public Brush EmptytileBrush = Brushes.Navy;
 
       /// <summary>
-      /// occurs on empty tile displayed
-      /// </summary>
-      public event EmptyTileError OnEmptyTileError;
-
-      /// <summary>
       /// text on empty tiles
       /// </summary>
-      public FormattedText EmptyTileText = new FormattedText("We are sorry, but we don't\nhave imagery at this zoom\n     level for this region.", System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("Arial"), 16, Brushes.White);
+      public FormattedText EmptyTileText = new FormattedText("We are sorry, but we don't\nhave imagery at this zoom\n     level for this region.", System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("Arial"), 16, Brushes.Blue);
 
       private int maxZoom = 2;
 
@@ -140,6 +134,37 @@ namespace GMap.NET.WindowsPresentation
          {
             showTileGridLines = value;
             InvalidateVisual();
+         }
+      }
+
+      /// <summary>
+      /// retry count to get tile 
+      /// </summary>
+      public int RetryLoadTile
+      {
+         get
+         {
+            return Core.RetryLoadTile;
+         }
+         set
+         {
+            Core.RetryLoadTile = value;
+         }
+      }
+
+      /// <summary>
+      /// how many levels of tiles are staying decompresed in memory
+      /// </summary>
+      public int LevelsKeepInMemmory
+      {
+         get
+         {
+            return Core.LevelsKeepInMemmory;
+         }
+
+         set
+         {
+            Core.LevelsKeepInMemmory = value;
          }
       }
 
@@ -480,17 +505,17 @@ namespace GMap.NET.WindowsPresentation
                Core.tilePoint.X += i;
                Core.tilePoint.Y += j;
 
-               Tile t = Core.Matrix[Core.tilePoint];
-               if(t != null)
+               Core.tileRect.X = Core.tilePoint.X * Core.tileRect.Width;
+               Core.tileRect.Y = Core.tilePoint.Y * Core.tileRect.Height;
+               Core.tileRect.Offset(Core.renderOffset);
+
+               if(region.IntersectsWith(Core.tileRect))
                {
-                  Core.tileRect.X = Core.tilePoint.X * Core.tileRect.Width;
-                  Core.tileRect.Y = Core.tilePoint.Y * Core.tileRect.Height;
-                  Core.tileRect.Offset(Core.renderOffset);
+                  bool found = false;
 
-                  if(region.IntersectsWith(Core.tileRect))
+                  Tile t = Core.Matrix.GetTile(Core.Zoom, Core.tilePoint);
+                  if(t != null)
                   {
-                     bool found = false;
-
                      lock(t.Overlays)
                      {
                         foreach(WindowsPresentationImage img in t.Overlays)
@@ -504,51 +529,43 @@ namespace GMap.NET.WindowsPresentation
                            }
                         }
                      }
+                  }                    
 
-                     if(ShowTileGridLines)
+                  // add text if tile is missing
+                  if(!found)
+                  {
+                     lock(Core.FailedLoads)
                      {
-                        g.DrawRectangle(null, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                        var lt = new LoadTask(Core.tilePoint, Core.Zoom);
 
-                        if(Core.tilePoint == Core.centerTileXYLocation)
+                        if(Core.FailedLoads.ContainsKey(lt))
                         {
-                           FormattedText TileText = new FormattedText("CENTER:" + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
-                           g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
-                        }
-                        else
-                        {
-                           FormattedText TileText = new FormattedText("TILE: " + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
-                           g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
+                           g.DrawRectangle(EmptytileBrush, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+
+                           var ex = Core.FailedLoads[lt];
+                           FormattedText TileText = new FormattedText("Exception: " + ex.Message, System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 14, Brushes.Red);
+                           TileText.MaxTextWidth = Core.tileRect.Width - 11;
+
+                           g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + 11, Core.tileRect.Y + 11));
+
+                           g.DrawText(EmptyTileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
                         }
                      }
+                  }
 
-                     // add text if tile is missing
-                     if(!found)
+                  if(ShowTileGridLines)
+                  {
+                     g.DrawRectangle(null, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+
+                     if(Core.tilePoint == Core.centerTileXYLocation)
                      {
-                        g.DrawRectangle(EmptytileBrush, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
-                        g.DrawText(EmptyTileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
-
-                        if(ShowTileGridLines)
-                        {
-                           g.DrawRectangle(null, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
-                           {
-                              FormattedText TileText = new FormattedText("TILE: " + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
-                              g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y - EmptyTileText.Height / 2));
-                           }
-                        }
-
-                        // raise error
-                        if(OnEmptyTileError != null)
-                        {
-                           if(!RaiseEmptyTileError)
-                           {
-                              RaiseEmptyTileError = true;
-
-                              this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(delegate()
-                              {
-                                 OnEmptyTileError(t.Zoom, t.Pos);
-                              }));
-                           }
-                        }
+                        FormattedText TileText = new FormattedText("CENTER:" + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
+                        g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - TileText.Height / 2));
+                     }
+                     else
+                     {
+                        FormattedText TileText = new FormattedText("TILE: " + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
+                        g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - TileText.Height / 2));
                      }
                   }
                }
@@ -992,7 +1009,6 @@ namespace GMap.NET.WindowsPresentation
                InvalidateVisual();
             }
          }
-         RaiseEmptyTileError = false;
 
          base.OnMouseUp(e);
       }
@@ -1387,6 +1403,20 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
+      /// <summary>
+      /// occurs on empty tile displayed
+      /// </summary>
+      public event EmptyTileError OnEmptyTileError
+      {
+         add
+         {
+            Core.OnEmptyTileError += value;
+         }
+         remove
+         {
+            Core.OnEmptyTileError -= value;
+         }
+      }
       #endregion
    }
 }

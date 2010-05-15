@@ -28,7 +28,6 @@ namespace GMap.NET.Internals
             }
 
             Overlays.Clear();
-            Overlays.TrimExcess();
          }
       }
 

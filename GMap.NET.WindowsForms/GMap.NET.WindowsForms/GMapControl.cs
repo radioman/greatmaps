@@ -34,11 +34,6 @@ namespace GMap.NET.WindowsForms
       public event MarkerLeave OnMarkerLeave;
 
       /// <summary>
-      /// occurs on empty tile displayed
-      /// </summary>
-      public event EmptyTileError OnEmptyTileError;
-
-      /// <summary>
       /// list of overlays, should be thread safe
       /// </summary>
       public readonly ObservableCollectionThreadSafe<GMapOverlay> Overlays = new ObservableCollectionThreadSafe<GMapOverlay>();
@@ -149,6 +144,37 @@ namespace GMap.NET.WindowsForms
       /// show map scale info
       /// </summary>
       public bool MapScaleInfoEnabled = true;
+
+      /// <summary>
+      /// retry count to get tile 
+      /// </summary>
+      public int RetryLoadTile
+      {
+         get
+         {
+            return Core.RetryLoadTile;
+         }
+         set
+         {
+            Core.RetryLoadTile = value;
+         }
+      }
+
+      /// <summary>
+      /// how many levels of tiles are staying decompresed in memory
+      /// </summary>
+      public int LevelsKeepInMemmory
+      {
+         get
+         {
+            return Core.LevelsKeepInMemmory;
+         }
+
+         set
+         {
+            Core.LevelsKeepInMemmory = value;
+         }
+      }
 
       /// <summary>
       /// map dragg button
@@ -403,18 +429,19 @@ namespace GMap.NET.WindowsForms
                //-----
 
                {
-                  Tile t = Core.Matrix[Core.tilePoint];
-                  //Tile t = Core.Matrix[tileToDraw];                     
-                  if(t != null)
+                  Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
+                  Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
+                  Core.tileRect.Offset(Core.renderOffset);
+
+                  if(Core.CurrentRegion.IntersectsWith(Core.tileRect))
                   {
-                     Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
-                     Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
-                     Core.tileRect.Offset(Core.renderOffset);
+                     bool found = false;
 
-                     if(Core.CurrentRegion.IntersectsWith(Core.tileRect))
+                     //Tile t = Core.Matrix[tileToDraw];
+
+                     Tile t = Core.Matrix.GetTile(Core.Zoom, Core.tilePoint);
+                     if(t != null)
                      {
-                        bool found = false;
-
                         // render tile
                         lock(t.Overlays)
                         {
@@ -424,60 +451,54 @@ namespace GMap.NET.WindowsForms
                               {
                                  if(!found)
                                     found = true;
-                                 {
 #if !PocketPC
-                                    g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+                                 g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
 #else
-                                    g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y);
+                                 g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y);
 #endif
-                                 }
                               }
                            }
                         }
+                     }
 
-                        if(ShowTileGridLines)
+                     // add text if tile is missing
+                     if(!found)
+                     {
+                        lock(Core.FailedLoads)
                         {
-                           g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+                           var lt = new LoadTask(Core.tilePoint, Core.Zoom);
+                           if(Core.FailedLoads.ContainsKey(lt))
                            {
+                              var ex = Core.FailedLoads[lt];
 #if !PocketPC
-                              g.DrawString((Core.tilePoint == Core.centerTileXYLocation? "CENTER: " :"TILE: ") + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                              g.FillRectangle(EmptytileBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+
+                              g.DrawString("Exception: " + ex.Message, MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X + 11, Core.tileRect.Y + 11, Core.tileRect.Width - 11, Core.tileRect.Height - 11));
+
+                              g.DrawString(EmptyTileText, MissingDataFont, Brushes.Blue, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+
 #else
-                              g.DrawString((Core.tilePoint == Core.centerTileXYLocation? "" :"TILE: ") + Core.tilePoint.ToString(), MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                              g.FillRectangle(EmptytileBrush, new System.Drawing.Rectangle(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                              
+                              g.DrawString("Exception: " + ex.Message, MissingDataFont, TileGridMissingTextBrush, new RectangleF(Core.tileRect.X + 11, Core.tileRect.Y + 11, Core.tileRect.Width - 11, Core.tileRect.Height - 11));
+                              
+                              g.DrawString(EmptyTileText, MissingDataFont, TileGridMissingTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y + Core.tileRect.Width/2 + (ShowTileGridLines? 11 : -22), Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
 #endif
+
+                              g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
                            }
                         }
+                     }
 
-                        // add text if tile is missing
-                        if(!found)
+                     if(ShowTileGridLines)
+                     {
+                        g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
                         {
 #if !PocketPC
-                           g.FillRectangle(EmptytileBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
-                           g.DrawString(EmptyTileText, MissingDataFont, Brushes.White, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                           g.DrawString((Core.tilePoint == Core.centerTileXYLocation? "CENTER: " :"TILE: ") + Core.tilePoint, MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #else
-                           g.FillRectangle(EmptytileBrush, new System.Drawing.Rectangle(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
-                           g.DrawString(EmptyTileText, MissingDataFont, TileGridMissingTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y + Core.tileRect.Width/2 + (ShowTileGridLines? 11 : -22), Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
+                           g.DrawString((Core.tilePoint == Core.centerTileXYLocation? "" :"TILE: ") + Core.tilePoint, MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #endif
-
-                           if(ShowTileGridLines)
-                           {
-#if !PocketPC
-                              g.DrawString((Core.tilePoint == Core.centerTileXYLocation? "CENTER: " :"TILE: ") + Core.tilePoint.ToString(), MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
-#else
-                              g.DrawString((Core.tilePoint == Core.centerTileXYLocation? "" :"TILE: ") + Core.tilePoint.ToString(), MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
-#endif
-                           }
-
-                           g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
-
-                           // raise error
-                           if(OnEmptyTileError != null)
-                           {
-                              if(!RaiseEmptyTileError)
-                              {
-                                 RaiseEmptyTileError = true;
-                                 OnEmptyTileError(t.Zoom, t.Pos);
-                              }
-                           }
                         }
                      }
                   }
@@ -2006,6 +2027,21 @@ namespace GMap.NET.WindowsForms
          remove
          {
             Core.OnMapTypeChanged -= value;
+         }
+      }
+
+      /// <summary>
+      /// occurs on empty tile displayed
+      /// </summary>
+      public event EmptyTileError OnEmptyTileError
+      {
+         add
+         {
+            Core.OnEmptyTileError += value;
+         }
+         remove
+         {
+            Core.OnEmptyTileError -= value;
          }
       }
 

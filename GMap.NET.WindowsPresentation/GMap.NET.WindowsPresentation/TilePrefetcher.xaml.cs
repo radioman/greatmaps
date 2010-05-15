@@ -89,7 +89,9 @@ namespace GMap.NET.WindowsPresentation
       {
          foreach(MapType type in types)
          {
-            PureImage img = GMaps.Instance.GetImageFrom(type, p, zoom);
+            Exception ex;
+
+            PureImage img = GMaps.Instance.GetImageFrom(type, p, zoom, out ex);
             if(img != null)
             {
                img.Dispose();

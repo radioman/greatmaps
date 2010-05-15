@@ -96,15 +96,6 @@ namespace GMap.NET
       public int Timeout = 30 * 1000;
 
       /// <summary>
-      /// retry count to get tile 
-      /// </summary>
-#if !PocketPC
-      public int RetryLoadTile = 2;
-#else
-      public int RetryLoadTile = 1;
-#endif
-
-      /// <summary>
       /// proxy for net access
       /// </summary>
       public IWebProxy Proxy;
@@ -2266,9 +2257,10 @@ namespace GMap.NET
       /// <param name="pos"></param>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public PureImage GetImageFrom(MapType type, Point pos, int zoom)
+      public PureImage GetImageFrom(MapType type, Point pos, int zoom, out Exception result)
       {
          PureImage ret = null;
+         result = null;
 
          try
          {
@@ -2454,10 +2446,15 @@ namespace GMap.NET
                      response.Close();
                   }
                }
+               else
+               {
+                  result = new Exception("No data in local tile cache...");
+               }
             }
          }
          catch(Exception ex)
          {
+            result = ex;
             ret = null;
             Debug.WriteLine("GetImageFrom: " + ex.ToString());
          }

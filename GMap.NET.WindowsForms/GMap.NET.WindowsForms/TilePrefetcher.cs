@@ -5,6 +5,7 @@ namespace GMap.NET
    using System.ComponentModel;
    using System.Windows.Forms;
    using GMap.NET.Internals;
+   using System;
 
    /// <summary>
    /// form helping to prefetch tiles on local db
@@ -86,7 +87,9 @@ namespace GMap.NET
       {
          foreach(MapType type in types)
          {
-            PureImage img = GMaps.Instance.GetImageFrom(type, p, zoom);
+            Exception ex;
+
+            PureImage img = GMaps.Instance.GetImageFrom(type, p, zoom, out ex);
             if(img != null)
             {
                img.Dispose();

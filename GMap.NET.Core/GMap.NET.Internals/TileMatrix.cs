@@ -8,75 +8,147 @@ namespace GMap.NET.Internals
    /// </summary>
    internal class TileMatrix
    {
-      readonly Dictionary<Point, Tile> matrix = new Dictionary<Point, Tile>(55);
-      readonly List<Point> removals = new List<Point>();
+      readonly List<Dictionary<Point, Tile>> Levels = new List<Dictionary<Point, Tile>>(20);
 
-      public void Clear()
+      public TileMatrix()
       {
-         lock(matrix)
+         for(int i = 0; i < 22; i++)
          {
-            foreach(Tile t in matrix.Values)
-            {
-               t.Clear();
-            }
-            matrix.Clear();
+            Levels.Add(new Dictionary<Point, Tile>(55));
          }
-      }       
-
-      public void ClearPointsNotIn(ref List<Point> list)
-      {
-         removals.Clear();
-         lock(matrix)
-         {
-            foreach(Point p in matrix.Keys)
-            {
-               if(!list.Contains(p))
-               {
-                  removals.Add(p);
-               }
-            }
-         }
-
-         foreach(Point p in removals)
-         {
-            Tile t = this[p];
-            if(t != null)
-            {
-               lock(matrix)
-               {
-                  t.Clear();
-                  t = null;
-
-                  matrix.Remove(p);
-               }
-            }
-         }
-         removals.Clear();
       }
 
-      public Tile this[Point p]
+      public void ClearAllLevels()
       {
-         get
+         lock(Levels)
          {
-            lock(matrix)
+            foreach(var matrix in Levels)
             {
-               Tile ret = null;
-               if(matrix.TryGetValue(p, out ret))
+               foreach(var t in matrix)
+               {
+                  t.Value.Clear();
+               }
+               matrix.Clear();
+            }
+         }
+      }
+
+      public void ClearLevel(int zoom)
+      {
+         lock(Levels)
+         {
+            if(zoom < Levels.Count)
+            {
+               var l = Levels[zoom];
+
+               foreach(var t in l)
+               {
+                  t.Value.Clear();
+               }
+
+               l.Clear();
+            }
+         }
+      }
+
+      readonly List<KeyValuePair<Point, Tile>> tmp = new List<KeyValuePair<Point, Tile>>(44);
+
+      public void ClearLevelAndPointsNotIn(int zoom, List<Point> list)
+      {
+         lock(Levels)
+         {
+            if(zoom < Levels.Count)
+            {
+               var l = Levels[zoom];
+
+               tmp.Clear();
+
+               foreach(var t in l)
+               {
+                  if(!list.Contains(t.Key))
+                  {
+                     tmp.Add(t);
+                  }
+               }
+
+               foreach(var r in tmp)
+               {
+                  l.Remove(r.Key);
+                  r.Value.Clear();
+               }
+
+               tmp.Clear();
+            }
+         }
+      }
+
+      public void ClearLevelsBelove(int zoom)
+      {
+         lock(Levels)
+         {
+            if(zoom-1 < Levels.Count)
+            {
+               for(int i = zoom-1; i >= 0; i--)
+               {
+                  var l = Levels[i];
+
+                  foreach(var t in l)
+                  {
+                     t.Value.Clear();
+                  }
+
+                  l.Clear();
+               }
+            }
+         }
+      }
+
+      public void ClearLevelsAbove(int zoom)
+      {
+         lock(Levels)
+         {
+            if(zoom+1 < Levels.Count)
+            {
+               for(int i = zoom+1; i < Levels.Count; i++)
+               {
+                  var l = Levels[i];
+
+                  foreach(var t in l)
+                  {
+                     t.Value.Clear();
+                  }
+
+                  l.Clear();
+               }
+            }
+         }
+      }
+
+      public Tile GetTile(int zoom, Point p)
+      {
+         lock(Levels)
+         {
+            Tile ret = null;
+
+            //if(zoom < Levels.Count)
+            {
+               if(Levels[zoom].TryGetValue(p, out ret))
                {
                   return ret;
                }
-               else
-               {
-                  return null;
-               }
             }
-         }
 
-         set
+            return ret;
+         }
+      }
+
+      public void SetTile(Tile t)
+      {
+         lock(Levels)
          {
-            lock(matrix)
+            if(t.Zoom < Levels.Count)
             {
-               matrix[p] = value;
+               Levels[t.Zoom][t.Pos] = t;
             }
          }
       }

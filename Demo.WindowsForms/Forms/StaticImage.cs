@@ -110,7 +110,8 @@ namespace Demo.WindowsForms
 
                            foreach(MapType tp in types)
                            {
-                              WindowsFormsImage tile = GMaps.Instance.GetImageFrom(tp, p, info.Zoom) as WindowsFormsImage;
+                              Exception ex;
+                              WindowsFormsImage tile = GMaps.Instance.GetImageFrom(tp, p, info.Zoom, out ex) as WindowsFormsImage;
                               if(tile != null)
                               {
                                  using(tile)

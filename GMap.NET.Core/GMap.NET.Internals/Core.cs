@@ -115,7 +115,15 @@ namespace GMap.NET.Internals
                   {
                      tileLoadQueue.Clear();
                   }
-                  Matrix.Clear();
+
+                  Matrix.ClearLevelsBelove(zoom - LevelsKeepInMemmory);
+                  Matrix.ClearLevelsAbove(zoom + LevelsKeepInMemmory);
+
+                  lock(FailedLoads)
+                  {
+                     FailedLoads.Clear();
+                     RaiseEmptyTileError = true;
+                  }
 
                   GoToCurrentPositionOnZoom();
                   UpdateBounds();
@@ -317,6 +325,20 @@ namespace GMap.NET.Internals
       public bool CanDragMap = true;
 
       /// <summary>
+      /// retry count to get tile 
+      /// </summary>
+#if !PocketPC
+      public int RetryLoadTile = 0;
+#else
+      public int RetryLoadTile = 0;
+#endif
+
+      /// <summary>
+      /// how many levels of tiles are staying decompresed in memory
+      /// </summary>
+      public int LevelsKeepInMemmory = 5;
+
+      /// <summary>
       /// map render mode
       /// </summary>
       public RenderMode RenderMode = RenderMode.GDI_PLUS;
@@ -335,6 +357,11 @@ namespace GMap.NET.Internals
       /// occurs when tile set is starting to load
       /// </summary>
       public event TileLoadStart OnTileLoadStart;
+
+      /// <summary>
+      /// occurs on empty tile displayed
+      /// </summary>
+      public event EmptyTileError OnEmptyTileError;
 
       /// <summary>
       /// occurs on tile loaded
@@ -409,66 +436,73 @@ namespace GMap.NET.Internals
                // send start ping to codeplex Analytics service
                ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object o)
                {
-                  using(Analytics.MessagingServiceV2 s = new Analytics.MessagingServiceV2())
+                  try
                   {
-                     if(GMaps.Instance.Proxy != null)
+                     using(Analytics.MessagingServiceV2 s = new Analytics.MessagingServiceV2())
                      {
-                        s.Proxy = GMaps.Instance.Proxy;
-                        s.PreAuthenticate = true;
-                     }
-
-                     Analytics.MessageCache info = new Analytics.MessageCache();
-                     {
-                        FillAnalyticsInfo(info);
-
-                        info.Messages = new Analytics.Message[2];
-
-                        Analytics.ApplicationLifeCycle alc = new Analytics.ApplicationLifeCycle();
+                        if(GMaps.Instance.Proxy != null)
                         {
-                           alc.Id = Guid.NewGuid();
-                           alc.SessionId = SessionIdGuid;
-                           alc.TimeStampUtc = DateTime.UtcNow;
-
-                           alc.Event = new GMap.NET.Analytics.EventInformation();
-                           {
-                              alc.Event.Code = "Application.Start";
-                              alc.Event.PrivacySetting = GMap.NET.Analytics.PrivacySettings.SupportOptout;
-                           }
-
-                           alc.Binary = new Analytics.BinaryInformation();
-                           {
-                              System.Reflection.AssemblyName app = System.Reflection.Assembly.GetEntryAssembly().GetName();
-                              alc.Binary.Name = app.Name;
-                              alc.Binary.Version = app.Version.ToString();
-                           }
-
-                           alc.Host = new GMap.NET.Analytics.HostInfo();
-                           {
-                              alc.Host.RuntimeVersion = Environment.Version.ToString();
-                           }
-
-                           alc.Host.OS = new GMap.NET.Analytics.OSInformation();
-                           {
-                              alc.Host.OS.OsName = Environment.OSVersion.VersionString;
-                           }
+                           s.Proxy = GMaps.Instance.Proxy;
+                           s.PreAuthenticate = true;
                         }
-                        info.Messages[0] = alc;
 
-                        Analytics.SessionLifeCycle slc = new Analytics.SessionLifeCycle();
+                        Analytics.MessageCache info = new Analytics.MessageCache();
                         {
-                           slc.Id = Guid.NewGuid();
-                           slc.SessionId = SessionIdGuid;
-                           slc.TimeStampUtc = DateTime.UtcNow;
+                           FillAnalyticsInfo(info);
 
-                           slc.Event = new GMap.NET.Analytics.EventInformation();
+                           info.Messages = new Analytics.Message[2];
+
+                           Analytics.ApplicationLifeCycle alc = new Analytics.ApplicationLifeCycle();
                            {
-                              slc.Event.Code = "Session.Start";
-                              slc.Event.PrivacySetting = GMap.NET.Analytics.PrivacySettings.SupportOptout;
+                              alc.Id = Guid.NewGuid();
+                              alc.SessionId = SessionIdGuid;
+                              alc.TimeStampUtc = DateTime.UtcNow;
+
+                              alc.Event = new GMap.NET.Analytics.EventInformation();
+                              {
+                                 alc.Event.Code = "Application.Start";
+                                 alc.Event.PrivacySetting = GMap.NET.Analytics.PrivacySettings.SupportOptout;
+                              }
+
+                              alc.Binary = new Analytics.BinaryInformation();
+                              {
+                                 System.Reflection.AssemblyName app = System.Reflection.Assembly.GetEntryAssembly().GetName();
+                                 alc.Binary.Name = app.Name;
+                                 alc.Binary.Version = app.Version.ToString();
+                              }
+
+                              alc.Host = new GMap.NET.Analytics.HostInfo();
+                              {
+                                 alc.Host.RuntimeVersion = Environment.Version.ToString();
+                              }
+
+                              alc.Host.OS = new GMap.NET.Analytics.OSInformation();
+                              {
+                                 alc.Host.OS.OsName = Environment.OSVersion.VersionString;
+                              }
                            }
+                           info.Messages[0] = alc;
+
+                           Analytics.SessionLifeCycle slc = new Analytics.SessionLifeCycle();
+                           {
+                              slc.Id = Guid.NewGuid();
+                              slc.SessionId = SessionIdGuid;
+                              slc.TimeStampUtc = DateTime.UtcNow;
+
+                              slc.Event = new GMap.NET.Analytics.EventInformation();
+                              {
+                                 slc.Event.Code = "Session.Start";
+                                 slc.Event.PrivacySetting = GMap.NET.Analytics.PrivacySettings.SupportOptout;
+                              }
+                           }
+                           info.Messages[1] = slc;
                         }
-                        info.Messages[1] = slc;
+                        s.Publish(info);
                      }
-                     s.Publish(info);
+                  }
+                  catch(Exception ex)
+                  {
+                     Debug.WriteLine("Analytics Start: " + ex.ToString());
                   }
                }));
             }
@@ -553,9 +587,9 @@ namespace GMap.NET.Internals
                }
             }
          }
-         catch
+         catch(Exception ex)
          {
-            // die in silence ;}
+            Debug.WriteLine("Analytics Stop: " + ex.ToString());
          }
 #endif
 #endif
@@ -749,7 +783,13 @@ namespace GMap.NET.Internals
                tileLoadQueue.Clear();
             }
 
-            Matrix.Clear();
+            Matrix.ClearAllLevels();
+
+            lock(FailedLoads)
+            {
+               FailedLoads.Clear();
+               RaiseEmptyTileError = true;
+            }
 
             if(OnNeedInvalidation != null)
             {
@@ -894,6 +934,9 @@ namespace GMap.NET.Internals
          }
       }
 
+      bool RaiseEmptyTileError = false;
+      internal readonly Dictionary<LoadTask, Exception> FailedLoads = new Dictionary<LoadTask, Exception>();
+
       void ProcessLoadTask(object obj)
       {
          bool last = false;
@@ -918,7 +961,7 @@ namespace GMap.NET.Internals
             {
                try
                {
-                  var m = Matrix[task.Value.Pos];
+                  var m = Matrix.GetTile(task.Value.Zoom, task.Value.Pos);
 
                   if(m == null || m.Overlays.Count == 0)
                   {
@@ -933,15 +976,16 @@ namespace GMap.NET.Internals
                         do
                         {
                            PureImage img;
+                           Exception ex;
 
                            // tile number inversion(BottomLeft -> TopLeft) for pergo maps
                            if(tl == MapType.PergoTurkeyMap)
                            {
-                              img = GMaps.Instance.GetImageFrom(tl, new Point(task.Value.Pos.X, maxOfTiles.Height - task.Value.Pos.Y), task.Value.Zoom);
+                              img = GMaps.Instance.GetImageFrom(tl, new Point(task.Value.Pos.X, maxOfTiles.Height - task.Value.Pos.Y), task.Value.Zoom, out ex);
                            }
                            else // ok
                            {
-                              img = GMaps.Instance.GetImageFrom(tl, task.Value.Pos, task.Value.Zoom);
+                              img = GMaps.Instance.GetImageFrom(tl, task.Value.Pos, task.Value.Zoom, out ex);
                            }
 
                            if(img != null)
@@ -952,20 +996,43 @@ namespace GMap.NET.Internals
                               }
                               break;
                            }
-                           else if(GMaps.Instance.RetryLoadTile > 0)
+                           else
                            {
-                              Debug.WriteLine("ProcessLoadTask: " + task + " -> empty tile, retry " + retry);
+                              if(ex != null)
                               {
-                                 Thread.Sleep(1111);
+                                 lock(FailedLoads)
+                                 {
+                                    if(!FailedLoads.ContainsKey(task.Value))
+                                    {
+                                       FailedLoads.Add(task.Value, ex);
+
+                                       if(OnEmptyTileError != null)
+                                       {
+                                          if(!RaiseEmptyTileError)
+                                          {
+                                             RaiseEmptyTileError = true;
+                                             OnEmptyTileError(task.Value.Zoom, task.Value.Pos);
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+
+                              if(RetryLoadTile > 0)
+                              {
+                                 Debug.WriteLine("ProcessLoadTask: " + task + " -> empty tile, retry " + retry);
+                                 {
+                                    Thread.Sleep(1111);
+                                 }
                               }
                            }
                         }
-                        while(++retry < GMaps.Instance.RetryLoadTile);
+                        while(++retry < RetryLoadTile);
                      }
 
                      if(t.Overlays.Count > 0)
                      {
-                        Matrix[task.Value.Pos] = t;
+                        Matrix.SetTile(t);
                      }
                      else
                      {
@@ -997,9 +1064,8 @@ namespace GMap.NET.Internals
 
                      lock(tileDrawingList)
                      {
-                        Matrix.ClearPointsNotIn(ref tileDrawingList);
+                        Matrix.ClearLevelAndPointsNotIn(Zoom, tileDrawingList);
                      }
-
 #if UseGC
                      GC.Collect();
                      GC.WaitForPendingFinalizers();

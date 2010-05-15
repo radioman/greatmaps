@@ -383,7 +383,8 @@ namespace GMap.NET.WindowsPresentation
                      // get tiles
                      for(int i = 0; i < layers.Length; i++)
                      {
-                        imgs[i] = (GMaps.Instance.GetImageFrom(layers[i], rawTile.Pos, rawTile.Zoom) as WindowsPresentationImage).Img;
+                        Exception ex;
+                        imgs[i] = (GMaps.Instance.GetImageFrom(layers[i], rawTile.Pos, rawTile.Zoom, out ex) as WindowsPresentationImage).Img;
                      }
 
                      // combine visual
@@ -641,7 +642,7 @@ namespace GMap.NET.WindowsPresentation
                Core.tilePoint.X += i;
                Core.tilePoint.Y += j;
 
-               Tile t = Core.Matrix[Core.tilePoint];
+               Tile t = Core.Matrix.GetTile(Core.Zoom, Core.tilePoint);
                if(t != null)
                {
                   Core.tileRect.X = Core.tilePoint.X * Core.tileRect.Width;

@@ -55,7 +55,8 @@ namespace BigMapMaker
 
                            foreach(MapType tp in types)
                            {
-                              WindowsFormsImage tile = GMaps.Instance.GetImageFrom(tp, p, zoom) as WindowsFormsImage;
+                              Exception ex;
+                              WindowsFormsImage tile = GMaps.Instance.GetImageFrom(tp, p, zoom, out ex) as WindowsFormsImage;
                               if(tile != null)
                               {
                                  using(tile)
