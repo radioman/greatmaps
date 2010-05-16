@@ -18,7 +18,7 @@ namespace GMap.NET.Internals
 #if !PocketPC
       public int MemoryCacheCapacity = 22;
 #else
-      public int MemoryCacheCapacity = 5;
+      public int MemoryCacheCapacity = 3;
 #endif
 
       long memoryCacheSize = 0;

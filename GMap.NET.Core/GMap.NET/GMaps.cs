@@ -595,6 +595,8 @@ namespace GMap.NET
          return GetPlacemarkFromReverseGeocoderUrl(MakeReverseGeocoderUrl(location, LanguageStr), UsePlacemarkCache);
       }
 
+#if !PocketPC
+
       /// <summary>
       /// exports current map cache to GMDB file
       /// if file exsist only new records will be added
@@ -662,6 +664,8 @@ namespace GMap.NET
 
          return false;
       }
+#endif
+
 #endif
 
       /// <summary>

@@ -330,13 +330,17 @@ namespace GMap.NET.Internals
 #if !PocketPC
       public int RetryLoadTile = 0;
 #else
-      public int RetryLoadTile = 0;
+      public int RetryLoadTile = 1;
 #endif
 
       /// <summary>
       /// how many levels of tiles are staying decompresed in memory
       /// </summary>
+#if !PocketPC
       public int LevelsKeepInMemmory = 5;
+#else
+      public int LevelsKeepInMemmory = 1;
+#endif
 
       /// <summary>
       /// map render mode
