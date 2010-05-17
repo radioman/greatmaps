@@ -26,6 +26,7 @@ namespace GMap.NET.CacheProviders
    {
       string cache;
       string gtileCache;
+      string db;
 
       public string GtileCache
       {
@@ -48,6 +49,24 @@ namespace GMap.NET.CacheProviders
          {
             cache = value;
             gtileCache = cache + "TileDBv3" + Path.DirectorySeparatorChar;
+
+            string dir = gtileCache + GMaps.Instance.LanguageStr + Path.DirectorySeparatorChar;
+
+            // precrete dir
+            if(!Directory.Exists(dir))
+            {
+               Directory.CreateDirectory(dir);
+            }
+
+            // make empty db
+            {
+               db = dir + "Data.gmdb";
+
+               if(!File.Exists(db))
+               {
+                  CreateEmptyDB(db);
+               }
+            }
          }
       }
 
@@ -84,6 +103,7 @@ namespace GMap.NET.CacheProviders
                      {
                         using(DbCommand cmd = cn.CreateCommand())
                         {
+                           cmd.Transaction = tr;
 #if !PocketPC
                            cmd.CommandText = Properties.Resources.CreateTileDb;
 #else
@@ -93,8 +113,11 @@ namespace GMap.NET.CacheProviders
                         }
                         tr.Commit();
                      }
-                     catch
+                     catch(Exception exx)
                      {
+                        Console.WriteLine("CreateEmptyDB: " + exx.ToString());
+                        Debug.WriteLine("CreateEmptyDB: " + exx.ToString());
+
                         tr.Rollback();
                         ret = false;
                      }
@@ -105,6 +128,9 @@ namespace GMap.NET.CacheProviders
          }
          catch(Exception ex)
          {
+#if MONO
+            Console.WriteLine("CreateEmptyDB: " + ex.ToString());
+#endif
             Debug.WriteLine("CreateEmptyDB: " + ex.ToString());
             ret = false;
          }
@@ -161,7 +187,7 @@ namespace GMap.NET.CacheProviders
 #if !MONO
                   cn1.ConnectionString = string.Format("Data Source=\"{0}\";", sourceFile);
 #else
-                  cn1.ConnectionString = string.Format("Version=3,URI=file://{0}", sourceFile);
+                  cn1.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True", sourceFile);
 #endif
 
                   cn1.Open();
@@ -172,7 +198,7 @@ namespace GMap.NET.CacheProviders
 #if !MONO
                         cn2.ConnectionString = string.Format("Data Source=\"{0}\";", destFile);
 #else
-                        cn2.ConnectionString = string.Format("Version=3,URI=file://{0}", destFile);
+                        cn2.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True", destFile);
 #endif
                         cn2.Open();
                         if(cn2.State == System.Data.ConnectionState.Open)
@@ -182,7 +208,11 @@ namespace GMap.NET.CacheProviders
                               cmd.ExecuteNonQuery();
                            }
 
+#if !MONO
+                           using(SQLiteTransaction tr = cn2.BeginTransaction())
+#else
                            using(DbTransaction tr = cn2.BeginTransaction())
+#endif
                            {
                               try
                               {
@@ -212,6 +242,7 @@ namespace GMap.NET.CacheProviders
                                  {
                                     using(SQLiteCommand cmd = new SQLiteCommand(string.Format("INSERT INTO Tiles(X, Y, Zoom, Type) SELECT X, Y, Zoom, Type FROM Source.Tiles WHERE id={0}; INSERT INTO TilesData(id, Tile) Values((SELECT last_insert_rowid()), (SELECT Tile FROM Source.TilesData WHERE id={0}));", id), cn2))
                                     {
+                                       cmd.Transaction = tr;
                                        cmd.ExecuteNonQuery();
                                     }
                                  }
@@ -247,82 +278,66 @@ namespace GMap.NET.CacheProviders
          bool ret = true;
          try
          {
-            string dir = gtileCache + GMaps.Instance.LanguageStr + Path.DirectorySeparatorChar;
-
-            // precrete dir
-            if(!Directory.Exists(dir))
+            using(SQLiteConnection cn = new SQLiteConnection())
             {
-               Directory.CreateDirectory(dir);
-            }
-
-            // save
-            {
-               string db = dir + "Data.gmdb";
-
-               if(!File.Exists(db))
-               {
-                  ret = CreateEmptyDB(db);
-               }
-
-               if(ret)
-               {
-                  using(SQLiteConnection cn = new SQLiteConnection())
-                  {
 #if !MONO
-                     cn.ConnectionString = string.Format("Data Source=\"{0}\";", db);
+               cn.ConnectionString = string.Format("Data Source=\"{0}\";", db);
 #else
-                     cn.ConnectionString = string.Format("Version=3,URI=file://{0}", db);
+               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Default Timeout=33", db);
 #endif
 
-                     cn.Open();
+               cn.Open();
+               {
+                  {
+                     using(DbTransaction tr = cn.BeginTransaction())
                      {
+                        try
                         {
-                           using(DbTransaction tr = cn.BeginTransaction())
+                           using(DbCommand cmd = cn.CreateCommand())
                            {
-                              try
-                              {
-                                 using(DbCommand cmd = cn.CreateCommand())
-                                 {
-                                    cmd.Transaction = tr;
+                              cmd.Transaction = tr;
 
-                                    cmd.CommandText = "INSERT INTO Tiles(X, Y, Zoom, Type) VALUES(@p1, @p2, @p3, @p4)";
+                              cmd.CommandText = "INSERT INTO Tiles(X, Y, Zoom, Type) VALUES(@p1, @p2, @p3, @p4)";
 
-                                    cmd.Parameters.Add(new SQLiteParameter("@p1", pos.X));
-                                    cmd.Parameters.Add(new SQLiteParameter("@p2", pos.Y));
-                                    cmd.Parameters.Add(new SQLiteParameter("@p3", zoom));
-                                    cmd.Parameters.Add(new SQLiteParameter("@p4", (int) type));
+                              cmd.Parameters.Add(new SQLiteParameter("@p1", pos.X));
+                              cmd.Parameters.Add(new SQLiteParameter("@p2", pos.Y));
+                              cmd.Parameters.Add(new SQLiteParameter("@p3", zoom));
+                              cmd.Parameters.Add(new SQLiteParameter("@p4", (int) type));
 
-                                    cmd.ExecuteNonQuery();
-                                 }
-
-                                 using(DbCommand cmd = cn.CreateCommand())
-                                 {
-                                    cmd.Transaction = tr;
-
-                                    cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
-                                    cmd.Parameters.Add(new SQLiteParameter("@p1", tile.GetBuffer()));
-
-                                    cmd.ExecuteNonQuery();
-                                 }
-                                 tr.Commit();
-                              }
-                              catch(Exception ex)
-                              {
-                                 Debug.WriteLine("PutImageToCache: " + ex.ToString());
-
-                                 tr.Rollback();
-                                 ret = false;
-                              }
+                              cmd.ExecuteNonQuery();
                            }
+
+                           using(DbCommand cmd = cn.CreateCommand())
+                           {
+                              cmd.Transaction = tr;
+
+                              cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
+                              cmd.Parameters.Add(new SQLiteParameter("@p1", tile.GetBuffer()));
+
+                              cmd.ExecuteNonQuery();
+                           }
+                           tr.Commit();
+                        }
+                        catch(Exception ex)
+                        {
+                           Console.WriteLine("PutImageToCache: " + ex.ToString());
+
+                           Debug.WriteLine("PutImageToCache: " + ex.ToString());
+
+                           tr.Rollback();
+                           ret = false;
                         }
                      }
-                     cn.Close();
                   }
                }
+               cn.Close();
             }
          }
          catch(Exception ex)
          {
+#if MONO
+            Console.WriteLine("PutImageToCache: " + ex.ToString());
+#endif
             Debug.WriteLine("PutImageToCache: " + ex.ToString());
             ret = false;
          }
@@ -334,56 +349,52 @@ namespace GMap.NET.CacheProviders
          PureImage ret = null;
          try
          {
-            string db = gtileCache + GMaps.Instance.LanguageStr + Path.DirectorySeparatorChar + "Data.gmdb";
-
-            // get
+            using(SQLiteConnection cn = new SQLiteConnection())
             {
-               {
-                  using(SQLiteConnection cn = new SQLiteConnection())
-                  {
 #if !MONO
-                     cn.ConnectionString = string.Format("Data Source=\"{0}\";", db);
+               cn.ConnectionString = string.Format("Data Source=\"{0}\";", db);
 #else
-                     cn.ConnectionString = string.Format("Version=3,URI=file://{0}", db);
+               cn.ConnectionString = string.Format("Version=3,URI=file://{0},Default Timeout=33", db);
 #endif
-                     cn.Open();
+               cn.Open();
+               {
+                  using(DbCommand com = cn.CreateCommand())
+                  {
+                     com.CommandText = string.Format("SELECT Tile FROM TilesData WHERE id = (SELECT id FROM Tiles WHERE X={0} AND Y={1} AND Zoom={2} AND Type={3})", pos.X, pos.Y, zoom, (int) type);
+
+                     using(DbDataReader rd = com.ExecuteReader(System.Data.CommandBehavior.SequentialAccess))
                      {
-                        using(DbCommand com = cn.CreateCommand())
+                        if(rd.Read())
                         {
-                           com.CommandText = string.Format("SELECT Tile FROM TilesData WHERE id = (SELECT id FROM Tiles WHERE X={0} AND Y={1} AND Zoom={2} AND Type={3})", pos.X, pos.Y, zoom, (int) type);
-
-                           using(DbDataReader rd = com.ExecuteReader(System.Data.CommandBehavior.SequentialAccess))
+                           long length = rd.GetBytes(0, 0, null, 0, 0);
+                           byte[] tile = new byte[length];
+                           rd.GetBytes(0, 0, tile, 0, tile.Length);
                            {
-                              if(rd.Read())
+                              if(GMaps.Instance.ImageProxy != null)
                               {
-                                 long length = rd.GetBytes(0, 0, null, 0, 0);
-                                 byte[] tile = new byte[length];
-                                 rd.GetBytes(0, 0, tile, 0, tile.Length);
-                                 {
-                                    if(GMaps.Instance.ImageProxy != null)
-                                    {
-                                       MemoryStream stm = new MemoryStream(tile, 0, tile.Length, false, true);
+                                 MemoryStream stm = new MemoryStream(tile, 0, tile.Length, false, true);
 
-                                       ret = GMaps.Instance.ImageProxy.FromStream(stm);
-                                       if(ret!= null)
-                                       {
-                                          ret.Data = stm;
-                                       }
-                                    }
+                                 ret = GMaps.Instance.ImageProxy.FromStream(stm);
+                                 if(ret!= null)
+                                 {
+                                    ret.Data = stm;
                                  }
-                                 tile = null;
                               }
-                              rd.Close();
                            }
+                           tile = null;
                         }
+                        rd.Close();
                      }
-                     cn.Close();
                   }
                }
+               cn.Close();
             }
          }
          catch(Exception ex)
          {
+#if MONO
+            Console.WriteLine("GetImageFromCache: " + ex.ToString());
+#endif
             Debug.WriteLine("GetImageFromCache: " + ex.ToString());
             ret = null;
          }

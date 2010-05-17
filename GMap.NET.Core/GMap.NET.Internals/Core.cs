@@ -1159,15 +1159,19 @@ namespace GMap.NET.Internals
                p.X += i;
                p.Y += j;
 
-               //if(p.X < minOfTiles.Width)
-               //{
-               //   p.X += (maxOfTiles.Width + 1);
-               //}
+#if ContinuesMap
+               // ----------------------------
+               if(p.X < minOfTiles.Width)
+               {
+                  p.X += (maxOfTiles.Width + 1);
+               }
 
-               //if(p.X > maxOfTiles.Width)
-               //{
-               //   p.X -= (maxOfTiles.Width + 1);
-               //}
+               if(p.X > maxOfTiles.Width)
+               {
+                  p.X -= (maxOfTiles.Width + 1);
+               }
+               // ----------------------------
+#endif
 
                if(p.X >= minOfTiles.Width && p.Y >= minOfTiles.Height && p.X <= maxOfTiles.Width && p.Y <= maxOfTiles.Height)
                {

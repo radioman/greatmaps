@@ -416,17 +416,19 @@ namespace GMap.NET.WindowsForms
                Core.tilePoint.X += i;
                Core.tilePoint.Y += j;
 
+#if ContinuesMap
                //-----
-               //GMap.NET.Point tileToDraw = Core.tilePoint;  
-               //if(tileToDraw.X < Core.minOfTiles.Width)
-               //{
-               //   tileToDraw.X += (Core.maxOfTiles.Width + 1);
-               //}
-               //if(tileToDraw.X > Core.maxOfTiles.Width)
-               //{
-               //   tileToDraw.X -= (Core.maxOfTiles.Width + 1);
-               //}
+               GMap.NET.Point tileToDraw = Core.tilePoint;  
+               if(tileToDraw.X < Core.minOfTiles.Width)
+               {
+                  tileToDraw.X += (Core.maxOfTiles.Width + 1);
+               }
+               if(tileToDraw.X > Core.maxOfTiles.Width)
+               {
+                  tileToDraw.X -= (Core.maxOfTiles.Width + 1);
+               }
                //-----
+#endif
 
                {
                   Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
@@ -435,11 +437,13 @@ namespace GMap.NET.WindowsForms
 
                   if(Core.CurrentRegion.IntersectsWith(Core.tileRect))
                   {
-                     bool found = false;
-
-                     //Tile t = Core.Matrix[tileToDraw];
+                     bool found = false; 
+#if !ContinuesMap
 
                      Tile t = Core.Matrix.GetTile(Core.Zoom, Core.tilePoint);
+#else
+                     Tile t = Core.Matrix.GetTile(Core.Zoom, tileToDraw);
+#endif
                      if(t != null)
                      {
                         // render tile
