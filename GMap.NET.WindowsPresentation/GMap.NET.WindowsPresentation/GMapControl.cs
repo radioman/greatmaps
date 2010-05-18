@@ -354,7 +354,7 @@ namespace GMap.NET.WindowsPresentation
             ClipToBounds = true;
             SnapsToDevicePixels = true;
 
-            GMaps.Instance.ImageProxy = new WindowsPresentationImageProxy();
+            Manager.ImageProxy = new WindowsPresentationImageProxy();
 
             Core.SystemType = "WindowsPresentation";
 
@@ -364,8 +364,6 @@ namespace GMap.NET.WindowsPresentation
             Loaded += new RoutedEventHandler(GMapControl_Loaded);
             Unloaded += new RoutedEventHandler(GMapControl_Unloaded);
             SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
-
-            Application.Current.Exit += new ExitEventHandler(Current_Exit);
 
             Markers.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
             this.ItemsSource = Markers;
@@ -405,6 +403,13 @@ namespace GMap.NET.WindowsPresentation
       {
          Core.StartSystem();
          Core_OnMapZoomChanged();
+
+         Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+            new Action(delegate()
+            {
+               Application.Current.Exit += new ExitEventHandler(Current_Exit);
+            }
+            ));
       }
 
       void GMapControl_Unloaded(object sender, RoutedEventArgs e)
