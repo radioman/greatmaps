@@ -269,6 +269,7 @@ namespace Demo.WindowsForms
                else
                {
                   marker.Position = new PointLatLng(d.Lat, d.Lng);
+                  (marker as GMapMarkerGoogleRed).Bearing = (float?)d.Bearing;
                }
                marker.ToolTipText = d.Line;
             }
@@ -292,6 +293,7 @@ namespace Demo.WindowsForms
                else
                {
                   marker.Position = new PointLatLng(d.Lat, d.Lng);
+                  (marker as GMapMarkerGoogleGreen).Bearing = (float?) d.Bearing;
                }
                marker.ToolTipText = d.Line;
             }
