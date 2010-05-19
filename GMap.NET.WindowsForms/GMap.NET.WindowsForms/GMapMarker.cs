@@ -30,7 +30,7 @@ namespace GMap.NET.WindowsForms
          {
             position = value;
 
-            if(Overlay != null)
+            if(Overlay != null && Overlay.Control != null)
             {
                GMap.NET.Point p = Overlay.Control.FromLatLngToLocal(Position);
                LocalPosition = new Point(p.X + Offset.X, p.Y  + Offset.Y);
@@ -40,7 +40,7 @@ namespace GMap.NET.WindowsForms
 
       internal void ForceUpdateLocalPosition()
       {
-         if(Overlay != null)
+         if(Overlay != null && Overlay.Control != null)
          {
             GMap.NET.Point p = Overlay.Control.FromLatLngToLocal(Position);
             area.Location = new Point(p.X + Offset.X, p.Y  + Offset.Y);
@@ -63,19 +63,23 @@ namespace GMap.NET.WindowsForms
       }
 
       Rectangle area;
+
+      /// <summary>
+      /// marker position in local coordinates, internal only, do not set it manualy
+      /// </summary>
       public Point LocalPosition
       {
          get
          {
             return area.Location;
          }
-         internal set
+         set
          {
             if(area.Location != value)
             {
                area.Location = value;
 
-               if(Overlay != null)
+               if(Overlay != null && Overlay.Control != null)
                {
                   if(!Overlay.Control.HoldInvalidation)
                   {

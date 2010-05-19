@@ -129,7 +129,7 @@ namespace Demo.WindowsForms
                         }
                      }
 
-                     // draw route
+                     // draw routes
                      {
                         foreach(GMapRoute r in Main.routes.Routes)
                         {
@@ -159,6 +159,73 @@ namespace Demo.WindowsForms
                               if(rp.PointCount > 0)
                               {
                                  gfx.DrawPath(r.Stroke, rp);
+                              }
+                           }
+                        }
+                     }
+
+                     // draw polygons
+                     {
+                        foreach(GMapPolygon r in Main.polygons.Polygons)
+                        {
+                           using(GraphicsPath rp = new GraphicsPath())
+                           {
+                              for(int j = 0; j < r.Points.Count; j++)
+                              {
+                                 var pr = r.Points[j];
+                                 GMap.NET.Point px = info.Projection.FromLatLngToPixel(pr.Lat, pr.Lng, info.Zoom);
+
+                                 px.Offset(padding, padding);
+                                 px.Offset(-topLeftPx.X, -topLeftPx.Y);
+
+                                 GMap.NET.Point p2 = px;
+
+                                 if(j == 0)
+                                 {
+                                    rp.AddLine(p2.X, p2.Y, p2.X, p2.Y);
+                                 }
+                                 else
+                                 {
+                                    System.Drawing.PointF p = rp.GetLastPoint();
+                                    rp.AddLine(p.X, p.Y, p2.X, p2.Y);
+                                 }
+                              }
+
+                              if(rp.PointCount > 0)
+                              {
+                                 rp.CloseFigure();
+
+                                 gfx.FillPath(r.Fill, rp);
+
+                                 gfx.DrawPath(r.Stroke, rp);
+                              }
+                           }
+                        }
+                     }
+
+                     // draw markers
+                     {
+                        foreach(GMapMarker r in Main.objects.Markers)
+                        {
+                           var pr = r.Position;
+                           GMap.NET.Point px = info.Projection.FromLatLngToPixel(pr.Lat, pr.Lng, info.Zoom);
+
+                           px.Offset(padding, padding);
+                           px.Offset(-topLeftPx.X, -topLeftPx.Y);
+
+                           r.LocalPosition = new System.Drawing.Point(px.X, px.Y);
+
+                           r.OnRender(gfx);
+                        }
+
+                        // tooltips above
+                        foreach(GMapMarker m in Main.objects.Markers)
+                        {
+                           if(m.ToolTip != null && m.Visible)
+                           {
+                              if(!string.IsNullOrEmpty(m.ToolTipText))
+                              {
+                                 m.ToolTip.Draw(gfx);
                               }
                            }
                         }

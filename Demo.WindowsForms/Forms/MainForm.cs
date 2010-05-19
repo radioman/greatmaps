@@ -29,9 +29,9 @@ namespace Demo.WindowsForms
 
       // layers
       GMapOverlay top;
-      GMapOverlay objects;
+      internal GMapOverlay objects;
       internal GMapOverlay routes;
-      GMapOverlay polygons;
+      internal GMapOverlay polygons;
 
       public MainForm()
       {
@@ -114,11 +114,11 @@ namespace Demo.WindowsForms
 
             // add custom layers  
             {
-               polygons = new GMapOverlay(MainMap, "polygons");
-               MainMap.Overlays.Add(polygons);
-
                routes = new GMapOverlay(MainMap, "routes");
                MainMap.Overlays.Add(routes);
+
+               polygons = new GMapOverlay(MainMap, "polygons");
+               MainMap.Overlays.Add(polygons);
 
                objects = new GMapOverlay(MainMap, "objects");
                MainMap.Overlays.Add(objects);

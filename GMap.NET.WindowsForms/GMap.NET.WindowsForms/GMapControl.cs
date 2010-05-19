@@ -1803,23 +1803,7 @@ namespace GMap.NET.WindowsForms
          {
             return Core.CurrentViewArea;
          }
-      }
-
-      /// <summary>
-      /// for tooltip text padding
-      /// </summary>
-      [Browsable(false)]
-      public GMap.NET.Size TooltipTextPadding
-      {
-         get
-         {
-            return Core.TooltipTextPadding;
-         }
-         set
-         {
-            Core.TooltipTextPadding = value;
-         }
-      }
+      }        
 
       /// <summary>
       /// type of map

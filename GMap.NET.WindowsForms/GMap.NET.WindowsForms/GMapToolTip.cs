@@ -49,6 +49,11 @@
       public Brush Foreground = new System.Drawing.SolidBrush(Color.Navy);
 #endif
 
+      /// <summary>
+      /// text padding
+      /// </summary>
+      public Size TextPadding = new Size(10, 10);
+
       public GMapToolTip(GMapMarker marker)
       {
          this.Marker = marker;
@@ -68,7 +73,7 @@
       public virtual void Draw(Graphics g)
       {
          System.Drawing.Size st = g.MeasureString(Marker.ToolTipText, Font).ToSize();
-         System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.LocalPosition.X, Marker.LocalPosition.Y - st.Height, st.Width + Marker.Overlay.Control.TooltipTextPadding.Width, st.Height + Marker.Overlay.Control.TooltipTextPadding.Height);
+         System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.LocalPosition.X, Marker.LocalPosition.Y - st.Height, st.Width + TextPadding.Width, st.Height + TextPadding.Height);
          rect.Offset(Offset.X, Offset.Y);
 
          g.DrawLine(Stroke, Marker.LocalPosition.X, Marker.LocalPosition.Y, rect.X, rect.Y + rect.Height / 2);

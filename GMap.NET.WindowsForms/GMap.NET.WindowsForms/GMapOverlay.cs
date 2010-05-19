@@ -51,15 +51,21 @@ namespace GMap.NET.WindowsForms
       {
          if(e.NewItems != null)
          {
-            foreach(GMapPolygon obj in e.NewItems)
+            if(Control != null)
             {
-               Control.UpdatePolygonLocalPosition(obj);
+               foreach(GMapPolygon obj in e.NewItems)
+               {
+                  Control.UpdatePolygonLocalPosition(obj);
+               }
             }
          }
 
-         if(!Control.HoldInvalidation)
+         if(Control != null)
          {
-            Control.Core_OnNeedInvalidation();
+            if(!Control.HoldInvalidation)
+            {
+               Control.Core_OnNeedInvalidation();
+            }
          }
       }
 
@@ -67,15 +73,21 @@ namespace GMap.NET.WindowsForms
       {
          if(e.NewItems != null)
          {
-            foreach(GMapRoute obj in e.NewItems)
+            if(Control != null)
             {
-               Control.UpdateRouteLocalPosition(obj);
+               foreach(GMapRoute obj in e.NewItems)
+               {
+                  Control.UpdateRouteLocalPosition(obj);
+               }
             }
          }
 
-         if(!Control.HoldInvalidation)
+         if(Control != null)
          {
-            Control.Core_OnNeedInvalidation();
+            if(!Control.HoldInvalidation)
+            {
+               Control.Core_OnNeedInvalidation();
+            }
          }
       }
 
@@ -83,30 +95,36 @@ namespace GMap.NET.WindowsForms
       {
          if(e.NewItems != null)
          {
-            foreach(GMapMarker obj in e.NewItems)
+            if(Control != null)
             {
-               if(obj != null)
+               foreach(GMapMarker obj in e.NewItems)
                {
-                  obj.Overlay = this;
-                  obj.ForceUpdateLocalPosition();
+                  if(obj != null)
+                  {
+                     obj.Overlay = this;
+                     obj.ForceUpdateLocalPosition();
+                  }
                }
             }
          }
 
-         if(e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Reset)
+         if(Control != null)
          {
-#if !PocketPC
-            if(Control.IsMouseOverMarker)
+            if(e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Reset)
             {
-               Control.IsMouseOverMarker = false;
-               Control.Cursor = Cursors.Default;
-            }
+#if !PocketPC
+               if(Control.IsMouseOverMarker)
+               {
+                  Control.IsMouseOverMarker = false;
+                  Control.Cursor = Cursors.Default;
+               }
 #endif
-         }
+            }
 
-         if(!Control.HoldInvalidation)
-         {
-            Control.Core_OnNeedInvalidation();
+            if(!Control.HoldInvalidation)
+            {
+               Control.Core_OnNeedInvalidation();
+            }
          }
       }
 
@@ -221,35 +239,38 @@ namespace GMap.NET.WindowsForms
       /// <param name="g"></param>
       public virtual void Render(Graphics g)
       {
-         if(Control.PolygonsEnabled)
+         if(Control != null)
          {
-            DrawPolygons(g);
-         }
-
-         if(Control.RoutesEnabled)
-         {
-            DrawRoutes(g);
-         }
-
-         if(Control.MarkersEnabled)
-         {
-            // markers
-            foreach(GMapMarker m in Markers)
+            if(Control.RoutesEnabled)
             {
-               if(m.Visible && Control.Core.CurrentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
-               {
-                  m.OnRender(g);
-               }
+               DrawRoutes(g);
             }
 
-            // tooltips above
-            foreach(GMapMarker m in Markers)
+            if(Control.PolygonsEnabled)
             {
-               if(m.ToolTip != null && m.Visible && Control.Core.CurrentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
+               DrawPolygons(g);
+            }
+
+            if(Control.MarkersEnabled)
+            {
+               // markers
+               foreach(GMapMarker m in Markers)
                {
-                  if(!string.IsNullOrEmpty(m.ToolTipText) && (m.ToolTipMode == MarkerTooltipMode.Always || (m.ToolTipMode == MarkerTooltipMode.OnMouseOver && m.IsMouseOver)))
+                  if(m.Visible && Control.Core.CurrentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
                   {
-                     m.ToolTip.Draw(g);
+                     m.OnRender(g);
+                  }
+               }
+
+               // tooltips above
+               foreach(GMapMarker m in Markers)
+               {
+                  if(m.ToolTip != null && m.Visible && Control.Core.CurrentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
+                  {
+                     if(!string.IsNullOrEmpty(m.ToolTipText) && (m.ToolTipMode == MarkerTooltipMode.Always || (m.ToolTipMode == MarkerTooltipMode.OnMouseOver && m.IsMouseOver)))
+                     {
+                        m.ToolTip.Draw(g);
+                     }
                   }
                }
             }

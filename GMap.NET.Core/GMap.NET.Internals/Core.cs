@@ -201,11 +201,6 @@ namespace GMap.NET.Internals
          }
       }
 
-      /// <summary>
-      /// for tooltip text padding
-      /// </summary>
-      public Size TooltipTextPadding = new Size(10, 10);
-
       MapType mapType;
       public MapType MapType
       {
