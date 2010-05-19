@@ -46,6 +46,7 @@
          this.trackBar1 = new System.Windows.Forms.TrackBar();
          this.groupBox2 = new System.Windows.Forms.GroupBox();
          this.groupBox5 = new System.Windows.Forms.GroupBox();
+         this.button16 = new System.Windows.Forms.Button();
          this.button13 = new System.Windows.Forms.Button();
          this.checkBoxDebug = new System.Windows.Forms.CheckBox();
          this.button12 = new System.Windows.Forms.Button();
@@ -98,10 +99,9 @@
          // label7
          // 
          this.label7.AutoSize = true;
-         this.label7.Location = new System.Drawing.Point(176, 27);
-         this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+         this.label7.Location = new System.Drawing.Point(132, 22);
          this.label7.Name = "label7";
-         this.label7.Size = new System.Drawing.Size(35, 17);
+         this.label7.Size = new System.Drawing.Size(27, 13);
          this.label7.TabIndex = 31;
          this.label7.Text = "type";
          // 
@@ -109,10 +109,9 @@
          // 
          this.comboBoxMapType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
          this.comboBoxMapType.FormattingEnabled = true;
-         this.comboBoxMapType.Location = new System.Drawing.Point(8, 23);
-         this.comboBoxMapType.Margin = new System.Windows.Forms.Padding(4);
+         this.comboBoxMapType.Location = new System.Drawing.Point(8, 19);
          this.comboBoxMapType.Name = "comboBoxMapType";
-         this.comboBoxMapType.Size = new System.Drawing.Size(165, 24);
+         this.comboBoxMapType.Size = new System.Drawing.Size(123, 21);
          this.comboBoxMapType.TabIndex = 9;
          this.comboBoxMapType.DropDownClosed += new System.EventHandler(this.comboBoxMapType_DropDownClosed);
          // 
@@ -122,11 +121,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
          this.groupMap.Controls.Add(this.MainMap);
-         this.groupMap.Location = new System.Drawing.Point(16, 9);
-         this.groupMap.Margin = new System.Windows.Forms.Padding(4);
+         this.groupMap.Location = new System.Drawing.Point(12, 7);
          this.groupMap.Name = "groupMap";
-         this.groupMap.Padding = new System.Windows.Forms.Padding(4);
-         this.groupMap.Size = new System.Drawing.Size(859, 860);
+         this.groupMap.Size = new System.Drawing.Size(644, 699);
          this.groupMap.TabIndex = 27;
          this.groupMap.TabStop = false;
          this.groupMap.Text = "gmap";
@@ -136,19 +133,21 @@
          this.MainMap.CanDragMap = true;
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
          this.MainMap.GrayScaleMode = false;
-         this.MainMap.Location = new System.Drawing.Point(4, 19);
-         this.MainMap.MapType = GMap.NET.MapType.GoogleMap;
+         this.MainMap.LevelsKeepInMemmory = 5;
+         this.MainMap.Location = new System.Drawing.Point(3, 16);
+         this.MainMap.MapType = GMap.NET.MapType.ArcGIS_MapsLT_Map;
          this.MainMap.MarkersEnabled = true;
          this.MainMap.MaxZoom = 2;
          this.MainMap.MinZoom = 2;
          this.MainMap.MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionAndCenter;
          this.MainMap.Name = "MainMap";
          this.MainMap.PolygonsEnabled = true;
+         this.MainMap.RetryLoadTile = 0;
          this.MainMap.RoutesEnabled = true;
          this.MainMap.ShowTileGridLines = false;
-         this.MainMap.Size = new System.Drawing.Size(851, 837);
+         this.MainMap.Size = new System.Drawing.Size(638, 680);
          this.MainMap.TabIndex = 0;
-         this.MainMap.Zoom = 0D;
+         this.MainMap.Zoom = 0;
          // 
          // groupBox3
          // 
@@ -161,11 +160,9 @@
          this.groupBox3.Controls.Add(this.label1);
          this.groupBox3.Controls.Add(this.textBoxLng);
          this.groupBox3.Controls.Add(this.textBoxLat);
-         this.groupBox3.Location = new System.Drawing.Point(955, 9);
-         this.groupBox3.Margin = new System.Windows.Forms.Padding(4);
+         this.groupBox3.Location = new System.Drawing.Point(716, 7);
          this.groupBox3.Name = "groupBox3";
-         this.groupBox3.Padding = new System.Windows.Forms.Padding(4);
-         this.groupBox3.Size = new System.Drawing.Size(225, 158);
+         this.groupBox3.Size = new System.Drawing.Size(169, 128);
          this.groupBox3.TabIndex = 28;
          this.groupBox3.TabStop = false;
          this.groupBox3.Text = "coordinates";
@@ -173,19 +170,17 @@
          // label6
          // 
          this.label6.AutoSize = true;
-         this.label6.Location = new System.Drawing.Point(176, 91);
-         this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+         this.label6.Location = new System.Drawing.Point(132, 74);
          this.label6.Name = "label6";
-         this.label6.Size = new System.Drawing.Size(36, 17);
+         this.label6.Size = new System.Drawing.Size(28, 13);
          this.label6.TabIndex = 11;
          this.label6.Text = "goto";
          // 
          // textBoxGeo
          // 
-         this.textBoxGeo.Location = new System.Drawing.Point(8, 87);
-         this.textBoxGeo.Margin = new System.Windows.Forms.Padding(4);
+         this.textBoxGeo.Location = new System.Drawing.Point(9, 71);
          this.textBoxGeo.Name = "textBoxGeo";
-         this.textBoxGeo.Size = new System.Drawing.Size(165, 22);
+         this.textBoxGeo.Size = new System.Drawing.Size(122, 20);
          this.textBoxGeo.TabIndex = 10;
          this.textBoxGeo.Text = "lietuva vilnius";
          this.textBoxGeo.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxGeo_KeyPress);
@@ -193,10 +188,9 @@
          // button1
          // 
          this.button1.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-         this.button1.Location = new System.Drawing.Point(113, 121);
-         this.button1.Margin = new System.Windows.Forms.Padding(4);
+         this.button1.Location = new System.Drawing.Point(85, 98);
          this.button1.Name = "button1";
-         this.button1.Size = new System.Drawing.Size(99, 30);
+         this.button1.Size = new System.Drawing.Size(74, 24);
          this.button1.TabIndex = 9;
          this.button1.Text = "Reload";
          this.button1.UseVisualStyleBackColor = true;
@@ -205,10 +199,9 @@
          // button8
          // 
          this.button8.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-         this.button8.Location = new System.Drawing.Point(8, 121);
-         this.button8.Margin = new System.Windows.Forms.Padding(4);
+         this.button8.Location = new System.Drawing.Point(9, 98);
          this.button8.Name = "button8";
-         this.button8.Size = new System.Drawing.Size(100, 30);
+         this.button8.Size = new System.Drawing.Size(72, 24);
          this.button8.TabIndex = 8;
          this.button8.Text = "GoTo !";
          this.button8.UseVisualStyleBackColor = true;
@@ -217,47 +210,42 @@
          // label2
          // 
          this.label2.AutoSize = true;
-         this.label2.Location = new System.Drawing.Point(176, 59);
-         this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+         this.label2.Location = new System.Drawing.Point(132, 48);
          this.label2.Name = "label2";
-         this.label2.Size = new System.Drawing.Size(27, 17);
+         this.label2.Size = new System.Drawing.Size(21, 13);
          this.label2.TabIndex = 3;
          this.label2.Text = "lng";
          // 
          // label1
          // 
          this.label1.AutoSize = true;
-         this.label1.Location = new System.Drawing.Point(176, 27);
-         this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+         this.label1.Location = new System.Drawing.Point(132, 22);
          this.label1.Name = "label1";
-         this.label1.Size = new System.Drawing.Size(23, 17);
+         this.label1.Size = new System.Drawing.Size(18, 13);
          this.label1.TabIndex = 2;
          this.label1.Text = "lat";
          // 
          // textBoxLng
          // 
-         this.textBoxLng.Location = new System.Drawing.Point(8, 55);
-         this.textBoxLng.Margin = new System.Windows.Forms.Padding(4);
+         this.textBoxLng.Location = new System.Drawing.Point(9, 45);
          this.textBoxLng.Name = "textBoxLng";
-         this.textBoxLng.Size = new System.Drawing.Size(165, 22);
+         this.textBoxLng.Size = new System.Drawing.Size(122, 20);
          this.textBoxLng.TabIndex = 1;
          this.textBoxLng.Text = "25.2985095977783";
          // 
          // textBoxLat
          // 
-         this.textBoxLat.Location = new System.Drawing.Point(8, 23);
-         this.textBoxLat.Margin = new System.Windows.Forms.Padding(4);
+         this.textBoxLat.Location = new System.Drawing.Point(9, 19);
          this.textBoxLat.Name = "textBoxLat";
-         this.textBoxLat.Size = new System.Drawing.Size(165, 22);
+         this.textBoxLat.Size = new System.Drawing.Size(122, 20);
          this.textBoxLat.TabIndex = 0;
          this.textBoxLat.Text = "54.6961334816182";
          // 
          // button5
          // 
-         this.button5.Location = new System.Drawing.Point(125, 55);
-         this.button5.Margin = new System.Windows.Forms.Padding(4);
+         this.button5.Location = new System.Drawing.Point(94, 45);
          this.button5.Name = "button5";
-         this.button5.Size = new System.Drawing.Size(84, 30);
+         this.button5.Size = new System.Drawing.Size(63, 24);
          this.button5.TabIndex = 13;
          this.button5.Text = "Clear All";
          this.button5.UseVisualStyleBackColor = true;
@@ -265,10 +253,9 @@
          // 
          // button4
          // 
-         this.button4.Location = new System.Drawing.Point(8, 18);
-         this.button4.Margin = new System.Windows.Forms.Padding(4);
+         this.button4.Location = new System.Drawing.Point(6, 15);
          this.button4.Name = "button4";
-         this.button4.Size = new System.Drawing.Size(109, 30);
+         this.button4.Size = new System.Drawing.Size(82, 24);
          this.button4.TabIndex = 12;
          this.button4.Text = "Add Marker";
          this.button4.UseVisualStyleBackColor = true;
@@ -278,13 +265,12 @@
          // 
          this.trackBar1.Dock = System.Windows.Forms.DockStyle.Fill;
          this.trackBar1.LargeChange = 1;
-         this.trackBar1.Location = new System.Drawing.Point(4, 19);
-         this.trackBar1.Margin = new System.Windows.Forms.Padding(4);
+         this.trackBar1.Location = new System.Drawing.Point(3, 16);
          this.trackBar1.Maximum = 17;
          this.trackBar1.Minimum = 1;
          this.trackBar1.Name = "trackBar1";
          this.trackBar1.Orientation = System.Windows.Forms.Orientation.Vertical;
-         this.trackBar1.Size = new System.Drawing.Size(56, 837);
+         this.trackBar1.Size = new System.Drawing.Size(42, 680);
          this.trackBar1.TabIndex = 29;
          this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
          this.trackBar1.Value = 12;
@@ -295,11 +281,9 @@
          this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
          this.groupBox2.Controls.Add(this.trackBar1);
-         this.groupBox2.Location = new System.Drawing.Point(883, 9);
-         this.groupBox2.Margin = new System.Windows.Forms.Padding(4);
+         this.groupBox2.Location = new System.Drawing.Point(662, 7);
          this.groupBox2.Name = "groupBox2";
-         this.groupBox2.Padding = new System.Windows.Forms.Padding(4);
-         this.groupBox2.Size = new System.Drawing.Size(64, 860);
+         this.groupBox2.Size = new System.Drawing.Size(48, 699);
          this.groupBox2.TabIndex = 30;
          this.groupBox2.TabStop = false;
          this.groupBox2.Text = "zoom";
@@ -307,6 +291,7 @@
          // groupBox5
          // 
          this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+         this.groupBox5.Controls.Add(this.button16);
          this.groupBox5.Controls.Add(this.button13);
          this.groupBox5.Controls.Add(this.checkBoxDebug);
          this.groupBox5.Controls.Add(this.button12);
@@ -316,33 +301,41 @@
          this.groupBox5.Controls.Add(this.checkBoxCurrentMarker);
          this.groupBox5.Controls.Add(this.label7);
          this.groupBox5.Controls.Add(this.comboBoxMapType);
-         this.groupBox5.Location = new System.Drawing.Point(955, 174);
-         this.groupBox5.Margin = new System.Windows.Forms.Padding(4);
+         this.groupBox5.Location = new System.Drawing.Point(716, 141);
          this.groupBox5.Name = "groupBox5";
-         this.groupBox5.Padding = new System.Windows.Forms.Padding(4);
-         this.groupBox5.Size = new System.Drawing.Size(225, 180);
+         this.groupBox5.Size = new System.Drawing.Size(169, 146);
          this.groupBox5.TabIndex = 31;
          this.groupBox5.TabStop = false;
          this.groupBox5.Text = "gmap";
          // 
+         // button16
+         // 
+         this.button16.Location = new System.Drawing.Point(92, 92);
+         this.button16.Name = "button16";
+         this.button16.Size = new System.Drawing.Size(69, 24);
+         this.button16.TabIndex = 49;
+         this.button16.Text = "GPX...";
+         this.button16.UseVisualStyleBackColor = true;
+         this.button16.Click += new System.EventHandler(this.button16_Click);
+         // 
          // button13
          // 
-         this.button13.Location = new System.Drawing.Point(11, 144);
-         this.button13.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         this.button13.Location = new System.Drawing.Point(9, 117);
+         this.button13.Margin = new System.Windows.Forms.Padding(2);
          this.button13.Name = "button13";
-         this.button13.Size = new System.Drawing.Size(97, 30);
+         this.button13.Size = new System.Drawing.Size(73, 24);
          this.button13.TabIndex = 41;
-         this.button13.Text = "Get Static Map";
+         this.button13.Text = "Get Static";
          this.button13.UseVisualStyleBackColor = true;
          this.button13.Click += new System.EventHandler(this.button13_Click);
          // 
          // checkBoxDebug
          // 
          this.checkBoxDebug.AutoSize = true;
-         this.checkBoxDebug.Location = new System.Drawing.Point(139, 91);
-         this.checkBoxDebug.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         this.checkBoxDebug.Location = new System.Drawing.Point(104, 74);
+         this.checkBoxDebug.Margin = new System.Windows.Forms.Padding(2);
          this.checkBoxDebug.Name = "checkBoxDebug";
-         this.checkBoxDebug.Size = new System.Drawing.Size(57, 21);
+         this.checkBoxDebug.Size = new System.Drawing.Size(45, 17);
          this.checkBoxDebug.TabIndex = 40;
          this.checkBoxDebug.Text = "Grid";
          this.checkBoxDebug.UseVisualStyleBackColor = true;
@@ -350,10 +343,10 @@
          // 
          // button12
          // 
-         this.button12.Location = new System.Drawing.Point(113, 144);
-         this.button12.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         this.button12.Location = new System.Drawing.Point(92, 117);
+         this.button12.Margin = new System.Windows.Forms.Padding(2);
          this.button12.Name = "button12";
-         this.button12.Size = new System.Drawing.Size(97, 30);
+         this.button12.Size = new System.Drawing.Size(69, 24);
          this.button12.TabIndex = 39;
          this.button12.Text = "Save View";
          this.button12.UseVisualStyleBackColor = true;
@@ -362,10 +355,9 @@
          // label8
          // 
          this.label8.AutoSize = true;
-         this.label8.Location = new System.Drawing.Point(176, 60);
-         this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+         this.label8.Location = new System.Drawing.Point(132, 49);
          this.label8.Name = "label8";
-         this.label8.Size = new System.Drawing.Size(43, 17);
+         this.label8.Size = new System.Drawing.Size(33, 13);
          this.label8.TabIndex = 38;
          this.label8.Text = "mode";
          // 
@@ -373,10 +365,9 @@
          // 
          this.comboBoxMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
          this.comboBoxMode.FormattingEnabled = true;
-         this.comboBoxMode.Location = new System.Drawing.Point(8, 57);
-         this.comboBoxMode.Margin = new System.Windows.Forms.Padding(4);
+         this.comboBoxMode.Location = new System.Drawing.Point(8, 46);
          this.comboBoxMode.Name = "comboBoxMode";
-         this.comboBoxMode.Size = new System.Drawing.Size(165, 24);
+         this.comboBoxMode.Size = new System.Drawing.Size(123, 21);
          this.comboBoxMode.TabIndex = 37;
          this.comboBoxMode.DropDownClosed += new System.EventHandler(this.comboBoxMode_DropDownClosed);
          // 
@@ -385,12 +376,11 @@
          this.checkBoxCanDrag.AutoSize = true;
          this.checkBoxCanDrag.Checked = true;
          this.checkBoxCanDrag.CheckState = System.Windows.Forms.CheckState.Checked;
-         this.checkBoxCanDrag.Location = new System.Drawing.Point(8, 119);
-         this.checkBoxCanDrag.Margin = new System.Windows.Forms.Padding(4);
+         this.checkBoxCanDrag.Location = new System.Drawing.Point(9, 95);
          this.checkBoxCanDrag.Name = "checkBoxCanDrag";
-         this.checkBoxCanDrag.Size = new System.Drawing.Size(121, 21);
+         this.checkBoxCanDrag.Size = new System.Drawing.Size(73, 17);
          this.checkBoxCanDrag.TabIndex = 36;
-         this.checkBoxCanDrag.Text = "Can Drag Map";
+         this.checkBoxCanDrag.Text = "Drag Map";
          this.checkBoxCanDrag.UseVisualStyleBackColor = true;
          this.checkBoxCanDrag.CheckedChanged += new System.EventHandler(this.checkBoxCanDrag_CheckedChanged);
          // 
@@ -399,10 +389,9 @@
          this.checkBoxCurrentMarker.AutoSize = true;
          this.checkBoxCurrentMarker.Checked = true;
          this.checkBoxCurrentMarker.CheckState = System.Windows.Forms.CheckState.Checked;
-         this.checkBoxCurrentMarker.Location = new System.Drawing.Point(8, 91);
-         this.checkBoxCurrentMarker.Margin = new System.Windows.Forms.Padding(4);
+         this.checkBoxCurrentMarker.Location = new System.Drawing.Point(9, 73);
          this.checkBoxCurrentMarker.Name = "checkBoxCurrentMarker";
-         this.checkBoxCurrentMarker.Size = new System.Drawing.Size(125, 21);
+         this.checkBoxCurrentMarker.Size = new System.Drawing.Size(96, 17);
          this.checkBoxCurrentMarker.TabIndex = 35;
          this.checkBoxCurrentMarker.Text = "Current Marker";
          this.checkBoxCurrentMarker.UseVisualStyleBackColor = true;
@@ -417,21 +406,18 @@
          this.groupBox1.Controls.Add(this.checkBoxUseGeoCache);
          this.groupBox1.Controls.Add(this.checkBoxUseRouteCache);
          this.groupBox1.Controls.Add(this.button2);
-         this.groupBox1.Location = new System.Drawing.Point(955, 754);
-         this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
+         this.groupBox1.Location = new System.Drawing.Point(716, 613);
          this.groupBox1.Name = "groupBox1";
-         this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
-         this.groupBox1.Size = new System.Drawing.Size(225, 114);
+         this.groupBox1.Size = new System.Drawing.Size(169, 93);
          this.groupBox1.TabIndex = 32;
          this.groupBox1.TabStop = false;
          this.groupBox1.Text = "cache";
          // 
          // button11
          // 
-         this.button11.Location = new System.Drawing.Point(116, 80);
-         this.button11.Margin = new System.Windows.Forms.Padding(4);
+         this.button11.Location = new System.Drawing.Point(87, 65);
          this.button11.Name = "button11";
-         this.button11.Size = new System.Drawing.Size(95, 25);
+         this.button11.Size = new System.Drawing.Size(71, 20);
          this.button11.TabIndex = 38;
          this.button11.Text = "Prefetch";
          this.button11.UseVisualStyleBackColor = true;
@@ -439,10 +425,9 @@
          // 
          // button10
          // 
-         this.button10.Location = new System.Drawing.Point(116, 48);
-         this.button10.Margin = new System.Windows.Forms.Padding(4);
+         this.button10.Location = new System.Drawing.Point(87, 39);
          this.button10.Name = "button10";
-         this.button10.Size = new System.Drawing.Size(95, 25);
+         this.button10.Size = new System.Drawing.Size(71, 20);
          this.button10.TabIndex = 5;
          this.button10.Text = "Import";
          this.button10.UseVisualStyleBackColor = true;
@@ -450,10 +435,9 @@
          // 
          // button9
          // 
-         this.button9.Location = new System.Drawing.Point(11, 48);
-         this.button9.Margin = new System.Windows.Forms.Padding(4);
+         this.button9.Location = new System.Drawing.Point(8, 39);
          this.button9.Name = "button9";
-         this.button9.Size = new System.Drawing.Size(99, 25);
+         this.button9.Size = new System.Drawing.Size(74, 20);
          this.button9.TabIndex = 4;
          this.button9.Text = "Export";
          this.button9.UseVisualStyleBackColor = true;
@@ -465,10 +449,9 @@
          this.checkBoxUseGeoCache.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
          this.checkBoxUseGeoCache.Checked = true;
          this.checkBoxUseGeoCache.CheckState = System.Windows.Forms.CheckState.Checked;
-         this.checkBoxUseGeoCache.Location = new System.Drawing.Point(115, 23);
-         this.checkBoxUseGeoCache.Margin = new System.Windows.Forms.Padding(4);
+         this.checkBoxUseGeoCache.Location = new System.Drawing.Point(86, 19);
          this.checkBoxUseGeoCache.Name = "checkBoxUseGeoCache";
-         this.checkBoxUseGeoCache.Size = new System.Drawing.Size(96, 21);
+         this.checkBoxUseGeoCache.Size = new System.Drawing.Size(76, 17);
          this.checkBoxUseGeoCache.TabIndex = 3;
          this.checkBoxUseGeoCache.Text = "geocoding";
          this.checkBoxUseGeoCache.UseVisualStyleBackColor = true;
@@ -480,10 +463,9 @@
          this.checkBoxUseRouteCache.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
          this.checkBoxUseRouteCache.Checked = true;
          this.checkBoxUseRouteCache.CheckState = System.Windows.Forms.CheckState.Checked;
-         this.checkBoxUseRouteCache.Location = new System.Drawing.Point(8, 23);
-         this.checkBoxUseRouteCache.Margin = new System.Windows.Forms.Padding(4);
+         this.checkBoxUseRouteCache.Location = new System.Drawing.Point(6, 19);
          this.checkBoxUseRouteCache.Name = "checkBoxUseRouteCache";
-         this.checkBoxUseRouteCache.Size = new System.Drawing.Size(74, 21);
+         this.checkBoxUseRouteCache.Size = new System.Drawing.Size(58, 17);
          this.checkBoxUseRouteCache.TabIndex = 2;
          this.checkBoxUseRouteCache.Text = "routing";
          this.checkBoxUseRouteCache.UseVisualStyleBackColor = true;
@@ -491,10 +473,9 @@
          // 
          // button2
          // 
-         this.button2.Location = new System.Drawing.Point(11, 80);
-         this.button2.Margin = new System.Windows.Forms.Padding(4);
+         this.button2.Location = new System.Drawing.Point(8, 65);
          this.button2.Name = "button2";
-         this.button2.Size = new System.Drawing.Size(99, 25);
+         this.button2.Size = new System.Drawing.Size(74, 20);
          this.button2.TabIndex = 0;
          this.button2.Text = "Clear All";
          this.button2.UseVisualStyleBackColor = true;
@@ -503,10 +484,9 @@
          // button3
          // 
          this.button3.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button3.Location = new System.Drawing.Point(12, 60);
-         this.button3.Margin = new System.Windows.Forms.Padding(4);
+         this.button3.Location = new System.Drawing.Point(9, 49);
          this.button3.Name = "button3";
-         this.button3.Size = new System.Drawing.Size(97, 30);
+         this.button3.Size = new System.Drawing.Size(73, 24);
          this.button3.TabIndex = 33;
          this.button3.Text = "Add Route";
          this.button3.UseVisualStyleBackColor = true;
@@ -525,20 +505,19 @@
          this.groupBox7.Controls.Add(this.buttonSetStart);
          this.groupBox7.Controls.Add(this.button6);
          this.groupBox7.Controls.Add(this.button3);
-         this.groupBox7.Location = new System.Drawing.Point(955, 362);
-         this.groupBox7.Margin = new System.Windows.Forms.Padding(4);
+         this.groupBox7.Location = new System.Drawing.Point(716, 294);
          this.groupBox7.Name = "groupBox7";
-         this.groupBox7.Padding = new System.Windows.Forms.Padding(4);
-         this.groupBox7.Size = new System.Drawing.Size(225, 190);
+         this.groupBox7.Size = new System.Drawing.Size(169, 155);
          this.groupBox7.TabIndex = 35;
          this.groupBox7.TabStop = false;
          this.groupBox7.Text = "routing";
          // 
          // buttonExportToGpx
          // 
-         this.buttonExportToGpx.Location = new System.Drawing.Point(163, 97);
+         this.buttonExportToGpx.Location = new System.Drawing.Point(122, 79);
+         this.buttonExportToGpx.Margin = new System.Windows.Forms.Padding(2);
          this.buttonExportToGpx.Name = "buttonExportToGpx";
-         this.buttonExportToGpx.Size = new System.Drawing.Size(49, 46);
+         this.buttonExportToGpx.Size = new System.Drawing.Size(37, 37);
          this.buttonExportToGpx.TabIndex = 48;
          this.buttonExportToGpx.Text = "to GPX";
          this.buttonExportToGpx.UseVisualStyleBackColor = true;
@@ -548,30 +527,28 @@
          // 
          this.MobileLogTo.CustomFormat = "yyyy\'.\'MM\'.\'dd HH\':\'mm";
          this.MobileLogTo.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-         this.MobileLogTo.Location = new System.Drawing.Point(12, 122);
-         this.MobileLogTo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         this.MobileLogTo.Location = new System.Drawing.Point(9, 99);
+         this.MobileLogTo.Margin = new System.Windows.Forms.Padding(2);
          this.MobileLogTo.Name = "MobileLogTo";
          this.MobileLogTo.ShowCheckBox = true;
-         this.MobileLogTo.Size = new System.Drawing.Size(145, 22);
+         this.MobileLogTo.Size = new System.Drawing.Size(110, 20);
          this.MobileLogTo.TabIndex = 47;
          // 
          // label3
          // 
          this.label3.AutoSize = true;
-         this.label3.Location = new System.Drawing.Point(12, 157);
-         this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+         this.label3.Location = new System.Drawing.Point(9, 128);
          this.label3.Name = "label3";
-         this.label3.Size = new System.Drawing.Size(45, 17);
+         this.label3.Size = new System.Drawing.Size(34, 13);
          this.label3.TabIndex = 46;
          this.label3.Text = "Clear:";
          // 
          // button15
          // 
          this.button15.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button15.Location = new System.Drawing.Point(137, 150);
-         this.button15.Margin = new System.Windows.Forms.Padding(4);
+         this.button15.Location = new System.Drawing.Point(101, 121);
          this.button15.Name = "button15";
-         this.button15.Size = new System.Drawing.Size(77, 30);
+         this.button15.Size = new System.Drawing.Size(58, 24);
          this.button15.TabIndex = 45;
          this.button15.Text = "Polygons";
          this.button15.UseVisualStyleBackColor = true;
@@ -581,21 +558,20 @@
          // 
          this.MobileLogFrom.CustomFormat = "yyyy\'.\'MM\'.\'dd HH\':\'mm";
          this.MobileLogFrom.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-         this.MobileLogFrom.Location = new System.Drawing.Point(12, 96);
-         this.MobileLogFrom.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         this.MobileLogFrom.Location = new System.Drawing.Point(9, 78);
+         this.MobileLogFrom.Margin = new System.Windows.Forms.Padding(2);
          this.MobileLogFrom.Name = "MobileLogFrom";
          this.MobileLogFrom.ShowCheckBox = true;
-         this.MobileLogFrom.Size = new System.Drawing.Size(145, 22);
+         this.MobileLogFrom.Size = new System.Drawing.Size(110, 20);
          this.MobileLogFrom.TabIndex = 44;
          this.MobileLogFrom.Value = new System.DateTime(2010, 5, 10, 15, 41, 0, 0);
          // 
          // button14
          // 
          this.button14.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button14.Location = new System.Drawing.Point(113, 60);
-         this.button14.Margin = new System.Windows.Forms.Padding(4);
+         this.button14.Location = new System.Drawing.Point(85, 49);
          this.button14.Name = "button14";
-         this.button14.Size = new System.Drawing.Size(99, 30);
+         this.button14.Size = new System.Drawing.Size(74, 24);
          this.button14.TabIndex = 43;
          this.button14.Text = "Mobile log...";
          this.button14.UseVisualStyleBackColor = true;
@@ -603,10 +579,9 @@
          // 
          // buttonSetEnd
          // 
-         this.buttonSetEnd.Location = new System.Drawing.Point(113, 23);
-         this.buttonSetEnd.Margin = new System.Windows.Forms.Padding(4);
+         this.buttonSetEnd.Location = new System.Drawing.Point(85, 19);
          this.buttonSetEnd.Name = "buttonSetEnd";
-         this.buttonSetEnd.Size = new System.Drawing.Size(99, 30);
+         this.buttonSetEnd.Size = new System.Drawing.Size(74, 24);
          this.buttonSetEnd.TabIndex = 42;
          this.buttonSetEnd.Text = "set End";
          this.buttonSetEnd.UseVisualStyleBackColor = true;
@@ -614,10 +589,9 @@
          // 
          // buttonSetStart
          // 
-         this.buttonSetStart.Location = new System.Drawing.Point(12, 23);
-         this.buttonSetStart.Margin = new System.Windows.Forms.Padding(4);
+         this.buttonSetStart.Location = new System.Drawing.Point(9, 19);
          this.buttonSetStart.Name = "buttonSetStart";
-         this.buttonSetStart.Size = new System.Drawing.Size(96, 30);
+         this.buttonSetStart.Size = new System.Drawing.Size(73, 24);
          this.buttonSetStart.TabIndex = 41;
          this.buttonSetStart.Text = "set Start";
          this.buttonSetStart.UseVisualStyleBackColor = true;
@@ -626,10 +600,9 @@
          // button6
          // 
          this.button6.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button6.Location = new System.Drawing.Point(60, 150);
-         this.button6.Margin = new System.Windows.Forms.Padding(4);
+         this.button6.Location = new System.Drawing.Point(46, 121);
          this.button6.Name = "button6";
-         this.button6.Size = new System.Drawing.Size(73, 30);
+         this.button6.Size = new System.Drawing.Size(55, 24);
          this.button6.TabIndex = 34;
          this.button6.Text = "Routes";
          this.button6.UseVisualStyleBackColor = true;
@@ -642,21 +615,18 @@
          this.groupBox8.Controls.Add(this.checkBoxPlacemarkInfo);
          this.groupBox8.Controls.Add(this.button5);
          this.groupBox8.Controls.Add(this.button4);
-         this.groupBox8.Location = new System.Drawing.Point(955, 560);
-         this.groupBox8.Margin = new System.Windows.Forms.Padding(4);
+         this.groupBox8.Location = new System.Drawing.Point(716, 455);
          this.groupBox8.Name = "groupBox8";
-         this.groupBox8.Padding = new System.Windows.Forms.Padding(4);
-         this.groupBox8.Size = new System.Drawing.Size(225, 91);
+         this.groupBox8.Size = new System.Drawing.Size(169, 74);
          this.groupBox8.TabIndex = 37;
          this.groupBox8.TabStop = false;
          this.groupBox8.Text = "markers";
          // 
          // button7
          // 
-         this.button7.Location = new System.Drawing.Point(8, 55);
-         this.button7.Margin = new System.Windows.Forms.Padding(4);
+         this.button7.Location = new System.Drawing.Point(6, 45);
          this.button7.Name = "button7";
-         this.button7.Size = new System.Drawing.Size(109, 30);
+         this.button7.Size = new System.Drawing.Size(82, 24);
          this.button7.TabIndex = 15;
          this.button7.Text = "Zoom Center";
          this.button7.UseVisualStyleBackColor = true;
@@ -668,10 +638,9 @@
          this.checkBoxPlacemarkInfo.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
          this.checkBoxPlacemarkInfo.Checked = true;
          this.checkBoxPlacemarkInfo.CheckState = System.Windows.Forms.CheckState.Checked;
-         this.checkBoxPlacemarkInfo.Location = new System.Drawing.Point(125, 23);
-         this.checkBoxPlacemarkInfo.Margin = new System.Windows.Forms.Padding(4);
+         this.checkBoxPlacemarkInfo.Location = new System.Drawing.Point(94, 19);
          this.checkBoxPlacemarkInfo.Name = "checkBoxPlacemarkInfo";
-         this.checkBoxPlacemarkInfo.Size = new System.Drawing.Size(91, 21);
+         this.checkBoxPlacemarkInfo.Size = new System.Drawing.Size(72, 17);
          this.checkBoxPlacemarkInfo.TabIndex = 14;
          this.checkBoxPlacemarkInfo.Text = "place info";
          this.checkBoxPlacemarkInfo.UseVisualStyleBackColor = true;
@@ -683,35 +652,34 @@
             this.toolStripStatusLabelCurrentPosition,
             this.toolStripStatusLabelLoading,
             this.progressBar1});
-         this.statusStrip1.Location = new System.Drawing.Point(0, 882);
+         this.statusStrip1.Location = new System.Drawing.Point(0, 716);
          this.statusStrip1.Name = "statusStrip1";
-         this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 19, 0);
-         this.statusStrip1.Size = new System.Drawing.Size(1195, 26);
+         this.statusStrip1.Size = new System.Drawing.Size(896, 22);
          this.statusStrip1.TabIndex = 38;
          this.statusStrip1.Text = "statusStrip1";
          // 
          // toolStripStatusLabelMemoryCache
          // 
          this.toolStripStatusLabelMemoryCache.Name = "toolStripStatusLabelMemoryCache";
-         this.toolStripStatusLabelMemoryCache.Size = new System.Drawing.Size(104, 21);
+         this.toolStripStatusLabelMemoryCache.Size = new System.Drawing.Size(85, 17);
          this.toolStripStatusLabelMemoryCache.Text = "MemoryCache";
          // 
          // toolStripStatusLabelCurrentPosition
          // 
          this.toolStripStatusLabelCurrentPosition.Name = "toolStripStatusLabelCurrentPosition";
-         this.toolStripStatusLabelCurrentPosition.Size = new System.Drawing.Size(110, 21);
+         this.toolStripStatusLabelCurrentPosition.Size = new System.Drawing.Size(90, 17);
          this.toolStripStatusLabelCurrentPosition.Text = "CurrentPosition";
          // 
          // toolStripStatusLabelLoading
          // 
          this.toolStripStatusLabelLoading.Name = "toolStripStatusLabelLoading";
-         this.toolStripStatusLabelLoading.Size = new System.Drawing.Size(66, 21);
+         this.toolStripStatusLabelLoading.Size = new System.Drawing.Size(53, 17);
          this.toolStripStatusLabelLoading.Text = "Loading:";
          // 
          // progressBar1
          // 
          this.progressBar1.Name = "progressBar1";
-         this.progressBar1.Size = new System.Drawing.Size(133, 20);
+         this.progressBar1.Size = new System.Drawing.Size(100, 16);
          this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
          // 
          // groupBox6
@@ -720,11 +688,9 @@
          this.groupBox6.Controls.Add(this.radioButtonNone);
          this.groupBox6.Controls.Add(this.radioButtonPerf);
          this.groupBox6.Controls.Add(this.radioButtonTransport);
-         this.groupBox6.Location = new System.Drawing.Point(955, 659);
-         this.groupBox6.Margin = new System.Windows.Forms.Padding(4);
+         this.groupBox6.Location = new System.Drawing.Point(716, 535);
          this.groupBox6.Name = "groupBox6";
-         this.groupBox6.Padding = new System.Windows.Forms.Padding(4);
-         this.groupBox6.Size = new System.Drawing.Size(225, 82);
+         this.groupBox6.Size = new System.Drawing.Size(169, 67);
          this.groupBox6.TabIndex = 39;
          this.groupBox6.TabStop = false;
          this.groupBox6.Text = "RealTime";
@@ -733,10 +699,9 @@
          // 
          this.radioButtonNone.AutoSize = true;
          this.radioButtonNone.Checked = true;
-         this.radioButtonNone.Location = new System.Drawing.Point(149, 23);
-         this.radioButtonNone.Margin = new System.Windows.Forms.Padding(4);
+         this.radioButtonNone.Location = new System.Drawing.Point(112, 19);
          this.radioButtonNone.Name = "radioButtonNone";
-         this.radioButtonNone.Size = new System.Drawing.Size(63, 21);
+         this.radioButtonNone.Size = new System.Drawing.Size(51, 17);
          this.radioButtonNone.TabIndex = 2;
          this.radioButtonNone.TabStop = true;
          this.radioButtonNone.Text = "None";
@@ -746,10 +711,9 @@
          // radioButtonPerf
          // 
          this.radioButtonPerf.AutoSize = true;
-         this.radioButtonPerf.Location = new System.Drawing.Point(8, 52);
-         this.radioButtonPerf.Margin = new System.Windows.Forms.Padding(4);
+         this.radioButtonPerf.Location = new System.Drawing.Point(6, 42);
          this.radioButtonPerf.Name = "radioButtonPerf";
-         this.radioButtonPerf.Size = new System.Drawing.Size(137, 21);
+         this.radioButtonPerf.Size = new System.Drawing.Size(105, 17);
          this.radioButtonPerf.TabIndex = 1;
          this.radioButtonPerf.Text = "Performance test";
          this.radioButtonPerf.UseVisualStyleBackColor = true;
@@ -758,10 +722,9 @@
          // radioButtonTransport
          // 
          this.radioButtonTransport.AutoSize = true;
-         this.radioButtonTransport.Location = new System.Drawing.Point(8, 23);
-         this.radioButtonTransport.Margin = new System.Windows.Forms.Padding(4);
+         this.radioButtonTransport.Location = new System.Drawing.Point(6, 19);
          this.radioButtonTransport.Name = "radioButtonTransport";
-         this.radioButtonTransport.Size = new System.Drawing.Size(130, 21);
+         this.radioButtonTransport.Size = new System.Drawing.Size(99, 17);
          this.radioButtonTransport.TabIndex = 0;
          this.radioButtonTransport.Text = "Transport demo";
          this.radioButtonTransport.UseVisualStyleBackColor = true;
@@ -769,10 +732,10 @@
          // 
          // MainForm
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.BackColor = System.Drawing.Color.AliceBlue;
-         this.ClientSize = new System.Drawing.Size(1195, 908);
+         this.ClientSize = new System.Drawing.Size(896, 738);
          this.Controls.Add(this.groupBox6);
          this.Controls.Add(this.statusStrip1);
          this.Controls.Add(this.groupBox8);
@@ -783,8 +746,7 @@
          this.Controls.Add(this.groupBox2);
          this.Controls.Add(this.groupMap);
          this.KeyPreview = true;
-         this.Margin = new System.Windows.Forms.Padding(4);
-         this.MinimumSize = new System.Drawing.Size(733, 125);
+         this.MinimumSize = new System.Drawing.Size(554, 109);
          this.Name = "MainForm";
          this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
          this.Text = "GMap.NET - Great Maps for Windows Forms";
@@ -870,7 +832,8 @@
       private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelMemoryCache;
       private System.Windows.Forms.DateTimePicker MobileLogTo;
       private System.Windows.Forms.Button buttonExportToGpx;
-      private Map MainMap;
+      internal Map MainMap;
+      private System.Windows.Forms.Button button16;
    }
 }
 

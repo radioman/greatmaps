@@ -11,6 +11,7 @@ using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms.ToolTips;
+using System.IO;
 
 namespace Demo.WindowsForms
 {
@@ -29,7 +30,7 @@ namespace Demo.WindowsForms
       // layers
       GMapOverlay top;
       GMapOverlay objects;
-      GMapOverlay routes;
+      internal GMapOverlay routes;
       GMapOverlay polygons;
 
       public MainForm()
@@ -176,7 +177,7 @@ namespace Demo.WindowsForms
          }
       }
 
-     GMapMarkerRect CurentRectMarker = null;
+      GMapMarkerRect CurentRectMarker = null;
 
       void MainMap_OnMarkerLeave(GMapMarker item)
       {
@@ -269,7 +270,7 @@ namespace Demo.WindowsForms
                else
                {
                   marker.Position = new PointLatLng(d.Lat, d.Lng);
-                  (marker as GMapMarkerGoogleRed).Bearing = (float?)d.Bearing;
+                  (marker as GMapMarkerGoogleRed).Bearing = (float?) d.Bearing;
                }
                marker.ToolTipText = d.Line;
             }
@@ -903,17 +904,9 @@ namespace Demo.WindowsForms
 
       private void button13_Click(object sender, EventArgs e)
       {
-         RectLatLng area = MainMap.SelectedArea;
-         if(!area.IsEmpty)
-         {
-            StaticImage st = new StaticImage(MainMap);
-            st.Owner = this;
-            st.Show();
-         }
-         else
-         {
-            MessageBox.Show("Select map area holding ALT", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-         }
+         StaticImage st = new StaticImage(this);
+         st.Owner = this;
+         st.Show();
       }
 
       // add gps log from mobile
@@ -1075,6 +1068,66 @@ namespace Demo.WindowsForms
          catch(Exception ex)
          {
             MessageBox.Show("GPX failed to save: " + ex.Message, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Error);
+         }
+      }
+
+      // load gpx file
+      private void button16_Click(object sender, EventArgs e)
+      {
+         using(FileDialog dlg = new OpenFileDialog())
+         {
+            dlg.CheckPathExists = true;
+            dlg.CheckFileExists = false;
+            dlg.AddExtension = true;
+            dlg.DefaultExt = "gpx";
+            dlg.ValidateNames = true;
+            dlg.Title = "GMap.NET: open gpx log";
+            dlg.Filter = "gpx files (*.gpx)|*.gpx";
+            dlg.FilterIndex = 1;
+            dlg.RestoreDirectory = true;
+
+            if(dlg.ShowDialog() == DialogResult.OK)
+            {
+               try
+               {
+                  string gpx = File.ReadAllText(dlg.FileName);
+
+                  gpxType r = GMaps.Instance.DeserializeGPX(gpx);
+                  if(r != null)
+                  {
+                     if(r.trk.Length > 0)
+                     {
+                        foreach(var trk in r.trk)
+                        {
+                           List<PointLatLng> points = new List<PointLatLng>();
+
+                           foreach(var seg in trk.trkseg)
+                           {
+                              foreach(var p in seg.trkpt)
+                              {
+                                 points.Add(new PointLatLng((double) p.lat, (double) p.lon));
+                              }
+                           }
+
+                           GMapRoute rt = new GMapRoute(points, string.Empty);
+                           {
+                              rt.Stroke = new Pen(Color.FromArgb(144, Color.Red));
+                              rt.Stroke.Width = 5;
+                              rt.Stroke.DashStyle = System.Drawing.Drawing2D.DashStyle.DashDot;
+                           }
+                           routes.Routes.Add(rt);
+                        }
+
+                        MainMap.ZoomAndCenterRoutes(null);
+                     }
+                  }
+               }
+               catch(Exception ex)
+               {
+                  Debug.WriteLine("GPX import: " + ex.ToString());
+                  MessageBox.Show("Error importing gpx: " + ex.Message, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+               }
+            }
          }
       }
    }

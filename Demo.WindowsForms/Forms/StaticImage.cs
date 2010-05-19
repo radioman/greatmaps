@@ -14,19 +14,20 @@ namespace Demo.WindowsForms
 {
    public partial class StaticImage : Form
    {
-      GMapControl MainMap;
+      MainForm Main;
+
       BackgroundWorker bg = new BackgroundWorker();
       readonly List<GMap.NET.Point> tileArea = new List<GMap.NET.Point>();
 
-      public StaticImage(GMapControl main)
+      public StaticImage(MainForm main)
       {
          InitializeComponent();
 
-         this.MainMap = main;
+         Main = main;
 
-         numericUpDown1.Maximum = MainMap.MaxZoom;
-         numericUpDown1.Minimum = MainMap.MinZoom;
-         numericUpDown1.Value = new decimal(MainMap.Zoom);
+         numericUpDown1.Maximum = Main.MainMap.MaxZoom;
+         numericUpDown1.Minimum = Main.MainMap.MinZoom;
+         numericUpDown1.Value = new decimal(Main.MainMap.Zoom);
 
          bg.WorkerReportsProgress = true;
          bg.WorkerSupportsCancellation = true;
@@ -76,7 +77,7 @@ namespace Demo.WindowsForms
          {
             var types = GMaps.Instance.GetAllLayersOfType(info.Type);
 
-            string bigImage = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + Path.DirectorySeparatorChar + "GMap-" + types[0] + "-" + DateTime.Now.Ticks + ".png";
+            string bigImage = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + Path.DirectorySeparatorChar + "GMap at zoom " + info.Zoom + " - " + types[0] + "-" + DateTime.Now.Ticks + ".png";
             e.Result = bigImage;
 
             // current area
@@ -91,6 +92,7 @@ namespace Demo.WindowsForms
                   using(Graphics gfx = Graphics.FromImage(bmpDestination))
                   {
                      gfx.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                     gfx.SmoothingMode = SmoothingMode.HighQuality;
 
                      int i = 0;
 
@@ -126,51 +128,84 @@ namespace Demo.WindowsForms
                            }
                         }
                      }
-                  }
 
-                  // draw info
-                  {
-                     System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
+                     // draw route
                      {
-                        rect.Location = new System.Drawing.Point(padding, padding);
-                        rect.Size = new System.Drawing.Size(pxDelta.X, pxDelta.Y);
-                     }
-                     using(Font f = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold))
-                     using(Graphics gfx = Graphics.FromImage(bmpDestination))
-                     {
-                        gfx.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-                        // draw bounds & coordinates
-                        using(Pen p = new Pen(Brushes.Red, 3))
+                        foreach(GMapRoute r in Main.routes.Routes)
                         {
-                           p.DashStyle = System.Drawing.Drawing2D.DashStyle.DashDot;
+                           using(GraphicsPath rp = new GraphicsPath())
+                           {
+                              for(int j = 0; j < r.Points.Count; j++)
+                              {
+                                 var pr = r.Points[j];
+                                 GMap.NET.Point px = info.Projection.FromLatLngToPixel(pr.Lat, pr.Lng, info.Zoom);
 
-                           gfx.DrawRectangle(p, rect);
+                                 px.Offset(padding, padding);
+                                 px.Offset(-topLeftPx.X, -topLeftPx.Y);
 
-                           string topleft = info.Area.LocationTopLeft.ToString();
-                           SizeF s = gfx.MeasureString(topleft, f);
+                                 GMap.NET.Point p2 = px;
 
-                           gfx.DrawString(topleft, f, p.Brush, rect.X + s.Height/2, rect.Y + s.Height/2);
+                                 if(j == 0)
+                                 {
+                                    rp.AddLine(p2.X, p2.Y, p2.X, p2.Y);
+                                 }
+                                 else
+                                 {
+                                    System.Drawing.PointF p = rp.GetLastPoint();
+                                    rp.AddLine(p.X, p.Y, p2.X, p2.Y);
+                                 }
+                              }
 
-                           string rightBottom = new PointLatLng(info.Area.Bottom, info.Area.Right).ToString();
-                           SizeF s2 = gfx.MeasureString(rightBottom, f);
+                              if(rp.PointCount > 0)
+                              {
+                                 gfx.DrawPath(r.Stroke, rp);
+                              }
+                           }
+                        }
+                     }
 
-                           gfx.DrawString(rightBottom, f, p.Brush, rect.Right - s2.Width - s2.Height/2, rect.Bottom - s2.Height - s2.Height/2);
+                     // draw info
+                     {
+                        System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
+                        {
+                           rect.Location = new System.Drawing.Point(padding, padding);
+                           rect.Size = new System.Drawing.Size(pxDelta.X, pxDelta.Y);
                         }
 
-                        // draw scale
-                        using(Pen p = new Pen(Brushes.Blue, 1))
+                        using(Font f = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold))
                         {
-                           double rez = info.Projection.GetGroundResolution(info.Zoom, info.Area.Bottom);
-                           int px100 = (int) (100.0 / rez); // 100 meters
-                           int px1000 = (int) (1000.0 / rez); // 1km   
+                           // draw bounds & coordinates
+                           using(Pen p = new Pen(Brushes.DimGray, 3))
+                           {
+                              p.DashStyle = System.Drawing.Drawing2D.DashStyle.DashDot;
 
-                           gfx.DrawRectangle(p, rect.X + 10, rect.Bottom - 20, px1000, 10);
-                           gfx.DrawRectangle(p, rect.X + 10, rect.Bottom - 20, px100, 10);
+                              gfx.DrawRectangle(p, rect);
 
-                           string leftBottom = "scale: 100m | 1Km";
-                           SizeF s = gfx.MeasureString(leftBottom, f);
-                           gfx.DrawString(leftBottom, f, p.Brush, rect.X+10, rect.Bottom - s.Height - 20);
+                              string topleft = info.Area.LocationTopLeft.ToString();
+                              SizeF s = gfx.MeasureString(topleft, f);
+
+                              gfx.DrawString(topleft, f, p.Brush, rect.X + s.Height/2, rect.Y + s.Height/2);
+
+                              string rightBottom = new PointLatLng(info.Area.Bottom, info.Area.Right).ToString();
+                              SizeF s2 = gfx.MeasureString(rightBottom, f);
+
+                              gfx.DrawString(rightBottom, f, p.Brush, rect.Right - s2.Width - s2.Height/2, rect.Bottom - s2.Height - s2.Height/2);
+                           }
+
+                           // draw scale
+                           using(Pen p = new Pen(Brushes.Blue, 1))
+                           {
+                              double rez = info.Projection.GetGroundResolution(info.Zoom, info.Area.Bottom);
+                              int px100 = (int) (100.0 / rez); // 100 meters
+                              int px1000 = (int) (1000.0 / rez); // 1km   
+
+                              gfx.DrawRectangle(p, rect.X + 10, rect.Bottom - 20, px1000, 10);
+                              gfx.DrawRectangle(p, rect.X + 10, rect.Bottom - 20, px100, 10);
+
+                              string leftBottom = "scale: 100m | 1Km";
+                              SizeF s = gfx.MeasureString(leftBottom, f);
+                              gfx.DrawString(leftBottom, f, p.Brush, rect.X+10, rect.Bottom - s.Height - 20);
+                           }
                         }
                      }
                   }
@@ -206,30 +241,46 @@ namespace Demo.WindowsForms
          }
       }
 
+      readonly List<PointLatLng> GpxRoute = new List<PointLatLng>();
+      RectLatLng AreaGpx = RectLatLng.Empty;
+
       private void button1_Click(object sender, EventArgs e)
       {
-         RectLatLng area = MainMap.SelectedArea;
-         if(!area.IsEmpty)
+         RectLatLng? area = null;
+
+         if(checkBoxRoutes.Checked)
          {
-            if(!bg.IsBusy)
+            area = Main.MainMap.GetRectOfAllRoutes(null);
+            if(!area.HasValue)
             {
-               lock(tileArea)
-               {
-                  tileArea.Clear();
-                  tileArea.AddRange(MainMap.Projection.GetAreaTileList(area, (int) numericUpDown1.Value, 1));
-                  tileArea.TrimExcess();
-               }
-
-               numericUpDown1.Enabled = false;
-               progressBar1.Value = 0;
-               button1.Enabled = false;
-
-               bg.RunWorkerAsync(new MapInfo(MainMap.Projection, area, (int) numericUpDown1.Value, MainMap.MapType, checkBoxWorldFile.Checked));
+               MessageBox.Show("No routes in map", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+               return;
             }
          }
          else
          {
-            MessageBox.Show("Select map area holding ALT", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            area = Main.MainMap.SelectedArea;
+            if(area.Value.IsEmpty)
+            {
+               MessageBox.Show("Select map area holding ALT", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+               return;
+            }
+         }
+
+         if(!bg.IsBusy)
+         {
+            lock(tileArea)
+            {
+               tileArea.Clear();
+               tileArea.AddRange(Main.MainMap.Projection.GetAreaTileList(area.Value, (int) numericUpDown1.Value, 1));
+               tileArea.TrimExcess();
+            }
+
+            numericUpDown1.Enabled = false;
+            progressBar1.Value = 0;
+            button1.Enabled = false;
+
+            bg.RunWorkerAsync(new MapInfo(Main.MainMap.Projection, area.Value, (int) numericUpDown1.Value, Main.MainMap.MapType, checkBoxWorldFile.Checked));
          }
       }
 
