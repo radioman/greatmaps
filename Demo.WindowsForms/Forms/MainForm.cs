@@ -153,26 +153,46 @@ namespace Demo.WindowsForms
             // add some point in lithuania
             //if(false)
             {
-               AddLocationLithuania("Kaunas", 1);
-               AddLocationLithuania("Klaipėda", 2);
-               AddLocationLithuania("Šiauliai", 3);
-               AddLocationLithuania("Panevėžys", 4);
+               AddLocationLithuania("Kaunas");
+               AddLocationLithuania("Klaipėda");
+               AddLocationLithuania("Šiauliai");
+               AddLocationLithuania("Panevėžys");
 
-               // add polygon around all cities
-               {
-                  List<PointLatLng> polygonPoints = new List<PointLatLng>();
-                  polygonPoints.Add(currentMarker.Position); // vilnius, 0
+               RegeneratePolygon();
+            }
+         }
+      }
 
-                  foreach(GMapMarker m in objects.Markers)
-                  {
-                     if(m is GMapMarkerRect)
-                     {
-                        polygonPoints.Add(m.Position);
-                     }
-                  }
-                  polygon = new GMapPolygon(polygonPoints, "polygon test");
-                  polygons.Polygons.Add(polygon);
-               }
+      void RegeneratePolygon()
+      {
+         List<PointLatLng> polygonPoints = new List<PointLatLng>();
+
+         foreach(GMapMarker m in objects.Markers)
+         {
+            if(m is GMapMarkerRect)
+            {
+               m.Tag = polygonPoints.Count;
+               polygonPoints.Add(m.Position);                
+            }
+         }
+
+         if(polygon == null)
+         {
+            polygon = new GMapPolygon(polygonPoints, "polygon test");
+            polygons.Polygons.Add(polygon);
+         }
+         else
+         {
+            polygon.Points.Clear();
+            polygon.Points.AddRange(polygonPoints);
+
+            if(polygons.Polygons.Count == 0)
+            {
+               polygons.Polygons.Add(polygon);
+            }
+            else
+            {
+               MainMap.UpdatePolygonLocalPosition(polygon);
             }
          }
       }
@@ -489,7 +509,7 @@ namespace Demo.WindowsForms
       /// adds marker using geocoder
       /// </summary>
       /// <param name="place"></param>
-      void AddLocationLithuania(string place, int? polygonId)
+      void AddLocationLithuania(string place)
       {
          GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
          PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, " + place, out status);
@@ -503,7 +523,6 @@ namespace Demo.WindowsForms
                mBorders.InnerMarker = m;
                mBorders.ToolTipText = place;
                mBorders.ToolTipMode = MarkerTooltipMode.Always;
-               mBorders.Tag = polygonId;
             }
 
             objects.Markers.Add(m);
@@ -741,6 +760,8 @@ namespace Demo.WindowsForms
          {
             mBorders.InnerMarker = m;
             mBorders.Size = new System.Drawing.Size(100, 100);
+            mBorders.Tag = polygon.Points.Count;
+            mBorders.ToolTipMode = MarkerTooltipMode.Always;
          }
 
          Placemark p = null;
@@ -760,6 +781,8 @@ namespace Demo.WindowsForms
 
          objects.Markers.Add(m);
          objects.Markers.Add(mBorders);
+
+         RegeneratePolygon();
       }
 
       // clear routes
@@ -984,6 +1007,8 @@ namespace Demo.WindowsForms
                   objects.Markers.Remove(CurentRectMarker.InnerMarker);
                }
                CurentRectMarker = null;
+
+               RegeneratePolygon();
             }
          }
       }
