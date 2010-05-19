@@ -153,25 +153,22 @@ namespace GMap.NET.Internals
 
       public Tile GetTile(int zoom, Point p)
       {
+         Tile ret = null;
+
          Lock.AcquireReaderLock(-1);
          try
          {
-            Tile ret = null;
-
             //if(zoom < Levels.Count)
             {
-               if(Levels[zoom].TryGetValue(p, out ret))
-               {
-                  return ret;
-               }
+               Levels[zoom].TryGetValue(p, out ret);
             }
-
-            return ret;
          }
          finally
          {
             Lock.ReleaseReaderLock();
          }
+
+         return ret;
       }
 
       public void SetTile(Tile t)

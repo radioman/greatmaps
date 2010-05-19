@@ -437,7 +437,7 @@ namespace GMap.NET.WindowsForms
 
                   if(Core.CurrentRegion.IntersectsWith(Core.tileRect))
                   {
-                     bool found = false; 
+                     bool found = false;
 #if !ContinuesMap
 
                      Tile t = Core.Matrix.GetTile(Core.Zoom, Core.tilePoint);
@@ -1541,12 +1541,14 @@ namespace GMap.NET.WindowsForms
       }
 
 #if !PocketPC
+
       /// <summary>
       /// shows map db export dialog
       /// </summary>
       /// <returns></returns>
       public bool ShowExportDialog()
       {
+#if SQLite
          if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
             using(FileDialog dlg = new SaveFileDialog())
@@ -1583,6 +1585,7 @@ namespace GMap.NET.WindowsForms
          {
             MessageBox.Show("Failed! Only SQLite support ;/", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
          }
+#endif
          return false;
       }
 
@@ -1592,6 +1595,7 @@ namespace GMap.NET.WindowsForms
       /// <returns></returns>
       public bool ShowImportDialog()
       {
+#if SQLite
          if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
             using(FileDialog dlg = new OpenFileDialog())
@@ -1628,6 +1632,7 @@ namespace GMap.NET.WindowsForms
          {
             MessageBox.Show("Failed! Only SQLite support ;/", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
          }
+#endif
          return false;
       }
 #endif
@@ -1803,7 +1808,7 @@ namespace GMap.NET.WindowsForms
          {
             return Core.CurrentViewArea;
          }
-      }        
+      }
 
       /// <summary>
       /// type of map

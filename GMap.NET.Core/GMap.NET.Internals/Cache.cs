@@ -45,7 +45,7 @@ namespace GMap.NET.Internals
             geoCache = cache + "GeocoderCache" + Path.DirectorySeparatorChar;
             placemarkCache = cache + "PlacemarkCache" + Path.DirectorySeparatorChar;
 
-#if SQLiteEnabled
+#if SQLite
             if(ImageCache is SQLitePureImageCache)
             {
                (ImageCache as SQLitePureImageCache).CacheLocation = value;
@@ -68,7 +68,7 @@ namespace GMap.NET.Internals
          }
          #endregion
 
-#if SQLiteEnabled
+#if SQLite
          ImageCache = new SQLitePureImageCache();
 #else
          // you can use $ms stuff if you like too ;}
@@ -87,7 +87,23 @@ namespace GMap.NET.Internals
             else
 #endif
             {
-               CacheLocation = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+               string oldCache = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+               string newCache = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+
+               // move database to non-roaming user directory
+               try
+               {
+                  if(Directory.Exists(oldCache))
+                  {
+                     Directory.Move(oldCache, newCache);
+                  }
+                  CacheLocation = newCache;
+               }
+               catch(Exception ex)
+               {
+                  Trace.WriteLine("SQLitePureImageCache, moving data: " + ex.ToString());
+                  CacheLocation = oldCache;
+               }
             }
          }
       }

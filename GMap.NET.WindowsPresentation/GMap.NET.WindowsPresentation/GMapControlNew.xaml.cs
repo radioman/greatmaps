@@ -362,7 +362,7 @@ namespace GMap.NET.WindowsPresentation
                {
                   var rawTile = new RawTile(MapType.GoogleHybrid, new GMap.NET.Point(x, y), ZoomStep);
                   var rectTilePx = new Rect(x*Projection.TileSize.Width, y*Projection.TileSize.Height, Projection.TileSize.Width, Projection.TileSize.Height);
-                  
+
                   var rectTileLatLngLeftTop = Projection.FromPixelToLatLng(rawTile.Pos, rawTile.Zoom);
                   var rectTileLatLngRightBottom = Projection.FromPixelToLatLng(rawTile.Pos.X + 1, rawTile.Pos.Y + 1, rawTile.Zoom);
 
@@ -1266,8 +1266,10 @@ namespace GMap.NET.WindowsPresentation
          return ret;
       }
 
+
       public bool ShowExportDialog()
       {
+#if SQLite
          if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
@@ -1304,11 +1306,13 @@ namespace GMap.NET.WindowsPresentation
          {
             MessageBox.Show("Failed! Only SQLite support ;/", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
          }
+#endif
          return false;
       }
 
       public bool ShowImportDialog()
       {
+#if SQLite
          if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
@@ -1350,7 +1354,7 @@ namespace GMap.NET.WindowsPresentation
          {
             MessageBox.Show("Failed! Only SQLite support ;/", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
          }
-
+#endif
          return false;
       }
 

@@ -66,8 +66,10 @@ namespace GMap.NET
       Point FromLatLngToLocal(PointLatLng point);
 
 #if !PocketPC
+#if SQLite
       bool ShowExportDialog();
       bool ShowImportDialog();
+#endif
 #endif
    }
 }

@@ -1118,8 +1118,10 @@ namespace GMap.NET.WindowsPresentation
          return ret;
       }
 
+
       public bool ShowExportDialog()
       {
+#if SQLite
          if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
@@ -1156,11 +1158,13 @@ namespace GMap.NET.WindowsPresentation
          {
             MessageBox.Show("Failed! Only SQLite support ;/", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
          }
+#endif
          return false;
       }
 
       public bool ShowImportDialog()
       {
+#if SQLite
          if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
@@ -1202,7 +1206,7 @@ namespace GMap.NET.WindowsPresentation
          {
             MessageBox.Show("Failed! Only SQLite support ;/", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
          }
-
+#endif
          return false;
       }
 

@@ -1,7 +1,7 @@
 ﻿
 namespace GMap.NET.CacheProviders
 {
-#if !SQLiteEnabled
+#if !SQLite
    using System;
    using System.Data;
    using System.Diagnostics;
@@ -29,7 +29,7 @@ namespace GMap.NET.CacheProviders
          set
          {
             cache = value;
-            gtileCache = cache + "TileDBv3" + Path.DirectorySeparatorChar + GMaps.Instance.Language + Path.DirectorySeparatorChar;
+            gtileCache = cache + "TileDBv3" + Path.DirectorySeparatorChar + GMaps.Instance.LanguageStr + Path.DirectorySeparatorChar;
          }
       }
 
@@ -38,33 +38,10 @@ namespace GMap.NET.CacheProviders
       SqlConnection cnGet;
       SqlConnection cnSet;
 
-      public MsSQLCePureImageCache()
-      {
-         CacheLocation = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
-      }
-
-      bool initialized = false;
-
       /// <summary>
       /// is cache initialized
       /// </summary>
-      public bool Initialized
-      {
-         get
-         {
-            lock(this)
-            {
-               return initialized;
-            }
-         }
-         private set
-         {
-            lock(this)
-            {
-               initialized = value;
-            }
-         }
-      }
+      public volatile bool Initialized = false;
 
       /// <summary>
       /// inits connection to server
@@ -72,36 +49,34 @@ namespace GMap.NET.CacheProviders
       /// <returns></returns>
       public bool Initialize()
       {
-         lock(this)
+         if(!Initialized)
          {
-            if(!Initialized)
+            #region prepare mssql & cache table
+            try
             {
-               #region prepare mssql & cache table
-               try
+               // precrete dir
+               if(!Directory.Exists(gtileCache))
                {
-                  // precrete dir
-                  if(!Directory.Exists(gtileCache))
+                  Directory.CreateDirectory(gtileCache);
+               }
+
+               string connectionString = string.Format("Data Source={0}Data.sdf", gtileCache);
+
+               if(!File.Exists(gtileCache + "Data.sdf"))
+               {
+                  using(System.Data.SqlServerCe.SqlCeEngine engine = new System.Data.SqlServerCe.SqlCeEngine(connectionString))
                   {
-                     Directory.CreateDirectory(gtileCache);
+                     engine.CreateDatabase();
                   }
 
-                  string connectionString = string.Format("Data Source={0}Data.sdf", gtileCache);
-
-                  if(!File.Exists(gtileCache + "Data.sdf"))
+                  try
                   {
-                     using(System.Data.SqlServerCe.SqlCeEngine engine = new System.Data.SqlServerCe.SqlCeEngine(connectionString))
+                     using(SqlConnection c = new SqlConnection(connectionString))
                      {
-                        engine.CreateDatabase();
-                     }
+                        c.Open();
 
-                     try
-                     {
-                        using(SqlConnection c = new SqlConnection(connectionString))
-                        {
-                           c.Open();
-
-                           using(SqlCommand cmd = new SqlCommand(
-                              "CREATE TABLE [GMapNETcache] ( \n"
+                        using(SqlCommand cmd = new SqlCommand(
+                           "CREATE TABLE [GMapNETcache] ( \n"
                   + "   [Type] [int]   NOT NULL, \n"
                   + "   [Zoom] [int]   NOT NULL, \n"
                   + "   [X]    [int]   NOT NULL, \n"
@@ -109,57 +84,56 @@ namespace GMap.NET.CacheProviders
                   + "   [Tile] [image] NOT NULL, \n"
                   + "   CONSTRAINT [PK_GMapNETcache] PRIMARY KEY (Type, Zoom, X, Y) \n"
                   + ")", c))
-                           {
-                              cmd.ExecuteNonQuery();
-                           }
-                        }
-                     }
-                     catch(Exception ex)
-                     {
-                        try
                         {
-                           File.Delete(gtileCache + "Data.sdf");
+                           cmd.ExecuteNonQuery();
                         }
-                        catch
-                        {
-                        }
-
-                        throw ex;
                      }
                   }
+                  catch(Exception ex)
+                  {
+                     try
+                     {
+                        File.Delete(gtileCache + "Data.sdf");
+                     }
+                     catch
+                     {
+                     }
 
-                  // different connections so the multi-thread inserts and selects don't collide on open readers.
-                  this.cnGet = new SqlConnection(connectionString);
-                  this.cnGet.Open();
-                  this.cnSet = new SqlConnection(connectionString);
-                  this.cnSet.Open();
-
-                  this.cmdFetch = new SqlCommand("SELECT [Tile] FROM [GMapNETcache] WITH (NOLOCK) WHERE [X]=@x AND [Y]=@y AND [Zoom]=@zoom AND [Type]=@type", cnGet);
-                  this.cmdFetch.Parameters.Add("@x", System.Data.SqlDbType.Int);
-                  this.cmdFetch.Parameters.Add("@y", System.Data.SqlDbType.Int);
-                  this.cmdFetch.Parameters.Add("@zoom", System.Data.SqlDbType.Int);
-                  this.cmdFetch.Parameters.Add("@type", System.Data.SqlDbType.Int);
-                  this.cmdFetch.Prepare();
-
-                  this.cmdInsert = new SqlCommand("INSERT INTO [GMapNETcache] ( [X], [Y], [Zoom], [Type], [Tile] ) VALUES ( @x, @y, @zoom, @type, @tile )", cnSet);
-                  this.cmdInsert.Parameters.Add("@x", System.Data.SqlDbType.Int);
-                  this.cmdInsert.Parameters.Add("@y", System.Data.SqlDbType.Int);
-                  this.cmdInsert.Parameters.Add("@zoom", System.Data.SqlDbType.Int);
-                  this.cmdInsert.Parameters.Add("@type", System.Data.SqlDbType.Int);
-                  this.cmdInsert.Parameters.Add("@tile", System.Data.SqlDbType.Image); //, calcmaximgsize);
-                  //can't prepare insert because of the IMAGE field having a variable size.  Could set it to some 'maximum' size?
-
-                  Initialized = true;
+                     throw ex;
+                  }
                }
-               catch(Exception ex)
-               {
-                  this.initialized = false;
-                  Debug.WriteLine(ex.Message);
-               }
-               #endregion
+
+               // different connections so the multi-thread inserts and selects don't collide on open readers.
+               this.cnGet = new SqlConnection(connectionString);
+               this.cnGet.Open();
+               this.cnSet = new SqlConnection(connectionString);
+               this.cnSet.Open();
+
+               this.cmdFetch = new SqlCommand("SELECT [Tile] FROM [GMapNETcache] WITH (NOLOCK) WHERE [X]=@x AND [Y]=@y AND [Zoom]=@zoom AND [Type]=@type", cnGet);
+               this.cmdFetch.Parameters.Add("@x", System.Data.SqlDbType.Int);
+               this.cmdFetch.Parameters.Add("@y", System.Data.SqlDbType.Int);
+               this.cmdFetch.Parameters.Add("@zoom", System.Data.SqlDbType.Int);
+               this.cmdFetch.Parameters.Add("@type", System.Data.SqlDbType.Int);
+               this.cmdFetch.Prepare();
+
+               this.cmdInsert = new SqlCommand("INSERT INTO [GMapNETcache] ( [X], [Y], [Zoom], [Type], [Tile] ) VALUES ( @x, @y, @zoom, @type, @tile )", cnSet);
+               this.cmdInsert.Parameters.Add("@x", System.Data.SqlDbType.Int);
+               this.cmdInsert.Parameters.Add("@y", System.Data.SqlDbType.Int);
+               this.cmdInsert.Parameters.Add("@zoom", System.Data.SqlDbType.Int);
+               this.cmdInsert.Parameters.Add("@type", System.Data.SqlDbType.Int);
+               this.cmdInsert.Parameters.Add("@tile", System.Data.SqlDbType.Image); //, calcmaximgsize);
+               //can't prepare insert because of the IMAGE field having a variable size.  Could set it to some 'maximum' size?
+
+               Initialized = true;
             }
-            return Initialized;
+            catch(Exception ex)
+            {
+               Initialized = false;
+               Debug.WriteLine(ex.Message);
+            }
+            #endregion
          }
+         return Initialized;
       }
 
       #region IDisposable Members
@@ -209,13 +183,6 @@ namespace GMap.NET.CacheProviders
                {
                   lock(cmdInsert)
                   {
-                     //cnSet.Ping();
-
-                     if(cnSet.State != ConnectionState.Open)
-                     {
-                        cnSet.Open();
-                     }
-
                      cmdInsert.Parameters["@x"].Value = pos.X;
                      cmdInsert.Parameters["@y"].Value = pos.Y;
                      cmdInsert.Parameters["@zoom"].Value = zoom;
@@ -246,13 +213,6 @@ namespace GMap.NET.CacheProviders
                   object odata = null;
                   lock(cmdFetch)
                   {
-                     //cnGet.Ping();
-
-                     if(cnGet.State != ConnectionState.Open)
-                     {
-                        cnGet.Open();
-                     }
-
                      cmdFetch.Parameters["@x"].Value = pos.X;
                      cmdFetch.Parameters["@y"].Value = pos.Y;
                      cmdFetch.Parameters["@zoom"].Value = zoom;

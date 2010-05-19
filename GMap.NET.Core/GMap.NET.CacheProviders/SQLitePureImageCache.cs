@@ -1,7 +1,7 @@
 ﻿
 namespace GMap.NET.CacheProviders
 {
-#if SQLiteEnabled
+#if SQLite
    using System.Collections.Generic;
    using System.Data.Common;
 #if !MONO
@@ -68,11 +68,6 @@ namespace GMap.NET.CacheProviders
                }
             }
          }
-      }
-
-      public SQLitePureImageCache()
-      {
-         CacheLocation = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
       }
 
       #region -- import / export --

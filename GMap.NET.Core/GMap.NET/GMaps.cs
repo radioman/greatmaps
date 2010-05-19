@@ -606,7 +606,7 @@ namespace GMap.NET
       /// <returns></returns>
       public bool ExportToGMDB(string file)
       {
-#if SQLiteEnabled
+#if SQLite
          if(Cache.Instance.ImageCache is SQLitePureImageCache)
          {
             StringBuilder db = new StringBuilder((Cache.Instance.ImageCache as SQLitePureImageCache).GtileCache);
@@ -626,7 +626,7 @@ namespace GMap.NET
       /// <returns></returns>
       public bool ImportFromGMDB(string file)
       {
-#if SQLiteEnabled
+#if SQLite
          if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
             StringBuilder db = new StringBuilder((Cache.Instance.ImageCache as SQLitePureImageCache).GtileCache);
@@ -638,7 +638,7 @@ namespace GMap.NET
          return false;
       }
 
-#if SQLiteEnabled
+#if SQLite
 
       /// <summary>
       /// optimizes map database, *.gmdb
@@ -678,7 +678,7 @@ namespace GMap.NET
       /// <returns></returns>
       public IEnumerable<List<GpsLog>> GetRoutesFromMobileLog(string gpsdLogFile, DateTime? start, DateTime? end, double? maxPositionDilutionOfPrecision)
       {
-#if SQLiteEnabled
+#if SQLite
          using(SQLiteConnection cn = new SQLiteConnection())
          {
 #if !MONO
