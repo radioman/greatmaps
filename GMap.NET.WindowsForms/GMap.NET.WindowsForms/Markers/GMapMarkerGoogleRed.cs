@@ -16,7 +16,8 @@ namespace GMap.NET.WindowsForms.Markers
       public GMapMarkerGoogleRed(PointLatLng p)
          : base(p)
       {
-
+         Size = new System.Drawing.Size(Resources.marker.Width, Resources.marker.Height);
+         Offset = new Point(-10, -34);
       }
 
       Point[] Arrow = new Point[] { new Point(-5, 5), new Point(0, -20), new Point(5, 5), new Point(0, 2) };
@@ -25,7 +26,7 @@ namespace GMap.NET.WindowsForms.Markers
       {
 #if !PocketPC
 
-         g.DrawImageUnscaled(Resources.shadow50, LocalPosition.X-10, LocalPosition.Y-34);
+         g.DrawImageUnscaled(Resources.shadow50, LocalPosition.X, LocalPosition.Y);
 
          if(Bearing.HasValue)
          {
@@ -37,10 +38,10 @@ namespace GMap.NET.WindowsForms.Markers
             g.ResetTransform();
          }
 
-         g.DrawImageUnscaled(Resources.marker, LocalPosition.X-10, LocalPosition.Y-34);
+         g.DrawImageUnscaled(Resources.marker, LocalPosition.X, LocalPosition.Y);
 #else
-            DrawImageUnscaled(g, Resources.shadow50, LocalPosition.X-10, LocalPosition.Y-34);
-            DrawImageUnscaled(g, Resources.marker, LocalPosition.X-10, LocalPosition.Y-34);
+            DrawImageUnscaled(g, Resources.shadow50, LocalPosition.X, LocalPosition.Y);
+            DrawImageUnscaled(g, Resources.marker, LocalPosition.X, LocalPosition.Y);
 #endif
       }
    }

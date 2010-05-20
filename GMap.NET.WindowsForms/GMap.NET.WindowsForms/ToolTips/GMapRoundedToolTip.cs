@@ -41,10 +41,11 @@ namespace GMap.NET.WindowsForms.ToolTips
       public override void Draw(Graphics g)
       {
          System.Drawing.Size st = g.MeasureString(Marker.ToolTipText, Font).ToSize();
-         System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.LocalPosition.X, Marker.LocalPosition.Y - st.Height, st.Width + TextPadding.Width, st.Height + TextPadding.Height);
+        
+         System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y - st.Height, st.Width + TextPadding.Width, st.Height + TextPadding.Height);
          rect.Offset(Offset.X, Offset.Y);
 
-         g.DrawLine(Stroke, Marker.LocalPosition.X, Marker.LocalPosition.Y, rect.X + Radius/2, rect.Y + rect.Height - Radius/2);
+         g.DrawLine(Stroke, Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y, rect.X + Radius/2, rect.Y + rect.Height - Radius/2);
 
          DrawRoundRectangle(g, Stroke, rect.X, rect.Y, rect.Width, rect.Height, Radius);
 

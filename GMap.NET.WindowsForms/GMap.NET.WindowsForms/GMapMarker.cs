@@ -90,6 +90,19 @@ namespace GMap.NET.WindowsForms
          }
       }
 
+      /// <summary>
+      /// ToolTip position in local coordinates
+      /// </summary>
+      public Point ToolTipPosition
+      {
+         get
+         {
+            Point ret = area.Location;
+            ret.Offset(-Offset.X, -Offset.Y);
+            return ret;
+         }
+      }
+
       public Size Size
       {
          get
@@ -106,9 +119,7 @@ namespace GMap.NET.WindowsForms
       {
          get
          {
-            Rectangle ret = area;
-            ret.Offset(-Size.Width/2, -Size.Height/2);
-            return ret;
+            return area;
          }
       }
 

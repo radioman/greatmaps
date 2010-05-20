@@ -13,9 +13,9 @@ namespace Demo.WindowsForms
       /// any custom drawing here
       /// </summary>
       /// <param name="drawingContext"></param>
-      protected override void OnPaint(PaintEventArgs e)
+      protected override void OnPaintEtc(System.Drawing.Graphics g)
       {
-         base.OnPaint(e);            
+         base.OnPaintEtc(g);
       }
    }
 }

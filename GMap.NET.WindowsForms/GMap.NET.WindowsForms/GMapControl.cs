@@ -1003,11 +1003,14 @@ namespace GMap.NET.WindowsForms
          base.OnPaint(e);
       }
 
-      void OnPaintEtc(Graphics g)
+      /// <summary>
+      /// override, to render something more
+      /// </summary>
+      /// <param name="g"></param>
+      protected virtual void OnPaintEtc(Graphics g)
       {
 #if !PocketPC
-         GraphicsState s = g.Save();
-         g.SmoothingMode = SmoothingMode.AntiAlias;
+         g.SmoothingMode = SmoothingMode.HighQuality;
 #endif
          foreach(GMapOverlay o in Overlays)
          {
@@ -1016,10 +1019,6 @@ namespace GMap.NET.WindowsForms
                o.Render(g);
             }
          }
-
-#if !PocketPC
-         g.Restore(s);
-#endif
 
 #if !PocketPC
          if(!SelectedArea.IsEmpty)

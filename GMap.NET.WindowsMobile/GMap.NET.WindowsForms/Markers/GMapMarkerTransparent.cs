@@ -20,9 +20,12 @@ namespace GMap.NET.WindowsForms.Markers
          {
             IGMapTransparentBitmap bitmap = GetBitmap(i);
             if(bitmap == null)
+            {
                continue;
+            }
+
             System.Drawing.Rectangle src = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
-            System.Drawing.Rectangle dst = new System.Drawing.Rectangle(LocalPosition.X - bitmap.DrawOffset.X, LocalPosition.Y - bitmap.DrawOffset.Y, bitmap.Width, bitmap.Height);
+            System.Drawing.Rectangle dst = new System.Drawing.Rectangle(LocalPosition.X + bitmap.DrawOffset.X, LocalPosition.Y + bitmap.DrawOffset.Y, bitmap.Width, bitmap.Height);
             bitmap.Draw(g, dst, src);
          }
       }

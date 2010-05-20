@@ -759,7 +759,6 @@ namespace Demo.WindowsForms
          GMapMarkerRect mBorders = new GMapMarkerRect(currentMarker.Position);
          {
             mBorders.InnerMarker = m;
-            mBorders.Size = new System.Drawing.Size(100, 100);
             mBorders.Tag = polygon.Points.Count;
             mBorders.ToolTipMode = MarkerTooltipMode.Always;
          }

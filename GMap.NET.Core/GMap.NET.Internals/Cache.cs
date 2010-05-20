@@ -88,6 +88,9 @@ namespace GMap.NET.Internals
 #endif
             {
                string oldCache = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+#if PocketPC
+               CacheLocation = oldCache;
+#else
                string newCache = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
 
                // move database to non-roaming user directory
@@ -104,6 +107,7 @@ namespace GMap.NET.Internals
                   Trace.WriteLine("SQLitePureImageCache, moving data: " + ex.ToString());
                   CacheLocation = oldCache;
                }
+#endif
             }
          }
       }
