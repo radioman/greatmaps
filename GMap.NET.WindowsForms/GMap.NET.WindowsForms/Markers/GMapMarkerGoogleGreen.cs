@@ -20,7 +20,7 @@ namespace GMap.NET.WindowsForms.Markers
          Offset = new Point(-10, -34);
       }
 
-      Point[] Arrow = new Point[] { new Point(-5, 5), new Point(0, -20), new Point(5, 5), new Point(0, 2) };
+      static readonly Point[] Arrow = new Point[] { new Point(-5, 5), new Point(0, -20), new Point(5, 5), new Point(0, 2) };
 
       public override void OnRender(Graphics g)
       {
@@ -30,7 +30,7 @@ namespace GMap.NET.WindowsForms.Markers
 
          if(Bearing.HasValue)
          {
-            g.TranslateTransform(LocalPosition.X, LocalPosition.Y);
+            g.TranslateTransform(ToolTipPosition.X, ToolTipPosition.Y);
             g.RotateTransform(Bearing.Value);
 
             g.FillPolygon(Brushes.Green, Arrow);
