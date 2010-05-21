@@ -12,6 +12,7 @@ namespace GMap.NET
    using System.Threading;
    using System.Xml.Serialization;
    using GMap.NET.CacheProviders;
+   using GMap.NET.Projections;
    using GMap.NET.Internals;
    using System.Data.Common;
    using System.Xml;
@@ -465,6 +466,88 @@ namespace GMap.NET
          }
 
          return types;
+      }
+
+      /// <summary>
+      /// sets projection using specific map
+      /// </summary>
+      /// <param name="type"></param>
+      /// <param name="Projection"></param>
+      public void AdjustProjection(MapType type, ref PureProjection Projection, out int maxZoom)
+      {
+         maxZoom = MaxZoom;
+
+         switch(type)
+         {
+            case MapType.ArcGIS_Map:
+            case MapType.ArcGIS_Satellite:
+            case MapType.ArcGIS_ShadedRelief:
+            case MapType.ArcGIS_Terrain:
+            {
+               if(false == (Projection is PlateCarreeProjection))
+               {
+                  Projection = new PlateCarreeProjection();
+               }
+               maxZoom = 13;
+            }
+            break;
+
+            case MapType.ArcGIS_MapsLT_Map_Hybrid:
+            case MapType.ArcGIS_MapsLT_Map_Labels:
+            case MapType.ArcGIS_MapsLT_Map:
+            case MapType.ArcGIS_MapsLT_OrtoFoto:
+            {
+               if(false == (Projection is LKS94Projection))
+               {
+                  Projection = new LKS94Projection();
+               }
+               maxZoom = 11;
+            }
+            break;
+
+            case MapType.PergoTurkeyMap:
+            {
+               if(false == (Projection is PlateCarreeProjectionPergo))
+               {
+                  Projection = new PlateCarreeProjectionPergo();
+               }
+               maxZoom = 17;
+            }
+            break;
+
+            case MapType.YandexMapRu:
+            {
+               if(false == (Projection is MercatorProjectionYandex))
+               {
+                  Projection = new MercatorProjectionYandex();
+               }
+               maxZoom = 13;
+            }
+            break;
+
+            case MapType.OpenStreetMapSurfer:
+            case MapType.OpenStreetMapSurferTerrain:
+            case MapType.SigPacSpainMap:
+            {
+               if(false == (Projection is MercatorProjection))
+               {
+                  Projection = new MercatorProjection();
+               }
+               maxZoom = 19;
+            }
+            break;   
+
+
+            default:
+            {
+               if(false == (Projection is MercatorProjection))
+               {
+                  Projection = new MercatorProjection();
+               }
+               maxZoom = 17;
+            }
+            break;
+         }
       }
 
       /// <summary>

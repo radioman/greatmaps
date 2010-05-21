@@ -56,6 +56,8 @@ namespace GMap.NET.Internals
 
       internal bool started = false;
       int zoom;
+      internal int maxZoom = 2;
+      internal int minZoom = 2;
       internal int Width;
       internal int Height;
 
@@ -66,23 +68,10 @@ namespace GMap.NET.Internals
       internal int pxRes1000km; // 1000km
       internal int pxRes5000km; // 5000km
 
-      PureProjection projection;
-
       /// <summary>
       /// current peojection
       /// </summary>
-      public PureProjection Projection
-      {
-         get
-         {
-            return projection;
-         }
-         set
-         {
-            projection = value;
-            tileRect = new Rectangle(new Point(0, 0), value.TileSize);
-         }
-      }
+      public PureProjection Projection;
 
       /// <summary>
       /// is user dragging map
@@ -201,6 +190,8 @@ namespace GMap.NET.Internals
          }
       }
 
+      internal bool zoomToArea = true;
+
       MapType mapType;
       public MapType MapType
       {
@@ -214,71 +205,9 @@ namespace GMap.NET.Internals
             {
                mapType = value;
 
-               switch(value)
-               {
-#if TESTpjbcoetzer
-                  case MapType.ArcGIS_TestPjbcoetzer:
-                  {
-                     if(false == (Projection is PlateCarreeProjection2))
-                     {
-                        Projection = new PlateCarreeProjection2();
-                     }
-                  }
-                  break;
-#endif
+               GMaps.Instance.AdjustProjection(mapType, ref Projection, out maxZoom);
 
-                  case MapType.ArcGIS_Map:
-                  case MapType.ArcGIS_Satellite:
-                  case MapType.ArcGIS_ShadedRelief:
-                  case MapType.ArcGIS_Terrain:
-                  {
-                     if(false == (Projection is PlateCarreeProjection))
-                     {
-                        Projection = new PlateCarreeProjection();
-                     }
-                  }
-                  break;
-
-                  case MapType.ArcGIS_MapsLT_Map_Hybrid:
-                  case MapType.ArcGIS_MapsLT_Map_Labels:
-                  case MapType.ArcGIS_MapsLT_Map:
-                  case MapType.ArcGIS_MapsLT_OrtoFoto:
-                  {
-                     if(false == (Projection is LKS94Projection))
-                     {
-                        Projection = new LKS94Projection();
-                     }
-                  }
-                  break;
-
-                  case MapType.PergoTurkeyMap:
-                  {
-                     if(false == (Projection is PlateCarreeProjectionPergo))
-                     {
-                        Projection = new PlateCarreeProjectionPergo();
-                     }
-                  }
-                  break;
-
-                  case MapType.YandexMapRu:
-                  {
-                     if(false == (Projection is MercatorProjectionYandex))
-                     {
-                        Projection = new MercatorProjectionYandex();
-                     }
-                  }
-                  break;
-
-                  default:
-                  {
-                     if(false == (Projection is MercatorProjection))
-                     {
-                        Projection = new MercatorProjection();
-                     }
-                  }
-                  break;
-               }
-
+               tileRect = new Rectangle(new Point(0, 0), Projection.TileSize);
                minOfTiles = Projection.GetTileMatrixMinXY(Zoom);
                maxOfTiles = Projection.GetTileMatrixMaxXY(Zoom);
                CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, Zoom);
@@ -294,9 +223,97 @@ namespace GMap.NET.Internals
                   {
                      OnMapTypeChanged(value);
                   }
+
+                  switch(mapType)
+                  {
+                     case MapType.ArcGIS_MapsLT_Map_Hybrid:
+                     case MapType.ArcGIS_MapsLT_Map_Labels:
+                     case MapType.ArcGIS_MapsLT_Map:
+                     case MapType.ArcGIS_MapsLT_OrtoFoto:
+                     {
+                        RectLatLng area = new RectLatLng(56.431489960361, 20.8962105239809, 5.8924169643369, 2.58940626652217);
+                        if(!area.Contains(CurrentPosition))
+                        {
+                           SetZoomToFitRect(area);
+                           zoomToArea = false;
+                        }
+                     }
+                     break;
+
+                     case MapType.PergoTurkeyMap:
+                     {
+                        RectLatLng area = new RectLatLng(42.5830078125, 25.48828125, 19.05029296875, 6.83349609375);
+                        if(!area.Contains(CurrentPosition))
+                        {
+                           SetZoomToFitRect(area);
+                           zoomToArea = false;
+                        }
+                     }
+                     break;
+
+                     case MapType.SigPacSpainMap:
+                     {
+                        minZoom = 5;
+                        RectLatLng area = new RectLatLng(43.8741381814747, -9.700927734375, 14.34814453125, 7.8605775962932);
+                        if(!area.Contains(CurrentPosition))
+                        {
+                           SetZoomToFitRect(area);
+                           zoomToArea = false;
+                        }
+                     }
+                     break;
+
+                     case MapType.GoogleMapKorea:
+                     case MapType.GoogleLabelsKorea:
+                     case MapType.GoogleHybridKorea:
+                     case MapType.GoogleSatelliteKorea:
+                     {
+                        RectLatLng area = new RectLatLng(38.6597777307125, 125.738525390625, 4.02099609375, 4.42072406219614);
+                        if(!area.Contains(CurrentPosition))
+                        {
+                           SetZoomToFitRect(area);
+                           zoomToArea = false;
+                        }
+                     }
+                     break;
+
+                     default:
+                     {
+                        zoomToArea = true;
+                     }
+                     break;
+                  }
                }
             }
          }
+      }
+
+      /// <summary>
+      /// sets zoom to max to fit rect
+      /// </summary>
+      /// <param name="rect"></param>
+      /// <returns></returns>
+      public bool SetZoomToFitRect(RectLatLng rect)
+      {
+         int mmaxZoom = GetMaxZoomToFitRect(rect);
+         if(mmaxZoom > 0)
+         {
+            PointLatLng center = new PointLatLng(rect.Lat-(rect.HeightLat/2), rect.Lng+(rect.WidthLng/2));
+            CurrentPosition = center;
+
+            if(mmaxZoom > maxZoom)
+            {
+               mmaxZoom = maxZoom;
+            }
+
+            if((int) Zoom != mmaxZoom)
+            {
+               Zoom = mmaxZoom;
+            }
+
+            return true;
+         }
+         return false;
       }
 
       /// <summary>
@@ -687,11 +704,15 @@ namespace GMap.NET.Internals
       {
          get
          {
-            PointLatLng p = Projection.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y, Zoom);
-            double rlng = Projection.FromPixelToLatLng(-renderOffset.X + Width, -renderOffset.Y, Zoom).Lng;
-            double blat = Projection.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y + Height, Zoom).Lat;
+            if(Projection != null)
+            {
+               PointLatLng p = Projection.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y, Zoom);
+               double rlng = Projection.FromPixelToLatLng(-renderOffset.X + Width, -renderOffset.Y, Zoom).Lng;
+               double blat = Projection.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y + Height, Zoom).Lat;
 
-            return RectLatLng.FromLTRB(p.Lng, p.Lat, rlng, blat);
+               return RectLatLng.FromLTRB(p.Lng, p.Lat, rlng, blat);
+            }
+            return RectLatLng.Empty;
          }
       }
 
@@ -725,12 +746,12 @@ namespace GMap.NET.Internals
       /// <returns></returns>
       public int GetMaxZoomToFitRect(RectLatLng rect)
       {
-         int zoom = 0;
+         int zoom = minZoom;
 
-         for(int i = 1; i <= GMaps.Instance.MaxZoom; i++)
+         for(int i = zoom; i <= maxZoom; i++)
          {
             Point p1 = Projection.FromLatLngToPixel(rect.LocationTopLeft, i);
-            Point p2 = Projection.FromLatLngToPixel(rect.Bottom, rect.Right, i);
+            Point p2 = Projection.FromLatLngToPixel(rect.LocationRightBottom, i);
 
             if(((p2.X - p1.X) <= Width+10) && (p2.Y - p1.Y) <= Height+10)
             {

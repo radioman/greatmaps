@@ -17,7 +17,9 @@ namespace BigMapMaker
          GMaps.Instance.ImageProxy = new WindowsFormsImageProxy();
 
          MapType type = MapType.GoogleMap;
-         PureProjection prj = new MercatorProjection();
+         PureProjection prj = null;
+
+         GMaps.Instance.AdjustProjection(type, ref prj);
 
          int zoom = 12;
          RectLatLng area = RectLatLng.FromLTRB(25.013809204101563, 54.832138557519563, 25.506134033203125, 54.615623046071839);

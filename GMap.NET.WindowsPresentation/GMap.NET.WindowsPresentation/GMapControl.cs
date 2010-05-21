@@ -47,7 +47,12 @@ namespace GMap.NET.WindowsPresentation
       /// <summary>
       /// pen for Selection
       /// </summary>
-      public Pen SelectionPen = new Pen(Brushes.Blue, 3.0);
+      public Pen SelectionPen = new Pen(Brushes.Blue, 2.0);
+
+      /// <summary>
+      /// background of selected area
+      /// </summary>
+      public Brush SelectedAreaFill = new SolidColorBrush(Color.FromArgb(33, Colors.RoyalBlue.R, Colors.RoyalBlue.G, Colors.RoyalBlue.B));
 
       /// <summary>
       /// /// <summary>
@@ -60,8 +65,6 @@ namespace GMap.NET.WindowsPresentation
       /// </summary>
       public FormattedText EmptyTileText = new FormattedText("We are sorry, but we don't\nhave imagery at this zoom\n     level for this region.", System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("Arial"), 16, Brushes.Blue);
 
-      private int maxZoom = 2;
-
       /// <summary>
       /// max zoom
       /// </summary>         
@@ -71,15 +74,13 @@ namespace GMap.NET.WindowsPresentation
       {
          get
          {
-            return maxZoom;
+            return Core.maxZoom;
          }
          set
          {
-            maxZoom = value;
+            Core.maxZoom = value;
          }
       }
-
-      private int minZoom = 2;
 
       /// <summary>
       /// min zoom
@@ -90,11 +91,11 @@ namespace GMap.NET.WindowsPresentation
       {
          get
          {
-            return minZoom;
+            return Core.minZoom;
          }
          set
          {
-            minZoom = value;
+            Core.minZoom = value;
          }
       }
 
@@ -830,7 +831,7 @@ namespace GMap.NET.WindowsPresentation
             int x2 = p2.X;
             int y2 = p2.Y;
 
-            drawingContext.DrawRectangle(null, SelectionPen, new Rect(x1, y1, x2 - x1, y2 - y1));
+            drawingContext.DrawRoundedRectangle(SelectedAreaFill, SelectionPen, new Rect(x1, y1, x2 - x1, y2 - y1), 5, 5);
          }
 
          #region -- copyright --
@@ -1307,7 +1308,33 @@ namespace GMap.NET.WindowsPresentation
          }
          set
          {
-            Core.MapType = value;
+            if(Core.MapType != value)
+            {
+               RectLatLng viewarea = SelectedArea;
+               if(viewarea != RectLatLng.Empty)
+               {
+                  CurrentPosition = new PointLatLng(viewarea.Lat - viewarea.HeightLat/2, viewarea.Lng + viewarea.WidthLng/2);
+               }
+               else
+               {
+                  viewarea = CurrentViewArea;
+               }
+
+               Core.MapType = value;
+
+               if(Core.started && Core.zoomToArea)
+               {
+                  // restore zoomrect as close as possible
+                  if(viewarea != RectLatLng.Empty && viewarea != CurrentViewArea)
+                  {
+                     int bestZoom = Core.GetMaxZoomToFitRect(viewarea);
+                     if(bestZoom > 0 && Zoom != bestZoom)
+                     {
+                        Zoom = bestZoom;
+                     }
+                  }
+               }
+            }
          }
       }
 

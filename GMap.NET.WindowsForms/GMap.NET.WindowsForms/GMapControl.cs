@@ -38,8 +38,6 @@ namespace GMap.NET.WindowsForms
       /// </summary>
       public readonly ObservableCollectionThreadSafe<GMapOverlay> Overlays = new ObservableCollectionThreadSafe<GMapOverlay>();
 
-      private int maxZoom = 2;
-
       /// <summary>
       /// max zoom
       /// </summary>         
@@ -49,15 +47,13 @@ namespace GMap.NET.WindowsForms
       {
          get
          {
-            return maxZoom;
+            return Core.maxZoom;
          }
          set
          {
-            maxZoom = value;
+            Core.maxZoom = value;
          }
       }
-
-      private int minZoom = 2;
 
       /// <summary>
       /// min zoom
@@ -68,11 +64,11 @@ namespace GMap.NET.WindowsForms
       {
          get
          {
-            return minZoom;
+            return Core.minZoom;
          }
          set
          {
-            minZoom = value;
+            Core.minZoom = value;
          }
       }
 
@@ -119,10 +115,13 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// area selection pen
       /// </summary>
+      public Pen SelectionPen = new Pen(Brushes.Blue, 2);
+
 #if !PocketPC
-      public Pen SelectionPen = new Pen(Brushes.Blue, 4);
-#else
-      public Pen SelectionPen = new Pen(Color.Blue, 4);
+      /// <summary>
+      /// background of selected area
+      /// </summary>
+      public Brush SelectedAreaFill = new SolidBrush(Color.FromArgb(33, Color.RoyalBlue));
 #endif
 
       /// <summary>
@@ -216,7 +215,11 @@ namespace GMap.NET.WindowsForms
          set
          {
             selectedArea = value;
-            Invalidate();
+
+            if(Core.started)
+            {
+               Invalidate();
+            }
          }
       }
 
@@ -1039,6 +1042,7 @@ namespace GMap.NET.WindowsForms
             int y2 = p2.Y;
 
             g.DrawRectangle(SelectionPen, x1, y1, x2 - x1, y2 - y1);
+            g.FillRectangle(SelectedAreaFill, x1, y1, x2 - x1, y2 - y1);
          }
 #endif
 
@@ -1828,7 +1832,33 @@ namespace GMap.NET.WindowsForms
          }
          set
          {
-            Core.MapType = value;
+            if(Core.MapType != value)
+            {
+               RectLatLng viewarea = SelectedArea;
+               if(viewarea != RectLatLng.Empty)
+               {
+                  CurrentPosition = new PointLatLng(viewarea.Lat - viewarea.HeightLat/2, viewarea.Lng + viewarea.WidthLng/2);
+               }
+               else
+               {
+                  viewarea = CurrentViewArea;
+               }
+
+               Core.MapType = value;
+
+               if(Core.started && Core.zoomToArea)
+               {
+                  // restore zoomrect as close as possible
+                  if(viewarea != RectLatLng.Empty && viewarea != CurrentViewArea)
+                  {
+                     int bestZoom = Core.GetMaxZoomToFitRect(viewarea);
+                     if(bestZoom > 0 && Zoom != bestZoom)
+                     {
+                        Zoom = bestZoom;
+                     }
+                  }
+               }
+            }
          }
       }
 
