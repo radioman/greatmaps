@@ -60,7 +60,7 @@ namespace Demo.WindowsForms
             }
 
             // config map             
-            MainMap.MapType = MapType.ArcGIS_MapsLT_Map;
+            MainMap.MapType = MapType.MapsLT_Map;
             MainMap.MaxZoom = 11;
             MainMap.MinZoom = 1;
             MainMap.Zoom = MainMap.MinZoom + 1;

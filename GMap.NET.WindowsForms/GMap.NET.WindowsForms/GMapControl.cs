@@ -112,12 +112,12 @@ namespace GMap.NET.WindowsForms
       public Pen ScalePen = new Pen(Color.Blue, 1);
 #endif
 
+#if !PocketPC
       /// <summary>
       /// area selection pen
       /// </summary>
       public Pen SelectionPen = new Pen(Brushes.Blue, 2);
 
-#if !PocketPC
       /// <summary>
       /// background of selected area
       /// </summary>
@@ -1106,15 +1106,24 @@ namespace GMap.NET.WindowsForms
             case MapType.ArcGIS_Satellite:
             case MapType.ArcGIS_ShadedRelief:
             case MapType.ArcGIS_Terrain:
-            case MapType.ArcGIS_MapsLT_OrtoFoto:
-            case MapType.ArcGIS_MapsLT_Map:
-            case MapType.ArcGIS_MapsLT_Map_Hybrid:
-            case MapType.ArcGIS_MapsLT_Map_Labels:
             {
 #if !PocketPC
                g.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
 #else
                g.DrawString(Core.arcGisCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+#endif
+            }
+            break;
+
+            case MapType.MapsLT_OrtoFoto:
+            case MapType.MapsLT_Map:
+            case MapType.MapsLT_Map_Hybrid:
+            case MapType.MapsLT_Map_Labels:
+            {
+#if !PocketPC
+               g.DrawString(Core.hnitCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#else
+               g.DrawString(Core.hnitCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
 #endif
             }
             break;

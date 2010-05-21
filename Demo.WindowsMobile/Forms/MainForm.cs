@@ -82,7 +82,7 @@ namespace Demo.WindowsMobile
          MainMap.Manager.Mode = AccessMode.CacheOnly;
          menuItemCacheOnly.Checked = true;
 #endif
-         MainMap.MapType = MapType.ArcGIS_MapsLT_Map;
+         MainMap.MapType = MapType.MapsLT_Map;
          MainMap.MaxZoom = 11;
          MainMap.MinZoom = 1;
          MainMap.Zoom = MainMap.MinZoom + 1;
@@ -189,46 +189,6 @@ namespace Demo.WindowsMobile
 
       void MainMap_OnMapTypeChanged(MapType type)
       {
-         switch(type)
-         {
-            case MapType.ArcGIS_Map:
-            case MapType.ArcGIS_Satellite:
-            case MapType.ArcGIS_ShadedRelief:
-            case MapType.ArcGIS_Terrain:
-            {
-               MainMap.MaxZoom = 13;
-            }
-            break;
-
-            case MapType.ArcGIS_MapsLT_Map_Hybrid:
-            case MapType.ArcGIS_MapsLT_Map_Labels:
-            case MapType.ArcGIS_MapsLT_Map:
-            case MapType.ArcGIS_MapsLT_OrtoFoto:
-            {
-               MainMap.MaxZoom = 11;
-            }
-            break;
-
-            case MapType.OpenStreetMapSurfer:
-            case MapType.OpenStreetMapSurferTerrain:
-            {
-               MainMap.MaxZoom = 19;
-            }
-            break;
-
-            default:
-            {
-               MainMap.MaxZoom = 17;
-            }
-            break;
-         }
-
-         if(MainMap.Zoom > MainMap.MaxZoom)
-         {
-            MainMap.Zoom = MainMap.MaxZoom;
-         }
-         //trackBar1.Maximum = MainMap.MaxZoom;
-
          //if(routes.Routes.Count > 0)
          //{
          //   MainMap.ZoomAndCenterRoutes(null);
@@ -254,7 +214,7 @@ namespace Demo.WindowsMobile
 
       private void menuItem15_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.ArcGIS_MapsLT_OrtoFoto;
+         MainMap.MapType = MapType.MapsLT_OrtoFoto;
       }
 
       private void menuItem10_Click(object sender, EventArgs e)
@@ -304,7 +264,7 @@ namespace Demo.WindowsMobile
 
       private void menuItem14_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.ArcGIS_MapsLT_Map;
+         MainMap.MapType = MapType.MapsLT_Map;
       }
 
       private void menuItem25_Click(object sender, EventArgs e)

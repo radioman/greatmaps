@@ -51,10 +51,10 @@ namespace GMap.NET
       //ArcGIS_MapsLT_Map_Labels=991,
       //ArcGIS_MapsLT_Map_Hybrid=998,
 
-      ArcGIS_MapsLT_Map=1000,
-      ArcGIS_MapsLT_OrtoFoto=1001,
-      ArcGIS_MapsLT_Map_Labels=1002,
-      ArcGIS_MapsLT_Map_Hybrid=1003,
+      MapsLT_Map=1000,
+      MapsLT_OrtoFoto=1001,
+      MapsLT_Map_Labels=1002,
+      MapsLT_Map_Hybrid=1003,
 
       PergoTurkeyMap = 2001, 
       SigPacSpainMap = 3001,

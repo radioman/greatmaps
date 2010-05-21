@@ -38,6 +38,7 @@ namespace GMap.NET.WindowsPresentation
       FormattedText virtualEarthCopyright;
       FormattedText openStreetMapCopyright;
       FormattedText arcGisMapCopyright;
+      FormattedText hnitMapCopyright;
 
       /// <summary>
       /// pen for empty tile borders
@@ -374,6 +375,7 @@ namespace GMap.NET.WindowsPresentation
             virtualEarthCopyright = new FormattedText(Core.virtualEarthCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             openStreetMapCopyright = new FormattedText(Core.openStreetMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             arcGisMapCopyright = new FormattedText(Core.arcGisCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+            hnitMapCopyright = new FormattedText(Core.hnitCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
 
             MapType = MapType.GoogleMap;
          }
@@ -878,12 +880,17 @@ namespace GMap.NET.WindowsPresentation
             case MapType.ArcGIS_Satellite:
             case MapType.ArcGIS_ShadedRelief:
             case MapType.ArcGIS_Terrain:
-            case MapType.ArcGIS_MapsLT_OrtoFoto:
-            case MapType.ArcGIS_MapsLT_Map:
-            case MapType.ArcGIS_MapsLT_Map_Hybrid:
-            case MapType.ArcGIS_MapsLT_Map_Labels:
             {
-               drawingContext.DrawText(arcGisMapCopyright, new System.Windows.Point(5, ActualHeight - virtualEarthCopyright.Height - 5));
+               drawingContext.DrawText(arcGisMapCopyright, new System.Windows.Point(5, ActualHeight - arcGisMapCopyright.Height - 5));
+            }
+            break;
+
+            case MapType.MapsLT_OrtoFoto:
+            case MapType.MapsLT_Map:
+            case MapType.MapsLT_Map_Hybrid:
+            case MapType.MapsLT_Map_Labels:
+            {
+               drawingContext.DrawText(hnitMapCopyright, new System.Windows.Point(5, ActualHeight - hnitMapCopyright.Height - 5));
             }
             break;
          }

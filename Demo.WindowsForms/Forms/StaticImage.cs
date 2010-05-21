@@ -212,6 +212,7 @@ namespace Demo.WindowsForms
 
                            px.Offset(padding, padding);
                            px.Offset(-topLeftPx.X, -topLeftPx.Y);
+                           px.Offset(r.Offset.X, r.Offset.Y);
 
                            r.LocalPosition = new System.Drawing.Point(px.X, px.Y);
 

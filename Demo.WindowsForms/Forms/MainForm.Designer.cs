@@ -135,7 +135,7 @@
          this.MainMap.GrayScaleMode = false;
          this.MainMap.LevelsKeepInMemmory = 5;
          this.MainMap.Location = new System.Drawing.Point(3, 16);
-         this.MainMap.MapType = GMap.NET.MapType.ArcGIS_MapsLT_Map;
+         this.MainMap.MapType = GMap.NET.MapType.MapsLT_Map;
          this.MainMap.MarkersEnabled = true;
          this.MainMap.MaxZoom = 2;
          this.MainMap.MinZoom = 2;

@@ -24,7 +24,6 @@ namespace Demo.WindowsPresentation
 
       // marker
       GMapMarker currentMarker;
-      GMapMarker center;
 
       // zones list
       List<GMapMarker> Circles = new List<GMapMarker>();
@@ -107,15 +106,6 @@ namespace Demo.WindowsPresentation
             currentMarker.Offset = new System.Windows.Point(-15, -15);
             currentMarker.ZIndex = int.MaxValue;
             MainMap.Markers.Add(currentMarker);
-         }
-
-         // map center
-         center = new GMapMarker(MainMap.CurrentPosition);
-         {
-            center.Shape = new Cross();
-            center.Offset = new System.Windows.Point(-15, -15);
-            center.ZIndex = int.MaxValue;
-            MainMap.Markers.Add(center);
          }
 
          //if(false)
@@ -513,7 +503,6 @@ namespace Demo.WindowsPresentation
       // current location changed
       void MainMap_OnCurrentPositionChanged(PointLatLng point)
       {
-         center.Position = point;
          mapgroup.Header = "gmap: " + point;
       }
 
@@ -565,9 +554,9 @@ namespace Demo.WindowsPresentation
          double lat = double.Parse(textBoxLat.Text, CultureInfo.InvariantCulture);
          double lng = double.Parse(textBoxLng.Text, CultureInfo.InvariantCulture);
 
-         center.Position = new PointLatLng(lat, lng);
+         currentMarker.Position = new PointLatLng(lat, lng);
 
-         MainMap.CurrentPosition = center.Position;
+         MainMap.CurrentPosition = currentMarker.Position;
       }
 
       // goto by geocoder
@@ -733,7 +722,7 @@ namespace Demo.WindowsPresentation
       // clear all markers
       private void button10_Click(object sender, RoutedEventArgs e)
       {
-         var clear = MainMap.Markers.Where(p => p != null && p != currentMarker && p != center);
+         var clear = MainMap.Markers.Where(p => p != null && p != currentMarker);
          if(clear != null)
          {
             for(int i = 0; i < clear.Count(); i++)

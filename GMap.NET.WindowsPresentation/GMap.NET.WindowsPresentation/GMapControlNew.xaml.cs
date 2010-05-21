@@ -1003,10 +1003,10 @@ namespace GMap.NET.WindowsPresentation
             case MapType.ArcGIS_Satellite:
             case MapType.ArcGIS_ShadedRelief:
             case MapType.ArcGIS_Terrain:
-            case MapType.ArcGIS_MapsLT_OrtoFoto:
-            case MapType.ArcGIS_MapsLT_Map:
-            case MapType.ArcGIS_MapsLT_Map_Hybrid:
-            case MapType.ArcGIS_MapsLT_Map_Labels:
+            case MapType.MapsLT_OrtoFoto:
+            case MapType.MapsLT_Map:
+            case MapType.MapsLT_Map_Hybrid:
+            case MapType.MapsLT_Map_Labels:
             {
                drawingContext.DrawText(arcGisMapCopyright, new System.Windows.Point(5, ActualHeight - virtualEarthCopyright.Height - 5));
             }

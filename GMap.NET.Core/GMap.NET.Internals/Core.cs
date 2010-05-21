@@ -48,11 +48,12 @@ namespace GMap.NET.Internals
       public readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>();
       readonly WaitCallback ProcessLoadTaskCallback;
 
-      public readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
-      public readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
-      public readonly string yahooMapCopyright = string.Format("© Yahoo! Inc. - Map data & Imagery ©{0} NAVTEQ", DateTime.Today.Year);
-      public readonly string virtualEarthCopyright = string.Format("©{0} Microsoft Corporation, ©{0} NAVTEQ, ©{0} Image courtesy of NASA", DateTime.Today.Year);
-      public readonly string arcGisCopyright = string.Format("©{0} ESRI - Map data ©{0} ArcGIS", DateTime.Today.Year);
+      public static readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
+      public static readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
+      public static readonly string yahooMapCopyright = string.Format("© Yahoo! Inc. - Map data & Imagery ©{0} NAVTEQ", DateTime.Today.Year);
+      public static readonly string virtualEarthCopyright = string.Format("©{0} Microsoft Corporation, ©{0} NAVTEQ, ©{0} Image courtesy of NASA", DateTime.Today.Year);
+      public static readonly string arcGisCopyright = string.Format("©{0} ESRI - Map data ©{0} ArcGIS", DateTime.Today.Year);
+      public static readonly string hnitCopyright = string.Format("©{0} Hnit-Baltic - Map data ©{0} ESRI", DateTime.Today.Year);
 
       internal bool started = false;
       int zoom;
@@ -226,10 +227,10 @@ namespace GMap.NET.Internals
 
                   switch(mapType)
                   {
-                     case MapType.ArcGIS_MapsLT_Map_Hybrid:
-                     case MapType.ArcGIS_MapsLT_Map_Labels:
-                     case MapType.ArcGIS_MapsLT_Map:
-                     case MapType.ArcGIS_MapsLT_OrtoFoto:
+                     case MapType.MapsLT_Map_Hybrid:
+                     case MapType.MapsLT_Map_Labels:
+                     case MapType.MapsLT_Map:
+                     case MapType.MapsLT_OrtoFoto:
                      {
                         RectLatLng area = new RectLatLng(56.431489960361, 20.8962105239809, 5.8924169643369, 2.58940626652217);
                         if(!area.Contains(CurrentPosition))
