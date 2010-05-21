@@ -960,7 +960,7 @@ namespace GMap.NET.Internals
             {
                try
                {
-                  var m = Matrix.GetTile(task.Value.Zoom, task.Value.Pos);
+                  var m = Matrix.GetTileWithReadLock(task.Value.Zoom, task.Value.Pos);
 
                   if(m == null || m.Overlays.Count == 0)
                   {

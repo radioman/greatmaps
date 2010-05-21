@@ -3,6 +3,8 @@ namespace GMap.NET.Internals
 {
    using System.Collections.Generic;
    using System.Threading;
+   using System.Diagnostics;
+   using System;
 
    /// <summary>
    /// matrix for tiles
@@ -151,17 +153,36 @@ namespace GMap.NET.Internals
          }
       }
 
-      public Tile GetTile(int zoom, Point p)
+      public void EnterReadLock()
+      {
+         Lock.AcquireReaderLock(-1);
+      }
+
+      public void LeaveReadLock()
+      {
+         Lock.ReleaseReaderLock();
+      }
+
+      public Tile GetTileWithNoLock(int zoom, Point p)
+      {
+         Tile ret = null;
+
+         //if(zoom < Levels.Count)
+         {
+            Levels[zoom].TryGetValue(p, out ret);
+         }
+
+         return ret;
+      }
+
+      public Tile GetTileWithReadLock(int zoom, Point p)
       {
          Tile ret = null;
 
          Lock.AcquireReaderLock(-1);
          try
          {
-            //if(zoom < Levels.Count)
-            {
-               Levels[zoom].TryGetValue(p, out ret);
-            }
+            ret = GetTileWithNoLock(zoom, p);
          }
          finally
          {

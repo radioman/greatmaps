@@ -634,87 +634,95 @@ namespace GMap.NET.WindowsPresentation
       /// <param name="g"></param>
       void DrawMapWPF(DrawingContext g)
       {
-         for(int i = -Core.sizeOfMapArea.Width; i <= Core.sizeOfMapArea.Width; i++)
+         Core.Matrix.EnterReadLock();
+         try
          {
-            for(int j = -Core.sizeOfMapArea.Height; j <= Core.sizeOfMapArea.Height; j++)
+            for(int i = -Core.sizeOfMapArea.Width; i <= Core.sizeOfMapArea.Width; i++)
             {
-               Core.tilePoint = Core.centerTileXYLocation;
-               Core.tilePoint.X += i;
-               Core.tilePoint.Y += j;
-
-               Tile t = Core.Matrix.GetTile(Core.Zoom, Core.tilePoint);
-               if(t != null)
+               for(int j = -Core.sizeOfMapArea.Height; j <= Core.sizeOfMapArea.Height; j++)
                {
-                  Core.tileRect.X = Core.tilePoint.X * Core.tileRect.Width;
-                  Core.tileRect.Y = Core.tilePoint.Y * Core.tileRect.Height;
-                  Core.tileRect.Offset(Core.renderOffset);
+                  Core.tilePoint = Core.centerTileXYLocation;
+                  Core.tilePoint.X += i;
+                  Core.tilePoint.Y += j;
 
-                  if(region.IntersectsWith(Core.tileRect))
+                  Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, Core.tilePoint);
+                  if(t != null)
                   {
-                     bool found = false;
+                     Core.tileRect.X = Core.tilePoint.X * Core.tileRect.Width;
+                     Core.tileRect.Y = Core.tilePoint.Y * Core.tileRect.Height;
+                     Core.tileRect.Offset(Core.renderOffset);
 
-                     //lock(t.Overlays)
-                     //{
-                     //   foreach(WindowsPresentationImage img in t.Overlays)
-                     //   {
-                     //      if(img != null && img.Img != null)
-                     //      {
-                     //         if(!found)
-                     //            found = true;
-
-                     //         g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
-                     //      }
-                     //   }
-                     //}
-
-                     if(ShowTileGridLines)
+                     if(region.IntersectsWith(Core.tileRect))
                      {
-                        g.DrawRectangle(null, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                        bool found = false;
 
-                        if(Core.tilePoint == Core.centerTileXYLocation)
-                        {
-                           FormattedText TileText = new FormattedText("CENTER:" + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
-                           g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
-                        }
-                        else
-                        {
-                           FormattedText TileText = new FormattedText("TILE: " + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
-                           g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
-                        }
-                     }
+                        //lock(t.Overlays)
+                        //{
+                        //   foreach(WindowsPresentationImage img in t.Overlays)
+                        //   {
+                        //      if(img != null && img.Img != null)
+                        //      {
+                        //         if(!found)
+                        //            found = true;
 
-                     // add text if tile is missing
-                     if(!found)
-                     {
-                        g.DrawRectangle(EmptytileBrush, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
-                        g.DrawText(EmptyTileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
+                        //         g.DrawImage(img.Img, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                        //      }
+                        //   }
+                        //}
 
                         if(ShowTileGridLines)
                         {
                            g.DrawRectangle(null, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+
+                           if(Core.tilePoint == Core.centerTileXYLocation)
+                           {
+                              FormattedText TileText = new FormattedText("CENTER:" + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
+                              g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
+                           }
+                           else
                            {
                               FormattedText TileText = new FormattedText("TILE: " + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
-                              g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y - EmptyTileText.Height / 2));
+                              g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
                            }
                         }
 
-                        // raise error
-                        if(OnEmptyTileError != null)
+                        // add text if tile is missing
+                        if(!found)
                         {
-                           if(!RaiseEmptyTileError)
-                           {
-                              RaiseEmptyTileError = true;
+                           g.DrawRectangle(EmptytileBrush, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                           g.DrawText(EmptyTileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - EmptyTileText.Height / 2));
 
-                              this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(delegate()
+                           if(ShowTileGridLines)
+                           {
+                              g.DrawRectangle(null, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
                               {
-                                 OnEmptyTileError(t.Zoom, t.Pos);
-                              }));
+                                 FormattedText TileText = new FormattedText("TILE: " + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
+                                 g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y - EmptyTileText.Height / 2));
+                              }
+                           }
+
+                           // raise error
+                           if(OnEmptyTileError != null)
+                           {
+                              if(!RaiseEmptyTileError)
+                              {
+                                 RaiseEmptyTileError = true;
+
+                                 this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(delegate()
+                                 {
+                                    OnEmptyTileError(t.Zoom, t.Pos);
+                                 }));
+                              }
                            }
                         }
                      }
                   }
                }
             }
+         }
+         finally
+         {
+            Core.Matrix.LeaveReadLock();
          }
       }
 
