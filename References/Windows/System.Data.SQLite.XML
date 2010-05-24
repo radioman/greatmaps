@@ -1,6 +1,399 @@
 <?xml version="1.0"?>
 <doc>
     <members>
+        <member name="T:System.Data.SQLite.SQLiteMetaDataCollectionNames">
+            <summary>
+            MetaDataCollections specific to SQLite
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.Catalogs">
+            <summary>
+            Returns a list of databases attached to the connection
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.Columns">
+            <summary>
+            Returns column information for the specified table
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.Indexes">
+            <summary>
+            Returns index information for the optionally-specified table
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.IndexColumns">
+            <summary>
+            Returns base columns for the given index
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.Tables">
+            <summary>
+            Returns the tables in the given catalog
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.Views">
+            <summary>
+            Returns user-defined views in the given catalog
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.ViewColumns">
+            <summary>
+            Returns underlying column information on the given view
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.ForeignKeys">
+            <summary>
+            Returns foreign key information for the given catalog
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.Triggers">
+            <summary>
+            Returns the triggers on the database
+            </summary>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteConnectionStringBuilder">
+            <summary>
+            SQLite implementation of DbConnectionStringBuilder.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteConnectionStringBuilder._properties">
+            <summary>
+            Properties of this class
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConnectionStringBuilder.#ctor">
+            <overloads>
+            Constructs a new instance of the class
+            </overloads>
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConnectionStringBuilder.#ctor(System.String)">
+            <summary>
+            Constructs a new instance of the class using the specified connection string.
+            </summary>
+            <param name="connectionString">The connection string to parse</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConnectionStringBuilder.Initialize(System.String)">
+            <summary>
+            Private initializer, which assigns the connection string and resets the builder
+            </summary>
+            <param name="cnnString">The connection string to assign</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConnectionStringBuilder.TryGetValue(System.String,System.Object@)">
+            <summary>
+            Helper function for retrieving values from the connectionstring
+            </summary>
+            <param name="keyword">The keyword to retrieve settings for</param>
+            <param name="value">The resulting parameter value</param>
+            <returns>Returns true if the value was found and returned</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConnectionStringBuilder.FallbackGetProperties(System.Collections.Hashtable)">
+            <summary>
+            Fallback method for MONO, which doesn't implement DbConnectionStringBuilder.GetProperties()
+            </summary>
+            <param name="propertyList">The hashtable to fill with property descriptors</param>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.Version">
+            <summary>
+            Gets/Sets the default version of the SQLite engine to instantiate.  Currently the only valid value is 3, indicating version 3 of the sqlite library.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.SyncMode">
+            <summary>
+            Gets/Sets the synchronization mode (file flushing) of the connection string.  Default is "Normal".
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.UseUTF16Encoding">
+            <summary>
+            Gets/Sets the encoding for the connection string.  The default is "False" which indicates UTF-8 encoding.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.Pooling">
+            <summary>
+            Gets/Sets whether or not to use connection pooling.  The default is "False"
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.BinaryGUID">
+            <summary>
+            Gets/Sets whethor not to store GUID's in binary format.  The default is True
+            which saves space in the database.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.DataSource">
+            <summary>
+            Gets/Sets the filename to open on the connection string.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.Uri">
+            <summary>
+            An alternate to the data source property
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.DefaultTimeout">
+            <summary>
+            Gets/sets the default command timeout for newly-created commands.  This is especially useful for 
+            commands used internally such as inside a SQLiteTransaction, where setting the timeout is not possible.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.Enlist">
+            <summary>
+            Determines whether or not the connection will automatically participate
+            in the current distributed transaction (if one exists)
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.FailIfMissing">
+            <summary>
+            If set to true, will throw an exception if the database specified in the connection
+            string does not exist.  If false, the database will be created automatically.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.LegacyFormat">
+            <summary>
+            If enabled, uses the legacy 3.xx format for maximum compatibility, but results in larger
+            database sizes.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.ReadOnly">
+            <summary>
+            When enabled, the database will be opened for read-only access and writing will be disabled.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.Password">
+            <summary>
+            Gets/sets the database encryption password
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.PageSize">
+            <summary>
+            Gets/Sets the page size for the connection.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.MaxPageCount">
+            <summary>
+            Gets/Sets the maximum number of pages the database may hold
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.CacheSize">
+            <summary>
+            Gets/Sets the cache size for the connection.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.DateTimeFormat">
+            <summary>
+            Gets/Sets the datetime format for the connection.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.JournalMode">
+            <summary>
+            Determines how SQLite handles the transaction journal file.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.DefaultIsolationLevel">
+            <summary>
+            Sets the default isolation level for transactions on the connection.
+            </summary>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteCommandBuilder">
+            <summary>
+            SQLite implementation of DbCommandBuilder.
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.#ctor(System.Data.SQLite.SQLiteDataAdapter)">
+            <summary>
+            Initializes the command builder and associates it with the specified data adapter.
+            </summary>
+            <param name="adp"></param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.ApplyParameterInfo(System.Data.Common.DbParameter,System.Data.DataRow,System.Data.StatementType,System.Boolean)">
+            <summary>
+            Minimal amount of parameter processing.  Primarily sets the DbType for the parameter equal to the provider type in the schema
+            </summary>
+            <param name="parameter">The parameter to use in applying custom behaviors to a row</param>
+            <param name="row">The row to apply the parameter to</param>
+            <param name="statementType">The type of statement</param>
+            <param name="whereClause">Whether the application of the parameter is part of a WHERE clause</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetParameterName(System.String)">
+            <summary>
+            Returns a valid named parameter
+            </summary>
+            <param name="parameterName">The name of the parameter</param>
+            <returns>Error</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetParameterName(System.Int32)">
+            <summary>
+            Returns a named parameter for the given ordinal
+            </summary>
+            <param name="parameterOrdinal">The i of the parameter</param>
+            <returns>Error</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetParameterPlaceholder(System.Int32)">
+            <summary>
+            Returns a placeholder character for the specified parameter i.
+            </summary>
+            <param name="parameterOrdinal">The index of the parameter to provide a placeholder for</param>
+            <returns>Returns a named parameter</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.SetRowUpdatingHandler(System.Data.Common.DbDataAdapter)">
+            <summary>
+            Sets the handler for receiving row updating events.  Used by the DbCommandBuilder to autogenerate SQL
+            statements that may not have previously been generated.
+            </summary>
+            <param name="adapter">A data adapter to receive events on.</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetDeleteCommand">
+            <summary>
+            Returns the automatically-generated SQLite command to delete rows from the database
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetDeleteCommand(System.Boolean)">
+            <summary>
+            Returns the automatically-generated SQLite command to delete rows from the database
+            </summary>
+            <param name="useColumnsForParameterNames"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetUpdateCommand">
+            <summary>
+            Returns the automatically-generated SQLite command to update rows in the database
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetUpdateCommand(System.Boolean)">
+            <summary>
+            Returns the automatically-generated SQLite command to update rows in the database
+            </summary>
+            <param name="useColumnsForParameterNames"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetInsertCommand">
+            <summary>
+            Returns the automatically-generated SQLite command to insert rows into the database
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetInsertCommand(System.Boolean)">
+            <summary>
+            Returns the automatically-generated SQLite command to insert rows into the database
+            </summary>
+            <param name="useColumnsForParameterNames"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.QuoteIdentifier(System.String)">
+            <summary>
+            Places brackets around an identifier
+            </summary>
+            <param name="unquotedIdentifier">The identifier to quote</param>
+            <returns>The bracketed identifier</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.UnquoteIdentifier(System.String)">
+            <summary>
+            Removes brackets around an identifier
+            </summary>
+            <param name="quotedIdentifier">The quoted (bracketed) identifier</param>
+            <returns>The undecorated identifier</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetSchemaTable(System.Data.Common.DbCommand)">
+            <summary>
+            Override helper, which can help the base command builder choose the right keys for the given query
+            </summary>
+            <param name="sourceCommand"></param>
+            <returns></returns>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteCommandBuilder.DataAdapter">
+            <summary>
+            Gets/sets the DataAdapter for this CommandBuilder
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteCommandBuilder.CatalogLocation">
+            <summary>
+            Overridden to hide its property from the designer
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteCommandBuilder.CatalogSeparator">
+            <summary>
+            Overridden to hide its property from the designer
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteCommandBuilder.QuotePrefix">
+            <summary>
+            Overridden to hide its property from the designer
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteCommandBuilder.QuoteSuffix">
+            <summary>
+            Overridden to hide its property from the designer
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteCommandBuilder.SchemaSeparator">
+            <summary>
+            Overridden to hide its property from the designer
+            </summary>
+        </member>
+        <member name="T:System.Data.SQLite.SR">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SR.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SR.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SR.DataTypes">
+             <summary>
+               Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; standalone=&quot;yes&quot;?&gt;
+            &lt;DocumentElement&gt;
+              &lt;DataTypes&gt;
+                &lt;TypeName&gt;smallint&lt;/TypeName&gt;
+                &lt;ProviderDbType&gt;10&lt;/ProviderDbType&gt;
+                &lt;ColumnSize&gt;5&lt;/ColumnSize&gt;
+                &lt;DataType&gt;System.Int16&lt;/DataType&gt;
+                &lt;CreateFormat&gt;smallint&lt;/CreateFormat&gt;
+                &lt;IsAutoIncrementable&gt;false&lt;/IsAutoIncrementable&gt;
+                &lt;IsCaseSensitive&gt;false&lt;/IsCaseSensitive&gt;
+                &lt;IsFixedLength&gt;true&lt;/IsFixedLength&gt;
+                &lt;IsFixedPrecisionScale&gt;true&lt;/IsFixedPrecisionScale&gt;
+                &lt;IsLong&gt;false&lt;/IsLong&gt;
+                &lt;IsNullable&gt;true&lt;/ [rest of string was truncated]&quot;;.
+             </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SR.Keywords">
+            <summary>
+              Looks up a localized string similar to ALL,ALTER,AND,AS,AUTOINCREMENT,BETWEEN,BY,CASE,CHECK,COLLATE,COMMIT,CONSTRAINT,CREATE,CROSS,DEFAULT,DEFERRABLE,DELETE,DISTINCT,DROP,ELSE,ESCAPE,EXCEPT,FOREIGN,FROM,FULL,GROUP,HAVING,IN,INDEX,INNER,INSERT,INTERSECT,INTO,IS,ISNULL,JOIN,LEFT,LIMIT,NATURAL,NOT,NOTNULL,NULL,ON,OR,ORDER,OUTER,PRIMARY,REFERENCES,RIGHT,ROLLBACK,SELECT,SET,TABLE,THEN,TO,TRANSACTION,UNION,UNIQUE,UPDATE,USING,VALUES,WHEN,WHERE.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SR.MetaDataCollections">
+             <summary>
+               Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+            &lt;DocumentElement&gt;
+              &lt;MetaDataCollections&gt;
+                &lt;CollectionName&gt;MetaDataCollections&lt;/CollectionName&gt;
+                &lt;NumberOfRestrictions&gt;0&lt;/NumberOfRestrictions&gt;
+                &lt;NumberOfIdentifierParts&gt;0&lt;/NumberOfIdentifierParts&gt;
+              &lt;/MetaDataCollections&gt;
+              &lt;MetaDataCollections&gt;
+                &lt;CollectionName&gt;DataSourceInformation&lt;/CollectionName&gt;
+                &lt;NumberOfRestrictions&gt;0&lt;/NumberOfRestrictions&gt;
+                &lt;NumberOfIdentifierParts&gt;0&lt;/NumberOfIdentifierParts&gt;
+              &lt;/MetaDataCollections&gt;
+              &lt;MetaDataC [rest of string was truncated]&quot;;.
+             </summary>
+        </member>
         <member name="F:System.Data.SQLite.SQLiteConnectionPool._connections">
             <summary>
             The connection pool object
@@ -760,501 +1153,96 @@
             Return non-zero to trigger a rollback
             </summary>
         </member>
-        <member name="T:System.Data.SQLite.SQLiteDataAdapter">
+        <member name="T:System.Data.SQLite.SynchronizationModes">
             <summary>
-            SQLite implementation of DbDataAdapter.
+            The I/O file cache flushing behavior for the connection
             </summary>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteDataAdapter.#ctor">
-            <overloads>
-            This class is just a shell around the DbDataAdapter.  Nothing from DbDataAdapter is overridden here, just a few constructors are defined.
-            </overloads>
+        <member name="F:System.Data.SQLite.SynchronizationModes.Normal">
             <summary>
-            Default constructor.
+            Normal file flushing at critical sections of the code
             </summary>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteDataAdapter.#ctor(System.Data.SQLite.SQLiteCommand)">
+        <member name="F:System.Data.SQLite.SynchronizationModes.Full">
             <summary>
-            Constructs a data adapter using the specified select command.
+            Full file flushing after every write operation
             </summary>
-            <param name="cmd">The select command to associate with the adapter.</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteDataAdapter.#ctor(System.String,System.Data.SQLite.SQLiteConnection)">
+        <member name="F:System.Data.SQLite.SynchronizationModes.Off">
             <summary>
-            Constructs a data adapter with the supplied select command text and associated with the specified connection.
+            Use the default operating system's file flushing, SQLite does not explicitly flush the file buffers after writing
             </summary>
-            <param name="commandText">The select command text to associate with the data adapter.</param>
-            <param name="connection">The connection to associate with the select command.</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteDataAdapter.#ctor(System.String,System.String)">
+        <member name="T:System.Data.SQLite.SQLiteCommitHandler">
             <summary>
-            Constructs a data adapter with the specified select command text, and using the specified database connection string.
+            Raised when a transaction is about to be committed.  To roll back a transaction, set the 
+            rollbackTrans boolean value to true.
             </summary>
-            <param name="commandText">The select command text to use to construct a select command.</param>
-            <param name="connectionString">A connection string suitable for passing to a new SQLiteConnection, which is associated with the select command.</param>
+            <param name="sender">The connection committing the transaction</param>
+            <param name="e">Event arguments on the transaction</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteDataAdapter.OnRowUpdating(System.Data.Common.RowUpdatingEventArgs)">
+        <member name="T:System.Data.SQLite.SQLiteUpdateEventHandler">
             <summary>
-            Raised by the underlying DbDataAdapter when a row is being updated
+            Raised when data is inserted, updated and deleted on a given connection
             </summary>
-            <param name="value">The event's specifics</param>
+            <param name="sender">The connection committing the transaction</param>
+            <param name="e">The event parameters which triggered the event</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteDataAdapter.OnRowUpdated(System.Data.Common.RowUpdatedEventArgs)">
+        <member name="T:System.Data.SQLite.UpdateEventType">
             <summary>
-            Raised by DbDataAdapter after a row is updated
+            Whenever an update event is triggered on a connection, this enum will indicate
+            exactly what type of operation is being performed.
             </summary>
-            <param name="value">The event's specifics</param>
         </member>
-        <member name="E:System.Data.SQLite.SQLiteDataAdapter.RowUpdating">
+        <member name="F:System.Data.SQLite.UpdateEventType.Delete">
             <summary>
-            Row updating event handler
+            A row is being deleted from the given database and table
             </summary>
         </member>
-        <member name="E:System.Data.SQLite.SQLiteDataAdapter.RowUpdated">
+        <member name="F:System.Data.SQLite.UpdateEventType.Insert">
             <summary>
-            Row updated event handler
+            A row is being inserted into the table.
             </summary>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteDataAdapter.SelectCommand">
+        <member name="F:System.Data.SQLite.UpdateEventType.Update">
             <summary>
-            Gets/sets the select command for this DataAdapter
+            A row is being updated in the table.
             </summary>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteDataAdapter.InsertCommand">
+        <member name="T:System.Data.SQLite.UpdateEventArgs">
             <summary>
-            Gets/sets the insert command for this DataAdapter
+            Passed during an Update callback, these event arguments detail the type of update operation being performed
+            on the given connection.
             </summary>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteDataAdapter.UpdateCommand">
+        <member name="F:System.Data.SQLite.UpdateEventArgs.Database">
             <summary>
-            Gets/sets the update command for this DataAdapter
+            The name of the database being updated (usually "main" but can be any attached or temporary database)
             </summary>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteDataAdapter.DeleteCommand">
+        <member name="F:System.Data.SQLite.UpdateEventArgs.Table">
             <summary>
-            Gets/sets the delete command for this DataAdapter
+            The name of the table being updated
             </summary>
         </member>
-        <member name="T:System.Data.SQLite.SQLiteConvert">
+        <member name="F:System.Data.SQLite.UpdateEventArgs.Event">
             <summary>
-            This base class provides datatype conversion services for the SQLite provider.
+            The type of update being performed (insert/update/delete)
             </summary>
         </member>
-        <member name="F:System.Data.SQLite.SQLiteConvert._datetimeFormats">
+        <member name="F:System.Data.SQLite.UpdateEventArgs.RowId">
             <summary>
-            An array of ISO8601 datetime formats we support conversion from
+            The RowId affected by this update.
             </summary>
         </member>
-        <member name="F:System.Data.SQLite.SQLiteConvert._utf8">
+        <member name="T:System.Data.SQLite.CommitEventArgs">
             <summary>
-            An UTF-8 Encoding instance, so we can convert strings to and from UTF-8
+            Event arguments raised when a transaction is being committed
             </summary>
         </member>
-        <member name="F:System.Data.SQLite.SQLiteConvert._datetimeFormat">
+        <member name="F:System.Data.SQLite.CommitEventArgs.AbortTransaction">
             <summary>
-            The default DateTime format for this instance
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.#ctor(System.Data.SQLite.SQLiteDateFormats)">
-            <summary>
-            Initializes the conversion class
-            </summary>
-            <param name="fmt">The default date/time format to use for this instance</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.ToUTF8(System.String)">
-            <summary>
-            Converts a string to a UTF-8 encoded byte array sized to include a null-terminating character.
-            </summary>
-            <param name="sourceText">The string to convert to UTF-8</param>
-            <returns>A byte array containing the converted string plus an extra 0 terminating byte at the end of the array.</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.ToUTF8(System.DateTime)">
-            <summary>
-            Convert a DateTime to a UTF-8 encoded, zero-terminated byte array.
-            </summary>
-            <remarks>
-            This function is a convenience function, which first calls ToString() on the DateTime, and then calls ToUTF8() with the
-            string result.
-            </remarks>
-            <param name="dateTimeValue">The DateTime to convert.</param>
-            <returns>The UTF-8 encoded string, including a 0 terminating byte at the end of the array.</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.ToString(System.IntPtr,System.Int32)">
-            <summary>
-            Converts a UTF-8 encoded IntPtr of the specified length into a .NET string
-            </summary>
-            <param name="nativestring">The pointer to the memory where the UTF-8 string is encoded</param>
-            <param name="nativestringlen">The number of bytes to decode</param>
-            <returns>A string containing the translated character(s)</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.UTF8ToString(System.IntPtr,System.Int32)">
-            <summary>
-            Converts a UTF-8 encoded IntPtr of the specified length into a .NET string
-            </summary>
-            <param name="nativestring">The pointer to the memory where the UTF-8 string is encoded</param>
-            <param name="nativestringlen">The number of bytes to decode</param>
-            <returns>A string containing the translated character(s)</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.ToDateTime(System.String)">
-            <summary>
-            Converts a string into a DateTime, using the current DateTimeFormat specified for the connection when it was opened.
-            </summary>
-            <remarks>
-            Acceptable ISO8601 DateTime formats are:
-              yyyy-MM-dd HH:mm:ss
-              yyyyMMddHHmmss
-              yyyyMMddTHHmmssfffffff
-              yyyy-MM-dd
-              yy-MM-dd
-              yyyyMMdd
-              HH:mm:ss
-              THHmmss
-            </remarks>
-            <param name="dateText">The string containing either a Tick value, a JulianDay double, or an ISO8601-format string</param>
-            <returns>A DateTime value</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.ToDateTime(System.Double)">
-            <summary>
-            Converts a julianday value into a DateTime
-            </summary>
-            <param name="julianDay">The value to convert</param>
-            <returns>A .NET DateTime</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.ToJulianDay(System.DateTime)">
-            <summary>
-            Converts a DateTime struct to a JulianDay double
-            </summary>
-            <param name="value">The DateTime to convert</param>
-            <returns>The JulianDay value the Datetime represents</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.ToString(System.DateTime)">
-            <summary>
-            Converts a DateTime to a string value, using the current DateTimeFormat specified for the connection when it was opened.
-            </summary>
-            <param name="dateValue">The DateTime value to convert</param>
-            <returns>Either a string consisting of the tick count for DateTimeFormat.Ticks, a JulianDay double, or a date/time in ISO8601 format.</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.ToDateTime(System.IntPtr,System.Int32)">
-            <summary>
-            Internal function to convert a UTF-8 encoded IntPtr of the specified length to a DateTime.
-            </summary>
-            <remarks>
-            This is a convenience function, which first calls ToString() on the IntPtr to convert it to a string, then calls
-            ToDateTime() on the string to return a DateTime.
-            </remarks>
-            <param name="ptr">A pointer to the UTF-8 encoded string</param>
-            <param name="len">The length in bytes of the string</param>
-            <returns>The parsed DateTime value</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.Split(System.String,System.Char)">
-            <summary>
-            Smart method of splitting a string.  Skips quoted elements, removes the quotes.
-            </summary>
-            <remarks>
-            This split function works somewhat like the String.Split() function in that it breaks apart a string into
-            pieces and returns the pieces as an array.  The primary differences are:
-            <list type="bullet">
-            <item><description>Only one character can be provided as a separator character</description></item>
-            <item><description>Quoted text inside the string is skipped over when searching for the separator, and the quotes are removed.</description></item>
-            </list>
-            Thus, if splitting the following string looking for a comma:<br/>
-            One,Two, "Three, Four", Five<br/>
-            <br/>
-            The resulting array would contain<br/>
-            [0] One<br/>
-            [1] Two<br/>
-            [2] Three, Four<br/>
-            [3] Five<br/>
-            <br/>
-            Note that the leading and trailing spaces were removed from each item during the split.
-            </remarks>
-            <param name="source">Source string to split apart</param>
-            <param name="separator">Separator character</param>
-            <returns>A string array of the split up elements</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.ToBoolean(System.Object)">
-            <summary>
-            Convert a value to true or false.
-            </summary>
-            <param name="source">A string or number representing true or false</param>
-            <returns></returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.ToBoolean(System.String)">
-            <summary>
-            Convert a string to true or false.
-            </summary>
-            <param name="source">A string representing true or false</param>
-            <returns></returns>
-            <remarks>
-            "yes", "no", "y", "n", "0", "1", "on", "off" as well as Boolean.FalseString and Boolean.TrueString will all be
-            converted to a proper boolean value.
-            </remarks>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.ColumnToType(System.Data.SQLite.SQLiteStatement,System.Int32,System.Data.SQLite.SQLiteType)">
-            <summary>
-            Determines the data type of a column in a statement
-            </summary>
-            <param name="stmt">The statement to retrieve information for</param>
-            <param name="i">The column to retrieve type information on</param>
-            <param name="typ">The SQLiteType to receive the affinity for the given column</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.SQLiteTypeToType(System.Data.SQLite.SQLiteType)">
-            <summary>
-            Converts a SQLiteType to a .NET Type object
-            </summary>
-            <param name="t">The SQLiteType to convert</param>
-            <returns>Returns a .NET Type object</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.TypeToDbType(System.Type)">
-            <summary>
-            For a given intrinsic type, return a DbType
-            </summary>
-            <param name="typ">The native type to convert</param>
-            <returns>The corresponding (closest match) DbType</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.DbTypeToColumnSize(System.Data.DbType)">
-            <summary>
-            Returns the ColumnSize for the given DbType
-            </summary>
-            <param name="typ">The DbType to get the size of</param>
-            <returns></returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.DbTypeToType(System.Data.DbType)">
-            <summary>
-            Convert a DbType to a Type
-            </summary>
-            <param name="typ">The DbType to convert from</param>
-            <returns>The closest-match .NET type</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.TypeToAffinity(System.Type)">
-            <summary>
-            For a given type, return the closest-match SQLite TypeAffinity, which only understands a very limited subset of types.
-            </summary>
-            <param name="typ">The type to evaluate</param>
-            <returns>The SQLite type affinity for that type.</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConvert.TypeNameToDbType(System.String)">
-            <summary>
-            For a given type name, return a closest-match .NET type
-            </summary>
-            <param name="Name">The name of the type to match</param>
-            <returns>The .NET DBType the text evaluates to.</returns>
-        </member>
-        <member name="T:System.Data.SQLite.TypeAffinity">
-            <summary>
-            SQLite has very limited types, and is inherently text-based.  The first 5 types below represent the sum of all types SQLite
-            understands.  The DateTime extension to the spec is for internal use only.
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.TypeAffinity.Uninitialized">
-            <summary>
-            Not used
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.TypeAffinity.Int64">
-            <summary>
-            All integers in SQLite default to Int64
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.TypeAffinity.Double">
-            <summary>
-            All floating point numbers in SQLite default to double
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.TypeAffinity.Text">
-            <summary>
-            The default data type of SQLite is text
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.TypeAffinity.Blob">
-            <summary>
-            Typically blob types are only seen when returned from a function
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.TypeAffinity.Null">
-            <summary>
-            Null types can be returned from functions
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.TypeAffinity.DateTime">
-            <summary>
-            Used internally by this provider
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.TypeAffinity.None">
-            <summary>
-            Used internally
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteDateFormats">
-            <summary>
-            This implementation of SQLite for ADO.NET can process date/time fields in databases in only one of three formats.  Ticks, ISO8601
-            and JulianDay.
-            </summary>
-            <remarks>
-            ISO8601 is more compatible, readable, fully-processable, but less accurate as it doesn't provide time down to fractions of a second.
-            JulianDay is the numeric format the SQLite uses internally and is arguably the most compatible with 3rd party tools.  It is
-            not readable as text without post-processing.
-            Ticks less compatible with 3rd party tools that query the database, and renders the DateTime field unreadable as text without post-processing.
-            
-            The preferred order of choosing a datetime format is JulianDay, ISO8601, and then Ticks.  Ticks is mainly present for legacy 
-            code support.
-            </remarks>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteDateFormats.Ticks">
-            <summary>
-            Using ticks is not recommended and is not well supported with LINQ.
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteDateFormats.ISO8601">
-            <summary>
-            The default format for this provider.
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteDateFormats.JulianDay">
-            <summary>
-            JulianDay format, which is what SQLite uses internally
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteJournalModeEnum">
-            <summary>
-            This enum determines how SQLite treats its journal file.
-            </summary>
-            <remarks>
-            By default SQLite will create and delete the journal file when needed during a transaction.
-            However, for some computers running certain filesystem monitoring tools, the rapid
-            creation and deletion of the journal file can cause those programs to fail, or to interfere with SQLite.
-            
-            If a program or virus scanner is interfering with SQLite's journal file, you may receive errors like "unable to open database file"
-            when starting a transaction.  If this is happening, you may want to change the default journal mode to Persist.
-            </remarks>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteJournalModeEnum.Delete">
-            <summary>
-            The default mode, this causes SQLite to create and destroy the journal file as-needed.
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteJournalModeEnum.Persist">
-            <summary>
-            When this is set, SQLite will keep the journal file even after a transaction has completed.  It's contents will be erased,
-            and the journal re-used as often as needed.  If it is deleted, it will be recreated the next time it is needed.
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteJournalModeEnum.Off">
-            <summary>
-            This option disables the rollback journal entirely.  Interrupted transactions or a program crash can cause database
-            corruption in this mode!
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteType">
-            <summary>
-            Struct used internally to determine the datatype of a column in a resultset
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteType.Type">
-            <summary>
-            The DbType of the column, or DbType.Object if it cannot be determined
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteType.Affinity">
-            <summary>
-            The affinity of a column, used for expressions or when Type is DbType.Object
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteTransaction">
-            <summary>
-            SQLite implementation of DbTransaction.
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteTransaction._cnn">
-            <summary>
-            The connection to which this transaction is bound
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteTransaction.#ctor(System.Data.SQLite.SQLiteConnection,System.Boolean)">
-            <summary>
-            Constructs the transaction object, binding it to the supplied connection
-            </summary>
-            <param name="connection">The connection to open a transaction on</param>
-            <param name="deferredLock">TRUE to defer the writelock, or FALSE to lock immediately</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteTransaction.Commit">
-            <summary>
-            Commits the current transaction.
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteTransaction.Dispose(System.Boolean)">
-            <summary>
-            Disposes the transaction.  If it is currently active, any changes are rolled back.
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteTransaction.Rollback">
-            <summary>
-            Rolls back the active transaction.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteTransaction.Connection">
-            <summary>
-            Returns the underlying connection to which this transaction applies.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteTransaction.DbConnection">
-            <summary>
-            Forwards to the local Connection property
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteTransaction.IsolationLevel">
-            <summary>
-            Gets the isolation level of the transaction.  SQLite only supports Serializable transactions.
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteKeyReader">
-            <summary>
-            This class provides key info for a given SQLite statement.
-            <remarks>
-            Providing key information for a given statement is non-trivial :(
-            </remarks>
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteKeyReader.#ctor(System.Data.SQLite.SQLiteConnection,System.Data.SQLite.SQLiteDataReader,System.Data.SQLite.SQLiteStatement)">
-            <summary>
-            This function does all the nasty work at determining what keys need to be returned for
-            a given statement.
-            </summary>
-            <param name="cnn"></param>
-            <param name="reader"></param>
-            <param name="stmt"></param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteKeyReader.Sync">
-            <summary>
-            Make sure all the subqueries are open and ready and sync'd with the current rowid
-            of the table they're supporting
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteKeyReader.Reset">
-            <summary>
-            Release any readers on any subqueries
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteKeyReader.AppendSchemaTable(System.Data.DataTable)">
-            <summary>
-            Append all the columns we've added to the original query to the schema
-            </summary>
-            <param name="tbl"></param>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteKeyReader.Count">
-            <summary>
-            How many additional columns of keyinfo we're holding
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteKeyReader.KeyInfo">
-            <summary>
-            Used to support CommandBehavior.KeyInfo
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteKeyReader.KeyQuery">
-            <summary>
-            A single sub-query for a given table/database.
+            Set to true to abort the transaction and trigger a rollback
             </summary>
         </member>
         <member name="T:System.Data.SQLite.SQLiteFunction">
@@ -1623,6 +1611,738 @@
             <param name="c2">The second array to compare</param>
             <returns>-1 if c1 is less than c2, 0 if c1 is equal to c2, and 1 if c1 is greater than c2</returns>
         </member>
+        <member name="T:System.Data.SQLite.SQLiteFactory">
+            <summary>
+            SQLite implementation of DbProviderFactory.
+            </summary>
+            <summary>
+            SQLite implementation of DbProviderFactory.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteFactory.Instance">
+            <summary>
+            Static instance member which returns an instanced SQLiteFactory class.
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteFactory.CreateCommand">
+            <summary>
+            Returns a new SQLiteCommand object.
+            </summary>
+            <returns>A SQLiteCommand object.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteFactory.CreateCommandBuilder">
+            <summary>
+            Returns a new SQLiteCommandBuilder object.
+            </summary>
+            <returns>A SQLiteCommandBuilder object.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteFactory.CreateConnection">
+            <summary>
+            Creates a new SQLiteConnection.
+            </summary>
+            <returns>A SQLiteConnection object.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteFactory.CreateConnectionStringBuilder">
+            <summary>
+            Creates a new SQLiteConnectionStringBuilder.
+            </summary>
+            <returns>A SQLiteConnectionStringBuilder object.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteFactory.CreateDataAdapter">
+            <summary>
+            Creates a new SQLiteDataAdapter.
+            </summary>
+            <returns>A SQLiteDataAdapter object.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteFactory.CreateParameter">
+            <summary>
+            Creates a new SQLiteParameter.
+            </summary>
+            <returns>A SQLiteParameter object.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteFactory.System#IServiceProvider#GetService(System.Type)">
+            <summary>
+            Will provide a DbProviderServices object in .NET 3.5
+            </summary>
+            <param name="serviceType">The class or interface type to query for</param>
+            <returns></returns>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteException">
+            <summary>
+            SQLite exception class.
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteException.#ctor(System.Int32,System.String)">
+            <summary>
+            Public constructor for generating a SQLite error given the base error code
+            </summary>
+            <param name="errorCode">The SQLite error code to report</param>
+            <param name="extendedInformation">Extra text to go along with the error message text</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteException.#ctor(System.String)">
+            <summary>
+            Various public constructors that just pass along to the base Exception
+            </summary>
+            <param name="message">Passed verbatim to Exception</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteException.#ctor">
+            <summary>
+            Various public constructors that just pass along to the base Exception
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteException.#ctor(System.String,System.Exception)">
+            <summary>
+            Various public constructors that just pass along to the base Exception
+            <param name="message">Passed to Exception</param>
+            <param name="innerException">Passed to Exception</param>
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteException.GetStockErrorMessage(System.Int32,System.String)">
+            <summary>
+            Initializes the exception class with the SQLite error code.
+            </summary>
+            <param name="errorCode">The SQLite error code</param>
+            <param name="errorMessage">A detailed error message</param>
+            <returns>An error message string</returns>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteException.ErrorCode">
+            <summary>
+            Retrieves the underlying SQLite error code for this exception
+            </summary>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteErrorCode">
+            <summary>
+            SQLite error codes
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Ok">
+            <summary>
+            Success
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Error">
+            <summary>
+            SQL error or missing database
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Internal">
+            <summary>
+            Internal logic error in SQLite
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Perm">
+            <summary>
+            Access permission denied
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Abort">
+            <summary>
+            Callback routine requested an abort
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Busy">
+            <summary>
+            The database file is locked
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Locked">
+            <summary>
+            A table in the database is locked
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.NoMem">
+            <summary>
+            malloc() failed
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.ReadOnly">
+            <summary>
+            Attempt to write a read-only database
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Interrupt">
+            <summary>
+            Operation terminated by sqlite3_interrupt()
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.IOErr">
+            <summary>
+            Some kind of disk I/O error occurred
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Corrupt">
+            <summary>
+            The database disk image is malformed
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.NotFound">
+            <summary>
+            Table or record not found
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Full">
+            <summary>
+            Insertion failed because database is full
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.CantOpen">
+            <summary>
+            Unable to open the database file
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Protocol">
+            <summary>
+            Database lock protocol error
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Empty">
+            <summary>
+            Database is empty
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Schema">
+            <summary>
+            The database schema changed
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.TooBig">
+            <summary>
+            Too much data for one row of a table
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Constraint">
+            <summary>
+            Abort due to constraint violation
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Mismatch">
+            <summary>
+            Data type mismatch
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Misuse">
+            <summary>
+            Library used incorrectly
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.NOLFS">
+            <summary>
+            Uses OS features not supported on host
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Auth">
+            <summary>
+            Authorization denied
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Format">
+            <summary>
+            Auxiliary database format error
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Range">
+            <summary>
+            2nd parameter to sqlite3_bind out of range
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.NotADatabase">
+            <summary>
+            File opened that is not a database file
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Row">
+            <summary>
+            sqlite3_step() has another row ready
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteErrorCode.Done">
+            <summary>
+            sqlite3_step() has finished executing
+            </summary>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteBase">
+            <summary>
+            This internal class provides the foundation of SQLite support.  It defines all the abstract members needed to implement
+            a SQLite data provider, and inherits from SQLiteConvert which allows for simple translations of string to and from SQLite.
+            </summary>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteConvert">
+            <summary>
+            This base class provides datatype conversion services for the SQLite provider.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteConvert._datetimeFormats">
+            <summary>
+            An array of ISO8601 datetime formats we support conversion from
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteConvert._utf8">
+            <summary>
+            An UTF-8 Encoding instance, so we can convert strings to and from UTF-8
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteConvert._datetimeFormat">
+            <summary>
+            The default DateTime format for this instance
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.#ctor(System.Data.SQLite.SQLiteDateFormats)">
+            <summary>
+            Initializes the conversion class
+            </summary>
+            <param name="fmt">The default date/time format to use for this instance</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.ToUTF8(System.String)">
+            <summary>
+            Converts a string to a UTF-8 encoded byte array sized to include a null-terminating character.
+            </summary>
+            <param name="sourceText">The string to convert to UTF-8</param>
+            <returns>A byte array containing the converted string plus an extra 0 terminating byte at the end of the array.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.ToUTF8(System.DateTime)">
+            <summary>
+            Convert a DateTime to a UTF-8 encoded, zero-terminated byte array.
+            </summary>
+            <remarks>
+            This function is a convenience function, which first calls ToString() on the DateTime, and then calls ToUTF8() with the
+            string result.
+            </remarks>
+            <param name="dateTimeValue">The DateTime to convert.</param>
+            <returns>The UTF-8 encoded string, including a 0 terminating byte at the end of the array.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.ToString(System.IntPtr,System.Int32)">
+            <summary>
+            Converts a UTF-8 encoded IntPtr of the specified length into a .NET string
+            </summary>
+            <param name="nativestring">The pointer to the memory where the UTF-8 string is encoded</param>
+            <param name="nativestringlen">The number of bytes to decode</param>
+            <returns>A string containing the translated character(s)</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.UTF8ToString(System.IntPtr,System.Int32)">
+            <summary>
+            Converts a UTF-8 encoded IntPtr of the specified length into a .NET string
+            </summary>
+            <param name="nativestring">The pointer to the memory where the UTF-8 string is encoded</param>
+            <param name="nativestringlen">The number of bytes to decode</param>
+            <returns>A string containing the translated character(s)</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.ToDateTime(System.String)">
+            <summary>
+            Converts a string into a DateTime, using the current DateTimeFormat specified for the connection when it was opened.
+            </summary>
+            <remarks>
+            Acceptable ISO8601 DateTime formats are:
+              yyyy-MM-dd HH:mm:ss
+              yyyyMMddHHmmss
+              yyyyMMddTHHmmssfffffff
+              yyyy-MM-dd
+              yy-MM-dd
+              yyyyMMdd
+              HH:mm:ss
+              THHmmss
+            </remarks>
+            <param name="dateText">The string containing either a Tick value, a JulianDay double, or an ISO8601-format string</param>
+            <returns>A DateTime value</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.ToDateTime(System.Double)">
+            <summary>
+            Converts a julianday value into a DateTime
+            </summary>
+            <param name="julianDay">The value to convert</param>
+            <returns>A .NET DateTime</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.ToJulianDay(System.DateTime)">
+            <summary>
+            Converts a DateTime struct to a JulianDay double
+            </summary>
+            <param name="value">The DateTime to convert</param>
+            <returns>The JulianDay value the Datetime represents</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.ToString(System.DateTime)">
+            <summary>
+            Converts a DateTime to a string value, using the current DateTimeFormat specified for the connection when it was opened.
+            </summary>
+            <param name="dateValue">The DateTime value to convert</param>
+            <returns>Either a string consisting of the tick count for DateTimeFormat.Ticks, a JulianDay double, or a date/time in ISO8601 format.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.ToDateTime(System.IntPtr,System.Int32)">
+            <summary>
+            Internal function to convert a UTF-8 encoded IntPtr of the specified length to a DateTime.
+            </summary>
+            <remarks>
+            This is a convenience function, which first calls ToString() on the IntPtr to convert it to a string, then calls
+            ToDateTime() on the string to return a DateTime.
+            </remarks>
+            <param name="ptr">A pointer to the UTF-8 encoded string</param>
+            <param name="len">The length in bytes of the string</param>
+            <returns>The parsed DateTime value</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.Split(System.String,System.Char)">
+            <summary>
+            Smart method of splitting a string.  Skips quoted elements, removes the quotes.
+            </summary>
+            <remarks>
+            This split function works somewhat like the String.Split() function in that it breaks apart a string into
+            pieces and returns the pieces as an array.  The primary differences are:
+            <list type="bullet">
+            <item><description>Only one character can be provided as a separator character</description></item>
+            <item><description>Quoted text inside the string is skipped over when searching for the separator, and the quotes are removed.</description></item>
+            </list>
+            Thus, if splitting the following string looking for a comma:<br/>
+            One,Two, "Three, Four", Five<br/>
+            <br/>
+            The resulting array would contain<br/>
+            [0] One<br/>
+            [1] Two<br/>
+            [2] Three, Four<br/>
+            [3] Five<br/>
+            <br/>
+            Note that the leading and trailing spaces were removed from each item during the split.
+            </remarks>
+            <param name="source">Source string to split apart</param>
+            <param name="separator">Separator character</param>
+            <returns>A string array of the split up elements</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.ToBoolean(System.Object)">
+            <summary>
+            Convert a value to true or false.
+            </summary>
+            <param name="source">A string or number representing true or false</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.ToBoolean(System.String)">
+            <summary>
+            Convert a string to true or false.
+            </summary>
+            <param name="source">A string representing true or false</param>
+            <returns></returns>
+            <remarks>
+            "yes", "no", "y", "n", "0", "1", "on", "off" as well as Boolean.FalseString and Boolean.TrueString will all be
+            converted to a proper boolean value.
+            </remarks>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.ColumnToType(System.Data.SQLite.SQLiteStatement,System.Int32,System.Data.SQLite.SQLiteType)">
+            <summary>
+            Determines the data type of a column in a statement
+            </summary>
+            <param name="stmt">The statement to retrieve information for</param>
+            <param name="i">The column to retrieve type information on</param>
+            <param name="typ">The SQLiteType to receive the affinity for the given column</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.SQLiteTypeToType(System.Data.SQLite.SQLiteType)">
+            <summary>
+            Converts a SQLiteType to a .NET Type object
+            </summary>
+            <param name="t">The SQLiteType to convert</param>
+            <returns>Returns a .NET Type object</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.TypeToDbType(System.Type)">
+            <summary>
+            For a given intrinsic type, return a DbType
+            </summary>
+            <param name="typ">The native type to convert</param>
+            <returns>The corresponding (closest match) DbType</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.DbTypeToColumnSize(System.Data.DbType)">
+            <summary>
+            Returns the ColumnSize for the given DbType
+            </summary>
+            <param name="typ">The DbType to get the size of</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.DbTypeToType(System.Data.DbType)">
+            <summary>
+            Convert a DbType to a Type
+            </summary>
+            <param name="typ">The DbType to convert from</param>
+            <returns>The closest-match .NET type</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.TypeToAffinity(System.Type)">
+            <summary>
+            For a given type, return the closest-match SQLite TypeAffinity, which only understands a very limited subset of types.
+            </summary>
+            <param name="typ">The type to evaluate</param>
+            <returns>The SQLite type affinity for that type.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.TypeNameToDbType(System.String)">
+            <summary>
+            For a given type name, return a closest-match .NET type
+            </summary>
+            <param name="Name">The name of the type to match</param>
+            <returns>The .NET DBType the text evaluates to.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBase.Open(System.String,System.Data.SQLite.SQLiteOpenFlagsEnum,System.Int32,System.Boolean)">
+            <summary>
+            Opens a database.
+            </summary>
+            <remarks>
+            Implementers should call SQLiteFunction.BindFunctions() and save the array after opening a connection
+            to bind all attributed user-defined functions and collating sequences to the new connection.
+            </remarks>
+            <param name="strFilename">The filename of the database to open.  SQLite automatically creates it if it doesn't exist.</param>
+            <param name="flags">The open flags to use when creating the connection</param>
+            <param name="maxPoolSize">The maximum size of the pool for the given filename</param>
+            <param name="usePool">If true, the connection can be pulled from the connection pool</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBase.Close">
+            <summary>
+            Closes the currently-open database.
+            </summary>
+            <remarks>
+            After the database has been closed implemeters should call SQLiteFunction.UnbindFunctions() to deallocate all interop allocated
+            memory associated with the user-defined functions and collating sequences tied to the closed connection.
+            </remarks>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBase.SetTimeout(System.Int32)">
+            <summary>
+            Sets the busy timeout on the connection.  SQLiteCommand will call this before executing any command.
+            </summary>
+            <param name="nTimeoutMS">The number of milliseconds to wait before returning SQLITE_BUSY</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBase.SQLiteLastError">
+            <summary>
+            Returns the text of the last error issued by SQLite
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBase.ClearPool">
+            <summary>
+            When pooling is enabled, force this connection to be disposed rather than returned to the pool
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBase.Prepare(System.Data.SQLite.SQLiteConnection,System.String,System.Data.SQLite.SQLiteStatement,System.UInt32,System.String@)">
+            <summary>
+            Prepares a SQL statement for execution.
+            </summary>
+            <param name="cnn">The source connection preparing the command.  Can be null for any caller except LINQ</param>
+            <param name="strSql">The SQL command text to prepare</param>
+            <param name="previous">The previous statement in a multi-statement command, or null if no previous statement exists</param>
+            <param name="timeoutMS">The timeout to wait before aborting the prepare</param>
+            <param name="strRemain">The remainder of the statement that was not processed.  Each call to prepare parses the
+            SQL up to to either the end of the text or to the first semi-colon delimiter.  The remaining text is returned
+            here for a subsequent call to Prepare() until all the text has been processed.</param>
+            <returns>Returns an initialized SQLiteStatement.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBase.Step(System.Data.SQLite.SQLiteStatement)">
+            <summary>
+            Steps through a prepared statement.
+            </summary>
+            <param name="stmt">The SQLiteStatement to step through</param>
+            <returns>True if a row was returned, False if not.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBase.Reset(System.Data.SQLite.SQLiteStatement)">
+            <summary>
+            Resets a prepared statement so it can be executed again.  If the error returned is SQLITE_SCHEMA, 
+            transparently attempt to rebuild the SQL statement and throw an error if that was not possible.
+            </summary>
+            <param name="stmt">The statement to reset</param>
+            <returns>Returns -1 if the schema changed while resetting, 0 if the reset was sucessful or 6 (SQLITE_LOCKED) if the reset failed due to a lock</returns>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteBase.Version">
+            <summary>
+            Returns a string representing the active version of SQLite
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteBase.Changes">
+            <summary>
+            Returns the number of changes the last executing insert/update caused.
+            </summary>
+        </member>
+        <member name="T:System.Data.SQLite.TypeAffinity">
+            <summary>
+            SQLite has very limited types, and is inherently text-based.  The first 5 types below represent the sum of all types SQLite
+            understands.  The DateTime extension to the spec is for internal use only.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.TypeAffinity.Uninitialized">
+            <summary>
+            Not used
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.TypeAffinity.Int64">
+            <summary>
+            All integers in SQLite default to Int64
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.TypeAffinity.Double">
+            <summary>
+            All floating point numbers in SQLite default to double
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.TypeAffinity.Text">
+            <summary>
+            The default data type of SQLite is text
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.TypeAffinity.Blob">
+            <summary>
+            Typically blob types are only seen when returned from a function
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.TypeAffinity.Null">
+            <summary>
+            Null types can be returned from functions
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.TypeAffinity.DateTime">
+            <summary>
+            Used internally by this provider
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.TypeAffinity.None">
+            <summary>
+            Used internally
+            </summary>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteDateFormats">
+            <summary>
+            This implementation of SQLite for ADO.NET can process date/time fields in databases in only one of three formats.  Ticks, ISO8601
+            and JulianDay.
+            </summary>
+            <remarks>
+            ISO8601 is more compatible, readable, fully-processable, but less accurate as it doesn't provide time down to fractions of a second.
+            JulianDay is the numeric format the SQLite uses internally and is arguably the most compatible with 3rd party tools.  It is
+            not readable as text without post-processing.
+            Ticks less compatible with 3rd party tools that query the database, and renders the DateTime field unreadable as text without post-processing.
+            
+            The preferred order of choosing a datetime format is JulianDay, ISO8601, and then Ticks.  Ticks is mainly present for legacy 
+            code support.
+            </remarks>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteDateFormats.Ticks">
+            <summary>
+            Using ticks is not recommended and is not well supported with LINQ.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteDateFormats.ISO8601">
+            <summary>
+            The default format for this provider.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteDateFormats.JulianDay">
+            <summary>
+            JulianDay format, which is what SQLite uses internally
+            </summary>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteJournalModeEnum">
+            <summary>
+            This enum determines how SQLite treats its journal file.
+            </summary>
+            <remarks>
+            By default SQLite will create and delete the journal file when needed during a transaction.
+            However, for some computers running certain filesystem monitoring tools, the rapid
+            creation and deletion of the journal file can cause those programs to fail, or to interfere with SQLite.
+            
+            If a program or virus scanner is interfering with SQLite's journal file, you may receive errors like "unable to open database file"
+            when starting a transaction.  If this is happening, you may want to change the default journal mode to Persist.
+            </remarks>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteJournalModeEnum.Delete">
+            <summary>
+            The default mode, this causes SQLite to create and destroy the journal file as-needed.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteJournalModeEnum.Persist">
+            <summary>
+            When this is set, SQLite will keep the journal file even after a transaction has completed.  It's contents will be erased,
+            and the journal re-used as often as needed.  If it is deleted, it will be recreated the next time it is needed.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteJournalModeEnum.Off">
+            <summary>
+            This option disables the rollback journal entirely.  Interrupted transactions or a program crash can cause database
+            corruption in this mode!
+            </summary>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteType">
+            <summary>
+            Struct used internally to determine the datatype of a column in a resultset
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteType.Type">
+            <summary>
+            The DbType of the column, or DbType.Object if it cannot be determined
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteType.Affinity">
+            <summary>
+            The affinity of a column, used for expressions or when Type is DbType.Object
+            </summary>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteStatement">
+            <summary>
+            Represents a single SQL statement in SQLite.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteStatement._sql">
+            <summary>
+            The underlying SQLite object this statement is bound to
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteStatement._sqlStatement">
+            <summary>
+            The command text of this SQL statement
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteStatement._sqlite_stmt">
+            <summary>
+            The actual statement pointer
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteStatement._unnamedParameters">
+            <summary>
+            An index from which unnamed parameters begin
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteStatement._paramNames">
+            <summary>
+            Names of the parameters as SQLite understands them to be
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteStatement._paramValues">
+            <summary>
+            Parameters for this statement
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteStatement._command">
+            <summary>
+            Command this statement belongs to (if any)
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteStatement.#ctor(System.Data.SQLite.SQLiteBase,System.Data.SQLite.SQLiteStatementHandle,System.String,System.Data.SQLite.SQLiteStatement)">
+            <summary>
+            Initializes the statement and attempts to get all information about parameters in the statement
+            </summary>
+            <param name="sqlbase">The base SQLite object</param>
+            <param name="stmt">The statement</param>
+            <param name="strCommand">The command text for this statement</param>
+            <param name="previous">The previous command in a multi-statement command</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteStatement.MapParameter(System.String,System.Data.SQLite.SQLiteParameter)">
+            <summary>
+            Called by SQLiteParameterCollection, this function determines if the specified parameter name belongs to
+            this statement, and if so, keeps a reference to the parameter so it can be bound later.
+            </summary>
+            <param name="s">The parameter name to map</param>
+            <param name="p">The parameter to assign it</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteStatement.Dispose">
+            <summary>
+            Disposes and finalizes the statement
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteStatement.BindParameters">
+            <summary>
+             Bind all parameters, making sure the caller didn't miss any
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteStatement.BindParameter(System.Int32,System.Data.SQLite.SQLiteParameter)">
+            <summary>
+            Perform the bind operation for an individual parameter
+            </summary>
+            <param name="index">The index of the parameter to bind</param>
+            <param name="param">The parameter we're binding</param>
+        </member>
         <member name="T:System.Data.SQLite.SQLiteDataReader">
             <summary>
             SQLite implementation of DbDataReader.
@@ -1956,296 +2676,412 @@
             <param name="i">The index of the column to retrieve</param>
             <returns>The value contained in the column</returns>
         </member>
-        <member name="T:System.Data.SQLite.SQLiteParameter">
+        <member name="T:System.Data.SQLite.SQLiteDataAdapter">
             <summary>
-            SQLite implementation of DbParameter.
+            SQLite implementation of DbDataAdapter.
             </summary>
         </member>
-        <member name="F:System.Data.SQLite.SQLiteParameter._dbType">
+        <member name="M:System.Data.SQLite.SQLiteDataAdapter.#ctor">
+            <overloads>
+            This class is just a shell around the DbDataAdapter.  Nothing from DbDataAdapter is overridden here, just a few constructors are defined.
+            </overloads>
             <summary>
-            The data type of the parameter
+            Default constructor.
             </summary>
         </member>
-        <member name="F:System.Data.SQLite.SQLiteParameter._rowVersion">
+        <member name="M:System.Data.SQLite.SQLiteDataAdapter.#ctor(System.Data.SQLite.SQLiteCommand)">
             <summary>
-            The version information for mapping the parameter
+            Constructs a data adapter using the specified select command.
+            </summary>
+            <param name="cmd">The select command to associate with the adapter.</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteDataAdapter.#ctor(System.String,System.Data.SQLite.SQLiteConnection)">
+            <summary>
+            Constructs a data adapter with the supplied select command text and associated with the specified connection.
+            </summary>
+            <param name="commandText">The select command text to associate with the data adapter.</param>
+            <param name="connection">The connection to associate with the select command.</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteDataAdapter.#ctor(System.String,System.String)">
+            <summary>
+            Constructs a data adapter with the specified select command text, and using the specified database connection string.
+            </summary>
+            <param name="commandText">The select command text to use to construct a select command.</param>
+            <param name="connectionString">A connection string suitable for passing to a new SQLiteConnection, which is associated with the select command.</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteDataAdapter.OnRowUpdating(System.Data.Common.RowUpdatingEventArgs)">
+            <summary>
+            Raised by the underlying DbDataAdapter when a row is being updated
+            </summary>
+            <param name="value">The event's specifics</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteDataAdapter.OnRowUpdated(System.Data.Common.RowUpdatedEventArgs)">
+            <summary>
+            Raised by DbDataAdapter after a row is updated
+            </summary>
+            <param name="value">The event's specifics</param>
+        </member>
+        <member name="E:System.Data.SQLite.SQLiteDataAdapter.RowUpdating">
+            <summary>
+            Row updating event handler
             </summary>
         </member>
-        <member name="F:System.Data.SQLite.SQLiteParameter._objValue">
+        <member name="E:System.Data.SQLite.SQLiteDataAdapter.RowUpdated">
             <summary>
-            The value of the data in the parameter
+            Row updated event handler
             </summary>
         </member>
-        <member name="F:System.Data.SQLite.SQLiteParameter._sourceColumn">
+        <member name="P:System.Data.SQLite.SQLiteDataAdapter.SelectCommand">
             <summary>
-            The source column for the parameter
+            Gets/sets the select command for this DataAdapter
             </summary>
         </member>
-        <member name="F:System.Data.SQLite.SQLiteParameter._parameterName">
+        <member name="P:System.Data.SQLite.SQLiteDataAdapter.InsertCommand">
             <summary>
-            The column name
+            Gets/sets the insert command for this DataAdapter
             </summary>
         </member>
-        <member name="F:System.Data.SQLite.SQLiteParameter._dataSize">
+        <member name="P:System.Data.SQLite.SQLiteDataAdapter.UpdateCommand">
             <summary>
-            The data size, unused by SQLite
+            Gets/sets the update command for this DataAdapter
             </summary>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor">
+        <member name="P:System.Data.SQLite.SQLiteDataAdapter.DeleteCommand">
             <summary>
-            Default constructor
+            Gets/sets the delete command for this DataAdapter
             </summary>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String)">
+        <member name="T:System.Data.SQLite.SQLiteTransaction">
             <summary>
-            Constructs a named parameter given the specified parameter name
+            SQLite implementation of DbTransaction.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteTransaction._cnn">
+            <summary>
+            The connection to which this transaction is bound
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteTransaction.#ctor(System.Data.SQLite.SQLiteConnection,System.Boolean)">
+            <summary>
+            Constructs the transaction object, binding it to the supplied connection
+            </summary>
+            <param name="connection">The connection to open a transaction on</param>
+            <param name="deferredLock">TRUE to defer the writelock, or FALSE to lock immediately</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteTransaction.Commit">
+            <summary>
+            Commits the current transaction.
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteTransaction.Dispose(System.Boolean)">
+            <summary>
+            Disposes the transaction.  If it is currently active, any changes are rolled back.
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteTransaction.Rollback">
+            <summary>
+            Rolls back the active transaction.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteTransaction.Connection">
+            <summary>
+            Returns the underlying connection to which this transaction applies.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteTransaction.DbConnection">
+            <summary>
+            Forwards to the local Connection property
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteTransaction.IsolationLevel">
+            <summary>
+            Gets the isolation level of the transaction.  SQLite only supports Serializable transactions.
+            </summary>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteParameterCollection">
+            <summary>
+            SQLite implementation of DbParameterCollection.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteParameterCollection._command">
+            <summary>
+            The underlying command to which this collection belongs
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteParameterCollection._parameterList">
+            <summary>
+            The internal array of parameters in this collection
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteParameterCollection._unboundFlag">
+            <summary>
+            Determines whether or not all parameters have been bound to their statement(s)
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.#ctor(System.Data.SQLite.SQLiteCommand)">
+            <summary>
+            Initializes the collection
+            </summary>
+            <param name="cmd">The command to which the collection belongs</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.GetEnumerator">
+            <summary>
+            Retrieves an enumerator for the collection
+            </summary>
+            <returns>An enumerator for the underlying array</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Add(System.String,System.Data.DbType,System.Int32,System.String)">
+            <summary>
+            Adds a parameter to the collection
             </summary>
             <param name="parameterName">The parameter name</param>
+            <param name="parameterType">The data type</param>
+            <param name="parameterSize">The size of the value</param>
+            <param name="sourceColumn">The source column</param>
+            <returns>A SQLiteParameter object</returns>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Object)">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Add(System.String,System.Data.DbType,System.Int32)">
             <summary>
-            Constructs a named parameter given the specified parameter name and initial value
+            Adds a parameter to the collection
             </summary>
             <param name="parameterName">The parameter name</param>
+            <param name="parameterType">The data type</param>
+            <param name="parameterSize">The size of the value</param>
+            <returns>A SQLiteParameter object</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Add(System.String,System.Data.DbType)">
+            <summary>
+            Adds a parameter to the collection
+            </summary>
+            <param name="parameterName">The parameter name</param>
+            <param name="parameterType">The data type</param>
+            <returns>A SQLiteParameter object</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Add(System.Data.SQLite.SQLiteParameter)">
+            <summary>
+            Adds a parameter to the collection
+            </summary>
+            <param name="parameter">The parameter to add</param>
+            <returns>A zero-based index of where the parameter is located in the array</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Add(System.Object)">
+            <summary>
+            Adds a parameter to the collection
+            </summary>
+            <param name="value">The parameter to add</param>
+            <returns>A zero-based index of where the parameter is located in the array</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.AddWithValue(System.String,System.Object)">
+            <summary>
+            Adds a named/unnamed parameter and its value to the parameter collection.
+            </summary>
+            <param name="parameterName">Name of the parameter, or null to indicate an unnamed parameter</param>
             <param name="value">The initial value of the parameter</param>
+            <returns>Returns the SQLiteParameter object created during the call.</returns>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType)">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.AddRange(System.Data.SQLite.SQLiteParameter[])">
             <summary>
-            Constructs a named parameter of the specified type
+            Adds an array of parameters to the collection
             </summary>
-            <param name="parameterName">The parameter name</param>
-            <param name="dbType">The datatype of the parameter</param>
+            <param name="values">The array of parameters to add</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType,System.String)">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.AddRange(System.Array)">
             <summary>
-            Constructs a named parameter of the specified type and source column reference
+            Adds an array of parameters to the collection
             </summary>
-            <param name="parameterName">The parameter name</param>
-            <param name="dbType">The data type</param>
-            <param name="sourceColumn">The source column</param>
+            <param name="values">The array of parameters to add</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType,System.String,System.Data.DataRowVersion)">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Clear">
             <summary>
-            Constructs a named parameter of the specified type, source column and row version
-            </summary>
-            <param name="parameterName">The parameter name</param>
-            <param name="dbType">The data type</param>
-            <param name="sourceColumn">The source column</param>
-            <param name="rowVersion">The row version information</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.Data.DbType)">
-            <summary>
-            Constructs an unnamed parameter of the specified data type
-            </summary>
-            <param name="dbType">The datatype of the parameter</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.Data.DbType,System.Object)">
-            <summary>
-            Constructs an unnamed parameter of the specified data type and sets the initial value
-            </summary>
-            <param name="dbType">The datatype of the parameter</param>
-            <param name="value">The initial value of the parameter</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.Data.DbType,System.String)">
-            <summary>
-            Constructs an unnamed parameter of the specified data type and source column
-            </summary>
-            <param name="dbType">The datatype of the parameter</param>
-            <param name="sourceColumn">The source column</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.Data.DbType,System.String,System.Data.DataRowVersion)">
-            <summary>
-            Constructs an unnamed parameter of the specified data type, source column and row version
-            </summary>
-            <param name="dbType">The data type</param>
-            <param name="sourceColumn">The source column</param>
-            <param name="rowVersion">The row version information</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType,System.Int32)">
-            <summary>
-            Constructs a named parameter of the specified type and size
-            </summary>
-            <param name="parameterName">The parameter name</param>
-            <param name="parameterType">The data type</param>
-            <param name="parameterSize">The size of the parameter</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType,System.Int32,System.String)">
-            <summary>
-            Constructs a named parameter of the specified type, size and source column
-            </summary>
-            <param name="parameterName">The name of the parameter</param>
-            <param name="parameterType">The data type</param>
-            <param name="parameterSize">The size of the parameter</param>
-            <param name="sourceColumn">The source column</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType,System.Int32,System.String,System.Data.DataRowVersion)">
-            <summary>
-            Constructs a named parameter of the specified type, size, source column and row version
-            </summary>
-            <param name="parameterName">The name of the parameter</param>
-            <param name="parameterType">The data type</param>
-            <param name="parameterSize">The size of the parameter</param>
-            <param name="sourceColumn">The source column</param>
-            <param name="rowVersion">The row version information</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType,System.Int32,System.Data.ParameterDirection,System.Boolean,System.Byte,System.Byte,System.String,System.Data.DataRowVersion,System.Object)">
-            <summary>
-            Constructs a named parameter of the specified type, size, source column and row version
-            </summary>
-            <param name="parameterName">The name of the parameter</param>
-            <param name="parameterType">The data type</param>
-            <param name="parameterSize">The size of the parameter</param>
-            <param name="direction">Only input parameters are supported in SQLite</param>
-            <param name="isNullable">Ignored</param>
-            <param name="precision">Ignored</param>
-            <param name="scale">Ignored</param>
-            <param name="sourceColumn">The source column</param>
-            <param name="rowVersion">The row version information</param>
-            <param name="value">The initial value to assign the parameter</param>   
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType,System.Int32,System.Data.ParameterDirection,System.Byte,System.Byte,System.String,System.Data.DataRowVersion,System.Boolean,System.Object)">
-            <summary>
-            Constructs a named parameter, yet another flavor
-            </summary>
-            <param name="parameterName">The name of the parameter</param>
-            <param name="parameterType">The data type</param>
-            <param name="parameterSize">The size of the parameter</param>
-            <param name="direction">Only input parameters are supported in SQLite</param>
-            <param name="precision">Ignored</param>
-            <param name="scale">Ignored</param>
-            <param name="sourceColumn">The source column</param>
-            <param name="rowVersion">The row version information</param>
-            <param name="sourceColumnNullMapping">Whether or not this parameter is for comparing NULL's</param>
-            <param name="value">The intial value to assign the parameter</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.Data.DbType,System.Int32)">
-            <summary>
-            Constructs an unnamed parameter of the specified type and size
-            </summary>
-            <param name="parameterType">The data type</param>
-            <param name="parameterSize">The size of the parameter</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.Data.DbType,System.Int32,System.String)">
-            <summary>
-            Constructs an unnamed parameter of the specified type, size, and source column
-            </summary>
-            <param name="parameterType">The data type</param>
-            <param name="parameterSize">The size of the parameter</param>
-            <param name="sourceColumn">The source column</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.Data.DbType,System.Int32,System.String,System.Data.DataRowVersion)">
-            <summary>
-            Constructs an unnamed parameter of the specified type, size, source column and row version
-            </summary>
-            <param name="parameterType">The data type</param>
-            <param name="parameterSize">The size of the parameter</param>
-            <param name="sourceColumn">The source column</param>
-            <param name="rowVersion">The row version information</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.ResetDbType">
-            <summary>
-            Resets the DbType of the parameter so it can be inferred from the value
+            Clears the array and resets the collection
             </summary>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteParameter.Clone">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Contains(System.String)">
             <summary>
-            Clones a parameter
+            Determines if the named parameter exists in the collection
             </summary>
-            <returns>A new, unassociated SQLiteParameter</returns>
+            <param name="parameterName">The name of the parameter to check</param>
+            <returns>True if the parameter is in the collection</returns>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteParameter.IsNullable">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Contains(System.Object)">
             <summary>
-            Whether or not the parameter can contain a null value
+            Determines if the parameter exists in the collection
             </summary>
+            <param name="value">The SQLiteParameter to check</param>
+            <returns>True if the parameter is in the collection</returns>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteParameter.DbType">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.CopyTo(System.Array,System.Int32)">
             <summary>
-            Returns the datatype of the parameter
+            Not implemented
             </summary>
+            <param name="array"></param>
+            <param name="index"></param>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteParameter.Direction">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.GetParameter(System.String)">
             <summary>
-            Supports only input parameters
+            Retrieve a parameter by name from the collection
             </summary>
+            <param name="parameterName">The name of the parameter to fetch</param>
+            <returns>A DbParameter object</returns>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteParameter.ParameterName">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.GetParameter(System.Int32)">
             <summary>
-            Returns the parameter name
+            Retrieves a parameter by its index in the collection
             </summary>
+            <param name="index">The index of the parameter to retrieve</param>
+            <returns>A DbParameter object</returns>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteParameter.Size">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.IndexOf(System.String)">
             <summary>
-            Returns the size of the parameter
+            Returns the index of a parameter given its name
             </summary>
+            <param name="parameterName">The name of the parameter to find</param>
+            <returns>-1 if not found, otherwise a zero-based index of the parameter</returns>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteParameter.SourceColumn">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.IndexOf(System.Object)">
             <summary>
-            Gets/sets the source column
+            Returns the index of a parameter
             </summary>
+            <param name="value">The parameter to find</param>
+            <returns>-1 if not found, otherwise a zero-based index of the parameter</returns>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteParameter.SourceColumnNullMapping">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Insert(System.Int32,System.Object)">
             <summary>
-            Used by DbCommandBuilder to determine the mapping for nullable fields
+            Inserts a parameter into the array at the specified location
             </summary>
+            <param name="index">The zero-based index to insert the parameter at</param>
+            <param name="value">The parameter to insert</param>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteParameter.SourceVersion">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Remove(System.Object)">
             <summary>
-            Gets and sets the row version
+            Removes a parameter from the collection
             </summary>
+            <param name="value">The parameter to remove</param>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteParameter.Value">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.RemoveAt(System.String)">
             <summary>
-            Gets and sets the parameter value.  If no datatype was specified, the datatype will assume the type from the value given.
+            Removes a parameter from the collection given its name
             </summary>
+            <param name="parameterName">The name of the parameter to remove</param>
         </member>
-        <member name="T:System.Data.SQLite.SQLiteMetaDataCollectionNames">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.RemoveAt(System.Int32)">
             <summary>
-            MetaDataCollections specific to SQLite
+            Removes a parameter from the collection given its index
             </summary>
+            <param name="index">The zero-based parameter index to remove</param>
         </member>
-        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.Catalogs">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.SetParameter(System.String,System.Data.Common.DbParameter)">
             <summary>
-            Returns a list of databases attached to the connection
+            Re-assign the named parameter to a new parameter object
             </summary>
+            <param name="parameterName">The name of the parameter to replace</param>
+            <param name="value">The new parameter</param>
         </member>
-        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.Columns">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.SetParameter(System.Int32,System.Data.Common.DbParameter)">
             <summary>
-            Returns column information for the specified table
+            Re-assign a parameter at the specified index
             </summary>
+            <param name="index">The zero-based index of the parameter to replace</param>
+            <param name="value">The new parameter</param>
         </member>
-        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.Indexes">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Unbind">
             <summary>
-            Returns index information for the optionally-specified table
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.IndexColumns">
-            <summary>
-            Returns base columns for the given index
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.Tables">
-            <summary>
-            Returns the tables in the given catalog
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.Views">
-            <summary>
-            Returns user-defined views in the given catalog
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.ViewColumns">
-            <summary>
-            Returns underlying column information on the given view
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.ForeignKeys">
-            <summary>
-            Returns foreign key information for the given catalog
+            Un-binds all parameters from their statements
             </summary>
         </member>
-        <member name="F:System.Data.SQLite.SQLiteMetaDataCollectionNames.Triggers">
+        <member name="M:System.Data.SQLite.SQLiteParameterCollection.MapParameters(System.Data.SQLite.SQLiteStatement)">
             <summary>
-            Returns the triggers on the database
+            This function attempts to map all parameters in the collection to all statements in a Command.
+            Since named parameters may span multiple statements, this function makes sure all statements are bound
+            to the same named parameter.  Unnamed parameters are bound in sequence.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteParameterCollection.IsSynchronized">
+            <summary>
+            Returns true
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteParameterCollection.IsFixedSize">
+            <summary>
+            Returns false
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteParameterCollection.IsReadOnly">
+            <summary>
+            Returns false
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteParameterCollection.SyncRoot">
+            <summary>
+            Returns null
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteParameterCollection.Count">
+            <summary>
+            Returns a count of parameters in the collection
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteParameterCollection.Item(System.String)">
+            <summary>
+            Overloaded to specialize the return value of the default indexer
+            </summary>
+            <param name="parameterName">Name of the parameter to get/set</param>
+            <returns>The specified named SQLite parameter</returns>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteParameterCollection.Item(System.Int32)">
+            <summary>
+            Overloaded to specialize the return value of the default indexer
+            </summary>
+            <param name="index">The index of the parameter to get/set</param>
+            <returns>The specified SQLite parameter</returns>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteKeyReader">
+            <summary>
+            This class provides key info for a given SQLite statement.
+            <remarks>
+            Providing key information for a given statement is non-trivial :(
+            </remarks>
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteKeyReader.#ctor(System.Data.SQLite.SQLiteConnection,System.Data.SQLite.SQLiteDataReader,System.Data.SQLite.SQLiteStatement)">
+            <summary>
+            This function does all the nasty work at determining what keys need to be returned for
+            a given statement.
+            </summary>
+            <param name="cnn"></param>
+            <param name="reader"></param>
+            <param name="stmt"></param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteKeyReader.Sync">
+            <summary>
+            Make sure all the subqueries are open and ready and sync'd with the current rowid
+            of the table they're supporting
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteKeyReader.Reset">
+            <summary>
+            Release any readers on any subqueries
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteKeyReader.AppendSchemaTable(System.Data.DataTable)">
+            <summary>
+            Append all the columns we've added to the original query to the schema
+            </summary>
+            <param name="tbl"></param>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteKeyReader.Count">
+            <summary>
+            How many additional columns of keyinfo we're holding
+            </summary>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteKeyReader.KeyInfo">
+            <summary>
+            Used to support CommandBehavior.KeyInfo
+            </summary>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteKeyReader.KeyQuery">
+            <summary>
+            A single sub-query for a given table/database.
             </summary>
         </member>
         <member name="T:System.Data.SQLite.SQLiteCommand">
@@ -2489,978 +3325,6 @@
             Determines if the command is visible at design time.  Defaults to True.
             </summary>
         </member>
-        <member name="T:System.Data.SQLite.SQLiteBase">
-            <summary>
-            This internal class provides the foundation of SQLite support.  It defines all the abstract members needed to implement
-            a SQLite data provider, and inherits from SQLiteConvert which allows for simple translations of string to and from SQLite.
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteBase.Open(System.String,System.Data.SQLite.SQLiteOpenFlagsEnum,System.Int32,System.Boolean)">
-            <summary>
-            Opens a database.
-            </summary>
-            <remarks>
-            Implementers should call SQLiteFunction.BindFunctions() and save the array after opening a connection
-            to bind all attributed user-defined functions and collating sequences to the new connection.
-            </remarks>
-            <param name="strFilename">The filename of the database to open.  SQLite automatically creates it if it doesn't exist.</param>
-            <param name="flags">The open flags to use when creating the connection</param>
-            <param name="maxPoolSize">The maximum size of the pool for the given filename</param>
-            <param name="usePool">If true, the connection can be pulled from the connection pool</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteBase.Close">
-            <summary>
-            Closes the currently-open database.
-            </summary>
-            <remarks>
-            After the database has been closed implemeters should call SQLiteFunction.UnbindFunctions() to deallocate all interop allocated
-            memory associated with the user-defined functions and collating sequences tied to the closed connection.
-            </remarks>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteBase.SetTimeout(System.Int32)">
-            <summary>
-            Sets the busy timeout on the connection.  SQLiteCommand will call this before executing any command.
-            </summary>
-            <param name="nTimeoutMS">The number of milliseconds to wait before returning SQLITE_BUSY</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteBase.SQLiteLastError">
-            <summary>
-            Returns the text of the last error issued by SQLite
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteBase.ClearPool">
-            <summary>
-            When pooling is enabled, force this connection to be disposed rather than returned to the pool
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteBase.Prepare(System.Data.SQLite.SQLiteConnection,System.String,System.Data.SQLite.SQLiteStatement,System.UInt32,System.String@)">
-            <summary>
-            Prepares a SQL statement for execution.
-            </summary>
-            <param name="cnn">The source connection preparing the command.  Can be null for any caller except LINQ</param>
-            <param name="strSql">The SQL command text to prepare</param>
-            <param name="previous">The previous statement in a multi-statement command, or null if no previous statement exists</param>
-            <param name="timeoutMS">The timeout to wait before aborting the prepare</param>
-            <param name="strRemain">The remainder of the statement that was not processed.  Each call to prepare parses the
-            SQL up to to either the end of the text or to the first semi-colon delimiter.  The remaining text is returned
-            here for a subsequent call to Prepare() until all the text has been processed.</param>
-            <returns>Returns an initialized SQLiteStatement.</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteBase.Step(System.Data.SQLite.SQLiteStatement)">
-            <summary>
-            Steps through a prepared statement.
-            </summary>
-            <param name="stmt">The SQLiteStatement to step through</param>
-            <returns>True if a row was returned, False if not.</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteBase.Reset(System.Data.SQLite.SQLiteStatement)">
-            <summary>
-            Resets a prepared statement so it can be executed again.  If the error returned is SQLITE_SCHEMA, 
-            transparently attempt to rebuild the SQL statement and throw an error if that was not possible.
-            </summary>
-            <param name="stmt">The statement to reset</param>
-            <returns>Returns -1 if the schema changed while resetting, 0 if the reset was sucessful or 6 (SQLITE_LOCKED) if the reset failed due to a lock</returns>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteBase.Version">
-            <summary>
-            Returns a string representing the active version of SQLite
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteBase.Changes">
-            <summary>
-            Returns the number of changes the last executing insert/update caused.
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteConnectionStringBuilder">
-            <summary>
-            SQLite implementation of DbConnectionStringBuilder.
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteConnectionStringBuilder._properties">
-            <summary>
-            Properties of this class
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConnectionStringBuilder.#ctor">
-            <overloads>
-            Constructs a new instance of the class
-            </overloads>
-            <summary>
-            Default constructor
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConnectionStringBuilder.#ctor(System.String)">
-            <summary>
-            Constructs a new instance of the class using the specified connection string.
-            </summary>
-            <param name="connectionString">The connection string to parse</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConnectionStringBuilder.Initialize(System.String)">
-            <summary>
-            Private initializer, which assigns the connection string and resets the builder
-            </summary>
-            <param name="cnnString">The connection string to assign</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConnectionStringBuilder.TryGetValue(System.String,System.Object@)">
-            <summary>
-            Helper function for retrieving values from the connectionstring
-            </summary>
-            <param name="keyword">The keyword to retrieve settings for</param>
-            <param name="value">The resulting parameter value</param>
-            <returns>Returns true if the value was found and returned</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConnectionStringBuilder.FallbackGetProperties(System.Collections.Hashtable)">
-            <summary>
-            Fallback method for MONO, which doesn't implement DbConnectionStringBuilder.GetProperties()
-            </summary>
-            <param name="propertyList">The hashtable to fill with property descriptors</param>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.Version">
-            <summary>
-            Gets/Sets the default version of the SQLite engine to instantiate.  Currently the only valid value is 3, indicating version 3 of the sqlite library.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.SyncMode">
-            <summary>
-            Gets/Sets the synchronization mode (file flushing) of the connection string.  Default is "Normal".
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.UseUTF16Encoding">
-            <summary>
-            Gets/Sets the encoding for the connection string.  The default is "False" which indicates UTF-8 encoding.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.Pooling">
-            <summary>
-            Gets/Sets whether or not to use connection pooling.  The default is "False"
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.BinaryGUID">
-            <summary>
-            Gets/Sets whethor not to store GUID's in binary format.  The default is True
-            which saves space in the database.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.DataSource">
-            <summary>
-            Gets/Sets the filename to open on the connection string.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.Uri">
-            <summary>
-            An alternate to the data source property
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.DefaultTimeout">
-            <summary>
-            Gets/sets the default command timeout for newly-created commands.  This is especially useful for 
-            commands used internally such as inside a SQLiteTransaction, where setting the timeout is not possible.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.Enlist">
-            <summary>
-            Determines whether or not the connection will automatically participate
-            in the current distributed transaction (if one exists)
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.FailIfMissing">
-            <summary>
-            If set to true, will throw an exception if the database specified in the connection
-            string does not exist.  If false, the database will be created automatically.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.LegacyFormat">
-            <summary>
-            If enabled, uses the legacy 3.xx format for maximum compatibility, but results in larger
-            database sizes.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.ReadOnly">
-            <summary>
-            When enabled, the database will be opened for read-only access and writing will be disabled.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.Password">
-            <summary>
-            Gets/sets the database encryption password
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.PageSize">
-            <summary>
-            Gets/Sets the page size for the connection.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.MaxPageCount">
-            <summary>
-            Gets/Sets the maximum number of pages the database may hold
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.CacheSize">
-            <summary>
-            Gets/Sets the cache size for the connection.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.DateTimeFormat">
-            <summary>
-            Gets/Sets the datetime format for the connection.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.JournalMode">
-            <summary>
-            Determines how SQLite handles the transaction journal file.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnectionStringBuilder.DefaultIsolationLevel">
-            <summary>
-            Sets the default isolation level for transactions on the connection.
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.SQLite3">
-            <summary>
-            This class implements SQLiteBase completely, and is the guts of the code that interop's SQLite with .NET
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLite3._sql">
-            <summary>
-            The opaque pointer returned to us by the sqlite provider
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLite3._functionsArray">
-            <summary>
-            The user-defined functions registered on this connection
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLite3.GetValue(System.Data.SQLite.SQLiteStatement,System.Int32,System.Data.SQLite.SQLiteType)">
-            <summary>
-            Helper function to retrieve a column of data from an active statement.
-            </summary>
-            <param name="stmt">The statement being step()'d through</param>
-            <param name="index">The column index to retrieve</param>
-            <param name="typ">The type of data contained in the column.  If Uninitialized, this function will retrieve the datatype information.</param>
-            <returns>Returns the data in the column</returns>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteParameterCollection">
-            <summary>
-            SQLite implementation of DbParameterCollection.
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteParameterCollection._command">
-            <summary>
-            The underlying command to which this collection belongs
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteParameterCollection._parameterList">
-            <summary>
-            The internal array of parameters in this collection
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteParameterCollection._unboundFlag">
-            <summary>
-            Determines whether or not all parameters have been bound to their statement(s)
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.#ctor(System.Data.SQLite.SQLiteCommand)">
-            <summary>
-            Initializes the collection
-            </summary>
-            <param name="cmd">The command to which the collection belongs</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.GetEnumerator">
-            <summary>
-            Retrieves an enumerator for the collection
-            </summary>
-            <returns>An enumerator for the underlying array</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Add(System.String,System.Data.DbType,System.Int32,System.String)">
-            <summary>
-            Adds a parameter to the collection
-            </summary>
-            <param name="parameterName">The parameter name</param>
-            <param name="parameterType">The data type</param>
-            <param name="parameterSize">The size of the value</param>
-            <param name="sourceColumn">The source column</param>
-            <returns>A SQLiteParameter object</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Add(System.String,System.Data.DbType,System.Int32)">
-            <summary>
-            Adds a parameter to the collection
-            </summary>
-            <param name="parameterName">The parameter name</param>
-            <param name="parameterType">The data type</param>
-            <param name="parameterSize">The size of the value</param>
-            <returns>A SQLiteParameter object</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Add(System.String,System.Data.DbType)">
-            <summary>
-            Adds a parameter to the collection
-            </summary>
-            <param name="parameterName">The parameter name</param>
-            <param name="parameterType">The data type</param>
-            <returns>A SQLiteParameter object</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Add(System.Data.SQLite.SQLiteParameter)">
-            <summary>
-            Adds a parameter to the collection
-            </summary>
-            <param name="parameter">The parameter to add</param>
-            <returns>A zero-based index of where the parameter is located in the array</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Add(System.Object)">
-            <summary>
-            Adds a parameter to the collection
-            </summary>
-            <param name="value">The parameter to add</param>
-            <returns>A zero-based index of where the parameter is located in the array</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.AddWithValue(System.String,System.Object)">
-            <summary>
-            Adds a named/unnamed parameter and its value to the parameter collection.
-            </summary>
-            <param name="parameterName">Name of the parameter, or null to indicate an unnamed parameter</param>
-            <param name="value">The initial value of the parameter</param>
-            <returns>Returns the SQLiteParameter object created during the call.</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.AddRange(System.Data.SQLite.SQLiteParameter[])">
-            <summary>
-            Adds an array of parameters to the collection
-            </summary>
-            <param name="values">The array of parameters to add</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.AddRange(System.Array)">
-            <summary>
-            Adds an array of parameters to the collection
-            </summary>
-            <param name="values">The array of parameters to add</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Clear">
-            <summary>
-            Clears the array and resets the collection
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Contains(System.String)">
-            <summary>
-            Determines if the named parameter exists in the collection
-            </summary>
-            <param name="parameterName">The name of the parameter to check</param>
-            <returns>True if the parameter is in the collection</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Contains(System.Object)">
-            <summary>
-            Determines if the parameter exists in the collection
-            </summary>
-            <param name="value">The SQLiteParameter to check</param>
-            <returns>True if the parameter is in the collection</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.CopyTo(System.Array,System.Int32)">
-            <summary>
-            Not implemented
-            </summary>
-            <param name="array"></param>
-            <param name="index"></param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.GetParameter(System.String)">
-            <summary>
-            Retrieve a parameter by name from the collection
-            </summary>
-            <param name="parameterName">The name of the parameter to fetch</param>
-            <returns>A DbParameter object</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.GetParameter(System.Int32)">
-            <summary>
-            Retrieves a parameter by its index in the collection
-            </summary>
-            <param name="index">The index of the parameter to retrieve</param>
-            <returns>A DbParameter object</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.IndexOf(System.String)">
-            <summary>
-            Returns the index of a parameter given its name
-            </summary>
-            <param name="parameterName">The name of the parameter to find</param>
-            <returns>-1 if not found, otherwise a zero-based index of the parameter</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.IndexOf(System.Object)">
-            <summary>
-            Returns the index of a parameter
-            </summary>
-            <param name="value">The parameter to find</param>
-            <returns>-1 if not found, otherwise a zero-based index of the parameter</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Insert(System.Int32,System.Object)">
-            <summary>
-            Inserts a parameter into the array at the specified location
-            </summary>
-            <param name="index">The zero-based index to insert the parameter at</param>
-            <param name="value">The parameter to insert</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Remove(System.Object)">
-            <summary>
-            Removes a parameter from the collection
-            </summary>
-            <param name="value">The parameter to remove</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.RemoveAt(System.String)">
-            <summary>
-            Removes a parameter from the collection given its name
-            </summary>
-            <param name="parameterName">The name of the parameter to remove</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.RemoveAt(System.Int32)">
-            <summary>
-            Removes a parameter from the collection given its index
-            </summary>
-            <param name="index">The zero-based parameter index to remove</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.SetParameter(System.String,System.Data.Common.DbParameter)">
-            <summary>
-            Re-assign the named parameter to a new parameter object
-            </summary>
-            <param name="parameterName">The name of the parameter to replace</param>
-            <param name="value">The new parameter</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.SetParameter(System.Int32,System.Data.Common.DbParameter)">
-            <summary>
-            Re-assign a parameter at the specified index
-            </summary>
-            <param name="index">The zero-based index of the parameter to replace</param>
-            <param name="value">The new parameter</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.Unbind">
-            <summary>
-            Un-binds all parameters from their statements
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteParameterCollection.MapParameters(System.Data.SQLite.SQLiteStatement)">
-            <summary>
-            This function attempts to map all parameters in the collection to all statements in a Command.
-            Since named parameters may span multiple statements, this function makes sure all statements are bound
-            to the same named parameter.  Unnamed parameters are bound in sequence.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteParameterCollection.IsSynchronized">
-            <summary>
-            Returns true
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteParameterCollection.IsFixedSize">
-            <summary>
-            Returns false
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteParameterCollection.IsReadOnly">
-            <summary>
-            Returns false
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteParameterCollection.SyncRoot">
-            <summary>
-            Returns null
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteParameterCollection.Count">
-            <summary>
-            Returns a count of parameters in the collection
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteParameterCollection.Item(System.String)">
-            <summary>
-            Overloaded to specialize the return value of the default indexer
-            </summary>
-            <param name="parameterName">Name of the parameter to get/set</param>
-            <returns>The specified named SQLite parameter</returns>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteParameterCollection.Item(System.Int32)">
-            <summary>
-            Overloaded to specialize the return value of the default indexer
-            </summary>
-            <param name="index">The index of the parameter to get/set</param>
-            <returns>The specified SQLite parameter</returns>
-        </member>
-        <member name="T:System.Data.SQLite.SQLite3_UTF16">
-            <summary>
-            Alternate SQLite3 object, overriding many text behaviors to support UTF-16 (Unicode)
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLite3_UTF16.ToString(System.IntPtr,System.Int32)">
-            <summary>
-            Overrides SQLiteConvert.ToString() to marshal UTF-16 strings instead of UTF-8
-            </summary>
-            <param name="b">A pointer to a UTF-16 string</param>
-            <param name="nbytelen">The length (IN BYTES) of the string</param>
-            <returns>A .NET string</returns>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteFactory">
-            <summary>
-            SQLite implementation of DbProviderFactory.
-            </summary>
-            <summary>
-            SQLite implementation of DbProviderFactory.
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteFactory.System#IServiceProvider#GetService(System.Type)">
-            <summary>
-            Will provide a DbProviderServices object in .NET 3.5
-            </summary>
-            <param name="serviceType">The class or interface type to query for</param>
-            <returns></returns>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteFactory.Instance">
-            <summary>
-            Static instance member which returns an instanced SQLiteFactory class.
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteFactory.CreateCommand">
-            <summary>
-            Returns a new SQLiteCommand object.
-            </summary>
-            <returns>A SQLiteCommand object.</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteFactory.CreateCommandBuilder">
-            <summary>
-            Returns a new SQLiteCommandBuilder object.
-            </summary>
-            <returns>A SQLiteCommandBuilder object.</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteFactory.CreateConnection">
-            <summary>
-            Creates a new SQLiteConnection.
-            </summary>
-            <returns>A SQLiteConnection object.</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteFactory.CreateConnectionStringBuilder">
-            <summary>
-            Creates a new SQLiteConnectionStringBuilder.
-            </summary>
-            <returns>A SQLiteConnectionStringBuilder object.</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteFactory.CreateDataAdapter">
-            <summary>
-            Creates a new SQLiteDataAdapter.
-            </summary>
-            <returns>A SQLiteDataAdapter object.</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteFactory.CreateParameter">
-            <summary>
-            Creates a new SQLiteParameter.
-            </summary>
-            <returns>A SQLiteParameter object.</returns>
-        </member>
-        <member name="T:System.Data.SQLite.SR">
-            <summary>
-              A strongly-typed resource class, for looking up localized strings, etc.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SR.ResourceManager">
-            <summary>
-              Returns the cached ResourceManager instance used by this class.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SR.Culture">
-            <summary>
-              Overrides the current thread's CurrentUICulture property for all
-              resource lookups using this strongly typed resource class.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SR.DataTypes">
-             <summary>
-               Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; standalone=&quot;yes&quot;?&gt;
-            &lt;DocumentElement&gt;
-              &lt;DataTypes&gt;
-                &lt;TypeName&gt;smallint&lt;/TypeName&gt;
-                &lt;ProviderDbType&gt;10&lt;/ProviderDbType&gt;
-                &lt;ColumnSize&gt;5&lt;/ColumnSize&gt;
-                &lt;DataType&gt;System.Int16&lt;/DataType&gt;
-                &lt;CreateFormat&gt;smallint&lt;/CreateFormat&gt;
-                &lt;IsAutoIncrementable&gt;false&lt;/IsAutoIncrementable&gt;
-                &lt;IsCaseSensitive&gt;false&lt;/IsCaseSensitive&gt;
-                &lt;IsFixedLength&gt;true&lt;/IsFixedLength&gt;
-                &lt;IsFixedPrecisionScale&gt;true&lt;/IsFixedPrecisionScale&gt;
-                &lt;IsLong&gt;false&lt;/IsLong&gt;
-                &lt;IsNullable&gt;true&lt;/ [rest of string was truncated]&quot;;.
-             </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SR.Keywords">
-            <summary>
-              Looks up a localized string similar to ALL,ALTER,AND,AS,AUTOINCREMENT,BETWEEN,BY,CASE,CHECK,COLLATE,COMMIT,CONSTRAINT,CREATE,CROSS,DEFAULT,DEFERRABLE,DELETE,DISTINCT,DROP,ELSE,ESCAPE,EXCEPT,FOREIGN,FROM,FULL,GROUP,HAVING,IN,INDEX,INNER,INSERT,INTERSECT,INTO,IS,ISNULL,JOIN,LEFT,LIMIT,NATURAL,NOT,NOTNULL,NULL,ON,OR,ORDER,OUTER,PRIMARY,REFERENCES,RIGHT,ROLLBACK,SELECT,SET,TABLE,THEN,TO,TRANSACTION,UNION,UNIQUE,UPDATE,USING,VALUES,WHEN,WHERE.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SR.MetaDataCollections">
-             <summary>
-               Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-            &lt;DocumentElement&gt;
-              &lt;MetaDataCollections&gt;
-                &lt;CollectionName&gt;MetaDataCollections&lt;/CollectionName&gt;
-                &lt;NumberOfRestrictions&gt;0&lt;/NumberOfRestrictions&gt;
-                &lt;NumberOfIdentifierParts&gt;0&lt;/NumberOfIdentifierParts&gt;
-              &lt;/MetaDataCollections&gt;
-              &lt;MetaDataCollections&gt;
-                &lt;CollectionName&gt;DataSourceInformation&lt;/CollectionName&gt;
-                &lt;NumberOfRestrictions&gt;0&lt;/NumberOfRestrictions&gt;
-                &lt;NumberOfIdentifierParts&gt;0&lt;/NumberOfIdentifierParts&gt;
-              &lt;/MetaDataCollections&gt;
-              &lt;MetaDataC [rest of string was truncated]&quot;;.
-             </summary>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteException">
-            <summary>
-            SQLite exception class.
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteException.#ctor(System.Int32,System.String)">
-            <summary>
-            Public constructor for generating a SQLite error given the base error code
-            </summary>
-            <param name="errorCode">The SQLite error code to report</param>
-            <param name="extendedInformation">Extra text to go along with the error message text</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteException.#ctor(System.String)">
-            <summary>
-            Various public constructors that just pass along to the base Exception
-            </summary>
-            <param name="message">Passed verbatim to Exception</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteException.#ctor">
-            <summary>
-            Various public constructors that just pass along to the base Exception
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteException.#ctor(System.String,System.Exception)">
-            <summary>
-            Various public constructors that just pass along to the base Exception
-            <param name="message">Passed to Exception</param>
-            <param name="innerException">Passed to Exception</param>
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteException.GetStockErrorMessage(System.Int32,System.String)">
-            <summary>
-            Initializes the exception class with the SQLite error code.
-            </summary>
-            <param name="errorCode">The SQLite error code</param>
-            <param name="errorMessage">A detailed error message</param>
-            <returns>An error message string</returns>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteException.ErrorCode">
-            <summary>
-            Retrieves the underlying SQLite error code for this exception
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteErrorCode">
-            <summary>
-            SQLite error codes
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Ok">
-            <summary>
-            Success
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Error">
-            <summary>
-            SQL error or missing database
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Internal">
-            <summary>
-            Internal logic error in SQLite
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Perm">
-            <summary>
-            Access permission denied
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Abort">
-            <summary>
-            Callback routine requested an abort
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Busy">
-            <summary>
-            The database file is locked
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Locked">
-            <summary>
-            A table in the database is locked
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.NoMem">
-            <summary>
-            malloc() failed
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.ReadOnly">
-            <summary>
-            Attempt to write a read-only database
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Interrupt">
-            <summary>
-            Operation terminated by sqlite3_interrupt()
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.IOErr">
-            <summary>
-            Some kind of disk I/O error occurred
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Corrupt">
-            <summary>
-            The database disk image is malformed
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.NotFound">
-            <summary>
-            Table or record not found
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Full">
-            <summary>
-            Insertion failed because database is full
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.CantOpen">
-            <summary>
-            Unable to open the database file
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Protocol">
-            <summary>
-            Database lock protocol error
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Empty">
-            <summary>
-            Database is empty
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Schema">
-            <summary>
-            The database schema changed
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.TooBig">
-            <summary>
-            Too much data for one row of a table
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Constraint">
-            <summary>
-            Abort due to constraint violation
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Mismatch">
-            <summary>
-            Data type mismatch
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Misuse">
-            <summary>
-            Library used incorrectly
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.NOLFS">
-            <summary>
-            Uses OS features not supported on host
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Auth">
-            <summary>
-            Authorization denied
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Format">
-            <summary>
-            Auxiliary database format error
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Range">
-            <summary>
-            2nd parameter to sqlite3_bind out of range
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.NotADatabase">
-            <summary>
-            File opened that is not a database file
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Row">
-            <summary>
-            sqlite3_step() has another row ready
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteErrorCode.Done">
-            <summary>
-            sqlite3_step() has finished executing
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.SynchronizationModes">
-            <summary>
-            The I/O file cache flushing behavior for the connection
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SynchronizationModes.Normal">
-            <summary>
-            Normal file flushing at critical sections of the code
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SynchronizationModes.Full">
-            <summary>
-            Full file flushing after every write operation
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SynchronizationModes.Off">
-            <summary>
-            Use the default operating system's file flushing, SQLite does not explicitly flush the file buffers after writing
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteCommitHandler">
-            <summary>
-            Raised when a transaction is about to be committed.  To roll back a transaction, set the 
-            rollbackTrans boolean value to true.
-            </summary>
-            <param name="sender">The connection committing the transaction</param>
-            <param name="e">Event arguments on the transaction</param>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteUpdateEventHandler">
-            <summary>
-            Raised when data is inserted, updated and deleted on a given connection
-            </summary>
-            <param name="sender">The connection committing the transaction</param>
-            <param name="e">The event parameters which triggered the event</param>
-        </member>
-        <member name="T:System.Data.SQLite.UpdateEventType">
-            <summary>
-            Whenever an update event is triggered on a connection, this enum will indicate
-            exactly what type of operation is being performed.
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.UpdateEventType.Delete">
-            <summary>
-            A row is being deleted from the given database and table
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.UpdateEventType.Insert">
-            <summary>
-            A row is being inserted into the table.
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.UpdateEventType.Update">
-            <summary>
-            A row is being updated in the table.
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.UpdateEventArgs">
-            <summary>
-            Passed during an Update callback, these event arguments detail the type of update operation being performed
-            on the given connection.
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.UpdateEventArgs.Database">
-            <summary>
-            The name of the database being updated (usually "main" but can be any attached or temporary database)
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.UpdateEventArgs.Table">
-            <summary>
-            The name of the table being updated
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.UpdateEventArgs.Event">
-            <summary>
-            The type of update being performed (insert/update/delete)
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.UpdateEventArgs.RowId">
-            <summary>
-            The RowId affected by this update.
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.CommitEventArgs">
-            <summary>
-            Event arguments raised when a transaction is being committed
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.CommitEventArgs.AbortTransaction">
-            <summary>
-            Set to true to abort the transaction and trigger a rollback
-            </summary>
-        </member>
-        <member name="T:System.Data.SQLite.SQLiteStatement">
-            <summary>
-            Represents a single SQL statement in SQLite.
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteStatement._sql">
-            <summary>
-            The underlying SQLite object this statement is bound to
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteStatement._sqlStatement">
-            <summary>
-            The command text of this SQL statement
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteStatement._sqlite_stmt">
-            <summary>
-            The actual statement pointer
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteStatement._unnamedParameters">
-            <summary>
-            An index from which unnamed parameters begin
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteStatement._paramNames">
-            <summary>
-            Names of the parameters as SQLite understands them to be
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteStatement._paramValues">
-            <summary>
-            Parameters for this statement
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteStatement._command">
-            <summary>
-            Command this statement belongs to (if any)
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteStatement.#ctor(System.Data.SQLite.SQLiteBase,System.Data.SQLite.SQLiteStatementHandle,System.String,System.Data.SQLite.SQLiteStatement)">
-            <summary>
-            Initializes the statement and attempts to get all information about parameters in the statement
-            </summary>
-            <param name="sqlbase">The base SQLite object</param>
-            <param name="stmt">The statement</param>
-            <param name="strCommand">The command text for this statement</param>
-            <param name="previous">The previous command in a multi-statement command</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteStatement.MapParameter(System.String,System.Data.SQLite.SQLiteParameter)">
-            <summary>
-            Called by SQLiteParameterCollection, this function determines if the specified parameter name belongs to
-            this statement, and if so, keeps a reference to the parameter so it can be bound later.
-            </summary>
-            <param name="s">The parameter name to map</param>
-            <param name="p">The parameter to assign it</param>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteStatement.Dispose">
-            <summary>
-            Disposes and finalizes the statement
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteStatement.BindParameters">
-            <summary>
-             Bind all parameters, making sure the caller didn't miss any
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteStatement.BindParameter(System.Int32,System.Data.SQLite.SQLiteParameter)">
-            <summary>
-            Perform the bind operation for an individual parameter
-            </summary>
-            <param name="index">The index of the parameter to bind</param>
-            <param name="param">The parameter we're binding</param>
-        </member>
         <member name="T:System.Data.SQLite.SQLiteFunctionAttribute">
             <summary>
             A simple custom attribute to enable us to easily find user-defined functions in
@@ -3487,147 +3351,283 @@
             The type of function this implementation will be.
             </summary>
         </member>
-        <member name="T:System.Data.SQLite.SQLiteCommandBuilder">
+        <member name="T:System.Data.SQLite.SQLite3">
             <summary>
-            SQLite implementation of DbCommandBuilder.
+            This class implements SQLiteBase completely, and is the guts of the code that interop's SQLite with .NET
             </summary>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.#ctor">
+        <member name="F:System.Data.SQLite.SQLite3._sql">
+            <summary>
+            The opaque pointer returned to us by the sqlite provider
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLite3._functionsArray">
+            <summary>
+            The user-defined functions registered on this connection
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLite3.GetValue(System.Data.SQLite.SQLiteStatement,System.Int32,System.Data.SQLite.SQLiteType)">
+            <summary>
+            Helper function to retrieve a column of data from an active statement.
+            </summary>
+            <param name="stmt">The statement being step()'d through</param>
+            <param name="index">The column index to retrieve</param>
+            <param name="typ">The type of data contained in the column.  If Uninitialized, this function will retrieve the datatype information.</param>
+            <returns>Returns the data in the column</returns>
+        </member>
+        <member name="T:System.Data.SQLite.SQLite3_UTF16">
+            <summary>
+            Alternate SQLite3 object, overriding many text behaviors to support UTF-16 (Unicode)
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLite3_UTF16.ToString(System.IntPtr,System.Int32)">
+            <summary>
+            Overrides SQLiteConvert.ToString() to marshal UTF-16 strings instead of UTF-8
+            </summary>
+            <param name="b">A pointer to a UTF-16 string</param>
+            <param name="nbytelen">The length (IN BYTES) of the string</param>
+            <returns>A .NET string</returns>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteParameter">
+            <summary>
+            SQLite implementation of DbParameter.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteParameter._dbType">
+            <summary>
+            The data type of the parameter
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteParameter._rowVersion">
+            <summary>
+            The version information for mapping the parameter
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteParameter._objValue">
+            <summary>
+            The value of the data in the parameter
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteParameter._sourceColumn">
+            <summary>
+            The source column for the parameter
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteParameter._parameterName">
+            <summary>
+            The column name
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteParameter._dataSize">
+            <summary>
+            The data size, unused by SQLite
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor">
             <summary>
             Default constructor
             </summary>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.#ctor(System.Data.SQLite.SQLiteDataAdapter)">
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String)">
             <summary>
-            Initializes the command builder and associates it with the specified data adapter.
+            Constructs a named parameter given the specified parameter name
             </summary>
-            <param name="adp"></param>
+            <param name="parameterName">The parameter name</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.ApplyParameterInfo(System.Data.Common.DbParameter,System.Data.DataRow,System.Data.StatementType,System.Boolean)">
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Object)">
             <summary>
-            Minimal amount of parameter processing.  Primarily sets the DbType for the parameter equal to the provider type in the schema
+            Constructs a named parameter given the specified parameter name and initial value
             </summary>
-            <param name="parameter">The parameter to use in applying custom behaviors to a row</param>
-            <param name="row">The row to apply the parameter to</param>
-            <param name="statementType">The type of statement</param>
-            <param name="whereClause">Whether the application of the parameter is part of a WHERE clause</param>
+            <param name="parameterName">The parameter name</param>
+            <param name="value">The initial value of the parameter</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetParameterName(System.String)">
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType)">
             <summary>
-            Returns a valid named parameter
+            Constructs a named parameter of the specified type
+            </summary>
+            <param name="parameterName">The parameter name</param>
+            <param name="dbType">The datatype of the parameter</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType,System.String)">
+            <summary>
+            Constructs a named parameter of the specified type and source column reference
+            </summary>
+            <param name="parameterName">The parameter name</param>
+            <param name="dbType">The data type</param>
+            <param name="sourceColumn">The source column</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType,System.String,System.Data.DataRowVersion)">
+            <summary>
+            Constructs a named parameter of the specified type, source column and row version
+            </summary>
+            <param name="parameterName">The parameter name</param>
+            <param name="dbType">The data type</param>
+            <param name="sourceColumn">The source column</param>
+            <param name="rowVersion">The row version information</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.Data.DbType)">
+            <summary>
+            Constructs an unnamed parameter of the specified data type
+            </summary>
+            <param name="dbType">The datatype of the parameter</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.Data.DbType,System.Object)">
+            <summary>
+            Constructs an unnamed parameter of the specified data type and sets the initial value
+            </summary>
+            <param name="dbType">The datatype of the parameter</param>
+            <param name="value">The initial value of the parameter</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.Data.DbType,System.String)">
+            <summary>
+            Constructs an unnamed parameter of the specified data type and source column
+            </summary>
+            <param name="dbType">The datatype of the parameter</param>
+            <param name="sourceColumn">The source column</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.Data.DbType,System.String,System.Data.DataRowVersion)">
+            <summary>
+            Constructs an unnamed parameter of the specified data type, source column and row version
+            </summary>
+            <param name="dbType">The data type</param>
+            <param name="sourceColumn">The source column</param>
+            <param name="rowVersion">The row version information</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType,System.Int32)">
+            <summary>
+            Constructs a named parameter of the specified type and size
+            </summary>
+            <param name="parameterName">The parameter name</param>
+            <param name="parameterType">The data type</param>
+            <param name="parameterSize">The size of the parameter</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType,System.Int32,System.String)">
+            <summary>
+            Constructs a named parameter of the specified type, size and source column
             </summary>
             <param name="parameterName">The name of the parameter</param>
-            <returns>Error</returns>
+            <param name="parameterType">The data type</param>
+            <param name="parameterSize">The size of the parameter</param>
+            <param name="sourceColumn">The source column</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetParameterName(System.Int32)">
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType,System.Int32,System.String,System.Data.DataRowVersion)">
             <summary>
-            Returns a named parameter for the given ordinal
+            Constructs a named parameter of the specified type, size, source column and row version
             </summary>
-            <param name="parameterOrdinal">The i of the parameter</param>
-            <returns>Error</returns>
+            <param name="parameterName">The name of the parameter</param>
+            <param name="parameterType">The data type</param>
+            <param name="parameterSize">The size of the parameter</param>
+            <param name="sourceColumn">The source column</param>
+            <param name="rowVersion">The row version information</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetParameterPlaceholder(System.Int32)">
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType,System.Int32,System.Data.ParameterDirection,System.Boolean,System.Byte,System.Byte,System.String,System.Data.DataRowVersion,System.Object)">
             <summary>
-            Returns a placeholder character for the specified parameter i.
+            Constructs a named parameter of the specified type, size, source column and row version
             </summary>
-            <param name="parameterOrdinal">The index of the parameter to provide a placeholder for</param>
-            <returns>Returns a named parameter</returns>
+            <param name="parameterName">The name of the parameter</param>
+            <param name="parameterType">The data type</param>
+            <param name="parameterSize">The size of the parameter</param>
+            <param name="direction">Only input parameters are supported in SQLite</param>
+            <param name="isNullable">Ignored</param>
+            <param name="precision">Ignored</param>
+            <param name="scale">Ignored</param>
+            <param name="sourceColumn">The source column</param>
+            <param name="rowVersion">The row version information</param>
+            <param name="value">The initial value to assign the parameter</param>   
         </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.SetRowUpdatingHandler(System.Data.Common.DbDataAdapter)">
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.String,System.Data.DbType,System.Int32,System.Data.ParameterDirection,System.Byte,System.Byte,System.String,System.Data.DataRowVersion,System.Boolean,System.Object)">
             <summary>
-            Sets the handler for receiving row updating events.  Used by the DbCommandBuilder to autogenerate SQL
-            statements that may not have previously been generated.
+            Constructs a named parameter, yet another flavor
             </summary>
-            <param name="adapter">A data adapter to receive events on.</param>
+            <param name="parameterName">The name of the parameter</param>
+            <param name="parameterType">The data type</param>
+            <param name="parameterSize">The size of the parameter</param>
+            <param name="direction">Only input parameters are supported in SQLite</param>
+            <param name="precision">Ignored</param>
+            <param name="scale">Ignored</param>
+            <param name="sourceColumn">The source column</param>
+            <param name="rowVersion">The row version information</param>
+            <param name="sourceColumnNullMapping">Whether or not this parameter is for comparing NULL's</param>
+            <param name="value">The intial value to assign the parameter</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetDeleteCommand">
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.Data.DbType,System.Int32)">
             <summary>
-            Returns the automatically-generated SQLite command to delete rows from the database
+            Constructs an unnamed parameter of the specified type and size
             </summary>
-            <returns></returns>
+            <param name="parameterType">The data type</param>
+            <param name="parameterSize">The size of the parameter</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetDeleteCommand(System.Boolean)">
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.Data.DbType,System.Int32,System.String)">
             <summary>
-            Returns the automatically-generated SQLite command to delete rows from the database
+            Constructs an unnamed parameter of the specified type, size, and source column
             </summary>
-            <param name="useColumnsForParameterNames"></param>
-            <returns></returns>
+            <param name="parameterType">The data type</param>
+            <param name="parameterSize">The size of the parameter</param>
+            <param name="sourceColumn">The source column</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetUpdateCommand">
+        <member name="M:System.Data.SQLite.SQLiteParameter.#ctor(System.Data.DbType,System.Int32,System.String,System.Data.DataRowVersion)">
             <summary>
-            Returns the automatically-generated SQLite command to update rows in the database
+            Constructs an unnamed parameter of the specified type, size, source column and row version
             </summary>
-            <returns></returns>
+            <param name="parameterType">The data type</param>
+            <param name="parameterSize">The size of the parameter</param>
+            <param name="sourceColumn">The source column</param>
+            <param name="rowVersion">The row version information</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetUpdateCommand(System.Boolean)">
+        <member name="M:System.Data.SQLite.SQLiteParameter.ResetDbType">
             <summary>
-            Returns the automatically-generated SQLite command to update rows in the database
-            </summary>
-            <param name="useColumnsForParameterNames"></param>
-            <returns></returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetInsertCommand">
-            <summary>
-            Returns the automatically-generated SQLite command to insert rows into the database
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetInsertCommand(System.Boolean)">
-            <summary>
-            Returns the automatically-generated SQLite command to insert rows into the database
-            </summary>
-            <param name="useColumnsForParameterNames"></param>
-            <returns></returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.QuoteIdentifier(System.String)">
-            <summary>
-            Places brackets around an identifier
-            </summary>
-            <param name="unquotedIdentifier">The identifier to quote</param>
-            <returns>The bracketed identifier</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.UnquoteIdentifier(System.String)">
-            <summary>
-            Removes brackets around an identifier
-            </summary>
-            <param name="quotedIdentifier">The quoted (bracketed) identifier</param>
-            <returns>The undecorated identifier</returns>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteCommandBuilder.GetSchemaTable(System.Data.Common.DbCommand)">
-            <summary>
-            Override helper, which can help the base command builder choose the right keys for the given query
-            </summary>
-            <param name="sourceCommand"></param>
-            <returns></returns>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteCommandBuilder.DataAdapter">
-            <summary>
-            Gets/sets the DataAdapter for this CommandBuilder
+            Resets the DbType of the parameter so it can be inferred from the value
             </summary>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteCommandBuilder.CatalogLocation">
+        <member name="M:System.Data.SQLite.SQLiteParameter.Clone">
             <summary>
-            Overridden to hide its property from the designer
+            Clones a parameter
+            </summary>
+            <returns>A new, unassociated SQLiteParameter</returns>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteParameter.IsNullable">
+            <summary>
+            Whether or not the parameter can contain a null value
             </summary>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteCommandBuilder.CatalogSeparator">
+        <member name="P:System.Data.SQLite.SQLiteParameter.DbType">
             <summary>
-            Overridden to hide its property from the designer
+            Returns the datatype of the parameter
             </summary>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteCommandBuilder.QuotePrefix">
+        <member name="P:System.Data.SQLite.SQLiteParameter.Direction">
             <summary>
-            Overridden to hide its property from the designer
+            Supports only input parameters
             </summary>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteCommandBuilder.QuoteSuffix">
+        <member name="P:System.Data.SQLite.SQLiteParameter.ParameterName">
             <summary>
-            Overridden to hide its property from the designer
+            Returns the parameter name
             </summary>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteCommandBuilder.SchemaSeparator">
+        <member name="P:System.Data.SQLite.SQLiteParameter.Size">
             <summary>
-            Overridden to hide its property from the designer
+            Returns the size of the parameter
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteParameter.SourceColumn">
+            <summary>
+            Gets/sets the source column
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteParameter.SourceColumnNullMapping">
+            <summary>
+            Used by DbCommandBuilder to determine the mapping for nullable fields
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteParameter.SourceVersion">
+            <summary>
+            Gets and sets the row version
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteParameter.Value">
+            <summary>
+            Gets and sets the parameter value.  If no datatype was specified, the datatype will assume the type from the value given.
             </summary>
         </member>
     </members>

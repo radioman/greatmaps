@@ -254,7 +254,11 @@ namespace GMap.NET.Internals
 
                      case MapType.SigPacSpainMap:
                      {
-                        minZoom = 5;
+                        if(minZoom < 5)
+                        {
+                           minZoom = 5;
+                        }
+
                         RectLatLng area = new RectLatLng(43.8741381814747, -9.700927734375, 14.34814453125, 7.8605775962932);
                         if(!area.Contains(CurrentPosition))
                         {
