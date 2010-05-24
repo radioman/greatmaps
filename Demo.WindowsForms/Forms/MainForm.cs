@@ -12,6 +12,7 @@ using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms.ToolTips;
 using System.IO;
+using System.Net.NetworkInformation;
 
 namespace Demo.WindowsForms
 {
@@ -112,6 +113,12 @@ namespace Demo.WindowsForms
             transport.WorkerSupportsCancellation = true;
             transport.WorkerReportsProgress = true;
 
+            // Connections
+            connectionsWorker.DoWork += new DoWorkEventHandler(connectionsWorker_DoWork);
+            connectionsWorker.ProgressChanged += new ProgressChangedEventHandler(connectionsWorker_ProgressChanged);
+            connectionsWorker.WorkerSupportsCancellation = true;
+            connectionsWorker.WorkerReportsProgress = true;
+
             // add custom layers  
             {
                routes = new GMapOverlay(MainMap, "routes");
@@ -172,7 +179,7 @@ namespace Demo.WindowsForms
             if(m is GMapMarkerRect)
             {
                m.Tag = polygonPoints.Count;
-               polygonPoints.Add(m.Position);                
+               polygonPoints.Add(m.Position);
             }
          }
 
@@ -354,6 +361,116 @@ namespace Demo.WindowsForms
          }
          trolleybusMarkers.Clear();
          busMarkers.Clear();
+      }
+
+      #endregion
+
+      #region -- tcp/ip connections demo --
+      BackgroundWorker connectionsWorker = new BackgroundWorker();
+
+      readonly Dictionary<string, GMapMarker> tcpConnections = new Dictionary<string, GMapMarker>();
+      bool firstLoadConnections = true;
+
+      void connectionsWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+      {
+         // stops immediate marker/route/polygon invalidations;
+         // call Refresh to perform single refresh and reset invalidation state
+         MainMap.HoldInvalidation = true;
+
+         lock(tcpConnections)
+         {
+            foreach(var d in tcpConnections)
+            {
+               GMapMarker marker;
+
+               if(!tcpConnections.TryGetValue("192.168.1.1", out marker))
+               {
+                  //marker = new GMapMarkerGoogleRed(new PointLatLng(d.Lat, d.Lng));
+                  //marker.Tag = d.Id;
+                  //marker.ToolTipMode = MarkerTooltipMode.Always;
+
+                  //trolleybusMarkers[d.Id] = marker;
+                  //objects.Markers.Add(marker);
+               }
+               else
+               {
+                  //marker.Position = new PointLatLng(d.Lat, d.Lng);
+               }
+               //marker.ToolTipText = d.Line;
+            }
+         }
+
+         if(firstLoadConnections)
+         {
+            MainMap.ZoomAndCenterMarkers("objects");
+            firstLoadConnections = false;
+         }
+         MainMap.Refresh();
+      }
+
+      void connectionsWorker_DoWork(object sender, DoWorkEventArgs e)
+      {
+         IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
+
+         while(!connectionsWorker.CancellationPending)
+         {
+            try
+            {
+               // http://ipinfodb.com/ip_location_api.php
+
+               // http://ipinfodb.com/ip_query2.php?ip=74.125.45.100,206.190.60.37&timezone=false
+
+               //<?xml version="1.0" encoding="UTF-8"?>
+               //<Locations>
+               //  <Location id="0">
+               //    <Ip>74.125.45.100</Ip>
+               //    <Status>OK</Status>
+               //    <CountryCode>US</CountryCode>
+               //    <CountryName>United States</CountryName>
+               //    <RegionCode>06</RegionCode>
+               //    <RegionName>California</RegionName>
+               //    <City>Mountain View</City>
+               //    <ZipPostalCode>94043</ZipPostalCode>
+               //    <Latitude>37.4192</Latitude>
+               //    <Longitude>-122.057</Longitude>
+               //  </Location>
+               //  <Location id="1">
+               //    <Ip>206.190.60.37</Ip>
+               //    <Status>OK</Status>
+               //    <CountryCode>US</CountryCode>
+               //    <CountryName>United States</CountryName>
+               //    <RegionCode>06</RegionCode>
+               //    <RegionName>California</RegionName>
+               //    <City>Sunnyvale</City>
+               //    <ZipPostalCode>94089</ZipPostalCode>
+               //    <Latitude>37.4249</Latitude>
+               //    <Longitude>-122.007</Longitude>
+               //  </Location>
+               //</Locations>
+
+               lock(tcpConnections)
+               {
+                  TcpConnectionInformation[] tcpInfoList = properties.GetActiveTcpConnections();
+
+                  int c = 0;
+
+                  foreach(TcpConnectionInformation i in tcpInfoList)
+                  {
+                     Debug.WriteLine(c++ + ": " + i.State + " -> " + i.RemoteEndPoint.Address + ":" + i.RemoteEndPoint.Port);
+                  }
+
+                  tcpInfoList = null;
+               }
+
+               connectionsWorker.ReportProgress(100);
+            }
+            catch(Exception ex)
+            {
+               Debug.WriteLine("connectionsWorker_DoWork: " + ex.ToString());
+            }
+            Thread.Sleep(3333);
+         }
+         tcpConnections.Clear();
       }
 
       #endregion
