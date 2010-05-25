@@ -380,6 +380,7 @@ namespace Demo.WindowsForms
       readonly Dictionary<string, GMapMarker> tcpConnections = new Dictionary<string, GMapMarker>();
 
       bool firstLoadConnections = true;
+      GMapMarker lastTcpmarker;
 
       void connectionsWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
       {
@@ -402,26 +403,30 @@ namespace Demo.WindowsForms
                      if(!string.IsNullOrEmpty(tcp.Value.Ip))
                      {
                         marker = new GMapMarkerGoogleGreen(new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude));
-                        marker.Tag = tcp.Key;
-                        marker.ToolTipMode = MarkerTooltipMode.Always;
+                        marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
-                        tcpConnections[tcp.Key] = marker;
-                     }
+                        tcpConnections[tcp.Key] = marker;                         
 
-                     if(!objects.Markers.Contains(marker))
-                     {
-                        objects.Markers.Add(marker);
-
-                        if(!MainMap.IsDragging)
                         {
+                           objects.Markers.Add(marker);                          
+                           UpdateMarkerTcpIpToolTip(marker, tcp.Value);
+
                            if(snap)
                            {
                               MainMap.CurrentPosition = marker.Position;
                               snap = false;
+
+                              if(lastTcpmarker != null)
+                              {
+                                 marker.ToolTipMode = MarkerTooltipMode.Always;
+
+                                 lastTcpmarker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+                                 MainMap.Invalidate();
+                              }
+
+                              lastTcpmarker = marker;
                            }
                         }
-
-                        UpdateMarkerTcpIpToolTip(marker, tcp.Value);
                      }
                   }
                   else
@@ -436,17 +441,10 @@ namespace Demo.WindowsForms
                         if(!objects.Markers.Contains(marker))
                         {
                            objects.Markers.Add(marker);
-
-                           if(snap)
-                           {
-                              MainMap.CurrentPosition = marker.Position;
-                              snap = false;
-                           }
-                        }
-
+                        } 
                         UpdateMarkerTcpIpToolTip(marker, tcp.Value);
                      }
-                  }
+                  }                    
                }
             }
          }
@@ -629,9 +627,9 @@ namespace Demo.WindowsForms
                            info.City = i.City;
                            info.Latitude = i.Latitude;
                            info.Longitude = i.Longitude;
-                        }
 
-                        TcpState[i.Ip] = info;
+                           TcpState[i.Ip] = info;
+                        }                          
 
                         // get tracert route to each ip
                         if(false)
