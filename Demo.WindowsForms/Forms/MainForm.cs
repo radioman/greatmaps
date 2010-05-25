@@ -1239,6 +1239,11 @@ namespace Demo.WindowsForms
          {
             if(!connectionsWorker.IsBusy)
             {
+               if(MainMap.MapType != MapType.GoogleMap)
+               {
+                  MainMap.MapType = MapType.GoogleMap;
+               }
+
                firstLoadConnections = true;
                connectionsWorker.RunWorkerAsync();
             }
