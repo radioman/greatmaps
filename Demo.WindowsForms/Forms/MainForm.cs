@@ -378,8 +378,6 @@ namespace Demo.WindowsForms
       readonly Dictionary<string, List<IPAddress>> TraceRoutes = new Dictionary<string, List<IPAddress>>();
 
       readonly Dictionary<string, GMapMarker> tcpConnections = new Dictionary<string, GMapMarker>();
-
-      bool firstLoadConnections = true;
       GMapMarker lastTcpmarker;
 
       void connectionsWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -409,7 +407,7 @@ namespace Demo.WindowsForms
 
                         {
                            objects.Markers.Add(marker);                          
-                           UpdateMarkerTcpIpToolTip(marker, tcp.Value);
+                           UpdateMarkerTcpIpToolTip(marker, tcp.Value, "(" + objects.Markers.Count + ") ");
 
                            if(snap)
                            {
@@ -418,10 +416,8 @@ namespace Demo.WindowsForms
 
                               if(lastTcpmarker != null)
                               {
-                                 marker.ToolTipMode = MarkerTooltipMode.Always;
-
+                                 marker.ToolTipMode = MarkerTooltipMode.Always; 
                                  lastTcpmarker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
-                                 MainMap.Invalidate();
                               }
 
                               lastTcpmarker = marker;
@@ -441,25 +437,20 @@ namespace Demo.WindowsForms
                         if(!objects.Markers.Contains(marker))
                         {
                            objects.Markers.Add(marker);
-                        } 
-                        UpdateMarkerTcpIpToolTip(marker, tcp.Value);
+                        }
+                        UpdateMarkerTcpIpToolTip(marker, tcp.Value, string.Empty);
                      }
                   }                    
                }
             }
          }
 
-         if(firstLoadConnections)
-         {
-            MainMap.ZoomAndCenterMarkers("objects");
-            firstLoadConnections = false;
-         }
          MainMap.Refresh();
       }
 
-      void UpdateMarkerTcpIpToolTip(GMapMarker marker, IpInfo tcp)
+      void UpdateMarkerTcpIpToolTip(GMapMarker marker, IpInfo tcp, string info)
       {
-         marker.ToolTipText = tcp.Ip + ":" + tcp.Port + " - " + tcp.State;
+         marker.ToolTipText = info + tcp.Ip + ":" + tcp.Port + " - " + tcp.State;
 
          if(!string.IsNullOrEmpty(tcp.CountryName))
          {
@@ -1302,8 +1293,8 @@ namespace Demo.WindowsForms
                {
                   MainMap.MapType = MapType.GoogleMap;
                }
+               MainMap.Zoom = 5;
 
-               firstLoadConnections = true;
                connectionsWorker.RunWorkerAsync();
             }
          }
