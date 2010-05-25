@@ -15,6 +15,7 @@ using System.IO;
 using System.Net.NetworkInformation;
 using System.Xml;
 using System.Net;
+using System.Text;
 
 namespace Demo.WindowsForms
 {
@@ -374,7 +375,10 @@ namespace Demo.WindowsForms
       BackgroundWorker connectionsWorker = new BackgroundWorker();
 
       readonly Dictionary<string, IpInfo> TcpState = new Dictionary<string, IpInfo>();
+      readonly Dictionary<string, List<IPAddress>> TraceRoutes = new Dictionary<string, List<IPAddress>>();
+
       readonly Dictionary<string, GMapMarker> tcpConnections = new Dictionary<string, GMapMarker>();
+
       bool firstLoadConnections = true;
 
       void connectionsWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -389,56 +393,59 @@ namespace Demo.WindowsForms
 
             foreach(var tcp in TcpState)
             {
-               GMapMarker marker;
-
-               if(!tcpConnections.TryGetValue(tcp.Key, out marker))
+               if(tcp.Value.State != System.Net.NetworkInformation.TcpState.Unknown)
                {
-                  if(!string.IsNullOrEmpty(tcp.Value.Ip))
+                  GMapMarker marker;
+
+                  if(!tcpConnections.TryGetValue(tcp.Key, out marker))
                   {
-                     marker = new GMapMarkerGoogleGreen(new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude));
-                     marker.Tag = tcp.Key;
-                     marker.ToolTipMode = MarkerTooltipMode.Always;
-
-                     tcpConnections[tcp.Key] = marker;
-                  }
-
-                  if(!objects.Markers.Contains(marker))
-                  {
-                     objects.Markers.Add(marker);
-
-                     if(!MainMap.IsDragging)
+                     if(!string.IsNullOrEmpty(tcp.Value.Ip))
                      {
-                        if(snap)
-                        {
-                           MainMap.CurrentPosition = marker.Position;
-                           snap = false;
-                        }
+                        marker = new GMapMarkerGoogleGreen(new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude));
+                        marker.Tag = tcp.Key;
+                        marker.ToolTipMode = MarkerTooltipMode.Always;
+
+                        tcpConnections[tcp.Key] = marker;
                      }
 
-                     UpdateMarkerTcpIpToolTip(marker, tcp.Value);
-                  }
-               }
-               else
-               {
-                  if(DateTime.Now - tcp.Value.Time > TimeSpan.FromSeconds(5))
-                  {
-                     objects.Markers.Remove(marker);
-                  }
-                  else
-                  {
-                     marker.Position = new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude);
                      if(!objects.Markers.Contains(marker))
                      {
                         objects.Markers.Add(marker);
 
-                        if(snap)
+                        if(!MainMap.IsDragging)
                         {
-                           MainMap.CurrentPosition = marker.Position;
-                           snap = false;
+                           if(snap)
+                           {
+                              MainMap.CurrentPosition = marker.Position;
+                              snap = false;
+                           }
                         }
-                     }
 
-                     UpdateMarkerTcpIpToolTip(marker, tcp.Value);
+                        UpdateMarkerTcpIpToolTip(marker, tcp.Value);
+                     }
+                  }
+                  else
+                  {
+                     if(DateTime.Now - tcp.Value.Time > TimeSpan.FromSeconds(5))
+                     {
+                        objects.Markers.Remove(marker);
+                     }
+                     else
+                     {
+                        marker.Position = new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude);
+                        if(!objects.Markers.Contains(marker))
+                        {
+                           objects.Markers.Add(marker);
+
+                           if(snap)
+                           {
+                              MainMap.CurrentPosition = marker.Position;
+                              snap = false;
+                           }
+                        }
+
+                        UpdateMarkerTcpIpToolTip(marker, tcp.Value);
+                     }
                   }
                }
             }
@@ -472,6 +479,53 @@ namespace Demo.WindowsForms
                marker.ToolTipText += ", " + tcp.RegionName;
             }
          }
+      }
+
+      List<IpInfo> GetIpHostInfo(string iplist)
+      {
+         List<IpInfo> ret = new List<IpInfo>();
+         try
+         {
+            string reqUrl = string.Format("http://ipinfodb.com/ip_query2.php?ip={0}&timezone=false", iplist);
+            HttpWebRequest httpReq = HttpWebRequest.Create(reqUrl) as HttpWebRequest;
+            {
+               string result = string.Empty;
+               using(HttpWebResponse response = httpReq.GetResponse() as HttpWebResponse)
+               {
+                  using(StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8))
+                  {
+                     result = reader.ReadToEnd();
+                  }
+                  response.Close();
+               }
+
+               XmlDocument x = new XmlDocument();
+               x.LoadXml(result);
+
+               XmlNodeList nodes = x.SelectNodes("/Locations/Location");
+               foreach(XmlNode node in nodes)
+               {
+                  string Ip = node.SelectSingleNode("Ip").InnerText;
+
+                  IpInfo info = new IpInfo();
+                  {
+                     info.Ip = Ip;
+                     info.CountryName = node.SelectSingleNode("CountryName").InnerText;
+                     info.RegionName = node.SelectSingleNode("RegionName").InnerText;
+                     info.City = node.SelectSingleNode("City").InnerText;
+                     info.Latitude = double.Parse(node.SelectSingleNode("Latitude").InnerText, CultureInfo.InvariantCulture);
+                     info.Longitude = double.Parse(node.SelectSingleNode("Longitude").InnerText, CultureInfo.InvariantCulture);
+
+                     ret.Add(info);
+                  }
+               }
+            }
+         }
+         catch(Exception ex)
+         {
+            Debug.WriteLine("GetIpHostInfo: " + ex.Message);
+         }
+         return ret;
       }
 
       void connectionsWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -563,48 +617,55 @@ namespace Demo.WindowsForms
                   // fill location info
                   if(!string.IsNullOrEmpty(iplist))
                   {
-                     try
+                     List<IpInfo> ips = GetIpHostInfo(iplist);
+                     foreach(var i in ips)
                      {
-                        string reqUrl = string.Format("http://ipinfodb.com/ip_query2.php?ip={0}&timezone=false", iplist);
-                        HttpWebRequest httpReq = HttpWebRequest.Create(reqUrl) as HttpWebRequest;
+                        IpInfo info;
+                        if(TcpState.TryGetValue(i.Ip, out info))
                         {
-                           string result = string.Empty;
-                           using(HttpWebResponse response = httpReq.GetResponse() as HttpWebResponse)
+                           info.Ip = i.Ip;
+                           info.CountryName = i.CountryName;
+                           info.RegionName = i.RegionName;
+                           info.City = i.City;
+                           info.Latitude = i.Latitude;
+                           info.Longitude = i.Longitude;
+                        }
+
+                        TcpState[i.Ip] = info;
+
+                        // get tracert route to each ip
+                        if(false)
+                        {
+                           if(!TraceRoutes.ContainsKey(i.Ip))
                            {
-                              using(StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8))
+                              var tracert = TraceRoute.GetTraceRoute(i.Ip);
+                              TraceRoutes[i.Ip] = tracert;
+
+                              string tracertIps = string.Empty;
+                              foreach(var t in tracert)
                               {
-                                 result = reader.ReadToEnd();
+                                 if(!t.ToString().StartsWith("192.168.") && !t.ToString().StartsWith("127.0."))
+                                 {
+                                    if(tracertIps.Length > 0)
+                                    {
+                                       tracertIps += ",";
+                                    }
+                                    tracertIps += t.ToString();
+                                 }
                               }
-                              response.Close();
-                           }
 
-                           XmlDocument x = new XmlDocument();
-                           x.LoadXml(result);
+                              Thread.Sleep(2222);
 
-                           XmlNodeList nodes = x.SelectNodes("/Locations/Location");
-                           foreach(XmlNode node in nodes)
-                           {
-                              string Ip = node.SelectSingleNode("Ip").InnerText;
-
-                              IpInfo info;
-                              if(TcpState.TryGetValue(Ip, out info))
+                              List<IpInfo> tinfo = GetIpHostInfo(tracertIps);
+                              foreach(var ti in tinfo)
                               {
-                                 info.Ip = Ip;
-                                 info.CountryName = node.SelectSingleNode("CountryName").InnerText;
-                                 info.RegionName = node.SelectSingleNode("RegionName").InnerText;
-                                 info.City = node.SelectSingleNode("City").InnerText;
-                                 info.Latitude = double.Parse(node.SelectSingleNode("Latitude").InnerText, CultureInfo.InvariantCulture);
-                                 info.Longitude = double.Parse(node.SelectSingleNode("Longitude").InnerText, CultureInfo.InvariantCulture);
-
-                                 TcpState[Ip] = info;
+                                 TcpState[ti.Ip] = ti;
                               }
+                              tinfo.Clear();
                            }
                         }
                      }
-                     catch(Exception ex)
-                     {
-                        Debug.WriteLine("Load Location xml: " + ex.Message);
-                     }
+                     ips.Clear();
                   }
                }
 
