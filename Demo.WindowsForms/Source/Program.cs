@@ -22,6 +22,7 @@ namespace Demo.WindowsForms
    struct IpInfo
    {
       public string Ip;
+      public int Port;
       public TcpState State;
 
       public string CountryName;
@@ -30,6 +31,6 @@ namespace Demo.WindowsForms
       public double Latitude;
       public double Longitude;
 
-      public DateTime Time;
+      public DateTime Time;       
    }
 }

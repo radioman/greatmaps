@@ -454,7 +454,7 @@ namespace Demo.WindowsForms
 
       void UpdateMarkerTcpIpToolTip(GMapMarker marker, IpInfo tcp)
       {
-         marker.ToolTipText = tcp.Ip + ": " + tcp.State;
+         marker.ToolTipText = tcp.Ip + ":" + tcp.Port + " - " + tcp.State;
 
          if(!string.IsNullOrEmpty(tcp.CountryName))
          {
@@ -526,13 +526,13 @@ namespace Demo.WindowsForms
                      if(!Ip.StartsWith("192.168.") && !Ip.StartsWith("127.0."))
                      {
                         IpInfo info;
-                        if(!TcpState.TryGetValue(i.RemoteEndPoint.Address.ToString(), out info))
+                        if(!TcpState.TryGetValue(Ip, out info))
                         {
                            info = new IpInfo();
                         }
 
                         info.State = i.State;
-
+                        info.Port = i.RemoteEndPoint.Port;
                         info.Time = DateTime.Now;
 
                         TcpState[Ip] = info;
