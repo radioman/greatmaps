@@ -84,6 +84,7 @@
          this.radioButtonNone = new System.Windows.Forms.RadioButton();
          this.radioButtonPerf = new System.Windows.Forms.RadioButton();
          this.radioButtonTransport = new System.Windows.Forms.RadioButton();
+         this.radioButtonTcpIp = new System.Windows.Forms.RadioButton();
          this.groupMap.SuspendLayout();
          this.groupBox3.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize) (this.trackBar1)).BeginInit();
@@ -685,6 +686,7 @@
          // groupBox6
          // 
          this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+         this.groupBox6.Controls.Add(this.radioButtonTcpIp);
          this.groupBox6.Controls.Add(this.radioButtonNone);
          this.groupBox6.Controls.Add(this.radioButtonPerf);
          this.groupBox6.Controls.Add(this.radioButtonTransport);
@@ -699,11 +701,10 @@
          // 
          this.radioButtonNone.AutoSize = true;
          this.radioButtonNone.Checked = true;
-         this.radioButtonNone.Location = new System.Drawing.Point(112, 19);
+         this.radioButtonNone.Location = new System.Drawing.Point(110, 19);
          this.radioButtonNone.Name = "radioButtonNone";
          this.radioButtonNone.Size = new System.Drawing.Size(51, 17);
          this.radioButtonNone.TabIndex = 2;
-         this.radioButtonNone.TabStop = true;
          this.radioButtonNone.Text = "None";
          this.radioButtonNone.UseVisualStyleBackColor = true;
          this.radioButtonNone.CheckedChanged += new System.EventHandler(this.RealTimeChanged);
@@ -711,24 +712,35 @@
          // radioButtonPerf
          // 
          this.radioButtonPerf.AutoSize = true;
-         this.radioButtonPerf.Location = new System.Drawing.Point(6, 42);
+         this.radioButtonPerf.Location = new System.Drawing.Point(9, 42);
          this.radioButtonPerf.Name = "radioButtonPerf";
-         this.radioButtonPerf.Size = new System.Drawing.Size(105, 17);
+         this.radioButtonPerf.Size = new System.Drawing.Size(85, 17);
          this.radioButtonPerf.TabIndex = 1;
-         this.radioButtonPerf.Text = "Performance test";
+         this.radioButtonPerf.Text = "Performance";
          this.radioButtonPerf.UseVisualStyleBackColor = true;
          this.radioButtonPerf.CheckedChanged += new System.EventHandler(this.RealTimeChanged);
          // 
          // radioButtonTransport
          // 
          this.radioButtonTransport.AutoSize = true;
-         this.radioButtonTransport.Location = new System.Drawing.Point(6, 19);
+         this.radioButtonTransport.Location = new System.Drawing.Point(8, 19);
          this.radioButtonTransport.Name = "radioButtonTransport";
          this.radioButtonTransport.Size = new System.Drawing.Size(99, 17);
          this.radioButtonTransport.TabIndex = 0;
          this.radioButtonTransport.Text = "Transport demo";
          this.radioButtonTransport.UseVisualStyleBackColor = true;
          this.radioButtonTransport.CheckedChanged += new System.EventHandler(this.RealTimeChanged);
+         // 
+         // radioButtonTcpIp
+         // 
+         this.radioButtonTcpIp.AutoSize = true;
+         this.radioButtonTcpIp.Location = new System.Drawing.Point(110, 42);
+         this.radioButtonTcpIp.Name = "radioButtonTcpIp";
+         this.radioButtonTcpIp.Size = new System.Drawing.Size(53, 17);
+         this.radioButtonTcpIp.TabIndex = 3;
+         this.radioButtonTcpIp.Text = "tcp/ip";
+         this.radioButtonTcpIp.UseVisualStyleBackColor = true;
+         this.radioButtonTcpIp.CheckedChanged += new System.EventHandler(this.RealTimeChanged);
          // 
          // MainForm
          // 
@@ -834,6 +846,7 @@
       private System.Windows.Forms.Button buttonExportToGpx;
       internal Map MainMap;
       private System.Windows.Forms.Button button16;
+      private System.Windows.Forms.RadioButton radioButtonTcpIp;
    }
 }
 

@@ -13,6 +13,8 @@ using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms.ToolTips;
 using System.IO;
 using System.Net.NetworkInformation;
+using System.Xml;
+using System.Net;
 
 namespace Demo.WindowsForms
 {
@@ -118,6 +120,9 @@ namespace Demo.WindowsForms
             connectionsWorker.ProgressChanged += new ProgressChangedEventHandler(connectionsWorker_ProgressChanged);
             connectionsWorker.WorkerSupportsCancellation = true;
             connectionsWorker.WorkerReportsProgress = true;
+
+            // perf
+            timerPerf.Tick += new EventHandler(timer_Tick);
 
             // add custom layers  
             {
@@ -343,12 +348,12 @@ namespace Demo.WindowsForms
             {
                lock(trolleybus)
                {
-                  MainMap.Manager.GetVilniusTransportData(TransportType.TrolleyBus, string.Empty, trolleybus);
+                  MainMap.Manager.GetVilniusTransportData(GMap.NET.TransportType.TrolleyBus, string.Empty, trolleybus);
                }
 
                lock(bus)
                {
-                  MainMap.Manager.GetVilniusTransportData(TransportType.Bus, string.Empty, bus);
+                  MainMap.Manager.GetVilniusTransportData(GMap.NET.TransportType.Bus, string.Empty, bus);
                }
 
                transport.ReportProgress(100);
@@ -368,6 +373,7 @@ namespace Demo.WindowsForms
       #region -- tcp/ip connections demo --
       BackgroundWorker connectionsWorker = new BackgroundWorker();
 
+      readonly Dictionary<string, IpInfo> TcpState = new Dictionary<string, IpInfo>();
       readonly Dictionary<string, GMapMarker> tcpConnections = new Dictionary<string, GMapMarker>();
       bool firstLoadConnections = true;
 
@@ -377,26 +383,64 @@ namespace Demo.WindowsForms
          // call Refresh to perform single refresh and reset invalidation state
          MainMap.HoldInvalidation = true;
 
-         lock(tcpConnections)
+         lock(TcpState)
          {
-            foreach(var d in tcpConnections)
+            bool snap = true;
+
+            foreach(var tcp in TcpState)
             {
                GMapMarker marker;
 
-               if(!tcpConnections.TryGetValue("192.168.1.1", out marker))
+               if(!tcpConnections.TryGetValue(tcp.Key, out marker))
                {
-                  //marker = new GMapMarkerGoogleRed(new PointLatLng(d.Lat, d.Lng));
-                  //marker.Tag = d.Id;
-                  //marker.ToolTipMode = MarkerTooltipMode.Always;
+                  if(!string.IsNullOrEmpty(tcp.Value.Ip))
+                  {
+                     marker = new GMapMarkerGoogleGreen(new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude));
+                     marker.Tag = tcp.Key;
+                     marker.ToolTipMode = MarkerTooltipMode.Always;
 
-                  //trolleybusMarkers[d.Id] = marker;
-                  //objects.Markers.Add(marker);
+                     tcpConnections[tcp.Key] = marker;
+                  }
+
+                  if(!objects.Markers.Contains(marker))
+                  {
+                     objects.Markers.Add(marker);
+
+                     if(!MainMap.IsDragging)
+                     {
+                        if(snap)
+                        {
+                           MainMap.CurrentPosition = marker.Position;
+                           snap = false;
+                        }
+                     }
+
+                     UpdateMarkerTcpIpToolTip(marker, tcp.Value);
+                  }
                }
                else
                {
-                  //marker.Position = new PointLatLng(d.Lat, d.Lng);
+                  if(DateTime.Now - tcp.Value.Time > TimeSpan.FromSeconds(5))
+                  {
+                     objects.Markers.Remove(marker);
+                  }
+                  else
+                  {
+                     marker.Position = new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude);
+                     if(!objects.Markers.Contains(marker))
+                     {
+                        objects.Markers.Add(marker);
+
+                        if(snap)
+                        {
+                           MainMap.CurrentPosition = marker.Position;
+                           snap = false;
+                        }
+                     }
+
+                     UpdateMarkerTcpIpToolTip(marker, tcp.Value);
+                  }
                }
-               //marker.ToolTipText = d.Line;
             }
          }
 
@@ -406,6 +450,28 @@ namespace Demo.WindowsForms
             firstLoadConnections = false;
          }
          MainMap.Refresh();
+      }
+
+      void UpdateMarkerTcpIpToolTip(GMapMarker marker, IpInfo tcp)
+      {
+         marker.ToolTipText = tcp.Ip + ": " + tcp.State;
+
+         if(!string.IsNullOrEmpty(tcp.CountryName))
+         {
+            marker.ToolTipText += "\n" + tcp.CountryName;
+         }
+
+         if(!string.IsNullOrEmpty(tcp.City))
+         {
+            marker.ToolTipText += ", " + tcp.City;
+         }
+         else
+         {
+            if(!string.IsNullOrEmpty(tcp.RegionName))
+            {
+               marker.ToolTipText += ", " + tcp.RegionName;
+            }
+         }
       }
 
       void connectionsWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -448,18 +514,98 @@ namespace Demo.WindowsForms
                //  </Location>
                //</Locations>
 
-               lock(tcpConnections)
+               lock(TcpState)
                {
                   TcpConnectionInformation[] tcpInfoList = properties.GetActiveTcpConnections();
 
-                  int c = 0;
-
                   foreach(TcpConnectionInformation i in tcpInfoList)
                   {
-                     Debug.WriteLine(c++ + ": " + i.State + " -> " + i.RemoteEndPoint.Address + ":" + i.RemoteEndPoint.Port);
+                     string Ip = i.RemoteEndPoint.Address.ToString();
+
+                     // exclude local network
+                     if(!Ip.StartsWith("192.168.") && !Ip.StartsWith("127.0."))
+                     {
+                        IpInfo info;
+                        if(!TcpState.TryGetValue(i.RemoteEndPoint.Address.ToString(), out info))
+                        {
+                           info = new IpInfo();
+                        }
+
+                        info.State = i.State;
+
+                        info.Time = DateTime.Now;
+
+                        TcpState[Ip] = info;
+                     }
                   }
 
                   tcpInfoList = null;
+
+                  int count = 0;
+                  string iplist = string.Empty;
+                  foreach(var info in TcpState)
+                  {
+                     if(string.IsNullOrEmpty(info.Value.Ip))
+                     {
+                        if(iplist.Length > 0)
+                        {
+                           iplist += ",";
+                        }
+                        iplist += info.Key;
+
+                        if(count++ >= 11)
+                        {
+                           break;
+                        }
+                     }
+                  }
+
+                  // fill location info
+                  if(!string.IsNullOrEmpty(iplist))
+                  {
+                     try
+                     {
+                        string reqUrl = string.Format("http://ipinfodb.com/ip_query2.php?ip={0}&timezone=false", iplist);
+                        HttpWebRequest httpReq = HttpWebRequest.Create(reqUrl) as HttpWebRequest;
+                        {
+                           string result = string.Empty;
+                           using(HttpWebResponse response = httpReq.GetResponse() as HttpWebResponse)
+                           {
+                              using(StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8))
+                              {
+                                 result = reader.ReadToEnd();
+                              }
+                              response.Close();
+                           }
+
+                           XmlDocument x = new XmlDocument();
+                           x.LoadXml(result);
+
+                           XmlNodeList nodes = x.SelectNodes("/Locations/Location");
+                           foreach(XmlNode node in nodes)
+                           {
+                              string Ip = node.SelectSingleNode("Ip").InnerText;
+
+                              IpInfo info;
+                              if(TcpState.TryGetValue(Ip, out info))
+                              {
+                                 info.Ip = Ip;
+                                 info.CountryName = node.SelectSingleNode("CountryName").InnerText;
+                                 info.RegionName = node.SelectSingleNode("RegionName").InnerText;
+                                 info.City = node.SelectSingleNode("City").InnerText;
+                                 info.Latitude = double.Parse(node.SelectSingleNode("Latitude").InnerText, CultureInfo.InvariantCulture);
+                                 info.Longitude = double.Parse(node.SelectSingleNode("Longitude").InnerText, CultureInfo.InvariantCulture);
+
+                                 TcpState[Ip] = info;
+                              }
+                           }
+                        }
+                     }
+                     catch(Exception ex)
+                     {
+                        Debug.WriteLine("Load Location xml: " + ex.Message);
+                     }
+                  }
                }
 
                connectionsWorker.ReportProgress(100);
@@ -1063,7 +1209,6 @@ namespace Demo.WindowsForms
          if(radioButtonPerf.Checked)
          {
             timerPerf.Interval = 44;
-            timerPerf.Tick += new EventHandler(timer_Tick);
             timerPerf.Start();
          }
          else
@@ -1086,6 +1231,23 @@ namespace Demo.WindowsForms
             if(transport.IsBusy)
             {
                transport.CancelAsync();
+            }
+         }
+
+         // start live tcp/ip connections demo
+         if(radioButtonTcpIp.Checked)
+         {
+            if(!connectionsWorker.IsBusy)
+            {
+               firstLoadConnections = true;
+               connectionsWorker.RunWorkerAsync();
+            }
+         }
+         else
+         {
+            if(connectionsWorker.IsBusy)
+            {
+               connectionsWorker.CancelAsync();
             }
          }
       }

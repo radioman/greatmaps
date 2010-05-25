@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Net.NetworkInformation;
 
 namespace Demo.WindowsForms
 {
@@ -16,5 +17,19 @@ namespace Demo.WindowsForms
          Application.SetCompatibleTextRenderingDefault(false);
          Application.Run(new MainForm());
       }
+   }
+
+   struct IpInfo
+   {
+      public string Ip;
+      public TcpState State;
+
+      public string CountryName;
+      public string RegionName;
+      public string City;
+      public double Latitude;
+      public double Longitude;
+
+      public DateTime Time;
    }
 }

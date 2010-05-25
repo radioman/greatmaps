@@ -15,7 +15,7 @@ namespace GMap.NET.WindowsForms.ToolTips
       public GMapRoundedToolTip(GMapMarker marker)
          : base(marker)
       {
-
+         TextPadding = new Size((int)Radius, (int)Radius);
       }
 
       public void DrawRoundRectangle(Graphics g, Pen pen, float h, float v, float width, float height, float radius)
@@ -41,8 +41,8 @@ namespace GMap.NET.WindowsForms.ToolTips
       public override void Draw(Graphics g)
       {
          System.Drawing.Size st = g.MeasureString(Marker.ToolTipText, Font).ToSize();
-        
-         System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y - st.Height, st.Width + TextPadding.Width, st.Height + TextPadding.Height);
+
+         System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y - st.Height, st.Width + TextPadding.Width * 2, st.Height + TextPadding.Height);
          rect.Offset(Offset.X, Offset.Y);
 
          g.DrawLine(Stroke, Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y, rect.X + Radius/2, rect.Y + rect.Height - Radius/2);
@@ -50,6 +50,10 @@ namespace GMap.NET.WindowsForms.ToolTips
          DrawRoundRectangle(g, Stroke, rect.X, rect.Y, rect.Width, rect.Height, Radius);
 
 #if !PocketPC
+         if(Format.Alignment == StringAlignment.Near)
+         {
+            rect.Offset(TextPadding.Width, 0);
+         }
          g.DrawString(Marker.ToolTipText, Font, Brushes.Navy, rect, Format);
 #else
          g.DrawString(ToolTipText, ToolTipFont, TooltipForeground, rect, ToolTipFormat);
