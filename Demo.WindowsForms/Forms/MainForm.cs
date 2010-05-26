@@ -403,10 +403,10 @@ namespace Demo.WindowsForms
                         marker = new GMapMarkerGoogleGreen(new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude));
                         marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
-                        tcpConnections[tcp.Key] = marker;                         
+                        tcpConnections[tcp.Key] = marker;
 
                         {
-                           objects.Markers.Add(marker);                          
+                           objects.Markers.Add(marker);
                            UpdateMarkerTcpIpToolTip(marker, tcp.Value, "(" + objects.Markers.Count + ") ");
 
                            if(snap)
@@ -416,7 +416,7 @@ namespace Demo.WindowsForms
 
                               if(lastTcpmarker != null)
                               {
-                                 marker.ToolTipMode = MarkerTooltipMode.Always; 
+                                 marker.ToolTipMode = MarkerTooltipMode.Always;
                                  lastTcpmarker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
                               }
 
@@ -440,7 +440,7 @@ namespace Demo.WindowsForms
                         }
                         UpdateMarkerTcpIpToolTip(marker, tcp.Value, string.Empty);
                      }
-                  }                    
+                  }
                }
             }
          }
@@ -473,46 +473,59 @@ namespace Demo.WindowsForms
       List<IpInfo> GetIpHostInfo(string iplist)
       {
          List<IpInfo> ret = new List<IpInfo>();
-         try
+         string reqUrl = string.Format("http://ipinfodb.com/ip_query2.php?ip={0}&timezone=false", iplist);
+         bool retry = false;
+
+         while(true)
          {
-            string reqUrl = string.Format("http://ipinfodb.com/ip_query2.php?ip={0}&timezone=false", iplist);
-            HttpWebRequest httpReq = HttpWebRequest.Create(reqUrl) as HttpWebRequest;
+            ret.Clear();
+            try
             {
-               string result = string.Empty;
-               using(HttpWebResponse response = httpReq.GetResponse() as HttpWebResponse)
+               HttpWebRequest httpReq = HttpWebRequest.Create(reqUrl) as HttpWebRequest;
                {
-                  using(StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8))
+                  string result = string.Empty;
+                  using(HttpWebResponse response = httpReq.GetResponse() as HttpWebResponse)
                   {
-                     result = reader.ReadToEnd();
+                     using(StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8))
+                     {
+                        result = reader.ReadToEnd();
+                     }
+                     response.Close();
                   }
-                  response.Close();
-               }
 
-               XmlDocument x = new XmlDocument();
-               x.LoadXml(result);
+                  XmlDocument x = new XmlDocument();
+                  x.LoadXml(result);
 
-               XmlNodeList nodes = x.SelectNodes("/Locations/Location");
-               foreach(XmlNode node in nodes)
-               {
-                  string Ip = node.SelectSingleNode("Ip").InnerText;
-
-                  IpInfo info = new IpInfo();
+                  XmlNodeList nodes = x.SelectNodes("/Locations/Location");
+                  foreach(XmlNode node in nodes)
                   {
-                     info.Ip = Ip;
-                     info.CountryName = node.SelectSingleNode("CountryName").InnerText;
-                     info.RegionName = node.SelectSingleNode("RegionName").InnerText;
-                     info.City = node.SelectSingleNode("City").InnerText;
-                     info.Latitude = double.Parse(node.SelectSingleNode("Latitude").InnerText, CultureInfo.InvariantCulture);
-                     info.Longitude = double.Parse(node.SelectSingleNode("Longitude").InnerText, CultureInfo.InvariantCulture);
+                     string Ip = node.SelectSingleNode("Ip").InnerText;
 
-                     ret.Add(info);
+                     IpInfo info = new IpInfo();
+                     {
+                        info.Ip = Ip;
+                        info.CountryName = node.SelectSingleNode("CountryName").InnerText;
+                        info.RegionName = node.SelectSingleNode("RegionName").InnerText;
+                        info.City = node.SelectSingleNode("City").InnerText;
+                        info.Latitude = double.Parse(node.SelectSingleNode("Latitude").InnerText, CultureInfo.InvariantCulture);
+                        info.Longitude = double.Parse(node.SelectSingleNode("Longitude").InnerText, CultureInfo.InvariantCulture);
+
+                        ret.Add(info);
+                     }
                   }
                }
+               break;
             }
-         }
-         catch(Exception ex)
-         {
-            Debug.WriteLine("GetIpHostInfo: " + ex.Message);
+            catch(Exception ex)
+            {
+               if(retry) // fail in retry too, full stop ;}
+               {
+                  break;
+               }
+               retry = true;
+               reqUrl = string.Format("http://backup.ipinfodb.com/ip_query2.php?ip={0}&timezone=false", iplist);
+               Debug.WriteLine("GetIpHostInfo: " + ex.Message + ", retry on backup server...");
+            }
          }
          return ret;
       }
@@ -620,7 +633,7 @@ namespace Demo.WindowsForms
                            info.Longitude = i.Longitude;
 
                            TcpState[i.Ip] = info;
-                        }                          
+                        }
 
                         // get tracert route to each ip
                         if(false)
