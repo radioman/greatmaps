@@ -36,6 +36,43 @@ namespace Demo.WindowsForms
       public DateTime Time;
    }
 
+   struct IpStatus
+   {
+      private string countryName;
+      public string CountryName
+      {
+         get
+         {
+            return countryName;
+         }
+         set
+         {
+            countryName = value;
+         }
+      }
+
+      private int connectionsCount;
+      public int ConnectionsCount
+      {
+         get
+         {
+            return connectionsCount;
+         }
+         set
+         {
+            connectionsCount = value;
+         }
+      }
+   }
+
+   class DescendingComparer : IComparer<IpStatus>
+   {
+      public int Compare(IpStatus x, IpStatus y)
+      {
+         return y.ConnectionsCount.CompareTo(x.ConnectionsCount);
+      }
+   }
+
    class TraceRoute
    {
       readonly static string Data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";

@@ -40,6 +40,9 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BSE.Windows.Forms">
+      <HintPath>..\References\Windows\BSE.Windows.Forms.dll</HintPath>
+    </Reference>
     <Reference Include="Demo.WindowsForms, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <ExecutableExtension>.exe</ExecutableExtension>
     </Reference>

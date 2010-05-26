@@ -110,6 +110,8 @@ namespace Demo.WindowsForms
             checkBoxDebug.Checked = true;
 #endif
 
+            ToolStripManager.Renderer = new BSE.Windows.Forms.Office2007Renderer();
+
             // transport demo
             transport.DoWork += new DoWorkEventHandler(transport_DoWork);
             transport.ProgressChanged += new ProgressChangedEventHandler(transport_ProgressChanged);
@@ -121,6 +123,8 @@ namespace Demo.WindowsForms
             connectionsWorker.ProgressChanged += new ProgressChangedEventHandler(connectionsWorker_ProgressChanged);
             connectionsWorker.WorkerSupportsCancellation = true;
             connectionsWorker.WorkerReportsProgress = true;
+
+            GridConnections.AutoGenerateColumns = false;
 
             // perf
             timerPerf.Tick += new EventHandler(timer_Tick);
@@ -138,6 +142,9 @@ namespace Demo.WindowsForms
 
                top = new GMapOverlay(MainMap, "top");
                MainMap.Overlays.Add(top);
+
+               routes.Routes.CollectionChanged += new GMap.NET.ObjectModel.NotifyCollectionChangedEventHandler(Routes_CollectionChanged);
+               objects.Markers.CollectionChanged += new GMap.NET.ObjectModel.NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
             }
 
             // set current marker
@@ -174,6 +181,16 @@ namespace Demo.WindowsForms
                RegeneratePolygon();
             }
          }
+      }
+
+      void Markers_CollectionChanged(object sender, GMap.NET.ObjectModel.NotifyCollectionChangedEventArgs e)
+      {
+         textBoxMarkerCount.Text = objects.Markers.Count.ToString();
+      }
+
+      void Routes_CollectionChanged(object sender, GMap.NET.ObjectModel.NotifyCollectionChangedEventArgs e)
+      {
+         textBoxrouteCount.Text = routes.Routes.Count.ToString();
       }
 
       void RegeneratePolygon()
@@ -380,73 +397,108 @@ namespace Demo.WindowsForms
       readonly Dictionary<string, GMapMarker> tcpConnections = new Dictionary<string, GMapMarker>();
       GMapMarker lastTcpmarker;
 
+      readonly List<IpStatus> CountryStatusView = new List<IpStatus>();
+      readonly SortedDictionary<string, int> CountryStatus = new SortedDictionary<string, int>();
+
       void connectionsWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
       {
-         // stops immediate marker/route/polygon invalidations;
-         // call Refresh to perform single refresh and reset invalidation state
-         MainMap.HoldInvalidation = true;
-
-         lock(TcpState)
+         try
          {
-            bool snap = true;
 
-            foreach(var tcp in TcpState)
+            // stops immediate marker/route/polygon invalidations;
+            // call Refresh to perform single refresh and reset invalidation state
+            MainMap.HoldInvalidation = true;
+
+            lock(TcpState)
             {
-               if(tcp.Value.State != System.Net.NetworkInformation.TcpState.Unknown)
+               bool snap = true;
+
+               foreach(var tcp in TcpState)
                {
-                  GMapMarker marker;
-
-                  if(!tcpConnections.TryGetValue(tcp.Key, out marker))
+                  if(tcp.Value.State != System.Net.NetworkInformation.TcpState.Unknown)
                   {
-                     if(!string.IsNullOrEmpty(tcp.Value.Ip))
+                     GMapMarker marker;
+
+                     if(!tcpConnections.TryGetValue(tcp.Key, out marker))
                      {
-                        marker = new GMapMarkerGoogleGreen(new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude));
-                        marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
-
-                        tcpConnections[tcp.Key] = marker;
-
+                        if(!string.IsNullOrEmpty(tcp.Value.Ip))
                         {
-                           objects.Markers.Add(marker);
-                           UpdateMarkerTcpIpToolTip(marker, tcp.Value, "(" + objects.Markers.Count + ") ");
+                           marker = new GMapMarkerGoogleGreen(new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude));
+                           marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
-                           if(snap)
+                           tcpConnections[tcp.Key] = marker;
+
                            {
-                              MainMap.CurrentPosition = marker.Position;
-                              snap = false;
+                              objects.Markers.Add(marker);
+                              UpdateMarkerTcpIpToolTip(marker, tcp.Value, "(" + objects.Markers.Count + ") ");
 
-                              if(lastTcpmarker != null)
+                              if(snap)
                               {
-                                 marker.ToolTipMode = MarkerTooltipMode.Always;
-                                 lastTcpmarker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
-                              }
+                                 if(checkBoxTcpIpSnap.Checked)
+                                 {
+                                    MainMap.CurrentPosition = marker.Position;
+                                 }
+                                 snap = false;
 
-                              lastTcpmarker = marker;
+                                 if(lastTcpmarker != null)
+                                 {
+                                    marker.ToolTipMode = MarkerTooltipMode.Always;
+                                    lastTcpmarker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+                                 }
+
+                                 lastTcpmarker = marker;
+                              }
                            }
                         }
                      }
-                  }
-                  else
-                  {
-                     if(DateTime.Now - tcp.Value.Time > TimeSpan.FromSeconds(5))
-                     {
-                        objects.Markers.Remove(marker);
-                     }
                      else
                      {
-                        marker.Position = new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude);
-                        if(!objects.Markers.Contains(marker))
+                        if(DateTime.Now - tcp.Value.Time > TimeSpan.FromSeconds(5))
                         {
-                           objects.Markers.Add(marker);
+                           objects.Markers.Remove(marker);
                         }
-                        UpdateMarkerTcpIpToolTip(marker, tcp.Value, string.Empty);
+                        else
+                        {
+                           marker.Position = new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude);
+                           if(!objects.Markers.Contains(marker))
+                           {
+                              objects.Markers.Add(marker);
+                           }
+                           UpdateMarkerTcpIpToolTip(marker, tcp.Value, string.Empty);
+                        }
                      }
                   }
                }
-            }
-         }
 
-         MainMap.Refresh();
+               // update grid data
+               if(panelMenu.Expand && xPanderPanelLive.Expand)
+               {
+                  CountryStatusView.Clear();
+                  foreach(var c in CountryStatus)
+                  {
+                     IpStatus s = new IpStatus();
+                     {
+                        s.CountryName = c.Key;
+                        s.ConnectionsCount = c.Value;
+                     }
+                     CountryStatusView.Add(s);
+                  }
+                  CountryStatusView.Sort(ComparerIpStatus);
+
+                  GridConnections.RowCount = CountryStatusView.Count;
+                  GridConnections.InvalidateColumn(1);
+               }
+            }
+
+            MainMap.Refresh();
+         }
+         catch(Exception ex)
+         {
+            Debug.WriteLine(ex.ToString());
+         }
       }
+
+      readonly DescendingComparer ComparerIpStatus = new DescendingComparer();
 
       void UpdateMarkerTcpIpToolTip(GMapMarker marker, IpInfo tcp, string info)
       {
@@ -574,6 +626,8 @@ namespace Demo.WindowsForms
                {
                   TcpConnectionInformation[] tcpInfoList = properties.GetActiveTcpConnections();
 
+                  CountryStatus.Clear();
+
                   foreach(TcpConnectionInformation i in tcpInfoList)
                   {
                      string Ip = i.RemoteEndPoint.Address.ToString();
@@ -592,6 +646,18 @@ namespace Demo.WindowsForms
                         info.Time = DateTime.Now;
 
                         TcpState[Ip] = info;
+
+                        if(!string.IsNullOrEmpty(info.CountryName))
+                        {
+                           if(!CountryStatus.ContainsKey(info.CountryName))
+                           {
+                              CountryStatus[info.CountryName] = 1;
+                           }
+                           else
+                           {
+                              CountryStatus[info.CountryName]++;
+                           }
+                        }
                      }
                   }
 
@@ -836,6 +902,7 @@ namespace Demo.WindowsForms
       void MainMap_OnMapZoomChanged()
       {
          trackBar1.Value = (int) (MainMap.Zoom);
+         textBoxZoomCurrent.Text = MainMap.Zoom.ToString();
       }
 
       // click on some marker
@@ -860,8 +927,7 @@ namespace Demo.WindowsForms
       {
          MethodInvoker m = delegate()
          {
-            progressBar1.Visible = true;
-            toolStripStatusLabelLoading.Visible = true;
+            panelMenu.Text = "Menu: loading tiles...";
          };
          try
          {
@@ -877,10 +943,9 @@ namespace Demo.WindowsForms
       {
          MethodInvoker m = delegate()
          {
-            progressBar1.Visible = false;
-            toolStripStatusLabelLoading.Visible = false;
+            panelMenu.Text = "Menu";
 
-            toolStripStatusLabelMemoryCache.Text = string.Format("MemoryCache: {0:0.00}MB of {1:0.00}MB", MainMap.Manager.MemoryCacheSize, MainMap.Manager.MemoryCacheCapacity);
+            textBoxMemory.Text = string.Format(CultureInfo.InvariantCulture, "{0:0.00}MB of {1:0.00}MB", MainMap.Manager.MemoryCacheSize, MainMap.Manager.MemoryCacheCapacity);
          };
          try
          {
@@ -895,7 +960,8 @@ namespace Demo.WindowsForms
       void MainMap_OnCurrentPositionChanged(PointLatLng point)
       {
          center.Position = point;
-         toolStripStatusLabelCurrentPosition.Text = "CurrentPosition: " + point;
+         textBoxLatCurrent.Text = point.Lat.ToString(CultureInfo.InvariantCulture);
+         textBoxLngCurrent.Text = point.Lng.ToString(CultureInfo.InvariantCulture);
       }
 
       // change map type
@@ -1241,10 +1307,6 @@ namespace Demo.WindowsForms
          {
             MainMap.Offset(0, -offset);
          }
-         else if(e.KeyCode == Keys.Down)
-         {
-            MainMap.Offset(0, offset);
-         }
          else if(e.KeyCode == Keys.Delete)
          {
             if(CurentRectMarker != null)
@@ -1300,6 +1362,10 @@ namespace Demo.WindowsForms
          // start live tcp/ip connections demo
          if(radioButtonTcpIp.Checked)
          {
+            GridConnections.Visible = true;
+            GridConnections.Height = xPanderPanelLive.Height - GridConnections.Location.Y - 10;
+            GridConnections.Refresh();
+            
             if(!connectionsWorker.IsBusy)
             {
                if(MainMap.MapType != MapType.GoogleMap)
@@ -1313,6 +1379,9 @@ namespace Demo.WindowsForms
          }
          else
          {
+            CountryStatusView.Clear();
+            GridConnections.Visible = false;
+
             if(connectionsWorker.IsBusy)
             {
                connectionsWorker.CancelAsync();
@@ -1423,6 +1492,57 @@ namespace Demo.WindowsForms
                   MessageBox.Show("Error importing gpx: " + ex.Message, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                }
             }
+         }
+      }
+
+      private void xPanderPanel1_Click(object sender, EventArgs e)
+      {
+         xPanderPanelList1.Expand(xPanderPanelMain);
+      }
+
+      private void xPanderPanelCache_Click(object sender, EventArgs e)
+      {
+         xPanderPanelList1.Expand(xPanderPanelCache);
+      }
+
+      private void xPanderPanelLive_Click(object sender, EventArgs e)
+      {
+         xPanderPanelList1.Expand(xPanderPanelLive);
+      }
+
+      private void xPanderPanelInfo_Click(object sender, EventArgs e)
+      {
+         xPanderPanelList1.Expand(xPanderPanelInfo);
+      }
+
+      private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
+      {
+         if(e.KeyChar == '+')
+         {
+            MainMap.Zoom += 1;
+         }
+         else if(e.KeyChar == '-')
+         {
+            MainMap.Zoom -= 1;
+         }
+      }
+
+      private void GridConnections_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
+      {
+         if(e.RowIndex >= CountryStatusView.Count)
+            return;
+
+         IpStatus val = CountryStatusView[e.RowIndex];
+
+         switch(GridConnections.Columns[e.ColumnIndex].Name)
+         {
+            case "CountryName":
+            e.Value = val.CountryName;
+            break;
+
+            case "ConnectionsCount":
+            e.Value = val.ConnectionsCount;
+            break;
          }
       }
    }
