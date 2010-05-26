@@ -14,6 +14,7 @@
 "C:\Program Files\7-Zip\7z.exe" a GMap.NET.WindowsForms.zip .\Release\GMap.NET.WindowsForms.dll
 "C:\Program Files\7-Zip\7z.exe" a GMap.NET.WindowsForms.zip .\Release\GMap.NET.WindowsForms.xml
 "C:\Program Files\7-Zip\7z.exe" a GMap.NET.WindowsForms.zip .\Release\System.Data.SQLite.DLL
+"C:\Program Files\7-Zip\7z.exe" a GMap.NET.WindowsForms.zip .\Release\BSE.Windows.Forms.dll
 "C:\Program Files\7-Zip\7z.exe" a GMap.NET.WindowsForms.zip .\Info.txt
 
 pause
