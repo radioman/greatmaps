@@ -409,6 +409,7 @@ namespace Demo.WindowsForms
       readonly List<string> TcpStateNeedLocationInfo = new List<string>();
       readonly List<string> TcpStateNeedtraceInfo = new List<string>();
 
+      volatile bool TryTraceConnection = false;
       GMapMarker lastTcpmarker;
       readonly SQLiteIpCache IpCache = new SQLiteIpCache();
 
@@ -487,54 +488,57 @@ namespace Demo.WindowsForms
                         }
                         UpdateMarkerTcpIpToolTip(marker, tcp.Value, string.Empty);
 
-                        // routes
-                        GMapRoute route;
-                        if(!this.tcpRoutes.TryGetValue(tcp.Key, out route))
+                        if(TryTraceConnection)
                         {
-                           lock(TraceRoutes)
+                           // routes
+                           GMapRoute route;
+                           if(!this.tcpRoutes.TryGetValue(tcp.Key, out route))
                            {
-                              List<IPAddress> tr;
-                              if(TraceRoutes.TryGetValue(tcp.Key, out tr))
+                              lock(TraceRoutes)
                               {
-                                 if(tr != null)
+                                 List<IPAddress> tr;
+                                 if(TraceRoutes.TryGetValue(tcp.Key, out tr))
                                  {
-                                    List<PointLatLng> points = new List<PointLatLng>();
-                                    foreach(var add in tr)
+                                    if(tr != null)
                                     {
-                                       IpInfo info;
-
-                                       lock(TcpTracePoints)
+                                       List<PointLatLng> points = new List<PointLatLng>();
+                                       foreach(var add in tr)
                                        {
-                                          if(TcpTracePoints.TryGetValue(add.ToString(), out info))
+                                          IpInfo info;
+
+                                          lock(TcpTracePoints)
                                           {
-                                             if(!string.IsNullOrEmpty(info.Ip))
+                                             if(TcpTracePoints.TryGetValue(add.ToString(), out info))
                                              {
-                                                points.Add(new PointLatLng(info.Latitude, info.Longitude));
+                                                if(!string.IsNullOrEmpty(info.Ip))
+                                                {
+                                                   points.Add(new PointLatLng(info.Latitude, info.Longitude));
+                                                }
                                              }
                                           }
                                        }
-                                    }
 
-                                    if(points.Count > 0)
-                                    {
-                                       route = new GMapRoute(points, tcp.Key);
+                                       if(points.Count > 0)
+                                       {
+                                          route = new GMapRoute(points, tcp.Key);
 
-                                       route.Stroke = new Pen(GetRandomColor());
-                                       route.Stroke.Width = 4;
-                                       route.Stroke.DashStyle = System.Drawing.Drawing2D.DashStyle.DashDotDot;
+                                          route.Stroke = new Pen(GetRandomColor());
+                                          route.Stroke.Width = 4;
+                                          route.Stroke.DashStyle = System.Drawing.Drawing2D.DashStyle.DashDotDot;
 
-                                       routes.Routes.Add(route);
-                                       tcpRoutes[tcp.Key] = route;
+                                          routes.Routes.Add(route);
+                                          tcpRoutes[tcp.Key] = route;
+                                       }
                                     }
                                  }
                               }
                            }
-                        }
-                        else
-                        {
-                           if(!routes.Routes.Contains(route))
+                           else
                            {
-                              routes.Routes.Add(route);
+                              if(!routes.Routes.Contains(route))
+                              {
+                                 routes.Routes.Add(route);
+                              }
                            }
                         }
                      }
@@ -751,15 +755,18 @@ namespace Demo.WindowsForms
                               Debug.WriteLine("TcpStateNeedLocationInfo: " + TcpStateNeedLocationInfo.Count + " left...");
                            }
 
-                           lock(TcpStateNeedtraceInfo)
+                           if(TryTraceConnection)
                            {
-                              if(!TcpStateNeedtraceInfo.Contains(i.Ip))
+                              lock(TcpStateNeedtraceInfo)
                               {
-                                 TcpStateNeedtraceInfo.Add(i.Ip);
-
-                                 if(!iptracerWorker.IsBusy)
+                                 if(!TcpStateNeedtraceInfo.Contains(i.Ip))
                                  {
-                                    iptracerWorker.RunWorkerAsync();
+                                    TcpStateNeedtraceInfo.Add(i.Ip);
+
+                                    if(!iptracerWorker.IsBusy)
+                                    {
+                                       iptracerWorker.RunWorkerAsync();
+                                    }
                                  }
                               }
                            }
@@ -1591,6 +1598,7 @@ namespace Demo.WindowsForms
          {
             GridConnections.Visible = true;
             checkBoxTcpIpSnap.Visible = true;
+            checkBoxTraceRoute.Visible = true;
             GridConnections.Refresh();
 
             if(!connectionsWorker.IsBusy)
@@ -1609,6 +1617,7 @@ namespace Demo.WindowsForms
             CountryStatusView.Clear();
             GridConnections.Visible = false;
             checkBoxTcpIpSnap.Visible = false;
+            checkBoxTraceRoute.Visible = false;
 
             if(connectionsWorker.IsBusy)
             {
@@ -1771,6 +1780,19 @@ namespace Demo.WindowsForms
             case "ConnectionsCount":
             e.Value = val.ConnectionsCount;
             break;
+         }
+      }
+
+      private void checkBoxTraceRoute_CheckedChanged(object sender, EventArgs e)
+      {
+         TryTraceConnection = checkBoxTraceRoute.Checked;
+         if(!TryTraceConnection)
+         {
+            if(iptracerWorker.IsBusy)
+            {
+               iptracerWorker.CancelAsync();
+            }
+            routes.Routes.Clear();
          }
       }
    }

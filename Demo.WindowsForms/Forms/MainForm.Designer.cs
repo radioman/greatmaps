@@ -104,6 +104,7 @@
          this.radioButtonTransport = new System.Windows.Forms.RadioButton();
          this.radioButtonPerf = new System.Windows.Forms.RadioButton();
          this.radioButtonTcpIp = new System.Windows.Forms.RadioButton();
+         this.checkBoxTraceRoute = new System.Windows.Forms.CheckBox();
          this.panel2 = new System.Windows.Forms.Panel();
          this.MainMap = new Demo.WindowsForms.Map();
          this.panel4 = new System.Windows.Forms.Panel();
@@ -518,7 +519,7 @@
          // buttonExportToGpx
          // 
          this.buttonExportToGpx.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.buttonExportToGpx.Location = new System.Drawing.Point(162, 97);
+         this.buttonExportToGpx.Location = new System.Drawing.Point(474, 97);
          this.buttonExportToGpx.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.buttonExportToGpx.Name = "buttonExportToGpx";
          this.buttonExportToGpx.Size = new System.Drawing.Size(49, 46);
@@ -551,7 +552,7 @@
          // button15
          // 
          this.button15.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button15.Location = new System.Drawing.Point(138, 153);
+         this.button15.Location = new System.Drawing.Point(450, 153);
          this.button15.Margin = new System.Windows.Forms.Padding(4);
          this.button15.Name = "button15";
          this.button15.Size = new System.Drawing.Size(73, 30);
@@ -575,7 +576,7 @@
          // button14
          // 
          this.button14.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button14.Location = new System.Drawing.Point(113, 60);
+         this.button14.Location = new System.Drawing.Point(425, 60);
          this.button14.Margin = new System.Windows.Forms.Padding(4);
          this.button14.Name = "button14";
          this.button14.Size = new System.Drawing.Size(97, 30);
@@ -587,7 +588,7 @@
          // buttonSetEnd
          // 
          this.buttonSetEnd.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.buttonSetEnd.Location = new System.Drawing.Point(113, 23);
+         this.buttonSetEnd.Location = new System.Drawing.Point(425, 23);
          this.buttonSetEnd.Margin = new System.Windows.Forms.Padding(4);
          this.buttonSetEnd.Name = "buttonSetEnd";
          this.buttonSetEnd.Size = new System.Drawing.Size(97, 30);
@@ -610,7 +611,7 @@
          // button6
          // 
          this.button6.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button6.Location = new System.Drawing.Point(64, 153);
+         this.button6.Location = new System.Drawing.Point(376, 153);
          this.button6.Margin = new System.Windows.Forms.Padding(4);
          this.button6.Name = "button6";
          this.button6.Size = new System.Drawing.Size(73, 30);
@@ -1135,16 +1136,18 @@
          this.tableLayoutPanel3.Controls.Add(this.radioButtonTransport, 1, 2);
          this.tableLayoutPanel3.Controls.Add(this.radioButtonPerf, 1, 3);
          this.tableLayoutPanel3.Controls.Add(this.radioButtonTcpIp, 1, 4);
+         this.tableLayoutPanel3.Controls.Add(this.checkBoxTraceRoute, 1, 7);
          this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
          this.tableLayoutPanel3.Location = new System.Drawing.Point(1, 25);
          this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-         this.tableLayoutPanel3.RowCount = 7;
+         this.tableLayoutPanel3.RowCount = 8;
          this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
          this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+         this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel3.Size = new System.Drawing.Size(302, 0);
          this.tableLayoutPanel3.TabIndex = 6;
@@ -1168,7 +1171,7 @@
          this.checkBoxTcpIpSnap.AutoSize = true;
          this.checkBoxTcpIpSnap.Checked = true;
          this.checkBoxTcpIpSnap.CheckState = System.Windows.Forms.CheckState.Checked;
-         this.checkBoxTcpIpSnap.Location = new System.Drawing.Point(23, -22);
+         this.checkBoxTcpIpSnap.Location = new System.Drawing.Point(23, -47);
          this.checkBoxTcpIpSnap.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.checkBoxTcpIpSnap.Name = "checkBoxTcpIpSnap";
          this.checkBoxTcpIpSnap.Size = new System.Drawing.Size(238, 21);
@@ -1263,6 +1266,19 @@
          this.radioButtonTcpIp.UseVisualStyleBackColor = true;
          this.radioButtonTcpIp.CheckedChanged += new System.EventHandler(this.RealTimeChanged);
          // 
+         // checkBoxTraceRoute
+         // 
+         this.checkBoxTraceRoute.AutoSize = true;
+         this.checkBoxTraceRoute.Location = new System.Drawing.Point(23, -22);
+         this.checkBoxTraceRoute.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         this.checkBoxTraceRoute.Name = "checkBoxTraceRoute";
+         this.checkBoxTraceRoute.Size = new System.Drawing.Size(233, 21);
+         this.checkBoxTraceRoute.TabIndex = 6;
+         this.checkBoxTraceRoute.Text = "Trace route for each connection";
+         this.checkBoxTraceRoute.UseVisualStyleBackColor = true;
+         this.checkBoxTraceRoute.Visible = false;
+         this.checkBoxTraceRoute.CheckedChanged += new System.EventHandler(this.checkBoxTraceRoute_CheckedChanged);
+         // 
          // panel2
          // 
          this.panel2.Controls.Add(this.MainMap);
@@ -1293,7 +1309,7 @@
          this.MainMap.ShowTileGridLines = false;
          this.MainMap.Size = new System.Drawing.Size(881, 818);
          this.MainMap.TabIndex = 0;
-         this.MainMap.Zoom = 0;
+         this.MainMap.Zoom = 0D;
          // 
          // panel4
          // 
@@ -1435,6 +1451,7 @@
       private System.Windows.Forms.RadioButton radioButtonTcpIp;
       private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
       private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+      private System.Windows.Forms.CheckBox checkBoxTraceRoute;
    }
 }
 
