@@ -28,7 +28,7 @@
       /// </summary>
       private void InitializeComponent()
       {
-         System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+         System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
          this.label7 = new System.Windows.Forms.Label();
          this.comboBoxMapType = new System.Windows.Forms.ComboBox();
          this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -57,7 +57,6 @@
          this.button9 = new System.Windows.Forms.Button();
          this.checkBoxUseGeoCache = new System.Windows.Forms.CheckBox();
          this.checkBoxUseRouteCache = new System.Windows.Forms.CheckBox();
-         this.button2 = new System.Windows.Forms.Button();
          this.button3 = new System.Windows.Forms.Button();
          this.groupBox7 = new System.Windows.Forms.GroupBox();
          this.buttonExportToGpx = new System.Windows.Forms.Button();
@@ -82,6 +81,7 @@
          this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
          this.textBoxMemory = new System.Windows.Forms.TextBox();
          this.label10 = new System.Windows.Forms.Label();
+         this.button2 = new System.Windows.Forms.Button();
          this.xPanderPanelInfo = new BSE.Windows.Forms.XPanderPanel();
          this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
          this.textBoxZoomCurrent = new System.Windows.Forms.TextBox();
@@ -471,18 +471,6 @@
          this.checkBoxUseRouteCache.UseVisualStyleBackColor = true;
          this.checkBoxUseRouteCache.CheckedChanged += new System.EventHandler(this.checkBoxUseCache_CheckedChanged);
          // 
-         // button2
-         // 
-         this.button2.Dock = System.Windows.Forms.DockStyle.Top;
-         this.button2.Location = new System.Drawing.Point(24, 122);
-         this.button2.Margin = new System.Windows.Forms.Padding(4);
-         this.button2.Name = "button2";
-         this.button2.Size = new System.Drawing.Size(254, 25);
-         this.button2.TabIndex = 0;
-         this.button2.Text = "Clear All";
-         this.button2.UseVisualStyleBackColor = true;
-         this.button2.Click += new System.EventHandler(this.button2_Click);
-         // 
          // button3
          // 
          this.button3.Location = new System.Drawing.Point(12, 60);
@@ -518,8 +506,7 @@
          // 
          // buttonExportToGpx
          // 
-         this.buttonExportToGpx.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.buttonExportToGpx.Location = new System.Drawing.Point(474, 97);
+         this.buttonExportToGpx.Location = new System.Drawing.Point(165, 96);
          this.buttonExportToGpx.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.buttonExportToGpx.Name = "buttonExportToGpx";
          this.buttonExportToGpx.Size = new System.Drawing.Size(49, 46);
@@ -551,11 +538,10 @@
          // 
          // button15
          // 
-         this.button15.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button15.Location = new System.Drawing.Point(450, 153);
+         this.button15.Location = new System.Drawing.Point(139, 153);
          this.button15.Margin = new System.Windows.Forms.Padding(4);
          this.button15.Name = "button15";
-         this.button15.Size = new System.Drawing.Size(73, 30);
+         this.button15.Size = new System.Drawing.Size(75, 30);
          this.button15.TabIndex = 45;
          this.button15.Text = "Polygons";
          this.button15.UseVisualStyleBackColor = true;
@@ -575,8 +561,7 @@
          // 
          // button14
          // 
-         this.button14.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button14.Location = new System.Drawing.Point(425, 60);
+         this.button14.Location = new System.Drawing.Point(117, 60);
          this.button14.Margin = new System.Windows.Forms.Padding(4);
          this.button14.Name = "button14";
          this.button14.Size = new System.Drawing.Size(97, 30);
@@ -587,8 +572,7 @@
          // 
          // buttonSetEnd
          // 
-         this.buttonSetEnd.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.buttonSetEnd.Location = new System.Drawing.Point(425, 23);
+         this.buttonSetEnd.Location = new System.Drawing.Point(117, 23);
          this.buttonSetEnd.Margin = new System.Windows.Forms.Padding(4);
          this.buttonSetEnd.Name = "buttonSetEnd";
          this.buttonSetEnd.Size = new System.Drawing.Size(97, 30);
@@ -610,8 +594,7 @@
          // 
          // button6
          // 
-         this.button6.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button6.Location = new System.Drawing.Point(376, 153);
+         this.button6.Location = new System.Drawing.Point(60, 153);
          this.button6.Margin = new System.Windows.Forms.Padding(4);
          this.button6.Name = "button6";
          this.button6.Size = new System.Drawing.Size(73, 30);
@@ -852,21 +835,22 @@
          this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
          this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
          this.tableLayoutPanel1.Controls.Add(this.button10, 1, 1);
-         this.tableLayoutPanel1.Controls.Add(this.checkBoxUseGeoCache, 1, 10);
-         this.tableLayoutPanel1.Controls.Add(this.textBoxMemory, 1, 7);
-         this.tableLayoutPanel1.Controls.Add(this.checkBoxUseRouteCache, 1, 9);
+         this.tableLayoutPanel1.Controls.Add(this.checkBoxUseGeoCache, 1, 11);
+         this.tableLayoutPanel1.Controls.Add(this.textBoxMemory, 1, 8);
+         this.tableLayoutPanel1.Controls.Add(this.checkBoxUseRouteCache, 1, 10);
          this.tableLayoutPanel1.Controls.Add(this.button9, 1, 2);
          this.tableLayoutPanel1.Controls.Add(this.button11, 1, 3);
-         this.tableLayoutPanel1.Controls.Add(this.button2, 1, 4);
-         this.tableLayoutPanel1.Controls.Add(this.label10, 1, 6);
+         this.tableLayoutPanel1.Controls.Add(this.label10, 1, 7);
+         this.tableLayoutPanel1.Controls.Add(this.button2, 1, 5);
          this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
          this.tableLayoutPanel1.Location = new System.Drawing.Point(1, 25);
          this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-         this.tableLayoutPanel1.RowCount = 12;
+         this.tableLayoutPanel1.RowCount = 13;
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
+         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -899,6 +883,18 @@
          this.label10.Size = new System.Drawing.Size(104, 17);
          this.label10.TabIndex = 40;
          this.label10.Text = "memory cache:";
+         // 
+         // button2
+         // 
+         this.button2.Dock = System.Windows.Forms.DockStyle.Top;
+         this.button2.Location = new System.Drawing.Point(24, 122);
+         this.button2.Margin = new System.Windows.Forms.Padding(4);
+         this.button2.Name = "button2";
+         this.button2.Size = new System.Drawing.Size(254, 25);
+         this.button2.TabIndex = 43;
+         this.button2.Text = "Clear All";
+         this.button2.UseVisualStyleBackColor = true;
+         this.button2.Click += new System.EventHandler(this.button2_Click);
          // 
          // xPanderPanelInfo
          // 
@@ -1189,14 +1185,14 @@
          this.GridConnections.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.CountryName,
             this.ConnectionsCount});
-         dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-         dataGridViewCellStyle1.BackColor = System.Drawing.Color.AliceBlue;
-         dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
-         dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-         dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.LightSkyBlue;
-         dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-         dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-         this.GridConnections.DefaultCellStyle = dataGridViewCellStyle1;
+         dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+         dataGridViewCellStyle7.BackColor = System.Drawing.Color.AliceBlue;
+         dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+         dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
+         dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.LightSkyBlue;
+         dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+         dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+         this.GridConnections.DefaultCellStyle = dataGridViewCellStyle7;
          this.GridConnections.Dock = System.Windows.Forms.DockStyle.Fill;
          this.GridConnections.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
          this.GridConnections.Location = new System.Drawing.Point(23, 138);
@@ -1384,7 +1380,6 @@
       private System.Windows.Forms.TrackBar trackBar1;
       private System.Windows.Forms.GroupBox groupBox5;
       private System.Windows.Forms.Button button1;
-      private System.Windows.Forms.Button button2;
       private System.Windows.Forms.Label label6;
       private System.Windows.Forms.TextBox textBoxGeo;
       private System.Windows.Forms.Button button3;
@@ -1452,6 +1447,7 @@
       private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
       private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
       private System.Windows.Forms.CheckBox checkBoxTraceRoute;
+      private System.Windows.Forms.Button button2;
    }
 }
 
