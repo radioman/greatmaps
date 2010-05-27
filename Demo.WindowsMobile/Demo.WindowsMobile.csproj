@@ -102,7 +102,7 @@
   <ItemGroup>
     <ProjectReference Include="..\GMap.NET.WindowsMobile\GMap.NET.WindowsMobile.csproj">
       <Project>{421813B1-A007-44B2-8C53-32751C45113E}</Project>
-      <Name>GMap.NET.WindowsMobile</Name>
+      <Name>GMap.NET.WindowsMobile %28GMap.NET\GMap.NET.WindowsMobile%29</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1363,7 +1363,7 @@ namespace Demo.WindowsForms
          if(radioButtonTcpIp.Checked)
          {
             GridConnections.Visible = true;
-            GridConnections.Height = xPanderPanelLive.Height - GridConnections.Location.Y - 10;
+            checkBoxTcpIpSnap.Visible = true;
             GridConnections.Refresh();
             
             if(!connectionsWorker.IsBusy)
@@ -1381,6 +1381,7 @@ namespace Demo.WindowsForms
          {
             CountryStatusView.Clear();
             GridConnections.Visible = false;
+            checkBoxTcpIpSnap.Visible = false;
 
             if(connectionsWorker.IsBusy)
             {
