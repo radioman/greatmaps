@@ -117,5 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="IpCacheCreateDb" xml:space="preserve">
+    <value>CREATE TABLE [Cache] (
+    [Ip] varchar(15) PRIMARY KEY NOT NULL,
+    [CountryName] text NOT NULL,
+    [RegionName] text NOT NULL,
+    [City] text NOT NULL,
+    [Latitude] float NOT NULL,
+    [Longitude] float NOT NULL,
+    [Time] datetime NOT NULL
+);</value>
+  </data>
 </root>

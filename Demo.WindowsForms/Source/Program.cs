@@ -32,8 +32,10 @@ namespace Demo.WindowsForms
       public string City;
       public double Latitude;
       public double Longitude;
+      public DateTime CacheTime;
 
-      public DateTime Time;
+      public DateTime StatusTime;
+      public bool TracePoint;
    }
 
    struct IpStatus
@@ -86,7 +88,11 @@ namespace Demo.WindowsForms
 
       public static List<IPAddress> GetTraceRoute(string hostNameOrAddress)
       {
-         return GetTraceRoute(hostNameOrAddress, 1);
+         var ret = GetTraceRoute(hostNameOrAddress, 1);
+
+         ret.Add(IPAddress.Parse(hostNameOrAddress));
+
+         return ret;
       }
 
       private static List<IPAddress> GetTraceRoute(string hostNameOrAddress, int ttl)
@@ -115,7 +121,7 @@ namespace Demo.WindowsForms
             {
                // failure... 
             }
-         }
+         }          
 
          return result;
       }

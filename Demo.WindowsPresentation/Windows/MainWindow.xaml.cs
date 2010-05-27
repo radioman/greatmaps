@@ -802,7 +802,7 @@ namespace Demo.WindowsPresentation
 
             MainMap.Markers.Add(m1);
             MainMap.Markers.Add(m2);
-            MainMap.Markers.Add(mRoute);
+            MainMap.Markers.Add(mRoute);             
          }
       }
 
