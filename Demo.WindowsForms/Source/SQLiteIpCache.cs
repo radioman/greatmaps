@@ -185,9 +185,9 @@ namespace Demo.WindowsForms
          return ret;
       }
 
-      public IpInfo? GetDataFromCache(string ip)
+      public IpInfo GetDataFromCache(string ip)
       {
-         IpInfo? ret = null;
+         IpInfo ret = null;
          try
          {
             using(SQLiteConnection cn = new SQLiteConnection())

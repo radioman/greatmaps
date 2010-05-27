@@ -21,7 +21,7 @@ namespace Demo.WindowsForms
       }
    }
 
-   struct IpInfo
+   class IpInfo
    {
       public string Ip;
       public int Port;
@@ -71,7 +71,12 @@ namespace Demo.WindowsForms
    {
       public int Compare(IpStatus x, IpStatus y)
       {
-         return y.ConnectionsCount.CompareTo(x.ConnectionsCount);
+         int r = y.ConnectionsCount.CompareTo(x.ConnectionsCount);
+         if(r == 0)
+         {
+            return x.CountryName.CompareTo(y.CountryName);
+         }
+         return r;
       }
    }
 
@@ -79,7 +84,7 @@ namespace Demo.WindowsForms
    {
       readonly static string Data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
       readonly static byte[] DataBuffer;
-      readonly static int timeout = 10000;
+      readonly static int timeout = 4444;
 
       static TraceRoute()
       {
@@ -90,7 +95,7 @@ namespace Demo.WindowsForms
       {
          var ret = GetTraceRoute(hostNameOrAddress, 1);
 
-         ret.Add(IPAddress.Parse(hostNameOrAddress));
+         //ret.Add(IPAddress.Parse(hostNameOrAddress));
 
          return ret;
       }
