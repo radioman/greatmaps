@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
+using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Text;
-using System.Net;
+using System.Windows.Forms;
 
 namespace Demo.WindowsForms
 {
@@ -84,25 +84,23 @@ namespace Demo.WindowsForms
    {
       readonly static string Data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
       readonly static byte[] DataBuffer;
-      readonly static int timeout = 4444;
+      readonly static int timeout = 8888;
 
       static TraceRoute()
       {
          DataBuffer = Encoding.ASCII.GetBytes(Data);
       }
 
-      public static List<IPAddress> GetTraceRoute(string hostNameOrAddress)
+      public static List<PingReply> GetTraceRoute(string hostNameOrAddress)
       {
          var ret = GetTraceRoute(hostNameOrAddress, 1);
-
-         //ret.Add(IPAddress.Parse(hostNameOrAddress));
 
          return ret;
       }
 
-      private static List<IPAddress> GetTraceRoute(string hostNameOrAddress, int ttl)
+      private static List<PingReply> GetTraceRoute(string hostNameOrAddress, int ttl)
       {
-         List<IPAddress> result = new List<IPAddress>();
+         List<PingReply> result = new List<PingReply>();
 
          using(Ping pinger = new Ping())
          {
@@ -110,23 +108,25 @@ namespace Demo.WindowsForms
 
             PingReply reply = pinger.Send(hostNameOrAddress, timeout, DataBuffer, pingerOptions);
 
+            //Debug.WriteLine("GetTraceRoute[" + hostNameOrAddress + "]: " + reply.RoundtripTime + "ms " + reply.Address + " -> " + reply.Status);
+
             if(reply.Status == IPStatus.Success)
             {
-               result.Add(reply.Address);
+               result.Add(reply);
             }
             else if(reply.Status == IPStatus.TtlExpired)
             {
                // add the currently returned address
-               result.Add(reply.Address);
+               result.Add(reply);
 
                // recurse to get the next address...
                result.AddRange(GetTraceRoute(hostNameOrAddress, ttl + 1));
             }
             else
             {
-               // failure... 
+               Debug.WriteLine("GetTraceRoute[" + hostNameOrAddress + "]: " + reply.Status);
             }
-         }          
+         }
 
          return result;
       }

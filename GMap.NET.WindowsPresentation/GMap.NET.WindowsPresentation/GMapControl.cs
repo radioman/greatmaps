@@ -39,6 +39,7 @@ namespace GMap.NET.WindowsPresentation
       FormattedText openStreetMapCopyright;
       FormattedText arcGisMapCopyright;
       FormattedText hnitMapCopyright;
+      FormattedText pergoMapCopyright;
 
       /// <summary>
       /// pen for empty tile borders
@@ -376,6 +377,7 @@ namespace GMap.NET.WindowsPresentation
             openStreetMapCopyright = new FormattedText(Core.openStreetMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             arcGisMapCopyright = new FormattedText(Core.arcGisCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             hnitMapCopyright = new FormattedText(Core.hnitCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+            pergoMapCopyright = new FormattedText(Core.pergoCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
 
             MapType = MapType.GoogleMap;
          }
@@ -891,6 +893,12 @@ namespace GMap.NET.WindowsPresentation
             case MapType.MapsLT_Map_Labels:
             {
                drawingContext.DrawText(hnitMapCopyright, new System.Windows.Point(5, ActualHeight - hnitMapCopyright.Height - 5));
+            }
+            break;
+
+            case MapType.PergoTurkeyMap:
+            {
+               drawingContext.DrawText(pergoMapCopyright, new System.Windows.Point(5, ActualHeight - pergoMapCopyright.Height - 5));
             }
             break;
          }

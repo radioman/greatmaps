@@ -4,26 +4,23 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
+using System.Net;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Windows.Forms;
+using System.Xml;
 using Demo.WindowsForms.CustomMarkers;
 using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms.ToolTips;
-using System.IO;
-using System.Net.NetworkInformation;
-using System.Xml;
-using System.Net;
-using System.Text;
+using System.Drawing.Drawing2D;
 
 namespace Demo.WindowsForms
 {
    public partial class MainForm : Form
    {
-      PointLatLng start;
-      PointLatLng end;
-
       // marker
       GMapMarker currentMarker;
       GMapMarker center;
@@ -36,6 +33,15 @@ namespace Demo.WindowsForms
       internal GMapOverlay objects;
       internal GMapOverlay routes;
       internal GMapOverlay polygons;
+
+      // etc
+      readonly Random rnd = new Random();
+      readonly DescendingComparer ComparerIpStatus = new DescendingComparer();
+      GMapMarkerRect CurentRectMarker = null;
+      string mobileGpsLog = string.Empty;
+      bool isMouseDown = false;
+      PointLatLng start;
+      PointLatLng end;
 
       public MainForm()
       {
@@ -202,66 +208,6 @@ namespace Demo.WindowsForms
          textBoxrouteCount.Text = routes.Routes.Count.ToString();
       }
 
-      void RegeneratePolygon()
-      {
-         List<PointLatLng> polygonPoints = new List<PointLatLng>();
-
-         foreach(GMapMarker m in objects.Markers)
-         {
-            if(m is GMapMarkerRect)
-            {
-               m.Tag = polygonPoints.Count;
-               polygonPoints.Add(m.Position);
-            }
-         }
-
-         if(polygon == null)
-         {
-            polygon = new GMapPolygon(polygonPoints, "polygon test");
-            polygons.Polygons.Add(polygon);
-         }
-         else
-         {
-            polygon.Points.Clear();
-            polygon.Points.AddRange(polygonPoints);
-
-            if(polygons.Polygons.Count == 0)
-            {
-               polygons.Polygons.Add(polygon);
-            }
-            else
-            {
-               MainMap.UpdatePolygonLocalPosition(polygon);
-            }
-         }
-      }
-
-      GMapMarkerRect CurentRectMarker = null;
-
-      void MainMap_OnMarkerLeave(GMapMarker item)
-      {
-         if(item is GMapMarkerRect)
-         {
-            CurentRectMarker = null;
-
-            GMapMarkerRect rc = item as GMapMarkerRect;
-            rc.Pen.Color = Color.Blue;
-            MainMap.Invalidate(false);
-         }
-      }
-
-      void MainMap_OnMarkerEnter(GMapMarker item)
-      {
-         if(item is GMapMarkerRect)
-         {
-            GMapMarkerRect rc = item as GMapMarkerRect;
-            rc.Pen.Color = Color.Red;
-            MainMap.Invalidate(false);
-
-            CurentRectMarker = rc;
-         }
-      }
-
       #region -- performance test --
 
       double NextDouble(Random rng, double min, double max)
@@ -269,12 +215,10 @@ namespace Demo.WindowsForms
          return min + (rng.NextDouble() * (max - min));
       }
 
-      Random r = new Random();
-
       int tt = 0;
       void timer_Tick(object sender, EventArgs e)
       {
-         var pos = new PointLatLng(NextDouble(r, MainMap.CurrentViewArea.Top, MainMap.CurrentViewArea.Bottom), NextDouble(r, MainMap.CurrentViewArea.Left, MainMap.CurrentViewArea.Right));
+         var pos = new PointLatLng(NextDouble(rnd, MainMap.CurrentViewArea.Top, MainMap.CurrentViewArea.Bottom), NextDouble(rnd, MainMap.CurrentViewArea.Left, MainMap.CurrentViewArea.Right));
          GMapMarker m = new GMapMarkerGoogleGreen(pos);
          {
             m.ToolTipText = (tt++).ToString();
@@ -404,7 +348,7 @@ namespace Demo.WindowsForms
 
       readonly Dictionary<string, IpInfo> TcpState = new Dictionary<string, IpInfo>();
       readonly Dictionary<string, IpInfo> TcpTracePoints = new Dictionary<string, IpInfo>();
-      readonly Dictionary<string, List<IPAddress>> TraceRoutes = new Dictionary<string, List<IPAddress>>();
+      readonly Dictionary<string, List<PingReply>> TraceRoutes = new Dictionary<string, List<PingReply>>();
 
       readonly List<string> TcpStateNeedLocationInfo = new List<string>();
       readonly List<string> TcpStateNeedtraceInfo = new List<string>();
@@ -419,6 +363,312 @@ namespace Demo.WindowsForms
       readonly List<IpStatus> CountryStatusView = new List<IpStatus>();
       readonly SortedDictionary<string, int> CountryStatus = new SortedDictionary<string, int>();
 
+      readonly List<string> SelectedCountries = new List<string>();
+
+      void ipInfoSearchWorker_DoWork(object sender, DoWorkEventArgs e)
+      {
+         while(!ipInfoSearchWorker.CancellationPending)
+         {
+            try
+            {
+               string iplist = string.Empty;
+
+               lock(TcpStateNeedLocationInfo)
+               {
+                  int count = 0;
+                  foreach(var info in TcpStateNeedLocationInfo)
+                  {
+                     if(iplist.Length > 0)
+                     {
+                        iplist += ",";
+                     }
+                     iplist += info;
+
+                     if(count++ >= 22)
+                     {
+                        break;
+                     }
+                  }
+               }
+
+               // fill location info
+               if(!string.IsNullOrEmpty(iplist))
+               {
+                  List<IpInfo> ips = GetIpHostInfo(iplist);
+                  foreach(var i in ips)
+                  {
+                     lock(TcpState)
+                     {
+                        IpInfo info;
+                        if(TcpState.TryGetValue(i.Ip, out info))
+                        {
+                           info.CountryName = i.CountryName;
+                           info.RegionName = i.RegionName;
+                           info.City = i.City;
+                           info.Latitude = i.Latitude;
+                           info.Longitude = i.Longitude;
+                           info.TracePoint = false;
+
+                           if(info.CountryName != "Reserved")
+                           {
+                              info.Ip = i.Ip;
+
+                              // add host for tracing
+                              lock(TcpStateNeedtraceInfo)
+                              {
+                                 if(!TcpStateNeedtraceInfo.Contains(i.Ip))
+                                 {
+                                    TcpStateNeedtraceInfo.Add(i.Ip);
+                                 }
+                              }
+                           }
+
+                           lock(TcpStateNeedLocationInfo)
+                           {
+                              TcpStateNeedLocationInfo.Remove(i.Ip);
+
+                              Debug.WriteLine("TcpStateNeedLocationInfo: " + TcpStateNeedLocationInfo.Count + " left...");
+                           }
+                        }
+                     }
+                  }
+                  ips.Clear();
+               }
+               else
+               {
+                  break;
+               }
+            }
+            catch(Exception ex)
+            {
+               Debug.WriteLine("ipInfoSearchWorker_DoWork: " + ex.ToString());
+            }
+            Thread.Sleep(3333);
+         }
+         Debug.WriteLine("ipInfoSearchWorker_DoWork: QUIT");
+      }
+
+      void iptracerWorker_DoWork(object sender, DoWorkEventArgs e)
+      {
+         while(!iptracerWorker.CancellationPending)
+         {
+            try
+            {
+               string Ip = string.Empty;
+               lock(TcpStateNeedtraceInfo)
+               {
+                  if(TcpStateNeedtraceInfo.Count > 0)
+                  {
+                     Ip = TcpStateNeedtraceInfo[0];
+                  }
+               }
+
+               if(!string.IsNullOrEmpty(Ip))
+               {
+                  string tracertIps = string.Empty;
+
+                  List<PingReply> tracert;
+
+                  bool contains = false;
+                  lock(TraceRoutes)
+                  {
+                     contains = TraceRoutes.TryGetValue(Ip, out tracert);
+                  }
+
+                  if(!contains)
+                  {
+                     Debug.WriteLine("GetTraceRoute: " + Ip);
+
+                     tracert = TraceRoute.GetTraceRoute(Ip);
+                     if(tracert != null)
+                     {
+                        if(tracert[tracert.Count-1].Status == IPStatus.Success)
+                        {
+                           foreach(var t in tracert)
+                           {
+                              if(!t.ToString().StartsWith("192.168.") && !t.ToString().StartsWith("127.0."))
+                              {
+                                 if(tracertIps.Length > 0)
+                                 {
+                                    tracertIps += ",";
+                                 }
+                                 tracertIps += t.Address.ToString();
+                              }
+                           }
+
+                           if(!string.IsNullOrEmpty(tracertIps))
+                           {
+                              List<IpInfo> tinfo = GetIpHostInfo(tracertIps);
+                              if(tinfo.Count > 0)
+                              {
+                                 for(int i = 0; i < tinfo.Count; i++)
+                                 {
+                                    IpInfo ti = tinfo[i];
+                                    ti.TracePoint = true;
+
+                                    if(ti.CountryName != "Reserved")
+                                    {
+                                       lock(TcpTracePoints)
+                                       {
+                                          TcpTracePoints[ti.Ip] = ti;
+                                       }
+                                    }
+                                 }
+                                 tinfo.Clear();
+
+                                 lock(TcpStateNeedtraceInfo)
+                                 {
+                                    TcpStateNeedtraceInfo.Remove(Ip);
+                                 }
+
+                                 lock(TraceRoutes)
+                                 {
+                                    TraceRoutes[Ip] = tracert;
+                                 }
+                              }
+                           }
+                        }
+                        else
+                        {
+                           // move failed traces to end
+                           lock(TcpStateNeedtraceInfo)
+                           {
+                              TcpStateNeedtraceInfo.Remove(Ip);
+                              TcpStateNeedtraceInfo.Add(Ip);
+                           }
+                        }
+                     }
+                  }
+               }
+               else
+               {
+                  break;
+               }
+            }
+            catch(Exception ex)
+            {
+               Debug.WriteLine("iptracerWorker_DoWork: " + ex.ToString());
+            }
+            Thread.Sleep(3333);
+         }
+         Debug.WriteLine("iptracerWorker_DoWork: QUIT");
+      }
+
+      void connectionsWorker_DoWork(object sender, DoWorkEventArgs e)
+      {
+         IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
+
+         while(!connectionsWorker.CancellationPending)
+         {
+            try
+            {
+               #region -- xml --
+               // http://ipinfodb.com/ip_location_api.php
+
+               // http://ipinfodb.com/ip_query2.php?ip=74.125.45.100,206.190.60.37&timezone=false
+
+               //<?xml version="1.0" encoding="UTF-8"?>
+               //<Locations>
+               //  <Location id="0">
+               //    <Ip>74.125.45.100</Ip>
+               //    <Status>OK</Status>
+               //    <CountryCode>US</CountryCode>
+               //    <CountryName>United States</CountryName>
+               //    <RegionCode>06</RegionCode>
+               //    <RegionName>California</RegionName>
+               //    <City>Mountain View</City>
+               //    <ZipPostalCode>94043</ZipPostalCode>
+               //    <Latitude>37.4192</Latitude>
+               //    <Longitude>-122.057</Longitude>
+               //  </Location> 
+               #endregion
+
+               lock(TcpState)
+               {
+                  TcpConnectionInformation[] tcpInfoList = properties.GetActiveTcpConnections();
+
+                  CountryStatus.Clear();
+
+                  foreach(TcpConnectionInformation i in tcpInfoList)
+                  {
+                     #region -- update TcpState --
+                     string Ip = i.RemoteEndPoint.Address.ToString();
+
+                     // exclude local network
+                     if(!Ip.StartsWith("192.168.") && !Ip.StartsWith("127.0."))
+                     {
+                        IpInfo info;
+                        if(!TcpState.TryGetValue(Ip, out info))
+                        {
+                           info = new IpInfo();
+                           TcpState[Ip] = info;
+                        }
+
+                        info.State = i.State;
+                        info.Port = i.RemoteEndPoint.Port;
+                        info.StatusTime = DateTime.Now;
+
+                        // request location info
+                        if(string.IsNullOrEmpty(info.Ip))
+                        {
+                           lock(TcpStateNeedLocationInfo)
+                           {
+                              if(!TcpStateNeedLocationInfo.Contains(Ip))
+                              {
+                                 TcpStateNeedLocationInfo.Add(Ip);
+
+                                 if(!ipInfoSearchWorker.IsBusy)
+                                 {
+                                    ipInfoSearchWorker.RunWorkerAsync();
+                                 }
+                              }
+                           }
+                        }
+
+                        if(!string.IsNullOrEmpty(info.CountryName))
+                        {
+                           if(!CountryStatus.ContainsKey(info.CountryName))
+                           {
+                              CountryStatus[info.CountryName] = 1;
+                           }
+                           else
+                           {
+                              CountryStatus[info.CountryName]++;
+                           }
+                        }
+                     }
+                     #endregion
+                  }
+
+                  tcpInfoList = null;
+               }
+
+               // launch tracer if needed
+               if(TryTraceConnection)
+               {
+                  lock(TcpStateNeedtraceInfo)
+                  {
+                     if(TcpStateNeedtraceInfo.Count > 0)
+                     {
+                        if(!iptracerWorker.IsBusy)
+                        {
+                           iptracerWorker.RunWorkerAsync();
+                        }
+                     }
+                  }
+               }
+
+               connectionsWorker.ReportProgress(100);
+            }
+            catch(Exception ex)
+            {
+               Debug.WriteLine("connectionsWorker_DoWork: " + ex.ToString());
+            }
+            Thread.Sleep(3333);
+         }
+         tcpConnections.Clear();
+      }
+
       void connectionsWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
       {
          try
@@ -427,10 +677,20 @@ namespace Demo.WindowsForms
             // call Refresh to perform single refresh and reset invalidation state
             MainMap.HoldInvalidation = true;
 
+            SelectedCountries.Clear(); 
+            Int32 selectedRowCount = GridConnections.Rows.GetRowCount(DataGridViewElementStates.Selected);
+            if(selectedRowCount > 0)
+            {
+               for(int i = 0; i < selectedRowCount; i++)
+               {
+                  string country = GridConnections.SelectedRows[i].Cells[0].Value as string;
+                  SelectedCountries.Add(country);
+               }
+            }
+
             lock(TcpState)
             {
                bool snap = true;
-
                foreach(var tcp in TcpState)
                {
                   GMapMarker marker;
@@ -441,6 +701,7 @@ namespace Demo.WindowsForms
                      {
                         marker = new GMapMarkerGoogleGreen(new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude));
                         marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+                        marker.Tag = tcp.Value.CountryName;
 
                         tcpConnections[tcp.Key] = marker;
 
@@ -469,14 +730,24 @@ namespace Demo.WindowsForms
                   }
                   else
                   {
-                     if(DateTime.Now - tcp.Value.StatusTime > TimeSpan.FromSeconds(8))
+                     if((DateTime.Now - tcp.Value.StatusTime > TimeSpan.FromSeconds(8)) || (selectedRowCount > 0 && !SelectedCountries.Contains(tcp.Value.CountryName)))
                      {
                         objects.Markers.Remove(marker);
-                       
+
                         GMapRoute route;
                         if(tcpRoutes.TryGetValue(tcp.Key, out route))
                         {
                            routes.Routes.Remove(route);
+                        }
+
+                        lock(TcpStateNeedtraceInfo)
+                        {
+                           TcpStateNeedtraceInfo.Remove(tcp.Key);
+                        }
+
+                        lock(TcpStateNeedLocationInfo)
+                        {
+                           TcpStateNeedLocationInfo.Remove(tcp.Key);
                         }
                      }
                      else
@@ -496,7 +767,7 @@ namespace Demo.WindowsForms
                            {
                               lock(TraceRoutes)
                               {
-                                 List<IPAddress> tr;
+                                 List<PingReply> tr;
                                  if(TraceRoutes.TryGetValue(tcp.Key, out tr))
                                  {
                                     if(tr != null)
@@ -508,7 +779,7 @@ namespace Demo.WindowsForms
 
                                           lock(TcpTracePoints)
                                           {
-                                             if(TcpTracePoints.TryGetValue(add.ToString(), out info))
+                                             if(TcpTracePoints.TryGetValue(add.Address.ToString(), out info))
                                              {
                                                 if(!string.IsNullOrEmpty(info.Ip))
                                                 {
@@ -520,11 +791,15 @@ namespace Demo.WindowsForms
 
                                        if(points.Count > 0)
                                        {
-                                          route = new GMapRoute(points, tcp.Key);
+                                          route = new GMapRoute(points, tcp.Value.CountryName);
 
                                           route.Stroke = new Pen(GetRandomColor());
                                           route.Stroke.Width = 4;
-                                          route.Stroke.DashStyle = System.Drawing.Drawing2D.DashStyle.DashDotDot;
+                                          route.Stroke.DashStyle = System.Drawing.Drawing2D.DashStyle.DashDot;
+
+                                          route.Stroke.StartCap = LineCap.NoAnchor;
+                                          route.Stroke.EndCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor;
+                                          route.Stroke.LineJoin = LineJoin.Round;
 
                                           routes.Routes.Add(route);
                                           tcpRoutes[tcp.Key] = route;
@@ -574,9 +849,26 @@ namespace Demo.WindowsForms
          }
       }
 
-      readonly Random rnd = new Random();
+      void GridConnections_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
+      {
+         if(e.RowIndex >= CountryStatusView.Count)
+            return;
 
-      public Color GetRandomColor()
+         IpStatus val = CountryStatusView[e.RowIndex];
+
+         switch(GridConnections.Columns[e.ColumnIndex].Name)
+         {
+            case "CountryName":
+            e.Value = val.CountryName;
+            break;
+
+            case "ConnectionsCount":
+            e.Value = val.ConnectionsCount;
+            break;
+         }
+      }
+
+      Color GetRandomColor()
       {
          byte r = Convert.ToByte(rnd.Next(0, 111));
          byte g = Convert.ToByte(rnd.Next(0, 111));
@@ -584,8 +876,6 @@ namespace Demo.WindowsForms
 
          return Color.FromArgb(144, r, g, b);
       }
-
-      readonly DescendingComparer ComparerIpStatus = new DescendingComparer();
 
       void UpdateMarkerTcpIpToolTip(GMapMarker marker, IpInfo tcp, string info)
       {
@@ -699,308 +989,43 @@ namespace Demo.WindowsForms
          return ret;
       }
 
-      void ipInfoSearchWorker_DoWork(object sender, DoWorkEventArgs e)
-      {
-         while(!ipInfoSearchWorker.CancellationPending)
-         {
-            try
-            {
-               string iplist = string.Empty;
-
-               lock(TcpStateNeedLocationInfo)
-               {
-                  int count = 0;
-                  foreach(var info in TcpStateNeedLocationInfo)
-                  {
-                     if(iplist.Length > 0)
-                     {
-                        iplist += ",";
-                     }
-                     iplist += info;
-
-                     if(count++ >= 22)
-                     {
-                        break;
-                     }
-                  }
-               }
-
-               // fill location info
-               if(!string.IsNullOrEmpty(iplist))
-               {
-                  List<IpInfo> ips = GetIpHostInfo(iplist);
-                  foreach(var i in ips)
-                  {
-                     lock(TcpState)
-                     {
-                        IpInfo info;
-                        if(TcpState.TryGetValue(i.Ip, out info))
-                        {
-                           info.CountryName = i.CountryName;
-                           info.RegionName = i.RegionName;
-                           info.City = i.City;
-                           info.Latitude = i.Latitude;
-                           info.Longitude = i.Longitude;
-                           info.TracePoint = false;
-
-                           if(info.CountryName != "Reserved")
-                           {
-                              info.Ip = i.Ip;
-                           }
-
-                           lock(TcpStateNeedLocationInfo)
-                           {
-                              TcpStateNeedLocationInfo.Remove(i.Ip);
-
-                              Debug.WriteLine("TcpStateNeedLocationInfo: " + TcpStateNeedLocationInfo.Count + " left...");
-                           }
-
-                           if(TryTraceConnection)
-                           {
-                              lock(TcpStateNeedtraceInfo)
-                              {
-                                 if(!TcpStateNeedtraceInfo.Contains(i.Ip))
-                                 {
-                                    TcpStateNeedtraceInfo.Add(i.Ip);
-
-                                    if(!iptracerWorker.IsBusy)
-                                    {
-                                       iptracerWorker.RunWorkerAsync();
-                                    }
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-                  ips.Clear();
-               }
-               else
-               {
-                  break;
-               }
-            }
-            catch(Exception ex)
-            {
-               Debug.WriteLine("ipInfoSearchWorker_DoWork: " + ex.ToString());
-            }
-            Thread.Sleep(3333);
-         }
-         Debug.WriteLine("ipInfoSearchWorker_DoWork: QUIT");
-      }
-
-      void iptracerWorker_DoWork(object sender, DoWorkEventArgs e)
-      {
-         while(!iptracerWorker.CancellationPending)
-         {
-            try
-            {
-               string Ip = string.Empty;
-               lock(TcpStateNeedtraceInfo)
-               {
-                  if(TcpStateNeedtraceInfo.Count > 0)
-                  {
-                     Ip = TcpStateNeedtraceInfo[0];
-                  }
-               }
-
-               if(!string.IsNullOrEmpty(Ip))
-               {
-                  string tracertIps = string.Empty;
-
-                  List<IPAddress> tracert;
-
-                  bool contains = false;
-                  lock(TraceRoutes)
-                  {
-                     contains = TraceRoutes.TryGetValue(Ip, out tracert);
-                  }
-
-                  if(!contains)
-                  {
-                     Debug.WriteLine("GetTraceRoute: " + Ip);
-
-                     tracert = TraceRoute.GetTraceRoute(Ip);
-                     if(tracert != null)
-                     {
-                        foreach(var t in tracert)
-                        {
-                           if(!t.ToString().StartsWith("192.168.") && !t.ToString().StartsWith("127.0."))
-                           {
-                              if(tracertIps.Length > 0)
-                              {
-                                 tracertIps += ",";
-                              }
-                              tracertIps += t.ToString();
-                           }
-                        }
-
-                        if(!string.IsNullOrEmpty(tracertIps))
-                        {
-                           List<IpInfo> tinfo = GetIpHostInfo(tracertIps);
-                           if(tinfo.Count > 0)
-                           {
-                              for(int i = 0; i < tinfo.Count; i++)
-                              {
-                                 IpInfo ti = tinfo[i];
-                                 ti.TracePoint = true;
-
-                                 if(ti.CountryName != "Reserved")
-                                 {
-                                    lock(TcpTracePoints)
-                                    {
-                                       TcpTracePoints[ti.Ip] = ti;
-                                    }
-                                 }
-                              }
-                              tinfo.Clear();
-
-                              lock(TcpStateNeedtraceInfo)
-                              {
-                                 TcpStateNeedtraceInfo.Remove(Ip);
-                              }
-
-                              lock(TraceRoutes)
-                              {
-                                 TraceRoutes[Ip] = tracert;
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-               else
-               {
-                  break;
-               }
-            }
-            catch(Exception ex)
-            {
-               Debug.WriteLine("iptracerWorker_DoWork: " + ex.ToString());
-            }
-            Thread.Sleep(3333);
-         }
-         Debug.WriteLine("iptracerWorker_DoWork: QUIT");
-      }
-
-      void connectionsWorker_DoWork(object sender, DoWorkEventArgs e)
-      {
-         IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
-
-         while(!connectionsWorker.CancellationPending)
-         {
-            try
-            {
-               #region -- xml --
-               // http://ipinfodb.com/ip_location_api.php
-
-               // http://ipinfodb.com/ip_query2.php?ip=74.125.45.100,206.190.60.37&timezone=false
-
-               //<?xml version="1.0" encoding="UTF-8"?>
-               //<Locations>
-               //  <Location id="0">
-               //    <Ip>74.125.45.100</Ip>
-               //    <Status>OK</Status>
-               //    <CountryCode>US</CountryCode>
-               //    <CountryName>United States</CountryName>
-               //    <RegionCode>06</RegionCode>
-               //    <RegionName>California</RegionName>
-               //    <City>Mountain View</City>
-               //    <ZipPostalCode>94043</ZipPostalCode>
-               //    <Latitude>37.4192</Latitude>
-               //    <Longitude>-122.057</Longitude>
-               //  </Location> 
-               #endregion
-
-               lock(TcpState)
-               {
-                  TcpConnectionInformation[] tcpInfoList = properties.GetActiveTcpConnections();
-
-                  CountryStatus.Clear();
-
-                  foreach(TcpConnectionInformation i in tcpInfoList)
-                  {
-                     #region -- update TcpState --
-                     string Ip = i.RemoteEndPoint.Address.ToString();
-
-                     // exclude local network
-                     if(!Ip.StartsWith("192.168.") && !Ip.StartsWith("127.0."))
-                     {
-                        IpInfo info;
-                        if(!TcpState.TryGetValue(Ip, out info))
-                        {
-                           info = new IpInfo();
-                           TcpState[Ip] = info;
-                        }
-
-                        info.State = i.State;
-                        info.Port = i.RemoteEndPoint.Port;
-                        info.StatusTime = DateTime.Now;
-
-                        if(string.IsNullOrEmpty(info.Ip))
-                        {
-                           lock(TcpStateNeedLocationInfo)
-                           {
-                              if(!TcpStateNeedLocationInfo.Contains(Ip))
-                              {
-                                 TcpStateNeedLocationInfo.Add(Ip);
-
-                                 if(!ipInfoSearchWorker.IsBusy)
-                                 {
-                                    ipInfoSearchWorker.RunWorkerAsync();
-                                 }
-                              }
-                           }
-                        }
-
-                        if(!string.IsNullOrEmpty(info.CountryName))
-                        {
-                           if(!CountryStatus.ContainsKey(info.CountryName))
-                           {
-                              CountryStatus[info.CountryName] = 1;
-                           }
-                           else
-                           {
-                              CountryStatus[info.CountryName]++;
-                           }
-                        }
-                     }
-                     #endregion
-                  }
-
-                  tcpInfoList = null;
-               }
-
-               connectionsWorker.ReportProgress(100);
-            }
-            catch(Exception ex)
-            {
-               Debug.WriteLine("connectionsWorker_DoWork: " + ex.ToString());
-            }
-            Thread.Sleep(3333);
-         }
-         tcpConnections.Clear();
-      }
-
       #endregion
 
-      void MainMap_OnMapTypeChanged(MapType type)
-      {
-         trackBar1.Minimum = MainMap.MinZoom;
-         trackBar1.Maximum = MainMap.MaxZoom;
+      #region -- some functions --
 
-         if(routes.Routes.Count > 0)
+      void RegeneratePolygon()
+      {
+         List<PointLatLng> polygonPoints = new List<PointLatLng>();
+
+         foreach(GMapMarker m in objects.Markers)
          {
-            MainMap.ZoomAndCenterRoutes(null);
+            if(m is GMapMarkerRect)
+            {
+               m.Tag = polygonPoints.Count;
+               polygonPoints.Add(m.Position);
+            }
          }
 
-         if(radioButtonTransport.Checked)
+         if(polygon == null)
          {
-            MainMap.ZoomAndCenterMarkers("objects");
+            polygon = new GMapPolygon(polygonPoints, "polygon test");
+            polygons.Polygons.Add(polygon);
+         }
+         else
+         {
+            polygon.Points.Clear();
+            polygon.Points.AddRange(polygonPoints);
+
+            if(polygons.Polygons.Count == 0)
+            {
+               polygons.Polygons.Add(polygon);
+            }
+            else
+            {
+               MainMap.UpdatePolygonLocalPosition(polygon);
+            }
          }
       }
-
-      string mobileGpsLog = string.Empty;
 
       // testing my mobile gps log
       void AddGpsMobileLogRoutes(string file)
@@ -1080,7 +1105,51 @@ namespace Demo.WindowsForms
          }
       }
 
-      bool isMouseDown = false;
+      #endregion
+
+      #region -- map events --
+      void MainMap_OnMarkerLeave(GMapMarker item)
+      {
+         if(item is GMapMarkerRect)
+         {
+            CurentRectMarker = null;
+
+            GMapMarkerRect rc = item as GMapMarkerRect;
+            rc.Pen.Color = Color.Blue;
+            MainMap.Invalidate(false);
+         }
+      }
+
+      void MainMap_OnMarkerEnter(GMapMarker item)
+      {
+         if(item is GMapMarkerRect)
+         {
+            GMapMarkerRect rc = item as GMapMarkerRect;
+            rc.Pen.Color = Color.Red;
+            MainMap.Invalidate(false);
+
+            CurentRectMarker = rc;
+         }
+      }
+
+      void MainMap_OnMapTypeChanged(MapType type)
+      {
+         comboBoxMapType.SelectedItem = MainMap.MapType;
+
+         trackBar1.Minimum = MainMap.MinZoom;
+         trackBar1.Maximum = MainMap.MaxZoom;
+
+         if(routes.Routes.Count > 0)
+         {
+            MainMap.ZoomAndCenterRoutes(null);
+         }
+
+         if(radioButtonTransport.Checked)
+         {
+            MainMap.ZoomAndCenterMarkers("objects");
+         }
+      }
+
       void MainMap_MouseUp(object sender, MouseEventArgs e)
       {
          if(e.Button == MouseButtons.Left)
@@ -1198,6 +1267,43 @@ namespace Demo.WindowsForms
          textBoxLngCurrent.Text = point.Lng.ToString(CultureInfo.InvariantCulture);
       }
 
+      // center markers on start
+      private void MainForm_Load(object sender, EventArgs e)
+      {
+         MainMap.ZoomAndCenterMarkers(null);
+         trackBar1.Value = (int) MainMap.Zoom;
+      }
+
+      // ensure focus on map, trackbar can have it too
+      private void MainMap_MouseEnter(object sender, EventArgs e)
+      {
+         MainMap.Focus();
+      }
+      #endregion
+
+      #region -- menu panels expanders --
+      private void xPanderPanel1_Click(object sender, EventArgs e)
+      {
+         xPanderPanelList1.Expand(xPanderPanelMain);
+      }
+
+      private void xPanderPanelCache_Click(object sender, EventArgs e)
+      {
+         xPanderPanelList1.Expand(xPanderPanelCache);
+      }
+
+      private void xPanderPanelLive_Click(object sender, EventArgs e)
+      {
+         xPanderPanelList1.Expand(xPanderPanelLive);
+      }
+
+      private void xPanderPanelInfo_Click(object sender, EventArgs e)
+      {
+         xPanderPanelList1.Expand(xPanderPanelInfo);
+      }
+      #endregion
+
+      #region -- ui events --
       // change map type
       private void comboBoxMapType_DropDownClosed(object sender, EventArgs e)
       {
@@ -1389,7 +1495,7 @@ namespace Demo.WindowsForms
          MainMap.ZoomAndCenterMarkers("objects");
       }
 
-      // expord map data
+      // export map data
       private void button9_Click(object sender, EventArgs e)
       {
          MainMap.ShowExportDialog();
@@ -1468,12 +1574,13 @@ namespace Demo.WindowsForms
          }
       }
 
-      // debug
+      // debug tile grid
       private void checkBoxDebug_CheckedChanged(object sender, EventArgs e)
       {
          MainMap.ShowTileGridLines = checkBoxDebug.Checked;
       }
 
+      // launch static map maker
       private void button13_Click(object sender, EventArgs e)
       {
          StaticImage st = new StaticImage(this);
@@ -1513,18 +1620,7 @@ namespace Demo.WindowsForms
          }
       }
 
-      private void MainForm_Load(object sender, EventArgs e)
-      {
-         MainMap.ZoomAndCenterMarkers(null);
-         trackBar1.Value = (int) MainMap.Zoom;
-      }
-
-      // ensure focus on map, trackbar can have it too
-      private void MainMap_MouseEnter(object sender, EventArgs e)
-      {
-         MainMap.Focus();
-      }
-
+      // key-up events
       private void MainForm_KeyUp(object sender, KeyEventArgs e)
       {
          int offset = 22;
@@ -1558,6 +1654,20 @@ namespace Demo.WindowsForms
          }
       }
 
+      // key-press events
+      private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
+      {
+         if(e.KeyChar == '+')
+         {
+            MainMap.Zoom += 1;
+         }
+         else if(e.KeyChar == '-')
+         {
+            MainMap.Zoom -= 1;
+         }
+      }
+
+      // engage some live demo
       private void RealTimeChanged(object sender, EventArgs e)
       {
          objects.Markers.Clear();
@@ -1732,57 +1842,7 @@ namespace Demo.WindowsForms
          }
       }
 
-      private void xPanderPanel1_Click(object sender, EventArgs e)
-      {
-         xPanderPanelList1.Expand(xPanderPanelMain);
-      }
-
-      private void xPanderPanelCache_Click(object sender, EventArgs e)
-      {
-         xPanderPanelList1.Expand(xPanderPanelCache);
-      }
-
-      private void xPanderPanelLive_Click(object sender, EventArgs e)
-      {
-         xPanderPanelList1.Expand(xPanderPanelLive);
-      }
-
-      private void xPanderPanelInfo_Click(object sender, EventArgs e)
-      {
-         xPanderPanelList1.Expand(xPanderPanelInfo);
-      }
-
-      private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
-      {
-         if(e.KeyChar == '+')
-         {
-            MainMap.Zoom += 1;
-         }
-         else if(e.KeyChar == '-')
-         {
-            MainMap.Zoom -= 1;
-         }
-      }
-
-      private void GridConnections_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
-      {
-         if(e.RowIndex >= CountryStatusView.Count)
-            return;
-
-         IpStatus val = CountryStatusView[e.RowIndex];
-
-         switch(GridConnections.Columns[e.ColumnIndex].Name)
-         {
-            case "CountryName":
-            e.Value = val.CountryName;
-            break;
-
-            case "ConnectionsCount":
-            e.Value = val.ConnectionsCount;
-            break;
-         }
-      }
-
+      // enable/disable host tracing
       private void checkBoxTraceRoute_CheckedChanged(object sender, EventArgs e)
       {
          TryTraceConnection = checkBoxTraceRoute.Checked;
@@ -1795,5 +1855,12 @@ namespace Demo.WindowsForms
             routes.Routes.Clear();
          }
       }
+
+      private void GridConnections_DoubleClick(object sender, EventArgs e)
+      {
+         GridConnections.ClearSelection();
+      }
+
+      #endregion         
    }
 }

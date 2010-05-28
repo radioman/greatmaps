@@ -1127,6 +1127,16 @@ namespace GMap.NET.WindowsForms
 #endif
             }
             break;
+
+            case MapType.PergoTurkeyMap:
+            {
+#if !PocketPC
+               g.DrawString(Core.pergoCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#else
+               g.DrawString(Core.pergoCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+#endif
+            }
+            break;
          }
 
          #endregion
