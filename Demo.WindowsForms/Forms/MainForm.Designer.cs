@@ -106,8 +106,8 @@
          this.radioButtonTcpIp = new System.Windows.Forms.RadioButton();
          this.checkBoxTraceRoute = new System.Windows.Forms.CheckBox();
          this.panel2 = new System.Windows.Forms.Panel();
-         this.panel4 = new System.Windows.Forms.Panel();
          this.MainMap = new Demo.WindowsForms.Map();
+         this.panel4 = new System.Windows.Forms.Panel();
          this.groupBox3.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize) (this.trackBar1)).BeginInit();
          this.groupBox5.SuspendLayout();
@@ -1233,18 +1233,6 @@
          this.panel2.Size = new System.Drawing.Size(661, 665);
          this.panel2.TabIndex = 41;
          // 
-         // panel4
-         // 
-         this.panel4.Controls.Add(this.panel2);
-         this.panel4.Controls.Add(this.splitter1);
-         this.panel4.Controls.Add(this.panelMenu);
-         this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.panel4.Location = new System.Drawing.Point(0, 0);
-         this.panel4.Margin = new System.Windows.Forms.Padding(2);
-         this.panel4.Name = "panel4";
-         this.panel4.Size = new System.Drawing.Size(891, 665);
-         this.panel4.TabIndex = 44;
-         // 
          // MainMap
          // 
          this.MainMap.CanDragMap = true;
@@ -1265,6 +1253,18 @@
          this.MainMap.Size = new System.Drawing.Size(661, 665);
          this.MainMap.TabIndex = 0;
          this.MainMap.Zoom = 0;
+         // 
+         // panel4
+         // 
+         this.panel4.Controls.Add(this.panel2);
+         this.panel4.Controls.Add(this.splitter1);
+         this.panel4.Controls.Add(this.panelMenu);
+         this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.panel4.Location = new System.Drawing.Point(0, 0);
+         this.panel4.Margin = new System.Windows.Forms.Padding(2);
+         this.panel4.Name = "panel4";
+         this.panel4.Size = new System.Drawing.Size(891, 665);
+         this.panel4.TabIndex = 44;
          // 
          // MainForm
          // 

@@ -351,7 +351,7 @@ namespace Demo.WindowsForms
       readonly Dictionary<string, List<PingReply>> TraceRoutes = new Dictionary<string, List<PingReply>>();
 
       readonly List<string> TcpStateNeedLocationInfo = new List<string>();
-      readonly List<string> TcpStateNeedtraceInfo = new List<string>();
+      readonly Queue<string> TcpStateNeedtraceInfo = new Queue<string>();
 
       volatile bool TryTraceConnection = false;
       GMapMarker lastTcpmarker;
@@ -418,7 +418,7 @@ namespace Demo.WindowsForms
                               {
                                  if(!TcpStateNeedtraceInfo.Contains(i.Ip))
                                  {
-                                    TcpStateNeedtraceInfo.Add(i.Ip);
+                                    TcpStateNeedtraceInfo.Enqueue(i.Ip);
                                  }
                               }
                            }
@@ -455,11 +455,13 @@ namespace Demo.WindowsForms
             try
             {
                string Ip = string.Empty;
+               int count = 0;
                lock(TcpStateNeedtraceInfo)
                {
-                  if(TcpStateNeedtraceInfo.Count > 0)
+                  count = TcpStateNeedtraceInfo.Count;
+                  if(count > 0)
                   {
-                     Ip = TcpStateNeedtraceInfo[0];
+                     Ip = TcpStateNeedtraceInfo.Dequeue();
                   }
                }
 
@@ -477,7 +479,7 @@ namespace Demo.WindowsForms
 
                   if(!contains)
                   {
-                     Debug.WriteLine("GetTraceRoute: " + Ip);
+                     Debug.WriteLine("GetTraceRoute: " + Ip + ", left " + count);
 
                      tracert = TraceRoute.GetTraceRoute(Ip);
                      if(tracert != null)
@@ -516,11 +518,6 @@ namespace Demo.WindowsForms
                                  }
                                  tinfo.Clear();
 
-                                 lock(TcpStateNeedtraceInfo)
-                                 {
-                                    TcpStateNeedtraceInfo.Remove(Ip);
-                                 }
-
                                  lock(TraceRoutes)
                                  {
                                     TraceRoutes[Ip] = tracert;
@@ -530,11 +527,10 @@ namespace Demo.WindowsForms
                         }
                         else
                         {
-                           // move failed traces to end
+                           // move failed, eque itself again
                            lock(TcpStateNeedtraceInfo)
                            {
-                              TcpStateNeedtraceInfo.Remove(Ip);
-                              TcpStateNeedtraceInfo.Add(Ip);
+                              TcpStateNeedtraceInfo.Enqueue(Ip);
                            }
                         }
                      }
@@ -602,15 +598,8 @@ namespace Demo.WindowsForms
                         {
                            info = new IpInfo();
                            TcpState[Ip] = info;
-                        }
 
-                        info.State = i.State;
-                        info.Port = i.RemoteEndPoint.Port;
-                        info.StatusTime = DateTime.Now;
-
-                        // request location info
-                        if(string.IsNullOrEmpty(info.Ip))
-                        {
+                           // request location info
                            lock(TcpStateNeedLocationInfo)
                            {
                               if(!TcpStateNeedLocationInfo.Contains(Ip))
@@ -624,6 +613,10 @@ namespace Demo.WindowsForms
                               }
                            }
                         }
+
+                        info.State = i.State;
+                        info.Port = i.RemoteEndPoint.Port;
+                        info.StatusTime = DateTime.Now;
 
                         if(!string.IsNullOrEmpty(info.CountryName))
                         {
@@ -646,11 +639,11 @@ namespace Demo.WindowsForms
                // launch tracer if needed
                if(TryTraceConnection)
                {
-                  lock(TcpStateNeedtraceInfo)
+                  if(!iptracerWorker.IsBusy)
                   {
-                     if(TcpStateNeedtraceInfo.Count > 0)
+                     lock(TcpStateNeedtraceInfo)
                      {
-                        if(!iptracerWorker.IsBusy)
+                        if(TcpStateNeedtraceInfo.Count > 0)
                         {
                            iptracerWorker.RunWorkerAsync();
                         }
@@ -677,15 +670,15 @@ namespace Demo.WindowsForms
             // call Refresh to perform single refresh and reset invalidation state
             MainMap.HoldInvalidation = true;
 
-            SelectedCountries.Clear(); 
-            Int32 selectedRowCount = GridConnections.Rows.GetRowCount(DataGridViewElementStates.Selected);
-            if(selectedRowCount > 0)
+            SelectedCountries.Clear();
+            Int32 SelectedCountriesCount = GridConnections.Rows.GetRowCount(DataGridViewElementStates.Selected);
+            if(SelectedCountriesCount > 0)
             {
-               for(int i = 0; i < selectedRowCount; i++)
+               for(int i = 0; i < SelectedCountriesCount; i++)
                {
                   string country = GridConnections.SelectedRows[i].Cells[0].Value as string;
                   SelectedCountries.Add(country);
-               }
+               }               
             }
 
             lock(TcpState)
@@ -730,7 +723,7 @@ namespace Demo.WindowsForms
                   }
                   else
                   {
-                     if((DateTime.Now - tcp.Value.StatusTime > TimeSpan.FromSeconds(8)) || (selectedRowCount > 0 && !SelectedCountries.Contains(tcp.Value.CountryName)))
+                     if((DateTime.Now - tcp.Value.StatusTime > TimeSpan.FromSeconds(8)) || (SelectedCountriesCount > 0 && !SelectedCountries.Contains(tcp.Value.CountryName)))
                      {
                         objects.Markers.Remove(marker);
 
@@ -738,16 +731,6 @@ namespace Demo.WindowsForms
                         if(tcpRoutes.TryGetValue(tcp.Key, out route))
                         {
                            routes.Routes.Remove(route);
-                        }
-
-                        lock(TcpStateNeedtraceInfo)
-                        {
-                           TcpStateNeedtraceInfo.Remove(tcp.Key);
-                        }
-
-                        lock(TcpStateNeedLocationInfo)
-                        {
-                           TcpStateNeedLocationInfo.Remove(tcp.Key);
                         }
                      }
                      else
@@ -823,6 +806,8 @@ namespace Demo.WindowsForms
                // update grid data
                if(panelMenu.Expand && xPanderPanelLive.Expand)
                {
+                  bool empty = CountryStatusView.Count == 0;
+
                   CountryStatusView.Clear();
                   foreach(var c in CountryStatus)
                   {
@@ -836,8 +821,12 @@ namespace Demo.WindowsForms
                   CountryStatusView.Sort(ComparerIpStatus);
 
                   GridConnections.RowCount = CountryStatusView.Count;
-                  GridConnections.InvalidateColumn(0);
-                  GridConnections.InvalidateColumn(1);
+                  GridConnections.Refresh();
+
+                  if(empty)
+                  {
+                     GridConnections.ClearSelection();
+                  }
                }
             }
 
@@ -1671,8 +1660,8 @@ namespace Demo.WindowsForms
       private void RealTimeChanged(object sender, EventArgs e)
       {
          objects.Markers.Clear();
-         objects.Routes.Clear();
          polygons.Polygons.Clear();
+         routes.Routes.Clear();
 
          // start performance test
          if(radioButtonPerf.Checked)
@@ -1861,6 +1850,6 @@ namespace Demo.WindowsForms
          GridConnections.ClearSelection();
       }
 
-      #endregion         
+      #endregion
    }
 }

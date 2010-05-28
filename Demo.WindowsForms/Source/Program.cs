@@ -124,7 +124,7 @@ namespace Demo.WindowsForms
             }
             else
             {
-               Debug.WriteLine("GetTraceRoute[" + hostNameOrAddress + "]: " + reply.Status);
+               Debug.WriteLine("GetTraceRoute: " + hostNameOrAddress + " - " + reply.Status);
             }
          }
 
