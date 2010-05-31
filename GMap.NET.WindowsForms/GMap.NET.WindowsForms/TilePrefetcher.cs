@@ -107,7 +107,7 @@ namespace GMap.NET
       {
          int countOk = 0;
 
-         Stuff.Shuffle<Point>(list);
+         Stuff.Shuffle<Point>(ref list);
          var types = GMaps.Instance.GetAllLayersOfType(type);
 
          for(int i = 0; i < all; i++)

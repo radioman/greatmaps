@@ -209,7 +209,7 @@ namespace GMap.NET
       /// <summary>
       /// lock for TilesInMemory
       /// </summary>
-      internal readonly ReaderWriterLock kiberCacheLock = new ReaderWriterLock();
+      internal readonly GReaderWriterLock kiberCacheLock = new GReaderWriterLock();
 
       /// <summary>
       /// the amount of tiles in MB to keep in memmory, default: 22MB, if each ~100Kb it's ~222 tiles
@@ -218,7 +218,7 @@ namespace GMap.NET
       {
          get
          {
-            kiberCacheLock.AcquireReaderLock(-1);
+            kiberCacheLock.AcquireReaderLock();
             try
             {
                return TilesInMemory.MemoryCacheCapacity;
@@ -230,7 +230,7 @@ namespace GMap.NET
          }
          set
          {
-            kiberCacheLock.AcquireWriterLock(-1);
+            kiberCacheLock.AcquireWriterLock();
             try
             {
                TilesInMemory.MemoryCacheCapacity = value;
@@ -249,7 +249,7 @@ namespace GMap.NET
       {
          get
          {
-            kiberCacheLock.AcquireReaderLock(-1);
+            kiberCacheLock.AcquireReaderLock();
             try
             {
                return TilesInMemory.MemoryCacheSize;
@@ -373,7 +373,7 @@ namespace GMap.NET
 
       MemoryStream GetTileFromMemoryCache(RawTile tile)
       {
-         kiberCacheLock.AcquireReaderLock(-1);
+         kiberCacheLock.AcquireReaderLock();
          try
          {
             MemoryStream ret = null;
@@ -391,7 +391,7 @@ namespace GMap.NET
 
       void AddTileToMemoryCache(RawTile tile, MemoryStream data)
       {
-         kiberCacheLock.AcquireWriterLock(-1);
+         kiberCacheLock.AcquireWriterLock();
          try
          {
             if(!TilesInMemory.ContainsKey(tile))

@@ -45,6 +45,8 @@ namespace GMap.NET.Internals
       public readonly TileMatrix Matrix = new TileMatrix();
       readonly System.Threading.EventWaitHandle waitOnEmptyTasks = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.AutoReset);
       public List<Point> tileDrawingList = new List<Point>();
+      public readonly GReaderWriterLock tileDrawingListLock = new GReaderWriterLock();
+
       public readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>();
       readonly WaitCallback ProcessLoadTaskCallback;
 
@@ -1078,7 +1080,7 @@ namespace GMap.NET.Internals
                   // last buddy cleans stuff ;}
                   if(last)
                   {
-                     GMaps.Instance.kiberCacheLock.AcquireWriterLock(-1);
+                     GMaps.Instance.kiberCacheLock.AcquireWriterLock();
                      try
                      {
                         GMaps.Instance.TilesInMemory.RemoveMemoryOverload();
@@ -1088,9 +1090,14 @@ namespace GMap.NET.Internals
                         GMaps.Instance.kiberCacheLock.ReleaseWriterLock();
                      }
 
-                     lock(tileDrawingList)
+                     tileDrawingListLock.AcquireReaderLock();
+                     try
                      {
                         Matrix.ClearLevelAndPointsNotIn(Zoom, tileDrawingList);
+                     }
+                     finally
+                     {
+                        tileDrawingListLock.ReleaseReaderLock();
                      }
 #if UseGC
                      GC.Collect();
@@ -1128,9 +1135,10 @@ namespace GMap.NET.Internals
       /// </summary>
       void UpdateBounds()
       {
-         lock(tileDrawingList)
+         tileDrawingListLock.AcquireWriterLock();
+         try
          {
-            FindTilesAround(ref tileDrawingList);
+            FindTilesAround();
 
             Debug.WriteLine("OnTileLoadStart: " + tileDrawingList.Count + " tiles to load at zoom " + Zoom + ", time: " + DateTime.Now.TimeOfDay);
 
@@ -1162,7 +1170,10 @@ namespace GMap.NET.Internals
                }
             }
          }
-
+         finally
+         {
+            tileDrawingListLock.ReleaseWriterLock();
+         }
          UpdateGroundResolution();
       }
 
@@ -1170,9 +1181,9 @@ namespace GMap.NET.Internals
       /// find tiles around to fill screen
       /// </summary>
       /// <param name="list"></param>
-      void FindTilesAround(ref List<Point> list)
+      void FindTilesAround()
       {
-         list.Clear();
+         tileDrawingList.Clear();
          for(int i = -sizeOfMapArea.Width; i <= sizeOfMapArea.Width; i++)
          {
             for(int j = -sizeOfMapArea.Height; j <= sizeOfMapArea.Height; j++)
@@ -1197,9 +1208,9 @@ namespace GMap.NET.Internals
 
                if(p.X >= minOfTiles.Width && p.Y >= minOfTiles.Height && p.X <= maxOfTiles.Width && p.Y <= maxOfTiles.Height)
                {
-                  if(!list.Contains(p))
+                  if(!tileDrawingList.Contains(p))
                   {
-                     list.Add(p);
+                     tileDrawingList.Add(p);
                   }
                }
             }
@@ -1207,7 +1218,7 @@ namespace GMap.NET.Internals
 
          if(GMaps.Instance.ShuffleTilesOnLoad)
          {
-            Stuff.Shuffle<Point>(list);
+            Stuff.Shuffle<Point>(ref tileDrawingList);
          }
       }
 

@@ -412,15 +412,12 @@ namespace GMap.NET.WindowsForms
       void DrawMapGDIplus(Graphics g)
       {
          Core.Matrix.EnterReadLock();
+         Core.tileDrawingListLock.AcquireReaderLock();
          try
          {
-            for(int i = -Core.sizeOfMapArea.Width; i <= Core.sizeOfMapArea.Width; i++)
+            foreach(var tilePoint in Core.tileDrawingList)
             {
-               for(int j = -Core.sizeOfMapArea.Height; j <= Core.sizeOfMapArea.Height; j++)
-               {
-                  Core.tilePoint = Core.centerTileXYLocation;
-                  Core.tilePoint.X += i;
-                  Core.tilePoint.Y += j;
+               Core.tilePoint = tilePoint;
 
 #if ContinuesMap
                //-----
@@ -435,56 +432,56 @@ namespace GMap.NET.WindowsForms
                }
                //-----
 #endif
-                  {
-                     Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
-                     Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
-                     Core.tileRect.Offset(Core.renderOffset);
+               {
+                  Core.tileRect.X = Core.tilePoint.X*Core.tileRect.Width;
+                  Core.tileRect.Y = Core.tilePoint.Y*Core.tileRect.Height;
+                  Core.tileRect.Offset(Core.renderOffset);
 
-                     if(Core.CurrentRegion.IntersectsWith(Core.tileRect))
-                     {
-                        bool found = false;
+                  if(Core.CurrentRegion.IntersectsWith(Core.tileRect))
+                  {
+                     bool found = false;
 #if !ContinuesMap
 
-                        Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, Core.tilePoint);
+                     Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, Core.tilePoint);
 #else
                         Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tileToDraw);
 #endif
-                        if(t != null)
+                     if(t != null)
+                     {
+                        // render tile
+                        lock(t.Overlays)
                         {
-                           // render tile
-                           lock(t.Overlays)
+                           foreach(WindowsFormsImage img in t.Overlays)
                            {
-                              foreach(WindowsFormsImage img in t.Overlays)
+                              if(img != null && img.Img != null)
                               {
-                                 if(img != null && img.Img != null)
-                                 {
-                                    if(!found)
-                                       found = true;
+                                 if(!found)
+                                    found = true;
 #if !PocketPC
-                                    g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+                                 g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
 #else
                                     g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y);
 #endif
-                                 }
                               }
                            }
                         }
+                     }
 
-                        // add text if tile is missing
-                        if(!found)
+                     // add text if tile is missing
+                     if(!found)
+                     {
+                        lock(Core.FailedLoads)
                         {
-                           lock(Core.FailedLoads)
+                           var lt = new LoadTask(Core.tilePoint, Core.Zoom);
+                           if(Core.FailedLoads.ContainsKey(lt))
                            {
-                              var lt = new LoadTask(Core.tilePoint, Core.Zoom);
-                              if(Core.FailedLoads.ContainsKey(lt))
-                              {
-                                 var ex = Core.FailedLoads[lt];
+                              var ex = Core.FailedLoads[lt];
 #if !PocketPC
-                                 g.FillRectangle(EmptytileBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                              g.FillRectangle(EmptytileBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
 
-                                 g.DrawString("Exception: " + ex.Message, MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X + 11, Core.tileRect.Y + 11, Core.tileRect.Width - 11, Core.tileRect.Height - 11));
+                              g.DrawString("Exception: " + ex.Message, MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X + 11, Core.tileRect.Y + 11, Core.tileRect.Width - 11, Core.tileRect.Height - 11));
 
-                                 g.DrawString(EmptyTileText, MissingDataFont, Brushes.Blue, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                              g.DrawString(EmptyTileText, MissingDataFont, Brushes.Blue, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 
 #else
                               g.FillRectangle(EmptytileBrush, new System.Drawing.Rectangle(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
@@ -494,21 +491,20 @@ namespace GMap.NET.WindowsForms
                               g.DrawString(EmptyTileText, MissingDataFont, TileGridMissingTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y + Core.tileRect.Width/2 + (ShowTileGridLines? 11 : -22), Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
 #endif
 
-                                 g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
-                              }
+                              g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
                            }
                         }
+                     }
 
-                        if(ShowTileGridLines)
+                     if(ShowTileGridLines)
+                     {
+                        g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
                         {
-                           g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
-                           {
 #if !PocketPC
-                              g.DrawString((Core.tilePoint == Core.centerTileXYLocation? "CENTER: " :"TILE: ") + Core.tilePoint, MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                           g.DrawString((Core.tilePoint == Core.centerTileXYLocation? "CENTER: " :"TILE: ") + Core.tilePoint, MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #else
                               g.DrawString((Core.tilePoint == Core.centerTileXYLocation? "" :"TILE: ") + Core.tilePoint, MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #endif
-                           }
                         }
                      }
                   }
@@ -517,6 +513,7 @@ namespace GMap.NET.WindowsForms
          }
          finally
          {
+            Core.tileDrawingListLock.ReleaseReaderLock();
             Core.Matrix.LeaveReadLock();
          }
       }

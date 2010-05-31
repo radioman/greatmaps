@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("GMap.NET.Core")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("GMap.NET - Great Maps")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Universe")]
 [assembly: AssemblyProduct("GMap.NET.Core")]
 [assembly: AssemblyCopyright("Copyright © Universe 2010")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTrademark("email@radioman.lt")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

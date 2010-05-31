@@ -70,7 +70,7 @@ namespace Demo.WindowsForms
             }           
 
             // config map             
-            MainMap.MapType = MapType.MapsLT_Map;
+            MainMap.MapType = MapType.GoogleMap;
             MainMap.MaxZoom = 11;
             MainMap.MinZoom = 1;
             MainMap.Zoom = MainMap.MinZoom + 1;
@@ -362,6 +362,7 @@ namespace Demo.WindowsForms
       readonly SortedDictionary<string, int> CountryStatus = new SortedDictionary<string, int>();
 
       readonly List<string> SelectedCountries = new List<string>();
+      readonly Dictionary<int, Process> ProcessList = new Dictionary<int, Process>();
 
       void ipInfoSearchWorker_DoWork(object sender, DoWorkEventArgs e)
       {
@@ -579,11 +580,13 @@ namespace Demo.WindowsForms
 
                lock(TcpState)
                {
-                  TcpConnectionInformation[] tcpInfoList = properties.GetActiveTcpConnections();
+                  //TcpConnectionInformation[] tcpInfoList = properties.GetActiveTcpConnections();
+                  //foreach(TcpConnectionInformation i in tcpInfoList)
 
                   CountryStatus.Clear();
+                  ManagedIpHelper.UpdateExtendedTcpTable(true);
 
-                  foreach(TcpConnectionInformation i in tcpInfoList)
+                  foreach(TcpRow i in ManagedIpHelper.TcpRows)
                   {
                      #region -- update TcpState --
                      string Ip = i.RemoteEndPoint.Address.ToString();
@@ -616,6 +619,20 @@ namespace Demo.WindowsForms
                         info.Port = i.RemoteEndPoint.Port;
                         info.StatusTime = DateTime.Now;
 
+                        try
+                        {
+                           Process p; 
+                           if(!ProcessList.TryGetValue(i.ProcessId, out p))
+                           {
+                              p = Process.GetProcessById(i.ProcessId);
+                              ProcessList[i.ProcessId] = p;
+                           }
+                           info.ProcessName = p.ProcessName;
+                        }
+                        catch
+                        {
+                        }
+
                         if(!string.IsNullOrEmpty(info.CountryName))
                         {
                            if(!CountryStatus.ContainsKey(info.CountryName))
@@ -631,7 +648,7 @@ namespace Demo.WindowsForms
                      #endregion
                   }
 
-                  tcpInfoList = null;
+                  //tcpInfoList = null;
                }
 
                // launch tracer if needed
@@ -866,7 +883,12 @@ namespace Demo.WindowsForms
 
       void UpdateMarkerTcpIpToolTip(GMapMarker marker, IpInfo tcp, string info)
       {
-         marker.ToolTipText = info + tcp.Ip + ":" + tcp.Port + " - " + tcp.State;
+         marker.ToolTipText = tcp.State.ToString();
+
+         if(!string.IsNullOrEmpty(tcp.ProcessName))
+         {
+            marker.ToolTipText += " by " + tcp.ProcessName;
+         }
 
          if(!string.IsNullOrEmpty(tcp.CountryName))
          {
@@ -884,6 +906,8 @@ namespace Demo.WindowsForms
                marker.ToolTipText += ", " + tcp.RegionName;
             }
          }
+
+         marker.ToolTipText += "\n" + tcp.Ip + ":" + tcp.Port + "\n" + info;
       }
 
       List<IpInfo> GetIpHostInfo(string iplist)
@@ -1257,7 +1281,7 @@ namespace Demo.WindowsForms
       // center markers on start
       private void MainForm_Load(object sender, EventArgs e)
       {
-         MainMap.ZoomAndCenterMarkers(null);
+         //MainMap.ZoomAndCenterMarkers(null);
          trackBar1.Value = (int) MainMap.Zoom;
       }
 

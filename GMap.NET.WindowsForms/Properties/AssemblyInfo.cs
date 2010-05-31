@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("Universe")]
 [assembly: AssemblyProduct("GMap.NET.WindowsForms")]
 [assembly: AssemblyCopyright("Copyright © Universe 2010")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTrademark("email@radioman.lt")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

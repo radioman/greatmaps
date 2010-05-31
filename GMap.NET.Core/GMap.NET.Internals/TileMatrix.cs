@@ -12,7 +12,7 @@ namespace GMap.NET.Internals
    internal class TileMatrix
    {
       readonly List<Dictionary<Point, Tile>> Levels = new List<Dictionary<Point, Tile>>(20);
-      readonly ReaderWriterLock Lock = new ReaderWriterLock();
+      readonly GReaderWriterLock Lock = new GReaderWriterLock();
 
       public TileMatrix()
       {
@@ -24,7 +24,7 @@ namespace GMap.NET.Internals
 
       public void ClearAllLevels()
       {
-         Lock.AcquireWriterLock(-1);
+         Lock.AcquireWriterLock();
          try
          {
             foreach(var matrix in Levels)
@@ -44,7 +44,7 @@ namespace GMap.NET.Internals
 
       public void ClearLevel(int zoom)
       {
-         Lock.AcquireWriterLock(-1);
+         Lock.AcquireWriterLock();
          try
          {
             if(zoom < Levels.Count)
@@ -69,7 +69,7 @@ namespace GMap.NET.Internals
 
       public void ClearLevelAndPointsNotIn(int zoom, List<Point> list)
       {
-         Lock.AcquireWriterLock(-1);
+         Lock.AcquireWriterLock();
          try
          {
             if(zoom < Levels.Count)
@@ -103,7 +103,7 @@ namespace GMap.NET.Internals
 
       public void ClearLevelsBelove(int zoom)
       {
-         Lock.AcquireWriterLock(-1);
+         Lock.AcquireWriterLock();
          try
          {
             if(zoom-1 < Levels.Count)
@@ -129,7 +129,7 @@ namespace GMap.NET.Internals
 
       public void ClearLevelsAbove(int zoom)
       {
-         Lock.AcquireWriterLock(-1);
+         Lock.AcquireWriterLock();
          try
          {
             if(zoom+1 < Levels.Count)
@@ -155,7 +155,7 @@ namespace GMap.NET.Internals
 
       public void EnterReadLock()
       {
-         Lock.AcquireReaderLock(-1);
+         Lock.AcquireReaderLock();
       }
 
       public void LeaveReadLock()
@@ -179,7 +179,7 @@ namespace GMap.NET.Internals
       {
          Tile ret = null;
 
-         Lock.AcquireReaderLock(-1);
+         Lock.AcquireReaderLock();
          try
          {
             ret = GetTileWithNoLock(zoom, p);
@@ -194,7 +194,7 @@ namespace GMap.NET.Internals
 
       public void SetTile(Tile t)
       {
-         Lock.AcquireWriterLock(-1);
+         Lock.AcquireWriterLock();
          try
          {
             if(t.Zoom < Levels.Count)
