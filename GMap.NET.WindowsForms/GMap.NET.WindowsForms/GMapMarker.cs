@@ -3,6 +3,7 @@ namespace GMap.NET.WindowsForms
 {
    using System.Drawing;
    using GMap.NET.WindowsForms.ToolTips;
+   using System.Windows.Forms;
 
    /// <summary>
    /// GMap.NET marker
@@ -184,7 +185,7 @@ namespace GMap.NET.WindowsForms
 #endif
    }
 
-   public delegate void MarkerClick(GMapMarker item);
+   public delegate void MarkerClick(GMapMarker item, MouseEventArgs e);
    public delegate void MarkerEnter(GMapMarker item);
    public delegate void MarkerLeave(GMapMarker item);
 

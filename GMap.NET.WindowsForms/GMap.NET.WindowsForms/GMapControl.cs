@@ -1332,7 +1332,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
       protected override void OnMouseClick(MouseEventArgs e)
       {
-         if(e.Button == MouseButtons.Left && !Core.IsDragging)
+         if(!Core.IsDragging)
          {
             for(int i = Overlays.Count-1; i >= 0; i--)
             {
@@ -1347,7 +1347,7 @@ namespace GMap.NET.WindowsForms
                         {
                            if(OnMarkerClick != null)
                            {
-                              OnMarkerClick(m);
+                              OnMarkerClick(m, e);
                               break;
                            }
                         }

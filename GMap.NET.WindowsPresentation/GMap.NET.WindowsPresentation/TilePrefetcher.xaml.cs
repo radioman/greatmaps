@@ -109,7 +109,7 @@ namespace GMap.NET.WindowsPresentation
       {
          int countOk = 0;
 
-         Stuff.Shuffle<GMap.NET.Point>(list);
+         Stuff.Shuffle<GMap.NET.Point>(ref list);
          var types = GMaps.Instance.GetAllLayersOfType(type);
 
          for(int i = 0; i < all; i++)

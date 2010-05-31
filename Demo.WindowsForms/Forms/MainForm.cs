@@ -70,7 +70,7 @@ namespace Demo.WindowsForms
             }           
 
             // config map             
-            MainMap.MapType = MapType.GoogleMap;
+            MainMap.MapType = MapType.MapsLT_Map;
             MainMap.MaxZoom = 11;
             MainMap.MinZoom = 1;
             MainMap.Zoom = MainMap.MinZoom + 1;
@@ -584,7 +584,7 @@ namespace Demo.WindowsForms
                   //foreach(TcpConnectionInformation i in tcpInfoList)
 
                   CountryStatus.Clear();
-                  ManagedIpHelper.UpdateExtendedTcpTable(true);
+                  ManagedIpHelper.UpdateExtendedTcpTable(false);
 
                   foreach(TcpRow i in ManagedIpHelper.TcpRows)
                   {
@@ -647,8 +647,6 @@ namespace Demo.WindowsForms
                      }
                      #endregion
                   }
-
-                  //tcpInfoList = null;
                }
 
                // launch tracer if needed
@@ -1220,18 +1218,21 @@ namespace Demo.WindowsForms
       }
 
       // click on some marker
-      void MainMap_OnMarkerClick(GMapMarker item)
+      void MainMap_OnMarkerClick(GMapMarker item, MouseEventArgs e)
       {
-         if(item is GMapMarkerRect)
+         if(e.Button == System.Windows.Forms.MouseButtons.Left)
          {
-            Placemark pos = GMaps.Instance.GetPlacemarkFromGeocoder(item.Position);
-            if(pos != null)
+            if(item is GMapMarkerRect)
             {
-               GMapMarkerRect v = item as GMapMarkerRect;
+               Placemark pos = GMaps.Instance.GetPlacemarkFromGeocoder(item.Position);
+               if(pos != null)
                {
-                  v.ToolTipText = pos.Address;
+                  GMapMarkerRect v = item as GMapMarkerRect;
+                  {
+                     v.ToolTipText = pos.Address;
+                  }
+                  MainMap.Invalidate(false);
                }
-               MainMap.Invalidate(false);
             }
          }
       }
@@ -1281,7 +1282,7 @@ namespace Demo.WindowsForms
       // center markers on start
       private void MainForm_Load(object sender, EventArgs e)
       {
-         //MainMap.ZoomAndCenterMarkers(null);
+         MainMap.ZoomAndCenterMarkers(null);
          trackBar1.Value = (int) MainMap.Zoom;
       }
 
