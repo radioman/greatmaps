@@ -67,7 +67,7 @@ namespace Demo.WindowsForms
             {
                MainMap.Manager.Mode = AccessMode.CacheOnly;
                MessageBox.Show("No internet connection avaible, going to CacheOnly mode.", "GMap.NET - Demo.WindowsForms", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }           
+            }
 
             // config map             
             MainMap.MapType = MapType.MapsLT_Map;
@@ -621,7 +621,7 @@ namespace Demo.WindowsForms
 
                         try
                         {
-                           Process p; 
+                           Process p;
                            if(!ProcessList.TryGetValue(i.ProcessId, out p))
                            {
                               p = Process.GetProcessById(i.ProcessId);
@@ -691,8 +691,10 @@ namespace Demo.WindowsForms
                {
                   string country = GridConnections.SelectedRows[i].Cells[0].Value as string;
                   SelectedCountries.Add(country);
-               }               
+               }                   
             }
+
+            ComparerIpStatus.SortOnlyCountryName = !(SelectedCountriesCount == 0);
 
             lock(TcpState)
             {
@@ -710,26 +712,29 @@ namespace Demo.WindowsForms
                         marker.Tag = tcp.Value.CountryName;
 
                         tcpConnections[tcp.Key] = marker;
-
                         {
-                           objects.Markers.Add(marker);
-                           UpdateMarkerTcpIpToolTip(marker, tcp.Value, "(" + objects.Markers.Count + ") ");
-
-                           if(snap)
+                           if(!(SelectedCountriesCount > 0 && !SelectedCountries.Contains(tcp.Value.CountryName)))
                            {
-                              if(checkBoxTcpIpSnap.Checked)
-                              {
-                                 MainMap.CurrentPosition = marker.Position;
-                              }
-                              snap = false;
+                              objects.Markers.Add(marker);
 
-                              if(lastTcpmarker != null)
-                              {
-                                 marker.ToolTipMode = MarkerTooltipMode.Always;
-                                 lastTcpmarker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
-                              }
+                              UpdateMarkerTcpIpToolTip(marker, tcp.Value, "(" + objects.Markers.Count + ") ");
 
-                              lastTcpmarker = marker;
+                              if(snap)
+                              {
+                                 if(checkBoxTcpIpSnap.Checked)
+                                 {
+                                    MainMap.CurrentPosition = marker.Position;
+                                 }
+                                 snap = false;
+
+                                 if(lastTcpmarker != null)
+                                 {
+                                    marker.ToolTipMode = MarkerTooltipMode.Always;
+                                    lastTcpmarker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+                                 }
+
+                                 lastTcpmarker = marker;
+                              }
                            }
                         }
                      }
@@ -821,7 +826,11 @@ namespace Demo.WindowsForms
                {
                   bool empty = CountryStatusView.Count == 0;
 
-                  CountryStatusView.Clear();
+                  if(!ComparerIpStatus.SortOnlyCountryName)
+                  {
+                     CountryStatusView.Clear();
+                  }
+
                   foreach(var c in CountryStatus)
                   {
                      IpStatus s = new IpStatus();
@@ -829,8 +838,21 @@ namespace Demo.WindowsForms
                         s.CountryName = c.Key;
                         s.ConnectionsCount = c.Value;
                      }
-                     CountryStatusView.Add(s);
-                  }
+
+                     if(ComparerIpStatus.SortOnlyCountryName)
+                     {
+                        int idx = CountryStatusView.FindIndex(p => p.CountryName == c.Key);
+                        if(idx >= 0)
+                        {
+                           CountryStatusView[idx] = s;
+                        }
+                     }
+                     else
+                     {
+                        CountryStatusView.Add(s);
+                     }
+                  }                    
+
                   CountryStatusView.Sort(ComparerIpStatus);
 
                   GridConnections.RowCount = CountryStatusView.Count;

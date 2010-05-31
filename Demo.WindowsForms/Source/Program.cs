@@ -73,9 +73,17 @@ namespace Demo.WindowsForms
 
    class DescendingComparer : IComparer<IpStatus>
    {
+      public bool SortOnlyCountryName = false;
+
       public int Compare(IpStatus x, IpStatus y)
       {
-         int r = y.ConnectionsCount.CompareTo(x.ConnectionsCount);
+         int r = 0;
+
+         if(!SortOnlyCountryName)
+         {
+            r = y.ConnectionsCount.CompareTo(x.ConnectionsCount);
+         }
+
          if(r == 0)
          {
             return x.CountryName.CompareTo(y.CountryName);
