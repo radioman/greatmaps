@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -15,7 +16,6 @@ using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms.ToolTips;
-using System.Drawing.Drawing2D;
 
 namespace Demo.WindowsForms
 {
@@ -50,7 +50,7 @@ namespace Demo.WindowsForms
          if(!DesignMode)
          {
             // add your custom map db provider
-            //MySQLPureImageCache ch = new MySQLPureImageCache();
+            //GMap.NET.CacheProviders.MySQLPureImageCache ch = new GMap.NET.CacheProviders.MySQLPureImageCache();
             //ch.ConnectionString = @"server=sql2008;User Id=trolis;Persist Security Info=True;database=gmapnetcache;password=trolis;";
             //MainMap.Manager.ImageCacheSecond = ch;
 
@@ -67,9 +67,7 @@ namespace Demo.WindowsForms
             {
                MainMap.Manager.Mode = AccessMode.CacheOnly;
                MessageBox.Show("No internet connection avaible, going to CacheOnly mode.", "GMap.NET - Demo.WindowsForms", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-
-            //  MainMap.CacheLocation
+            }           
 
             // config map             
             MainMap.MapType = MapType.MapsLT_Map;
