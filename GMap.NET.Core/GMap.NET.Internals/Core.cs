@@ -45,7 +45,7 @@ namespace GMap.NET.Internals
       public readonly TileMatrix Matrix = new TileMatrix();
       readonly System.Threading.EventWaitHandle waitOnEmptyTasks = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.AutoReset);
       public List<Point> tileDrawingList = new List<Point>();
-      public readonly GReaderWriterLock tileDrawingListLock = new GReaderWriterLock();
+      public readonly FastReaderWriterLock tileDrawingListLock = new FastReaderWriterLock();
 
       public readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>();
       readonly WaitCallback ProcessLoadTaskCallback;
@@ -129,11 +129,6 @@ namespace GMap.NET.Internals
                   if(OnMapZoomChanged != null)
                   {
                      OnMapZoomChanged();
-                  }
-
-                  if(OnNeedInvalidation != null)
-                  {
-                     OnNeedInvalidation();
                   }
                }
             }
@@ -903,11 +898,6 @@ namespace GMap.NET.Internals
             CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
          }
 
-         if(OnNeedInvalidation != null)
-         {
-            OnNeedInvalidation();
-         }
-
          if(OnMapDrag != null)
          {
             OnMapDrag();
@@ -935,11 +925,6 @@ namespace GMap.NET.Internals
          {
             LastLocationInBounds = CurrentPosition;
             CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
-         }
-
-         if(OnNeedInvalidation != null)
-         {
-            OnNeedInvalidation();
          }
 
          if(OnMapDrag != null)

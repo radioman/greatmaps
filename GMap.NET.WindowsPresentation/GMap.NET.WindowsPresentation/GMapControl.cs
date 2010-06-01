@@ -1064,6 +1064,7 @@ namespace GMap.NET.WindowsPresentation
 
                UpdateMarkersOffset();
             }
+            InvalidateVisual();
          }
          else
          {

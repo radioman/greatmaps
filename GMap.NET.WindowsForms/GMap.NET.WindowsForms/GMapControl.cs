@@ -350,6 +350,8 @@ namespace GMap.NET.WindowsForms
       /// </summary>
       void GMap_OnMapDrag()
       {
+         HoldInvalidation = true;
+
          foreach(GMapOverlay o in Overlays)
          {
             if(o.IsVisibile)
@@ -370,6 +372,8 @@ namespace GMap.NET.WindowsForms
                }
             }
          }
+
+         Refresh();
       }
 
       /// <summary>
@@ -1007,6 +1011,7 @@ namespace GMap.NET.WindowsForms
             }
             OnPaintEtc(e.Graphics);
          }
+
          base.OnPaint(e);
       }
 

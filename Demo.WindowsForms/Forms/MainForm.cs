@@ -691,7 +691,7 @@ namespace Demo.WindowsForms
                {
                   string country = GridConnections.SelectedRows[i].Cells[0].Value as string;
                   SelectedCountries.Add(country);
-               }                   
+               }
             }
 
             ComparerIpStatus.SortOnlyCountryName = !(SelectedCountriesCount == 0);
@@ -851,7 +851,7 @@ namespace Demo.WindowsForms
                      {
                         CountryStatusView.Add(s);
                      }
-                  }                    
+                  }
 
                   CountryStatusView.Sort(ComparerIpStatus);
 
@@ -1657,7 +1657,7 @@ namespace Demo.WindowsForms
       // key-up events
       private void MainForm_KeyUp(object sender, KeyEventArgs e)
       {
-         int offset = 22;
+         int offset = -22;
 
          if(e.KeyCode == Keys.Left)
          {
@@ -1670,6 +1670,10 @@ namespace Demo.WindowsForms
          else if(e.KeyCode == Keys.Up)
          {
             MainMap.Offset(0, -offset);
+         }
+         else if(e.KeyCode == Keys.Down)
+         {
+            MainMap.Offset(0, offset);
          }
          else if(e.KeyCode == Keys.Delete)
          {

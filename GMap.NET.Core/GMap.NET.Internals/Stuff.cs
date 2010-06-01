@@ -6,8 +6,6 @@ namespace GMap.NET.Internals
    using System.ComponentModel;
    using System.IO;
    using System.Reflection;
-   using System.Threading;
-   using System.Diagnostics;
 
    /// <summary>
    /// etc functions...
@@ -63,93 +61,6 @@ namespace GMap.NET.Internals
          }
          ms.Seek(0, SeekOrigin.Begin);
          return ms;
-      }
-   }
-
-   public sealed class oGReaderWriterLock
-   {
-
-      public void AcquireReaderLock()
-      {
-         Monitor.Enter(this);
-
-         //Debug.WriteLine("AcquireReaderLock(" + numReads + "): " +  + Thread.CurrentThread.ManagedThreadId);
-      }
-
-      public void ReleaseReaderLock()
-      {
-         Monitor.Exit(this);
-
-         //Debug.WriteLine("ReleaseReaderLock: " + Thread.CurrentThread.ManagedThreadId);
-      }
-
-      public void AcquireWriterLock()
-      {
-         Monitor.Enter(this);
-         
-
-         //Debug.WriteLine("AcquireWriterLock: " + Thread.CurrentThread.ManagedThreadId);
-      }
-
-      public void ReleaseWriterLock()
-      {
-         Monitor.Exit(this);
-         
-
-         // Debug.WriteLine("ReleaseWriterLock: " + Thread.CurrentThread.ManagedThreadId);
-      }
-   }
-
-   public sealed class GReaderWriterLock
-   {
-      int busy = 0;
-      int numReads = 0;
-
-      public void AcquireReaderLock()
-      {
-         Thread.BeginCriticalRegion();
-
-         while(Interlocked.CompareExchange(ref busy, 1, 0) != 0)
-         {
-            Thread.Sleep(1);
-         }
-
-         Interlocked.Increment(ref numReads);
-         Thread.VolatileWrite(ref busy, 0);
-
-         //Debug.WriteLine("AcquireReaderLock(" + numReads + "): " +  + Thread.CurrentThread.ManagedThreadId);
-      }
-
-      public void ReleaseReaderLock()
-      {
-         Interlocked.Decrement(ref numReads); 
-         Thread.EndCriticalRegion();
-
-         //Debug.WriteLine("ReleaseReaderLock: " + Thread.CurrentThread.ManagedThreadId);
-      }
-
-      public void AcquireWriterLock()
-      {
-         Thread.BeginCriticalRegion();
-
-         while(Interlocked.CompareExchange(ref busy, 1, 0) != 0)
-         {
-            Thread.Sleep(1);
-         }
-         while(Thread.VolatileRead(ref numReads) != 0)
-         {
-            Thread.Sleep(1);
-         }
-
-         //Debug.WriteLine("AcquireWriterLock: " + Thread.CurrentThread.ManagedThreadId);
-      }
-
-      public void ReleaseWriterLock()
-      {
-         Thread.VolatileWrite(ref busy, 0); 
-         Thread.EndCriticalRegion();
-
-        // Debug.WriteLine("ReleaseWriterLock: " + Thread.CurrentThread.ManagedThreadId);
       }
    }
 }

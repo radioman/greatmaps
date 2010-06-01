@@ -12,7 +12,7 @@ namespace GMap.NET.Internals
    internal class TileMatrix
    {
       readonly List<Dictionary<Point, Tile>> Levels = new List<Dictionary<Point, Tile>>(20);
-      readonly GReaderWriterLock Lock = new GReaderWriterLock();
+      readonly FastReaderWriterLock Lock = new FastReaderWriterLock();
 
       public TileMatrix()
       {
