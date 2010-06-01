@@ -429,7 +429,7 @@ namespace GMap.NET.Internals
       internal string SystemType;
       internal static readonly Guid SessionIdGuid = Guid.NewGuid();
       internal static readonly Guid CompanyIdGuid = new Guid("3E35F098-CE43-4F82-9E9D-05C8B1046A45");
-      internal static readonly Guid ApplicationIdGuid = new Guid("797dca7d-fb9f-49a2-87b6-5c9f26bdef25");
+      internal static readonly Guid ApplicationIdGuid = new Guid("FF328040-77B0-4546-ACF3-7C6EC0827BBB");
       internal static volatile bool AnalyticsStartDone = false;
       internal static volatile bool AnalyticsStopDone = false;
 
