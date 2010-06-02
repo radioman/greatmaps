@@ -62,5 +62,21 @@ namespace GMap.NET.Internals
          ms.Seek(0, SeekOrigin.Begin);
          return ms;
       }
+
+      public static bool IsRunningOnVistaOrLater()
+      {
+         OperatingSystem os = Environment.OSVersion;
+         Version vs = os.Version;
+
+         if(os.Platform == PlatformID.Win32NT)
+         {
+            if(vs.Major >= 6 && vs.Minor >= 0)
+            {
+               return true;
+            }
+         }
+
+         return false;
+      }
    }
 }
