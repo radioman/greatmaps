@@ -311,9 +311,9 @@ namespace GMap.NET
       /// try correct versions once
       /// </summary>
 #if !PocketPC
-      public bool CorrectGoogleVersions = true;
+      public volatile bool CorrectGoogleVersions = true;
 #else
-      public bool CorrectGoogleVersions = false;
+      public volatile bool CorrectGoogleVersions = false;
 #endif
 
       /// <summary>
@@ -340,36 +340,6 @@ namespace GMap.NET
       }
 
       #region -- Stuff --
-
-      /// <summary>
-      /// get a token from the Bing Maps Token service
-      /// </summary>
-      /// <param name="BingMapsDeveloperAccountID"></param>
-      /// <param name="BingMapsDeveloperAccountpassword"></param>
-      //bool UpdateTokenFromBingMaps(string BingMapsDeveloperAccountID, string BingMapsDeveloperAccountpassword)
-      //{
-      //   // Place the following code in the Page_Load event of your ASP .NET Web
-      //   // application so that it runs before the map control is loaded.
-      //   // This code assumes a using reference to the Bing Maps
-      //   // Token service. 
-      //   // Be sure to use an SSL connection to protect your information.
-      //   CommonServiceSoap commonService = new CommonServiceSoap();
-      //   commonService.Url = "https://staging.common.virtualearth.net/find-30/common.asmx";
-      //   commonService.Credentials = new NetworkCredential(BingMapsDeveloperAccountID, BingMapsDeveloperAccountpassword);
-
-      //   // Create the TokenSpecification object to pass to GetClientToken.
-      //   TokenSpecification tokenSpec = new TokenSpecification();
-
-      //   // Use the Page object to retrieve the end-client’s IPAddress.
-      //   tokenSpec.ClientIPAddress = Page.Request.UserHostAddress;
-
-      //   // The maximum allowable token duration is 480 minutes (8 hours).
-      //   // The minimum allowable duration is 15 minutes.
-      //   tokenSpec.TokenValidityDurationMinutes = 480;
-
-      //   // Now get a token from the Bing Maps Token service.
-      //   string clienttoken = commonService.GetClientToken(tokenSpec);
-      //}
 
       MemoryStream GetTileFromMemoryCache(RawTile tile)
       {

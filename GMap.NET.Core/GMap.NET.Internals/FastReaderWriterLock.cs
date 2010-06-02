@@ -17,11 +17,19 @@ namespace GMap.NET.Internals
          {
             Thread.Sleep(1);
          }
-
-         Thread.Sleep(1); // somehow this fix deadlock on heavy reads
+        
+         Interlocked.Increment(ref readCount);
+         
+         // somehow this fix deadlock on heavy reads
+         Thread.Sleep(0);
+         Thread.Sleep(0);
+         Thread.Sleep(0);
+         Thread.Sleep(0);
+         Thread.Sleep(0);
+         Thread.Sleep(0);
+         Thread.Sleep(0);
 
          Interlocked.Exchange(ref busy, 0);
-         Interlocked.Increment(ref readCount);
 
          // Debug.WriteLine("AcquireReaderLock(" + numReads + "): " +  + Thread.CurrentThread.ManagedThreadId);
       }
@@ -43,7 +51,7 @@ namespace GMap.NET.Internals
             Thread.Sleep(1);
          }
 
-         while(Thread.VolatileRead(ref readCount) != 0)
+         while(Interlocked.CompareExchange(ref readCount, 0, 0) != 0)
          {
             Thread.Sleep(1);
          }
