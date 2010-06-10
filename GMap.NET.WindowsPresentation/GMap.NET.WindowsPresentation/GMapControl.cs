@@ -124,6 +124,11 @@ namespace GMap.NET.WindowsPresentation
       public MouseButton DragButton = MouseButton.Right;
 
       /// <summary>
+      /// use circle for selection
+      /// </summary>
+      public bool SelectionUseCircle = false;
+
+      /// <summary>
       /// shows tile gridlines
       /// </summary>
       [Category("GMap.NET")]
@@ -832,7 +837,14 @@ namespace GMap.NET.WindowsPresentation
             int x2 = p2.X;
             int y2 = p2.Y;
 
-            drawingContext.DrawRoundedRectangle(SelectedAreaFill, SelectionPen, new Rect(x1, y1, x2 - x1, y2 - y1), 5, 5);
+            if(SelectionUseCircle)
+            {
+               drawingContext.DrawEllipse(SelectedAreaFill, SelectionPen, new System.Windows.Point(x1 + (x2 - x1)/2, y1 + (y2 - y1)/2), (x2 - x1)/2, (y2 - y1)/2);
+            }
+            else
+            {
+               drawingContext.DrawRoundedRectangle(SelectedAreaFill, SelectionPen, new Rect(x1, y1, x2 - x1, y2 - y1), 5, 5);
+            }
          }
 
          #region -- copyright --
