@@ -186,6 +186,11 @@ namespace GMap.NET.WindowsPresentation
       /// </summary>
       public readonly List<PointLatLng> Route = new List<PointLatLng>();
 
+      /// <summary>
+      /// if marker is a polygon that is a path of it's coordinates
+      /// </summary>
+      public readonly List<PointLatLng> Polygon = new List<PointLatLng>();
+
       public GMapMarker(PointLatLng pos)
       {
          Position = pos;
@@ -242,7 +247,7 @@ namespace GMap.NET.WindowsPresentation
       /// <summary>
       /// regenerates shape of route
       /// </summary>
-      public void RegenerateRouteShape(GMapControl map)
+      public virtual void RegenerateRouteShape(GMapControl map)
       {
          this.map = map;
 
@@ -257,6 +262,36 @@ namespace GMap.NET.WindowsPresentation
             }
 
             var shape = map.CreateRoutePath(localPath);
+
+            if(this.Shape != null && this.Shape is Path)
+            {
+               (this.Shape as Path).Data = shape.Data;
+            }
+            else
+            {
+               this.Shape = shape;
+            }
+         }
+      }
+
+      /// <summary>
+      /// regenerates shape of polygon
+      /// </summary>
+      public virtual void RegeneratePolygonShape(GMapControl map)
+      {
+         this.map = map;
+
+         if(map != null && Polygon.Count > 1)
+         {
+            var localPath = new List<System.Windows.Point>();
+            var offset = Map.FromLatLngToLocal(Polygon[0]);
+            foreach(var i in Polygon)
+            {
+               var p = Map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
+               localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
+            }
+
+            var shape = map.CreatePolygonPath(localPath);
 
             if(this.Shape != null && this.Shape is Path)
             {

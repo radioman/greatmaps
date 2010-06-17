@@ -467,6 +467,15 @@ namespace GMap.NET.WindowsPresentation
                i.RegenerateRouteShape(this);
             }
          }
+
+         var polygons = Markers.Where(p => p != null && p.Polygon.Count > 1);
+         if(polygons != null)
+         {
+            foreach(var i in polygons)
+            {
+               i.RegeneratePolygonShape(this);
+            }
+         }
       }
 
       /// <summary>
@@ -639,7 +648,7 @@ namespace GMap.NET.WindowsPresentation
       /// </summary>
       /// <param name="pl"></param>
       /// <returns></returns>
-      public Path CreateRoutePath(List<System.Windows.Point> localPath)
+      public virtual Path CreateRoutePath(List<System.Windows.Point> localPath)
       {
          // Create a StreamGeometry to use to specify myPath.
          StreamGeometry geometry = new StreamGeometry();
@@ -676,7 +685,60 @@ namespace GMap.NET.WindowsPresentation
             myPath.StrokeLineJoin = PenLineJoin.Round;
             myPath.StrokeStartLineCap = PenLineCap.Triangle;
             myPath.StrokeEndLineCap = PenLineCap.Square;
+
             myPath.Opacity = 0.6;
+            myPath.IsHitTestVisible = false;
+         }
+         return myPath;
+      }
+
+      /// <summary>
+      /// creates path from list of points
+      /// </summary>
+      /// <param name="pl"></param>
+      /// <returns></returns>
+      public virtual Path CreatePolygonPath(List<System.Windows.Point> localPath)
+      {
+         // Create a StreamGeometry to use to specify myPath.
+         StreamGeometry geometry = new StreamGeometry();
+
+         using(StreamGeometryContext ctx = geometry.Open())
+         {
+            ctx.BeginFigure(localPath[0], true, true);
+
+            // Draw a line to the next specified point.
+            ctx.PolyLineTo(localPath, true, true);
+         }
+
+         // Freeze the geometry (make it unmodifiable)
+         // for additional performance benefits.
+         geometry.Freeze();
+
+         // Create a path to draw a geometry with.
+         Path myPath = new Path();
+         {
+            // Specify the shape of the Path using the StreamGeometry.
+            myPath.Data = geometry;
+
+            BlurEffect ef = new BlurEffect();
+            {
+               ef.KernelType = KernelType.Gaussian;
+               ef.Radius = 3.0;
+               ef.RenderingBias = RenderingBias.Quality;
+            }
+
+            myPath.Effect = ef;
+
+            myPath.Stroke = Brushes.MidnightBlue;
+            myPath.StrokeThickness = 5;
+            myPath.StrokeLineJoin = PenLineJoin.Round;
+            myPath.StrokeStartLineCap = PenLineCap.Triangle;
+            myPath.StrokeEndLineCap = PenLineCap.Square;
+
+            myPath.Fill = Brushes.AliceBlue;
+
+            myPath.Opacity = 0.6;
+            myPath.IsHitTestVisible = false;
          }
          return myPath;
       }
