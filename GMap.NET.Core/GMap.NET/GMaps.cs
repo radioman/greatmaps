@@ -2129,7 +2129,7 @@ namespace GMap.NET
                      int l = tooltipEnd - x;
                      if(l > 0)
                      {
-                        tooltipHtml = route.Substring(x, l);
+                        tooltipHtml = route.Substring(x, l).Replace(@"\x26#160;", " ");
                      }
                   }
                }

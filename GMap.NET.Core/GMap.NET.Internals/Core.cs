@@ -1105,9 +1105,12 @@ namespace GMap.NET.Internals
                      }
                   }
 
-                  if(OnNeedInvalidation != null)
+                  if(!IsDragging)
                   {
-                     OnNeedInvalidation();
+                     if(OnNeedInvalidation != null)
+                     {
+                        OnNeedInvalidation();
+                     }
                   }
                }
             }

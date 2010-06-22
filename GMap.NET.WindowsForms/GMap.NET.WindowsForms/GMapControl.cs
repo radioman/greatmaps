@@ -319,7 +319,7 @@ namespace GMap.NET.WindowsForms
 
             // to know when to invalidate
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
-            Core.OnMapDrag += new MapDrag(GMap_OnMapDrag);
+            Core.OnMapDrag += new MapDrag(Core_OnMapDrag);
 
             Core.SystemType = "WindowsForms";
 
@@ -348,7 +348,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// update objects when map is draged
       /// </summary>
-      void GMap_OnMapDrag()
+      void Core_OnMapDrag()
       {
          HoldInvalidation = true;
 
