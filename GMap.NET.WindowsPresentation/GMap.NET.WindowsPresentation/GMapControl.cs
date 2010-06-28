@@ -18,12 +18,151 @@ namespace GMap.NET.WindowsPresentation
    using System.Windows.Threading;
    using GMap.NET;
    using GMap.NET.Internals;
+   using System.Diagnostics;
 
    /// <summary>
    /// GMap.NET control for Windows Presentation
    /// </summary>
    public partial class GMapControl : ItemsControl, IGControl
    {
+      #region DependencyProperties and related stuff
+
+      public static readonly DependencyProperty MapTypeProperty = DependencyProperty.Register("MapType", typeof(MapType), typeof(GMapControl), new UIPropertyMetadata(MapType.GoogleMap, new PropertyChangedCallback(MapTypePropertyChanged)));
+
+      /// <summary>
+      /// type of map
+      /// </summary>
+      [Category("GMap.NET")]
+      public MapType MapType
+      {
+         get
+         {
+            return (MapType) (GetValue(MapTypeProperty));
+         }
+         set
+         {
+            SetValue(MapTypeProperty, value);
+         }
+      }
+
+      private static void MapTypePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+      {
+         GMapControl map = (GMapControl) d;
+         if(map != null)
+         {
+            Debug.WriteLine("MapTypePropertyChanged: " + e.OldValue + " -> " + e.NewValue);
+
+            RectLatLng viewarea = map.SelectedArea;
+            if(viewarea != RectLatLng.Empty)
+            {
+               map.CurrentPosition = new PointLatLng(viewarea.Lat - viewarea.HeightLat/2, viewarea.Lng + viewarea.WidthLng/2);
+            }
+            else
+            {
+               viewarea = map.CurrentViewArea;
+            }
+
+            map.Core.MapType = (MapType) e.NewValue;
+
+            if(map.Core.started && map.Core.zoomToArea)
+            {
+               // restore zoomrect as close as possible
+               if(viewarea != RectLatLng.Empty && viewarea != map.CurrentViewArea)
+               {
+                  int bestZoom = map.Core.GetMaxZoomToFitRect(viewarea);
+                  if(bestZoom > 0 && map.Zoom != bestZoom)
+                  {
+                     map.Zoom = bestZoom;
+                  }
+               }
+            }
+         }
+      }
+
+      public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register("Zoom", typeof(double), typeof(GMapControl), new UIPropertyMetadata(13.0, new PropertyChangedCallback(ZoomPropertyChanged), new CoerceValueCallback(OnCoerceZoom)));
+
+      /// <summary>
+      /// map zoom
+      /// </summary>
+      [Category("GMap.NET")]
+      public double Zoom
+      {
+         get
+         {
+            return (double) (GetValue(ZoomProperty));
+         }
+         set
+         {
+            SetValue(ZoomProperty, value);
+         }
+      }
+
+      private static object OnCoerceZoom(DependencyObject o, object value)
+      {
+         GMapControl map = o as GMapControl;
+         if(map != null)
+         {
+            double result = (double) value;
+            if(result > map.MaxZoom)
+            {
+               result = map.MaxZoom;
+            }
+            if(result < map.MinZoom)
+            {
+               result = map.MinZoom;
+            }
+
+            return result;
+         }
+         else
+         {
+            return value;
+         }
+      }
+
+      private static void ZoomPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+      {
+         GMapControl map = (GMapControl) d;
+         if(map != null)
+         {
+            double value = (double) e.NewValue;
+
+            if(value > map.MaxZoom)
+            {
+               value = map.MaxZoom;
+            }
+            else if(value < map.MinZoom)
+            {
+               value = map.MinZoom;
+            }
+
+            Debug.WriteLine("ZoomPropertyChanged: " + e.OldValue + " -> " + value);
+
+            double remainder = value % 1;
+            if(remainder != 0 && map.ActualWidth > 0)
+            {
+               double scaleValue = remainder + 1;
+               {
+                  map.MapRenderTransform = new ScaleTransform(scaleValue, scaleValue, map.ActualWidth / 2, map.ActualHeight / 2);
+               }
+
+               map.ZoomStep = Convert.ToInt32(value - remainder);
+
+               map.Core_OnMapZoomChanged();
+
+               map.InvalidateVisual();
+            }
+            else
+            {
+               map.MapRenderTransform = null;
+               map.ZoomStep = Convert.ToInt32(value);
+               map.InvalidateVisual();
+            }
+         }
+      }
+
+      #endregion
+
       readonly Core Core = new Core();
       GMap.NET.Rectangle region;
       delegate void MethodInvoker();
@@ -40,32 +179,6 @@ namespace GMap.NET.WindowsPresentation
       FormattedText arcGisMapCopyright;
       FormattedText hnitMapCopyright;
       FormattedText pergoMapCopyright;
-
-      /// <summary>
-      /// pen for empty tile borders
-      /// </summary>
-      public Pen EmptyTileBorders = new Pen(Brushes.White, 1.0);
-
-      /// <summary>
-      /// pen for Selection
-      /// </summary>
-      public Pen SelectionPen = new Pen(Brushes.Blue, 2.0);
-
-      /// <summary>
-      /// background of selected area
-      /// </summary>
-      public Brush SelectedAreaFill = new SolidColorBrush(Color.FromArgb(33, Colors.RoyalBlue.R, Colors.RoyalBlue.G, Colors.RoyalBlue.B));
-
-      /// <summary>
-      /// /// <summary>
-      /// pen for empty tile background
-      /// </summary>
-      public Brush EmptytileBrush = Brushes.Navy;
-
-      /// <summary>
-      /// text on empty tiles
-      /// </summary>
-      public FormattedText EmptyTileText = new FormattedText("We are sorry, but we don't\nhave imagery at this zoom\n     level for this region.", System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("Arial"), 16, Brushes.Blue);
 
       /// <summary>
       /// max zoom
@@ -100,6 +213,32 @@ namespace GMap.NET.WindowsPresentation
             Core.minZoom = value;
          }
       }
+
+      /// <summary>
+      /// pen for empty tile borders
+      /// </summary>
+      public Pen EmptyTileBorders = new Pen(Brushes.White, 1.0);
+
+      /// <summary>
+      /// pen for Selection
+      /// </summary>
+      public Pen SelectionPen = new Pen(Brushes.Blue, 2.0);
+
+      /// <summary>
+      /// background of selected area
+      /// </summary>
+      public Brush SelectedAreaFill = new SolidColorBrush(Color.FromArgb(33, Colors.RoyalBlue.R, Colors.RoyalBlue.G, Colors.RoyalBlue.B));
+
+      /// <summary>
+      /// /// <summary>
+      /// pen for empty tile background
+      /// </summary>
+      public Brush EmptytileBrush = Brushes.Navy;
+
+      /// <summary>
+      /// text on empty tiles
+      /// </summary>
+      public FormattedText EmptyTileText = new FormattedText("We are sorry, but we don't\nhave imagery at this zoom\n     level for this region.", System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("Arial"), 16, Brushes.Blue);
 
       /// <summary>
       /// map zooming type for mouse wheel
@@ -215,57 +354,6 @@ namespace GMap.NET.WindowsPresentation
       /// </summary>
       internal TranslateTransform MapTranslateTransform = new TranslateTransform();
 
-      /// <summary>
-      /// map zoom
-      /// </summary>
-      [Category("GMap.NET")]
-      public double Zoom
-      {
-         get
-         {
-            return zoomReal;
-         }
-         set
-         {
-            if(zoomReal != value)
-            {
-               if(value > MaxZoom)
-               {
-                  zoomReal = MaxZoom;
-               }
-               else if(value < MinZoom)
-               {
-                  zoomReal = MinZoom;
-               }
-               else
-               {
-                  zoomReal = value;
-               }
-
-               double remainder = value % 1;
-               if(remainder != 0 && ActualWidth > 0)
-               {
-                  double scaleValue = remainder + 1;
-                  {
-                     MapRenderTransform = new ScaleTransform(scaleValue, scaleValue, ActualWidth / 2, ActualHeight / 2);
-                  }
-
-                  ZoomStep = Convert.ToInt32(value - remainder);
-
-                  Core_OnMapZoomChanged();
-
-                  InvalidateVisual();
-               }
-               else
-               {
-                  MapRenderTransform = null;
-                  ZoomStep = Convert.ToInt32(value);
-                  InvalidateVisual();
-               }
-            }
-         }
-      }
-
       protected bool DesignModeInConstruct
       {
          get
@@ -364,6 +452,7 @@ namespace GMap.NET.WindowsPresentation
 
             Manager.ImageProxy = new WindowsPresentationImageProxy();
 
+            Core.MapType = (MapType) MapTypeProperty.DefaultMetadata.DefaultValue;
             Core.SystemType = "WindowsPresentation";
 
             Core.RenderMode = GMap.NET.RenderMode.WPF;
@@ -373,8 +462,11 @@ namespace GMap.NET.WindowsPresentation
             Unloaded += new RoutedEventHandler(GMapControl_Unloaded);
             SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
 
+            // TODO: fix, any ideas how?
             Markers.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
-            this.ItemsSource = Markers;
+            ItemsSource = Markers;
+
+            ZoomStep = (int) ((double) ZoomProperty.DefaultMetadata.DefaultValue);
 
             googleCopyright = new FormattedText(Core.googleCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             yahooMapCopyright = new FormattedText(Core.yahooMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
@@ -383,8 +475,6 @@ namespace GMap.NET.WindowsPresentation
             arcGisMapCopyright = new FormattedText(Core.arcGisCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             hnitMapCopyright = new FormattedText(Core.hnitCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             pergoMapCopyright = new FormattedText(Core.pergoCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
-
-            MapType = MapType.GoogleMap;
          }
       }
 
@@ -869,6 +959,9 @@ namespace GMap.NET.WindowsPresentation
       #region UserControl Events
       protected override void OnRender(DrawingContext drawingContext)
       {
+         if(!Core.started)
+            return;
+
          if(MapRenderTransform != null)
          {
             drawingContext.PushTransform(MapRenderTransform);
@@ -1383,45 +1476,6 @@ namespace GMap.NET.WindowsPresentation
          get
          {
             return Core.CurrentViewArea;
-         }
-      }
-
-      [Category("GMap.NET")]
-      public MapType MapType
-      {
-         get
-         {
-            return Core.MapType;
-         }
-         set
-         {
-            if(Core.MapType != value)
-            {
-               RectLatLng viewarea = SelectedArea;
-               if(viewarea != RectLatLng.Empty)
-               {
-                  CurrentPosition = new PointLatLng(viewarea.Lat - viewarea.HeightLat/2, viewarea.Lng + viewarea.WidthLng/2);
-               }
-               else
-               {
-                  viewarea = CurrentViewArea;
-               }
-
-               Core.MapType = value;
-
-               if(Core.started && Core.zoomToArea)
-               {
-                  // restore zoomrect as close as possible
-                  if(viewarea != RectLatLng.Empty && viewarea != CurrentViewArea)
-                  {
-                     int bestZoom = Core.GetMaxZoomToFitRect(viewarea);
-                     if(bestZoom > 0 && Zoom != bestZoom)
-                     {
-                        Zoom = bestZoom;
-                     }
-                  }
-               }
-            }
          }
       }
 

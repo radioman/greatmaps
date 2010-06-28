@@ -57,18 +57,18 @@
     </Window.Resources>
     <Grid>
       <GroupBox Name="mapgroup"  Header="gmap" Margin="12,7,241,12" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-          <src:Map x:Name="MainMap" />  
+          <src:Map x:Name="MainMap" MapType="GoogleMap" Zoom="13" MaxZoom="17" MinZoom="5" />  
       </GroupBox>
       <GroupBox HorizontalAlignment="Right" Margin="0,7,186,12" VerticalAlignment="Stretch" Header="Zoom">
          <Grid>
             <Button x:Name="czuZoomUp" Style="{StaticResource ZoomUpButton}" HorizontalAlignment="Center" VerticalAlignment="Top" Width="23.5" Height="25.5" Click="czuZoomUp_Click"/>
-            <Slider Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Stretch" Maximum="17" Minimum="12" Value="13" TickPlacement="Both" Margin="0,35,0,35" SmallChange="1" x:Name="sliderZoom" ValueChanged="sliderZoom_ValueChanged" />
+                <Slider Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Stretch" Maximum="17" Minimum="12" Value="{Binding ElementName=MainMap, Path=Zoom}" TickPlacement="Both" Margin="0,35,0,35" SmallChange="1" x:Name="sliderZoom" ValueChanged="sliderZoom_ValueChanged" />
             <Button Style="{StaticResource ZoomUpButton}" x:Name="czuZoomDown" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="23" Height="25" Click="czuZoomDown_Click"/>
          </Grid>
       </GroupBox>
       <GroupBox Header="gmap" HorizontalAlignment="Right" Margin="0,158,12,0" Name="groupBox2" Width="169" VerticalAlignment="Top" Height="135">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <ComboBox DropDownClosed="comboBoxMapType_DropDownClosed" FontSize="12" Margin="6,6,45,0" Name="comboBoxMapType" Height="25.04" VerticalAlignment="Top" />
+                <ComboBox SelectedItem="{Binding ElementName=MainMap, Path=MapType}" FontSize="12" Margin="6,6,45,0" Name="comboBoxMapType" Height="25.04" VerticalAlignment="Top" />
                 <Label HorizontalAlignment="Right" Margin="0,6,6,0" Name="label1" Width="33" Height="25.04" VerticalAlignment="Top">type</Label>
                 <CheckBox Margin="6,0,21,6" Name="checkBoxDragMap" IsChecked="True" Height="16.04" VerticalAlignment="Bottom" Checked="checkBoxDragMap_Checked" Unchecked="checkBoxDragMap_Unchecked">Drag Map</CheckBox>
                 <CheckBox Height="16" Margin="6,0,45,28" IsChecked="True" Name="checkBoxCurrentMarker" VerticalAlignment="Bottom" Checked="checkBoxCurrentMarker_Checked" Unchecked="checkBoxCurrentMarker_Unchecked">Current Marker</CheckBox>

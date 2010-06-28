@@ -53,24 +53,18 @@ namespace Demo.WindowsPresentation
          }
 
          // config map
-         MainMap.MapType = MapType.GoogleMap;
-         MainMap.MaxZoom = 17;
-         MainMap.MinZoom = 5;
-         MainMap.Zoom = 13;
          MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
 
          // map events
          MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
          MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
          MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
-         MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
          MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
          MainMap.MouseMove += new System.Windows.Input.MouseEventHandler(MainMap_MouseMove);
          MainMap.MouseLeftButtonDown += new System.Windows.Input.MouseButtonEventHandler(MainMap_MouseLeftButtonDown);
 
          // get map types
          comboBoxMapType.ItemsSource = Enum.GetValues(typeof(MapType));
-         comboBoxMapType.SelectedItem = MainMap.MapType;
 
          // acccess mode
          comboBoxMode.ItemsSource = Enum.GetValues(typeof(AccessMode));
@@ -80,10 +74,9 @@ namespace Demo.WindowsPresentation
          checkBoxCacheRoute.IsChecked = MainMap.Manager.UseRouteCache;
          checkBoxGeoCache.IsChecked = MainMap.Manager.UseGeocoderCache;
 
-         // setup zoom slider
+         // setup zoom min/max
          sliderZoom.Maximum = MainMap.MaxZoom;
          sliderZoom.Minimum = MainMap.MinZoom;
-         sliderZoom.Value = MainMap.Zoom;
 
          // get position
          textBoxLat.Text = MainMap.CurrentPosition.Lat.ToString(CultureInfo.InvariantCulture);
@@ -460,12 +453,6 @@ namespace Demo.WindowsPresentation
          MainMap.ZoomAndCenterMarkers(55);
       }
 
-      // MapZoomChanged
-      void MainMap_OnMapZoomChanged()
-      {
-         sliderZoom.Value = MainMap.Zoom;
-      }
-
       // tile louading starts
       void MainMap_OnTileLoadStart()
       {
@@ -510,12 +497,6 @@ namespace Demo.WindowsPresentation
       private void button1_Click(object sender, RoutedEventArgs e)
       {
          MainMap.ReloadMap();
-      }
-
-      // map type changed
-      private void comboBoxMapType_DropDownClosed(object sender, EventArgs e)
-      {
-         MainMap.MapType = (MapType) comboBoxMapType.SelectedItem;
       }
 
       // enable current marker
@@ -575,8 +556,6 @@ namespace Demo.WindowsPresentation
       // zoom changed
       private void sliderZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
       {
-         MainMap.Zoom = e.NewValue;
-
          // updates circles on map
          foreach(var c in Circles)
          {
@@ -587,13 +566,13 @@ namespace Demo.WindowsPresentation
       // zoom up
       private void czuZoomUp_Click(object sender, RoutedEventArgs e)
       {
-         sliderZoom.Value = ((int) MainMap.Zoom) + 1;
+         MainMap.Zoom = ((int) MainMap.Zoom) + 1;
       }
 
       // zoom down
       private void czuZoomDown_Click(object sender, RoutedEventArgs e)
       {
-         sliderZoom.Value = ((int) (MainMap.Zoom + 0.99)) - 1;
+         MainMap.Zoom = ((int) (MainMap.Zoom + 0.99)) - 1;
       }
 
       // prefetch
