@@ -536,12 +536,12 @@ namespace GMap.NET.WindowsPresentation
       {
          UpdateMarkersOffset();
 
-         foreach(var i in Markers)
+         foreach(GMapMarker i in ItemsSource)
          {
             i.ForceUpdateLocalPosition(this);
          }
 
-         var routes = Markers.Where(p => p != null && p.Route.Count > 1);
+         var routes = ItemsSource.Cast<GMapMarker>().Where(p => p != null && p.Route.Count > 1);
          if(routes != null)
          {
             foreach(var i in routes)
@@ -550,7 +550,7 @@ namespace GMap.NET.WindowsPresentation
             }
          }
 
-         var polygons = Markers.Where(p => p != null && p.Polygon.Count > 1);
+         var polygons = ItemsSource.Cast<GMapMarker>().Where(p => p != null && p.Polygon.Count > 1);
          if(polygons != null)
          {
             foreach(var i in polygons)
@@ -886,11 +886,11 @@ namespace GMap.NET.WindowsPresentation
 
          if(ZIndex.HasValue)
          {
-            Overlays = Markers.Where(p => p != null && p.ZIndex == ZIndex);
+            Overlays = ItemsSource.Cast<GMapMarker>().Where(p => p != null && p.ZIndex == ZIndex);
          }
          else
          {
-            Overlays = Markers;
+            Overlays = ItemsSource.Cast<GMapMarker>();
          }
 
          if(Overlays != null)
