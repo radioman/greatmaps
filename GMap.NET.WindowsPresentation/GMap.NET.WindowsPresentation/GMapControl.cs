@@ -127,15 +127,6 @@ namespace GMap.NET.WindowsPresentation
          {
             double value = (double) e.NewValue;
 
-            if(value > map.MaxZoom)
-            {
-               value = map.MaxZoom;
-            }
-            else if(value < map.MinZoom)
-            {
-               value = map.MinZoom;
-            }
-
             Debug.WriteLine("ZoomPropertyChanged: " + e.OldValue + " -> " + value);
 
             double remainder = value % 1;
@@ -146,7 +137,7 @@ namespace GMap.NET.WindowsPresentation
                   map.MapRenderTransform = new ScaleTransform(scaleValue, scaleValue, map.ActualWidth / 2, map.ActualHeight / 2);
                }
 
-               map.ZoomStep = Convert.ToInt32(value - remainder);
+               map.Core.Zoom = Convert.ToInt32(value - remainder);
 
                map.Core_OnMapZoomChanged();
 
@@ -155,7 +146,7 @@ namespace GMap.NET.WindowsPresentation
             else
             {
                map.MapRenderTransform = null;
-               map.ZoomStep = Convert.ToInt32(value);
+               map.Core.Zoom = Convert.ToInt32(value);
                map.InvalidateVisual();
             }
          }
@@ -462,11 +453,10 @@ namespace GMap.NET.WindowsPresentation
             Unloaded += new RoutedEventHandler(GMapControl_Unloaded);
             SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
 
-            // TODO: fix, any ideas how?
-            Markers.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
+            // by default its internal property, feel free to use your own
             ItemsSource = Markers;
 
-            ZoomStep = (int) ((double) ZoomProperty.DefaultMetadata.DefaultValue);
+            Core.Zoom = (int) ((double) ZoomProperty.DefaultMetadata.DefaultValue);
 
             googleCopyright = new FormattedText(Core.googleCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             yahooMapCopyright = new FormattedText(Core.yahooMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
@@ -483,7 +473,7 @@ namespace GMap.NET.WindowsPresentation
          Core.ApplicationExit();
       }
 
-      void Markers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+      protected override void OnItemsChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
       {
          if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
          {
@@ -492,7 +482,9 @@ namespace GMap.NET.WindowsPresentation
                marker.ForceUpdateLocalPosition(this);
             }
          }
-      }
+
+         base.OnItemsChanged(e);
+      }    
 
       /// <summary>
       /// inits core system
@@ -851,7 +843,7 @@ namespace GMap.NET.WindowsPresentation
                maxZoom = MaxZoom;
             }
 
-            if(ZoomStep != maxZoom)
+            if(Core.Zoom != maxZoom)
             {
                Zoom = maxZoom;
             }
@@ -1080,11 +1072,6 @@ namespace GMap.NET.WindowsPresentation
          {
             System.Windows.Point p = e.GetPosition(this);
 
-            if(MapRenderTransform != null)
-            {
-               //p = MapRenderTransform.Inverse.Transform(p);
-            }
-
             if(Core.mouseLastZoom.X != (int) p.X && Core.mouseLastZoom.Y != (int) p.Y)
             {
                if(MouseWheelZoomType == MouseWheelZoomType.MousePositionAndCenter)
@@ -1154,6 +1141,7 @@ namespace GMap.NET.WindowsPresentation
             InvalidateVisual();
          }
          else
+         {
             if(!isSelected)
             {
                System.Windows.Point p = e.GetPosition(this);
@@ -1162,7 +1150,7 @@ namespace GMap.NET.WindowsPresentation
                selectionEnd = PointLatLng.Empty;
                selectionStart = FromLocalToLatLng((int) p.X, (int) p.Y);
             }
-
+         }
          base.OnMouseDown(e);
       }
 
@@ -1279,12 +1267,6 @@ namespace GMap.NET.WindowsPresentation
             y = (int) tp.Y;
          }
 
-         if(MapTranslateTransform != null)
-         {
-            //x -= (int) MapTranslateTransform.X;
-            //y -= (int) MapTranslateTransform.Y;
-         }
-
          return Core.FromLocalToLatLng(x, y);
       }
 
@@ -1397,31 +1379,6 @@ namespace GMap.NET.WindowsPresentation
          }
 #endif
          return false;
-      }
-
-      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-      [Browsable(false)]
-      internal int ZoomStep
-      {
-         get
-         {
-            return Core.Zoom;
-         }
-         set
-         {
-            if(value > MaxZoom)
-            {
-               Core.Zoom = MaxZoom;
-            }
-            else if(value < MinZoom)
-            {
-               Core.Zoom = MinZoom;
-            }
-            else
-            {
-               Core.Zoom = value;
-            }
-         }
       }
 
       [Browsable(false)]

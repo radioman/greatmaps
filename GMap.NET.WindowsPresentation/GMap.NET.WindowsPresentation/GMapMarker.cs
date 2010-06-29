@@ -232,7 +232,8 @@ namespace GMap.NET.WindowsPresentation
       }
 
       /// <summary>
-      /// forces to  update local marker  position
+      /// forces to update local marker  position
+      /// dot not call it if you don't really need to ;}
       /// </summary>
       /// <param name="m"></param>
       public void ForceUpdateLocalPosition(GMapControl m)
