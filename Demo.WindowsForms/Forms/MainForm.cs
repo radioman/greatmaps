@@ -221,7 +221,6 @@ namespace Demo.WindowsForms
          {
             m.ToolTipText = (tt++).ToString();
             m.ToolTipMode = MarkerTooltipMode.Always;
-            m.Offset = new System.Drawing.Point(-m.Size.Width, -m.Size.Height);
          }
 
          objects.Markers.Add(m);
