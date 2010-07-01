@@ -1344,7 +1344,7 @@ namespace GMap.NET.WindowsForms
                {
                   foreach(GMapMarker m in o.Markers)
                   {
-                     if(m.Visible)
+                     if(m.Visible && m.IsHitTestVisible)
                      {
                         if(m.LocalArea.Contains(e.X, e.Y))
                         {
@@ -1409,7 +1409,7 @@ namespace GMap.NET.WindowsForms
                   {
                      foreach(GMapMarker m in o.Markers)
                      {
-                        if(m.Visible)
+                        if(m.Visible && m.IsHitTestVisible)
                         {
                            if(m.LocalArea.Contains(e.X, e.Y))
                            {

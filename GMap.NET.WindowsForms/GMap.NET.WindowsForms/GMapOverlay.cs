@@ -256,7 +256,7 @@ namespace GMap.NET.WindowsForms
                // markers
                foreach(GMapMarker m in Markers)
                {
-                  if(m.Visible && Control.Core.CurrentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
+                  if(m.Visible && (m.DisableRegionCheck || Control.Core.CurrentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y)))
                   {
                      m.OnRender(g);
                   }

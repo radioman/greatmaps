@@ -150,9 +150,26 @@ namespace GMap.NET.WindowsForms
          }
       }
 
+      /// <summary>
+      /// is marker visible
+      /// </summary>
       public bool Visible = true;
 
+      /// <summary>
+      /// if true, marker will be rendered even if it's outside current view
+      /// </summary>
+      public bool DisableRegionCheck = false;
+
+      /// <summary>
+      /// can maker receive input
+      /// </summary>
+      public bool IsHitTestVisible = true;
+
       private bool isMouseOver = false;
+
+      /// <summary>
+      /// is mouse over marker
+      /// </summary>
       public bool IsMouseOver
       {
          get
