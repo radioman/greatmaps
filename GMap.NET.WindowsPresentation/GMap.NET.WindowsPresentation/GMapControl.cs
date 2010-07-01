@@ -484,7 +484,7 @@ namespace GMap.NET.WindowsPresentation
          }
 
          base.OnItemsChanged(e);
-      }    
+      }
 
       /// <summary>
       /// inits core system
@@ -609,17 +609,15 @@ namespace GMap.NET.WindowsPresentation
          {
             foreach(var tilePoint in Core.tileDrawingList)
             {
-               Core.tilePoint = tilePoint;
-
-               Core.tileRect.X = Core.tilePoint.X * Core.tileRect.Width;
-               Core.tileRect.Y = Core.tilePoint.Y * Core.tileRect.Height;
+               Core.tileRect.X = tilePoint.X * Core.tileRect.Width;
+               Core.tileRect.Y = tilePoint.Y * Core.tileRect.Height;
                Core.tileRect.Offset(Core.renderOffset);
 
                if(region.IntersectsWith(Core.tileRect))
                {
                   bool found = false;
 
-                  Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, Core.tilePoint);
+                  Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tilePoint);
                   if(t != null)
                   {
                      lock(t.Overlays)
@@ -642,7 +640,7 @@ namespace GMap.NET.WindowsPresentation
                   {
                      lock(Core.FailedLoads)
                      {
-                        var lt = new LoadTask(Core.tilePoint, Core.Zoom);
+                        var lt = new LoadTask(tilePoint, Core.Zoom);
 
                         if(Core.FailedLoads.ContainsKey(lt))
                         {
@@ -663,14 +661,14 @@ namespace GMap.NET.WindowsPresentation
                   {
                      g.DrawRectangle(null, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
 
-                     if(Core.tilePoint == Core.centerTileXYLocation)
+                     if(tilePoint == Core.centerTileXYLocation)
                      {
-                        FormattedText TileText = new FormattedText("CENTER:" + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
+                        FormattedText TileText = new FormattedText("CENTER:" + tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
                         g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - TileText.Height / 2));
                      }
                      else
                      {
-                        FormattedText TileText = new FormattedText("TILE: " + Core.tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
+                        FormattedText TileText = new FormattedText("TILE: " + tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
                         g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - TileText.Height / 2));
                      }
                   }

@@ -1,25 +1,53 @@
 ﻿
 namespace GMap.NET.WindowsPresentation
 {
+   using System.Collections.Generic;
+   using System.Collections.ObjectModel;
+   using System.Diagnostics;
+   using System.Windows;
    using System.Windows.Media;
    using System.Windows.Media.Imaging;
    using GMap.NET.Internals;
-   using System.Windows;
-   using System.Diagnostics;
 
    internal class TileVisual : FrameworkElement
    {
-      public readonly ImageSource[] Source;
+      public readonly ObservableCollection<ImageSource> Source;
       public readonly RawTile Tile;
 
-      public TileVisual(ImageSource[] src, RawTile tile)
+      public TileVisual(IEnumerable<ImageSource> src, RawTile tile)
       {
          Opacity = 0;
-         Source = src;
          Tile = tile;
 
+         Source = new ObservableCollection<ImageSource>(src);
+         Source.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Source_CollectionChanged);
+
          this.Loaded += new RoutedEventHandler(ImageVisual_Loaded);
-         this.Unloaded += new RoutedEventHandler(ImageVisual_Unloaded);       
+         this.Unloaded += new RoutedEventHandler(ImageVisual_Unloaded);
+      }
+
+      void Source_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+      {
+         if(IsLoaded)
+         {
+            switch(e.Action)
+            {
+               case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
+               case System.Collections.Specialized.NotifyCollectionChangedAction.Move:
+               case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
+               case System.Collections.Specialized.NotifyCollectionChangedAction.Replace:
+               {
+                  UpdateVisual();
+               }
+               break;
+
+               case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
+               {
+                  Child = null;
+               }
+               break;
+            }
+         }
       }
 
       void ImageVisual_Unloaded(object sender, RoutedEventArgs e)
@@ -68,19 +96,24 @@ namespace GMap.NET.WindowsPresentation
          Child = Create();
       }
 
+      static readonly Pen gridPen = new Pen(Brushes.White, 2.0);
+
       private DrawingVisual Create()
       {
-         var square = new DrawingVisual();
+         var dv = new DrawingVisual();
 
-         using(DrawingContext dc = square.RenderOpen())
+         using(DrawingContext dc = dv.RenderOpen())
          {
             foreach(var img in Source)
             {
-               dc.DrawImage(img, new Rect(new Size(img.Width + 0.5, img.Height + 0.5)));
+               var rect = new Rect(0, 0, img.Width + 0.6, img.Height + 0.6);
+
+               dc.DrawImage(img, rect);
+               dc.DrawRectangle(null, gridPen, rect);
             }
          }
 
-         return square;
+         return dv;
       }
 
       #region Necessary Overrides -- Needed by WPF to maintain bookkeeping of our hosted visuals
@@ -98,7 +131,7 @@ namespace GMap.NET.WindowsPresentation
          return Child;
       }
       #endregion
-   }     
+   }
 
    /// <summary>
    /// image abstraction
@@ -111,7 +144,7 @@ namespace GMap.NET.WindowsPresentation
       {
          if(Img != null)
          {
-            Img = null;             
+            Img = null;
          }
 
          if(Data != null)
@@ -172,7 +205,7 @@ namespace GMap.NET.WindowsPresentation
                   }
 
                   m = null;
-                  bitmapDecoder = null;                    
+                  bitmapDecoder = null;
                }
                catch
                {
@@ -194,7 +227,7 @@ namespace GMap.NET.WindowsPresentation
                {
                }
             }
-         } 
+         }
          return ret;
       }
 

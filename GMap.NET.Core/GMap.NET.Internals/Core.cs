@@ -38,8 +38,6 @@ namespace GMap.NET.Internals
       public Size maxOfTiles;
 
       public Rectangle tileRect;
-      public Point tilePoint;
-
       public Rectangle CurrentRegion;
 
       public readonly TileMatrix Matrix = new TileMatrix();
@@ -1123,12 +1121,12 @@ namespace GMap.NET.Internals
       /// </summary>
       void UpdateBounds()
       {
+         Debug.WriteLine("OnTileLoadStart - at zoom " + Zoom + ", time: " + DateTime.Now.TimeOfDay);
+
          tileDrawingListLock.AcquireWriterLock();
          try
          {
             FindTilesAround();
-
-            Debug.WriteLine("OnTileLoadStart: " + tileDrawingList.Count + " tiles to load at zoom " + Zoom + ", time: " + DateTime.Now.TimeOfDay);
 
             if(OnTileLoadStart != null)
             {
