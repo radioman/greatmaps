@@ -72,6 +72,7 @@ namespace GMap.NET
 
       // YandexMap
       public string VersionYandexMap = "2.15.0";
+      public string VersionYandexSatellite = "1.18.0";
 
       /// <summary>
       /// Bing Maps Customer Identification, more info here
@@ -423,6 +424,14 @@ namespace GMap.NET
                   types = new MapType[2];
                   types[0] = MapType.MapsLT_OrtoFoto;
                   types[1] = MapType.MapsLT_Map_Labels;
+               }
+               break;
+
+               case MapType.YandexMapRuHybrid:
+               {
+                  types = new MapType[2];
+                  types[0] = MapType.YandexMapRuSatellite;
+                  types[1] = MapType.YandexMapRuLabels;
                }
                break;
 
@@ -1428,6 +1437,25 @@ namespace GMap.NET
 
                return string.Format("http://{0}0{1}.maps.yandex.ru/tiles?l=map&v={2}&x={3}&y={4}&z={5}", server, GetServerNum(pos, 4)+1, VersionYandexMap, pos.X, pos.Y, zoom);
             }
+
+            case MapType.YandexMapRuSatellite:
+            {
+               string server = "sat";
+
+               //http://sat04.maps.yandex.ru/tiles?l=sat&v=1.18.0&x=149511&y=83513&z=18&g=Gagari
+
+               return string.Format("http://{0}0{1}.maps.yandex.ru/tiles?l=sat&v={2}&x={3}&y={4}&z={5}", server, GetServerNum(pos, 4)+1, VersionYandexSatellite, pos.X, pos.Y, zoom);
+            }
+
+            case MapType.YandexMapRuLabels:
+            {
+               string server = "vec";
+
+               //http://vec03.maps.yandex.ru/tiles?l=skl&v=2.15.0&x=585&y=326&z=10&g=G
+
+               return string.Format("http://{0}0{1}.maps.yandex.ru/tiles?l=skl&v={2}&x={3}&y={4}&z={5}", server, GetServerNum(pos, 4)+1, VersionYandexMap, pos.X, pos.Y, zoom);
+            }
+
             #endregion
 
             #region -- WMS demo --

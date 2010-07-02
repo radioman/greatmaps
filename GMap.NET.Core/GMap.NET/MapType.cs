@@ -56,7 +56,7 @@ namespace GMap.NET
       MapsLT_Map_Labels=1002,
       MapsLT_Map_Hybrid=1003,
 
-      PergoTurkeyMap = 2001, 
+      PergoTurkeyMap = 2001,
       SigPacSpainMap = 3001,
 
       GoogleMapKorea=4001,
@@ -64,8 +64,11 @@ namespace GMap.NET
       GoogleLabelsKorea=4003,
       GoogleHybridKorea=4005,
 
-      YandexMapRu = 5000,
+      YandexMapRu=5000,
+      YandexMapRuSatellite=5001,
+      YandexMapRuLabels=5002,
+      YandexMapRuHybrid=5003,
 
-      MapBenderWMS = 6000,
+      MapBenderWMS=6000,
    }
 }
