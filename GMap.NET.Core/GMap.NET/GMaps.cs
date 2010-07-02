@@ -495,12 +495,15 @@ namespace GMap.NET
             break;
 
             case MapType.YandexMapRu:
+            case MapType.YandexMapRuHybrid:
+            case MapType.YandexMapRuLabels:
+            case MapType.YandexMapRuSatellite:
             {
                if(false == (Projection is MercatorProjectionYandex))
                {
                   Projection = new MercatorProjectionYandex();
                }
-               maxZoom = 13;
+               maxZoom = 18;
             }
             break;
 
