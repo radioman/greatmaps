@@ -39,21 +39,21 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "m@126";
-      public string VersionGoogleSatellite = "61";
-      public string VersionGoogleLabels = "h@126";
-      public string VersionGoogleTerrain = "t@125,r@126";
+      public string VersionGoogleMap = "m@129";
+      public string VersionGoogleSatellite = "63";
+      public string VersionGoogleLabels = "h@129";
+      public string VersionGoogleTerrain = "t@125,r@129";
       public string SecGoogleWord = "Galileo";
 
       // Google (China) version strings
-      public string VersionGoogleMapChina = "m@126";
-      public string VersionGoogleSatelliteChina = "s@61";
-      public string VersionGoogleLabelsChina = "h@126";
-      public string VersionGoogleTerrainChina = "t@125,r@126";
+      public string VersionGoogleMapChina = "m@129";
+      public string VersionGoogleSatelliteChina = "s@63";
+      public string VersionGoogleLabelsChina = "h@129";
+      public string VersionGoogleTerrainChina = "t@125,r@129";
 
       // Google (Korea) version strings
       public string VersionGoogleMapKorea = "kr1.12";
-      public string VersionGoogleSatelliteKorea = "61";
+      public string VersionGoogleSatelliteKorea = "63";
       public string VersionGoogleLabelsKorea = "kr1t.12";
 
       /// <summary>
@@ -68,10 +68,10 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.3";
 
       // BingMaps
-      public string VersionBingMaps = "470";
+      public string VersionBingMaps = "488";
 
       // YandexMap
-      public string VersionYandexMap = "2.10.2";
+      public string VersionYandexMap = "2.15.0";
 
       /// <summary>
       /// Bing Maps Customer Identification, more info here
