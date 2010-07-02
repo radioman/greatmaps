@@ -681,23 +681,6 @@ namespace GMap.NET.Internals
       }
 
       /// <summary>
-      /// sets current position by geocoding
-      /// </summary>
-      /// <param name="keys"></param>
-      /// <returns></returns>
-      public GeoCoderStatusCode SetCurrentPositionByKeywords(string keys)
-      {
-         GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
-         PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder(keys, out status);
-         if(pos.HasValue && status == GeoCoderStatusCode.G_GEO_SUCCESS)
-         {
-            CurrentPosition = pos.Value;
-         }
-
-         return status;
-      }
-
-      /// <summary>
       /// gets current map view top/left coordinate, width in Lng, height in Lat
       /// </summary>
       /// <returns></returns>

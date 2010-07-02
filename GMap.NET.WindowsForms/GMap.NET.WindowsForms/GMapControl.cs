@@ -1525,7 +1525,14 @@ namespace GMap.NET.WindowsForms
       /// <returns>true if successfull</returns>
       public GeoCoderStatusCode SetCurrentPositionByKeywords(string keys)
       {
-         return Core.SetCurrentPositionByKeywords(keys);
+         GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
+         PointLatLng? pos = Manager.GetLatLngFromGeocoder(keys, out status);
+         if(pos.HasValue && status == GeoCoderStatusCode.G_GEO_SUCCESS)
+         {
+            CurrentPosition = pos.Value;
+         }
+
+         return status;
       }
 
       /// <summary>
