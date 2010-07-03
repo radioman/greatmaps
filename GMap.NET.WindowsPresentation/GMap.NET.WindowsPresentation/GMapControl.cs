@@ -538,24 +538,19 @@ namespace GMap.NET.WindowsPresentation
 
          foreach(GMapMarker i in ItemsSource)
          {
-            i.ForceUpdateLocalPosition(this);
-         }
-
-         var routes = ItemsSource.Cast<GMapMarker>().Where(p => p != null && p.Route.Count > 1);
-         if(routes != null)
-         {
-            foreach(var i in routes)
+            if(i != null)
             {
-               i.RegenerateRouteShape(this);
-            }
-         }
+               i.ForceUpdateLocalPosition(this);
 
-         var polygons = ItemsSource.Cast<GMapMarker>().Where(p => p != null && p.Polygon.Count > 1);
-         if(polygons != null)
-         {
-            foreach(var i in polygons)
-            {
-               i.RegeneratePolygonShape(this);
+               if(i.Route.Count > 0)
+               {
+                  i.RegenerateRouteShape(this);
+               }
+
+               if(i.Polygon.Count > 0)
+               {
+                  i.RegeneratePolygonShape(this);
+               }
             }
          }
       }
@@ -1298,7 +1293,6 @@ namespace GMap.NET.WindowsPresentation
 
          return ret;
       }
-
 
       public bool ShowExportDialog()
       {
