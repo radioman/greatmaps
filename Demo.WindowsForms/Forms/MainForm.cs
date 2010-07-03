@@ -720,7 +720,7 @@ namespace Demo.WindowsForms
 
                               if(snap)
                               {
-                                 if(checkBoxTcpIpSnap.Checked)
+                                 if(checkBoxTcpIpSnap.Checked && !MainMap.IsDragging)
                                  {
                                     MainMap.CurrentPosition = marker.Position;
                                  }
@@ -748,6 +748,15 @@ namespace Demo.WindowsForms
                         if(tcpRoutes.TryGetValue(tcp.Key, out route))
                         {
                            routes.Routes.Remove(route);
+                        }
+
+                        lock(TcpStateNeedLocationInfo)
+                        {
+                           bool r = TcpStateNeedLocationInfo.Remove(tcp.Key);
+                           if(r)
+                           {
+                              Debug.WriteLine("TcpStateNeedLocationInfo: removed " + tcp.Key + " " + r);
+                           }
                         }
                      }
                      else

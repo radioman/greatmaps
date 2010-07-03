@@ -18,7 +18,18 @@ namespace GMap.NET.WindowsForms
          attr.SetColorKey(Color.White, Color.White);
       }
 #endif
-      internal GMapOverlay Overlay;
+      GMapOverlay overlay;
+      public GMapOverlay Overlay
+      {
+         get
+         {
+            return overlay;
+         }
+         internal set
+         {
+            overlay = value;
+         }
+      }
 
       private PointLatLng position;
       public PointLatLng Position
