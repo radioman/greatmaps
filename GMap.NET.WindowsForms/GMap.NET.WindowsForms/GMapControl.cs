@@ -289,7 +289,7 @@ namespace GMap.NET.WindowsForms
       Font ScaleFont = new Font(FontFamily.GenericSansSerif, 5, FontStyle.Italic);
       internal readonly StringFormat CenterFormat = new StringFormat();
       internal readonly StringFormat BottomFormat = new StringFormat();
-      bool RaiseEmptyTileError = false;
+
       double zoomReal;
       Bitmap backBuffer;
       Graphics gxOff;
@@ -348,7 +348,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// update objects when map is draged
       /// </summary>
-      void Core_OnMapDrag()
+      internal void Core_OnMapDrag()
       {
          HoldInvalidation = true;
 
@@ -356,20 +356,7 @@ namespace GMap.NET.WindowsForms
          {
             if(o.IsVisibile)
             {
-               foreach(GMapMarker obj in o.Markers)
-               {
-                  obj.ForceUpdateLocalPosition();
-               }
-
-               foreach(GMapPolygon obj in o.Polygons)
-               {
-                  UpdatePolygonLocalPosition(obj);
-               }
-
-               foreach(GMapRoute obj in o.Routes)
-               {
-                  UpdateRouteLocalPosition(obj);
-               }
+               o.ForceUpdate();
             }
          }
 
@@ -521,6 +508,16 @@ namespace GMap.NET.WindowsForms
       }
 
       /// <summary>
+      /// updates markers local position
+      /// </summary>
+      /// <param name="marker"></param>
+      public void UpdateMarkerLocalPosition(GMapMarker marker)
+      {
+         GMap.NET.Point p = FromLatLngToLocal(marker.Position);
+         marker.LocalPosition = new System.Drawing.Point(p.X + marker.Offset.X, p.Y  + marker.Offset.Y);
+      }
+
+      /// <summary>
       /// updates routes local position
       /// </summary>
       /// <param name="route"></param>
@@ -650,7 +647,7 @@ namespace GMap.NET.WindowsForms
                {
                   foreach(GMapMarker m in o.Markers)
                   {
-                     if(m.Visible)
+                     if(m.IsVisible)
                      {
                         // left
                         if(m.Position.Lng < left)
@@ -1329,7 +1326,6 @@ namespace GMap.NET.WindowsForms
             }
 #endif
          }
-         RaiseEmptyTileError = false;
       }
 
 #if !PocketPC
@@ -1344,7 +1340,7 @@ namespace GMap.NET.WindowsForms
                {
                   foreach(GMapMarker m in o.Markers)
                   {
-                     if(m.Visible && m.IsHitTestVisible)
+                     if(m.IsVisible && m.IsHitTestVisible)
                      {
                         if(m.LocalArea.Contains(e.X, e.Y))
                         {
@@ -1409,7 +1405,7 @@ namespace GMap.NET.WindowsForms
                   {
                      foreach(GMapMarker m in o.Markers)
                      {
-                        if(m.Visible && m.IsHitTestVisible)
+                        if(m.IsVisible && m.IsHitTestVisible)
                         {
                            if(m.LocalArea.Contains(e.X, e.Y))
                            {
@@ -1511,7 +1507,7 @@ namespace GMap.NET.WindowsForms
       #region IGControl Members
 
       /// <summary>
-      /// reloads the map
+      /// Call it to empty tile cache & reload tiles
       /// </summary>
       public void ReloadMap()
       {

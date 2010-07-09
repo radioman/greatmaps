@@ -2494,6 +2494,9 @@ namespace GMap.NET
                      break;
 
                      case MapType.YandexMapRu:
+                     case MapType.YandexMapRuHybrid:
+                     case MapType.YandexMapRuLabels:
+                     case MapType.YandexMapRuSatellite:
                      {
                         request.Referer = "http://maps.yandex.ru/";
                      }
@@ -2530,6 +2533,9 @@ namespace GMap.NET
                            }
                         }
                      }
+#if PocketPC
+                     request.Abort();
+#endif
                      response.Close();
                   }
                }

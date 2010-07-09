@@ -222,7 +222,7 @@ namespace Demo.WindowsForms
                         // tooltips above
                         foreach(GMapMarker m in Main.objects.Markers)
                         {
-                           if(m.ToolTip != null && m.Visible)
+                           if(m.ToolTip != null && m.IsVisible)
                            {
                               if(!string.IsNullOrEmpty(m.ToolTipText))
                               {

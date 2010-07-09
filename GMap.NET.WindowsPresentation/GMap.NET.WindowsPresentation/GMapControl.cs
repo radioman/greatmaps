@@ -1241,6 +1241,9 @@ namespace GMap.NET.WindowsPresentation
 
       #region IGControl Members
 
+      /// <summary>
+      /// Call it to empty tile cache & reload tiles
+      /// </summary>
       public void ReloadMap()
       {
          Core.ReloadMap();

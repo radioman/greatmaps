@@ -1202,7 +1202,11 @@ namespace Demo.WindowsForms
          if(e.Button == MouseButtons.Left)
          {
             isMouseDown = true;
-            currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
+
+            if(currentMarker.IsVisible)
+            {
+               currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
+            }
          }
       }
 
@@ -1213,7 +1217,10 @@ namespace Demo.WindowsForms
          {
             if(CurentRectMarker == null)
             {
-               currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
+               if(currentMarker.IsVisible)
+               {
+                  currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
+               }
             }
             else // move rect marker
             {
@@ -1229,7 +1236,10 @@ namespace Demo.WindowsForms
                   }
                }
 
-               currentMarker.Position = pnew;
+               if(currentMarker.IsVisible)
+               {
+                  currentMarker.Position = pnew;
+               }
                CurentRectMarker.Position = pnew;
 
                if(CurentRectMarker.InnerMarker != null)
@@ -1503,14 +1513,7 @@ namespace Demo.WindowsForms
       // show current marker
       private void checkBoxCurrentMarker_CheckedChanged(object sender, EventArgs e)
       {
-         if(checkBoxCurrentMarker.Checked)
-         {
-            top.Markers.Add(currentMarker);
-         }
-         else
-         {
-            top.Markers.Remove(currentMarker);
-         }
+         currentMarker.IsVisible = checkBoxCurrentMarker.Checked;
       }
 
       // can drag

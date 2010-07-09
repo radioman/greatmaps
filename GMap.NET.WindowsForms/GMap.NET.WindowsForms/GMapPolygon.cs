@@ -11,6 +11,54 @@ namespace GMap.NET.WindowsForms
    /// </summary>
    public class GMapPolygon : MapRoute
    {
+      private bool visible = true;
+
+      /// <summary>
+      /// is marker visible
+      /// </summary>
+      public bool IsVisible
+      {
+         get
+         {
+            return visible;
+         }
+         set
+         {
+            if(value != visible)
+            {
+               visible = value;
+
+               if(Overlay != null && Overlay.Control != null)
+               {
+                  if(visible)
+                  {
+                     Overlay.Control.UpdatePolygonLocalPosition(this);
+                  }
+
+                  {
+                     if(!Overlay.Control.HoldInvalidation)
+                     {
+                        Overlay.Control.Invalidate();
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      GMapOverlay overlay;
+      public GMapOverlay Overlay
+      {
+         get
+         {
+            return overlay;
+         }
+         internal set
+         {
+            overlay = value;
+         }
+      }
+
       /// <summary>
       /// specifies how the outline is painted
       /// </summary>

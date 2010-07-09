@@ -42,20 +42,14 @@ namespace GMap.NET.WindowsForms
          {
             position = value;
 
-            if(Overlay != null && Overlay.Control != null)
+            if(IsVisible)
             {
-               GMap.NET.Point p = Overlay.Control.FromLatLngToLocal(Position);
-               LocalPosition = new Point(p.X + Offset.X, p.Y  + Offset.Y);
+               if(Overlay != null && Overlay.Control != null)
+               {
+                  GMap.NET.Point p = Overlay.Control.FromLatLngToLocal(Position);
+                  LocalPosition = new Point(p.X + Offset.X, p.Y  + Offset.Y);
+               }
             }
-         }
-      }
-
-      internal void ForceUpdateLocalPosition()
-      {
-         if(Overlay != null && Overlay.Control != null)
-         {
-            GMap.NET.Point p = Overlay.Control.FromLatLngToLocal(Position);
-            area.Location = new Point(p.X + Offset.X, p.Y  + Offset.Y);
          }
       }
 
@@ -90,12 +84,13 @@ namespace GMap.NET.WindowsForms
             if(area.Location != value)
             {
                area.Location = value;
-
-               if(Overlay != null && Overlay.Control != null)
                {
-                  if(!Overlay.Control.HoldInvalidation)
+                  if(Overlay != null && Overlay.Control != null)
                   {
-                     Overlay.Control.Core_OnNeedInvalidation();
+                     if(!Overlay.Control.HoldInvalidation)
+                     {
+                        Overlay.Control.Core_OnNeedInvalidation();
+                     }
                   }
                }
             }
@@ -161,10 +156,40 @@ namespace GMap.NET.WindowsForms
          }
       }
 
+      private bool visible = true;
+
       /// <summary>
       /// is marker visible
       /// </summary>
-      public bool Visible = true;
+      public bool IsVisible
+      {
+         get
+         {
+            return visible;
+         }
+         set
+         {
+            if(value != visible)
+            {
+               visible = value;
+
+               if(Overlay != null && Overlay.Control != null)
+               {
+                  if(visible)
+                  {
+                     Overlay.Control.UpdateMarkerLocalPosition(this);
+                  }
+
+                  {
+                     if(!Overlay.Control.HoldInvalidation)
+                     {
+                        Overlay.Control.Invalidate();
+                     }
+                  }
+               }
+            }
+         }
+      }
 
       /// <summary>
       /// if true, marker will be rendered even if it's outside current view

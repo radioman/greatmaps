@@ -11,6 +11,54 @@ namespace GMap.NET.WindowsForms
    /// </summary>
    public class GMapRoute : MapRoute
    {
+      GMapOverlay overlay;
+      public GMapOverlay Overlay
+      {
+         get
+         {
+            return overlay;
+         }
+         internal set
+         {
+            overlay = value;
+         }
+      }
+
+      private bool visible = true;
+
+      /// <summary>
+      /// is marker visible
+      /// </summary>
+      public bool IsVisible
+      {
+         get
+         {
+            return visible;
+         }
+         set
+         {
+            if(value != visible)
+            {
+               visible = value;
+
+               if(Overlay != null && Overlay.Control != null)
+               {
+                  if(visible)
+                  {
+                     Overlay.Control.UpdateRouteLocalPosition(this);
+                  }
+                  
+                  {
+                     if(!Overlay.Control.HoldInvalidation)
+                     {
+                        Overlay.Control.Invalidate();
+                     }
+                  }
+               }
+            }
+         }
+      }
+
       /// <summary>
       /// specifies how the outline is painted
       /// </summary>
