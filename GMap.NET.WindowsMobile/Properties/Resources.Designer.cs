@@ -65,16 +65,15 @@ namespace GMap.NET.WindowsMobile.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CREATE TABLE IF NOT EXISTS Tiles (id INTEGER NOT NULL PRIMARY KEY, X INTEGER NOT NULL, Y INTEGER NOT NULL, Zoom INTEGER NOT NULL, Type INTEGER NOT NULL);
+        ///   Looks up a localized string similar to CREATE TABLE IF NOT EXISTS Tiles (id INTEGER NOT NULL PRIMARY KEY, X INTEGER NOT NULL, Y INTEGER NOT NULL, Zoom INTEGER NOT NULL, Type INTEGER NOT NULL, CacheTime DATETIME);
         ///CREATE INDEX IF NOT EXISTS IndexOfTiles ON Tiles (X, Y, Zoom, Type);
-        ///
+        /// 
         ///CREATE TABLE IF NOT EXISTS TilesData (id INTEGER NOT NULL PRIMARY KEY CONSTRAINT fk_Tiles_id REFERENCES Tiles(id) ON DELETE CASCADE, Tile BLOB NULL);
         ///
         ///-- Foreign Key Preventing insert
         ///CREATE TRIGGER fki_TilesData_id_Tiles_id
         ///BEFORE INSERT ON [TilesData]
-        ///FOR EACH ROW BEGIN
-        ///  SELE [rest of string was truncated]&quot;;.
+        ///FOR E [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CreateTileDb {
             get {

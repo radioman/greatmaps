@@ -1244,7 +1244,7 @@ namespace GMap.NET.WindowsForms
          // 50px outside control
          Core.CurrentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
 
-         if(Core.started)
+         if(Core.IsStarted)
          {
             if(Visible) // && IsHandleCreated
             {

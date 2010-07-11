@@ -27,6 +27,7 @@ namespace GMap.NET.CacheProviders
       string cache;
       string gtileCache;
       string db;
+      bool Created = false;
 
       public string GtileCache
       {
@@ -64,9 +65,12 @@ namespace GMap.NET.CacheProviders
 
                if(!File.Exists(db))
                {
-                  CreateEmptyDB(db);
+                  Created = CreateEmptyDB(db);
                }
-
+               else
+               {
+                  Created = AlterDBAddTimeColumn(db);
+               }
 #if !MONO
                ConnectionString = string.Format("Data Source=\"{0}\";", db);
 #else
@@ -135,6 +139,99 @@ namespace GMap.NET.CacheProviders
             Console.WriteLine("CreateEmptyDB: " + ex.ToString());
 #endif
             Debug.WriteLine("CreateEmptyDB: " + ex.ToString());
+            ret = false;
+         }
+         return ret;
+      }
+
+      private static bool AlterDBAddTimeColumn(string file)
+      {
+         bool ret = true;
+
+         try
+         {
+            if(File.Exists(file))
+            {
+               using(SQLiteConnection cn = new SQLiteConnection())
+               {
+#if !MONO
+                  cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=False;", file);
+#else
+                  cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=False", file);
+#endif
+                  cn.Open();
+                  {
+                     using(DbTransaction tr = cn.BeginTransaction())
+                     {
+                        bool? NoCacheTimeColumn = null;
+
+                        try
+                        {
+                           using(DbCommand cmd = new SQLiteCommand("SELECT CacheTime FROM Tiles", cn))
+                           {
+                              cmd.Transaction = tr;
+
+                              using(DbDataReader rd = cmd.ExecuteReader())
+                              {
+                                 rd.Close();
+                              }
+                              NoCacheTimeColumn = false;
+                           }
+                        }
+                        catch(Exception ex)
+                        {
+                           if(ex.Message.Contains("no such column: CacheTime"))
+                           {
+                              NoCacheTimeColumn = true;
+                           }
+                           else
+                           {
+                              throw ex;
+                           }
+                        }
+
+                        try
+                        {
+                           if(NoCacheTimeColumn.HasValue && NoCacheTimeColumn.Value)
+                           {
+                              using(DbCommand cmd = cn.CreateCommand())
+                              {
+                                 cmd.Transaction = tr;
+
+                                 cmd.CommandText = "ALTER TABLE Tiles ADD CacheTime DATETIME";
+
+                                 cmd.ExecuteNonQuery();
+                              }
+                              tr.Commit();
+                              NoCacheTimeColumn = false;
+                           }
+                        }
+                        catch(Exception exx)
+                        {
+#if MONO                   
+                           Console.WriteLine("AlterDBAddTimeColumn: " + exx.ToString());
+#endif
+                           Debug.WriteLine("AlterDBAddTimeColumn: " + exx.ToString());
+
+                           tr.Rollback();
+                           ret = false;
+                        }
+                     }
+                     cn.Close();
+                  }
+               }
+            }
+            else
+            {
+               ret = false;
+            }
+         }
+         catch(Exception ex)
+         {
+#if MONO
+            Console.WriteLine("AlterDBAddTimeColumn: " + ex.ToString());
+#endif
+            Debug.WriteLine("AlterDBAddTimeColumn: " + ex.ToString());
             ret = false;
          }
          return ret;
@@ -279,64 +376,67 @@ namespace GMap.NET.CacheProviders
       bool PureImageCache.PutImageToCache(MemoryStream tile, MapType type, Point pos, int zoom)
       {
          bool ret = true;
-         try
+         if(Created)
          {
-            using(SQLiteConnection cn = new SQLiteConnection())
+            try
             {
-               cn.ConnectionString = ConnectionString;
-               cn.Open();
+               using(SQLiteConnection cn = new SQLiteConnection())
                {
-                  using(DbTransaction tr = cn.BeginTransaction())
+                  cn.ConnectionString = ConnectionString;
+                  cn.Open();
                   {
-                     try
+                     using(DbTransaction tr = cn.BeginTransaction())
                      {
-                        using(DbCommand cmd = cn.CreateCommand())
+                        try
                         {
-                           cmd.Transaction = tr;
+                           using(DbCommand cmd = cn.CreateCommand())
+                           {
+                              cmd.Transaction = tr;
+                              cmd.CommandText = "INSERT INTO Tiles(X, Y, Zoom, Type, CacheTime) VALUES(@p1, @p2, @p3, @p4, @p5)";
 
-                           cmd.CommandText = "INSERT INTO Tiles(X, Y, Zoom, Type) VALUES(@p1, @p2, @p3, @p4)";
+                              cmd.Parameters.Add(new SQLiteParameter("@p1", pos.X));
+                              cmd.Parameters.Add(new SQLiteParameter("@p2", pos.Y));
+                              cmd.Parameters.Add(new SQLiteParameter("@p3", zoom));
+                              cmd.Parameters.Add(new SQLiteParameter("@p4", (int) type));
+                              cmd.Parameters.Add(new SQLiteParameter("@p5", DateTime.Now));
 
-                           cmd.Parameters.Add(new SQLiteParameter("@p1", pos.X));
-                           cmd.Parameters.Add(new SQLiteParameter("@p2", pos.Y));
-                           cmd.Parameters.Add(new SQLiteParameter("@p3", zoom));
-                           cmd.Parameters.Add(new SQLiteParameter("@p4", (int) type));
+                              cmd.ExecuteNonQuery();
+                           }
 
-                           cmd.ExecuteNonQuery();
+                           using(DbCommand cmd = cn.CreateCommand())
+                           {
+                              cmd.Transaction = tr;
+
+                              cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
+                              cmd.Parameters.Add(new SQLiteParameter("@p1", tile.GetBuffer()));
+
+                              cmd.ExecuteNonQuery();
+                           }
+                           tr.Commit();
                         }
-
-                        using(DbCommand cmd = cn.CreateCommand())
+                        catch(Exception ex)
                         {
-                           cmd.Transaction = tr;
-
-                           cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
-                           cmd.Parameters.Add(new SQLiteParameter("@p1", tile.GetBuffer()));
-
-                           cmd.ExecuteNonQuery();
-                        }
-                        tr.Commit();
-                     }
-                     catch(Exception ex)
-                     {
 #if MONO
                         Console.WriteLine("PutImageToCache: " + ex.ToString());
 #endif
-                        Debug.WriteLine("PutImageToCache: " + ex.ToString());
+                           Debug.WriteLine("PutImageToCache: " + ex.ToString());
 
-                        tr.Rollback();
-                        ret = false;
+                           tr.Rollback();
+                           ret = false;
+                        }
                      }
                   }
+                  cn.Close();
                }
-               cn.Close();
             }
-         }
-         catch(Exception ex)
-         {
+            catch(Exception ex)
+            {
 #if MONO
             Console.WriteLine("PutImageToCache: " + ex.ToString());
 #endif
-            Debug.WriteLine("PutImageToCache: " + ex.ToString());
-            ret = false;
+               Debug.WriteLine("PutImageToCache: " + ex.ToString());
+               ret = false;
+            }
          }
          return ret;
       }
