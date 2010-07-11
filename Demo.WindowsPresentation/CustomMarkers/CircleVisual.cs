@@ -15,7 +15,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
       public readonly Popup Popup = new Popup();
       public readonly TrolleyTooltip Tooltip = new TrolleyTooltip();
       public readonly GMapMarker Marker;
-      
+
       public CircleVisual(GMapMarker m, Brush background)
       {
          Marker = m;
@@ -41,7 +41,6 @@ namespace Demo.WindowsPresentation.CustomMarkers
 
          Width = Height = 22;
          FontSize = (Width/1.55);
-         Stroke.Thickness = Width/22;
 
          Background = background;
          Angle = null;
@@ -59,11 +58,10 @@ namespace Demo.WindowsPresentation.CustomMarkers
          UpdateVisual(true);
       }
 
-      ScaleTransform scale = new ScaleTransform(1, 1);
+      readonly ScaleTransform scale = new ScaleTransform(1, 1);
 
       void CircleVisual_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
       {
-         Stroke.Thickness -= 2;
          if(Popup.IsOpen)
          {
             Popup.IsOpen = false;
@@ -80,7 +78,6 @@ namespace Demo.WindowsPresentation.CustomMarkers
 
       void CircleVisual_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
       {
-         Stroke.Thickness += 2;
          if(!Popup.IsOpen)
          {
             Popup.IsOpen = true;
@@ -97,7 +94,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
 
       public DropShadowEffect ShadowEffect;
 
-      static Typeface Font = new Typeface(new FontFamily("Arial"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal);
+      static readonly Typeface Font = new Typeface(new FontFamily("Arial"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal);
       FormattedText FText;
 
       private Brush background = Brushes.Blue;
@@ -136,7 +133,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
          }
       }
 
-      private Pen stroke = new Pen(Brushes.Blue, 10.0);
+      private Pen stroke = new Pen(Brushes.Blue, 2.0);
       public Pen Stroke
       {
          get

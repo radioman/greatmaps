@@ -66,6 +66,12 @@ namespace GMap.NET.CacheProviders
                {
                   CreateEmptyDB(db);
                }
+
+#if !MONO
+               ConnectionString = string.Format("Data Source=\"{0}\";", db);
+#else
+               ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Default Timeout=33", db);
+#endif
             }
          }
       }
@@ -110,7 +116,9 @@ namespace GMap.NET.CacheProviders
                      }
                      catch(Exception exx)
                      {
+#if MONO
                         Console.WriteLine("CreateEmptyDB: " + exx.ToString());
+#endif
                         Debug.WriteLine("CreateEmptyDB: " + exx.ToString());
 
                         tr.Rollback();
@@ -275,53 +283,47 @@ namespace GMap.NET.CacheProviders
          {
             using(SQLiteConnection cn = new SQLiteConnection())
             {
-#if !MONO
-               cn.ConnectionString = string.Format("Data Source=\"{0}\";", db);
-#else
-               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Default Timeout=33", db);
-#endif
-
+               cn.ConnectionString = ConnectionString;
                cn.Open();
                {
+                  using(DbTransaction tr = cn.BeginTransaction())
                   {
-                     using(DbTransaction tr = cn.BeginTransaction())
+                     try
                      {
-                        try
+                        using(DbCommand cmd = cn.CreateCommand())
                         {
-                           using(DbCommand cmd = cn.CreateCommand())
-                           {
-                              cmd.Transaction = tr;
+                           cmd.Transaction = tr;
 
-                              cmd.CommandText = "INSERT INTO Tiles(X, Y, Zoom, Type) VALUES(@p1, @p2, @p3, @p4)";
+                           cmd.CommandText = "INSERT INTO Tiles(X, Y, Zoom, Type) VALUES(@p1, @p2, @p3, @p4)";
 
-                              cmd.Parameters.Add(new SQLiteParameter("@p1", pos.X));
-                              cmd.Parameters.Add(new SQLiteParameter("@p2", pos.Y));
-                              cmd.Parameters.Add(new SQLiteParameter("@p3", zoom));
-                              cmd.Parameters.Add(new SQLiteParameter("@p4", (int) type));
+                           cmd.Parameters.Add(new SQLiteParameter("@p1", pos.X));
+                           cmd.Parameters.Add(new SQLiteParameter("@p2", pos.Y));
+                           cmd.Parameters.Add(new SQLiteParameter("@p3", zoom));
+                           cmd.Parameters.Add(new SQLiteParameter("@p4", (int) type));
 
-                              cmd.ExecuteNonQuery();
-                           }
-
-                           using(DbCommand cmd = cn.CreateCommand())
-                           {
-                              cmd.Transaction = tr;
-
-                              cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
-                              cmd.Parameters.Add(new SQLiteParameter("@p1", tile.GetBuffer()));
-
-                              cmd.ExecuteNonQuery();
-                           }
-                           tr.Commit();
+                           cmd.ExecuteNonQuery();
                         }
-                        catch(Exception ex)
+
+                        using(DbCommand cmd = cn.CreateCommand())
                         {
-                           Console.WriteLine("PutImageToCache: " + ex.ToString());
+                           cmd.Transaction = tr;
 
-                           Debug.WriteLine("PutImageToCache: " + ex.ToString());
+                           cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
+                           cmd.Parameters.Add(new SQLiteParameter("@p1", tile.GetBuffer()));
 
-                           tr.Rollback();
-                           ret = false;
+                           cmd.ExecuteNonQuery();
                         }
+                        tr.Commit();
+                     }
+                     catch(Exception ex)
+                     {
+#if MONO
+                        Console.WriteLine("PutImageToCache: " + ex.ToString());
+#endif
+                        Debug.WriteLine("PutImageToCache: " + ex.ToString());
+
+                        tr.Rollback();
+                        ret = false;
                      }
                   }
                }
@@ -339,6 +341,9 @@ namespace GMap.NET.CacheProviders
          return ret;
       }
 
+      static readonly string sqlSelect = "SELECT Tile FROM TilesData WHERE id = (SELECT id FROM Tiles WHERE X={0} AND Y={1} AND Zoom={2} AND Type={3})";
+      string ConnectionString;
+
       PureImage PureImageCache.GetImageFromCache(MapType type, Point pos, int zoom)
       {
          PureImage ret = null;
@@ -346,16 +351,12 @@ namespace GMap.NET.CacheProviders
          {
             using(SQLiteConnection cn = new SQLiteConnection())
             {
-#if !MONO
-               cn.ConnectionString = string.Format("Data Source=\"{0}\";", db);
-#else
-               cn.ConnectionString = string.Format("Version=3,URI=file://{0},Default Timeout=33", db);
-#endif
+               cn.ConnectionString = ConnectionString;
                cn.Open();
                {
                   using(DbCommand com = cn.CreateCommand())
                   {
-                     com.CommandText = string.Format("SELECT Tile FROM TilesData WHERE id = (SELECT id FROM Tiles WHERE X={0} AND Y={1} AND Zoom={2} AND Type={3})", pos.X, pos.Y, zoom, (int) type);
+                     com.CommandText = string.Format(sqlSelect, pos.X, pos.Y, zoom, (int) type);
 
                      using(DbDataReader rd = com.ExecuteReader(System.Data.CommandBehavior.SequentialAccess))
                      {
@@ -370,7 +371,7 @@ namespace GMap.NET.CacheProviders
                                  MemoryStream stm = new MemoryStream(tile, 0, tile.Length, false, true);
 
                                  ret = GMaps.Instance.ImageProxy.FromStream(stm);
-                                 if(ret!= null)
+                                 if(ret != null)
                                  {
                                     ret.Data = stm;
                                  }

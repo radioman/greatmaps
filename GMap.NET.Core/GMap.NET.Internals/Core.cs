@@ -56,7 +56,7 @@ namespace GMap.NET.Internals
       public static readonly string hnitCopyright = string.Format("©{0} Hnit-Baltic - Map data ©{0} ESRI", DateTime.Today.Year);
       public static readonly string pergoCopyright = string.Format("©{0} Pergo - Map data ©{0} Fideltus Advanced Technology", DateTime.Today.Year);
 
-      internal bool started = false;
+      internal bool IsStarted = false;
       int zoom;
       internal int maxZoom = 2;
       internal int minZoom = 2;
@@ -100,7 +100,7 @@ namespace GMap.NET.Internals
 
                CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, value);
 
-               if(started)
+               if(IsStarted)
                {
                   lock(tileLoadQueue)
                   {
@@ -165,7 +165,7 @@ namespace GMap.NET.Internals
                currentPosition = value;
                CurrentPositionGPixel = Projection.FromLatLngToPixel(value, Zoom);
 
-               if(started)
+               if(IsStarted)
                {
                   GoToCurrentPosition();
 
@@ -178,7 +178,7 @@ namespace GMap.NET.Internals
                currentPosition = value;
                CurrentPositionGPixel = Projection.FromLatLngToPixel(value, Zoom);
 
-               if(started)
+               if(IsStarted)
                {
                   if(OnCurrentPositionChanged != null)
                      OnCurrentPositionChanged(currentPosition);
@@ -209,7 +209,7 @@ namespace GMap.NET.Internals
                maxOfTiles = Projection.GetTileMatrixMaxXY(Zoom);
                CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, Zoom);
 
-               if(started)
+               if(IsStarted)
                {
                   CancelAsyncTasks();
                   OnMapSizeChanged(Width, Height);
@@ -436,9 +436,9 @@ namespace GMap.NET.Internals
       /// </summary>
       public void StartSystem()
       {
-         if(!started)
+         if(!IsStarted)
          {
-            started = true;
+            IsStarted = true;
 
             ReloadMap();
             GoToCurrentPosition();
@@ -654,7 +654,7 @@ namespace GMap.NET.Internals
 
          UpdateCenterTileXYLocation();
 
-         if(started)
+         if(IsStarted)
          {
             UpdateBounds();
 
@@ -778,7 +778,7 @@ namespace GMap.NET.Internals
       /// </summary>
       public void ReloadMap()
       {
-         if(started)
+         if(IsStarted)
          {
             Debug.WriteLine("------------------");
 
@@ -801,6 +801,10 @@ namespace GMap.NET.Internals
             }
 
             UpdateBounds();
+         }
+         else
+         {
+            throw new Exception("Please, do not call ReloadMap before form is loaded, it's useless");
          }
       }
 
@@ -919,7 +923,7 @@ namespace GMap.NET.Internals
       /// </summary>
       public void CancelAsyncTasks()
       {
-         if(started)
+         if(IsStarted)
          {
             lock(tileLoadQueue)
             {

@@ -216,7 +216,7 @@ namespace GMap.NET.WindowsForms
          {
             selectedArea = value;
 
-            if(Core.started)
+            if(Core.IsStarted)
             {
                Invalidate();
             }
@@ -272,7 +272,10 @@ namespace GMap.NET.WindowsForms
             if(GMaps.Instance.ImageProxy != null && GMaps.Instance.ImageProxy is WindowsFormsImageProxy)
             {
                (GMaps.Instance.ImageProxy as WindowsFormsImageProxy).GrayScale = value;
-               this.ReloadMap();
+               if(Core.IsStarted)
+               {
+                  ReloadMap();
+               }
             }
          }
       }
@@ -1852,7 +1855,7 @@ namespace GMap.NET.WindowsForms
 
                Core.MapType = value;
 
-               if(Core.started && Core.zoomToArea)
+               if(Core.IsStarted && Core.zoomToArea)
                {
                   // restore zoomrect as close as possible
                   if(viewarea != RectLatLng.Empty && viewarea != CurrentViewArea)

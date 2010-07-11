@@ -304,7 +304,12 @@ namespace Demo.WindowsPresentation
                {
                   marker = new GMapMarker(new PointLatLng(d.Lat, d.Lng));
                   marker.Tag = d.Id;
-                  marker.Shape = new CircleVisual(marker, Brushes.Blue);
+
+                  var v = new CircleVisual(marker, Brushes.Blue);
+                  {
+                     v.Stroke = new Pen(Brushes.Gray, 2.0);
+                  }
+                  marker.Shape = v;
 
                   busMarkers[d.Id] = marker;
                   MainMap.Markers.Add(marker);

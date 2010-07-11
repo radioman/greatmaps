@@ -64,7 +64,7 @@ namespace GMap.NET.WindowsPresentation
 
             map.Core.MapType = (MapType) e.NewValue;
 
-            if(map.Core.started && map.Core.zoomToArea)
+            if(map.Core.IsStarted && map.Core.zoomToArea)
             {
                // restore zoomrect as close as possible
                if(viewarea != RectLatLng.Empty && viewarea != map.CurrentViewArea)
@@ -944,7 +944,7 @@ namespace GMap.NET.WindowsPresentation
       #region UserControl Events
       protected override void OnRender(DrawingContext drawingContext)
       {
-         if(!Core.started)
+         if(!Core.IsStarted)
             return;
 
          if(MapRenderTransform != null)
