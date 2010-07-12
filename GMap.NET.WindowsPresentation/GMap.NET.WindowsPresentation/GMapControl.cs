@@ -1061,7 +1061,7 @@ namespace GMap.NET.WindowsPresentation
       {
          base.OnMouseWheel(e);
 
-         if(IsMouseDirectlyOver && !IsDragging)
+         if(IsMouseDirectlyOver && !Core.IsDragging)
          {
             System.Windows.Point p = e.GetPosition(this);
 
@@ -1158,6 +1158,11 @@ namespace GMap.NET.WindowsPresentation
          {
             Mouse.Capture(null);
 
+            if(isDragging)
+            {
+               isDragging = false;
+               Debug.WriteLine("IsDragging = " + isDragging);
+            }
             Core.EndDrag();
             Cursor = Cursors.Arrow;
 
@@ -1191,6 +1196,12 @@ namespace GMap.NET.WindowsPresentation
       {
          if(Core.IsDragging)
          {
+            if(!isDragging)
+            {
+               isDragging = true;
+               Debug.WriteLine("IsDragging = " + isDragging);
+            }
+
             if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
             {
                // ...
@@ -1425,12 +1436,14 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
+      bool isDragging = false;
+
       [Browsable(false)]
       public bool IsDragging
       {
          get
          {
-            return Core.IsDragging;
+            return isDragging;
          }
       }
 

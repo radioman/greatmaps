@@ -12,6 +12,7 @@ namespace GMap.NET.WindowsForms
    using GMap.NET;
    using GMap.NET.Internals;
    using GMap.NET.ObjectModel;
+   using System.Diagnostics;
 
    /// <summary>
    /// GMap.NET control for Windows Forms
@@ -1304,6 +1305,11 @@ namespace GMap.NET.WindowsForms
 
          if(Core.IsDragging)
          {
+            if(isDragging)
+            {
+               isDragging = false;
+               Debug.WriteLine("IsDragging = " + isDragging);
+            }
             Core.EndDrag();
 
 #if !PocketPC
@@ -1367,6 +1373,12 @@ namespace GMap.NET.WindowsForms
       {
          if(Core.IsDragging)
          {
+            if(!isDragging)
+            {
+               isDragging = true;
+               Debug.WriteLine("IsDragging = " + isDragging);
+            }
+
             if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
             {
                // ...
@@ -1459,7 +1471,7 @@ namespace GMap.NET.WindowsForms
       {
          base.OnMouseWheel(e);
 
-         if(!IsMouseOverMarker && !IsDragging)
+         if(!IsMouseOverMarker && !Core.IsDragging)
          {
             if(Core.mouseLastZoom.X != e.X && Core.mouseLastZoom.Y != e.Y)
             {
@@ -1788,6 +1800,8 @@ namespace GMap.NET.WindowsForms
          }
       }
 
+      bool isDragging = false;
+
       /// <summary>
       /// is user dragging map
       /// </summary>
@@ -1796,7 +1810,7 @@ namespace GMap.NET.WindowsForms
       {
          get
          {
-            return Core.IsDragging;
+            return isDragging;
          }
       }
 
