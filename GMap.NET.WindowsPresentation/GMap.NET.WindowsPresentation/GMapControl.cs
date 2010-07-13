@@ -123,7 +123,7 @@ namespace GMap.NET.WindowsPresentation
       private static void ZoomPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
       {
          GMapControl map = (GMapControl) d;
-         if(map != null)
+         if(map != null && map.Core.IsStarted)
          {
             double value = (double) e.NewValue;
 
