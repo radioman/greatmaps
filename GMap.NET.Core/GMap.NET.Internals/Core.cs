@@ -1088,13 +1088,33 @@ namespace GMap.NET.Internals
                      {
                         OnTileLoadComplete();
                      }
-                  }
 
-                  if(!IsDragging)
-                  {
                      if(OnNeedInvalidation != null)
                      {
+                        Thread.Sleep(333);
                         OnNeedInvalidation();
+                     }
+                     lock(this)
+                     {
+                        LastInvalidation = DateTime.Now;
+                     }
+                  }
+                  else
+                  {
+                     lock(this)
+                     {
+                        if((DateTime.Now - LastInvalidation).TotalMilliseconds > 111)
+                        {
+                           if(OnNeedInvalidation != null)
+                           {
+                              OnNeedInvalidation();
+                           }
+                           LastInvalidation = DateTime.Now;
+                        }
+                        else
+                        {
+                           Debug.WriteLine("SkipInvalidation, Delta: " + (DateTime.Now - LastInvalidation).TotalMilliseconds + "ms");
+                        }
                      }
                   }
                }
@@ -1102,6 +1122,8 @@ namespace GMap.NET.Internals
             loaderLimit.Release();
          }
       }
+
+      DateTime LastInvalidation = DateTime.Now;
 
       /// <summary>
       /// updates map bounds

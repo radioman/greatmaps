@@ -555,6 +555,10 @@ namespace Demo.WindowsPresentation
             {
                MessageBox.Show("Google Maps Geocoder can't find: '" + textBoxGeo.Text + "', reason: " + status.ToString(), "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
+            else
+            {
+               currentMarker.Position = MainMap.CurrentPosition;
+            }
          }
       }
 
