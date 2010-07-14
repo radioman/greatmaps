@@ -24,6 +24,11 @@ namespace Demo.WindowsForms
       }
    }
 
+   public class Dummy
+   {
+
+   }
+
    class IpInfo
    {
       public string Ip;

@@ -20,6 +20,11 @@ namespace Demo.WindowsPresentation
       }
    }
 
+   public class Dummy
+   {
+
+   }
+
    public struct PointAndInfo
    {
       public PointLatLng Point;
