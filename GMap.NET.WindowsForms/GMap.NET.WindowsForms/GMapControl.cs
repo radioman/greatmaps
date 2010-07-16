@@ -148,6 +148,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// retry count to get tile 
       /// </summary>
+      [Browsable(false)]
       public int RetryLoadTile
       {
          get
@@ -163,6 +164,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// how many levels of tiles are staying decompresed in memory
       /// </summary>
+      [Browsable(false)]
       public int LevelsKeepInMemmory
       {
          get
@@ -179,6 +181,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// map dragg button
       /// </summary>
+      [Category("GMap.NET")]
       public MouseButtons DragButton = MouseButtons.Right;
 
       private bool showTileGridLines = false;

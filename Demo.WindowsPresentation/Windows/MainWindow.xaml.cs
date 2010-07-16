@@ -50,7 +50,7 @@ namespace Demo.WindowsPresentation
          {
             MainMap.Manager.Mode = AccessMode.CacheOnly;
             MessageBox.Show("No internet connection avaible, going to CacheOnly mode.", "GMap.NET - Demo.WindowsPresentation", MessageBoxButton.OK, MessageBoxImage.Warning);
-         }
+         }             
 
          // config map
          MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
@@ -393,6 +393,7 @@ namespace Demo.WindowsPresentation
                   var s = new CustomMarkerDemo(this, it, o.Obj.Info + ", distance from center: " + o.Dist + "km.");
                   it.Shape = s;
                }
+
                MainMap.Markers.Add(it);
             }
 

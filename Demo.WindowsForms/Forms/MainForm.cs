@@ -263,6 +263,7 @@ namespace Demo.WindowsForms
                   marker = new GMapMarkerGoogleRed(new PointLatLng(d.Lat, d.Lng));
                   marker.Tag = d.Id;
                   marker.ToolTipMode = MarkerTooltipMode.Always;
+                  marker.IsHitTestVisible = false;
 
                   trolleybusMarkers[d.Id] = marker;
                   objects.Markers.Add(marker);
@@ -287,6 +288,7 @@ namespace Demo.WindowsForms
                   marker = new GMapMarkerGoogleGreen(new PointLatLng(d.Lat, d.Lng));
                   marker.Tag = d.Id;
                   marker.ToolTipMode = MarkerTooltipMode.Always;
+                  marker.IsHitTestVisible = false;
 
                   busMarkers[d.Id] = marker;
                   objects.Markers.Add(marker);

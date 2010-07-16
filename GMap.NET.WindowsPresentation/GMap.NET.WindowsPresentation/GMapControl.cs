@@ -251,6 +251,7 @@ namespace GMap.NET.WindowsPresentation
       /// <summary>
       /// map dragg button
       /// </summary>
+      [Category("GMap.NET")]
       public MouseButton DragButton = MouseButton.Right;
 
       /// <summary>
@@ -278,6 +279,7 @@ namespace GMap.NET.WindowsPresentation
       /// <summary>
       /// retry count to get tile 
       /// </summary>
+      [Browsable(false)]
       public int RetryLoadTile
       {
          get
@@ -293,6 +295,7 @@ namespace GMap.NET.WindowsPresentation
       /// <summary>
       /// how many levels of tiles are staying decompresed in memory
       /// </summary>
+      [Browsable(false)]
       public int LevelsKeepInMemmory
       {
          get
