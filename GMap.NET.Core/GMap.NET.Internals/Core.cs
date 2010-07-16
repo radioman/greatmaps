@@ -415,7 +415,7 @@ namespace GMap.NET.Internals
       }
 #endif
 
-      readonly List<Thread> GThreadPool = new List<Thread>();
+      readonly Stack<Thread> GThreadPool = new Stack<Thread>();
 
       // windows forms or wpf
       internal string SystemType;
@@ -932,9 +932,18 @@ namespace GMap.NET.Internals
          bool last = false;
          bool invalidate = false;
          LoadTask? task = null;
-         Thread ct = Thread.CurrentThread;
+         Thread ct;
 
+         lock(tileLoadQueue)
+         {
+            ct = GThreadPool.Peek();
+         }
+
+#if !PocketPC
          while(waitForTileLoad.WaitOne(TimeSpan.FromMinutes(5)))
+#else
+         while(waitForTileLoad.WaitOne())
+#endif
          {
             invalidate = false;
             task = null;
@@ -955,7 +964,6 @@ namespace GMap.NET.Internals
                }
             }
 
-            //if(loaderLimit.WaitOne(GMaps.Instance.Timeout, false))
             {
                if(task.HasValue)
                {
@@ -1128,15 +1136,16 @@ namespace GMap.NET.Internals
                      }
                   }
                }
-               //loaderLimit.Release();
             }
          }
 
+#if !PocketPC
          lock(tileLoadQueue)
          {
             Debug.WriteLine("Quite - " + ct.Name);
-            GThreadPool.Remove(ct);
+            GThreadPool.Pop();
          }
+#endif
       }
 
       DateTime LastInvalidation = DateTime.Now;
@@ -1186,16 +1195,14 @@ namespace GMap.NET.Internals
                            {
                               t.Name = "GMap.NET TileLoader: " + GThreadPool.Count;
                               t.IsBackground = true;
-                              t.Priority = ThreadPriority.Highest;
+                              t.Priority = ThreadPriority.BelowNormal;
                            }
-                           GThreadPool.Add(t);
+                           GThreadPool.Push(t);
 
                            Debug.WriteLine("add: " + t.Name + " to GThreadPool");
 
                            t.Start();
                         }
-
-                        //ThreadPool.QueueUserWorkItem(ProcessLoadTaskCallback);
                      }
                   }
                }
