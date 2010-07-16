@@ -367,7 +367,7 @@ namespace GMap.NET
          {
             if(!TilesInMemory.ContainsKey(tile))
             {
-               TilesInMemory.Add(tile, data);
+               TilesInMemory.Add(tile, Stuff.CopyStream(data, true));
             }
          }
          finally
@@ -915,17 +915,25 @@ namespace GMap.NET
 
                if(task.HasValue)
                {
-                  if((task.Value.CacheType & CacheUsage.First) == CacheUsage.First && ImageCacheLocal != null)
+                  // check if stream wasn't disposed somehow
+                  if(task.Value.Img != null && task.Value.Img.CanRead)
                   {
-                     ImageCacheLocal.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
-                  }
+                     if((task.Value.CacheType & CacheUsage.First) == CacheUsage.First && ImageCacheLocal != null)
+                     {
+                        ImageCacheLocal.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
+                     }
 
-                  if((task.Value.CacheType & CacheUsage.Second) == CacheUsage.Second && ImageCacheSecond != null)
+                     if((task.Value.CacheType & CacheUsage.Second) == CacheUsage.Second && ImageCacheSecond != null)
+                     {
+                        ImageCacheSecond.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
+                     }
+
+                     Thread.Sleep(44);
+                  }
+                  else
                   {
-                     ImageCacheSecond.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
+                     Debug.WriteLine("CacheEngineLoop: skip, tile disposed to early -> " + task.Value);
                   }
-
-                  Thread.Sleep(44);
                }
                else
                {
@@ -2362,7 +2370,14 @@ namespace GMap.NET
                      ret = GMaps.Instance.ImageProxy.FromStream(m);
                      if(ret == null)
                      {
-                        // should never happen ;}
+#if DEBUG
+                        Debug.WriteLine("Image disposed in MemoryCache o.O, should never happen ;} " + new RawTile(type, pos, zoom));
+                        if(Debugger.IsAttached)
+                        {
+                           Debugger.Break();
+                        }
+#endif
+
 #if !PocketPC
                         m.Dispose();
 #else

@@ -22,6 +22,11 @@ namespace GMap.NET.Internals
          this.Img = Img;
          this.CacheType = cacheType;
       }
+
+      public override string ToString()
+      {
+         return Type + " at zoom " + Zoom + ", pos: " + Pos + ", CacheType:" + CacheType;
+      }
    }
 
    internal enum CacheUsage

@@ -14,7 +14,7 @@ namespace GMap.NET___Hot_Build
       {
          InitializeComponent();
 
-         Text = "GMap.NET - Great Maps for Windows Forms & Presentation - Hot Build - 46073e2017a1";
+         Text = "GMap.NET - Great Maps for Windows Forms & Presentation - Hot Build - 5b97c7edfe8f";
       }
 
       private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
