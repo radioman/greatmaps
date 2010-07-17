@@ -62,6 +62,8 @@ namespace Demo.WindowsPresentation
          MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
          MainMap.MouseMove += new System.Windows.Input.MouseEventHandler(MainMap_MouseMove);
          MainMap.MouseLeftButtonDown += new System.Windows.Input.MouseButtonEventHandler(MainMap_MouseLeftButtonDown);
+         MainMap.Loaded += new RoutedEventHandler(MainMap_Loaded);
+         MainMap.MouseEnter += new MouseEventHandler(MainMap_MouseEnter);
 
          // get map types
          comboBoxMapType.ItemsSource = Enum.GetValues(typeof(MapType));
@@ -158,6 +160,11 @@ namespace Demo.WindowsPresentation
          transport.ProgressChanged += new ProgressChangedEventHandler(transport_ProgressChanged);
          transport.WorkerSupportsCancellation = true;
          transport.WorkerReportsProgress = true;
+      }
+
+      void MainMap_MouseEnter(object sender, MouseEventArgs e)
+      {
+         MainMap.Focus();
       }
 
       #region -- performance test--
@@ -432,6 +439,12 @@ namespace Demo.WindowsPresentation
          (c.Tag as GMapMarker).Offset = new System.Windows.Point(-c.Width / 2, -c.Height / 2);
       }
 
+      // center markers on load
+      void MainMap_Loaded(object sender, RoutedEventArgs e)
+      {
+         MainMap.ZoomAndCenterMarkers(null);
+      }
+
       void MainMap_OnMapTypeChanged(MapType type)
       {
          sliderZoom.Minimum = MainMap.MinZoom;
@@ -454,9 +467,10 @@ namespace Demo.WindowsPresentation
          }
       }
 
+      // zoo max & center markers
       private void button13_Click(object sender, RoutedEventArgs e)
       {
-         MainMap.ZoomAndCenterMarkers(55);
+         MainMap.ZoomAndCenterMarkers(null);
       }
 
       // tile louading starts
@@ -812,24 +826,36 @@ namespace Demo.WindowsPresentation
       {
          int offset = 22;
 
-         if(e.Key == Key.Left)
+         if(MainMap.IsFocused)
          {
-            MainMap.Offset(-offset, 0);
-         }
-         else if(e.Key == Key.Right)
-         {
-            MainMap.Offset(offset, 0);
-         }
-         else if(e.Key == Key.Up)
-         {
-            MainMap.Offset(0, -offset);
-         }
-         else if(e.Key == Key.Down)
-         {
-            MainMap.Offset(0, offset);
+            if(e.Key == Key.Left)
+            {
+               MainMap.Offset(-offset, 0);
+            }
+            else if(e.Key == Key.Right)
+            {
+               MainMap.Offset(offset, 0);
+            }
+            else if(e.Key == Key.Up)
+            {
+               MainMap.Offset(0, -offset);
+            }
+            else if(e.Key == Key.Down)
+            {
+               MainMap.Offset(0, offset);
+            }
+            else if(e.Key == Key.Add)
+            {
+               czuZoomUp_Click(null, null);
+            }
+            else if(e.Key == Key.Subtract)
+            {
+               czuZoomDown_Click(null, null);
+            }
          }
       }
 
+      // set real time demo
       private void realTimeChanged(object sender, RoutedEventArgs e)
       {
          MainMap.Markers.Clear();

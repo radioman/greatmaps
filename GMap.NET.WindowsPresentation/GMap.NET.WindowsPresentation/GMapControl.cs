@@ -457,7 +457,10 @@ namespace GMap.NET.WindowsPresentation
             SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
 
             // by default its internal property, feel free to use your own
-            ItemsSource = Markers;
+            if(ItemsSource == null)
+            {
+               ItemsSource = Markers;
+            }
 
             Core.Zoom = (int) ((double) ZoomProperty.DefaultMetadata.DefaultValue);
 

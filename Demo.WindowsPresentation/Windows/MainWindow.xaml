@@ -5,6 +5,7 @@
     Height="775" Width="888"
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
+    KeyboardNavigation.DirectionalNavigation="Once"
     xmlns:src="clr-namespace:Demo.WindowsPresentation"
     MinHeight="775" MinWidth="600" KeyUp="Window_KeyUp">
     <Window.Resources>
@@ -56,17 +57,17 @@
         </Style>
     </Window.Resources>
     <Grid>
-      <GroupBox Name="mapgroup"  Header="gmap" Margin="12,7,241,12" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-          <src:Map x:Name="MainMap" MapType="GoogleMap" Zoom="13" MaxZoom="17" MinZoom="5" />  
-      </GroupBox>
-      <GroupBox HorizontalAlignment="Right" Margin="0,7,186,12" VerticalAlignment="Stretch" Header="Zoom">
-         <Grid>
-            <Button x:Name="czuZoomUp" Style="{StaticResource ZoomUpButton}" HorizontalAlignment="Center" VerticalAlignment="Top" Width="23.5" Height="25.5" Click="czuZoomUp_Click"/>
+        <GroupBox Name="mapgroup"  Header="gmap" Margin="12,7,241,12" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+            <src:Map x:Name="MainMap" MapType="GoogleMap" Zoom="13" MaxZoom="17" MinZoom="5" />
+        </GroupBox>
+        <GroupBox HorizontalAlignment="Right" Margin="0,7,186,12" VerticalAlignment="Stretch" Header="Zoom">
+            <Grid>
+                <Button x:Name="czuZoomUp" Style="{StaticResource ZoomUpButton}" HorizontalAlignment="Center" VerticalAlignment="Top" Width="23.5" Height="25.5" Click="czuZoomUp_Click"/>
                 <Slider Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Stretch" Maximum="17" Minimum="12" Value="{Binding ElementName=MainMap, Path=Zoom}" TickPlacement="Both" Margin="0,35,0,35" SmallChange="1" x:Name="sliderZoom" ValueChanged="sliderZoom_ValueChanged" />
-            <Button Style="{StaticResource ZoomUpButton}" x:Name="czuZoomDown" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="23" Height="25" Click="czuZoomDown_Click"/>
-         </Grid>
-      </GroupBox>
-      <GroupBox Header="gmap" HorizontalAlignment="Right" Margin="0,158,12,0" Name="groupBox2" Width="169" VerticalAlignment="Top" Height="135">
+                <Button Style="{StaticResource ZoomUpButton}" x:Name="czuZoomDown" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="23" Height="25" Click="czuZoomDown_Click"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="gmap" HorizontalAlignment="Right" Margin="0,158,12,0" Name="groupBox2" Width="169" VerticalAlignment="Top" Height="135">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <ComboBox SelectedItem="{Binding ElementName=MainMap, Path=MapType}" FontSize="12" Margin="6,6,45,0" Name="comboBoxMapType" Height="25.04" VerticalAlignment="Top" />
                 <Label HorizontalAlignment="Right" Margin="0,6,6,0" Name="label1" Width="33" Height="25.04" VerticalAlignment="Top">type</Label>
@@ -112,20 +113,20 @@
                 <RadioButton HorizontalAlignment="Right" Margin="0,0,-6,7" Name="radioButtonNone" Width="56" Height="16.04" VerticalAlignment="Bottom" IsChecked="True" Checked="realTimeChanged">None</RadioButton>
             </Grid>
         </GroupBox>
-      <GroupBox Header="markers" HorizontalAlignment="Right" Name="markers" Width="169" Margin="0,299,11,283" Height="80" VerticalAlignment="Top">
-         <Grid>
-            <Button Margin="7,6,77,0" Name="button8" Height="21.04" VerticalAlignment="Top" Click="button8_Click">Add Marker</Button>
-            <Button Margin="7,0,0,6" Name="button10" Height="21.04" VerticalAlignment="Bottom" Click="button10_Click" HorizontalAlignment="Left" Width="56">Clear All</Button>
-            <CheckBox HorizontalAlignment="Right" Margin="0,9,0,0" Name="checkBoxPlace" Width="71" Height="16.04" VerticalAlignment="Top" IsChecked="True">place info</CheckBox>
-            <Button Margin="78,0,1,5" Name="button13" Height="21.04" VerticalAlignment="Bottom" Click="button13_Click">Zoom Center</Button>
-         </Grid>
-      </GroupBox>
-       <GroupBox Header="routes" HorizontalAlignment="Right" Name="routes" Width="169" Margin="0,385,11,283" Height="80" VerticalAlignment="Top">
-         <Grid>
-            <Button Margin="7,6,0,0" Name="button11" Height="21.04" VerticalAlignment="Top" HorizontalAlignment="Left" Width="65" Click="button11_Click">set start</Button>
-            <Button HorizontalAlignment="Right" Margin="0,6,5,0" Name="button9" Width="65" Height="21.04" VerticalAlignment="Top" Click="button9_Click">set end</Button>
-            <Button Margin="7,0,6,6" Name="button12" Height="21.04" VerticalAlignment="Bottom" Click="button12_Click">Add route</Button>
-         </Grid>
-      </GroupBox>
+        <GroupBox Header="markers" HorizontalAlignment="Right" Name="markers" Width="169" Margin="0,299,11,283" Height="80" VerticalAlignment="Top">
+            <Grid>
+                <Button Margin="7,6,77,0" Name="button8" Height="21.04" VerticalAlignment="Top" Click="button8_Click">Add Marker</Button>
+                <Button Margin="7,0,0,6" Name="button10" Height="21.04" VerticalAlignment="Bottom" Click="button10_Click" HorizontalAlignment="Left" Width="56">Clear All</Button>
+                <CheckBox HorizontalAlignment="Right" Margin="0,9,0,0" Name="checkBoxPlace" Width="71" Height="16.04" VerticalAlignment="Top" IsChecked="True">place info</CheckBox>
+                <Button Margin="78,0,1,5" Name="button13" Height="21.04" VerticalAlignment="Bottom" Click="button13_Click">Zoom Center</Button>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="routes" HorizontalAlignment="Right" Name="routes" Width="169" Margin="0,385,11,283" Height="80" VerticalAlignment="Top">
+            <Grid>
+                <Button Margin="7,6,0,0" Name="button11" Height="21.04" VerticalAlignment="Top" HorizontalAlignment="Left" Width="65" Click="button11_Click">set start</Button>
+                <Button HorizontalAlignment="Right" Margin="0,6,5,0" Name="button9" Width="65" Height="21.04" VerticalAlignment="Top" Click="button9_Click">set end</Button>
+                <Button Margin="7,0,6,6" Name="button12" Height="21.04" VerticalAlignment="Bottom" Click="button12_Click">Add route</Button>
+            </Grid>
+        </GroupBox>
     </Grid>
 </Window>
