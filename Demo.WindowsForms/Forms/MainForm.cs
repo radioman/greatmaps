@@ -1257,6 +1257,7 @@ namespace Demo.WindowsForms
       {
          trackBar1.Value = (int) (MainMap.Zoom);
          textBoxZoomCurrent.Text = MainMap.Zoom.ToString();
+         center.Position = MainMap.CurrentPosition;
       }
 
       // click on some marker

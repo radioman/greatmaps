@@ -58,6 +58,7 @@ namespace GMap.NET.Internals
       public static readonly string hnitCopyright = string.Format("©{0} Hnit-Baltic - Map data ©{0} ESRI", DateTime.Today.Year);
       public static readonly string pergoCopyright = string.Format("©{0} Pergo - Map data ©{0} Fideltus Advanced Technology", DateTime.Today.Year);
 
+      DateTime LastInvalidation = DateTime.Now;
       internal bool IsStarted = false;
       int zoom;
       internal int maxZoom = 2;
@@ -1100,6 +1101,7 @@ namespace GMap.NET.Internals
                      {
                         OnNeedInvalidation();
                      }
+
                      lock(this)
                      {
                         LastInvalidation = DateTime.Now;
@@ -1123,7 +1125,11 @@ namespace GMap.NET.Internals
                         {
                            OnNeedInvalidation();
                         }
-                        LastInvalidation = DateTime.Now;
+
+                        lock(this)
+                        {
+                           LastInvalidation = DateTime.Now;
+                        }
                      }
                      else
                      {
@@ -1142,6 +1148,7 @@ namespace GMap.NET.Internals
                   {
                      OnNeedInvalidation();
                   }
+
                   lock(this)
                   {
                      LastInvalidation = DateTime.Now;
@@ -1153,13 +1160,11 @@ namespace GMap.NET.Internals
 #if !PocketPC
          lock(tileLoadQueue)
          {
-            Debug.WriteLine("Quite - " + ct.Name);
+            Debug.WriteLine("Quit - " + ct.Name);
             GThreadPool.Pop();
          }
 #endif
       }
-
-      DateTime LastInvalidation = DateTime.Now;
 
       /// <summary>
       /// updates map bounds
@@ -1179,50 +1184,54 @@ namespace GMap.NET.Internals
             }
 
 #if DEBUG
+            timer.Reset();
+            timer.Start();
+#endif
             lock(tileLoadQueue)
             {
-               timer.Reset();
-               timer.Start();
-            }
-#endif
-
-            foreach(Point p in tileDrawingList)
-            {
-               LoadTask task = new LoadTask(p, Zoom);
+               foreach(Point p in tileDrawingList)
                {
-                  lock(tileLoadQueue)
+                  LoadTask task = new LoadTask(p, Zoom);
                   {
                      if(!tileLoadQueue.Contains(task))
                      {
                         tileLoadQueue.Enqueue(task);
-
-#if !PocketPC
-                        if(GThreadPool.Count < 5)
-#else
-                        if(GThreadPool.Count < 2)
-#endif
-                        {
-                           Thread t = new Thread(new ThreadStart(ProcessLoadTask));
-                           {
-                              t.Name = "GMap.NET TileLoader: " + GThreadPool.Count;
-                              t.IsBackground = true;
-                              t.Priority = ThreadPriority.BelowNormal;
-                           }
-                           GThreadPool.Push(t);
-
-                           Debug.WriteLine("add: " + t.Name + " to GThreadPool");
-
-                           t.Start();
-                        }
                      }
                   }
                }
+
+               EnsureLoaderThreads();
             }
          }
          finally
          {
-            waitForTileLoad.Set();
             tileDrawingListLock.ReleaseWriterLock();
+            waitForTileLoad.Set();
+         }
+      }
+
+      /// <summary>
+      /// starts loader threads if needed
+      /// </summary>
+      void EnsureLoaderThreads()
+      {
+#if !PocketPC
+         while(GThreadPool.Count < 5)
+#else
+         while(GThreadPool.Count < 2)
+#endif
+         {
+            Thread t = new Thread(new ThreadStart(ProcessLoadTask));
+            {
+               t.Name = "GMap.NET TileLoader: " + GThreadPool.Count;
+               t.IsBackground = true;
+               t.Priority = ThreadPriority.BelowNormal;
+            }
+            GThreadPool.Push(t);
+
+            Debug.WriteLine("add " + t.Name + " to GThreadPool");
+
+            t.Start();
          }
       }
 
