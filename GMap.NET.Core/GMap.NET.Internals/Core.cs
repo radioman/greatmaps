@@ -416,7 +416,7 @@ namespace GMap.NET.Internals
       }
 #endif
 
-      readonly Stack<Thread> GThreadPool = new Stack<Thread>();
+      readonly List<Thread> GThreadPool = new List<Thread>();
 
       // windows forms or wpf
       internal string SystemType;
@@ -1161,7 +1161,7 @@ namespace GMap.NET.Internals
          lock(tileLoadQueue)
          {
             Debug.WriteLine("Quit - " + ct.Name);
-            GThreadPool.Pop();
+            GThreadPool.Remove(ct);
          }
 #endif
       }
@@ -1227,7 +1227,7 @@ namespace GMap.NET.Internals
                t.IsBackground = true;
                t.Priority = ThreadPriority.BelowNormal;
             }
-            GThreadPool.Push(t);
+            GThreadPool.Add(t);
 
             Debug.WriteLine("add " + t.Name + " to GThreadPool");
 
