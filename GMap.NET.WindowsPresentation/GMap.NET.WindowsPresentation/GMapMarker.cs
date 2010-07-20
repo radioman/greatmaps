@@ -11,6 +11,54 @@ namespace GMap.NET.WindowsPresentation
    using System.Windows.Shapes;
    using System;
 
+   //public interface IGMapMarker : INotifyPropertyChanged
+   //{
+   //   UIElement Shape
+   //   {
+   //      get;
+   //      set;
+   //   }
+
+   //   int LocalPositionX
+   //   {
+   //      get;
+   //      set;
+   //   }
+
+   //   int LocalPositionY
+   //   {
+   //      get;
+   //      set;
+   //   }
+
+   //   PointLatLng Position
+   //   {
+   //      get;
+   //      set;
+   //   }
+
+   //   System.Windows.Point Offset
+   //   {
+   //      get;
+   //      set;
+   //   }
+
+   //   int ZIndex
+   //   {
+   //      get;
+   //      set;
+   //   }
+
+   //   List<PointLatLng> Route
+   //   {
+   //      get;
+   //   }
+   //   List<PointLatLng> Polygon
+   //   {
+   //      get;
+   //   }
+   //}
+
    /// <summary>
    /// GMap.NET marker
    /// </summary>
@@ -25,7 +73,16 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
+      void OnPropertyChanged(PropertyChangedEventArgs name)
+      {
+         if(PropertyChanged != null)
+         {
+            PropertyChanged(this, name);
+         }
+      }
+
       UIElement shape;
+      static readonly PropertyChangedEventArgs Shape_PropertyChangedEventArgs = new PropertyChangedEventArgs("Shape");
 
       /// <summary>
       /// marker visual
@@ -41,7 +98,7 @@ namespace GMap.NET.WindowsPresentation
             if(shape != value)
             {
                shape = value;
-               OnPropertyChanged("Shape");
+               OnPropertyChanged(Shape_PropertyChangedEventArgs);
 
                UpdateLocalPosition();
             }
@@ -119,6 +176,7 @@ namespace GMap.NET.WindowsPresentation
       }
 
       int localPositionX;
+      static readonly PropertyChangedEventArgs LocalPositionX_PropertyChangedEventArgs = new PropertyChangedEventArgs("LocalPositionX");
 
       /// <summary>
       /// local X position of marker
@@ -134,12 +192,13 @@ namespace GMap.NET.WindowsPresentation
             if(localPositionX != value)
             {
                localPositionX = value;
-               OnPropertyChanged("LocalPositionX");
+               OnPropertyChanged(LocalPositionX_PropertyChangedEventArgs);
             }
          }
       }
 
       int localPositionY;
+      static readonly PropertyChangedEventArgs LocalPositionY_PropertyChangedEventArgs = new PropertyChangedEventArgs("LocalPositionY");
 
       /// <summary>
       /// local Y position of marker
@@ -155,12 +214,13 @@ namespace GMap.NET.WindowsPresentation
             if(localPositionY != value)
             {
                localPositionY = value;
-               OnPropertyChanged("LocalPositionY");
+               OnPropertyChanged(LocalPositionY_PropertyChangedEventArgs);
             }
          }
       }
 
       int zIndex;
+      static readonly PropertyChangedEventArgs ZIndex_PropertyChangedEventArgs = new PropertyChangedEventArgs("ZIndex");
 
       /// <summary>
       /// the index of Z, render order
@@ -176,7 +236,7 @@ namespace GMap.NET.WindowsPresentation
             if(zIndex != value)
             {
                zIndex = value;
-               OnPropertyChanged("ZIndex");
+               OnPropertyChanged(ZIndex_PropertyChangedEventArgs);
             }
          }
       }
@@ -213,8 +273,9 @@ namespace GMap.NET.WindowsPresentation
             s = null;
          }
          Shape = null;
+
          Route.Clear();
-         Route.TrimExcess();
+         Polygon.Clear();
       }
 
       /// <summary>
@@ -236,7 +297,7 @@ namespace GMap.NET.WindowsPresentation
       /// dot not call it if you don't really need to ;}
       /// </summary>
       /// <param name="m"></param>
-      public void ForceUpdateLocalPosition(GMapControl m)
+      internal void ForceUpdateLocalPosition(GMapControl m)
       {
          if(m != null)
          {

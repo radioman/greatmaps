@@ -160,8 +160,8 @@ namespace GMap.NET.WindowsPresentation
       PointLatLng selectionStart;
       PointLatLng selectionEnd;
       Typeface tileTypeface = new Typeface("Arial");
-      double zoomReal;
       bool showTileGridLines = false;
+      MethodInvoker invalidator;
 
       FormattedText googleCopyright;
       FormattedText yahooMapCopyright;
@@ -346,7 +346,7 @@ namespace GMap.NET.WindowsPresentation
       /// <summary>
       /// current markers overlay offset
       /// </summary>
-      internal TranslateTransform MapTranslateTransform = new TranslateTransform();
+      internal readonly TranslateTransform MapTranslateTransform = new TranslateTransform();
 
       protected bool DesignModeInConstruct
       {
@@ -373,6 +373,8 @@ namespace GMap.NET.WindowsPresentation
                   ItemsPresenter items = border.Child as ItemsPresenter;
                   DependencyObject target = VisualTreeHelper.GetChild(items, 0);
                   mapCanvas = target as Canvas;
+
+                  mapCanvas.RenderTransform = MapTranslateTransform;
                }
             }
 
@@ -440,6 +442,8 @@ namespace GMap.NET.WindowsPresentation
             }
             ItemContainerStyle = st;
             #endregion
+
+            invalidator = new MethodInvoker(InvalidateVisual);
 
             ClipToBounds = true;
             SnapsToDevicePixels = true;
@@ -568,7 +572,7 @@ namespace GMap.NET.WindowsPresentation
       {
          try
          {
-            this.Dispatcher.Invoke(DispatcherPriority.Render, new MethodInvoker(InvalidateVisual));
+            this.Dispatcher.Invoke(DispatcherPriority.Render, invalidator);
          }
          catch
          {
@@ -593,8 +597,6 @@ namespace GMap.NET.WindowsPresentation
                MapTranslateTransform.X = Core.renderOffset.X;
                MapTranslateTransform.Y = Core.renderOffset.Y;
             }
-
-            MapCanvas.RenderTransform = MapTranslateTransform;
          }
       }
 
@@ -972,11 +974,8 @@ namespace GMap.NET.WindowsPresentation
             GMap.NET.Point p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
             GMap.NET.Point p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
 
-            if(MapTranslateTransform != null)
-            {
-               p1.Offset((int) MapTranslateTransform.X, (int) MapTranslateTransform.Y);
-               p2.Offset((int) MapTranslateTransform.X, (int) MapTranslateTransform.Y);
-            }
+            p1.Offset((int) MapTranslateTransform.X, (int) MapTranslateTransform.Y);
+            p2.Offset((int) MapTranslateTransform.X, (int) MapTranslateTransform.Y);
 
             int x1 = p1.X;
             int y1 = p1.Y;
@@ -1306,10 +1305,7 @@ namespace GMap.NET.WindowsPresentation
             ret.Y = (int) tp.Y;
          }
 
-         if(MapTranslateTransform != null)
-         {
-            ret.Offset(-(int) MapTranslateTransform.X, -(int) MapTranslateTransform.Y);
-         }
+         ret.Offset(-(int) MapTranslateTransform.X, -(int) MapTranslateTransform.Y);
 
          return ret;
       }
