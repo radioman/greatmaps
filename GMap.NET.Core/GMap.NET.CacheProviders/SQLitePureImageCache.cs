@@ -72,9 +72,9 @@ namespace GMap.NET.CacheProviders
                   Created = AlterDBAddTimeColumn(db);
                }
 #if !MONO
-               ConnectionString = string.Format("Data Source=\"{0}\";", db);
+               ConnectionString = string.Format("Data Source=\"{0}\";Page Size=32768;Pooling=True", db);
 #else
-               ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Default Timeout=33", db);
+               ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Page Size=32768,Pooling=True", db);
 #endif
             }
          }
@@ -96,9 +96,9 @@ namespace GMap.NET.CacheProviders
             using(SQLiteConnection cn = new SQLiteConnection())
             {
 #if !MONO
-               cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=False;", file);
+               cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=False;Page Size=32768;Pooling=True", file);
 #else
-               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=False", file);
+               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=False,Page Size=32768,Pooling=True", file);
 #endif
                cn.Open();
                {
@@ -155,9 +155,9 @@ namespace GMap.NET.CacheProviders
                using(SQLiteConnection cn = new SQLiteConnection())
                {
 #if !MONO
-                  cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=False;", file);
+                  cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=False;Page Size=32768;Pooling=True", file);
 #else
-                  cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=False", file);
+                  cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=False,Page Size=32768,Pooling=True", file);
 #endif
                   cn.Open();
                   {
@@ -246,9 +246,9 @@ namespace GMap.NET.CacheProviders
             using(SQLiteConnection cn = new SQLiteConnection())
             {
 #if !MONO
-               cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=True;", file);
+               cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=True;Page Size=32768;Pooling=True", file);
 #else
-               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True", file);
+               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Page Size=32768,Pooling=True", file);
 #endif
                cn.Open();
                {
@@ -285,9 +285,9 @@ namespace GMap.NET.CacheProviders
                using(SQLiteConnection cn1 = new SQLiteConnection())
                {
 #if !MONO
-                  cn1.ConnectionString = string.Format("Data Source=\"{0}\";", sourceFile);
+                  cn1.ConnectionString = string.Format("Data Source=\"{0}\";Page Size=32768;Pooling=True", sourceFile);
 #else
-                  cn1.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True", sourceFile);
+                  cn1.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Page Size=32768,Pooling=True", sourceFile);
 #endif
 
                   cn1.Open();
@@ -296,9 +296,9 @@ namespace GMap.NET.CacheProviders
                      using(SQLiteConnection cn2 = new SQLiteConnection())
                      {
 #if !MONO
-                        cn2.ConnectionString = string.Format("Data Source=\"{0}\";", destFile);
+                        cn2.ConnectionString = string.Format("Data Source=\"{0}\";Page Size=32768;Pooling=True", destFile);
 #else
-                        cn2.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True", destFile);
+                        cn2.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Page Size=32768,Pooling=True", destFile);
 #endif
                         cn2.Open();
                         if(cn2.State == System.Data.ConnectionState.Open)
