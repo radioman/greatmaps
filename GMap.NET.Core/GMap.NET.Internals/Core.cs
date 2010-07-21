@@ -59,6 +59,8 @@ namespace GMap.NET.Internals
       public static readonly string pergoCopyright = string.Format("©{0} Pergo - Map data ©{0} Fideltus Advanced Technology", DateTime.Today.Year);
 
       DateTime LastInvalidation = DateTime.Now;
+      DateTime LastTileLoadStart = DateTime.Now;
+      DateTime LastTileLoadEnd = DateTime.Now;
       internal bool IsStarted = false;
       int zoom;
       internal int maxZoom = 2;
@@ -402,19 +404,6 @@ namespace GMap.NET.Internals
       /// occurs on map type changed
       /// </summary>
       public event MapTypeChanged OnMapTypeChanged;
-
-#if DEBUG
-      Stopwatch timer;
-#endif
-
-#if !DESIGN
-      public Core()
-      {
-#if DEBUG
-         timer = new Stopwatch();
-#endif
-      }
-#endif
 
       readonly List<Thread> GThreadPool = new List<Thread>();
 
@@ -1082,19 +1071,14 @@ namespace GMap.NET.Internals
                      GC.WaitForPendingFinalizers();
                      GC.Collect();
 #endif
+                     LastTileLoadEnd = DateTime.Now;
+                     long lastTileLoadTimeMs = (long) (LastTileLoadEnd - LastTileLoadStart).TotalMilliseconds;
 
-#if DEBUG
-                     lock(tileLoadQueue)
-                     {
-                        timer.Stop();
-                     }
+                     Debug.WriteLine(ctid + " - OnTileLoadComplete: " + lastTileLoadTimeMs + "ms, MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB");
 
-                     Debug.WriteLine(ctid + " - OnTileLoadComplete: " + timer.ElapsedMilliseconds + "ms, MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB");
-                     Debug.Flush();
-#endif
                      if(OnTileLoadComplete != null)
                      {
-                        OnTileLoadComplete();
+                        OnTileLoadComplete(lastTileLoadTimeMs);
                      }
 
                      if(OnNeedInvalidation != null)
@@ -1171,22 +1155,11 @@ namespace GMap.NET.Internals
       /// </summary>
       void UpdateBounds()
       {
-         Debug.WriteLine("OnTileLoadStart - at zoom " + Zoom + ", time: " + DateTime.Now.TimeOfDay);
-
          tileDrawingListLock.AcquireWriterLock();
          try
          {
             FindTilesAround();
 
-            if(OnTileLoadStart != null)
-            {
-               OnTileLoadStart();
-            }
-
-#if DEBUG
-            timer.Reset();
-            timer.Start();
-#endif
             lock(tileLoadQueue)
             {
                foreach(Point p in tileDrawingList)
@@ -1199,13 +1172,21 @@ namespace GMap.NET.Internals
                      }
                   }
                }
-
                EnsureLoaderThreads();
             }
          }
          finally
          {
             tileDrawingListLock.ReleaseWriterLock();
+
+            if(OnTileLoadStart != null)
+            {
+               OnTileLoadStart();
+            }
+
+            LastTileLoadStart = DateTime.Now;
+            Debug.WriteLine("OnTileLoadStart - at zoom " + Zoom + ", time: " + LastTileLoadStart.TimeOfDay);
+
             waitForTileLoad.Set();
          }
       }
@@ -1238,7 +1219,6 @@ namespace GMap.NET.Internals
       /// <summary>
       /// find tiles around to fill screen
       /// </summary>
-      /// <param name="list"></param>
       void FindTilesAround()
       {
          tileDrawingList.Clear();

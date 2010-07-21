@@ -491,11 +491,14 @@ namespace Demo.WindowsPresentation
       }
 
       // tile loading stops
-      void MainMap_OnTileLoadComplete()
+      void MainMap_OnTileLoadComplete(long ElapsedMilliseconds)
       {
+         MainMap.ElapsedMilliseconds = ElapsedMilliseconds;
+
          System.Windows.Forms.MethodInvoker m = delegate()
          {
             progressBar1.Visibility = Visibility.Hidden;
+            groupBox3.Header = "loading, last in " + MainMap.ElapsedMilliseconds + "ms";
          };
 
          try

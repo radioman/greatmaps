@@ -1297,11 +1297,13 @@ namespace Demo.WindowsForms
       }
 
       // loader end loading tiles
-      void MainMap_OnTileLoadComplete()
+      void MainMap_OnTileLoadComplete(long ElapsedMilliseconds)
       {
+         MainMap.ElapsedMilliseconds = ElapsedMilliseconds;
+
          MethodInvoker m = delegate()
          {
-            panelMenu.Text = "Menu";
+            panelMenu.Text = "Menu, last load in " + MainMap.ElapsedMilliseconds + "ms";
 
             textBoxMemory.Text = string.Format(CultureInfo.InvariantCulture, "{0:0.00}MB of {1:0.00}MB", MainMap.Manager.MemoryCacheSize, MainMap.Manager.MemoryCacheCapacity);
          };

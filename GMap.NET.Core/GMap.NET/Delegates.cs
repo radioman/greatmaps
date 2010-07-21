@@ -4,7 +4,7 @@ namespace GMap.NET
    public delegate void CurrentPositionChanged(PointLatLng point);
    internal delegate void NeedInvalidation();
 
-   public delegate void TileLoadComplete();
+   public delegate void TileLoadComplete(long ElapsedMilliseconds);
    public delegate void TileLoadStart();
   
    public delegate void MapDrag();
