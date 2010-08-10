@@ -1565,15 +1565,13 @@ namespace Demo.WindowsForms
          {
             for(int i = (int) MainMap.Zoom; i <= MainMap.MaxZoom; i++)
             {
-               List<GMap.NET.Point> x = MainMap.Projection.GetAreaTileList(area, i, 0);
-
-               DialogResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButtons.YesNoCancel);
+               DialogResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ?", "GMap.NET", MessageBoxButtons.YesNoCancel);
 
                if(res == DialogResult.Yes)
                {
                   TilePrefetcher obj = new TilePrefetcher();
                   obj.ShowCompleteMessage = true;
-                  obj.Start(x, i, MainMap.MapType, 100);
+                  obj.Start(area, MainMap.Projection, i, MainMap.MapType, 100);
                }
                else if(res == DialogResult.No)
                {
@@ -1583,8 +1581,6 @@ namespace Demo.WindowsForms
                {
                   break;
                }
-
-               x.Clear();
             }
          }
          else

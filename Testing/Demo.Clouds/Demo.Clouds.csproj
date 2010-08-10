@@ -95,6 +95,7 @@
     </Compile>
     <Compile Include="Markers\GMapImage.cs" />
     <Compile Include="MapControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MapControl.designer.cs">
       <DependentUpon>MapControl.cs</DependentUpon>

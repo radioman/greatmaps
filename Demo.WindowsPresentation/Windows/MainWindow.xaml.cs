@@ -610,28 +610,22 @@ namespace Demo.WindowsPresentation
          {
             for(int i = (int) MainMap.Zoom; i <= MainMap.MaxZoom; i++)
             {
-               var x = MainMap.Projection.GetAreaTileList(area, i, 0);
-
-               MessageBoxResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ? Total => " + x.Count, "GMap.NET", MessageBoxButton.YesNoCancel);
+               MessageBoxResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ?", "GMap.NET", MessageBoxButton.YesNoCancel);
 
                if(res == MessageBoxResult.Yes)
                {
                   TilePrefetcher obj = new TilePrefetcher();
                   obj.ShowCompleteMessage = true;
-                  obj.Start(x, i, MainMap.MapType, 100);
+                  obj.Start(area, MainMap.Projection, i, MainMap.MapType, 100);
                }
-               else
-                  if(res == MessageBoxResult.No)
-                  {
-                     continue;
-                  }
-                  else
-                     if(res == MessageBoxResult.Cancel)
-                     {
-                        break;
-                     }
-
-               x.Clear();
+               else if(res == MessageBoxResult.No)
+               {
+                  continue;
+               }
+               else if(res == MessageBoxResult.Cancel)
+               {
+                  break;
+               }
             }
          }
          else

@@ -84,6 +84,7 @@ namespace Demo.WindowsForms
             GMap.NET.Point topLeftPx = info.Projection.FromLatLngToPixel(info.Area.LocationTopLeft, info.Zoom);
             GMap.NET.Point rightButtomPx = info.Projection.FromLatLngToPixel(info.Area.Bottom, info.Area.Right, info.Zoom);
             GMap.NET.Point pxDelta = new GMap.NET.Point(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
+            GMap.NET.Size maxOfTiles = info.Projection.GetTileMatrixMaxXY(info.Zoom);
 
             int padding = info.MakeWorldFile ? 0 : 22;
             {
@@ -113,7 +114,18 @@ namespace Demo.WindowsForms
                            foreach(MapType tp in types)
                            {
                               Exception ex;
-                              WindowsFormsImage tile = GMaps.Instance.GetImageFrom(tp, p, info.Zoom, out ex) as WindowsFormsImage;
+                              WindowsFormsImage tile;
+
+                              // tile number inversion(BottomLeft -> TopLeft) for pergo maps
+                              if(tp == MapType.PergoTurkeyMap)
+                              {
+                                 tile = GMaps.Instance.GetImageFrom(tp, new GMap.NET.Point(p.X, maxOfTiles.Height - p.Y), info.Zoom, out ex) as WindowsFormsImage;
+                              }
+                              else // ok
+                              {
+                                 tile = GMaps.Instance.GetImageFrom(tp, p, info.Zoom, out ex) as WindowsFormsImage;
+                              }
+
                               if(tile != null)
                               {
                                  using(tile)

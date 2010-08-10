@@ -39,21 +39,21 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "m@129";
-      public string VersionGoogleSatellite = "63";
-      public string VersionGoogleLabels = "h@129";
-      public string VersionGoogleTerrain = "t@125,r@129";
+      public string VersionGoogleMap = "m@130";
+      public string VersionGoogleSatellite = "66";
+      public string VersionGoogleLabels = "h@130";
+      public string VersionGoogleTerrain = "t@125,r@130";
       public string SecGoogleWord = "Galileo";
 
       // Google (China) version strings
-      public string VersionGoogleMapChina = "m@129";
-      public string VersionGoogleSatelliteChina = "s@63";
-      public string VersionGoogleLabelsChina = "h@129";
-      public string VersionGoogleTerrainChina = "t@125,r@129";
+      public string VersionGoogleMapChina = "m@130";
+      public string VersionGoogleSatelliteChina = "s@66";
+      public string VersionGoogleLabelsChina = "h@130";
+      public string VersionGoogleTerrainChina = "t@125,r@130";
 
       // Google (Korea) version strings
       public string VersionGoogleMapKorea = "kr1.12";
-      public string VersionGoogleSatelliteKorea = "63";
+      public string VersionGoogleSatelliteKorea = "66";
       public string VersionGoogleLabelsKorea = "kr1t.12";
 
       /// <summary>
@@ -68,7 +68,7 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.3";
 
       // BingMaps
-      public string VersionBingMaps = "488";
+      public string VersionBingMaps = "517";
 
       // YandexMap
       public string VersionYandexMap = "2.15.0";
@@ -86,6 +86,10 @@ namespace GMap.NET
                           "MTN200", "MTN200", "MTN200", 
                           "MTN25", "MTN25",
                           "ORTOFOTOS","ORTOFOTOS","ORTOFOTOS","ORTOFOTOS"};
+      /// <summary>
+      /// default tile server for Pergo maps
+      /// </summary>
+      public string Server_PergoTurkeyMap = "map{0}.pergo.com.tr";
 
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
@@ -1128,7 +1132,7 @@ namespace GMap.NET
                GetSecGoogleWords(pos, out sec1, out sec2);
                TryCorrectGoogleVersions();
 
-               //http://mt2.google.com/vt/lyrs=m@107&hl=lt&x=18&y=10&z=5&s=
+               // http://mt1.google.com/vt/lyrs=m@130&hl=lt&x=18683&s=&y=10413&z=15&s=Galile
 
                return string.Format("http://{0}{1}.google.com/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMap, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
@@ -1154,6 +1158,7 @@ namespace GMap.NET
                TryCorrectGoogleVersions();
 
                // http://mt1.google.com/vt/lyrs=h@107&hl=lt&x=583&y=325&z=10&s=Ga
+               // http://mt0.google.com/vt/lyrs=h@130&hl=lt&x=1166&y=652&z=11&s=Galile
 
                return string.Format("http://{0}{1}.google.com/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabels, language, pos.X, sec1, pos.Y, zoom, sec2);
             }
@@ -1428,7 +1433,7 @@ namespace GMap.NET
                string x = pos.X.ToString("000000000").Insert(3, "/").Insert(7, "/"); // - 000/000/001
                string y = pos.Y.ToString("000000000").Insert(3, "/").Insert(7, "/"); // - 000/000/000
 
-               return string.Format("http://map{0}.pergo.com.tr/tile/{1:00}/{2}/{3}.png", GetServerNum(pos, 4), zoom, x, y);
+               return string.Format("http://" + Server_PergoTurkeyMap + "/tile/{1:00}/{2}/{3}.png", GetServerNum(pos, 4), zoom, x, y);
             }
             #endregion
 
@@ -1668,6 +1673,8 @@ namespace GMap.NET
       /// </summary>
       internal void TryCorrectGoogleVersions()
       {
+         return; // temp disable
+
          if(CorrectGoogleVersions && !IsCorrectedGoogleVersions)
          {
             IsCorrectedGoogleVersions = true; // try it only once
@@ -1703,16 +1710,29 @@ namespace GMap.NET
                      {
                         string html = read.ReadToEnd();
 
-                        // find it  
-                        // apiCallback(["http://mt0.google.com/vt/v\x3dw2.106\x26hl\x3dlt\x26","http://mt1.google.com/vt/v\x3dw2.106\x26hl\x3dlt\x26","http://mt2.google.com/vt/v\x3dw2.106\x26hl\x3dlt\x26","http://mt3.google.com/vt/v\x3dw2.106\x26hl\x3dlt\x26"],
-                        // ["http://khm0.google.com/kh/v\x3d45\x26","http://khm1.google.com/kh/v\x3d45\x26","http://khm2.google.com/kh/v\x3d45\x26","http://khm3.google.com/kh/v\x3d45\x26"],
-                        // ["http://mt0.google.com/vt/v\x3dw2t.106\x26hl\x3dlt\x26","http://mt1.google.com/vt/v\x3dw2t.106\x26hl\x3dlt\x26","http://mt2.google.com/vt/v\x3dw2t.106\x26hl\x3dlt\x26","http://mt3.google.com/vt/v\x3dw2t.106\x26hl\x3dlt\x26"],
-                        // "","","",false,"G",opts,["http://mt0.google.com/vt/v\x3dw2p.106\x26hl\x3dlt\x26","http://mt1.google.com/vt/v\x3dw2p.106\x26hl\x3dlt\x26","http://mt2.google.com/vt/v\x3dw2p.106\x26hl\x3dlt\x26","http://mt3.google.com/vt/v\x3dw2p.106\x26hl\x3dlt\x26"],jslinker,pageArgs);
+                        // find it
+                        //
+                        // apiCallback({map_tile_urls:["http://mt0.google.com/vt/lyrs=m@130\x26hl=en\x26","http://mt1.google.com/vt/lyrs=m@130\x26hl=en\x26"],
+                        // satellite_tile_urls:["http://khm0.google.com/kh/v=66\x26","http://khm1.google.com/kh/v=66\x26"],
+                        // hybrid_tile_urls:["http://mt0.google.com/vt/lyrs=h@130\x26hl=en\x26","http://mt1.google.com/vt/lyrs=h@130\x26hl=en\x26"],
+                        //
+                        //tile_override:[{maptype:0,min_zoom:7,max_zoom:7,rect:[{lo:{lat_e7:330000000,lng_e7:1246050000},hi:{lat_e7:386200000,lng_e7:1293600000}},{lo:{lat_e7:366500000,lng_e7:1297000000},hi:{lat_e7:386200000,lng_e7:1320034790}}],uris:["http://mt0.gmaptiles.co.kr/mt/v=kr1.12\x26hl=en\x26","http://mt1.gmaptiles.co.kr/mt/v=kr1.12\x26hl=en\x26","http://mt2.gmaptiles.co.kr/mt/v=kr1.12\x26hl=en\x26","http://mt3.gmaptiles.co.kr/mt/v=kr1.12\x26hl=en\x26"]},
+                        //                {maptype:0,min_zoom:8,max_zoom:9,rect:[{lo:{lat_e7:330000000,lng_e7:1246050000},hi:{lat_e7:386200000,lng_e7:1279600000}},{lo:{lat_e7:345000000,lng_e7:1279600000},hi:{lat_e7:386200000,lng_e7:1286700000}},{lo:{lat_e7:348900000,lng_e7:1286700000},hi:{lat_e7:386200000,lng_e7:1293600000}},{lo:{lat_e7:354690000,lng_e7:1293600000},hi:{lat_e7:386200000,lng_e7:1320034790}}],uris:["http://mt0.gmaptiles.co.kr/mt/v=kr1.12\x26hl=en\x26","http://mt1.gmaptiles.co.kr/mt/v=kr1.12\x26hl=en\x26","http://mt2.gmaptiles.co.kr/mt/v=kr1.12\x26hl=en\x26","http://mt3.gmaptiles.co.kr/mt/v=kr1.12\x26hl=en\x26"]},
+                        //                {maptype:0,min_zoom:10,max_zoom:19,rect:[{lo:{lat_e7:329890840,lng_e7:1246055600},hi:{lat_e7:386930130,lng_e7:1284960940}},{lo:{lat_e7:344646740,lng_e7:1284960940},hi:{lat_e7:386930130,lng_e7:1288476560}},{lo:{lat_e7:350277470,lng_e7:1288476560},hi:{lat_e7:386930130,lng_e7:1310531620}},{lo:{lat_e7:370277730,lng_e7:1310531620},hi:{lat_e7:386930130,lng_e7:1320034790}}],uris:["http://mt0.gmaptiles.co.kr/mt/v=kr1.12\x26hl=en\x26","http://mt1.gmaptiles.co.kr/mt/v=kr1.12\x26hl=en\x26","http://mt2.gmaptiles.co.kr/mt/v=kr1.12\x26hl=en\x26","http://mt3.gmaptiles.co.kr/mt/v=kr1.12\x26hl=en\x26"]},
+                        //                {maptype:3,min_zoom:7,max_zoom:7,rect:[{lo:{lat_e7:330000000,lng_e7:1246050000},hi:{lat_e7:386200000,lng_e7:1293600000}},{lo:{lat_e7:366500000,lng_e7:1297000000},hi:{lat_e7:386200000,lng_e7:1320034790}}],uris:["http://mt0.gmaptiles.co.kr/mt/v=kr1p.12\x26hl=en\x26","http://mt1.gmaptiles.co.kr/mt/v=kr1p.12\x26hl=en\x26","http://mt2.gmaptiles.co.kr/mt/v=kr1p.12\x26hl=en\x26","http://mt3.gmaptiles.co.kr/mt/v=kr1p.12\x26hl=en\x26"]},
+                        //                {maptype:3,min_zoom:8,max_zoom:9,rect:[{lo:{lat_e7:330000000,lng_e7:1246050000},hi:{lat_e7:386200000,lng_e7:1279600000}},{lo:{lat_e7:345000000,lng_e7:1279600000},hi:{lat_e7:386200000,lng_e7:1286700000}},{lo:{lat_e7:348900000,lng_e7:1286700000},hi:{lat_e7:386200000,lng_e7:1293600000}},{lo:{lat_e7:354690000,lng_e7:1293600000},hi:{lat_e7:386200000,lng_e7:1320034790}}],uris:["http://mt0.gmaptiles.co.kr/mt/v=kr1p.12\x26hl=en\x26","http://mt1.gmaptiles.co.kr/mt/v=kr1p.12\x26hl=en\x26","http://mt2.gmaptiles.co.kr/mt/v=kr1p.12\x26hl=en\x26","http://mt3.gmaptiles.co.kr/mt/v=kr1p.12\x26hl=en\x26"]},
+                        //                {maptype:3,min_zoom:10,rect:[{lo:{lat_e7:329890840,lng_e7:1246055600},hi:{lat_e7:386930130,lng_e7:1284960940}},{lo:{lat_e7:344646740,lng_e7:1284960940},hi:{lat_e7:386930130,lng_e7:1288476560}},{lo:{lat_e7:350277470,lng_e7:1288476560},hi:{lat_e7:386930130,lng_e7:1310531620}},{lo:{lat_e7:370277730,lng_e7:1310531620},hi:{lat_e7:386930130,lng_e7:1320034790}}],uris:["http://mt0.gmaptiles.co.kr/mt/v=kr1p.12\x26hl=en\x26","http://mt1.gmaptiles.co.kr/mt/v=kr1p.12\x26hl=en\x26","http://mt2.gmaptiles.co.kr/mt/v=kr1p.12\x26hl=en\x26","http://mt3.gmaptiles.co.kr/mt/v=kr1p.12\x26hl=en\x26"]}],
+                        //    
+                        // physical_tile_urls:["http://mt0.google.com/vt/lyrs=t@125,r@130\x26hl=en\x26","http://mt1.google.com/vt/lyrs=t@125,r@130\x26hl=en\x26"],
+                        // experiment_ids:[200739],
+                        // log_info_window_ratio:0.0099999997764825821,log_fragment_count:10,log_fragment_seed:5,
+                        // oblique_tile_urls:["http://khmdb0.google.com/kh?v=30\x26","http://khmdb1.google.com/kh?v=30\x26"],jsmodule_base_url:"http://maps.gstatic.com/intl/en_ALL/mapfiles/264c/maps2",
+                        // generic_tile_urls:["http://mt0.google.com/vt?hl=en\x26","http://mt1.google.com/vt?hl=en\x26"]},jslinker);
 
-                        int id = html.LastIndexOf("apiCallback([");
+                        int id = html.LastIndexOf("apiCallback({");
                         if(id > 0)
                         {
-                           int idEnd = html.IndexOf("jslinker,pageArgs", id);
+                           int idEnd = html.IndexOf("jslinker", id);
                            if(idEnd > id)
                            {
                               string api = html.Substring(id, idEnd - id);

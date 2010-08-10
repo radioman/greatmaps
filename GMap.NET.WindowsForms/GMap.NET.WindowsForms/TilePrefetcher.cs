@@ -13,12 +13,15 @@ namespace GMap.NET
    public partial class TilePrefetcher : Form
    {
       BackgroundWorker worker = new BackgroundWorker();
-      List<Point> list = new List<Point>();
+      List<Point> list;
       int zoom;
       MapType type;
       int sleep;
       int all;
       public bool ShowCompleteMessage = false;
+      PureProjection prj;
+      RectLatLng area;
+      GMap.NET.Size maxOfTiles;
 
       public TilePrefetcher()
       {
@@ -31,17 +34,15 @@ namespace GMap.NET
          worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
       }
 
-      public void Start(List<Point> points, int zoom, MapType type, int sleep)
+      public void Start(RectLatLng area, PureProjection prj, int zoom, MapType type, int sleep)
       {
          if(!worker.IsBusy)
          {
             this.label1.Text = "...";
             this.progressBar1.Value = 0;
 
-            list.Clear();
-            list.AddRange(points);
-            all = list.Count;
-
+            this.prj = prj;
+            this.area = area;
             this.zoom = zoom;
             this.type = type;
             this.sleep = sleep;
@@ -88,8 +89,18 @@ namespace GMap.NET
          foreach(MapType type in types)
          {
             Exception ex;
+            PureImage img;
 
-            PureImage img = GMaps.Instance.GetImageFrom(type, p, zoom, out ex);
+            // tile number inversion(BottomLeft -> TopLeft) for pergo maps
+            if(type == MapType.PergoTurkeyMap)
+            {
+               img = GMaps.Instance.GetImageFrom(type, new Point(p.X, maxOfTiles.Height - p.Y), zoom, out ex);
+            }
+            else // ok
+            {
+               img = GMaps.Instance.GetImageFrom(type, p, zoom, out ex);
+            }
+
             if(img != null)
             {
                img.Dispose();
@@ -105,6 +116,15 @@ namespace GMap.NET
 
       void worker_DoWork(object sender, DoWorkEventArgs e)
       {
+         if(list != null)
+         {
+            list.Clear();
+            list = null;
+         }
+         list = prj.GetAreaTileList(area, zoom, 0);
+         maxOfTiles = prj.GetTileMatrixMaxXY(zoom);
+         all = list.Count;
+
          int countOk = 0;
 
          Stuff.Shuffle<Point>(ref list);

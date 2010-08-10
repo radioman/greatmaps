@@ -648,18 +648,8 @@ namespace GMap.NET.Internals
       public void OnMapClose()
       {
          CancelAsyncTasks();
-
-         if(waitForTileLoad != null)
-         {
-            try
-            {
-               waitForTileLoad.Set();
-               waitForTileLoad.Close();
-            }
-            catch
-            {
-            }
-         }
+         waitForTileLoad.Set();
+         IsStarted = false;
       }
 
       /// <summary>
@@ -917,6 +907,8 @@ namespace GMap.NET.Internals
       bool RaiseEmptyTileError = false;
       internal readonly Dictionary<LoadTask, Exception> FailedLoads = new Dictionary<LoadTask, Exception>();
 
+      internal static readonly int WaitForTileLoadThreadTimeout = 5*1000*60; // 5 min.
+
       void ProcessLoadTask()
       {
          bool last = false;
@@ -927,7 +919,7 @@ namespace GMap.NET.Internals
          Thread ct = Thread.CurrentThread;
          string ctid = "Thread[" + ct.ManagedThreadId + "]";
 
-         while(waitForTileLoad.WaitOne(TimeSpan.FromMinutes(5)))
+         while(waitForTileLoad.WaitOne(WaitForTileLoadThreadTimeout, false))
 #else
          int ctid = 0;
          while(waitForTileLoad.WaitOne())
