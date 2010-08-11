@@ -650,7 +650,7 @@ namespace GMap.NET
       /// <returns></returns>
       public PointLatLng? GetLatLngFromGeocoder(string keywords, out GeoCoderStatusCode status)
       {
-         return GetLatLngFromGeocoderUrl(MakeGeocoderUrl(keywords), UseGeocoderCache, out status);
+         return GetLatLngFromGeocoderUrl(MakeGeocoderUrl(keywords, LanguageStr), UseGeocoderCache, out status);
       }
 
       /// <summary>
@@ -1559,11 +1559,12 @@ namespace GMap.NET
       /// makes url for geocoder
       /// </summary>
       /// <param name="keywords"></param>
+      /// <param name="language"></param>
       /// <returns></returns>
-      internal string MakeGeocoderUrl(string keywords)
+      internal string MakeGeocoderUrl(string keywords, string language)
       {
          string key = keywords.Replace(' ', '+');
-         return string.Format("http://maps.google.com/maps/geo?q={0}&output=csv&key={1}", key, GoogleMapsAPIKey);
+         return string.Format("http://maps.google.com/maps/geo?q={0}&hl={1}&output=csv&key={2}", key, language, GoogleMapsAPIKey);
       }
 
       /// <summary>
