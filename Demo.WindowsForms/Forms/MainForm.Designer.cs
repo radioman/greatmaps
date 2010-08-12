@@ -608,7 +608,7 @@
          // 
          this.panelMenu.AssociatedSplitter = this.splitter1;
          this.panelMenu.BackColor = System.Drawing.Color.Transparent;
-         this.panelMenu.CaptionFont = new System.Drawing.Font("Segoe UI", 11.75F, System.Drawing.FontStyle.Bold);
+         this.panelMenu.CaptionFont = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
          this.panelMenu.CaptionHeight = 27;
          this.panelMenu.Controls.Add(this.xPanderPanelList1);
          this.panelMenu.CustomColors.BorderColor = System.Drawing.Color.FromArgb(((int) (((byte) (184)))), ((int) (((byte) (184)))), ((int) (((byte) (184)))));
@@ -1138,7 +1138,7 @@
             this.ConnectionsCount});
          dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
          dataGridViewCellStyle1.BackColor = System.Drawing.Color.AliceBlue;
-         dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+         dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
          dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
          dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.LightSkyBlue;
          dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;

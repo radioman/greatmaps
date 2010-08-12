@@ -637,6 +637,45 @@ namespace GMap.NET.WindowsPresentation
                         }
                      }
                   }
+                  //else // testing smooth zooming
+                  //{
+                  //   int ZoomOffset = 0;
+                  //   Tile ParentTile = null;
+                  //   int Ix = 0;
+
+                  //   while(ParentTile == null && (Core.Zoom - ZoomOffset) >= 1 && ZoomOffset <= LevelsKeepInMemmory)
+                  //   {
+                  //      Ix = (int) Math.Pow(2, ++ZoomOffset);
+                  //      ParentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - ZoomOffset, new GMap.NET.Point((int) (tilePoint.X / Ix), (int) (tilePoint.Y / Ix)));
+                  //   }
+
+                  //   if(ParentTile != null)
+                  //   {
+                  //      int Xoff = Math.Abs(tilePoint.X - (ParentTile.Pos.X * Ix));
+                  //      int Yoff = Math.Abs(tilePoint.Y - (ParentTile.Pos.Y * Ix));
+
+                  //      // render tile 
+                  //      lock(ParentTile.Overlays)
+                  //      {
+                  //         foreach(WindowsPresentationImage img in ParentTile.Overlays)
+                  //         {
+                  //            if(img != null && img.Img != null)
+                  //            {
+                  //               if(!found)
+                  //                  found = true;
+
+                  //               //System.Drawing.RectangleF srcRect = new System.Drawing.RectangleF((float) (Xoff * (img.Img.Width / Ix)), (float) (Yoff * (img.Img.Height / Ix)), (img.Img.Width / Ix), (img.Img.Height / Ix));
+                  //               //System.Drawing.Rectangle dst = new System.Drawing.Rectangle(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+
+                  //               //g.DrawImage(img.Img, new Rect(
+
+                  //               //g.DrawImage(img.Img, dst, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, GraphicsUnit.Pixel, TileFlipXYAttributes);
+                  //               //g.FillRectangle(SelectedAreaFill, dst);
+                  //            }
+                  //         }
+                  //      }
+                  //   }
+                  //}
 
                   // add text if tile is missing
                   if(!found)

@@ -296,7 +296,9 @@ namespace GMap.NET.WindowsForms
       Font ScaleFont = new Font(FontFamily.GenericSansSerif, 5, FontStyle.Italic);
       internal readonly StringFormat CenterFormat = new StringFormat();
       internal readonly StringFormat BottomFormat = new StringFormat();
-
+#if !PocketPC
+      readonly ImageAttributes TileFlipXYAttributes = new ImageAttributes();
+#endif
       double zoomReal;
       Bitmap backBuffer;
       Graphics gxOff;
@@ -321,6 +323,8 @@ namespace GMap.NET.WindowsForms
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.Opaque, true);
             ResizeRedraw = true;
+
+            TileFlipXYAttributes.SetWrapMode(WrapMode.TileFlipXY);
 #endif
             GMaps.Instance.ImageProxy = wimg;
 
@@ -462,7 +466,45 @@ namespace GMap.NET.WindowsForms
                            }
                         }
                      }
+#if !PocketPC
+                     else // testing smooth zooming
+                     {
+                        int ZoomOffset = 0;
+                        Tile ParentTile = null;
+                        int Ix = 0;
 
+                        while(ParentTile == null && (Core.Zoom - ZoomOffset) >= 1 && ZoomOffset <= LevelsKeepInMemmory)
+                        {
+                           Ix = (int) Math.Pow(2, ++ZoomOffset);
+                           ParentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - ZoomOffset, new GMap.NET.Point((int) (tilePoint.X / Ix), (int) (tilePoint.Y / Ix)));
+                        }
+
+                        if(ParentTile != null)
+                        {
+                           int Xoff = Math.Abs(tilePoint.X - (ParentTile.Pos.X * Ix));
+                           int Yoff = Math.Abs(tilePoint.Y - (ParentTile.Pos.Y * Ix));
+
+                           // render tile 
+                           lock(ParentTile.Overlays)
+                           {
+                              foreach(WindowsFormsImage img in ParentTile.Overlays)
+                              {
+                                 if(img != null && img.Img != null)
+                                 {
+                                    if(!found)
+                                       found = true;
+
+                                    System.Drawing.RectangleF srcRect = new System.Drawing.RectangleF((float) (Xoff * (img.Img.Width / Ix)), (float) (Yoff * (img.Img.Height / Ix)), (img.Img.Width / Ix), (img.Img.Height / Ix));
+                                    System.Drawing.Rectangle dst = new System.Drawing.Rectangle(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+
+                                    g.DrawImage(img.Img, dst, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, GraphicsUnit.Pixel, TileFlipXYAttributes);
+                                    g.FillRectangle(SelectedAreaFill, dst);
+                                 }
+                              }
+                           }
+                        }
+                     }
+#endif
                      // add text if tile is missing
                      if(!found)
                      {
