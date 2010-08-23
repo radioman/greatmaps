@@ -47,7 +47,7 @@ namespace GMap.NET.Internals
       public List<Point> tileDrawingList = new List<Point>();
       public readonly FastReaderWriterLock tileDrawingListLock = new FastReaderWriterLock();
 
-      readonly AutoResetEvent waitForTileLoad = new AutoResetEvent(false);
+      //readonly ManualResetEvent waitForTileLoad = new ManualResetEvent(false);
       public readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>();
 
       public static readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
@@ -648,7 +648,10 @@ namespace GMap.NET.Internals
       public void OnMapClose()
       {
          CancelAsyncTasks();
-         waitForTileLoad.Set();
+         //waitForTileLoad.Set();
+
+         Set();
+
          IsStarted = false;
       }
 
@@ -909,9 +912,10 @@ namespace GMap.NET.Internals
 
       internal static readonly int WaitForTileLoadThreadTimeout = 5*1000*60; // 5 min.
 
+      long loadCount = 0;
+
       void ProcessLoadTask()
       {
-         bool last = false;
          bool invalidate = false;
          LoadTask? task = null;
 
@@ -919,7 +923,9 @@ namespace GMap.NET.Internals
          Thread ct = Thread.CurrentThread;
          string ctid = "Thread[" + ct.ManagedThreadId + "]";
 
-         while(waitForTileLoad.WaitOne(WaitForTileLoadThreadTimeout, false))
+         while(WaitOne())
+
+         //while(waitForTileLoad.WaitOne(WaitForTileLoadThreadTimeout, false))
 #else
          int ctid = 0;
          while(waitForTileLoad.WaitOne())
@@ -933,14 +939,6 @@ namespace GMap.NET.Internals
                if(tileLoadQueue.Count > 0)
                {
                   task = tileLoadQueue.Dequeue();
-                  {
-                     last = tileLoadQueue.Count == 0;
-                     //Debug.WriteLine("TileLoadQueue: " + tileLoadQueue.Count);
-                  }
-               }
-               else
-               {
-                  last = true;
                }
             }
 
@@ -1036,43 +1034,13 @@ namespace GMap.NET.Internals
                }
                finally
                {
-                  // last buddy cleans stuff ;}
-                  if(last)
+                  lock(this)
                   {
-                     GMaps.Instance.kiberCacheLock.AcquireWriterLock();
-                     try
-                     {
-                        GMaps.Instance.TilesInMemory.RemoveMemoryOverload();
-                     }
-                     finally
-                     {
-                        GMaps.Instance.kiberCacheLock.ReleaseWriterLock();
-                     }
+                     invalidate = ((DateTime.Now - LastInvalidation).TotalMilliseconds > 111);
+                  }
 
-                     tileDrawingListLock.AcquireReaderLock();
-                     try
-                     {
-                        Matrix.ClearLevelAndPointsNotIn(Zoom, tileDrawingList);
-                     }
-                     finally
-                     {
-                        tileDrawingListLock.ReleaseReaderLock();
-                     }
-#if UseGC
-                     GC.Collect();
-                     GC.WaitForPendingFinalizers();
-                     GC.Collect();
-#endif
-                     LastTileLoadEnd = DateTime.Now;
-                     long lastTileLoadTimeMs = (long) (LastTileLoadEnd - LastTileLoadStart).TotalMilliseconds;
-
-                     Debug.WriteLine(ctid + " - OnTileLoadComplete: " + lastTileLoadTimeMs + "ms, MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB");
-
-                     if(OnTileLoadComplete != null)
-                     {
-                        OnTileLoadComplete(lastTileLoadTimeMs);
-                     }
-
+                  if(invalidate)
+                  {
                      if(OnNeedInvalidation != null)
                      {
                         OnNeedInvalidation();
@@ -1082,43 +1050,57 @@ namespace GMap.NET.Internals
                      {
                         LastInvalidation = DateTime.Now;
                      }
-
-                     UpdateGroundResolution();
                   }
                   else
                   {
-                     // continue on next tile
-                     waitForTileLoad.Set();
-
-                     lock(this)
-                     {
-                        invalidate = ((DateTime.Now - LastInvalidation).TotalMilliseconds > 111);
-                     }
-
-                     if(invalidate)
-                     {
-                        if(OnNeedInvalidation != null)
-                        {
-                           OnNeedInvalidation();
-                        }
-
-                        lock(this)
-                        {
-                           LastInvalidation = DateTime.Now;
-                        }
-                     }
-                     else
-                     {
-                        Debug.WriteLine(ctid + " - SkipInvalidation, Delta: " + (DateTime.Now - LastInvalidation).TotalMilliseconds + "ms");
-                     }
+                     //Debug.WriteLine(ctid + " - SkipInvalidation, Delta: " + (DateTime.Now - LastInvalidation).TotalMilliseconds + "ms");
                   }
                }
             }
-            else
+            else // last buddy cleans stuff ;}
             {
-               if(last)
+               long c = Interlocked.Increment(ref loadCount);
+               if(c == 5)
                {
-                  Debug.WriteLine(ctid + " - Perform last Invalidation...");
+                  Reset();
+
+                  Interlocked.Exchange(ref loadCount, 0);
+
+                  GMaps.Instance.kiberCacheLock.AcquireWriterLock();
+                  try
+                  {
+                     GMaps.Instance.TilesInMemory.RemoveMemoryOverload();
+                  }
+                  finally
+                  {
+                     GMaps.Instance.kiberCacheLock.ReleaseWriterLock();
+                  }
+
+                  tileDrawingListLock.AcquireReaderLock();
+                  try
+                  {
+                     Matrix.ClearLevelAndPointsNotIn(Zoom, tileDrawingList);
+                  }
+                  finally
+                  {
+                     tileDrawingListLock.ReleaseReaderLock();
+                  }
+#if UseGC
+               GC.Collect();
+               GC.WaitForPendingFinalizers();
+               GC.Collect();
+#endif
+                  UpdateGroundResolution();
+
+                  LastTileLoadEnd = DateTime.Now;
+                  long lastTileLoadTimeMs = (long) (LastTileLoadEnd - LastTileLoadStart).TotalMilliseconds;
+
+                  Debug.WriteLine(ctid + " - OnTileLoadComplete: " + lastTileLoadTimeMs + "ms, MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB");
+
+                  if(OnTileLoadComplete != null)
+                  {
+                     OnTileLoadComplete(lastTileLoadTimeMs);
+                  }
 
                   if(OnNeedInvalidation != null)
                   {
@@ -1129,6 +1111,18 @@ namespace GMap.NET.Internals
                   {
                      LastInvalidation = DateTime.Now;
                   }
+
+                  Thread.Sleep(1111);
+
+                  // to be sure all tiles are invalidated
+                  if(OnNeedInvalidation != null)
+                  {
+                     OnNeedInvalidation();
+                  }
+               }
+               else
+               {
+                  Debug.WriteLine(ctid + " - skip end: " + c);
                }
             }
          }
@@ -1141,6 +1135,40 @@ namespace GMap.NET.Internals
          }
 #endif
       }
+
+
+      #region -- manual reset --
+      readonly object _locker = new object();
+      bool _signal;
+
+      bool WaitOne()
+      {
+         lock(_locker)
+         {
+            while(!_signal)
+            {
+               Monitor.Wait(_locker);
+            }
+         }
+         return true;
+      }
+
+      void Set()
+      {
+         lock(_locker)
+         {
+            _signal = true;
+            Monitor.PulseAll(_locker);
+         }
+      }
+
+      void Reset()
+      {
+         lock(_locker)
+            _signal = false;
+      }
+      #endregion
+
 
       /// <summary>
       /// updates map bounds
@@ -1179,7 +1207,8 @@ namespace GMap.NET.Internals
             LastTileLoadStart = DateTime.Now;
             Debug.WriteLine("OnTileLoadStart - at zoom " + Zoom + ", time: " + LastTileLoadStart.TimeOfDay);
 
-            waitForTileLoad.Set();
+            Set();
+            //waitForTileLoad.Set();
          }
       }
 
