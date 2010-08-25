@@ -506,12 +506,15 @@ namespace GMap.NET.WindowsPresentation
          Core.StartSystem();
          Core_OnMapZoomChanged();
 
-         Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
-            new Action(delegate()
-            {
-               Application.Current.Exit += new ExitEventHandler(Current_Exit);
-            }
-            ));
+         if(Application.Current != null)
+         {
+            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+               new Action(delegate()
+               {
+                  Application.Current.Exit += new ExitEventHandler(Current_Exit);
+               }
+               ));
+         }
       }
 
       void GMapControl_Unloaded(object sender, RoutedEventArgs e)
