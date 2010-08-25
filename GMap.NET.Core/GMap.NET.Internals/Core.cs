@@ -12,6 +12,7 @@ namespace GMap.NET.Internals
    using OpenNETCF.ComponentModel;
    using OpenNETCF.Threading;
    using Thread=OpenNETCF.Threading.Thread2;
+   using Monitor=OpenNETCF.Threading.Monitor2;
 #endif
 
    /// <summary>
@@ -44,7 +45,7 @@ namespace GMap.NET.Internals
 
       public readonly TileMatrix Matrix = new TileMatrix();
 
-      public List<Point> tileDrawingList = new List<Point>();
+      public readonly List<Point> tileDrawingList = new List<Point>();
       public readonly FastReaderWriterLock tileDrawingListLock = new FastReaderWriterLock();
 
       //readonly ManualResetEvent waitForTileLoad = new ManualResetEvent(false);
@@ -57,6 +58,12 @@ namespace GMap.NET.Internals
       public static readonly string arcGisCopyright = string.Format("©{0} ESRI - Map data ©{0} ArcGIS", DateTime.Today.Year);
       public static readonly string hnitCopyright = string.Format("©{0} Hnit-Baltic - Map data ©{0} ESRI", DateTime.Today.Year);
       public static readonly string pergoCopyright = string.Format("©{0} Pergo - Map data ©{0} Fideltus Advanced Technology", DateTime.Today.Year);
+
+#if !PocketPC
+      static readonly int GThreadPoolSize = 5;
+#else
+      static readonly int GThreadPoolSize = 2;
+#endif
 
       DateTime LastInvalidation = DateTime.Now;
       DateTime LastTileLoadStart = DateTime.Now;
@@ -648,10 +655,6 @@ namespace GMap.NET.Internals
       public void OnMapClose()
       {
          CancelAsyncTasks();
-         //waitForTileLoad.Set();
-
-         Set();
-
          IsStarted = false;
       }
 
@@ -912,31 +915,108 @@ namespace GMap.NET.Internals
 
       internal static readonly int WaitForTileLoadThreadTimeout = 5*1000*60; // 5 min.
 
-      long loadCount = 0;
+      long loadWaitCount = 0;
+      readonly object LastInvalidationLock = new object();
+      readonly object LastTileLoadStartEndLock = new object();
+
+#if PocketPC
+      readonly Monitor wait = new Monitor();
+#endif
 
       void ProcessLoadTask()
       {
          bool invalidate = false;
          LoadTask? task = null;
+         long lastTileLoadTimeMs;
+         bool stop = false;
 
 #if !PocketPC
          Thread ct = Thread.CurrentThread;
          string ctid = "Thread[" + ct.ManagedThreadId + "]";
-
-         while(WaitOne())
-
-         //while(waitForTileLoad.WaitOne(WaitForTileLoadThreadTimeout, false))
 #else
          int ctid = 0;
-         while(waitForTileLoad.WaitOne())
 #endif
+         while(!stop)
          {
             invalidate = false;
             task = null;
 
             lock(tileLoadQueue)
             {
-               if(tileLoadQueue.Count > 0)
+               while(tileLoadQueue.Count == 0)
+               {
+                  Debug.WriteLine(ctid + " - Wait " + loadWaitCount + " - " + DateTime.Now.TimeOfDay);
+
+                  if(++loadWaitCount >= GThreadPoolSize)
+                  {
+                     loadWaitCount = 0;
+
+                     lock(LastInvalidationLock)
+                     {
+                        LastInvalidation = DateTime.Now;
+                     }
+
+                     if(OnNeedInvalidation != null)
+                     {
+                        OnNeedInvalidation();
+                     }
+
+                     lock(LastTileLoadStartEndLock)
+                     {
+                        LastTileLoadEnd = DateTime.Now;
+                        lastTileLoadTimeMs = (long) (LastTileLoadEnd - LastTileLoadStart).TotalMilliseconds;
+                     }
+
+                     #region -- clear stuff--
+                     {
+                        GMaps.Instance.kiberCacheLock.AcquireWriterLock();
+                        try
+                        {
+                           GMaps.Instance.TilesInMemory.RemoveMemoryOverload();
+                        }
+                        finally
+                        {
+                           GMaps.Instance.kiberCacheLock.ReleaseWriterLock();
+                        }
+
+                        tileDrawingListLock.AcquireReaderLock();
+                        try
+                        {
+                           Matrix.ClearLevelAndPointsNotIn(Zoom, tileDrawingList);
+                        }
+                        finally
+                        {
+                           tileDrawingListLock.ReleaseReaderLock();
+                        }
+                     }
+                     #endregion
+
+                     UpdateGroundResolution();
+#if UseGC
+                     GC.Collect();
+                     GC.WaitForPendingFinalizers();
+                     GC.Collect();
+#endif
+
+                     Debug.WriteLine(ctid + " - OnTileLoadComplete: " + lastTileLoadTimeMs + "ms, MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB");
+
+                     if(OnTileLoadComplete != null)
+                     {
+                        OnTileLoadComplete(lastTileLoadTimeMs);
+                     }
+                  }
+#if !PocketPC
+                  if(false == Monitor.Wait(tileLoadQueue, WaitForTileLoadThreadTimeout, false))
+                  {
+                     stop = true;
+                     break;
+                  }
+#else
+                  wait.Wait();
+#endif
+               }
+
+               if(!stop || tileLoadQueue.Count > 0)
                {
                   task = tileLoadQueue.Dequeue();
                }
@@ -946,6 +1026,7 @@ namespace GMap.NET.Internals
             {
                try
                {
+                  #region -- execute --
                   var m = Matrix.GetTileWithReadLock(task.Value.Zoom, task.Value.Pos);
 
                   if(m == null || m.Overlays.Count == 0)
@@ -1027,6 +1108,7 @@ namespace GMap.NET.Internals
 
                      layers = null;
                   }
+                  #endregion
                }
                catch(Exception ex)
                {
@@ -1034,9 +1116,13 @@ namespace GMap.NET.Internals
                }
                finally
                {
-                  lock(this)
+                  lock(LastInvalidationLock)
                   {
                      invalidate = ((DateTime.Now - LastInvalidation).TotalMilliseconds > 111);
+                     if(invalidate)
+                     {
+                        LastInvalidation = DateTime.Now;
+                     }
                   }
 
                   if(invalidate)
@@ -1045,84 +1131,16 @@ namespace GMap.NET.Internals
                      {
                         OnNeedInvalidation();
                      }
-
-                     lock(this)
-                     {
-                        LastInvalidation = DateTime.Now;
-                     }
                   }
-                  else
-                  {
-                     //Debug.WriteLine(ctid + " - SkipInvalidation, Delta: " + (DateTime.Now - LastInvalidation).TotalMilliseconds + "ms");
-                  }
-               }
-            }
-            else // last buddy cleans stuff ;}
-            {
-               long c = Interlocked.Increment(ref loadCount);
-               if(c == 5)
-               {
-                  Reset();
-
-                  Interlocked.Exchange(ref loadCount, 0);
-
-                  GMaps.Instance.kiberCacheLock.AcquireWriterLock();
-                  try
-                  {
-                     GMaps.Instance.TilesInMemory.RemoveMemoryOverload();
-                  }
-                  finally
-                  {
-                     GMaps.Instance.kiberCacheLock.ReleaseWriterLock();
-                  }
-
-                  tileDrawingListLock.AcquireReaderLock();
-                  try
-                  {
-                     Matrix.ClearLevelAndPointsNotIn(Zoom, tileDrawingList);
-                  }
-                  finally
-                  {
-                     tileDrawingListLock.ReleaseReaderLock();
-                  }
-#if UseGC
-               GC.Collect();
-               GC.WaitForPendingFinalizers();
-               GC.Collect();
+#if DEBUG
+                  //else
+                  //{
+                  //   lock(LastInvalidationLock)
+                  //   {
+                  //      Debug.WriteLine(ctid + " - SkipInvalidation, Delta: " + (DateTime.Now - LastInvalidation).TotalMilliseconds + "ms");
+                  //   }
+                  //}
 #endif
-                  UpdateGroundResolution();
-
-                  LastTileLoadEnd = DateTime.Now;
-                  long lastTileLoadTimeMs = (long) (LastTileLoadEnd - LastTileLoadStart).TotalMilliseconds;
-
-                  Debug.WriteLine(ctid + " - OnTileLoadComplete: " + lastTileLoadTimeMs + "ms, MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB");
-
-                  if(OnTileLoadComplete != null)
-                  {
-                     OnTileLoadComplete(lastTileLoadTimeMs);
-                  }
-
-                  if(OnNeedInvalidation != null)
-                  {
-                     OnNeedInvalidation();
-                  }
-
-                  lock(this)
-                  {
-                     LastInvalidation = DateTime.Now;
-                  }
-
-                  Thread.Sleep(1111);
-
-                  // to be sure all tiles are invalidated
-                  if(OnNeedInvalidation != null)
-                  {
-                     OnNeedInvalidation();
-                  }
-               }
-               else
-               {
-                  Debug.WriteLine(ctid + " - skip end: " + c);
                }
             }
          }
@@ -1136,120 +1154,26 @@ namespace GMap.NET.Internals
 #endif
       }
 
-
-      #region -- manual reset --
-      readonly object _locker = new object();
-      bool _signal;
-
-      bool WaitOne()
-      {
-         lock(_locker)
-         {
-            while(!_signal)
-            {
-               Monitor.Wait(_locker);
-            }
-         }
-         return true;
-      }
-
-      void Set()
-      {
-         lock(_locker)
-         {
-            _signal = true;
-            Monitor.PulseAll(_locker);
-         }
-      }
-
-      void Reset()
-      {
-         lock(_locker)
-            _signal = false;
-      }
-      #endregion
-
-
       /// <summary>
       /// updates map bounds
       /// </summary>
       void UpdateBounds()
       {
-         tileDrawingListLock.AcquireWriterLock();
-         try
+         lock(tileLoadQueue)
          {
-            FindTilesAround();
-
-            lock(tileLoadQueue)
+            tileDrawingListLock.AcquireWriterLock();
+            try
             {
-               foreach(Point p in tileDrawingList)
+               #region -- find tiles around --
+               tileDrawingList.Clear();
+
+               for(int i = -sizeOfMapArea.Width; i <= sizeOfMapArea.Width; i++)
                {
-                  LoadTask task = new LoadTask(p, Zoom);
+                  for(int j = -sizeOfMapArea.Height; j <= sizeOfMapArea.Height; j++)
                   {
-                     if(!tileLoadQueue.Contains(task))
-                     {
-                        tileLoadQueue.Enqueue(task);
-                     }
-                  }
-               }
-               EnsureLoaderThreads();
-            }
-         }
-         finally
-         {
-            tileDrawingListLock.ReleaseWriterLock();
-
-            if(OnTileLoadStart != null)
-            {
-               OnTileLoadStart();
-            }
-
-            LastTileLoadStart = DateTime.Now;
-            Debug.WriteLine("OnTileLoadStart - at zoom " + Zoom + ", time: " + LastTileLoadStart.TimeOfDay);
-
-            Set();
-            //waitForTileLoad.Set();
-         }
-      }
-
-      /// <summary>
-      /// starts loader threads if needed
-      /// </summary>
-      void EnsureLoaderThreads()
-      {
-#if !PocketPC
-         while(GThreadPool.Count < 5)
-#else
-         while(GThreadPool.Count < 2)
-#endif
-         {
-            Thread t = new Thread(new ThreadStart(ProcessLoadTask));
-            {
-               t.Name = "GMap.NET TileLoader: " + GThreadPool.Count;
-               t.IsBackground = true;
-               t.Priority = ThreadPriority.BelowNormal;
-            }
-            GThreadPool.Add(t);
-
-            Debug.WriteLine("add " + t.Name + " to GThreadPool");
-
-            t.Start();
-         }
-      }
-
-      /// <summary>
-      /// find tiles around to fill screen
-      /// </summary>
-      void FindTilesAround()
-      {
-         tileDrawingList.Clear();
-         for(int i = -sizeOfMapArea.Width; i <= sizeOfMapArea.Width; i++)
-         {
-            for(int j = -sizeOfMapArea.Height; j <= sizeOfMapArea.Height; j++)
-            {
-               Point p = centerTileXYLocation;
-               p.X += i;
-               p.Y += j;
+                     Point p = centerTileXYLocation;
+                     p.X += i;
+                     p.Y += j;
 
 #if ContinuesMap
                // ----------------------------
@@ -1265,19 +1189,77 @@ namespace GMap.NET.Internals
                // ----------------------------
 #endif
 
-               if(p.X >= minOfTiles.Width && p.Y >= minOfTiles.Height && p.X <= maxOfTiles.Width && p.Y <= maxOfTiles.Height)
+                     if(p.X >= minOfTiles.Width && p.Y >= minOfTiles.Height && p.X <= maxOfTiles.Width && p.Y <= maxOfTiles.Height)
+                     {
+                        if(!tileDrawingList.Contains(p))
+                        {
+                           tileDrawingList.Add(p);
+                        }
+                     }
+                  }
+               }
+
+               if(GMaps.Instance.ShuffleTilesOnLoad)
                {
-                  if(!tileDrawingList.Contains(p))
+                  Stuff.Shuffle<Point>(tileDrawingList);
+               }
+               #endregion
+
+               foreach(Point p in tileDrawingList)
+               {
+                  LoadTask task = new LoadTask(p, Zoom);
                   {
-                     tileDrawingList.Add(p);
+                     if(!tileLoadQueue.Contains(task))
+                     {
+                        tileLoadQueue.Enqueue(task);
+                     }
                   }
                }
             }
+            finally
+            {
+               tileDrawingListLock.ReleaseWriterLock();
+            }
+
+            #region -- starts loader threads if needed --
+#if !PocketPC
+            while(GThreadPool.Count < GThreadPoolSize)
+#else
+            while(GThreadPool.Count < GThreadPoolSize)
+#endif
+            {
+               Thread t = new Thread(new ThreadStart(ProcessLoadTask));
+               {
+                  t.Name = "GMap.NET TileLoader: " + GThreadPool.Count;
+                  t.IsBackground = true;
+                  t.Priority = ThreadPriority.BelowNormal;
+               }
+               GThreadPool.Add(t);
+
+               Debug.WriteLine("add " + t.Name + " to GThreadPool");
+
+               t.Start();
+            }
+            #endregion
+
+            lock(LastTileLoadStartEndLock)
+            {
+               LastTileLoadStart = DateTime.Now;
+               Debug.WriteLine("OnTileLoadStart - at zoom " + Zoom + ", time: " + LastTileLoadStart.TimeOfDay);
+            }
+
+            loadWaitCount = 0;
+
+#if !PocketPC
+            Monitor.PulseAll(tileLoadQueue);
+#else
+            wait.PulseAll();
+#endif
          }
 
-         if(GMaps.Instance.ShuffleTilesOnLoad)
+         if(OnTileLoadStart != null)
          {
-            Stuff.Shuffle<Point>(ref tileDrawingList);
+            OnTileLoadStart();
          }
       }
 

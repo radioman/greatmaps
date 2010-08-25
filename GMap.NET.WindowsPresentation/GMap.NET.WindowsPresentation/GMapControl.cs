@@ -572,7 +572,7 @@ namespace GMap.NET.WindowsPresentation
       {
          try
          {
-            this.Dispatcher.Invoke(DispatcherPriority.Render, invalidator);
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Render, invalidator);
          }
          catch
          {

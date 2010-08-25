@@ -26,9 +26,9 @@ namespace GMap.NET.Internals
       [return: System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.Bool)]
       public static extern bool SetCursorPos(int X, int Y);
 
-      static Random random = new System.Random();
+      static readonly Random random = new System.Random();
 
-      public static void Shuffle<T>(ref List<T> deck)
+      public static void Shuffle<T>(List<T> deck)
       {
          int N = deck.Count;
 

@@ -391,7 +391,11 @@ namespace GMap.NET.WindowsForms
             };
             try
             {
+#if !PocketPC
+               this.BeginInvoke(m);
+#else
                this.Invoke(m);
+#endif
             }
             catch
             {
