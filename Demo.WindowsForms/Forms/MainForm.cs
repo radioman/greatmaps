@@ -70,10 +70,10 @@ namespace Demo.WindowsForms
             }
 
             // config map             
-            MainMap.MapType = MapType.GoogleMap;
-            MainMap.MaxZoom = 17;
+            MainMap.MapType = MapType.MapsLT_Map;
+            MainMap.MaxZoom = 11;
             MainMap.MinZoom = 1;
-            MainMap.Zoom = MainMap.MinZoom + 12;
+            MainMap.Zoom = MainMap.MinZoom + 1;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
 
             // map events
@@ -168,9 +168,8 @@ namespace Demo.WindowsForms
             center = new GMapMarkerCross(MainMap.CurrentPosition);
             top.Markers.Add(center);
 
-            MainMap.VirtualSizeEnabled = true;
-
-            if(false)             
+            //MainMap.VirtualSizeEnabled = true; 
+            //if(false)
             {
                // add my city location for demo
                GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
@@ -248,6 +247,8 @@ namespace Demo.WindowsForms
 
       bool firstLoadTrasport = true;
 
+      int tId = 0;
+
       void transport_ProgressChanged(object sender, ProgressChangedEventArgs e)
       {
          // stops immediate marker/route/polygon invalidations;
@@ -276,6 +277,20 @@ namespace Demo.WindowsForms
                   (marker as GMapMarkerGoogleRed).Bearing = (float?) d.Bearing;
                }
                marker.ToolTipText = d.Line;
+
+               //if(d.Id == 1262756 && tId == 0 && d.Bearing.HasValue)
+               //{
+               //   tId = d.Id;
+               //}
+               //else if(tId == d.Id)
+               //{
+               //   MainMap.CurrentPosition = marker.Position;
+               //   if(d.Bearing.HasValue)
+               //   {
+               //      (marker as GMapMarkerGoogleRed).Bearing = (float?)(360 - d.Bearing.Value);
+               //      MainMap.Bearing = (float) (360 - d.Bearing.Value);
+               //   }
+               //}
             }
          }
 

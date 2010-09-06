@@ -35,13 +35,16 @@ namespace GMap.NET.Internals
       public MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePositionAndCenter;
 
       public PointLatLng? LastLocationInBounds = null;
-
+      public bool VirtualSizeEnabled = false;
+      
       public Size sizeOfMapArea;
       public Size minOfTiles;
       public Size maxOfTiles;
 
       public Rectangle tileRect;
-      public Rectangle CurrentRegion;
+      public Rectangle tileRectBearing;
+      public Rectangle currentRegion;
+      public float bearing = 0;  
 
       public readonly TileMatrix Matrix = new TileMatrix();
 
@@ -217,6 +220,12 @@ namespace GMap.NET.Internals
                GMaps.Instance.AdjustProjection(mapType, ref Projection, out maxZoom);
 
                tileRect = new Rectangle(new Point(0, 0), Projection.TileSize);
+               tileRectBearing = tileRect;
+               if(bearing != 0 && bearing % 360 != 0)
+               {
+                  tileRectBearing.Inflate(1, 1);
+               }
+
                minOfTiles = Projection.GetTileMatrixMinXY(Zoom);
                maxOfTiles = Projection.GetTileMatrixMaxXY(Zoom);
                CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, Zoom);

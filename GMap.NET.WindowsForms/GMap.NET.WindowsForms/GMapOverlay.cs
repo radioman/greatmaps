@@ -322,18 +322,8 @@ namespace GMap.NET.WindowsForms
                // markers
                foreach(GMapMarker m in Markers)
                {
-                  if(m.IsVisible && (m.DisableRegionCheck || Control.Core.CurrentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y)))
+                  if(m.IsVisible && (m.DisableRegionCheck || Control.Core.currentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y)))
                   {
-                     //if(Control.Bearing != 0 || Control.Bearing % 360 != 0)
-                     //{
-                     //   var xx = m.LocalPosition;
-                     //   xx.Offset(-m.Offset.X, -m.Offset.Y);
-
-                     //   g.TranslateTransform((float) xx.X, (float) xx.Y);
-                     //   g.RotateTransform(-Control.Bearing);
-                     //   g.TranslateTransform((float) -xx.X, (float) -xx.Y);
-                     //}
-
                      m.OnRender(g);
                   }
                }
@@ -341,7 +331,7 @@ namespace GMap.NET.WindowsForms
                // tooltips above
                foreach(GMapMarker m in Markers)
                {
-                  if(m.ToolTip != null && m.IsVisible && Control.Core.CurrentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
+                  if(m.ToolTip != null && m.IsVisible && Control.Core.currentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
                   {
                      if(!string.IsNullOrEmpty(m.ToolTipText) && (m.ToolTipMode == MarkerTooltipMode.Always || (m.ToolTipMode == MarkerTooltipMode.OnMouseOver && m.IsMouseOver)))
                      {
