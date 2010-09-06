@@ -13,6 +13,7 @@ namespace GMap.NET.WindowsForms
    using GMap.NET.Internals;
    using GMap.NET.ObjectModel;
    using System.Diagnostics;
+   using System.Drawing.Text;
 
    /// <summary>
    /// GMap.NET control for Windows Forms
@@ -567,7 +568,37 @@ namespace GMap.NET.WindowsForms
       public void UpdateMarkerLocalPosition(GMapMarker marker)
       {
          GMap.NET.Point p = FromLatLngToLocal(marker.Position);
-         marker.LocalPosition = new System.Drawing.Point(p.X + marker.Offset.X, p.Y  + marker.Offset.Y);
+
+         if(Bearing != 0 || Bearing % 360 != 0)
+         {
+            System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(p.X, p.Y) };
+            rotationMatrix.TransformPoints(tt);
+            var f = tt[0];
+
+            //if(VirtualSizeEnabled)
+            //{
+            //   f.X += (Width - Core.vWidth) / 2;
+            //   f.Y += (Height - Core.vHeight) / 2;
+            //}
+
+            marker.LocalPosition = new System.Drawing.Point(f.X + marker.Offset.X, f.Y + marker.Offset.Y);
+         }
+         else
+         {
+            var t = new System.Drawing.Point(p.X + marker.Offset.X, p.Y  + marker.Offset.Y);
+            marker.LocalPosition = t;
+         }
+      }
+
+      private PointF PointOnCircle(PointF center, PointF top, float angle)
+      {
+         float angleInRadians = angle * (float) Math.PI / 180;
+
+         return new PointF(
+             (float) (center.X + Math.Cos(angleInRadians) * (center.X - top.X) 
+        - Math.Sin(angleInRadians) * (center.Y - top.Y)),
+             (float) (center.Y + Math.Sin(angleInRadians) * (center.X - top.X) 
+        + Math.Cos(angleInRadians) * (center.Y - top.Y)));
       }
 
       /// <summary>
@@ -1055,12 +1086,75 @@ namespace GMap.NET.WindowsForms
             else
 #endif
             {
-               DrawMapGDIplus(e.Graphics);
+               if(VirtualSizeEnabled)
+               {
+                  e.Graphics.TranslateTransform((Width - Core.vWidth)/2, (Height - Core.vHeight)/2);
+               }
+
+               // test rotation
+               if(Bearing != 0 || Bearing % 360 != 0)
+               {
+                  e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+                  e.Graphics.TranslateTransform((float) (Core.Width / 2.0), (float) (Core.Height / 2.0));
+                  e.Graphics.RotateTransform(Bearing);
+                  e.Graphics.TranslateTransform((float) (-Core.Width / 2.0), (float) (-Core.Height / 2.0));
+
+                  DrawMapGDIplus(e.Graphics);
+
+                  e.Graphics.ResetTransform();
+
+                  OnPaintEtc(e.Graphics);
+               }
+               else
+               {
+                  DrawMapGDIplus(e.Graphics);
+                  OnPaintEtc(e.Graphics);
+               }
             }
-            OnPaintEtc(e.Graphics);
+
+            if(VirtualSizeEnabled)
+            {
+               e.Graphics.ResetTransform();
+               e.Graphics.DrawRectangle(SelectionPen, (Width - Core.vWidth)/2, (Height - Core.vHeight)/2, Core.vWidth, Core.vHeight);
+            }
          }
 
          base.OnPaint(e);
+      }
+
+      Matrix rotationMatrix = new Matrix();
+
+      float bearing = 0;
+      /// <summary>
+      /// bearing for the map
+      /// </summary>
+      public float Bearing
+      {
+         get
+         {
+            return bearing;
+         }
+         set
+         {
+            if(bearing != value)
+            {
+               bearing = value;
+
+               //if(VirtualSizeEnabled)
+               //{
+               //   c.X += (Width - Core.vWidth) / 2;
+               //   c.Y += (Height - Core.vHeight) / 2;
+               //}
+
+               rotationMatrix.Reset();
+               rotationMatrix.RotateAt(Bearing, new PointF(Core.Width / 2, Core.Height / 2));
+
+               if(!HoldInvalidation && Core.IsStarted)
+               {
+                  Core_OnMapDrag();
+               }
+            }
+         }
       }
 
       /// <summary>
@@ -1231,6 +1325,12 @@ namespace GMap.NET.WindowsForms
       }
 
 #if !PocketPC
+
+      /// <summary>
+      /// shrinks map area, useful just for testing
+      /// </summary>
+      public bool VirtualSizeEnabled = false;
+
       protected override void OnSizeChanged(EventArgs e)
       {
          base.OnSizeChanged(e);
@@ -1254,10 +1354,15 @@ namespace GMap.NET.WindowsForms
                gxOff = Graphics.FromImage(backBuffer);
             }
 
-            Core.OnMapSizeChanged(Width, Height);
-
-            // 50px outside control
-            Core.CurrentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
+            if(!VirtualSizeEnabled)
+            {
+               Core.OnMapSizeChanged(Width, Height);
+            }
+            else
+            {
+               Core.OnMapSizeChanged(Core.vWidth, Core.vHeight);
+            }
+            Core.CurrentRegion = new GMap.NET.Rectangle(-50, -50, Core.Width+50, Core.Height+50);
 
             if(Visible && IsHandleCreated)
             {
@@ -1612,6 +1717,12 @@ namespace GMap.NET.WindowsForms
             x = (int) (x * MapRenderTransform.Value);
             y = (int) (y * MapRenderTransform.Value);
          }
+
+         //if(VirtualSizeEnabled)
+         //{
+         //   x -= (Width - Core.vWidth) / 2;
+         //   y -= (Height - Core.vHeight) / 2;
+         //}
 #endif
          return Core.FromLocalToLatLng(x, y);
       }

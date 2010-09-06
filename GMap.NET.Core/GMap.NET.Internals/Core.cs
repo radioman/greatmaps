@@ -633,6 +633,9 @@ namespace GMap.NET.Internals
          centerTileXYLocation = Projection.FromPixelToTileXY(centerPixel);
       }
 
+      public int vWidth = 800;
+      public int vHeight = 400;
+
       public void OnMapSizeChanged(int width, int height)
       {
          this.Width = width;

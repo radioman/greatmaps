@@ -70,10 +70,10 @@ namespace Demo.WindowsForms
             }
 
             // config map             
-            MainMap.MapType = MapType.MapsLT_Map;
-            MainMap.MaxZoom = 11;
+            MainMap.MapType = MapType.GoogleMap;
+            MainMap.MaxZoom = 17;
             MainMap.MinZoom = 1;
-            MainMap.Zoom = MainMap.MinZoom + 1;
+            MainMap.Zoom = MainMap.MinZoom + 12;
             MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
 
             // map events
@@ -168,24 +168,26 @@ namespace Demo.WindowsForms
             center = new GMapMarkerCross(MainMap.CurrentPosition);
             top.Markers.Add(center);
 
-            // add my city location for demo
-            GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
+            MainMap.VirtualSizeEnabled = true;
+
+            if(false)             
             {
-               PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius", out status);
-               if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
+               // add my city location for demo
+               GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
                {
-                  currentMarker.Position = pos.Value;
+                  PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius", out status);
+                  if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
+                  {
+                     currentMarker.Position = pos.Value;
 
-                  GMapMarker myCity = new GMapMarkerGoogleGreen(pos.Value);
-                  myCity.ToolTipMode = MarkerTooltipMode.Always;
-                  myCity.ToolTipText = "Welcome to Lithuania! ;}";
-                  objects.Markers.Add(myCity);
+                     GMapMarker myCity = new GMapMarkerGoogleGreen(pos.Value);
+                     myCity.ToolTipMode = MarkerTooltipMode.Always;
+                     myCity.ToolTipText = "Welcome to Lithuania! ;}";
+                     objects.Markers.Add(myCity);
+                  }
                }
-            }
 
-            // add some point in lithuania
-            //if(false)
-            {
+               // add some points in lithuania
                AddLocationLithuania("Kaunas");
                AddLocationLithuania("Klaipėda");
                AddLocationLithuania("Šiauliai");
@@ -1327,7 +1329,10 @@ namespace Demo.WindowsForms
       // center markers on start
       private void MainForm_Load(object sender, EventArgs e)
       {
-         MainMap.ZoomAndCenterMarkers(null);
+         if(objects.Markers.Count > 0)
+         {
+            MainMap.ZoomAndCenterMarkers(null);
+         }
          trackBar1.Value = (int) MainMap.Zoom;
       }
 
@@ -1472,7 +1477,10 @@ namespace Demo.WindowsForms
          GMapMarkerRect mBorders = new GMapMarkerRect(currentMarker.Position);
          {
             mBorders.InnerMarker = m;
-            mBorders.Tag = polygon.Points.Count;
+            if(polygon != null)
+            {
+               mBorders.Tag = polygon.Points.Count;
+            }
             mBorders.ToolTipMode = MarkerTooltipMode.Always;
          }
 
@@ -1714,6 +1722,14 @@ namespace Demo.WindowsForms
          else if(e.KeyChar == '-')
          {
             MainMap.Zoom -= 1;
+         }
+         else if(e.KeyChar == 'a')
+         {
+            MainMap.Bearing--;
+         }
+         else if(e.KeyChar == 'z')
+         {
+            MainMap.Bearing++;
          }
       }
 

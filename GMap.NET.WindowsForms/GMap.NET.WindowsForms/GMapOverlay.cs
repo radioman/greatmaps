@@ -324,6 +324,16 @@ namespace GMap.NET.WindowsForms
                {
                   if(m.IsVisible && (m.DisableRegionCheck || Control.Core.CurrentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y)))
                   {
+                     //if(Control.Bearing != 0 || Control.Bearing % 360 != 0)
+                     //{
+                     //   var xx = m.LocalPosition;
+                     //   xx.Offset(-m.Offset.X, -m.Offset.Y);
+
+                     //   g.TranslateTransform((float) xx.X, (float) xx.Y);
+                     //   g.RotateTransform(-Control.Bearing);
+                     //   g.TranslateTransform((float) -xx.X, (float) -xx.Y);
+                     //}
+
                      m.OnRender(g);
                   }
                }
