@@ -168,7 +168,7 @@ namespace Demo.WindowsForms
             center = new GMapMarkerCross(MainMap.CurrentPosition);
             top.Markers.Add(center);
 
-            //MainMap.VirtualSizeEnabled = true; 
+            //MainMap.VirtualSizeEnabled = true;
             //if(false)
             {
                // add my city location for demo
@@ -246,8 +246,7 @@ namespace Demo.WindowsForms
       readonly Dictionary<int, GMapMarker> busMarkers = new Dictionary<int, GMapMarker>();
 
       bool firstLoadTrasport = true;
-
-      int tId = 0;
+      GMapMarker currentTransport;
 
       void transport_ProgressChanged(object sender, ProgressChangedEventArgs e)
       {
@@ -265,8 +264,7 @@ namespace Demo.WindowsForms
                {
                   marker = new GMapMarkerGoogleRed(new PointLatLng(d.Lat, d.Lng));
                   marker.Tag = d.Id;
-                  marker.ToolTipMode = MarkerTooltipMode.Always;
-                  marker.IsHitTestVisible = false;
+                  marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
                   trolleybusMarkers[d.Id] = marker;
                   objects.Markers.Add(marker);
@@ -276,21 +274,16 @@ namespace Demo.WindowsForms
                   marker.Position = new PointLatLng(d.Lat, d.Lng);
                   (marker as GMapMarkerGoogleRed).Bearing = (float?) d.Bearing;
                }
-               marker.ToolTipText = d.Line;
+               marker.ToolTipText = "Trolley " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
 
-               //if(d.Id == 1262756 && tId == 0 && d.Bearing.HasValue)
-               //{
-               //   tId = d.Id;
-               //}
-               //else if(tId == d.Id)
-               //{
-               //   MainMap.CurrentPosition = marker.Position;
-               //   if(d.Bearing.HasValue)
-               //   {
-               //      (marker as GMapMarkerGoogleRed).Bearing = (float?)(360 - d.Bearing.Value);
-               //      MainMap.Bearing = (float) (360 - d.Bearing.Value);
-               //   }
-               //}
+               if(currentTransport != null && currentTransport == marker)
+               {
+                  MainMap.CurrentPosition = marker.Position;
+                  if(d.Bearing.HasValue)
+                  {
+                     MainMap.Bearing = (float) (360 - d.Bearing.Value);
+                  }
+               }
             }
          }
 
@@ -304,8 +297,7 @@ namespace Demo.WindowsForms
                {
                   marker = new GMapMarkerGoogleGreen(new PointLatLng(d.Lat, d.Lng));
                   marker.Tag = d.Id;
-                  marker.ToolTipMode = MarkerTooltipMode.Always;
-                  marker.IsHitTestVisible = false;
+                  marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
                   busMarkers[d.Id] = marker;
                   objects.Markers.Add(marker);
@@ -315,7 +307,16 @@ namespace Demo.WindowsForms
                   marker.Position = new PointLatLng(d.Lat, d.Lng);
                   (marker as GMapMarkerGoogleGreen).Bearing = (float?) d.Bearing;
                }
-               marker.ToolTipText = d.Line;
+               marker.ToolTipText = "Bus " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
+
+               if(currentTransport != null && currentTransport == marker)
+               {
+                  MainMap.CurrentPosition = marker.Position;
+                  if(d.Bearing.HasValue)
+                  {
+                     MainMap.Bearing = (float) (360 - d.Bearing.Value);
+                  }
+               }
             }
          }
 
@@ -1294,6 +1295,19 @@ namespace Demo.WindowsForms
                   MainMap.Invalidate(false);
                }
             }
+            else
+            {
+               if(item.Tag != null)
+               {
+                  if(currentTransport != null)
+                  {
+                     currentTransport.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+                     currentTransport = null;
+                  }
+                  currentTransport = item;
+                  currentTransport.ToolTipMode = MarkerTooltipMode.Always;
+               }
+            }
          }
       }
 
@@ -1723,6 +1737,15 @@ namespace Demo.WindowsForms
                CurentRectMarker = null;
 
                RegeneratePolygon();
+            }
+         }
+         else if(e.KeyCode == Keys.Escape)
+         {
+            if(currentTransport != null && !MainMap.IsMouseOverMarker)
+            {
+               currentTransport.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+               currentTransport = null;
+               MainMap.Bearing = 0;
             }
          }
       }
