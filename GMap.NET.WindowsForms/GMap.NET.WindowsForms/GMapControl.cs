@@ -1113,7 +1113,7 @@ namespace GMap.NET.WindowsForms
                   e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
                   e.Graphics.TranslateTransform((float) (Core.Width / 2.0), (float) (Core.Height / 2.0));
-                  e.Graphics.RotateTransform(Bearing);
+                  e.Graphics.RotateTransform(-Bearing);
                   e.Graphics.TranslateTransform((float) (-Core.Width / 2.0), (float) (-Core.Height / 2.0));
 
                   DrawMapGDIplus(e.Graphics);
@@ -1150,10 +1150,10 @@ namespace GMap.NET.WindowsForms
          PointF center = new PointF(Core.Width / 2, Core.Height / 2);
 
          rotationMatrix.Reset();
-         rotationMatrix.RotateAt(Bearing, center);
+         rotationMatrix.RotateAt(-Bearing, center);
 
          rotationMatrixInvert.Reset();
-         rotationMatrixInvert.RotateAt(Bearing, center);
+         rotationMatrixInvert.RotateAt(-Bearing, center);
          rotationMatrixInvert.Invert();
       }
 
@@ -1169,7 +1169,7 @@ namespace GMap.NET.WindowsForms
       }
 
       /// <summary>
-      /// bearing for the map
+      /// bearing for rotation of the map
       /// </summary>
       public float Bearing
       {

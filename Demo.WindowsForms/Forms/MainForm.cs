@@ -281,7 +281,7 @@ namespace Demo.WindowsForms
                   MainMap.CurrentPosition = marker.Position;
                   if(d.Bearing.HasValue)
                   {
-                     MainMap.Bearing = (float) (360 - d.Bearing.Value);
+                     MainMap.Bearing = (float) d.Bearing.Value;
                   }
                }
             }
@@ -314,7 +314,7 @@ namespace Demo.WindowsForms
                   MainMap.CurrentPosition = marker.Position;
                   if(d.Bearing.HasValue)
                   {
-                     MainMap.Bearing = (float) (360 - d.Bearing.Value);
+                     MainMap.Bearing = (float) d.Bearing.Value;
                   }
                }
             }

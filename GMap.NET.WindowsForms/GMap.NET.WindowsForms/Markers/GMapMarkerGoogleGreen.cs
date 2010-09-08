@@ -33,7 +33,7 @@ namespace GMap.NET.WindowsForms.Markers
 
          if(Bearing.HasValue)
          {
-            g.RotateTransform(Bearing.Value + Overlay.Control.Bearing);
+            g.RotateTransform(Bearing.Value - Overlay.Control.Bearing);
             g.FillPolygon(Brushes.Lime, Arrow);
          }
 
