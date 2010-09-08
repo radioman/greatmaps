@@ -36,7 +36,7 @@ namespace GMap.NET.Internals
 
       public PointLatLng? LastLocationInBounds = null;
       public bool VirtualSizeEnabled = false;
-      
+
       public Size sizeOfMapArea;
       public Size minOfTiles;
       public Size maxOfTiles;
@@ -44,7 +44,8 @@ namespace GMap.NET.Internals
       public Rectangle tileRect;
       public Rectangle tileRectBearing;
       public Rectangle currentRegion;
-      public float bearing = 0;  
+      public float bearing = 0;
+      public bool IsRotated = false;
 
       public readonly TileMatrix Matrix = new TileMatrix();
 
@@ -221,7 +222,7 @@ namespace GMap.NET.Internals
 
                tileRect = new Rectangle(new Point(0, 0), Projection.TileSize);
                tileRectBearing = tileRect;
-               if(bearing != 0 && bearing % 360 != 0)
+               if(IsRotated)
                {
                   tileRectBearing.Inflate(1, 1);
                }
@@ -650,8 +651,19 @@ namespace GMap.NET.Internals
          this.Width = width;
          this.Height = height;
 
-         sizeOfMapArea.Width = 1 + (Width/Projection.TileSize.Width)/2;
-         sizeOfMapArea.Height = 1 + (Height/Projection.TileSize.Height)/2;
+         if(IsRotated)
+         {
+            int diag = (int) Math.Round(Math.Sqrt(Width*Width + Height*Height) / Projection.TileSize.Width, MidpointRounding.AwayFromZero);
+            sizeOfMapArea.Width = 1 + (diag / 2);
+            sizeOfMapArea.Height = 1 + (diag / 2);
+         }
+         else
+         {
+            sizeOfMapArea.Width = 1 + (Width/Projection.TileSize.Width)/2;
+            sizeOfMapArea.Height = 1 + (Height/Projection.TileSize.Height)/2;
+         }
+
+         Debug.WriteLine("OnMapSizeChanged, w: " + width + ", h: " + height + ", size: " + sizeOfMapArea);
 
          UpdateCenterTileXYLocation();
 

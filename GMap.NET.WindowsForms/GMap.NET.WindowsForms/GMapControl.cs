@@ -442,7 +442,7 @@ namespace GMap.NET.WindowsForms
                   Core.tileRect.Y = tilePoint.Y*Core.tileRect.Height;
                   Core.tileRect.Offset(Core.renderOffset);
 
-                  if(Core.currentRegion.IntersectsWith(Core.tileRect))
+                  if(Core.currentRegion.IntersectsWith(Core.tileRect) || IsRotated)
                   {
                      bool found = false;
 #if !ContinuesMap
@@ -593,7 +593,7 @@ namespace GMap.NET.WindowsForms
             GMap.NET.Point p = Projection.FromLatLngToPixel(pg, Core.Zoom);
             p.Offset(Core.renderOffset);
 
-            if(Bearing != 0 && Bearing % 360 != 0)
+            if(IsRotated)
             {
                System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(p.X, p.Y) };
                rotationMatrix.TransformPoints(tt);
@@ -626,7 +626,7 @@ namespace GMap.NET.WindowsForms
             GMap.NET.Point p = Projection.FromLatLngToPixel(pg, Core.Zoom);
             p.Offset(Core.renderOffset);
 
-            if(Bearing != 0 && Bearing % 360 != 0)
+            if(IsRotated)
             {
                System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(p.X, p.Y) };
                rotationMatrix.TransformPoints(tt);
@@ -1107,7 +1107,7 @@ namespace GMap.NET.WindowsForms
                }
 
                // test rotation
-               if(Bearing != 0 && Bearing % 360 != 0)
+               if(IsRotated)
                {
                   e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
                   e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
@@ -1139,8 +1139,34 @@ namespace GMap.NET.WindowsForms
          base.OnPaint(e);
       }
 
-      Matrix rotationMatrix = new Matrix();
-      Matrix rotationMatrixInvert = new Matrix();
+      readonly Matrix rotationMatrix = new Matrix();
+      readonly Matrix rotationMatrixInvert = new Matrix();
+
+      /// <summary>
+      /// updates rotation matrix
+      /// </summary>
+      void UpdateRotationMatrix()
+      {
+         PointF center = new PointF(Core.Width / 2, Core.Height / 2);
+
+         rotationMatrix.Reset();
+         rotationMatrix.RotateAt(Bearing, center);
+
+         rotationMatrixInvert.Reset();
+         rotationMatrixInvert.RotateAt(Bearing, center);
+         rotationMatrixInvert.Invert();
+      }
+
+      /// <summary>
+      /// returs true if map bearing is not zero
+      /// </summary>         
+      public bool IsRotated
+      {
+         get
+         {
+            return Core.IsRotated;
+         }
+      }
 
       /// <summary>
       /// bearing for the map
@@ -1155,6 +1181,7 @@ namespace GMap.NET.WindowsForms
          {
             if(Core.bearing != value)
             {
+               bool resize = Core.bearing == 0;
                Core.bearing = value;
 
                //if(VirtualSizeEnabled)
@@ -1163,15 +1190,27 @@ namespace GMap.NET.WindowsForms
                //   c.Y += (Height - Core.vHeight) / 2;
                //}
 
-               rotationMatrix.Reset();
-               rotationMatrix.RotateAt(Bearing, new PointF(Core.Width / 2, Core.Height / 2));
-               rotationMatrixInvert = rotationMatrix.Clone();
-               rotationMatrixInvert.Invert();
+               UpdateRotationMatrix();
 
-               Core.tileRectBearing = Core.tileRect;
                if(value != 0 && value % 360 != 0)
                {
-                  Core.tileRectBearing.Inflate(1, 1);
+                  Core.IsRotated = true;
+
+                  if(Core.tileRectBearing.Size == Core.tileRect.Size)
+                  {
+                     Core.tileRectBearing = Core.tileRect;
+                     Core.tileRectBearing.Inflate(1, 1);
+                  }
+               }
+               else
+               {
+                  Core.IsRotated = false;
+                  Core.tileRectBearing = Core.tileRect;
+               }
+
+               if(resize)
+               {
+                  Core.OnMapSizeChanged(Width, Height);
                }
 
                if(!HoldInvalidation && Core.IsStarted)
@@ -1389,7 +1428,6 @@ namespace GMap.NET.WindowsForms
                gxOff = Graphics.FromImage(backBuffer);
             }
 
-
             if(!VirtualSizeEnabled)
             {
                Core.OnMapSizeChanged(Width, Height);
@@ -1405,9 +1443,13 @@ namespace GMap.NET.WindowsForms
             {
                // keep center on same position
                Core.GoToCurrentPosition();
-            }
 
-            //ClientSize = new System.Drawing.Size(Core.vWidth, Core.vHeight);
+               if(IsRotated)
+               {
+                  UpdateRotationMatrix();
+                  Core_OnMapDrag();
+               }
+            }
          }
       }
 #else
@@ -1568,7 +1610,7 @@ namespace GMap.NET.WindowsForms
       {
          GMap.NET.Point ret = new GMap.NET.Point(x, y);
 
-         if(Bearing != 0 && Bearing % 360 != 0)
+         if(IsRotated)
          {
             System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(x, y) };
             rotationMatrixInvert.TransformPoints(tt);
@@ -1594,7 +1636,7 @@ namespace GMap.NET.WindowsForms
       {
          GMap.NET.Point ret = new GMap.NET.Point(x, y);
 
-         if(Bearing != 0 && Bearing % 360 != 0)
+         if(IsRotated)
          {
             System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(x, y) };
             rotationMatrix.TransformPoints(tt);
@@ -1805,7 +1847,7 @@ namespace GMap.NET.WindowsForms
             y = (int) (y * MapRenderTransform.Value);
          }
 
-         if(Bearing != 0 && Bearing % 360 != 0)
+         if(IsRotated)
          {
             System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(x, y) };
             rotationMatrixInvert.TransformPoints(tt);
@@ -1841,7 +1883,7 @@ namespace GMap.NET.WindowsForms
             ret.Y = (int) (ret.X / MapRenderTransform.Value);
          }
 
-         if(Bearing != 0 && Bearing % 360 != 0)
+         if(IsRotated)
          {
             System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(ret.X, ret.Y) };
             rotationMatrix.TransformPoints(tt);
