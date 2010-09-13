@@ -7,7 +7,7 @@
     WindowState="Maximized"
     KeyboardNavigation.DirectionalNavigation="Once"
     xmlns:src="clr-namespace:Demo.WindowsPresentation"
-    MinHeight="775" MinWidth="600" KeyUp="Window_KeyUp">
+    MinHeight="775" MinWidth="600" KeyUp="Window_KeyUp" PreviewKeyDown="Window_PreviewKeyDown">
     <Window.Resources>
         <Style x:Key="ZoomUpButton" TargetType="Button">
             <Setter Property="Width" Value="23.5" />

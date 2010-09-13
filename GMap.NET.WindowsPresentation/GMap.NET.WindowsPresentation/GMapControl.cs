@@ -541,7 +541,15 @@ namespace GMap.NET.WindowsPresentation
          {
             Core.GoToCurrentPosition();
 
-            UpdateMarkersOffset();
+            if(IsRotated)
+            {
+               UpdateRotationMatrix();
+               Core_OnMapZoomChanged();
+            }
+            else
+            {
+               UpdateMarkersOffset();
+            }
          }
       }
 
@@ -619,7 +627,7 @@ namespace GMap.NET.WindowsPresentation
                Core.tileRect.Y = tilePoint.Y * Core.tileRect.Height;
                Core.tileRect.Offset(Core.renderOffset);
 
-               if(region.IntersectsWith(Core.tileRect))
+               if(region.IntersectsWith(Core.tileRect) || IsRotated)
                {
                   bool found = false;
 
@@ -991,23 +999,150 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
+      RotateTransform rotationMatrix = new RotateTransform();
+      GeneralTransform rotationMatrixInvert = new RotateTransform();
+
+      /// <summary>
+      /// updates rotation matrix
+      /// </summary>
+      void UpdateRotationMatrix()
+      {
+         System.Windows.Point center = new System.Windows.Point(ActualWidth / 2.0, ActualHeight / 2.0);
+
+         rotationMatrix = new RotateTransform();
+         rotationMatrix.Angle = -Bearing;
+         rotationMatrix.CenterY = center.X;
+         rotationMatrix.CenterX = center.Y;
+
+         rotationMatrixInvert = rotationMatrix.Inverse;
+      }
+
+      /// <summary>
+      /// returs true if map bearing is not zero
+      /// </summary>         
+      public bool IsRotated
+      {
+         get
+         {
+            return Core.IsRotated;
+         }
+      }
+
+      /// <summary>
+      /// bearing for rotation of the map
+      /// </summary>
+      public float Bearing
+      {
+         get
+         {
+            return Core.bearing;
+         }
+         set
+         {
+            if(Core.bearing != value)
+            {
+               bool resize = Core.bearing == 0;
+               Core.bearing = value;
+
+               UpdateRotationMatrix();
+
+               if(value != 0 && value % 360 != 0)
+               {
+                  Core.IsRotated = true;
+
+                  if(Core.tileRectBearing.Size == Core.tileRect.Size)
+                  {
+                     Core.tileRectBearing = Core.tileRect;
+                     Core.tileRectBearing.Inflate(1, 1);
+                  }
+               }
+               else
+               {
+                  Core.IsRotated = false;
+                  Core.tileRectBearing = Core.tileRect;
+               }
+
+               if(resize)
+               {
+                  Core.OnMapSizeChanged((int) ActualWidth, (int) ActualHeight);
+               }
+
+               Core_OnMapZoomChanged();
+
+               InvalidateVisual();
+            }
+         }
+      }
+
+      /// <summary>
+      /// apply transformation if in rotation mode
+      /// </summary>
+      System.Windows.Point ApplyRotation(double x, double y)
+      {
+         System.Windows.Point ret = new System.Windows.Point(x, y);
+
+         if(IsRotated)
+         {
+            ret = rotationMatrix.Transform(ret);
+         }
+
+         return ret;
+      }
+
+      /// <summary>
+      /// apply transformation if in rotation mode
+      /// </summary>
+      System.Windows.Point ApplyRotationInversion(double x, double y)
+      {
+         System.Windows.Point ret = new System.Windows.Point(x, y);
+
+         if(IsRotated)
+         {
+            ret = rotationMatrixInvert.Transform(ret);
+         }
+
+         return ret;
+      }
+
       #region UserControl Events
       protected override void OnRender(DrawingContext drawingContext)
       {
          if(!Core.IsStarted)
             return;
 
-         if(MapRenderTransform != null)
+         if(IsRotated)
          {
-            drawingContext.PushTransform(MapRenderTransform);
+            drawingContext.PushTransform(rotationMatrix);
+
+            if(MapRenderTransform != null)
+            {
+               drawingContext.PushTransform(MapRenderTransform);
+               {
+                  DrawMapWPF(drawingContext);
+               }
+               drawingContext.Pop();
+            }
+            else
             {
                DrawMapWPF(drawingContext);
             }
+
             drawingContext.Pop();
          }
          else
          {
-            DrawMapWPF(drawingContext);
+            if(MapRenderTransform != null)
+            {
+               drawingContext.PushTransform(MapRenderTransform);
+               {
+                  DrawMapWPF(drawingContext);
+               }
+               drawingContext.Pop();
+            }
+            else
+            {
+               DrawMapWPF(drawingContext);
+            }
          }
 
          // selection
@@ -1111,6 +1246,7 @@ namespace GMap.NET.WindowsPresentation
          if(IsMouseDirectlyOver && !Core.IsDragging)
          {
             System.Windows.Point p = e.GetPosition(this);
+            //p = ApplyRotationInversion(p.X, p.Y);
 
             if(Core.mouseLastZoom.X != (int) p.X && Core.mouseLastZoom.Y != (int) p.Y)
             {
@@ -1171,6 +1307,8 @@ namespace GMap.NET.WindowsPresentation
             {
                p = MapRenderTransform.Inverse.Transform(p);
             }
+
+            p = ApplyRotationInversion(p.X, p.Y);
 
             Core.mouseDown.X = (int) p.X;
             Core.mouseDown.Y = (int) p.Y;
@@ -1262,13 +1400,22 @@ namespace GMap.NET.WindowsPresentation
                   p = MapRenderTransform.Inverse.Transform(p);
                }
 
+               p = ApplyRotationInversion(p.X, p.Y);
+
                Core.mouseCurrent.X = (int) p.X;
                Core.mouseCurrent.Y = (int) p.Y;
                {
                   Core.Drag(Core.mouseCurrent);
                }
 
-               UpdateMarkersOffset();
+               if(IsRotated)
+               {
+                  Core_OnMapZoomChanged();
+               }
+               else
+               {
+                  UpdateMarkersOffset();
+               }
             }
             InvalidateVisual();
          }
@@ -1333,6 +1480,14 @@ namespace GMap.NET.WindowsPresentation
             y = (int) tp.Y;
          }
 
+         if(IsRotated)
+         {
+            var f = rotationMatrixInvert.Transform(new System.Windows.Point(x, y));
+
+            x = (int) f.X;
+            y = (int) f.Y;
+         }
+
          return Core.FromLocalToLatLng(x, y);
       }
 
@@ -1345,6 +1500,14 @@ namespace GMap.NET.WindowsPresentation
             var tp = MapRenderTransform.Transform(new System.Windows.Point(ret.X, ret.Y));
             ret.X = (int) tp.X;
             ret.Y = (int) tp.Y;
+         }
+
+         if(IsRotated)
+         {
+            var f = rotationMatrix.Transform(new System.Windows.Point(ret.X, ret.Y));
+
+            ret.X = (int) f.X;
+            ret.Y = (int) f.Y;
          }
 
          ret.Offset(-(int) MapTranslateTransform.X, -(int) MapTranslateTransform.Y);

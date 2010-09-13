@@ -439,6 +439,14 @@ namespace GMap.NET
                }
                break;
 
+               case MapType.OpenSeaMapHybrid:
+               {
+                  types = new MapType[2];
+                  types[0] = MapType.OpenStreetMap;
+                  types[1] = MapType.OpenSeaMapLabels;
+               }
+               break;
+
                default:
                {
                   types = new MapType[1];
@@ -554,6 +562,40 @@ namespace GMap.NET
          double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
          double dDistance = EarthRadiusKm * c;
          return dDistance;
+      }
+
+      /// <summary>
+      /// Accepts two coordinates in degrees.
+      /// </summary>
+      /// <returns>A double value in degrees. From 0 to 360.</returns>
+      public double GetBearing(PointLatLng p1, PointLatLng p2)
+      {
+         var latitude1 = ToRadian(p1.Lat);
+         var latitude2 = ToRadian(p2.Lat);
+         var longitudeDifference = ToRadian(p2.Lng - p1.Lng);
+
+         var y = Math.Sin(longitudeDifference) * Math.Cos(latitude2);
+         var x = Math.Cos(latitude1) * Math.Sin(latitude2) - Math.Sin(latitude1) * Math.Cos(latitude2) * Math.Cos(longitudeDifference);
+
+         return (ToDegree(Math.Atan2(y, x)) + 360) % 360;
+      }
+
+      /// <summary>
+      /// Converts degrees to Radians.
+      /// </summary>
+      /// <returns>Returns a radian from degrees.</returns>
+      public static Double ToRadian(Double degree)
+      {
+         return (degree * Math.PI / 180.0);
+      }
+
+      /// <summary>
+      /// To degress from a radian value.
+      /// </summary>
+      /// <returns>Returns degrees from radians.</returns>
+      public static Double ToDegree(Double radian)
+      {
+         return (radian / Math.PI * 180.0);
       }
 
       /// <summary>
@@ -1322,6 +1364,13 @@ namespace GMap.NET
                // http://tiles2.mapsurfer.net/tms_t.ashx?x=9346&y=5209&z=14
 
                return string.Format("http://tiles2.mapsurfer.net/tms_t.ashx?x={0}&y={1}&z={2}", pos.X, pos.Y, zoom);
+            }
+
+            case MapType.OpenSeaMapLabels:
+            {
+               // http://tiles.openseamap.org/seamark/15/17481/10495.png
+
+               return string.Format("http://tiles.openseamap.org/seamark/{0}/{1}/{2}.png", zoom, pos.X, pos.Y);
             }
             #endregion
 

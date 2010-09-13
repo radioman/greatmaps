@@ -48,11 +48,13 @@ namespace GMap.NET.Internals
 
       public void AcquireReaderLock()
       {
+#if !MONO
          if(VistaOrLater)
          {
             NativeMethods.AcquireSRWLockShared(ref LockSRW);
          }
          else
+#endif
          {
             Thread.BeginCriticalRegion();
 
@@ -78,11 +80,13 @@ namespace GMap.NET.Internals
 
       public void ReleaseReaderLock()
       {
+#if !MONO
          if(VistaOrLater)
          {
             NativeMethods.ReleaseSRWLockShared(ref LockSRW);
          }
          else
+#endif
          {
             Interlocked.Decrement(ref readCount);
             Thread.EndCriticalRegion();
@@ -91,11 +95,13 @@ namespace GMap.NET.Internals
 
       public void AcquireWriterLock()
       {
+#if !MONO
          if(VistaOrLater)
          {
             NativeMethods.AcquireSRWLockExclusive(ref LockSRW);
          }
          else
+#endif
          {
             Thread.BeginCriticalRegion();
 
@@ -113,11 +119,13 @@ namespace GMap.NET.Internals
 
       public void ReleaseWriterLock()
       {
+#if !MONO
          if(VistaOrLater)
          {
             NativeMethods.ReleaseSRWLockExclusive(ref LockSRW);
          }
          else
+#endif
          {
             Interlocked.Exchange(ref busy, 0);
             Thread.EndCriticalRegion();

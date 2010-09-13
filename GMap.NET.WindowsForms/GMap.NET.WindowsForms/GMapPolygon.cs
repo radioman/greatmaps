@@ -59,6 +59,14 @@ namespace GMap.NET.WindowsForms
          }
       }
 
+      //public double Area
+      //{
+      //   get
+      //   {
+      //      return 0;
+      //   }
+      //}
+
       /// <summary>
       /// specifies how the outline is painted
       /// </summary>

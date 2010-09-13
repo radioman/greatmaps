@@ -22,6 +22,8 @@ namespace GMap.NET
       OpenStreetOsm=33,
       OpenStreetMapSurfer=34,
       OpenStreetMapSurferTerrain=35,
+      OpenSeaMapLabels=36,
+      OpenSeaMapHybrid=37,
 
       YahooMap=64,
       YahooSatellite=128,

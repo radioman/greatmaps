@@ -15,7 +15,7 @@
       /// <summary>
       /// string format
       /// </summary>
-      public StringFormat Format = new StringFormat();
+      public readonly StringFormat Format = new StringFormat();
 
       /// <summary>
       /// font

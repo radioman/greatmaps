@@ -22,6 +22,8 @@ namespace Demo.WindowsPresentation
       readonly System.Windows.FlowDirection fd = new System.Windows.FlowDirection();
 #endif
 
+      Pen cross = new Pen(Brushes.Red, 1);
+
       /// <summary>
       /// any custom drawing here
       /// </summary>
@@ -35,6 +37,9 @@ namespace Demo.WindowsPresentation
          drawingContext.DrawText(text, new Point(text.Height, text.Height));
          text = null;
 #endif
+
+         drawingContext.DrawLine(cross, new Point((ActualWidth/2) - 10, ActualHeight/2), new Point((ActualWidth/2) + 10, ActualHeight/2));
+         drawingContext.DrawLine(cross, new Point(ActualWidth/2, (ActualHeight/2) - 10), new Point(ActualWidth/2, (ActualHeight/2) + 10));
       }
    }
 }

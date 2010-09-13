@@ -53,7 +53,9 @@ namespace Demo.WindowsPresentation
          }
 
          // config map
+         MainMap.MinZoom = 1;
          MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
+         MainMap.Zoom = MainMap.MinZoom;
 
          // map events
          MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
@@ -103,7 +105,7 @@ namespace Demo.WindowsPresentation
             MainMap.Markers.Add(currentMarker);
          }
 
-         //if(false)
+         if(false)
          {
             // add my city location for demo
             GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
@@ -883,6 +885,18 @@ namespace Demo.WindowsPresentation
             {
                transport.CancelAsync();
             }
+         }
+      }
+
+      private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+      {
+         if(e.Key == Key.A)
+         {
+            MainMap.Bearing--;
+         }
+         else if(e.Key == Key.Z)
+         {
+            MainMap.Bearing++;
          }
       }
    }
