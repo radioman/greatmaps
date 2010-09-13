@@ -126,6 +126,7 @@ namespace GMap.NET
          all = list.Count;
 
          int countOk = 0;
+         int retry = 0;
 
          Stuff.Shuffle<Point>(list);
          var types = GMaps.Instance.GetAllLayersOfType(type);
@@ -140,12 +141,20 @@ namespace GMap.NET
                if(CacheTiles(ref types, zoom, p))
                {
                   countOk++;
+                  retry = 0;
                }
                else
                {
-                  i--;
-                  System.Threading.Thread.Sleep(1000);
-                  continue;
+                  if(++retry <= 1) // retry only one
+                  {
+                     i--;
+                     System.Threading.Thread.Sleep(1111);
+                     continue;
+                  }
+                  else
+                  {
+                     retry = 0;
+                  }
                }
             }
 
