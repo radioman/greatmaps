@@ -105,7 +105,7 @@ namespace Demo.WindowsPresentation
             MainMap.Markers.Add(currentMarker);
          }
 
-         if(false)
+         //if(false)
          {
             // add my city location for demo
             GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;

@@ -329,6 +329,11 @@ namespace GMap.NET.WindowsPresentation
       }
 
       /// <summary>
+      /// is touch control enabled
+      /// </summary>
+      bool TouchEnabled = true;
+
+      /// <summary>
       /// map boundaries
       /// </summary>
       public RectLatLng? BoundsOfMap = null;
@@ -1295,6 +1300,7 @@ namespace GMap.NET.WindowsPresentation
       }
 
       bool isSelected = false;
+
       protected override void OnMouseDown(MouseButtonEventArgs e)
       {
          if(CanDragMap && e.ChangedButton == DragButton && e.ButtonState == MouseButtonState.Pressed)
@@ -1440,6 +1446,112 @@ namespace GMap.NET.WindowsPresentation
          }
 
          base.OnMouseMove(e);
+      }
+
+      protected override void OnStylusDown(StylusDownEventArgs e)
+      {
+         if(TouchEnabled && CanDragMap && !e.InAir)
+         {
+            Mouse.Capture(this);
+
+            System.Windows.Point p = e.GetPosition(this);
+
+            if(MapRenderTransform != null)
+            {
+               p = MapRenderTransform.Inverse.Transform(p);
+            }
+
+            p = ApplyRotationInversion(p.X, p.Y);
+
+            Core.mouseDown.X = (int) p.X;
+            Core.mouseDown.Y = (int) p.Y;
+            {
+               Cursor = Cursors.SizeAll;
+               Core.BeginDrag(Core.mouseDown);
+            }
+            InvalidateVisual();
+         }
+
+         base.OnStylusDown(e);
+      }
+
+      protected override void OnStylusUp(StylusEventArgs e)
+      {
+         if(TouchEnabled)
+         {
+            if(isSelected)
+            {
+               isSelected = false;
+            }
+
+            if(Core.IsDragging)
+            {
+               Mouse.Capture(null);
+
+               if(isDragging)
+               {
+                  isDragging = false;
+                  Debug.WriteLine("IsDragging = " + isDragging);
+               }
+               Core.EndDrag();
+               Cursor = Cursors.Arrow;
+
+               if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
+               {
+                  if(Core.LastLocationInBounds.HasValue)
+                  {
+                     CurrentPosition = Core.LastLocationInBounds.Value;
+                  }
+               }
+            }
+         }
+         base.OnStylusUp(e);
+      }
+
+      protected override void OnStylusMove(StylusEventArgs e)
+      {
+         if(TouchEnabled && Core.IsDragging)
+         {
+            if(!isDragging)
+            {
+               isDragging = true;
+               Debug.WriteLine("IsDragging = " + isDragging);
+            }
+
+            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
+            {
+               // ...
+            }
+            else
+            {
+               System.Windows.Point p = e.GetPosition(this);
+
+               if(MapRenderTransform != null)
+               {
+                  p = MapRenderTransform.Inverse.Transform(p);
+               }
+
+               p = ApplyRotationInversion(p.X, p.Y);
+
+               Core.mouseCurrent.X = (int) p.X;
+               Core.mouseCurrent.Y = (int) p.Y;
+               {
+                  Core.Drag(Core.mouseCurrent);
+               }
+
+               if(IsRotated)
+               {
+                  Core_OnMapZoomChanged();
+               }
+               else
+               {
+                  UpdateMarkersOffset();
+               }
+            }
+            InvalidateVisual();
+         }
+
+         base.OnStylusMove(e);
       }
 
       #endregion
