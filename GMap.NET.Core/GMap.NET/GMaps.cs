@@ -39,21 +39,21 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "m@130";
-      public string VersionGoogleSatellite = "66";
-      public string VersionGoogleLabels = "h@130";
-      public string VersionGoogleTerrain = "t@125,r@130";
+      public string VersionGoogleMap = "m@132";
+      public string VersionGoogleSatellite = "69";
+      public string VersionGoogleLabels = "h@132";
+      public string VersionGoogleTerrain = "t@125,r@132";
       public string SecGoogleWord = "Galileo";
 
       // Google (China) version strings
-      public string VersionGoogleMapChina = "m@130";
-      public string VersionGoogleSatelliteChina = "s@66";
-      public string VersionGoogleLabelsChina = "h@130";
-      public string VersionGoogleTerrainChina = "t@125,r@130";
+      public string VersionGoogleMapChina = "m@132";
+      public string VersionGoogleSatelliteChina = "s@69";
+      public string VersionGoogleLabelsChina = "h@132";
+      public string VersionGoogleTerrainChina = "t@125,r@132";
 
       // Google (Korea) version strings
       public string VersionGoogleMapKorea = "kr1.12";
-      public string VersionGoogleSatelliteKorea = "66";
+      public string VersionGoogleSatelliteKorea = "69";
       public string VersionGoogleLabelsKorea = "kr1t.12";
 
       /// <summary>
@@ -1624,7 +1624,7 @@ namespace GMap.NET
       /// <returns></returns>
       internal string MakeReverseGeocoderUrl(PointLatLng pt, string language)
       {
-         return string.Format("http://maps.google.com/maps/geo?hl={0}&ll={1},{2}&output=csv&key={3}", language, pt.Lat.ToString(CultureInfo.InvariantCulture), pt.Lng.ToString(CultureInfo.InvariantCulture), GoogleMapsAPIKey);
+         return string.Format("http://maps.google.com/maps/geo?hl={0}&ll={1},{2}&output=xml&key={3}", language, pt.Lat.ToString(CultureInfo.InvariantCulture), pt.Lng.ToString(CultureInfo.InvariantCulture), GoogleMapsAPIKey);
       }
 
       /// <summary>
@@ -2125,13 +2125,118 @@ namespace GMap.NET
                }
             }
 
-            // parse
+            #region -- kml response --
+            //<?xml version="1.0" encoding="UTF-8" ?>
+            //<kml xmlns="http://earth.google.com/kml/2.0">
+            // <Response>
+            //  <name>55.023322,24.668408</name>
+            //  <Status>
+            //    <code>200</code>
+            //    <request>geocode</request>
+            //  </Status>
+
+            //  <Placemark id="p1">
+            //    <address>4313, Širvintos 19023, Lithuania</address>
+            //    <AddressDetails Accuracy="6" xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0"><Country><CountryNameCode>LT</CountryNameCode><CountryName>Lithuania</CountryName><SubAdministrativeArea><SubAdministrativeAreaName>Vilnius Region</SubAdministrativeAreaName><Locality><LocalityName>Širvintos</LocalityName><Thoroughfare><ThoroughfareName>4313</ThoroughfareName></Thoroughfare><PostalCode><PostalCodeNumber>19023</PostalCodeNumber></PostalCode></Locality></SubAdministrativeArea></Country></AddressDetails>
+            //    <ExtendedData>
+            //      <LatLonBox north="55.0270661" south="55.0207709" east="24.6711965" west="24.6573382" />
+            //    </ExtendedData>
+            //    <Point><coordinates>24.6642677,55.0239187,0</coordinates></Point>
+            //  </Placemark>
+
+            //  <Placemark id="p2">
+            //    <address>Širvintos 19023, Lithuania</address>
+            //    <AddressDetails Accuracy="5" xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0"><Country><CountryNameCode>LT</CountryNameCode><CountryName>Lithuania</CountryName><SubAdministrativeArea><SubAdministrativeAreaName>Vilnius Region</SubAdministrativeAreaName><Locality><LocalityName>Širvintos</LocalityName><PostalCode><PostalCodeNumber>19023</PostalCodeNumber></PostalCode></Locality></SubAdministrativeArea></Country></AddressDetails>
+            //    <ExtendedData>
+            //      <LatLonBox north="55.1109513" south="54.9867479" east="24.7563286" west="24.5854650" />
+            //    </ExtendedData>
+            //    <Point><coordinates>24.6778290,55.0561428,0</coordinates></Point>
+            //  </Placemark>
+
+            //  <Placemark id="p3">
+            //    <address>Širvintos, Lithuania</address>
+            //    <AddressDetails Accuracy="4" xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0"><Country><CountryNameCode>LT</CountryNameCode><CountryName>Lithuania</CountryName><SubAdministrativeArea><SubAdministrativeAreaName>Vilnius Region</SubAdministrativeAreaName><Locality><LocalityName>Širvintos</LocalityName></Locality></SubAdministrativeArea></Country></AddressDetails>
+            //    <ExtendedData>
+            //      <LatLonBox north="55.1597127" south="54.8595715" east="25.2358124" west="24.5536348" />
+            //    </ExtendedData>
+            //    <Point><coordinates>24.9447696,55.0482439,0</coordinates></Point>
+            //  </Placemark>
+
+            //  <Placemark id="p4">
+            //    <address>Vilnius Region, Lithuania</address>
+            //    <AddressDetails Accuracy="3" xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0"><Country><CountryNameCode>LT</CountryNameCode><CountryName>Lithuania</CountryName><SubAdministrativeArea><SubAdministrativeAreaName>Vilnius Region</SubAdministrativeAreaName></SubAdministrativeArea></Country></AddressDetails>
+            //    <ExtendedData>
+            //      <LatLonBox north="55.5177330" south="54.1276791" east="26.7590747" west="24.3866334" />
+            //    </ExtendedData>
+            //    <Point><coordinates>25.2182138,54.8086502,0</coordinates></Point>
+            //  </Placemark>
+
+            //  <Placemark id="p5">
+            //    <address>Lithuania</address>
+            //    <AddressDetails Accuracy="1" xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0"><Country><CountryNameCode>LT</CountryNameCode><CountryName>Lithuania</CountryName></Country></AddressDetails>
+            //    <ExtendedData>
+            //      <LatLonBox north="56.4503174" south="53.8986720" east="26.8356500" west="20.9310000" />
+            //    </ExtendedData>
+            //    <Point><coordinates>23.8812750,55.1694380,0</coordinates></Point>
+            //  </Placemark>
+            //</Response>
+            //</kml> 
+            #endregion
+
             {
                if(reverse.StartsWith("200"))
                {
                   string acc = reverse.Substring(0, reverse.IndexOf('\"'));
                   ret = new Placemark(reverse.Substring(reverse.IndexOf('\"')));
                   ret.Accuracy = int.Parse(acc.Split(',').GetValue(1) as string);
+               }
+               else if(reverse.StartsWith("<?xml")) // kml version
+               {
+                  XmlDocument doc = new XmlDocument();
+                  doc.LoadXml(reverse);
+
+                  XmlNamespaceManager nsMgr = new XmlNamespaceManager(doc.NameTable);
+                  nsMgr.AddNamespace("sm", "http://earth.google.com/kml/2.0");
+                  nsMgr.AddNamespace("sn", "urn:oasis:names:tc:ciq:xsdschema:xAL:2.0");
+
+                  XmlNodeList l = doc.SelectNodes("/sm:kml/sm:Response/sm:Placemark", nsMgr);
+                  if(l != null)
+                  {
+                     foreach(XmlNode n in l)
+                     {
+                        XmlNode nn = n.SelectSingleNode("//sm:Placemark/sm:address", nsMgr);
+                        if(nn != null)
+                        {
+                           ret = new Placemark(nn.InnerText);
+                           ret.XmlData = n.OuterXml;
+
+                           nn = n.SelectSingleNode("//sm:Status/sm:code", nsMgr);
+                           if(nn != null)
+                           {
+                              ret.Status = (GeoCoderStatusCode) int.Parse(nn.InnerText);
+                           }
+
+                           nn = n.SelectSingleNode("//sm:Placemark/sn:AddressDetails/@Accuracy", nsMgr);
+                           if(nn != null)
+                           {
+                              ret.Accuracy = int.Parse(nn.InnerText);
+                           }
+
+                           nn = n.SelectSingleNode("//sm:Placemark/sn:AddressDetails/sn:Country/sn:CountryNameCode", nsMgr);
+                           if(nn != null)
+                           {
+                              ret.CountryNameCode = nn.InnerText;
+                           }
+
+                           nn = n.SelectSingleNode("//sm:Placemark/sn:AddressDetails/sn:Country/sn:CountryName", nsMgr);
+                           if(nn != null)
+                           {
+                              ret.CountryName = nn.InnerText;
+                           }
+                           break;
+                        }
+                     }
+                  }
                }
             }
          }
@@ -2444,7 +2549,7 @@ namespace GMap.NET
                         Debug.WriteLine("Image disposed in MemoryCache o.O, should never happen ;} " + new RawTile(type, pos, zoom));
                         if(Debugger.IsAttached)
                         {
-                           Debugger.Break();
+                        Debugger.Break();
                         }
 #endif
 

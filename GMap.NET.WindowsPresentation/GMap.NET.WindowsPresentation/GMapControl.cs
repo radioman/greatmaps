@@ -55,7 +55,7 @@ namespace GMap.NET.WindowsPresentation
             RectLatLng viewarea = map.SelectedArea;
             if(viewarea != RectLatLng.Empty)
             {
-               map.CurrentPosition = new PointLatLng(viewarea.Lat - viewarea.HeightLat/2, viewarea.Lng + viewarea.WidthLng/2);
+               map.Position = new PointLatLng(viewarea.Lat - viewarea.HeightLat/2, viewarea.Lng + viewarea.WidthLng/2);
             }
             else
             {
@@ -395,6 +395,8 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
+      Slider slider = new Slider();
+
       public GMapControl()
       {
          if(!DesignModeInConstruct)
@@ -480,6 +482,8 @@ namespace GMap.NET.WindowsPresentation
             arcGisMapCopyright = new FormattedText(Core.arcGisCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             hnitMapCopyright = new FormattedText(Core.hnitCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             pergoMapCopyright = new FormattedText(Core.pergoCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+
+            
          }
       }
 
@@ -509,7 +513,7 @@ namespace GMap.NET.WindowsPresentation
       void GMapControl_Loaded(object sender, RoutedEventArgs e)
       {
          Core.StartSystem();
-         Core_OnMapZoomChanged();
+         Core_OnMapZoomChanged();  
 
          if(Application.Current != null)
          {
@@ -892,7 +896,7 @@ namespace GMap.NET.WindowsPresentation
          if(maxZoom > 0)
          {
             PointLatLng center = new PointLatLng(rect.Lat - (rect.HeightLat / 2), rect.Lng + (rect.WidthLng / 2));
-            CurrentPosition = center;
+            Position = center;
 
             if(maxZoom > MaxZoom)
             {
@@ -1004,7 +1008,7 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
-      RotateTransform rotationMatrix = new RotateTransform();
+      readonly RotateTransform rotationMatrix = new RotateTransform();
       GeneralTransform rotationMatrixInvert = new RotateTransform();
 
       /// <summary>
@@ -1014,7 +1018,6 @@ namespace GMap.NET.WindowsPresentation
       {
          System.Windows.Point center = new System.Windows.Point(ActualWidth / 2.0, ActualHeight / 2.0);
 
-         rotationMatrix = new RotateTransform();
          rotationMatrix.Angle = -Bearing;
          rotationMatrix.CenterY = center.X;
          rotationMatrix.CenterX = center.Y;
@@ -1174,6 +1177,12 @@ namespace GMap.NET.WindowsPresentation
             }
          }
 
+         if(ShowCenter)
+         {
+            drawingContext.DrawLine(CenterCrossPen, new System.Windows.Point((ActualWidth/2) - 10, ActualHeight/2), new System.Windows.Point((ActualWidth/2) + 10, ActualHeight/2));
+            drawingContext.DrawLine(CenterCrossPen, new System.Windows.Point(ActualWidth/2, (ActualHeight/2) - 10), new System.Windows.Point(ActualWidth/2, (ActualHeight/2) + 10));
+         }
+
          #region -- copyright --
 
          switch(Core.MapType)
@@ -1243,6 +1252,9 @@ namespace GMap.NET.WindowsPresentation
 
          base.OnRender(drawingContext);
       }
+
+      public Pen CenterCrossPen = new Pen(Brushes.Red, 1);
+      public bool ShowCenter = true;
 
       protected override void OnMouseWheel(MouseWheelEventArgs e)
       {
@@ -1357,11 +1369,11 @@ namespace GMap.NET.WindowsPresentation
             Core.EndDrag();
             Cursor = Cursors.Arrow;
 
-            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
+            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
             {
                if(Core.LastLocationInBounds.HasValue)
                {
-                  CurrentPosition = Core.LastLocationInBounds.Value;
+                  Position = Core.LastLocationInBounds.Value;
                }
             }
          }
@@ -1393,7 +1405,7 @@ namespace GMap.NET.WindowsPresentation
                Debug.WriteLine("IsDragging = " + isDragging);
             }
 
-            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
+            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
             {
                // ...
             }
@@ -1496,11 +1508,11 @@ namespace GMap.NET.WindowsPresentation
                Core.EndDrag();
                Cursor = Cursors.Arrow;
 
-               if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
+               if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
                {
                   if(Core.LastLocationInBounds.HasValue)
                   {
-                     CurrentPosition = Core.LastLocationInBounds.Value;
+                     Position = Core.LastLocationInBounds.Value;
                   }
                }
             }
@@ -1518,7 +1530,7 @@ namespace GMap.NET.WindowsPresentation
                Debug.WriteLine("IsDragging = " + isDragging);
             }
 
-            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
+            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
             {
                // ...
             }
@@ -1577,7 +1589,7 @@ namespace GMap.NET.WindowsPresentation
          PointLatLng? pos = Manager.GetLatLngFromGeocoder(keys, out status);
          if(pos.HasValue && status == GeoCoderStatusCode.G_GEO_SUCCESS)
          {
-            CurrentPosition = pos.Value;
+            Position = pos.Value;
          }
 
          return status;
@@ -1718,8 +1730,11 @@ namespace GMap.NET.WindowsPresentation
          return false;
       }
 
+      /// <summary>
+      /// current coordinates of the map center
+      /// </summary>
       [Browsable(false)]
-      public PointLatLng CurrentPosition
+      public PointLatLng Position
       {
          get
          {

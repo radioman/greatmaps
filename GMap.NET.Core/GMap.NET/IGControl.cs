@@ -3,7 +3,7 @@ namespace GMap.NET
 {
    public interface IGControl
    {
-      PointLatLng CurrentPosition
+      PointLatLng Position
       {
          get;
          set;

@@ -6,6 +6,9 @@ namespace GMap.NET
    /// </summary>
    public class Placemark
    {
+      public GeoCoderStatusCode Status = GeoCoderStatusCode.Unknow;
+      public string XmlData;
+
       string address;
 
       /// <summary>
@@ -23,28 +26,19 @@ namespace GMap.NET
          }
       }
 
-      private int accuracy;
-
       /// <summary>
       /// the accuracy of address
       /// </summary>
-      public int Accuracy
-      {
-         get
-         {
-            return accuracy;
-         }
-         internal set
-         {
-            accuracy = value;
-         }
-      }
+      public int Accuracy;
 
       // parsed values from address
       public string ThoroughfareName;
       public string LocalityName;
       public string PostalCodeNumber;
       public string CountryName;
+      public string CountryNameCode;
+      public string AdministrativeAreaName;
+      public string SubAdministrativeAreaName;
 
       public Placemark(string address)
       {
@@ -57,18 +51,7 @@ namespace GMap.NET
       /// <returns></returns>
       protected virtual bool ParseAddress()
       {
-         // usa format
-         //200,8,\"701 Constitution Ave NW, Washington, DC 20004, USA\"
-
-         // eu format           
-         //200,8,"10-80 Didlaukio gatve, Vilnius LT-08013, Lietuva"
-
-         bool ret = false;
-
-         // ...
-         //plc.CountryName = address.Substring(...
-
-         return ret;
+         return false;
       }
    }
 }

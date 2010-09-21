@@ -74,7 +74,7 @@ namespace Demo.WindowsForms
             MainMap.MaxZoom = 11;
             MainMap.MinZoom = 1;
             MainMap.Zoom = MainMap.MinZoom + 1;
-            MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
+            MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
 
             // map events
             MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
@@ -98,8 +98,8 @@ namespace Demo.WindowsForms
             comboBoxMode.SelectedItem = GMaps.Instance.Mode;
 
             // get position
-            textBoxLat.Text = MainMap.CurrentPosition.Lat.ToString(CultureInfo.InvariantCulture);
-            textBoxLng.Text = MainMap.CurrentPosition.Lng.ToString(CultureInfo.InvariantCulture);
+            textBoxLat.Text = MainMap.Position.Lat.ToString(CultureInfo.InvariantCulture);
+            textBoxLng.Text = MainMap.Position.Lng.ToString(CultureInfo.InvariantCulture);
 
             // get cache modes
             checkBoxUseRouteCache.Checked = GMaps.Instance.UseRouteCache;
@@ -161,11 +161,11 @@ namespace Demo.WindowsForms
             }
 
             // set current marker
-            currentMarker = new GMapMarkerGoogleRed(MainMap.CurrentPosition);
+            currentMarker = new GMapMarkerGoogleRed(MainMap.Position);
             top.Markers.Add(currentMarker);
 
             // map center
-            center = new GMapMarkerCross(MainMap.CurrentPosition);
+            center = new GMapMarkerCross(MainMap.Position);
             top.Markers.Add(center);
 
             //MainMap.VirtualSizeEnabled = true;
@@ -278,7 +278,7 @@ namespace Demo.WindowsForms
 
                if(currentTransport != null && currentTransport == marker)
                {
-                  MainMap.CurrentPosition = marker.Position;
+                  MainMap.Position = marker.Position;
                   if(d.Bearing.HasValue)
                   {
                      MainMap.Bearing = (float) d.Bearing.Value;
@@ -311,7 +311,7 @@ namespace Demo.WindowsForms
 
                if(currentTransport != null && currentTransport == marker)
                {
-                  MainMap.CurrentPosition = marker.Position;
+                  MainMap.Position = marker.Position;
                   if(d.Bearing.HasValue)
                   {
                      MainMap.Bearing = (float) d.Bearing.Value;
@@ -742,7 +742,7 @@ namespace Demo.WindowsForms
                               {
                                  if(checkBoxTcpIpSnap.Checked && !MainMap.IsDragging)
                                  {
-                                    MainMap.CurrentPosition = marker.Position;
+                                    MainMap.Position = marker.Position;
                                  }
                                  snap = false;
 
@@ -1275,7 +1275,7 @@ namespace Demo.WindowsForms
       {
          trackBar1.Value = (int) (MainMap.Zoom);
          textBoxZoomCurrent.Text = MainMap.Zoom.ToString();
-         center.Position = MainMap.CurrentPosition;
+         center.Position = MainMap.Position;
       }
 
       // click on some marker
@@ -1420,7 +1420,7 @@ namespace Demo.WindowsForms
          double lat = double.Parse(textBoxLat.Text, CultureInfo.InvariantCulture);
          double lng = double.Parse(textBoxLng.Text, CultureInfo.InvariantCulture);
 
-         MainMap.CurrentPosition = new PointLatLng(lat, lng);
+         MainMap.Position = new PointLatLng(lat, lng);
       }
 
       // goto by geocoder

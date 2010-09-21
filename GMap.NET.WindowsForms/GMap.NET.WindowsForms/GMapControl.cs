@@ -657,7 +657,7 @@ namespace GMap.NET.WindowsForms
          if(maxZoom > 0)
          {
             PointLatLng center = new PointLatLng(rect.Lat-(rect.HeightLat/2), rect.Lng+(rect.WidthLng/2));
-            CurrentPosition = center;
+            Position = center;
 
             if(maxZoom > MaxZoom)
             {
@@ -1549,11 +1549,11 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
             this.Cursor = System.Windows.Forms.Cursors.Default;
 #endif
-            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
+            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
             {
                if(Core.LastLocationInBounds.HasValue)
                {
-                  CurrentPosition = Core.LastLocationInBounds.Value;
+                  Position = Core.LastLocationInBounds.Value;
                }
             }
          }
@@ -1665,7 +1665,7 @@ namespace GMap.NET.WindowsForms
                Debug.WriteLine("IsDragging = " + isDragging);
             }
 
-            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(CurrentPosition))
+            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
             {
                // ...
             }
@@ -1823,7 +1823,7 @@ namespace GMap.NET.WindowsForms
          PointLatLng? pos = Manager.GetLatLngFromGeocoder(keys, out status);
          if(pos.HasValue && status == GeoCoderStatusCode.G_GEO_SUCCESS)
          {
-            CurrentPosition = pos.Value;
+            Position = pos.Value;
          }
 
          return status;
@@ -2075,7 +2075,7 @@ namespace GMap.NET.WindowsForms
       /// current map center position
       /// </summary>
       [Browsable(false)]
-      public PointLatLng CurrentPosition
+      public PointLatLng Position
       {
          get
          {
@@ -2176,7 +2176,7 @@ namespace GMap.NET.WindowsForms
                RectLatLng viewarea = SelectedArea;
                if(viewarea != RectLatLng.Empty)
                {
-                  CurrentPosition = new PointLatLng(viewarea.Lat - viewarea.HeightLat/2, viewarea.Lng + viewarea.WidthLng/2);
+                  Position = new PointLatLng(viewarea.Lat - viewarea.HeightLat/2, viewarea.Lng + viewarea.WidthLng/2);
                }
                else
                {

@@ -723,7 +723,7 @@ namespace GMap.NET.WindowsPresentation
          if(maxZoom > 0)
          {
             PointLatLng center = new PointLatLng(rect.Lat - (rect.HeightLat / 2), rect.Lng + (rect.WidthLng / 2));
-            CurrentPosition = center;
+            Position = center;
 
             if(maxZoom > MaxZoom)
             {
@@ -914,7 +914,7 @@ namespace GMap.NET.WindowsPresentation
          PointLatLng? pos = Manager.GetLatLngFromGeocoder(keys, out status);
          if(pos.HasValue && status == GeoCoderStatusCode.G_GEO_SUCCESS)
          {
-            CurrentPosition = pos.Value;
+            Position = pos.Value;
          }
 
          return status;
@@ -1095,7 +1095,7 @@ namespace GMap.NET.WindowsPresentation
       }
 
       [Browsable(false)]
-      public PointLatLng CurrentPosition
+      public PointLatLng Position
       {
          get
          {

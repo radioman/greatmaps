@@ -6,6 +6,7 @@
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     KeyboardNavigation.DirectionalNavigation="Once"
+    xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
     xmlns:src="clr-namespace:Demo.WindowsPresentation"
     MinHeight="775" MinWidth="600" KeyUp="Window_KeyUp" PreviewKeyDown="Window_PreviewKeyDown">
     <Window.Resources>

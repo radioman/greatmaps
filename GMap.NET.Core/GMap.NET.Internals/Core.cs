@@ -912,12 +912,12 @@ namespace GMap.NET.Internals
          {
             LastLocationInBounds = CurrentPosition;
             CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
-         }
 
-         if(OnMapDrag != null)
-         {
-            OnMapDrag();
-         }
+            if(OnMapDrag != null)
+            {
+               OnMapDrag();
+            }
+         }           
       }
 
       /// <summary>

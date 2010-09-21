@@ -54,7 +54,7 @@ namespace Demo.WindowsPresentation
 
          // config map
          MainMap.MinZoom = 1;
-         MainMap.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
+         MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
          MainMap.Zoom = MainMap.MinZoom;
 
          // map events
@@ -83,8 +83,8 @@ namespace Demo.WindowsPresentation
          sliderZoom.Minimum = MainMap.MinZoom;
 
          // get position
-         textBoxLat.Text = MainMap.CurrentPosition.Lat.ToString(CultureInfo.InvariantCulture);
-         textBoxLng.Text = MainMap.CurrentPosition.Lng.ToString(CultureInfo.InvariantCulture);
+         textBoxLat.Text = MainMap.Position.Lat.ToString(CultureInfo.InvariantCulture);
+         textBoxLng.Text = MainMap.Position.Lng.ToString(CultureInfo.InvariantCulture);
 
          // get marker state
          checkBoxCurrentMarker.IsChecked = true;
@@ -97,7 +97,7 @@ namespace Demo.WindowsPresentation
 #endif
 
          // set current marker
-         currentMarker = new GMapMarker(MainMap.CurrentPosition);
+         currentMarker = new GMapMarker(MainMap.Position);
          {
             currentMarker.Shape = new CustomMarkerRed(this, currentMarker, "custom position marker");
             currentMarker.Offset = new System.Windows.Point(-15, -15);
@@ -562,7 +562,7 @@ namespace Demo.WindowsPresentation
 
          currentMarker.Position = new PointLatLng(lat, lng);
 
-         MainMap.CurrentPosition = currentMarker.Position;
+         MainMap.Position = currentMarker.Position;
       }
 
       // goto by geocoder
@@ -577,7 +577,7 @@ namespace Demo.WindowsPresentation
             }
             else
             {
-               currentMarker.Position = MainMap.CurrentPosition;
+               currentMarker.Position = MainMap.Position;
             }
          }
       }
