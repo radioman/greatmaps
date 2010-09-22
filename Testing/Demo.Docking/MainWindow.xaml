@@ -12,6 +12,9 @@
                         <ad:DocumentContent Title="   Bing   ">
                             <map:GMapControl MinZoom="1" MaxZoom="17" Zoom="3" MapType="BingMap" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                         </ad:DocumentContent>
+                        <ad:DocumentContent Title="   Bing New  ">
+                            <map:GMapControl MinZoom="1" MaxZoom="17" Zoom="3" MapType="BingMap_New" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                        </ad:DocumentContent>
                         <ad:DocumentContent Title="   Bing Hybrid   ">
                             <map:GMapControl MinZoom="1" MaxZoom="17" Zoom="3" MapType="BingHybrid" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                         </ad:DocumentContent>
@@ -59,6 +62,9 @@
                             </ad:DocumentContent>
                             <ad:DocumentContent Title="   Maps.lt Hybrid  ">
                                 <map:GMapControl MinZoom="1" MaxZoom="11" Zoom="3" MapType="MapsLT_Map_Hybrid" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            </ad:DocumentContent>
+                            <ad:DocumentContent Title="   ArcGIS_World_Topo_Map  ">
+                                <map:GMapControl MinZoom="1" MaxZoom="11" Zoom="3" MapType="ArcGIS_World_Topo_Map" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                             </ad:DocumentContent>
                         </ad:DocumentPane>
                     </ad:ResizingPanel>

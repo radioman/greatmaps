@@ -70,10 +70,8 @@ namespace Demo.WindowsForms
             }
 
             // config map             
-            MainMap.MapType = MapType.MapsLT_Map;
-            MainMap.MaxZoom = 11;
+            MainMap.MapType = MapType.GoogleMap;
             MainMap.MinZoom = 1;
-            MainMap.Zoom = MainMap.MinZoom + 1;
             MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
 
             // map events

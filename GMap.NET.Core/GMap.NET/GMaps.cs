@@ -68,7 +68,7 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.3";
 
       // BingMaps
-      public string VersionBingMaps = "517";
+      public string VersionBingMaps = "559";
 
       // YandexMap
       public string VersionYandexMap = "2.15.0";
@@ -470,14 +470,35 @@ namespace GMap.NET
 
          switch(type)
          {
-            case MapType.ArcGIS_Map:
-            case MapType.ArcGIS_Satellite:
-            case MapType.ArcGIS_ShadedRelief:
-            case MapType.ArcGIS_Terrain:
+            case MapType.ArcGIS_StreetMap_World_2D:
+            case MapType.ArcGIS_Imagery_World_2D:
+            case MapType.ArcGIS_ShadedRelief_World_2D:
+            case MapType.ArcGIS_Topo_US_2D:
             {
                if(false == (Projection is PlateCarreeProjection))
                {
                   Projection = new PlateCarreeProjection();
+               }
+               maxZoom = 13;
+            }
+            break;
+
+            case MapType.ArcGIS_World_Physical_Map:
+            {
+               if(false == (Projection is MercatorProjection))
+               {
+                  Projection = new MercatorProjection();
+               }
+               maxZoom = 8;
+            }
+            break;
+
+            case MapType.ArcGIS_World_Shaded_Relief:
+            case MapType.ArcGIS_World_Terrain_Base:
+            {
+               if(false == (Projection is MercatorProjection))
+               {
+                  Projection = new MercatorProjection();
                }
                maxZoom = 13;
             }
@@ -522,6 +543,7 @@ namespace GMap.NET
             case MapType.OpenStreetMapSurfer:
             case MapType.OpenStreetMapSurferTerrain:
             case MapType.SigPacSpainMap:
+            case MapType.ArcGIS_World_Topo_Map:
             {
                if(false == (Projection is MercatorProjection))
                {
@@ -531,12 +553,12 @@ namespace GMap.NET
             }
             break;
 
-
             default:
             {
                if(false == (Projection is MercatorProjection))
                {
                   Projection = new MercatorProjection();
+                  maxZoom = GMaps.Instance.MaxZoom;
                }
             }
             break;
@@ -1381,6 +1403,14 @@ namespace GMap.NET
                return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}{4}", GetServerNum(pos, 4), key, VersionBingMaps, language, (!string.IsNullOrEmpty(BingMapsClientToken) ? "&token=" + BingMapsClientToken : string.Empty));
             }
 
+            case MapType.BingMap_New:
+            {
+               // http://ecn.t3.tiles.virtualearth.net/tiles/r12030012020233?g=559&mkt=en-us&lbl=l1&stl=h&shading=hill&n=z
+
+               string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
+               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}{4}&lbl=l1&stl=h&shading=hill&n=z", GetServerNum(pos, 4), key, VersionBingMaps, language, (!string.IsNullOrEmpty(BingMapsClientToken) ? "&token=" + BingMapsClientToken : string.Empty));
+            }
+
             case MapType.BingSatellite:
             {
                string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
@@ -1395,32 +1425,67 @@ namespace GMap.NET
             #endregion
 
             #region -- ArcGIS --
-            case MapType.ArcGIS_Map:
+            case MapType.ArcGIS_StreetMap_World_2D:
             {
                // http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_StreetMap_World_2D/MapServer/tile/0/0/0.jpg
 
                return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_StreetMap_World_2D/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
             }
 
-            case MapType.ArcGIS_Satellite:
+            case MapType.ArcGIS_Imagery_World_2D:
             {
                // http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_Imagery_World_2D/MapServer/tile/1/0/1.jpg
 
                return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_Imagery_World_2D/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
             }
 
-            case MapType.ArcGIS_ShadedRelief:
+            case MapType.ArcGIS_ShadedRelief_World_2D:
             {
                // http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_ShadedRelief_World_2D/MapServer/tile/1/0/1.jpg
 
                return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_ShadedRelief_World_2D/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
             }
 
-            case MapType.ArcGIS_Terrain:
+            case MapType.ArcGIS_Topo_US_2D:
             {
                // http://server.arcgisonline.com/ArcGIS/rest/services/NGS_Topo_US_2D/MapServer/tile/4/3/15
 
                return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/NGS_Topo_US_2D/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
+            }
+
+            case MapType.ArcGIS_World_Physical_Map:
+            {
+               // http://services.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/2/0/2.jpg
+
+               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
+            }
+
+            case MapType.ArcGIS_World_Shaded_Relief:
+            {
+               // http://services.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/0/0/0jpg
+
+               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
+            }
+
+            case MapType.ArcGIS_World_Street_Map:
+            {
+               // http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/0/0/0jpg
+
+               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
+            }
+
+            case MapType.ArcGIS_World_Terrain_Base:
+            {
+               // http://services.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/0/0/0jpg
+
+               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
+            }
+
+            case MapType.ArcGIS_World_Topo_Map:
+            {
+               // http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/0/0/0jpg
+
+               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
             }
 
 #if TESTpjbcoetzer
@@ -2549,7 +2614,7 @@ namespace GMap.NET
                         Debug.WriteLine("Image disposed in MemoryCache o.O, should never happen ;} " + new RawTile(type, pos, zoom));
                         if(Debugger.IsAttached)
                         {
-                        Debugger.Break();
+                           Debugger.Break();
                         }
 #endif
 
@@ -2645,6 +2710,7 @@ namespace GMap.NET
 
                      case MapType.BingHybrid:
                      case MapType.BingMap:
+                     case MapType.BingMap_New:
                      case MapType.BingSatellite:
                      {
                         request.Referer = "http://www.bing.com/maps/";
@@ -2680,6 +2746,12 @@ namespace GMap.NET
                      case MapType.OpenStreetOsm:
                      {
                         request.Referer = "http://www.openstreetmap.org/";
+                     }
+                     break;
+
+                     case MapType.OpenSeaMapLabels:
+                     {
+                        request.Referer = "http://openseamap.org/";
                      }
                      break;
 

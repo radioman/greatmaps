@@ -41,7 +41,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Setup", "Setup", "{BA76BAF9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GMap.NET - Hot Build", "Setup\GMap.NET - Hot Build\GMap.NET - Hot Build.csproj", "{C5E9D4B5-F9A8-4414-9B17-5A70DC2705C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample3_35", "Testing\Sample3\Sample3_35.csproj", "{F729FF99-2991-4819-9855-7CD7A1199089}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.Docking", "Testing\Demo.Docking\Demo.Docking.csproj", "{F729FF99-2991-4819-9855-7CD7A1199089}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -439,8 +439,8 @@ namespace GMap.NET.Internals
       {
          if(!IsStarted)
          {
-            IsStarted = true;
             GoToCurrentPosition();
+            IsStarted = true;
 
 #if !DEBUG
 #if !PocketPC
@@ -916,7 +916,7 @@ namespace GMap.NET.Internals
             UpdateBounds();
          }
 
-         if(IsDragging)
+         if(IsDragging || !IsStarted)
          {
             LastLocationInBounds = CurrentPosition;
             CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
