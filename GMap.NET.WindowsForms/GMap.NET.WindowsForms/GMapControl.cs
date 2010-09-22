@@ -1276,6 +1276,8 @@ namespace GMap.NET.WindowsForms
             case MapType.OpenStreetOsm:
             case MapType.OpenStreetMapSurfer:
             case MapType.OpenStreetMapSurferTerrain:
+            case MapType.OpenSeaMapLabels:
+            case MapType.OpenSeaMapHybrid:
             {
 #if !PocketPC
                g.DrawString(Core.openStreetMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
@@ -1300,6 +1302,7 @@ namespace GMap.NET.WindowsForms
 
             case MapType.BingHybrid:
             case MapType.BingMap:
+            case MapType.BingMap_New:
             case MapType.BingSatellite:
             {
 #if !PocketPC
@@ -1310,10 +1313,15 @@ namespace GMap.NET.WindowsForms
             }
             break;
 
-            case MapType.ArcGIS_Map:
-            case MapType.ArcGIS_Satellite:
-            case MapType.ArcGIS_ShadedRelief:
-            case MapType.ArcGIS_Terrain:
+            case MapType.ArcGIS_StreetMap_World_2D:
+            case MapType.ArcGIS_Imagery_World_2D:
+            case MapType.ArcGIS_ShadedRelief_World_2D:
+            case MapType.ArcGIS_Topo_US_2D:
+            case MapType.ArcGIS_World_Physical_Map:
+            case MapType.ArcGIS_World_Shaded_Relief:
+            case MapType.ArcGIS_World_Street_Map:
+            case MapType.ArcGIS_World_Terrain_Base:
+            case MapType.ArcGIS_World_Topo_Map:
             {
 #if !PocketPC
                g.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);

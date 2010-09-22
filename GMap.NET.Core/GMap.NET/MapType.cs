@@ -31,15 +31,16 @@ namespace GMap.NET
       YahooHybrid=333,
 
       BingMap=444,
+      BingMap_New=455,
       BingSatellite=555,
       BingHybrid=666,
 
-      ArcGIS_Map=777,
-      ArcGIS_Satellite=788,
-      ArcGIS_ShadedRelief=799,
-      ArcGIS_Terrain=811,
+      ArcGIS_StreetMap_World_2D=777,
+      ArcGIS_Imagery_World_2D=788,
+      ArcGIS_ShadedRelief_World_2D=799,
+      ArcGIS_Topo_US_2D=811,
 
-      // use these numbers to clean up old stuff
+      #region -- use these numbers to clean up old stuff --
       //ArcGIS_MapsLT_Map_Old= 877,
       //ArcGIS_MapsLT_OrtoFoto_Old = 888,
       //ArcGIS_MapsLT_Map_Labels_Old = 890,
@@ -51,7 +52,14 @@ namespace GMap.NET
       //ArcGIS_MapsLT_Map=978,
       //ArcGIS_MapsLT_OrtoFoto=989,
       //ArcGIS_MapsLT_Map_Labels=991,
-      //ArcGIS_MapsLT_Map_Hybrid=998,
+      //ArcGIS_MapsLT_Map_Hybrid=998, 
+      #endregion
+
+      ArcGIS_World_Physical_Map=822,
+      ArcGIS_World_Shaded_Relief=833,
+      ArcGIS_World_Street_Map=844,
+      ArcGIS_World_Terrain_Base=855,
+      ArcGIS_World_Topo_Map=866,
 
       MapsLT_Map=1000,
       MapsLT_OrtoFoto=1001,

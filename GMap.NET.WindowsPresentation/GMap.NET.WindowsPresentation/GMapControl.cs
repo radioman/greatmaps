@@ -483,7 +483,7 @@ namespace GMap.NET.WindowsPresentation
             hnitMapCopyright = new FormattedText(Core.hnitCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             pergoMapCopyright = new FormattedText(Core.pergoCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
 
-            
+
          }
       }
 
@@ -513,7 +513,7 @@ namespace GMap.NET.WindowsPresentation
       void GMapControl_Loaded(object sender, RoutedEventArgs e)
       {
          Core.StartSystem();
-         Core_OnMapZoomChanged();  
+         Core_OnMapZoomChanged();
 
          if(Application.Current != null)
          {
@@ -1201,6 +1201,8 @@ namespace GMap.NET.WindowsPresentation
             case MapType.OpenStreetOsm:
             case MapType.OpenStreetMapSurfer:
             case MapType.OpenStreetMapSurferTerrain:
+            case MapType.OpenSeaMapLabels:
+            case MapType.OpenSeaMapHybrid:
             {
                drawingContext.DrawText(openStreetMapCopyright, new System.Windows.Point(5, ActualHeight - openStreetMapCopyright.Height - 5));
             }
@@ -1217,16 +1219,22 @@ namespace GMap.NET.WindowsPresentation
 
             case MapType.BingHybrid:
             case MapType.BingMap:
+            case MapType.BingMap_New:
             case MapType.BingSatellite:
             {
                drawingContext.DrawText(virtualEarthCopyright, new System.Windows.Point(5, ActualHeight - virtualEarthCopyright.Height - 5));
             }
             break;
 
-            case MapType.ArcGIS_Map:
-            case MapType.ArcGIS_Satellite:
-            case MapType.ArcGIS_ShadedRelief:
-            case MapType.ArcGIS_Terrain:
+            case MapType.ArcGIS_StreetMap_World_2D:
+            case MapType.ArcGIS_Imagery_World_2D:
+            case MapType.ArcGIS_ShadedRelief_World_2D:
+            case MapType.ArcGIS_Topo_US_2D:
+            case MapType.ArcGIS_World_Physical_Map:
+            case MapType.ArcGIS_World_Shaded_Relief:
+            case MapType.ArcGIS_World_Street_Map:
+            case MapType.ArcGIS_World_Terrain_Base:
+            case MapType.ArcGIS_World_Topo_Map:
             {
                drawingContext.DrawText(arcGisMapCopyright, new System.Windows.Point(5, ActualHeight - arcGisMapCopyright.Height - 5));
             }
