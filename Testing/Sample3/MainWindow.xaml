@@ -1,0 +1,83 @@
+﻿<Window x:Class="Sample3.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
+        xmlns:map="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
+        Title="MainWindow" WindowState="Maximized" Height="420" Width="1024" Activated="Window_Activated">
+    <Grid>
+        <ad:DockingManager x:Name="dockManager">
+            <ad:ResizingPanel Orientation="Horizontal" Margin="5">
+                <ad:ResizingPanel Orientation="Vertical" ad:ResizingPanel.ResizeWidth="0.44*">
+                    <ad:DocumentPane SelectedIndex="0">
+                        <ad:DocumentContent Title="   Bing   ">
+                            <map:GMapControl MinZoom="1" MaxZoom="17" Zoom="3" MapType="BingMap" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                        </ad:DocumentContent>
+                        <ad:DocumentContent Title="   Bing Hybrid   ">
+                            <map:GMapControl MinZoom="1" MaxZoom="17" Zoom="3" MapType="BingHybrid" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                        </ad:DocumentContent>
+                    </ad:DocumentPane>
+                    <ad:DocumentPane SelectedIndex="0">
+                        <ad:DocumentContent Title="   Yahoo!   ">
+                            <map:GMapControl MinZoom="1" MaxZoom="17" Zoom="3" MapType="YahooMap" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                        </ad:DocumentContent>
+                        <ad:DocumentContent Title="   Yahoo! Hybrid   ">
+                            <map:GMapControl MinZoom="1" MaxZoom="17" Zoom="3" MapType="YahooHybrid" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                        </ad:DocumentContent>
+                    </ad:DocumentPane>
+                    <ad:DocumentPane SelectedIndex="0">
+                        <ad:DocumentContent Title="   OpenStreetMap   ">
+                            <map:GMapControl MinZoom="1" MaxZoom="17" Zoom="3" MapType="OpenStreetMap" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                        </ad:DocumentContent>
+                        <ad:DocumentContent Title="   OpenStreetOsm   ">
+                            <map:GMapControl MinZoom="1" MaxZoom="17" Zoom="3" MapType="OpenStreetOsm" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                        </ad:DocumentContent>
+                        <ad:DocumentContent Title="   OpenStreetMapSurfer   ">
+                            <map:GMapControl MinZoom="1" MaxZoom="17" Zoom="3" MapType="OpenStreetMapSurfer" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                        </ad:DocumentContent>
+                    </ad:DocumentPane>
+                </ad:ResizingPanel>
+                <ad:ResizingPanel Orientation="Vertical">
+                    <ad:ResizingPanel Orientation="Horizontal">
+                        <ad:DocumentPane SelectedIndex="0" SelectionChanged="DocumentPane_SelectionChanged">
+                            <ad:DocumentContent Title="   Google   " IsCloseable="False" IsFloatingAllowed="True">
+                                <map:GMapControl x:Name="MainMap" MinZoom="1" MaxZoom="17" Zoom="3" MapType="GoogleMap" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged" />
+                            </ad:DocumentContent>
+                            <ad:DocumentContent Title="   Google Hybrid   ">
+                                <map:GMapControl MinZoom="1" MaxZoom="17" Zoom="3" MapType="GoogleHybrid" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            </ad:DocumentContent>
+                            <ad:DocumentContent Title="   Google Terrain   ">
+                                <map:GMapControl MinZoom="1" MaxZoom="17" Zoom="3" MapType="GoogleTerrain" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            </ad:DocumentContent>
+                            <ad:DocumentContent Title="   YandexMapRu   ">
+                                <map:GMapControl MinZoom="1" MaxZoom="17" Zoom="3" MapType="YandexMapRu" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            </ad:DocumentContent>
+                            <ad:DocumentContent Title="   YandexMapRu Hybrid   ">
+                                <map:GMapControl MinZoom="1" MaxZoom="17" Zoom="3" MapType="YandexMapRuHybrid" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            </ad:DocumentContent>
+                            <ad:DocumentContent Title="   Maps.lt   ">
+                                <map:GMapControl MinZoom="1" MaxZoom="11" Zoom="3" MapType="MapsLT_Map" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            </ad:DocumentContent>
+                            <ad:DocumentContent Title="   Maps.lt Hybrid  ">
+                                <map:GMapControl MinZoom="1" MaxZoom="11" Zoom="3" MapType="MapsLT_Map_Hybrid" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            </ad:DocumentContent>
+                        </ad:DocumentPane>
+                    </ad:ResizingPanel>
+                    <ad:DockablePane ad:ResizingPanel.ResizeHeight="0.44*" ShowTabs="True" ShowHeader="True" SelectedIndex="0" BorderThickness="0" Opacity="0.9">
+                        <ad:DockableContent Title="   Map   " IsCloseable="False" HideOnClose="False">
+                            
+                        </ad:DockableContent>
+                        <ad:DockableContent Title="   Live   " IsCloseable="False">
+                            
+                        </ad:DockableContent>
+                        <ad:DockableContent Title="   Cache   " IsCloseable="False">
+                            
+                        </ad:DockableContent>
+                        <ad:DockableContent Title="   Info   " IsCloseable="False">
+                            
+                        </ad:DockableContent>
+                    </ad:DockablePane>
+                </ad:ResizingPanel>
+            </ad:ResizingPanel>
+        </ad:DockingManager>
+    </Grid>
+</Window>

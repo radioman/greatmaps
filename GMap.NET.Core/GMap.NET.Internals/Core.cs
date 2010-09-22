@@ -680,6 +680,14 @@ namespace GMap.NET.Internals
       {
          CancelAsyncTasks();
          IsStarted = false;
+
+         Matrix.ClearAllLevels();
+
+         lock(FailedLoads)
+         {
+            FailedLoads.Clear();
+            RaiseEmptyTileError = false;
+         }
       }
 
       /// <summary>
@@ -917,7 +925,7 @@ namespace GMap.NET.Internals
             {
                OnMapDrag();
             }
-         }           
+         }
       }
 
       /// <summary>
