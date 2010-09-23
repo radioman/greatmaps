@@ -418,6 +418,11 @@ namespace GMap.NET.WindowsForms
       /// <param name="g"></param>
       void DrawMapGDIplus(Graphics g)
       {
+         if(MapType == NET.MapType.None)
+         {
+            return;
+         }
+
          Core.Matrix.EnterReadLock();
          Core.tileDrawingListLock.AcquireReaderLock();
          try

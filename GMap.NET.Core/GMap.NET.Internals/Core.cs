@@ -1191,6 +1191,11 @@ namespace GMap.NET.Internals
       /// </summary>
       void UpdateBounds()
       {
+         if(MapType == NET.MapType.None)
+         {
+            return;
+         }
+
          lock(tileLoadQueue)
          {
             tileDrawingListLock.AcquireWriterLock();

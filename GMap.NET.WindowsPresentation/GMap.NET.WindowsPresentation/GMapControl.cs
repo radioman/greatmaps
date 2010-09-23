@@ -626,6 +626,11 @@ namespace GMap.NET.WindowsPresentation
       /// <param name="g"></param>
       void DrawMapWPF(DrawingContext g)
       {
+         if(MapType == NET.MapType.None)
+         {
+            return;
+         }
+
          Core.Matrix.EnterReadLock();
          Core.tileDrawingListLock.AcquireReaderLock();
          try

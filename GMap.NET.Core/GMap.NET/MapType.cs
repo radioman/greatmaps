@@ -6,6 +6,8 @@ namespace GMap.NET
    /// </summary>
    public enum MapType
    {
+      None = 0, // displays no map
+
       GoogleMap=1,
       GoogleSatellite=4,
       GoogleLabels=8,
