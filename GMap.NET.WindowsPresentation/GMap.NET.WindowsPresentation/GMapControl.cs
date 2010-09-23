@@ -620,6 +620,8 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
+      public Brush EmptyMapBackground = Brushes.WhiteSmoke;
+
       /// <summary>
       /// render map in WPF
       /// </summary>
@@ -628,6 +630,7 @@ namespace GMap.NET.WindowsPresentation
       {
          if(MapType == NET.MapType.None)
          {
+            g.DrawRectangle(EmptyMapBackground, null, new Rect(RenderSize));
             return;
          }
 

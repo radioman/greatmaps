@@ -1061,6 +1061,8 @@ namespace GMap.NET.WindowsForms
       float? MapRenderTransform = null;
 #endif
 
+      public Color EmptyMapBackground = Color.WhiteSmoke;
+
       protected override void OnPaint(PaintEventArgs e)
       {
          if(ForceDoubleBuffer)
@@ -1068,7 +1070,7 @@ namespace GMap.NET.WindowsForms
             if(gxOff != null && backBuffer != null)
             {
                // render white background
-               gxOff.Clear(Color.WhiteSmoke);
+               gxOff.Clear(EmptyMapBackground);
 
 #if !PocketPC
                if(MapRenderTransform.HasValue)
@@ -1092,7 +1094,7 @@ namespace GMap.NET.WindowsForms
          }
          else
          {
-            e.Graphics.Clear(Color.WhiteSmoke);
+            e.Graphics.Clear(EmptyMapBackground);
 
 #if !PocketPC
             if(MapRenderTransform.HasValue)
