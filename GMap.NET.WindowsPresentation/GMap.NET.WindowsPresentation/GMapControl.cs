@@ -1272,6 +1272,8 @@ namespace GMap.NET.WindowsPresentation
       public Pen CenterCrossPen = new Pen(Brushes.Red, 1);
       public bool ShowCenter = true;
 
+      public bool InvertedMouseWheelZooming = false;
+
       protected override void OnMouseWheel(MouseWheelEventArgs e)
       {
          base.OnMouseWheel(e);
@@ -1311,11 +1313,22 @@ namespace GMap.NET.WindowsPresentation
 
             if(e.Delta > 0)
             {
-               Zoom = ((int) Zoom) + 1;
+               if(!InvertedMouseWheelZooming)
+               {
+                  Zoom = ((int) Zoom) + 1;
+               }
+               else
+               {
+                  Zoom = ((int) (Zoom + 0.99)) - 1;
+               }
             }
             else
             {
-               if(e.Delta < 0)
+               if(InvertedMouseWheelZooming)
+               {
+                  Zoom = ((int) Zoom) + 1;
+               }
+               else
                {
                   Zoom = ((int) (Zoom + 0.99)) - 1;
                }

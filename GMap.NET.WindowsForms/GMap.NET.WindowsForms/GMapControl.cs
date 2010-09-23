@@ -1765,6 +1765,8 @@ namespace GMap.NET.WindowsForms
 
 #if !PocketPC
 
+      public bool InvertedMouseWheelZooming = false;
+
       protected override void OnMouseWheel(MouseEventArgs e)
       {
          base.OnMouseWheel(e);
@@ -1804,11 +1806,25 @@ namespace GMap.NET.WindowsForms
 
             if(e.Delta > 0)
             {
-               Zoom++;
+               if(!InvertedMouseWheelZooming)
+               {
+                  Zoom++;
+               }
+               else
+               {
+                  Zoom--;
+               }
             }
             else if(e.Delta < 0)
             {
-               Zoom--;
+               if(!InvertedMouseWheelZooming)
+               {
+                  Zoom--;
+               }
+               else
+               {
+                  Zoom++;
+               }
             }
 
             Core.MouseWheelZooming = false;
