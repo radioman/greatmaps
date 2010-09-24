@@ -630,7 +630,6 @@ namespace GMap.NET.WindowsPresentation
       {
          if(MapType == NET.MapType.None)
          {
-            g.DrawRectangle(EmptyMapBackground, null, new Rect(RenderSize));
             return;
          }
 
@@ -1125,6 +1124,8 @@ namespace GMap.NET.WindowsPresentation
       {
          if(!Core.IsStarted)
             return;
+
+         drawingContext.DrawRectangle(EmptyMapBackground, null, new Rect(RenderSize));
 
          if(IsRotated)
          {
