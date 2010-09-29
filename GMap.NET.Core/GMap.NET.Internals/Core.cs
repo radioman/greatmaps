@@ -135,11 +135,6 @@ namespace GMap.NET.Internals
                   GoToCurrentPositionOnZoom();
                   UpdateBounds();
 
-                  if(OnMapDrag != null)
-                  {
-                     OnMapDrag();
-                  }
-
                   if(OnMapZoomChanged != null)
                   {
                      OnMapZoomChanged();
@@ -184,28 +179,18 @@ namespace GMap.NET.Internals
                if(IsStarted)
                {
                   GoToCurrentPosition();
-
-                  if(OnCurrentPositionChanged != null)
-                  {
-                     OnCurrentPositionChanged(currentPosition);
-                  }
-
-                  if(OnMapDrag != null)
-                  {
-                     OnMapDrag();
-                  }
                }
             }
             else
             {
                currentPosition = value;
                CurrentPositionGPixel = Projection.FromLatLngToPixel(value, Zoom);
+            }
 
-               if(IsStarted)
-               {
-                  if(OnCurrentPositionChanged != null)
-                     OnCurrentPositionChanged(currentPosition);
-               }
+            if(IsStarted)
+            {
+               if(OnCurrentPositionChanged != null)
+                  OnCurrentPositionChanged(currentPosition);
             }
          }
       }
@@ -328,7 +313,7 @@ namespace GMap.NET.Internals
          int mmaxZoom = GetMaxZoomToFitRect(rect);
          if(mmaxZoom > 0)
          {
-            PointLatLng center = new PointLatLng(rect.Lat-(rect.HeightLat/2), rect.Lng+(rect.WidthLng/2));
+            PointLatLng center = new PointLatLng(rect.Lat - (rect.HeightLat / 2), rect.Lng + (rect.WidthLng / 2));
             CurrentPosition = center;
 
             if(mmaxZoom > maxZoom)
@@ -446,8 +431,12 @@ namespace GMap.NET.Internals
       {
          if(!IsStarted)
          {
-            GoToCurrentPosition();
             IsStarted = true;
+
+            GoToCurrentPosition();
+
+            if(OnCurrentPositionChanged != null)
+               OnCurrentPositionChanged(currentPosition);
 
 #if !DEBUG
 #if !PocketPC
@@ -645,7 +634,7 @@ namespace GMap.NET.Internals
 
       public void UpdateCenterTileXYLocation()
       {
-         PointLatLng center = FromLocalToLatLng(Width/2, Height/2);
+         PointLatLng center = FromLocalToLatLng(Width / 2, Height / 2);
          GMap.NET.Point centerPixel = Projection.FromLatLngToPixel(center, Zoom);
          centerTileXYLocation = Projection.FromPixelToTileXY(centerPixel);
       }
@@ -660,14 +649,14 @@ namespace GMap.NET.Internals
 
          if(IsRotated)
          {
-            int diag = (int) Math.Round(Math.Sqrt(Width*Width + Height*Height) / Projection.TileSize.Width, MidpointRounding.AwayFromZero);
+            int diag = (int) Math.Round(Math.Sqrt(Width * Width + Height * Height) / Projection.TileSize.Width, MidpointRounding.AwayFromZero);
             sizeOfMapArea.Width = 1 + (diag / 2);
             sizeOfMapArea.Height = 1 + (diag / 2);
          }
          else
          {
-            sizeOfMapArea.Width = 1 + (Width/Projection.TileSize.Width)/2;
-            sizeOfMapArea.Height = 1 + (Height/Projection.TileSize.Height)/2;
+            sizeOfMapArea.Width = 1 + (Width / Projection.TileSize.Width) / 2;
+            sizeOfMapArea.Height = 1 + (Height / Projection.TileSize.Height) / 2;
          }
 
          Debug.WriteLine("OnMapSizeChanged, w: " + width + ", h: " + height + ", size: " + sizeOfMapArea);
@@ -754,7 +743,7 @@ namespace GMap.NET.Internals
             Point p1 = Projection.FromLatLngToPixel(rect.LocationTopLeft, i);
             Point p2 = Projection.FromLatLngToPixel(rect.LocationRightBottom, i);
 
-            if(((p2.X - p1.X) <= Width+10) && (p2.Y - p1.Y) <= Height+10)
+            if(((p2.X - p1.X) <= Width + 10) && (p2.Y - p1.Y) <= Height + 10)
             {
                zoom = i;
             }
@@ -836,7 +825,7 @@ namespace GMap.NET.Internals
          dragPoint = Point.Empty;
 
          // goto location
-         this.Drag(new Point(-(CurrentPositionGPixel.X - Width/2), -(CurrentPositionGPixel.Y - Height/2)));
+         this.Drag(new Point(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2)));
       }
 
       public bool MouseWheelZooming = false;
@@ -856,7 +845,7 @@ namespace GMap.NET.Internals
          {
             if(MouseWheelZoomType != MouseWheelZoomType.MousePositionWithoutCenter)
             {
-               Point pt = new Point(-(CurrentPositionGPixel.X - Width/2), -(CurrentPositionGPixel.Y - Height/2));
+               Point pt = new Point(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2));
                renderOffset.X = pt.X - dragPoint.X;
                renderOffset.Y = pt.Y - dragPoint.Y;
             }
@@ -871,7 +860,7 @@ namespace GMap.NET.Internals
          {
             mouseLastZoom = Point.Empty;
 
-            Point pt = new Point(-(CurrentPositionGPixel.X - Width/2), -(CurrentPositionGPixel.Y - Height/2));
+            Point pt = new Point(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2));
             renderOffset.X = pt.X - dragPoint.X;
             renderOffset.Y = pt.Y - dragPoint.Y;
          }
@@ -897,7 +886,7 @@ namespace GMap.NET.Internals
 
          {
             LastLocationInBounds = CurrentPosition;
-            CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
+            CurrentPosition = FromLocalToLatLng((int) Width / 2, (int) Height / 2);
          }
 
          if(OnMapDrag != null)
@@ -923,10 +912,10 @@ namespace GMap.NET.Internals
             UpdateBounds();
          }
 
-         if(IsDragging || !IsStarted)
+         if(IsDragging)
          {
             LastLocationInBounds = CurrentPosition;
-            CurrentPosition = FromLocalToLatLng((int) Width/2, (int) Height/2);
+            CurrentPosition = FromLocalToLatLng((int) Width / 2, (int) Height / 2);
 
             if(OnMapDrag != null)
             {
@@ -952,7 +941,7 @@ namespace GMap.NET.Internals
       bool RaiseEmptyTileError = false;
       internal readonly Dictionary<LoadTask, Exception> FailedLoads = new Dictionary<LoadTask, Exception>();
 
-      internal static readonly int WaitForTileLoadThreadTimeout = 5*1000*60; // 5 min.
+      internal static readonly int WaitForTileLoadThreadTimeout = 5 * 1000 * 60; // 5 min.
 
       long loadWaitCount = 0;
       readonly object LastInvalidationLock = new object();
@@ -1313,10 +1302,10 @@ namespace GMap.NET.Internals
       void UpdateGroundResolution()
       {
          double rez = Projection.GetGroundResolution(Zoom, CurrentPosition.Lat);
-         pxRes100m =   (int) (100.0 / rez); // 100 meters
-         pxRes1000m =  (int) (1000.0 / rez); // 1km  
-         pxRes10km =   (int) (10000.0 / rez); // 10km
-         pxRes100km =  (int) (100000.0 / rez); // 100km
+         pxRes100m = (int) (100.0 / rez); // 100 meters
+         pxRes1000m = (int) (1000.0 / rez); // 1km  
+         pxRes10km = (int) (10000.0 / rez); // 10km
+         pxRes100km = (int) (100000.0 / rez); // 100km
          pxRes1000km = (int) (1000000.0 / rez); // 1000km
          pxRes5000km = (int) (5000000.0 / rez); // 5000km
       }

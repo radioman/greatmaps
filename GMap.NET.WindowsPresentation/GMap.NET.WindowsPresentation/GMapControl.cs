@@ -55,7 +55,7 @@ namespace GMap.NET.WindowsPresentation
             RectLatLng viewarea = map.SelectedArea;
             if(viewarea != RectLatLng.Empty)
             {
-               map.Position = new PointLatLng(viewarea.Lat - viewarea.HeightLat/2, viewarea.Lng + viewarea.WidthLng/2);
+               map.Position = new PointLatLng(viewarea.Lat - viewarea.HeightLat / 2, viewarea.Lng + viewarea.WidthLng / 2);
             }
             else
             {
@@ -482,8 +482,6 @@ namespace GMap.NET.WindowsPresentation
             arcGisMapCopyright = new FormattedText(Core.arcGisCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             hnitMapCopyright = new FormattedText(Core.hnitCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             pergoMapCopyright = new FormattedText(Core.pergoCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
-
-
          }
       }
 
@@ -659,7 +657,7 @@ namespace GMap.NET.WindowsPresentation
                               if(!found)
                                  found = true;
 
-                              g.DrawImage(img.Img, new Rect(Core.tileRect.X+0.6, Core.tileRect.Y+0.6, Core.tileRect.Width+0.6, Core.tileRect.Height+0.6));
+                              g.DrawImage(img.Img, new Rect(Core.tileRect.X + 0.6, Core.tileRect.Y + 0.6, Core.tileRect.Width + 0.6, Core.tileRect.Height + 0.6));
                            }
                         }
                      }
@@ -1178,7 +1176,7 @@ namespace GMap.NET.WindowsPresentation
 
             if(SelectionUseCircle)
             {
-               drawingContext.DrawEllipse(SelectedAreaFill, SelectionPen, new System.Windows.Point(x1 + (x2 - x1)/2, y1 + (y2 - y1)/2), (x2 - x1)/2, (y2 - y1)/2);
+               drawingContext.DrawEllipse(SelectedAreaFill, SelectionPen, new System.Windows.Point(x1 + (x2 - x1) / 2, y1 + (y2 - y1) / 2), (x2 - x1) / 2, (y2 - y1) / 2);
             }
             else
             {
@@ -1188,8 +1186,8 @@ namespace GMap.NET.WindowsPresentation
 
          if(ShowCenter)
          {
-            drawingContext.DrawLine(CenterCrossPen, new System.Windows.Point((ActualWidth/2) - 10, ActualHeight/2), new System.Windows.Point((ActualWidth/2) + 10, ActualHeight/2));
-            drawingContext.DrawLine(CenterCrossPen, new System.Windows.Point(ActualWidth/2, (ActualHeight/2) - 10), new System.Windows.Point(ActualWidth/2, (ActualHeight/2) + 10));
+            drawingContext.DrawLine(CenterCrossPen, new System.Windows.Point((ActualWidth / 2) - 10, ActualHeight / 2), new System.Windows.Point((ActualWidth / 2) + 10, ActualHeight / 2));
+            drawingContext.DrawLine(CenterCrossPen, new System.Windows.Point(ActualWidth / 2, (ActualHeight / 2) - 10), new System.Windows.Point(ActualWidth / 2, (ActualHeight / 2) + 10));
          }
 
          #region -- copyright --

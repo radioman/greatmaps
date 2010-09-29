@@ -49,6 +49,8 @@ namespace Sample3
             var amap = dockManager.ActiveContent.Content as GMap.NET.WindowsPresentation.GMapControl;
             if(amap != null)
             {
+               last = amap.Position;
+
                foreach(var d in dockManager.Documents)
                {
                   var map = d.Content as GMap.NET.WindowsPresentation.GMapControl;
@@ -61,6 +63,9 @@ namespace Sample3
             }
          }));
       }
+
+      GMap.NET.PointLatLng last = new GMap.NET.PointLatLng();
+      GMap.NET.WindowsPresentation.GMapControl lastMap;
 
       private void DocumentPane_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
       {
@@ -93,29 +98,34 @@ namespace Sample3
                         }
                         //}));
                      }
+
+                     lastMap = amap;
                   }
                }
             }
          }
       }
 
-      bool first = true;
-      private void Window_Activated(object sender, EventArgs e)
+      private void GMapControl_Loaded(object sender, RoutedEventArgs e)
       {
-         if(first)
+         var map = sender as GMap.NET.WindowsPresentation.GMapControl;
+
+         if(lastMap != null && lastMap != map)
          {
-            first = false;
+            map.Position = lastMap.Position;
 
-            foreach(var d in dockManager.Documents)
+            if(map.Projection.ToString() == lastMap.Projection.ToString())
             {
-               var map = d.Content as GMap.NET.WindowsPresentation.GMapControl;
-
-               if(map != null)
-               {
-                  map.ReloadMap();
-                  map.Offset(5, 5);
-               }
+               map.Zoom = lastMap.Zoom;
             }
+            else
+            {
+               map.SetZoomToFitRect(lastMap.CurrentViewArea);
+            }
+         }
+         else
+         {
+            map.Position = last;
          }
       }
    }
