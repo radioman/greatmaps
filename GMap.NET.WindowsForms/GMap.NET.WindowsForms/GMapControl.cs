@@ -1461,9 +1461,10 @@ namespace GMap.NET.WindowsForms
 
                if(IsRotated)
                {
-                  UpdateRotationMatrix();
-                  Core_OnMapDrag();
+                  UpdateRotationMatrix();                   
                }
+
+               Core_OnMapDrag();
             }
          }
       }

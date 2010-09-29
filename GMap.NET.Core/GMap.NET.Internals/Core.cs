@@ -186,7 +186,14 @@ namespace GMap.NET.Internals
                   GoToCurrentPosition();
 
                   if(OnCurrentPositionChanged != null)
+                  {
                      OnCurrentPositionChanged(currentPosition);
+                  }
+
+                  if(OnMapDrag != null)
+                  {
+                     OnMapDrag();
+                  }
                }
             }
             else
