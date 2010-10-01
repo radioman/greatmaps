@@ -11,7 +11,7 @@ namespace GMap.NET
    using System.Text;
    using System.Text.RegularExpressions;
    using System.Threading;
-   using System.Xml.Serialization;   
+   using System.Xml.Serialization;
    using System.Data.Common;
    using System.Xml;
    using GMap.NET.CacheProviders;
@@ -296,22 +296,15 @@ namespace GMap.NET
          }
       }
 
-      bool isCorrectedGoogleVersions = false;
+      /// <summary>
+      /// true if google versions was corrected
+      /// </summary>
+      bool IsCorrectedGoogleVersions = false;
 
       /// <summary>
       /// true if google versions was corrected
       /// </summary>
-      internal bool IsCorrectedGoogleVersions
-      {
-         get
-         {
-            return isCorrectedGoogleVersions;
-         }
-         set
-         {
-            isCorrectedGoogleVersions = value;
-         }
-      }
+      bool IsCorrectedBingVersions = false;
 
       /// <summary>
       /// cache worker
@@ -335,6 +328,7 @@ namespace GMap.NET
          Proxy = GlobalProxySelection.GetEmptyWebProxy();
 #else
          TryCorrectGoogleVersions();
+         TryCorrectBingVersions();
 #endif
       }
 
@@ -1869,6 +1863,64 @@ namespace GMap.NET
             {
                IsCorrectedGoogleVersions = false;
                Debug.WriteLine("TryCorrectGoogleVersions failed: " + ex.ToString());
+            }
+         }
+      }
+
+      /// <summary>
+      /// try to correct google versions
+      /// </summary>    
+      internal void TryCorrectBingVersions()
+      {
+         if(!IsCorrectedBingVersions)
+         {
+            string url = @"http://www.bing.com/maps";
+            try
+            {
+               HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+               if(Proxy != null)
+               {
+                  request.Proxy = Proxy;
+                  request.PreAuthenticate = true;
+               }
+               else
+               {
+                  request.Proxy = WebRequest.DefaultWebProxy;
+               }
+               request.UserAgent = UserAgent;
+               request.Timeout = Timeout;
+               request.ReadWriteTimeout = Timeout * 6;
+
+               using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+               {
+                  using(Stream responseStream = response.GetResponseStream())
+                  {
+                     using(StreamReader read = new StreamReader(responseStream))
+                     {
+                        string html = read.ReadToEnd();
+
+                        Regex reg = new Regex("http://ecn.t(\\d*).tiles.virtualearth.net/tiles/r(\\d*)[?*]g=(\\d*)", RegexOptions.IgnoreCase);
+                        Match mat = reg.Match(html);
+                        if(mat.Success)
+                        {
+                           GroupCollection gc = mat.Groups;
+                           int count = gc.Count;
+                           if(count > 2)
+                           {
+                              VersionBingMaps = gc[3].Value;
+                              Debug.WriteLine("TryCorrectBingVersions, VersionBingMaps: " + VersionBingMaps);
+                           }
+                        }
+
+                     }
+                  }
+               }
+               IsCorrectedBingVersions = true; // try it only once
+            }
+            catch(Exception ex)
+            {
+               IsCorrectedBingVersions = false;
+               Debug.WriteLine("TryCorrectBingVersions failed: " + ex.ToString());
             }
          }
       }

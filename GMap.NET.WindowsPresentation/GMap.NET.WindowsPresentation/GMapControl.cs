@@ -581,7 +581,7 @@ namespace GMap.NET.WindowsPresentation
                }
             }
          }
-      }
+      }   
 
       /// <summary>
       /// on core needs invalidation
