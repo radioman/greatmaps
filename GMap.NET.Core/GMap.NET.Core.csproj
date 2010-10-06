@@ -88,6 +88,7 @@
     <Compile Include="GMap.NET.Internals\PureImage.cs" />
     <Compile Include="GMap.NET.Internals\LoadTask.cs" />
     <Compile Include="GMap.NET.Internals\RawTile.cs" />
+    <Compile Include="GMap.NET.Projections\MapyCZProjection.cs" />
     <Compile Include="GMap.NET.Projections\MercatorProjectionYandex.cs" />
     <Compile Include="GMap.NET.Projections\PlateCarreeProjectionPergo.cs" />
     <Compile Include="GMap.NET.Projections\MapsLTProjection.cs" />

@@ -9,10 +9,10 @@ namespace GMap.NET.Projections
    /// </summary>
    public class PlateCarreeProjection : PureProjection
    {
-      const double MinLatitude = -85.05112878;
-      const double MaxLatitude = 85.05112878;
-      const double MinLongitude = -180;
-      const double MaxLongitude = 180;
+      static readonly double MinLatitude = -85.05112878;
+      static readonly double MaxLatitude = 85.05112878;
+      static readonly double MinLongitude = -180;
+      static readonly double MaxLongitude = 180;
 
       Size tileSize = new Size(512, 512);
       public override Size TileSize
@@ -72,18 +72,6 @@ namespace GMap.NET.Projections
          ret.Lng = (x * scale) - 180;
 
          return ret;
-      }
-
-      /// <summary>
-      /// Clips a number to the specified minimum and maximum values.
-      /// </summary>
-      /// <param name="n">The number to clip.</param>
-      /// <param name="minValue">Minimum allowable value.</param>
-      /// <param name="maxValue">Maximum allowable value.</param>
-      /// <returns>The clipped value.</returns>
-      double Clip(double n, double minValue, double maxValue)
-      {
-         return Math.Min(Math.Max(n, minValue), maxValue);
       }
 
       public override Size GetTileMatrixMaxXY(int zoom)

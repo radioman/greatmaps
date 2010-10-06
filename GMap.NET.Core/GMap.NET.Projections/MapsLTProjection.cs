@@ -9,12 +9,12 @@ namespace GMap.NET.Projections
    /// </summary>
    public class LKS94Projection : PureProjection
    {
-      const double MinLatitude = 53.33;
-      const double MaxLatitude = 56.55;
-      const double MinLongitude = 20.22;
-      const double MaxLongitude = 27.11;
-      const double orignX = 5122000;
-      const double orignY = 10000100;
+      static readonly double MinLatitude = 53.33;
+      static readonly double MaxLatitude = 56.55;
+      static readonly double MinLongitude = 20.22;
+      static readonly double MaxLongitude = 27.11;
+      static readonly double orignX = 5122000;
+      static readonly double orignY = 10000100;
 
       Size tileSize = new Size(256, 256);
       public override Size TileSize
@@ -464,18 +464,6 @@ namespace GMap.NET.Projections
          }
       }
 
-      /// <summary>
-      /// Clips a number to the specified minimum and maximum values.
-      /// </summary>
-      /// <param name="n">The number to clip.</param>
-      /// <param name="minValue">Minimum allowable value.</param>
-      /// <param name="maxValue">Maximum allowable value.</param>
-      /// <returns>The clipped value.</returns>
-      double Clip(double n, double minValue, double maxValue)
-      {
-         return Math.Min(Math.Max(n, minValue), maxValue);
-      }
-
       #region -- levels info --
       //dojo.io.script.jsonp_dojoIoScript1._jsonpCallback({"serviceDescription":"",
       //      "mapName":"map","description":"","copyrightText":"",
@@ -509,7 +497,7 @@ namespace GMap.NET.Projections
       //"documentInfo":{"Title":"mapslt_minimal","Author":"gstanevicius","Comments":"","Subject":"","Category":"","Keywords":""}}); 
       #endregion
 
-      public double GetTileMatrixResolution(int zoom)
+      public static double GetTileMatrixResolution(int zoom)
       {
          double ret = 0;
 

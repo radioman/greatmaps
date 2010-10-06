@@ -227,7 +227,7 @@ namespace GMap.NET.Internals
                {
                   CancelAsyncTasks();
                   OnMapSizeChanged(Width, Height);
-                  GoToCurrentPosition();
+                  //GoToCurrentPosition();
                   ReloadMap();
 
                   if(OnMapTypeChanged != null)
@@ -431,13 +431,8 @@ namespace GMap.NET.Internals
       {
          if(!IsStarted)
          {
-            IsStarted = true;
-
+            IsStarted = true;  
             GoToCurrentPosition();
-
-            if(OnCurrentPositionChanged != null)
-               OnCurrentPositionChanged(currentPosition);
-
 #if !DEBUG
 #if !PocketPC
             // in case there a few controls in one app

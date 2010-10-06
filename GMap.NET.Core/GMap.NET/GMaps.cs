@@ -541,6 +541,16 @@ namespace GMap.NET
             }
             break;
 
+            case MapType.MapyCZ_Map:
+            {
+               if(false == (Projection is MapyCZProjection))
+               {
+                  Projection = new MapyCZProjection();
+               }
+               maxZoom = 16;                
+            }
+            break;
+
             default:
             {
                if(false == (Projection is MercatorProjection))
@@ -1586,6 +1596,20 @@ namespace GMap.NET
                var ret = string.Format(CultureInfo.InvariantCulture, "http://mapbender.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&VERSION=1.1.1&REQUEST=GetMap&SERVICE=WMS&LAYERS=OSM_Basic&styles=&bbox={0},{1},{2},{3}&width={4}&height={5}&srs=EPSG:4326&format=image/png", p1.Lng, p1.Lat, p2.Lng, p2.Lat, ProjectionForWMS.TileSize.Width, ProjectionForWMS.TileSize.Height);
 
                return ret;
+            }
+            #endregion
+
+            #region -- MapyCZ --
+            case MapType.MapyCZ_Map:
+            {
+               // ['base','ophoto','turist','army2']
+
+               // http://m1.mapserver.mapy.cz/base-n/3_8000000_8000000
+
+               int xx = pos.X << (28 - zoom);  
+               int yy = ((((int) Math.Pow(2.0, (double) zoom)) - 1) - pos.Y) << (28 - zoom);
+
+               return string.Format("http://m{0}.mapserver.mapy.cz/base-n/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
             }
             #endregion
          }
@@ -2744,6 +2768,12 @@ namespace GMap.NET
                      case MapType.YandexMapRuSatellite:
                      {
                         request.Referer = "http://maps.yandex.ru/";
+                     }
+                     break;
+
+                     case MapType.MapyCZ_Map:
+                     {
+                        request.Referer = "http://www.mapy.cz/";
                      }
                      break;
                   }

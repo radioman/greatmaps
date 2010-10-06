@@ -82,5 +82,7 @@ namespace GMap.NET
       YandexMapRuHybrid=5003,
 
       MapBenderWMS=6000,
+
+      MapyCZ_Map = 7000,
    }
 }

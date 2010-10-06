@@ -185,22 +185,22 @@ namespace GMap.NET
       /// <summary>
       /// PI
       /// </summary>
-      protected const double PI = Math.PI;
+      protected static readonly double PI = Math.PI;
 
       /// <summary>
       /// Half of PI
       /// </summary>
-      protected const double HALF_PI = (PI * 0.5);
+      protected static readonly double HALF_PI = (PI * 0.5);
 
       /// <summary>
       /// PI * 2
       /// </summary>
-      protected const double TWO_PI = (PI * 2.0);
+      protected static readonly double TWO_PI = (PI * 2.0);
 
       /// <summary>
       /// EPSLoN
       /// </summary>
-      protected const double EPSLoN = 1.0e-10;
+      protected static readonly double EPSLoN = 1.0e-10;
 
       /// <summary>
       /// MAX_VAL
@@ -210,22 +210,22 @@ namespace GMap.NET
       /// <summary>
       /// MAXLONG
       /// </summary>
-      protected const double MAXLONG = 2147483647;
+      protected static readonly double MAXLONG = 2147483647;
 
       /// <summary>
       /// DBLLONG
       /// </summary>
-      protected const double DBLLONG = 4.61168601e18;
+      protected static readonly double DBLLONG = 4.61168601e18;
 
-      const double R2D = 180 / Math.PI;
-      const double D2R = Math.PI / 180;
+      static readonly double R2D = 180 / Math.PI;
+      static readonly double D2R = Math.PI / 180;
 
-      public double DegreesToRadians(double deg)
+      public static double DegreesToRadians(double deg)
       {
          return (D2R * deg);
       }
 
-      public double RadiansToDegrees(double rad)
+      public static double RadiansToDegrees(double rad)
       {
          return (R2D * rad);
       }
@@ -327,6 +327,18 @@ namespace GMap.NET
       protected static long GetUTMzone(double lon)
       {
          return ((long) (((lon + 180.0) / 6.0) + 1.0));
+      }
+
+      /// <summary>
+      /// Clips a number to the specified minimum and maximum values.
+      /// </summary>
+      /// <param name="n">The number to clip.</param>
+      /// <param name="minValue">Minimum allowable value.</param>
+      /// <param name="maxValue">Maximum allowable value.</param>
+      /// <returns>The clipped value.</returns>
+      protected static double Clip(double n, double minValue, double maxValue)
+      {
+         return Math.Min(Math.Max(n, minValue), maxValue);
       }
 
       #endregion

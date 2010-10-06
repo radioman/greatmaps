@@ -331,9 +331,6 @@ namespace GMap.NET.WindowsForms
 
             // to know when to invalidate
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
-            Core.OnCurrentPositionChanged += new CurrentPositionChanged(Core_OnCurrentPositionChanged);
-            Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
-
             Core.SystemType = "WindowsForms";
 
             RenderMode = RenderMode.GDI_PLUS;
@@ -356,16 +353,6 @@ namespace GMap.NET.WindowsForms
             }
          }
       }
-
-      void Core_OnMapZoomChanged()
-      {
-         ForceUpdateOverlays();
-      }
-
-      void Core_OnCurrentPositionChanged(PointLatLng point)
-      {
-         ForceUpdateOverlays();
-      }
 #endif
 
       /// <summary>
@@ -373,17 +360,22 @@ namespace GMap.NET.WindowsForms
       /// </summary>
       internal void ForceUpdateOverlays()
       {
-         HoldInvalidation = true;
-
-         foreach(GMapOverlay o in Overlays)
+         try
          {
-            if(o.IsVisibile)
+            HoldInvalidation = true;
+
+            foreach(GMapOverlay o in Overlays)
             {
-               o.ForceUpdate();
+               if(o.IsVisibile)
+               {
+                  o.ForceUpdate();
+               }
             }
          }
-
-         Refresh();
+         finally
+         {
+            Refresh();
+         }
       }
 
       /// <summary>
@@ -1029,6 +1021,8 @@ namespace GMap.NET.WindowsForms
             {
                Thread.Sleep(222);
                Core.StartSystem();
+
+               ForceUpdateOverlays();
             };
             this.BeginInvoke(m);
          }
@@ -1700,6 +1694,7 @@ namespace GMap.NET.WindowsForms
             {
                Core.mouseCurrent = ApplyRotationInversion(e.X, e.Y);
                Core.Drag(Core.mouseCurrent);
+               ForceUpdateOverlays();
             }
          }
          else
@@ -2063,11 +2058,6 @@ namespace GMap.NET.WindowsForms
                   }
 
                   ZoomStep = Convert.ToInt32(value - remainder);
-#if !PocketPC
-                  Invalidate(false);
-#else
-                  Invalidate();
-#endif
                }
                else
                {
@@ -2076,11 +2066,11 @@ namespace GMap.NET.WindowsForms
 #endif
                   ZoomStep = Convert.ToInt32(value);
                   zoomReal = ZoomStep;
-#if !PocketPC
-                  Invalidate(false);
-#else
-                  Invalidate();
-#endif
+               }
+
+               if(Core.IsStarted && !IsDragging)
+               {
+                  ForceUpdateOverlays();
                }
             }
          }
@@ -2127,6 +2117,11 @@ namespace GMap.NET.WindowsForms
          set
          {
             Core.CurrentPosition = value;
+
+            if(Core.IsStarted)
+            {
+               ForceUpdateOverlays();
+            }
          }
       }
 
