@@ -327,8 +327,11 @@ namespace GMap.NET
 #if PocketPC
          Proxy = GlobalProxySelection.GetEmptyWebProxy();
 #else
-         TryCorrectGoogleVersions();
-         TryCorrectBingVersions();
+         ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object obj)
+            {
+               TryCorrectGoogleVersions();
+               TryCorrectBingVersions();
+            }));
 #endif
       }
 
@@ -547,7 +550,7 @@ namespace GMap.NET
                {
                   Projection = new MapyCZProjection();
                }
-               maxZoom = 16;                
+               maxZoom = 16;
             }
             break;
 
@@ -1606,7 +1609,7 @@ namespace GMap.NET
 
                // http://m1.mapserver.mapy.cz/base-n/3_8000000_8000000
 
-               int xx = pos.X << (28 - zoom);  
+               int xx = pos.X << (28 - zoom);
                int yy = ((((int) Math.Pow(2.0, (double) zoom)) - 1) - pos.Y) << (28 - zoom);
 
                return string.Format("http://m{0}.mapserver.mapy.cz/base-n/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);

@@ -2,6 +2,7 @@
 namespace GMap.NET.Projections
 {
    using System;
+   //using DotSpatial.Projections;
 
    /// <summary>
    /// GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]
@@ -15,6 +16,9 @@ namespace GMap.NET.Projections
       static readonly double MaxLongitude = 180;
       static readonly double orignX = 0;
       static readonly double orignY = 0;
+
+      //ProjectionInfo pStart = KnownCoordinateSystems.Geographic.World.WGS1984;
+      //ProjectionInfo pEnd = new ProjectionInfo("+proj=tmerc +lat_0=0 +lon_0=15 +k=0.9996 +x_0=4200000 +y_0=-1300000 +ellps=WGS84 +datum=WGS84 +to_meter=0.03125 +no_defs");
 
       #region -- common --
       static int getLCM(int zone)
@@ -37,7 +41,9 @@ namespace GMap.NET.Projections
          return x;
       }
 
-      static readonly double UTMSIZE = 3;
+      static readonly double UTMSIZE = 2;
+      static readonly double UNITS = 1;
+
       #endregion
 
       #region -- WGSToMapyCZ --
@@ -53,12 +59,12 @@ namespace GMap.NET.Projections
       {
          var x = (Math.Round(east) - (-3700000)) * Math.Pow(2, 5);
          var y = (Math.Round(north) - (1300000)) * Math.Pow(2, 5);
+
          return new int[] { (int) x, (int) y };
       }
 
       double[] wgsToUTM(double la, double lo, int zone)
       {
-         var units = 1;
          var latrad = la;
          var lonrad = lo;
          var latddd = RadiansToDegrees(la);
@@ -67,8 +73,8 @@ namespace GMap.NET.Projections
          //zone = (int)Math.Round((londdd + 183) / 6);
 
          var k = 0.9996f;
-         var a = (float) Axis;
-         var f = (float) Flattening;
+         var a = Axis;
+         var f = Flattening;
          var b = a * (1 - f);
          var e2 = (a * a - b * b) / (a * a);
          var e = Math.Sqrt(e2);
@@ -76,7 +82,7 @@ namespace GMap.NET.Projections
          var ei = Math.Sqrt(ei2);
          var n = (a - b) / (a + b);
          var G = a * (1 - n) * (1 - n * n) * (1 + (9 / 4) * n * n + (255 / 64) * Math.Pow(n, 4)) * (PI / 180);
-         var w = londdd - ((float) (zone * 6 - 183));
+         var w = londdd - ((double) (zone * 6 - 183));
          w = DegreesToRadians(w);
          var t = Math.Tan(latrad);
          var rho = a * (1 - e2) / Math.Pow(1 - (e2 * Math.Sin(latrad) * Math.Sin(latrad)), (3 / 2));
@@ -93,14 +99,14 @@ namespace GMap.NET.Projections
          var eterm2 = (Math.Pow(w, 4) / 120) * Math.Pow(coslat, 4) * (4 * Math.Pow(psi, 3) * (1 - 6 * t * t) + psi * psi * (1 + 8 * t * t) - psi * 2 * t * t + Math.Pow(t, 4));
          var eterm3 = (Math.Pow(w, 6) / 5040) * Math.Pow(coslat, 6) * (61 - 479 * t * t + 179 * Math.Pow(t, 4) - Math.Pow(t, 6));
          var dE = k * nu * w * coslat * (1 + eterm1 + eterm2 + eterm3);
-         var east = ((float) (500000)) + (dE / units);
+         var east = 500000.0 + (dE / UNITS);
          east = roundoff(east, UTMSIZE);
          var nterm1 = (w * w / 2) * nu * sinlat * coslat;
          var nterm2 = (Math.Pow(w, 4) / 24) * nu * sinlat * Math.Pow(coslat, 3) * (4 * psi * psi + psi - t * t);
          var nterm3 = (Math.Pow(w, 6) / 720) * nu * sinlat * Math.Pow(coslat, 5) * (8 * Math.Pow(psi, 4) * (11 - 24 * t * t) - 28 * Math.Pow(psi, 3) * (1 - 6 * t * t) + psi * psi * (1 - 32 * t * t) - psi * 2 * t * t + Math.Pow(t, 4));
          var nterm4 = (Math.Pow(w, 8) / 40320) * nu * sinlat * Math.Pow(coslat, 7) * (1385 - 3111 * t * t + 543 * Math.Pow(t, 4) - Math.Pow(t, 6));
          var dN = k * (m + nterm1 + nterm2 + nterm3 + nterm4);
-         var north = (((float) (0)) + (dN / units));
+         var north = (0.0 + (dN / UNITS));
          north = roundoff(north, UTMSIZE);
 
          return new double[] { east, north, zone };
@@ -129,10 +135,9 @@ namespace GMap.NET.Projections
 
       double[] utmToWGS(double eastIn, double northIn, int zone)
       {
-         var units = 1;
          var k = 0.9996f;
-         var a = (float) Axis;
-         var f = (float) Flattening;
+         var a = Axis;
+         var f = Flattening;
          var b = a * (1 - f);
          var e2 = (a * a - b * b) / (a * a);
          var e = Math.Sqrt(e2);
@@ -140,8 +145,8 @@ namespace GMap.NET.Projections
          var ei = Math.Sqrt(ei2);
          var n = (a - b) / (a + b);
          var G = a * (1 - n) * (1 - n * n) * (1 + (9 / 4) * n * n + (255 / 64) * Math.Pow(n, 4)) * (PI / 180);
-         var north = (northIn - 0) * units;
-         var east = (eastIn - 500000) * units;
+         var north = (northIn - 0) * UNITS;
+         var east = (eastIn - 500000) * UNITS;
          var m = north / k;
          var sigma = (m * PI) / (180 * G);
          var footlat = sigma + ((3 * n / 2) - (27 * Math.Pow(n, 3) / 32)) * Math.Sin(2 * sigma) + ((21 * n * n / 16) - (55 * Math.Pow(n, 4) / 32)) * Math.Sin(4 * sigma) + (151 * Math.Pow(n, 3) / 96) * Math.Sin(6 * sigma) + (1097 * Math.Pow(n, 4) / 512) * Math.Sin(8 * sigma);
@@ -165,7 +170,7 @@ namespace GMap.NET.Projections
          var longrad = DegreesToRadians(getLCM(zone)) + w;
          var lon = RadiansToDegrees(longrad);
 
-         return new double[] { lon, lat, longrad, latrad };
+         return new double[] { lat, lon, latrad, longrad };
       }
 
       #endregion
@@ -201,9 +206,13 @@ namespace GMap.NET.Projections
          lat = Clip(lat, MinLatitude, MaxLatitude);
          lng = Clip(lng, MinLongitude, MaxLongitude);
 
-         var l = WGSToPP(lng, lat);
-         var oX = l[0] >> (20 - zoom);
-         var oY = l[1] >> (20 - zoom);
+         //double[] l = new double[] { lng, lat };
+         //double[] z = new double[] {1};  
+         //Reproject.ReprojectPoints(l, z, pStart, pEnd, 0, 1);
+
+         var l = WGSToPP(lat, lng);
+         var oX = (int)l[0] >> (20 - zoom);
+         var oY = (int)l[1] >> (20 - zoom);
 
          ret.X = oX;
          ret.Y = oY;
@@ -223,8 +232,12 @@ namespace GMap.NET.Projections
          //int[] lks = new int[] { (int) ((x * res) - orignX), (int) (-(y * res) + orignY) };
 
          var oX = x << (20 - zoom);
-         var oY = y << (20 - zoom);
+         var oY = y << (20 - zoom);  
          var l = PPToWGS(oX, oY);
+
+         //double[] l = new double[] { oX, oY };
+         //double[] z = new double[] { 1 };
+         //Reproject.ReprojectPoints(l, z, pEnd, pStart, 0, 1);
 
          ret.Lat = Clip(l[0], MinLatitude, MaxLatitude);
          ret.Lng = Clip(l[1], MinLongitude, MaxLongitude);
@@ -275,10 +288,6 @@ namespace GMap.NET.Projections
          return ret;
       }
 
-      // Zoom: size
-      // 3 : 8 x 8
-      // 4 : 16 x 13
-
       public override Size GetTileMatrixMinXY(int zoom)
       {
          Size ret = Size.Empty;
@@ -289,6 +298,18 @@ namespace GMap.NET.Projections
             case 3:
             {
                ret = new Size(1, 1);
+            }
+            break;
+
+            case 4:
+            {
+               ret = new Size(3, 3);
+            }
+            break;
+
+            case 5:
+            {
+               ret = new Size(7, 6);
             }
             break;
             #endregion
@@ -307,6 +328,18 @@ namespace GMap.NET.Projections
             case 3:
             {
                ret = new Size(6, 6);
+            }
+            break;
+
+            case 4:
+            {
+               ret = new Size(12, 12);
+            }
+            break;
+
+            case 5:
+            {
+               ret = new Size(24, 24);
             }
             break;
             #endregion
