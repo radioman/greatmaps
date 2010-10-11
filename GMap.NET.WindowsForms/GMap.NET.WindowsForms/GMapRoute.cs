@@ -1,84 +1,115 @@
 ﻿
 namespace GMap.NET.WindowsForms
 {
-   using GMap.NET;
-   using System.Collections.Generic;
-   using System.Drawing;
-   using System.Drawing.Drawing2D;
+    using GMap.NET;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Drawing.Drawing2D;
+    using System.Runtime.Serialization;
 
-   /// <summary>
-   /// GMap.NET route
-   /// </summary>
-   public class GMapRoute : MapRoute
-   {
-      GMapOverlay overlay;
-      public GMapOverlay Overlay
-      {
-         get
-         {
-            return overlay;
-         }
-         internal set
-         {
-            overlay = value;
-         }
-      }
-
-      private bool visible = true;
-
-      /// <summary>
-      /// is marker visible
-      /// </summary>
-      public bool IsVisible
-      {
-         get
-         {
-            return visible;
-         }
-         set
-         {
-            if(value != visible)
+    /// <summary>
+    /// GMap.NET route
+    /// </summary>
+    [System.Serializable]
+    public class GMapRoute : MapRoute, ISerializable
+    {
+        GMapOverlay overlay;
+        public GMapOverlay Overlay
+        {
+            get
             {
-               visible = value;
-
-               if(Overlay != null && Overlay.Control != null)
-               {
-                  if(visible)
-                  {
-                     Overlay.Control.UpdateRouteLocalPosition(this);
-                  }
-                  
-                  {
-                     if(!Overlay.Control.HoldInvalidation)
-                     {
-                        Overlay.Control.Invalidate();
-                     }
-                  }
-               }
+                return overlay;
             }
-         }
-      }
+            internal set
+            {
+                overlay = value;
+            }
+        }
 
-      /// <summary>
-      /// specifies how the outline is painted
-      /// </summary>
+        private bool visible = true;
+
+        /// <summary>
+        /// is marker visible
+        /// </summary>
+        public bool IsVisible
+        {
+            get
+            {
+                return visible;
+            }
+            set
+            {
+                if (value != visible)
+                {
+                    visible = value;
+
+                    if (Overlay != null && Overlay.Control != null)
+                    {
+                        if (visible)
+                        {
+                            Overlay.Control.UpdateRouteLocalPosition(this);
+                        }
+
+                        {
+                            if (!Overlay.Control.HoldInvalidation)
+                            {
+                                Overlay.Control.Invalidate();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// specifies how the outline is painted
+        /// </summary>
 #if !PocketPC
-      public Pen Stroke = new Pen(Color.FromArgb(144, Color.MidnightBlue));
+        public Pen Stroke = new Pen(Color.FromArgb(144, Color.MidnightBlue));
 #else
       public Pen Stroke = new Pen(Color.MidnightBlue);
 #endif
 
-      public readonly List<GMap.NET.Point> LocalPoints = new List<GMap.NET.Point>();
+        public readonly List<GMap.NET.Point> LocalPoints = new List<GMap.NET.Point>();
 
-      public GMapRoute(List<PointLatLng> points, string name)
-         : base(points, name)
-      {
-         LocalPoints.Capacity = Points.Count;
+        public GMapRoute(List<PointLatLng> points, string name)
+            : base(points, name)
+        {
+            LocalPoints.Capacity = Points.Count;
 
 #if !PocketPC
-         Stroke.LineJoin = LineJoin.Round;
+            Stroke.LineJoin = LineJoin.Round;
 #endif
-         Stroke.Width = 5;
-      }
-   }
+            Stroke.Width = 5;
+        }
+
+        #region ISerializable Members
+
+        /// <summary>
+        /// Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo"/> with the data needed to serialize the target object.
+        /// </summary>
+        /// <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> to populate with data.</param>
+        /// <param name="context">The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext"/>) for this serialization.</param>
+        /// <exception cref="T:System.Security.SecurityException">
+        /// The caller does not have the required permission.
+        /// </exception>
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("Stroke", this.Stroke);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GMapRoute"/> class.
+        /// </summary>
+        /// <param name="info">The info.</param>
+        /// <param name="context">The context.</param>
+        protected GMapRoute(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            this.Stroke = info.GetValue<Pen>("Stroke", new Pen(Color.FromArgb(144, Color.MidnightBlue)));
+        }
+
+        #endregion
+    }
 }

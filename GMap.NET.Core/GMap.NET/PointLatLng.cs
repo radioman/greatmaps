@@ -1,119 +1,120 @@
 ﻿
 namespace GMap.NET
 {
-   using System.Globalization;
+    using System.Globalization;
 
-   /// <summary>
-   /// the point of coordinates
-   /// </summary>
-   public struct PointLatLng
-   {
-      public static readonly PointLatLng Empty;  
-      private double lat;
-      private double lng; 
-      
-      public PointLatLng(double lat, double lng)
-      {
-         this.lat = lat;
-         this.lng = lng;
-      }
+    /// <summary>
+    /// the point of coordinates
+    /// </summary>
+    [System.Serializable]
+    public struct PointLatLng
+    {
+        public static readonly PointLatLng Empty;
+        private double lat;
+        private double lng;
 
-      public bool IsEmpty
-      {
-         get
-         {
-            return ((this.lng == 0d) && (this.lat == 0d));
-         }
-      }
+        public PointLatLng(double lat, double lng)
+        {
+            this.lat = lat;
+            this.lng = lng;
+        }
 
-      public double Lat
-      {
-         get
-         {
-            return this.lat;
-         }
-         set
-         {
-            this.lat = value;
-         }
-      }
+        public bool IsEmpty
+        {
+            get
+            {
+                return ((this.lng == 0d) && (this.lat == 0d));
+            }
+        }
 
-      public double Lng
-      {
-         get
-         {
-            return this.lng;
-         }
-         set
-         {
-            this.lng = value;
-         }
-      }       
+        public double Lat
+        {
+            get
+            {
+                return this.lat;
+            }
+            set
+            {
+                this.lat = value;
+            }
+        }
 
-      public static PointLatLng operator+(PointLatLng pt, SizeLatLng sz)
-      {
-         return Add(pt, sz);
-      }
+        public double Lng
+        {
+            get
+            {
+                return this.lng;
+            }
+            set
+            {
+                this.lng = value;
+            }
+        }
 
-      public static PointLatLng operator-(PointLatLng pt, SizeLatLng sz)
-      {
-         return Subtract(pt, sz);
-      }
+        public static PointLatLng operator +(PointLatLng pt, SizeLatLng sz)
+        {
+            return Add(pt, sz);
+        }
 
-      public static bool operator==(PointLatLng left, PointLatLng right)
-      {
-         return ((left.Lng == right.Lng) && (left.Lat == right.Lat));
-      }
+        public static PointLatLng operator -(PointLatLng pt, SizeLatLng sz)
+        {
+            return Subtract(pt, sz);
+        }
 
-      public static bool operator!=(PointLatLng left, PointLatLng right)
-      {
-         return !(left == right);
-      }
+        public static bool operator ==(PointLatLng left, PointLatLng right)
+        {
+            return ((left.Lng == right.Lng) && (left.Lat == right.Lat));
+        }
 
-      public static PointLatLng Add(PointLatLng pt, SizeLatLng sz)
-      {
-         return new PointLatLng(pt.Lat - sz.HeightLat, pt.Lng + sz.WidthLng);
-      }
+        public static bool operator !=(PointLatLng left, PointLatLng right)
+        {
+            return !(left == right);
+        }
 
-      public static PointLatLng Subtract(PointLatLng pt, SizeLatLng sz)
-      {
-         return new PointLatLng(pt.Lat + sz.HeightLat, pt.Lng - sz.WidthLng);
-      }
+        public static PointLatLng Add(PointLatLng pt, SizeLatLng sz)
+        {
+            return new PointLatLng(pt.Lat - sz.HeightLat, pt.Lng + sz.WidthLng);
+        }
 
-      public override bool Equals(object obj)
-      {
-         if(!(obj is PointLatLng))
-         {
-            return false;
-         }
-         PointLatLng tf = (PointLatLng) obj;
-         return (((tf.Lng == this.Lng) && (tf.Lat == this.Lat)) && tf.GetType().Equals(base.GetType()));
-      }
+        public static PointLatLng Subtract(PointLatLng pt, SizeLatLng sz)
+        {
+            return new PointLatLng(pt.Lat + sz.HeightLat, pt.Lng - sz.WidthLng);
+        }
 
-      public void Offset(PointLatLng pos)
-      {
-         this.Offset(pos.Lat, pos.Lng);
-      }
+        public override bool Equals(object obj)
+        {
+            if (!(obj is PointLatLng))
+            {
+                return false;
+            }
+            PointLatLng tf = (PointLatLng)obj;
+            return (((tf.Lng == this.Lng) && (tf.Lat == this.Lat)) && tf.GetType().Equals(base.GetType()));
+        }
 
-      public void Offset(double lat, double lng)
-      {
-         this.Lng += lng;
-         this.Lat -= lat;
-      }
+        public void Offset(PointLatLng pos)
+        {
+            this.Offset(pos.Lat, pos.Lng);
+        }
 
-      public override int GetHashCode()
-      {
-         return base.GetHashCode();
-      }
+        public void Offset(double lat, double lng)
+        {
+            this.Lng += lng;
+            this.Lat -= lat;
+        }
 
-      public override string ToString()
-      {
-         return string.Format(CultureInfo.CurrentCulture, "{{Lat={0}, Lng={1}}}", this.Lat, this.Lng);
-      }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
 
-      static PointLatLng()
-      {
-         Empty = new PointLatLng();
-      }
-   }
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.CurrentCulture, "{{Lat={0}, Lng={1}}}", this.Lat, this.Lng);
+        }
+
+        static PointLatLng()
+        {
+            Empty = new PointLatLng();
+        }
+    }
 }
