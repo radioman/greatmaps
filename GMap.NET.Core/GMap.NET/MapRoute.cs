@@ -1,139 +1,140 @@
 ﻿
 namespace GMap.NET
 {
-    using System.Collections.Generic;
-    using System.Runtime.Serialization;
+   using System;
+   using System.Collections.Generic;
+   using System.Runtime.Serialization;
 
-    /// <summary>
-    /// represents route of map
-    /// </summary>
-    [System.Serializable]
-    public class MapRoute : ISerializable, IDeserializationCallback
-    {
-        /// <summary>
-        /// points of route
-        /// </summary>
-        public readonly List<PointLatLng> Points;
+   /// <summary>
+   /// represents route of map
+   /// </summary>
+   [Serializable]
+   public class MapRoute : ISerializable, IDeserializationCallback
+   {
+      /// <summary>
+      /// points of route
+      /// </summary>
+      public readonly List<PointLatLng> Points;
 
-        /// <summary>
-        /// route info
-        /// </summary>
-        public string Name;
+      /// <summary>
+      /// route info
+      /// </summary>
+      public string Name;
 
-        /// <summary>
-        /// custom object
-        /// </summary>
-        public object Tag;
+      /// <summary>
+      /// custom object
+      /// </summary>
+      public object Tag;
 
-        /// <summary>
-        /// route start point
-        /// </summary>
-        public PointLatLng? From
-        {
-            get
+      /// <summary>
+      /// route start point
+      /// </summary>
+      public PointLatLng? From
+      {
+         get
+         {
+            if(Points.Count > 0)
             {
-                if (Points.Count > 0)
-                {
-                    return Points[0];
-                }
-
-                return null;
+               return Points[0];
             }
-        }
 
-        /// <summary>
-        /// route end point
-        /// </summary>
-        public PointLatLng? To
-        {
-            get
+            return null;
+         }
+      }
+
+      /// <summary>
+      /// route end point
+      /// </summary>
+      public PointLatLng? To
+      {
+         get
+         {
+            if(Points.Count > 1)
             {
-                if (Points.Count > 1)
-                {
-                    return Points[Points.Count - 1];
-                }
-
-                return null;
+               return Points[Points.Count - 1];
             }
-        }
 
-        public MapRoute(List<PointLatLng> points, string name)
-        {
-            Points = new List<PointLatLng>(points);
-            Points.TrimExcess();
+            return null;
+         }
+      }
 
-            Name = name;
-        }
+      public MapRoute(List<PointLatLng> points, string name)
+      {
+         Points = new List<PointLatLng>(points);
+         Points.TrimExcess();
 
-        /// <summary>
-        /// route distance (in km)
-        /// </summary>
-        public double Distance
-        {
-            get
+         Name = name;
+      }
+
+      /// <summary>
+      /// route distance (in km)
+      /// </summary>
+      public double Distance
+      {
+         get
+         {
+            double distance = 0.0;
+
+            if(From.HasValue && To.HasValue)
             {
-                double distance = 0.0;
-
-                if (From.HasValue && To.HasValue)
-                {
-                    for (int i = 1; i < Points.Count; i++)
-                    {
-                        distance += GMaps.Instance.GetDistance(Points[i - 1], Points[i]);
-                    }
-                }
-
-                return distance;
+               for(int i = 1; i < Points.Count; i++)
+               {
+                  distance += GMaps.Instance.GetDistance(Points[i - 1], Points[i]);
+               }
             }
-        }
 
-        #region ISerializable Members
+            return distance;
+         }
+      }
 
-        // Temp store for de-serialization.
-        private PointLatLng[] deserializedPoints;
+      #region ISerializable Members
 
-        /// <summary>
-        /// Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo"/> with the data needed to serialize the target object.
-        /// </summary>
-        /// <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> to populate with data.</param>
-        /// <param name="context">The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext"/>) for this serialization.</param>
-        /// <exception cref="T:System.Security.SecurityException">
-        /// The caller does not have the required permission.
-        /// </exception>
-        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("Name", this.Name);
-            info.AddValue("Tag", this.Tag);
-            info.AddValue("Points", this.Points.ToArray());
-        }
+      // Temp store for de-serialization.
+      private PointLatLng[] deserializedPoints;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MapRoute"/> class.
-        /// </summary>
-        /// <param name="info">The info.</param>
-        /// <param name="context">The context.</param>
-        protected MapRoute(SerializationInfo info, StreamingContext context)
-        {
-            this.Name = info.GetString("Name");
-            this.Tag = info.GetValue<object>("Tag", null);
-            this.deserializedPoints = info.GetValue<PointLatLng[]>("Points");
-            this.Points = new List<PointLatLng>();
-        }
+      /// <summary>
+      /// Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo"/> with the data needed to serialize the target object.
+      /// </summary>
+      /// <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> to populate with data.</param>
+      /// <param name="context">The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext"/>) for this serialization.</param>
+      /// <exception cref="T:System.Security.SecurityException">
+      /// The caller does not have the required permission.
+      /// </exception>
+      public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+      {
+         info.AddValue("Name", this.Name);
+         info.AddValue("Tag", this.Tag);
+         info.AddValue("Points", this.Points.ToArray());
+      }
 
-        #endregion
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MapRoute"/> class.
+      /// </summary>
+      /// <param name="info">The info.</param>
+      /// <param name="context">The context.</param>
+      protected MapRoute(SerializationInfo info, StreamingContext context)
+      {
+         this.Name = info.GetString("Name");
+         this.Tag = info.GetValue<object>("Tag", null);
+         this.deserializedPoints = info.GetValue<PointLatLng[]>("Points");
+         this.Points = new List<PointLatLng>();
+      }
 
-        #region IDeserializationCallback Members
+      #endregion
 
-        /// <summary>
-        /// Runs when the entire object graph has been de-serialized.
-        /// </summary>
-        /// <param name="sender">The object that initiated the callback. The functionality for this parameter is not currently implemented.</param>
-        public virtual void OnDeserialization(object sender)
-        {
-            // Accounts for the de-serialization being breadth first rather than depth first.
-            Points.AddRange(deserializedPoints);
-            Points.TrimExcess();
-        }
+      #region IDeserializationCallback Members
 
-        #endregion
-    }
+      /// <summary>
+      /// Runs when the entire object graph has been de-serialized.
+      /// </summary>
+      /// <param name="sender">The object that initiated the callback. The functionality for this parameter is not currently implemented.</param>
+      public virtual void OnDeserialization(object sender)
+      {
+         // Accounts for the de-serialization being breadth first rather than depth first.
+         Points.AddRange(deserializedPoints);
+         Points.TrimExcess();
+      }
+
+      #endregion
+   }
 }
