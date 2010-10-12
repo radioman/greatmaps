@@ -1235,14 +1235,14 @@
          // 
          // MainMap
          // 
+         this.MainMap.Bearing = 0F;
          this.MainMap.CanDragMap = true;
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
          this.MainMap.GrayScaleMode = false;
          this.MainMap.LevelsKeepInMemmory = 5;
          this.MainMap.Location = new System.Drawing.Point(0, 0);
-         this.MainMap.MapType = GMap.NET.MapType.MapsLT_Map;
          this.MainMap.MarkersEnabled = true;
-         this.MainMap.MaxZoom = 2;
+         this.MainMap.MaxZoom = 17;
          this.MainMap.MinZoom = 2;
          this.MainMap.MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionAndCenter;
          this.MainMap.Name = "MainMap";

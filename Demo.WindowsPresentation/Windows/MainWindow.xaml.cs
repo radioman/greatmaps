@@ -53,9 +53,7 @@ namespace Demo.WindowsPresentation
          }
 
          // config map
-         MainMap.MinZoom = 1;
          MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
-         MainMap.Zoom = MainMap.MinZoom;
 
          // map events
          MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);

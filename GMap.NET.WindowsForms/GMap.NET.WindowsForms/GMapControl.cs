@@ -332,7 +332,7 @@ namespace GMap.NET.WindowsForms
             // to know when to invalidate
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
             Core.SystemType = "WindowsForms";
-
+            
             RenderMode = RenderMode.GDI_PLUS;
             Core.currentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width + 100, Size.Height + 100);
 
@@ -344,8 +344,6 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
             BottomFormat.LineAlignment = StringAlignment.Far;
 #endif
-            MapType = MapType.GoogleMap;
-
             if(GMaps.Instance.IsRunningOnMono)
             {
                // no imports to move pointer
@@ -972,6 +970,8 @@ namespace GMap.NET.WindowsForms
          }
       }
 
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      [Browsable(false)]
       public bool IsDesignerHosted
       {
          get
@@ -1171,7 +1171,8 @@ namespace GMap.NET.WindowsForms
 
       /// <summary>
       /// returs true if map bearing is not zero
-      /// </summary>         
+      /// </summary>    
+      [Browsable(false)]
       public bool IsRotated
       {
          get
@@ -1183,6 +1184,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// bearing for rotation of the map
       /// </summary>
+      [Category("GMap.NET")]
       public float Bearing
       {
          get
@@ -1413,6 +1415,8 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// shrinks map area, useful just for testing
       /// </summary>
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      [Browsable(false)]
       public bool VirtualSizeEnabled
       {
          get
@@ -2022,7 +2026,7 @@ namespace GMap.NET.WindowsForms
       }
 #endif
 
-      [Category("GMap.NET")]
+      [Category("GMap.NET"), DefaultValue(0)]
       public double Zoom
       {
          get
@@ -2033,19 +2037,20 @@ namespace GMap.NET.WindowsForms
          {
             if(zoomReal != value)
             {
+               Debug.WriteLine("ZoomPropertyChanged: " + zoomReal + " -> " + value);
+
                if(value > MaxZoom)
                {
                   zoomReal = MaxZoom;
                }
+               else if(value < MinZoom)
+               {
+                  zoomReal = MinZoom;
+               }
                else
-                  if(value < MinZoom)
-                  {
-                     zoomReal = MinZoom;
-                  }
-                  else
-                  {
-                     zoomReal = value;
-                  }
+               {
+                  zoomReal = value;
+               }
 
                float remainder = (float) System.Decimal.Remainder((Decimal) value, (Decimal) 1);
                if(remainder != 0)
@@ -2173,6 +2178,8 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// is mouse over marker
       /// </summary>
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      [Browsable(false)]
       public bool IsMouseOverMarker
       {
          get
@@ -2200,7 +2207,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// type of map
       /// </summary>
-      [Category("GMap.NET")]
+      [Category("GMap.NET"), DefaultValue(MapType.None)]
       public MapType MapType
       {
          get
@@ -2211,6 +2218,8 @@ namespace GMap.NET.WindowsForms
          {
             if(Core.MapType != value)
             {
+               Debug.WriteLine("MapType: " + Core.MapType + " -> " + value);
+
                RectLatLng viewarea = SelectedArea;
                if(viewarea != RectLatLng.Empty)
                {
@@ -2334,6 +2343,8 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// gets map manager
       /// </summary>
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      [Browsable(false)]
       public GMaps Manager
       {
          get

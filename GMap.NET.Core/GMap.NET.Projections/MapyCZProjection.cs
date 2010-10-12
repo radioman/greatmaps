@@ -211,8 +211,8 @@ namespace GMap.NET.Projections
          //Reproject.ReprojectPoints(l, z, pStart, pEnd, 0, 1);
 
          var l = WGSToPP(lat, lng);
-         var oX = (int)l[0] >> (20 - zoom);
-         var oY = (int)l[1] >> (20 - zoom);
+         var oX = (int) l[0] >> (20 - zoom);
+         var oY = (int) l[1] >> (20 - zoom);
 
          ret.X = oX;
          ret.Y = oY;
@@ -232,7 +232,7 @@ namespace GMap.NET.Projections
          //int[] lks = new int[] { (int) ((x * res) - orignX), (int) (-(y * res) + orignY) };
 
          var oX = x << (20 - zoom);
-         var oY = y << (20 - zoom);  
+         var oY = y << (20 - zoom);
          var l = PPToWGS(oX, oY);
 
          //double[] l = new double[] { oX, oY };
