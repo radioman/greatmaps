@@ -69,13 +69,13 @@ namespace Demo.WindowsForms
                MessageBox.Show("No internet connection avaible, going to CacheOnly mode.", "GMap.NET - Demo.WindowsForms", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            MainMap.Manager.Mode = AccessMode.ServerOnly;
+            //MainMap.Manager.Mode = AccessMode.ServerOnly;
 
             // config map             
-            MainMap.MapType = MapType.MapyCZ_Map;
-            MainMap.MinZoom = 3;
-            MainMap.MaxZoom = 5;
-            MainMap.Zoom = 3;
+            MainMap.MapType = MapType.GoogleMap;
+            MainMap.MinZoom = 1;
+            MainMap.MaxZoom = 17;
+            //MainMap.Zoom = 5;
             MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
 
             // map events
@@ -172,7 +172,7 @@ namespace Demo.WindowsForms
             top.Markers.Add(center);
 
             //MainMap.VirtualSizeEnabled = true;
-            if(false)
+            //if(false)
             {
                // add my city location for demo
                GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
