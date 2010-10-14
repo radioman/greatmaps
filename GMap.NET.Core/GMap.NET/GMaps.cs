@@ -419,6 +419,14 @@ namespace GMap.NET
                }
                break;
 
+               case MapType.MapsLT_Map_Hybrid_2010:
+               {
+                  types = new MapType[2];
+                  types[0] = MapType.MapsLT_OrtoFoto_2010;
+                  types[1] = MapType.MapsLT_Map_Labels;
+               }
+               break;
+
                case MapType.YandexMapRuHybrid:
                {
                   types = new MapType[2];
@@ -496,6 +504,9 @@ namespace GMap.NET
             case MapType.MapsLT_Map_Labels:
             case MapType.MapsLT_Map:
             case MapType.MapsLT_OrtoFoto:
+            case MapType.MapsLT_OrtoFoto_2010:
+            case MapType.MapsLT_Map_Hybrid_2010:
+            case MapType.MapsLT_Map_2_5D:
             {
                if(false == (Projection is LKS94Projection))
                {
@@ -1494,6 +1505,11 @@ namespace GMap.NET
                return string.Format("http://dc1.maps.lt/cache/mapslt_ortofoto/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
             }
 
+            case MapType.MapsLT_OrtoFoto_2010:
+            {
+               return string.Format("http://dc1.maps.lt/cache/mapslt_ortofoto_2010/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
+            }
+
             case MapType.MapsLT_Map:
             {
                // http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L02/R0000001b/C00000028.jpg
@@ -1504,6 +1520,18 @@ namespace GMap.NET
 
                // http://dc1.maps.lt/cache/mapslt/map/_alllayers/L02/R0000001c/C00000029.png
                return string.Format("http://dc1.maps.lt/cache/mapslt/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png", zoom, pos.Y, pos.X);
+            }
+
+            case MapType.MapsLT_Map_2_5D:
+            {
+               // http://dc1.maps.lt/cache/mapslt_25d_vkkp/map/_alllayers/L01/R00007194/C0000a481.png
+               int z = zoom;
+               if(zoom >= 10)
+               {
+                  z -= 10;
+               }
+
+               return string.Format("http://dc1.maps.lt/cache/mapslt_25d_vkkp/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png", z, pos.Y, pos.X);
             }
 
             case MapType.MapsLT_Map_Labels:
@@ -2713,8 +2741,10 @@ namespace GMap.NET
                      case MapType.MapsLT_Map:
                      case MapType.MapsLT_OrtoFoto:
                      case MapType.MapsLT_Map_Hybrid:
+                     case MapType.MapsLT_OrtoFoto_2010:
+                     case MapType.MapsLT_Map_Hybrid_2010:
                      {
-                        request.Referer = "http://www.maps.lt/map_beta/";
+                        request.Referer = "http://www.maps.lt/map/";
                      }
                      break;
 
