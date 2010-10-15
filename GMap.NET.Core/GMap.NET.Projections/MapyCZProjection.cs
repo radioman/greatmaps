@@ -10,12 +10,10 @@ namespace GMap.NET.Projections
    /// </summary>
    public class MapyCZProjection : PureProjection
    {
-      static readonly double MinLatitude = -85.05112878;
-      static readonly double MaxLatitude = 85.05112878;
-      static readonly double MinLongitude = -180;
-      static readonly double MaxLongitude = 180;
-      static readonly double orignX = 0;
-      static readonly double orignY = 0;
+      static readonly double MinLatitude = 26;
+      static readonly double MaxLatitude = 76;
+      static readonly double MinLongitude = -26;
+      static readonly double MaxLongitude = 38;
 
       //ProjectionInfo pStart = KnownCoordinateSystems.Geographic.World.WGS1984;
       //ProjectionInfo pEnd = new ProjectionInfo("+proj=tmerc +lat_0=0 +lon_0=15 +k=0.9996 +x_0=4200000 +y_0=-1300000 +ellps=WGS84 +datum=WGS84 +to_meter=0.03125 +no_defs");
@@ -41,7 +39,7 @@ namespace GMap.NET.Projections
          return x;
       }
 
-      static readonly double UTMSIZE = 2;
+      static readonly double UTMSIZE = 3;
       static readonly double UNITS = 1;
 
       #endregion
@@ -69,8 +67,6 @@ namespace GMap.NET.Projections
          var lonrad = lo;
          var latddd = RadiansToDegrees(la);
          var londdd = RadiansToDegrees(lo);
-
-         //zone = (int)Math.Round((londdd + 183) / 6);
 
          var k = 0.9996f;
          var a = Axis;
@@ -125,8 +121,8 @@ namespace GMap.NET.Projections
 
       double[] ppToUTMEE(double x, double y)
       {
-         var north = (y) * Math.Pow(2, -5) + 1300000;
-         var east = (x) * Math.Pow(2, -5) + (-3700000);
+         var north = y * Math.Pow(2, -5) + 1300000;
+         var east = x * Math.Pow(2, -5) + (-3700000);
          east = roundoff(east, UTMSIZE);
          north = roundoff(north, UTMSIZE);
 
@@ -206,21 +202,23 @@ namespace GMap.NET.Projections
          lat = Clip(lat, MinLatitude, MaxLatitude);
          lng = Clip(lng, MinLongitude, MaxLongitude);
 
-         //double[] l = new double[] { lng, lat };
-         //double[] z = new double[] {1};  
-         //Reproject.ReprojectPoints(l, z, pStart, pEnd, 0, 1);
+         var size = GetTileMatrixSizePixel(zoom);
 
-         var l = WGSToPP(lat, lng);
-         var oX = (int) l[0] >> (20 - zoom);
-         var oY = (int) l[1] >> (20 - zoom);
+         //if(true)
+         //{
+         //   double[] l = new double[] { lng, lat };
+         //   double[] z = new double[] { 1 };
+         //   Reproject.ReprojectPoints(l, z, pStart, pEnd, 0, 1);
 
-         ret.X = oX;
-         ret.Y = oY;
-
-         //double res = GetTileMatrixResolution(zoom); 
-         //ret.X = (int) Math.Floor((oX + orignX) / res);
-         //ret.Y = (int) Math.Floor((oY - lks[0]) / res);
-
+         //   ret.X = (int) l[0] >> (20 - zoom);
+         //   ret.Y = size.Height - ((int) l[1] >> (20 - zoom));
+         //}
+         //else
+         {
+            var l = WGSToPP(lat, lng);
+            ret.X = (int) l[0] >> (20 - zoom);
+            ret.Y = size.Height - ((int) l[1] >> (20 - zoom));
+         }
          return ret;
       }
 
@@ -228,124 +226,52 @@ namespace GMap.NET.Projections
       {
          PointLatLng ret = PointLatLng.Empty;
 
-         //double res = GetTileMatrixResolution(zoom);
-         //int[] lks = new int[] { (int) ((x * res) - orignX), (int) (-(y * res) + orignY) };
+         var size = GetTileMatrixSizePixel(zoom);
 
          var oX = x << (20 - zoom);
-         var oY = y << (20 - zoom);
-         var l = PPToWGS(oX, oY);
+         var oY = (size.Height - y) << (20 - zoom);
 
-         //double[] l = new double[] { oX, oY };
-         //double[] z = new double[] { 1 };
-         //Reproject.ReprojectPoints(l, z, pEnd, pStart, 0, 1);
+         //if(true)
+         //{
+         //   double[] l = new double[] { oX, oY };
+         //   double[] z = new double[] { 1 };
+         //   Reproject.ReprojectPoints(l, z, pEnd, pStart, 0, 1);
 
-         ret.Lat = Clip(l[0], MinLatitude, MaxLatitude);
-         ret.Lng = Clip(l[1], MinLongitude, MaxLongitude);
+         //   var ll = PPToWGS(oX, oY);
 
+         //   ret.Lat = Clip(l[1], MinLatitude, MaxLatitude);
+         //   ret.Lng = Clip(l[0], MinLongitude, MaxLongitude);
+         //}
+         //else
+         {
+            var l = PPToWGS(oX, oY);
+            ret.Lat = Clip(l[0], MinLatitude, MaxLatitude);
+            ret.Lng = Clip(l[1], MinLongitude, MaxLongitude);
+         }
          return ret;
       }
 
-      #region -- levels info --
-      //     RESOLUTIONS: [
-      //    1,    // nepouzito
-      //    1,    // nepouzito
-      //    1,    // nepouzito
-      //    131072,
-      //    65536,
-      //    32768,
-      //    16384,
-      //    8192,
-      //    4096,
-      //    2048,
-      //    1024,
-      //    512,
-      //    256,
-      //    128,
-      //    64,
-      //    32,
-      //    16 
-      //],   
-
-      //maxResolution : 983040,
-      //minResolution : 16, 
-      #endregion
-
-      public static double GetTileMatrixResolution(int zoom)
+      public override Size GetTileMatrixSizeXY(int zoom)
       {
-         double ret = 0;
+         return new Size((int) Math.Pow(2, zoom), (int) Math.Pow(2, zoom));
+      }
 
-         switch(zoom)
-         {
-            #region -- sizes --
-            case 3:
-            {
-               ret = 128;
-            }
-            break;
-            #endregion
-         }
-
-         return ret;
+      public override Size GetTileMatrixSizePixel(int zoom)
+      {
+         Size s = GetTileMatrixSizeXY(zoom);
+         return new Size(s.Width << 8, s.Height << 8);
       }
 
       public override Size GetTileMatrixMinXY(int zoom)
       {
-         Size ret = Size.Empty;
-
-         switch(zoom)
-         {
-            #region -- sizes --
-            case 3:
-            {
-               ret = new Size(1, 1);
-            }
-            break;
-
-            case 4:
-            {
-               ret = new Size(3, 3);
-            }
-            break;
-
-            case 5:
-            {
-               ret = new Size(7, 6);
-            }
-            break;
-            #endregion
-         }
-
-         return ret;
+         int wh = zoom > 3 ? (3 * (int) Math.Pow(2, zoom - 4)) : 1;
+         return new Size(wh, wh);
       }
 
       public override Size GetTileMatrixMaxXY(int zoom)
       {
-         Size ret = Size.Empty;
-
-         switch(zoom)
-         {
-            #region -- sizes --
-            case 3:
-            {
-               ret = new Size(6, 6);
-            }
-            break;
-
-            case 4:
-            {
-               ret = new Size(12, 12);
-            }
-            break;
-
-            case 5:
-            {
-               ret = new Size(24, 24);
-            }
-            break;
-            #endregion
-         }
-
-         return ret;
+         int wh = (int) Math.Pow(2, zoom) - (int) Math.Pow(2, zoom - 2);
+         return new Size(wh, wh);
       }
    }
 }

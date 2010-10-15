@@ -69,13 +69,13 @@ namespace Demo.WindowsForms
                MessageBox.Show("No internet connection avaible, going to CacheOnly mode.", "GMap.NET - Demo.WindowsForms", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            //MainMap.Manager.Mode = AccessMode.ServerOnly;
+            MainMap.Manager.Mode = AccessMode.ServerOnly;
 
             // config map             
-            MainMap.MapType = MapType.GoogleMap;
-            MainMap.MinZoom = 1;
+            MainMap.MapType = MapType.MapyCZ_Map;
+            MainMap.MinZoom = 3;
             MainMap.MaxZoom = 17;
-            //MainMap.Zoom = 5;
+            MainMap.Zoom = 3;
             MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
 
             // map events
@@ -171,8 +171,57 @@ namespace Demo.WindowsForms
             center = new GMapMarkerCross(MainMap.Position);
             top.Markers.Add(center);
 
+            {
+               GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(new PointLatLng(0, 15));
+               m.ToolTipMode = MarkerTooltipMode.Always;
+               m.ToolTipText = m.Position.ToString();
+               objects.Markers.Add(m);
+            }
+
+            {
+               GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(new PointLatLng(15, 15));
+               m.ToolTipMode = MarkerTooltipMode.Always;
+               m.ToolTipText = m.Position.ToString();
+               objects.Markers.Add(m);
+            }
+
+            {
+               GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(new PointLatLng(30, 15));
+               m.ToolTipMode = MarkerTooltipMode.Always;
+               m.ToolTipText = m.Position.ToString();
+               objects.Markers.Add(m);
+            }
+
+            {
+               GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(new PointLatLng(45, 15));
+               m.ToolTipMode = MarkerTooltipMode.Always;
+               m.ToolTipText = m.Position.ToString();
+               objects.Markers.Add(m);
+            }
+
+            {
+               GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(new PointLatLng(60, 15));
+               m.ToolTipMode = MarkerTooltipMode.Always;
+               m.ToolTipText = m.Position.ToString();
+               objects.Markers.Add(m);
+            }
+
+            {
+               GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(new PointLatLng(75, 15));
+               m.ToolTipMode = MarkerTooltipMode.Always;
+               m.ToolTipText = m.Position.ToString();
+               objects.Markers.Add(m);
+            }
+
+            {
+               GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(new PointLatLng(90, 15));
+               m.ToolTipMode = MarkerTooltipMode.Always;
+               m.ToolTipText = m.Position.ToString();
+               objects.Markers.Add(m);
+            }
+
             //MainMap.VirtualSizeEnabled = true;
-            //if(false)
+            if(false)
             {
                // add my city location for demo
                GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
@@ -1243,6 +1292,11 @@ namespace Demo.WindowsForms
                if(currentMarker.IsVisible)
                {
                   currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
+
+                  var px = MainMap.Projection.FromLatLngToPixel(currentMarker.Position.Lat, currentMarker.Position.Lng, (int)MainMap.Zoom);
+                  var tile = MainMap.Projection.FromPixelToTileXY(px);
+
+                  Debug.WriteLine("CM loc: " + currentMarker.LocalPosition + " | geo: " + currentMarker.Position + " | px: " + px + " | tile: " + tile);
                }
             }
             else // move rect marker
@@ -1363,7 +1417,7 @@ namespace Demo.WindowsForms
       {
          if(objects.Markers.Count > 0)
          {
-            MainMap.ZoomAndCenterMarkers(null);
+            //MainMap.ZoomAndCenterMarkers(null);
             trackBar1.Value = (int) MainMap.Zoom;
          }
       }
