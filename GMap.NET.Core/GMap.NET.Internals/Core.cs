@@ -96,6 +96,11 @@ namespace GMap.NET.Internals
       /// </summary>
       public bool IsDragging = false;
 
+      public Core()
+      {
+         MapType = MapType.None;
+      }
+
       /// <summary>
       /// map zoom
       /// </summary>
@@ -206,7 +211,7 @@ namespace GMap.NET.Internals
          }
          set
          {
-            if(value != MapType)
+            if(value != MapType || value == MapType.None)
             {
                mapType = value;
 
@@ -227,7 +232,6 @@ namespace GMap.NET.Internals
                {
                   CancelAsyncTasks();
                   OnMapSizeChanged(Width, Height);
-                  GoToCurrentPosition();
                   ReloadMap();
 
                   if(OnMapTypeChanged != null)
@@ -432,12 +436,7 @@ namespace GMap.NET.Internals
          if(!IsStarted)
          {
             IsStarted = true;
-
             GoToCurrentPosition();
-
-            if(OnCurrentPositionChanged != null)
-               OnCurrentPositionChanged(currentPosition);
-
 #if !DEBUG
 #if !PocketPC
             // in case there a few controls in one app

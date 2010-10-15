@@ -11,12 +11,12 @@ namespace GMap.NET.Internals
    /// </summary>
    internal class TileMatrix
    {
-      readonly List<Dictionary<Point, Tile>> Levels = new List<Dictionary<Point, Tile>>(22);
+      readonly List<Dictionary<Point, Tile>> Levels = new List<Dictionary<Point, Tile>>(33);
       readonly FastReaderWriterLock Lock = new FastReaderWriterLock();
 
       public TileMatrix()
       {
-         for(int i = 0; i < 22; i++)
+         for(int i = 0; i < Levels.Capacity; i++)
          {
             Levels.Add(new Dictionary<Point, Tile>(55));
          }

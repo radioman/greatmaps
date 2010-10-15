@@ -27,7 +27,7 @@ namespace GMap.NET.WindowsPresentation
    {
       #region DependencyProperties and related stuff
 
-      public static readonly DependencyProperty MapTypeProperty = DependencyProperty.Register("MapType", typeof(MapType), typeof(GMapControl), new UIPropertyMetadata(MapType.GoogleMap, new PropertyChangedCallback(MapTypePropertyChanged)));
+      public static readonly DependencyProperty MapTypeProperty = DependencyProperty.Register("MapType", typeof(MapType), typeof(GMapControl), new UIPropertyMetadata(MapType.None, new PropertyChangedCallback(MapTypePropertyChanged)));
 
       /// <summary>
       /// type of map
@@ -50,7 +50,7 @@ namespace GMap.NET.WindowsPresentation
          GMapControl map = (GMapControl) d;
          if(map != null)
          {
-            Debug.WriteLine("MapTypePropertyChanged: " + e.OldValue + " -> " + e.NewValue);
+            Debug.WriteLine("MapType: " + e.OldValue + " -> " + e.NewValue);
 
             RectLatLng viewarea = map.SelectedArea;
             if(viewarea != RectLatLng.Empty)
@@ -79,7 +79,7 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
-      public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register("Zoom", typeof(double), typeof(GMapControl), new UIPropertyMetadata(13.0, new PropertyChangedCallback(ZoomPropertyChanged), new CoerceValueCallback(OnCoerceZoom)));
+      public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register("Zoom", typeof(double), typeof(GMapControl), new UIPropertyMetadata(0.0, new PropertyChangedCallback(ZoomPropertyChanged), new CoerceValueCallback(OnCoerceZoom)));
 
       /// <summary>
       /// map zoom
@@ -127,7 +127,7 @@ namespace GMap.NET.WindowsPresentation
          {
             double value = (double) e.NewValue;
 
-            Debug.WriteLine("ZoomPropertyChanged: " + e.OldValue + " -> " + value);
+            Debug.WriteLine("Zoom: " + e.OldValue + " -> " + value);
 
             double remainder = value % 1;
             if(remainder != 0 && map.ActualWidth > 0)
@@ -457,7 +457,6 @@ namespace GMap.NET.WindowsPresentation
 
             Manager.ImageProxy = new WindowsPresentationImageProxy();
 
-            Core.MapType = (MapType) MapTypeProperty.DefaultMetadata.DefaultValue;
             Core.SystemType = "WindowsPresentation";
 
             Core.RenderMode = GMap.NET.RenderMode.WPF;
@@ -581,7 +580,7 @@ namespace GMap.NET.WindowsPresentation
                }
             }
          }
-      }   
+      }
 
       /// <summary>
       /// on core needs invalidation
@@ -1044,6 +1043,7 @@ namespace GMap.NET.WindowsPresentation
       /// <summary>
       /// bearing for rotation of the map
       /// </summary>
+      [Category("GMap.NET")]
       public float Bearing
       {
          get

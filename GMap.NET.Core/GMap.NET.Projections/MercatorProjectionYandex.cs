@@ -5,13 +5,13 @@ namespace GMap.NET.Projections
 
    class MercatorProjectionYandex : PureProjection
    {
-      const double MinLatitude = -85.05112878;
-      const double MaxLatitude = 85.05112878;
-      const double MinLongitude = -177;
-      const double MaxLongitude = 177;
-      const double RAD_DEG = 180 / Math.PI;
-      const double DEG_RAD = Math.PI / 180;
-      const double MathPiDiv4 = Math.PI / 4;
+      static readonly double MinLatitude = -85.05112878;
+      static readonly double MaxLatitude = 85.05112878;
+      static readonly double MinLongitude = -177;
+      static readonly double MaxLongitude = 177;
+      static readonly double RAD_DEG = 180 / Math.PI;
+      static readonly double DEG_RAD = Math.PI / 180;
+      static readonly double MathPiDiv4 = Math.PI / 4;
 
       Size tileSize = new Size(256, 256);
       public override Size TileSize
@@ -86,18 +86,6 @@ namespace GMap.NET.Projections
          ret.Lng = mercX / a * RAD_DEG;
 
          return ret;
-      }
-
-      /// <summary>
-      /// Clips a number to the specified minimum and maximum values.
-      /// </summary>
-      /// <param name="n">The number to clip.</param>
-      /// <param name="minValue">Minimum allowable value.</param>
-      /// <param name="maxValue">Maximum allowable value.</param>
-      /// <returns>The clipped value.</returns>
-      double Clip(double n, double minValue, double maxValue)
-      {
-         return Math.Min(Math.Max(n, minValue), maxValue);
       }
 
       public override Size GetTileMatrixMinXY(int zoom)
