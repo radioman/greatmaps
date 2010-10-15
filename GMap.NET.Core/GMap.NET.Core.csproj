@@ -184,7 +184,6 @@
     </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="Web References\Analytics\MessagingServiceV2.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

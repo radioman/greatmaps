@@ -2,7 +2,6 @@
 namespace GMap.NET.Projections
 {
    using System;
-   //using DotSpatial.Projections;
 
    /// <summary>
    /// GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]
@@ -15,10 +14,7 @@ namespace GMap.NET.Projections
       static readonly double MinLongitude = -26;
       static readonly double MaxLongitude = 38;
 
-      //ProjectionInfo pStart = KnownCoordinateSystems.Geographic.World.WGS1984;
-      //ProjectionInfo pEnd = new ProjectionInfo("+proj=tmerc +lat_0=0 +lon_0=15 +k=0.9996 +x_0=4200000 +y_0=-1300000 +ellps=WGS84 +datum=WGS84 +to_meter=0.03125 +no_defs");
-
-      #region -- common --
+      #region -- Common --
       static int getLCM(int zone)
       {
          if((zone < 1) || (zone > 60))
@@ -203,17 +199,6 @@ namespace GMap.NET.Projections
          lng = Clip(lng, MinLongitude, MaxLongitude);
 
          var size = GetTileMatrixSizePixel(zoom);
-
-         //if(true)
-         //{
-         //   double[] l = new double[] { lng, lat };
-         //   double[] z = new double[] { 1 };
-         //   Reproject.ReprojectPoints(l, z, pStart, pEnd, 0, 1);
-
-         //   ret.X = (int) l[0] >> (20 - zoom);
-         //   ret.Y = size.Height - ((int) l[1] >> (20 - zoom));
-         //}
-         //else
          {
             var l = WGSToPP(lat, lng);
             ret.X = (int) l[0] >> (20 - zoom);
@@ -230,19 +215,6 @@ namespace GMap.NET.Projections
 
          var oX = x << (20 - zoom);
          var oY = (size.Height - y) << (20 - zoom);
-
-         //if(true)
-         //{
-         //   double[] l = new double[] { oX, oY };
-         //   double[] z = new double[] { 1 };
-         //   Reproject.ReprojectPoints(l, z, pEnd, pStart, 0, 1);
-
-         //   var ll = PPToWGS(oX, oY);
-
-         //   ret.Lat = Clip(l[1], MinLatitude, MaxLatitude);
-         //   ret.Lng = Clip(l[0], MinLongitude, MaxLongitude);
-         //}
-         //else
          {
             var l = PPToWGS(oX, oY);
             ret.Lat = Clip(l[0], MinLatitude, MaxLatitude);

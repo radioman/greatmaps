@@ -333,7 +333,7 @@ namespace GMap.NET.WindowsForms
             // to know when to invalidate
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
             Core.SystemType = "WindowsForms";
-            
+
             RenderMode = RenderMode.GDI_PLUS;
             Core.currentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width + 100, Size.Height + 100);
 
@@ -2233,16 +2233,23 @@ namespace GMap.NET.WindowsForms
 
                Core.MapType = value;
 
-               if(Core.IsStarted && Core.zoomToArea)
+               if(Core.IsStarted)
                {
-                  // restore zoomrect as close as possible
-                  if(viewarea != RectLatLng.Empty && viewarea != CurrentViewArea)
+                  if(Core.zoomToArea)
                   {
-                     int bestZoom = Core.GetMaxZoomToFitRect(viewarea);
-                     if(bestZoom > 0 && Zoom != bestZoom)
+                     // restore zoomrect as close as possible
+                     if(viewarea != RectLatLng.Empty && viewarea != CurrentViewArea)
                      {
-                        Zoom = bestZoom;
+                        int bestZoom = Core.GetMaxZoomToFitRect(viewarea);
+                        if(bestZoom > 0 && Zoom != bestZoom)
+                        {
+                           Zoom = bestZoom;
+                        }
                      }
+                  }
+                  else
+                  {
+                     ForceUpdateOverlays();
                   }
                }
             }

@@ -446,6 +446,22 @@ namespace GMap.NET
                }
                break;
 
+               case MapType.MapyCZ_Hybrid:
+               {
+                  types = new MapType[2];
+                  types[0] = MapType.MapyCZ_Satellite;
+                  types[1] = MapType.MapyCZ_Labels;
+               }
+               break;
+
+               case MapType.MapyCZ_HistoryHybrid:
+               {
+                  types = new MapType[2];
+                  types[0] = MapType.MapyCZ_History;
+                  types[1] = MapType.MapyCZ_Labels;
+               }
+               break;
+
                default:
                {
                   types = new MapType[1];
@@ -556,12 +572,18 @@ namespace GMap.NET
             break;
 
             case MapType.MapyCZ_Map:
+            case MapType.MapyCZ_Satellite:
+            case MapType.MapyCZ_MapTurist:
+            case MapType.MapyCZ_Labels:
+            case MapType.MapyCZ_Hybrid:
+            case MapType.MapyCZ_History:
+            case MapType.MapyCZ_HistoryHybrid:
             {
                if(false == (Projection is MapyCZProjection))
                {
                   Projection = new MapyCZProjection();
                }
-               maxZoom = 16;
+               maxZoom = 17;
             }
             break;
 
@@ -1633,8 +1655,7 @@ namespace GMap.NET
             #region -- MapyCZ --
             case MapType.MapyCZ_Map:
             {
-               // ['base','ophoto','turist','army2']
-
+               // ['base','ophoto','turist','army2']  
                // http://m1.mapserver.mapy.cz/base-n/3_8000000_8000000
 
                int xx = pos.X << (28 - zoom);
@@ -1642,6 +1663,47 @@ namespace GMap.NET
 
                return string.Format("http://m{0}.mapserver.mapy.cz/base-n/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
             }
+
+            case MapType.MapyCZ_MapTurist:
+            {
+               // http://m1.mapserver.mapy.cz/turist/3_8000000_8000000
+
+               int xx = pos.X << (28 - zoom);
+               int yy = ((((int) Math.Pow(2.0, (double) zoom)) - 1) - pos.Y) << (28 - zoom);
+
+               return string.Format("http://m{0}.mapserver.mapy.cz/turist/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
+            }
+
+            case MapType.MapyCZ_Satellite:
+            {
+               //http://m3.mapserver.mapy.cz/ophoto/9_7a80000_7a80000
+
+               int xx = pos.X << (28 - zoom);
+               int yy = ((((int) Math.Pow(2.0, (double) zoom)) - 1) - pos.Y) << (28 - zoom);
+
+               return string.Format("http://m{0}.mapserver.mapy.cz/ophoto/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
+            }
+
+            case MapType.MapyCZ_Labels:
+            {
+               // http://m2.mapserver.mapy.cz/hybrid/9_7d00000_7b80000
+
+               int xx = pos.X << (28 - zoom);
+               int yy = ((((int) Math.Pow(2.0, (double) zoom)) - 1) - pos.Y) << (28 - zoom);
+
+               return string.Format("http://m{0}.mapserver.mapy.cz/hybrid/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
+            }
+
+            case MapType.MapyCZ_History:
+            {
+               // http://m4.mapserver.mapy.cz/army2/9_7d00000_8080000
+
+               int xx = pos.X << (28 - zoom);
+               int yy = ((((int) Math.Pow(2.0, (double) zoom)) - 1) - pos.Y) << (28 - zoom);
+
+               return string.Format("http://m{0}.mapserver.mapy.cz/army2/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
+            }
+
             #endregion
          }
 
@@ -2805,6 +2867,12 @@ namespace GMap.NET
                      break;
 
                      case MapType.MapyCZ_Map:
+                     case MapType.MapyCZ_Hybrid:
+                     case MapType.MapyCZ_Labels:
+                     case MapType.MapyCZ_MapTurist:
+                     case MapType.MapyCZ_Satellite:
+                     case MapType.MapyCZ_History:
+                     case MapType.MapyCZ_HistoryHybrid:
                      {
                         request.Referer = "http://www.mapy.cz/";
                      }

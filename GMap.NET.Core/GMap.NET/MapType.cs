@@ -66,7 +66,7 @@ namespace GMap.NET
       MapsLT_Map = 1000,
       MapsLT_OrtoFoto = 1001,
       MapsLT_Map_Labels = 1002,
-      MapsLT_Map_Hybrid = 1003,   
+      MapsLT_Map_Hybrid = 1003,
       MapsLT_Map_2_5D = 1004,       // 2.5D only for zoom 10 & 11
       MapsLT_OrtoFoto_2010 = 1101,  // new but only partial coverage
       MapsLT_Map_Hybrid_2010 = 1103, // --..--
@@ -87,5 +87,11 @@ namespace GMap.NET
       MapBenderWMS = 6000,
 
       MapyCZ_Map = 7000,
+      MapyCZ_MapTurist = 7001,
+      MapyCZ_Satellite = 7002,
+      MapyCZ_Labels = 7003,
+      MapyCZ_Hybrid = 7004,
+      MapyCZ_History = 7005,
+      MapyCZ_HistoryHybrid = 7006,
    }
 }

@@ -255,6 +255,23 @@ namespace GMap.NET.Internals
                      }
                      break;
 
+                     case MapType.MapyCZ_Map:
+                     case MapType.MapyCZ_Satellite:
+                     case MapType.MapyCZ_MapTurist:
+                     case MapType.MapyCZ_Labels:
+                     case MapType.MapyCZ_Hybrid:
+                     case MapType.MapyCZ_History:
+                     case MapType.MapyCZ_HistoryHybrid:
+                     {
+                        RectLatLng area = new RectLatLng(51.2024819920053, 11.8401353319027, 7.22833716731277, 2.78312271922872);
+                        if(!area.Contains(CurrentPosition))
+                        {
+                           SetZoomToFitRect(area);
+                           zoomToArea = false;
+                        }
+                     }
+                     break;
+
                      case MapType.PergoTurkeyMap:
                      {
                         RectLatLng area = new RectLatLng(42.5830078125, 25.48828125, 19.05029296875, 6.83349609375);
