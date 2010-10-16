@@ -69,13 +69,12 @@ namespace Demo.WindowsForms
                MessageBox.Show("No internet connection avaible, going to CacheOnly mode.", "GMap.NET - Demo.WindowsForms", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            // config map
-            // http://www.ikarte.lv/map/default.aspx?lang=en
-            MainMap.Position = new PointLatLng(56.9465363, 24.1048503);
-            MainMap.MapType = MapType.KarteLV_Map;
-            MainMap.MinZoom = 2;
-            MainMap.MaxZoom = 11;
-            MainMap.Zoom = 1;
+            // config map 
+            MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
+            MainMap.MapType = MapType.GoogleMap;
+            MainMap.MinZoom = 1;
+            MainMap.MaxZoom = 17;
+            MainMap.Zoom = 3;
 
             // map events
             MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
@@ -176,25 +175,25 @@ namespace Demo.WindowsForms
                // add my city location for demo
                GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
                {
-                  PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Liatvia, Ryga", out status);
+                  PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius", out status);
                   if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
                   {
                      currentMarker.Position = pos.Value;
 
                      GMapMarker myCity = new GMapMarkerGoogleGreen(pos.Value);
                      myCity.ToolTipMode = MarkerTooltipMode.Always;
-                     myCity.ToolTipText = "Welcome to Latvia! ;}";
+                     myCity.ToolTipText = "Welcome to Lithuania! ;}";
                      objects.Markers.Add(myCity);
                   }
                }
 
                // add some points in lithuania
-               //AddLocationLithuania("Kaunas");
-               //AddLocationLithuania("Klaipėda");
-               //AddLocationLithuania("Šiauliai");
-               //AddLocationLithuania("Panevėžys");
+               AddLocationLithuania("Kaunas");
+               AddLocationLithuania("Klaipėda");
+               AddLocationLithuania("Šiauliai");
+               AddLocationLithuania("Panevėžys");
 
-               //RegeneratePolygon();
+               RegeneratePolygon();
             }
          }
       }
@@ -1367,7 +1366,7 @@ namespace Demo.WindowsForms
       {
          if(objects.Markers.Count > 0)
          {
-            //MainMap.ZoomAndCenterMarkers(null);
+            MainMap.ZoomAndCenterMarkers(null);
             trackBar1.Value = (int) MainMap.Zoom;
          }
       }
@@ -1748,11 +1747,12 @@ namespace Demo.WindowsForms
          }
          else if(e.KeyCode == Keys.Escape)
          {
+            MainMap.Bearing = 0;
+
             if(currentTransport != null && !MainMap.IsMouseOverMarker)
             {
                currentTransport.ToolTipMode = MarkerTooltipMode.OnMouseOver;
-               currentTransport = null;
-               MainMap.Bearing = 0;
+               currentTransport = null;                
             }
          }
       }
@@ -1760,6 +1760,8 @@ namespace Demo.WindowsForms
       // key-press events
       private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
       {
+         if(MainMap.Focused)
+         {
          if(e.KeyChar == '+')
          {
             MainMap.Zoom += 1;
@@ -1776,6 +1778,7 @@ namespace Demo.WindowsForms
          {
             MainMap.Bearing++;
          }
+            }
       }
 
       // engage some live demo
