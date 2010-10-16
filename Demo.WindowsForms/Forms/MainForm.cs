@@ -69,13 +69,12 @@ namespace Demo.WindowsForms
                MessageBox.Show("No internet connection avaible, going to CacheOnly mode.", "GMap.NET - Demo.WindowsForms", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            MainMap.Manager.Mode = AccessMode.ServerOnly;
-
-            // config map 
+            // config map
+            // http://www.ikarte.lv/map/default.aspx?lang=en
             MainMap.Position = new PointLatLng(56.9465363, 24.1048503);
             MainMap.MapType = MapType.KarteLV_Map;
-            MainMap.MinZoom = 0;
-            MainMap.MaxZoom = 1;
+            MainMap.MinZoom = 2;
+            MainMap.MaxZoom = 11;
             MainMap.Zoom = 1;
 
             // map events
@@ -184,7 +183,7 @@ namespace Demo.WindowsForms
 
                      GMapMarker myCity = new GMapMarkerGoogleGreen(pos.Value);
                      myCity.ToolTipMode = MarkerTooltipMode.Always;
-                     myCity.ToolTipText = "Welcome to Liatvia! ;}";
+                     myCity.ToolTipText = "Welcome to Latvia! ;}";
                      objects.Markers.Add(myCity);
                   }
                }

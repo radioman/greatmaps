@@ -255,6 +255,17 @@ namespace GMap.NET.Internals
                      }
                      break;
 
+                     case MapType.KarteLV_Map:
+                     {
+                        RectLatLng area = new RectLatLng(58.0794870805093, 20.3286067123543, 7.90883164336887, 2.506129113082);
+                        if(!area.Contains(CurrentPosition))
+                        {
+                           SetZoomToFitRect(area);
+                           zoomToArea = false;
+                        }
+                     }
+                     break;
+
                      case MapType.MapyCZ_Map:
                      case MapType.MapyCZ_Satellite:
                      case MapType.MapyCZ_MapTurist:

@@ -71,7 +71,6 @@ namespace GMap.NET
       MapsLT_OrtoFoto_2010 = 1101,  // new but only partial coverage
       MapsLT_Map_Hybrid_2010 = 1103, // --..--
 
-      // ikarte.lv
       KarteLV_Map = 1500,
 
       PergoTurkeyMap = 2001,
