@@ -9,6 +9,18 @@ namespace GMap.NET
    /// </summary>
    public abstract class PureProjection
    {
+      readonly List<Dictionary<PointLatLng, Point>> FromLatLngToPixelCache = new List<Dictionary<PointLatLng, Point>>(33);
+      readonly List<Dictionary<Point, PointLatLng>> FromPixelToLatLngCache = new List<Dictionary<Point, PointLatLng>>(33);
+
+      public PureProjection()
+      {
+         for(int i = 0; i < FromLatLngToPixelCache.Capacity; i++)
+         {
+            FromLatLngToPixelCache.Add(new Dictionary<PointLatLng, Point>(4444));
+            FromPixelToLatLngCache.Add(new Dictionary<Point, PointLatLng>(4444));
+         }
+      }
+
       /// <summary>
       /// size of tile
       /// </summary>
@@ -59,7 +71,13 @@ namespace GMap.NET
       /// <returns></returns>
       public Point FromLatLngToPixel(PointLatLng p, int zoom)
       {
-         return FromLatLngToPixel(p.Lat, p.Lng, zoom);
+         Point ret = Point.Empty;
+         if(!FromLatLngToPixelCache[zoom].TryGetValue(p, out ret))
+         {
+            ret = FromLatLngToPixel(p.Lat, p.Lng, zoom);
+            FromLatLngToPixelCache[zoom].Add(p, ret);
+         }
+         return ret;
       }
 
       /// <summary>
@@ -70,7 +88,13 @@ namespace GMap.NET
       /// <returns></returns>
       public PointLatLng FromPixelToLatLng(Point p, int zoom)
       {
-         return FromPixelToLatLng(p.X, p.Y, zoom);
+         PointLatLng ret = PointLatLng.Empty;
+         if(!FromPixelToLatLngCache[zoom].TryGetValue(p, out ret))
+         {
+            ret = FromPixelToLatLng(p.X, p.Y, zoom);
+            FromPixelToLatLngCache[zoom].Add(p, ret);
+         }
+         return ret;
       }
 
       /// <summary>
