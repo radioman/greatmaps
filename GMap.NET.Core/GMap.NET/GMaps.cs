@@ -535,6 +535,16 @@ namespace GMap.NET
             }
             break;
 
+            case MapType.KarteLV_Map:
+            {
+               if(false == (Projection is LKS92Projection))
+               {
+                  Projection = new LKS92Projection();
+               }
+               maxZoom = 11;
+            }
+            break;
+
             case MapType.PergoTurkeyMap:
             {
                if(false == (Projection is PlateCarreeProjectionPergo))
@@ -1577,6 +1587,17 @@ namespace GMap.NET
 
                return string.Format("http://dc1.maps.lt/cache/mapslt_ortofoto_overlay/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png", zoom, pos.Y, pos.X);
             }
+            #endregion
+
+            #region -- KarteLV --
+
+            case MapType.KarteLV_Map:
+            {
+               // http://www.maps.lt/cache/ikartelv/map/_alllayers/L03/R00000037/C00000053.png
+
+               return string.Format("http://www.maps.lt/cache/ikartelv/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png", zoom, pos.Y, pos.X);
+            }
+
             #endregion
 
             #region -- Pergo --
@@ -2834,6 +2855,12 @@ namespace GMap.NET
                      case MapType.MapsLT_Map_Hybrid_2010:
                      {
                         request.Referer = "http://www.maps.lt/map/";
+                     }
+                     break;
+
+                     case MapType.KarteLV_Map:
+                     {
+                        request.Referer = "http://www.ikarte.lv/map/default.aspx?lang=lv";
                      }
                      break;
 
