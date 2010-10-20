@@ -2677,16 +2677,27 @@ namespace GMap.NET
                string pLevels = allZlevels.Substring(allZlevels.Length - numLevel);
 
                // remove useless points at zoom
-               for(int i = 0; i < levels.Length; i++)
                {
-                  int zi = pLevels.IndexOf(levels[i]);
-                  if(zi > 0 && i < points.Count)
+                  List<PointLatLng> removedPoints = new List<PointLatLng>();
+
+                  for(int i = 0; i < levels.Length; i++)
                   {
-                     if(zi * numLevel > zoom)
+                     int zi = pLevels.IndexOf(levels[i]);
+                     if(zi > 0)
                      {
-                        points.RemoveAt(i);
+                        if(zi * numLevel > zoom)
+                        {
+                           removedPoints.Add(points[i]);
+                        }
                      }
                   }
+
+                  foreach(var v in removedPoints)
+                  {
+                     points.Remove(v);
+                  }
+                  removedPoints.Clear();
+                  removedPoints = null;
                }
             }
 
