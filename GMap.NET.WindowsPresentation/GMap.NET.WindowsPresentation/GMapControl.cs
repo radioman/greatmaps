@@ -1023,8 +1023,8 @@ namespace GMap.NET.WindowsPresentation
          System.Windows.Point center = new System.Windows.Point(ActualWidth / 2.0, ActualHeight / 2.0);
 
          rotationMatrix.Angle = -Bearing;
-         rotationMatrix.CenterY = center.X;
-         rotationMatrix.CenterX = center.Y;
+         rotationMatrix.CenterY = center.Y;
+         rotationMatrix.CenterX = center.X;
 
          rotationMatrixInvert = rotationMatrix.Inverse;
       }
