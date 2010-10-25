@@ -1271,13 +1271,21 @@ namespace GMap.NET.WindowsPresentation
       public Pen CenterCrossPen = new Pen(Brushes.Red, 1);
       public bool ShowCenter = true;
 
+      /// <summary>
+      /// reverses MouseWheel zooming direction
+      /// </summary>
       public bool InvertedMouseWheelZooming = false;
+
+      /// <summary>
+      /// lets you zoom by MouseWheel even when pointer is in area of marker
+      /// </summary>
+      public bool IgnoreMarkerOnMouseWheel = false;
 
       protected override void OnMouseWheel(MouseWheelEventArgs e)
       {
          base.OnMouseWheel(e);
 
-         if(IsMouseDirectlyOver && !Core.IsDragging)
+         if((IsMouseDirectlyOver || IgnoreMarkerOnMouseWheel) && !Core.IsDragging)
          {
             System.Windows.Point p = e.GetPosition(this);
             //p = ApplyRotationInversion(p.X, p.Y);

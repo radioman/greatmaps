@@ -1777,13 +1777,21 @@ namespace GMap.NET.WindowsForms
 
 #if !PocketPC
 
+      /// <summary>
+      /// reverses MouseWheel zooming direction
+      /// </summary>
       public bool InvertedMouseWheelZooming = false;
+
+      /// <summary>
+      /// lets you zoom by MouseWheel even when pointer is in area of marker
+      /// </summary>
+      public bool IgnoreMarkerOnMouseWheel = false;
 
       protected override void OnMouseWheel(MouseEventArgs e)
       {
          base.OnMouseWheel(e);
 
-         if(!IsMouseOverMarker && !Core.IsDragging)
+         if((!IsMouseOverMarker || IgnoreMarkerOnMouseWheel) && !Core.IsDragging)
          {
             if(Core.mouseLastZoom.X != e.X && Core.mouseLastZoom.Y != e.Y)
             {
