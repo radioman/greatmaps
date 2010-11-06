@@ -1752,7 +1752,7 @@ namespace Demo.WindowsForms
             if(currentTransport != null && !MainMap.IsMouseOverMarker)
             {
                currentTransport.ToolTipMode = MarkerTooltipMode.OnMouseOver;
-               currentTransport = null;                
+               currentTransport = null;
             }
          }
       }
@@ -1762,23 +1762,23 @@ namespace Demo.WindowsForms
       {
          if(MainMap.Focused)
          {
-         if(e.KeyChar == '+')
-         {
-            MainMap.Zoom += 1;
-         }
-         else if(e.KeyChar == '-')
-         {
-            MainMap.Zoom -= 1;
-         }
-         else if(e.KeyChar == 'a')
-         {
-            MainMap.Bearing--;
-         }
-         else if(e.KeyChar == 'z')
-         {
-            MainMap.Bearing++;
-         }
+            if(e.KeyChar == '+')
+            {
+               MainMap.Zoom += 1;
             }
+            else if(e.KeyChar == '-')
+            {
+               MainMap.Zoom -= 1;
+            }
+            else if(e.KeyChar == 'a')
+            {
+               MainMap.Bearing--;
+            }
+            else if(e.KeyChar == 'z')
+            {
+               MainMap.Bearing++;
+            }
+         }
       }
 
       // engage some live demo

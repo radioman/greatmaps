@@ -2521,7 +2521,7 @@ namespace GMap.NET
             int tooltipEnd = 0;
             {
                int x = route.IndexOf("tooltipHtml:") + 13;
-               if(x > 0)
+               if(x >= 13)
                {
                   tooltipEnd = route.IndexOf("\"", x + 1);
                   if(tooltipEnd > 0)
@@ -2539,7 +2539,7 @@ namespace GMap.NET
             int pointsEnd = 0;
             {
                int x = route.IndexOf("points:", tooltipEnd >= 0 ? tooltipEnd : 0) + 8;
-               if(x > 0)
+               if(x >= 8)
                {
                   pointsEnd = route.IndexOf("\"", x + 1);
                   if(pointsEnd > 0)
@@ -2608,7 +2608,7 @@ namespace GMap.NET
             int levelsEnd = 0;
             {
                int x = route.IndexOf("levels:", pointsEnd >= 0 ? pointsEnd : 0) + 8;
-               if(x > 0)
+               if(x >= 8)
                {
                   levelsEnd = route.IndexOf("\"", x + 1);
                   if(levelsEnd > 0)
@@ -2626,7 +2626,7 @@ namespace GMap.NET
             int numLevelsEnd = 0;
             {
                int x = route.IndexOf("numLevels:", levelsEnd >= 0 ? levelsEnd : 0) + 10;
-               if(x > 0)
+               if(x >= 10)
                {
                   numLevelsEnd = route.IndexOf(",", x);
                   if(numLevelsEnd > 0)
@@ -2643,7 +2643,7 @@ namespace GMap.NET
             // zoomFactor             
             {
                int x = route.IndexOf("zoomFactor:", numLevelsEnd >= 0 ? numLevelsEnd : 0) + 11;
-               if(x > 0)
+               if(x >= 11)
                {
                   int end = route.IndexOf("}", x);
                   if(end > 0)
