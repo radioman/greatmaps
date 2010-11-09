@@ -1347,7 +1347,7 @@ namespace GMap.NET.WindowsPresentation
          base.OnMouseWheel(e);
       }
 
-      bool isSelected = false;
+      bool isSelected = false;         
 
       protected override void OnMouseDown(MouseButtonEventArgs e)
       {
@@ -1367,7 +1367,6 @@ namespace GMap.NET.WindowsPresentation
             Core.mouseDown.X = (int) p.X;
             Core.mouseDown.Y = (int) p.Y;
             {
-               Cursor = Cursors.SizeAll;
                Core.BeginDrag(Core.mouseDown);
             }
             InvalidateVisual();
@@ -1401,9 +1400,9 @@ namespace GMap.NET.WindowsPresentation
             {
                isDragging = false;
                Debug.WriteLine("IsDragging = " + isDragging);
+               Cursor = cursorBefore;
             }
-            Core.EndDrag();
-            Cursor = Cursors.Arrow;
+            Core.EndDrag();                
 
             if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
             {
@@ -1431,6 +1430,8 @@ namespace GMap.NET.WindowsPresentation
          base.OnMouseUp(e);
       }
 
+      Cursor cursorBefore = Cursors.Arrow;
+
       protected override void OnMouseMove(MouseEventArgs e)
       {
          if(Core.IsDragging)
@@ -1439,6 +1440,9 @@ namespace GMap.NET.WindowsPresentation
             {
                isDragging = true;
                Debug.WriteLine("IsDragging = " + isDragging);
+
+               cursorBefore = Cursor;
+               Cursor = Cursors.SizeAll;
             }
 
             if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))

@@ -1535,10 +1535,6 @@ namespace GMap.NET.WindowsForms
 #endif
             {
                Core.mouseDown = ApplyRotationInversion(e.X, e.Y);
-
-#if !PocketPC
-               this.Cursor = System.Windows.Forms.Cursors.SizeAll;
-#endif
                Core.BeginDrag(Core.mouseDown);
 
 #if !PocketPC
@@ -1574,12 +1570,12 @@ namespace GMap.NET.WindowsForms
             {
                isDragging = false;
                Debug.WriteLine("IsDragging = " + isDragging);
+#if !PocketPC
+               this.Cursor = cursorBefore;
+#endif
             }
             Core.EndDrag();
 
-#if !PocketPC
-            this.Cursor = System.Windows.Forms.Cursors.Default;
-#endif
             if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
             {
                if(Core.LastLocationInBounds.HasValue)
@@ -1686,6 +1682,10 @@ namespace GMap.NET.WindowsForms
          return ret;
       }
 
+#if !PocketPC
+      Cursor cursorBefore = Cursors.Default;
+#endif
+
       protected override void OnMouseMove(MouseEventArgs e)
       {
          if(Core.IsDragging)
@@ -1694,6 +1694,11 @@ namespace GMap.NET.WindowsForms
             {
                isDragging = true;
                Debug.WriteLine("IsDragging = " + isDragging);
+
+#if !PocketPC
+               cursorBefore = this.Cursor;
+               this.Cursor = Cursors.SizeAll;
+#endif
             }
 
             if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
