@@ -10,7 +10,11 @@ namespace GMap.NET.WindowsForms
    /// GMap.NET marker
    /// </summary>
    [Serializable]
+#if !PocketPC
    public class GMapToolTip : ISerializable
+#else
+   public class GMapToolTip
+#endif
    {
       internal GMapMarker Marker;
 
@@ -92,6 +96,7 @@ namespace GMap.NET.WindowsForms
 #endif
       }
 
+#if !PocketPC
       #region ISerializable Members
 
       /// <summary>
@@ -101,12 +106,12 @@ namespace GMap.NET.WindowsForms
       /// <param name="context">The context.</param>
       protected GMapToolTip(SerializationInfo info, StreamingContext context)
       {
-         this.Fill = info.GetValue("Fill", new SolidBrush(Color.FromArgb(222, Color.AliceBlue)));
-         this.Font = info.GetValue("Font", new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold, GraphicsUnit.Pixel));
-         this.Format = info.GetValue("Format", new StringFormat());
-         this.Offset = info.GetStruct("Offset", Point.Empty);
-         this.Stroke = info.GetValue("Stroke", new Pen(Color.FromArgb(140, Color.MidnightBlue)));
-         this.TextPadding = info.GetStruct("TextPadding", new Size(10, 10));
+         this.Fill = Extensions.GetValue(info, "Fill", new SolidBrush(Color.FromArgb(222, Color.AliceBlue)));
+         this.Font = Extensions.GetValue(info, "Font", new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold, GraphicsUnit.Pixel));
+         this.Format = Extensions.GetValue(info, "Format", new StringFormat());
+         this.Offset = Extensions.GetStruct<Point>(info, "Offset", Point.Empty);
+         this.Stroke = Extensions.GetValue(info, "Stroke", new Pen(Color.FromArgb(140, Color.MidnightBlue)));
+         this.TextPadding = Extensions.GetStruct<Size>(info, "TextPadding", new Size(10, 10));
       }
 
       /// <summary>
@@ -128,5 +133,6 @@ namespace GMap.NET.WindowsForms
       }
 
       #endregion
+#endif
    }
 }

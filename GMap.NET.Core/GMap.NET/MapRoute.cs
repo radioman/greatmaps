@@ -9,7 +9,11 @@ namespace GMap.NET
    /// represents route of map
    /// </summary>
    [Serializable]
+#if !PocketPC
    public class MapRoute : ISerializable, IDeserializationCallback
+#else
+   public class MapRoute
+#endif
    {
       /// <summary>
       /// points of route
@@ -87,6 +91,7 @@ namespace GMap.NET
          }
       }
 
+#if !PocketPC
       #region ISerializable Members
 
       // Temp store for de-serialization.
@@ -115,8 +120,8 @@ namespace GMap.NET
       protected MapRoute(SerializationInfo info, StreamingContext context)
       {
          this.Name = info.GetString("Name");
-         this.Tag = info.GetValue<object>("Tag", null);
-         this.deserializedPoints = info.GetValue<PointLatLng[]>("Points");
+         this.Tag = Extensions.GetValue<object>(info, "Tag", null);
+         this.deserializedPoints = Extensions.GetValue<PointLatLng[]>(info, "Points");
          this.Points = new List<PointLatLng>();
       }
 
@@ -136,5 +141,6 @@ namespace GMap.NET
       }
 
       #endregion
+#endif
    }
 }

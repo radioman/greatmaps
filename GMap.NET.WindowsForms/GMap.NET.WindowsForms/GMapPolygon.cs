@@ -11,7 +11,11 @@ namespace GMap.NET.WindowsForms
    /// GMap.NET polygon
    /// </summary>
    [System.Serializable]
+#if !PocketPC
    public class GMapPolygon : MapRoute, ISerializable, IDeserializationCallback
+#else
+   public class GMapPolygon : MapRoute
+#endif
    {
       private bool visible = true;
 
@@ -100,6 +104,7 @@ namespace GMap.NET.WindowsForms
          Stroke.Width = 5;
       }
 
+#if !PocketPC
       #region ISerializable Members
 
       /// <summary>
@@ -129,9 +134,9 @@ namespace GMap.NET.WindowsForms
       protected GMapPolygon(SerializationInfo info, StreamingContext context)
          : base(info, context)
       {
-         this.Stroke = info.GetValue<Pen>("Stroke", new Pen(Color.FromArgb(155, Color.MidnightBlue)));
-         this.Fill = info.GetValue<Brush>("Fill", new SolidBrush(Color.FromArgb(155, Color.AliceBlue)));
-         this.deserializedLocalPoints = info.GetValue<GMap.NET.Point[]>("LocalPoints");
+         this.Stroke = Extensions.GetValue<Pen>(info, "Stroke", new Pen(Color.FromArgb(155, Color.MidnightBlue)));
+         this.Fill = Extensions.GetValue<Brush>(info, "Fill", new SolidBrush(Color.FromArgb(155, Color.AliceBlue)));
+         this.deserializedLocalPoints = Extensions.GetValue<GMap.NET.Point[]>(info, "LocalPoints");
       }
 
       #endregion
@@ -152,5 +157,6 @@ namespace GMap.NET.WindowsForms
       }
 
       #endregion
+#endif
    }
 }

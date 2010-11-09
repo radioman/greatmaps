@@ -13,7 +13,7 @@ namespace GMap.NET
       /// <param name="info">The SerializationInfo.</param>
       /// <param name="key">The key of the value we wish to retrieve.</param>
       /// <returns>The value if found, otherwise null.</returns>
-      public static T GetValue<T>(this SerializationInfo info, string key) where T : class
+      public static T GetValue<T>(SerializationInfo info, string key) where T : class
       {
          // Return the value from the SerializationInfo, casting it to type T.
          return info.GetValue(key, typeof(T)) as T;
@@ -27,9 +27,9 @@ namespace GMap.NET
       /// <param name="key">The key of the value we wish to retrieve.</param>
       /// <param name="defaultValue">The default value if the de-serialized value was null.</param>
       /// <returns>The value if found, otherwise the default value.</returns>
-      public static T GetValue<T>(this SerializationInfo info, string key, T defaultValue) where T : class
+      public static T GetValue<T>(SerializationInfo info, string key, T defaultValue) where T : class
       {
-         T deserializedValue = info.GetValue<T>(key);
+         T deserializedValue = GetValue<T>(info, key);
          if(deserializedValue != null)
          {
             return deserializedValue;
@@ -46,7 +46,7 @@ namespace GMap.NET
       /// <param name="key">The key of the value we wish to retrieve.</param>
       /// <param name="defaultValue">The default value if the de-serialized value was null.</param>
       /// <returns>The value if found, otherwise the default value.</returns>
-      public static T GetStruct<T>(this SerializationInfo info, string key, T defaultValue) where T : struct
+      public static T GetStruct<T>(SerializationInfo info, string key, T defaultValue) where T : struct
       {
          try
          {
@@ -57,18 +57,5 @@ namespace GMap.NET
             return defaultValue;
          }
       }
-   }
-}
-
-namespace System.Runtime.CompilerServices
-{
-   using System;
-
-   /// <summary>
-   /// Allows the use of Extension methods within .NET 2.0 Build.
-   /// </summary>
-   [AttributeUsage(AttributeTargets.Method, AllowMultiple=false, Inherited=false)]
-   public class ExtensionAttribute : Attribute
-   {
    }
 }

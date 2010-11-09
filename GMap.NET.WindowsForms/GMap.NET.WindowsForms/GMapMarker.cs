@@ -11,10 +11,14 @@ namespace GMap.NET.WindowsForms
    /// GMap.NET marker
    /// </summary>
    [Serializable]
+#if !PocketPC
    public class GMapMarker : ISerializable
+#else
+   public class GMapMarker
+#endif
    {
 #if PocketPC
-      static System.Drawing.Imaging.ImageAttributes attr = new System.Drawing.Imaging.ImageAttributes();
+      static readonly System.Drawing.Imaging.ImageAttributes attr = new System.Drawing.Imaging.ImageAttributes();
 
       static GMapMarker()
       {
@@ -240,6 +244,7 @@ namespace GMap.NET.WindowsForms
       }
 #endif
 
+#if !PocketPC
       #region ISerializable Members
 
       /// <summary>
@@ -271,12 +276,12 @@ namespace GMap.NET.WindowsForms
       /// <param name="context">The context.</param>
       protected GMapMarker(SerializationInfo info, StreamingContext context)
       {
-         this.Position = info.GetStruct<PointLatLng>("Position", PointLatLng.Empty);
-         this.Tag = info.GetValue<object>("Tag", null);
-         this.Offset = info.GetStruct<Point>("Offset", Point.Empty);
-         this.area = info.GetStruct<Rectangle>("Area", Rectangle.Empty);
-         this.ToolTip = info.GetValue<GMapToolTip>("ToolTip", null);
-         this.ToolTipMode = info.GetStruct<MarkerTooltipMode>("ToolTipMode", MarkerTooltipMode.OnMouseOver);
+         this.Position = Extensions.GetStruct<PointLatLng>(info, "Position", PointLatLng.Empty);
+         this.Tag = Extensions.GetValue<object>(info, "Tag", null);
+         this.Offset = Extensions.GetStruct<Point>(info, "Offset", Point.Empty);
+         this.area = Extensions.GetStruct<Rectangle>(info, "Area", Rectangle.Empty);
+         this.ToolTip = Extensions.GetValue<GMapToolTip>(info, "ToolTip", null);
+         this.ToolTipMode = Extensions.GetStruct<MarkerTooltipMode>(info, "ToolTipMode", MarkerTooltipMode.OnMouseOver);
          this.ToolTipText = info.GetString("ToolTipText");
          this.IsVisible = info.GetBoolean("Visible");
          this.DisableRegionCheck = info.GetBoolean("DisableregionCheck");
@@ -284,6 +289,7 @@ namespace GMap.NET.WindowsForms
       }
 
       #endregion
+#endif
    }
 
    public delegate void MarkerClick(GMapMarker item, MouseEventArgs e);

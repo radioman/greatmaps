@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{421813B1-A007-44B2-8C53-32751C45113E}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -71,6 +71,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -116,6 +117,12 @@
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\MapsLTProjection.cs">
       <Link>GMap.NET.Projections\MapsLTProjection.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\MapsLVProjection.cs">
+      <Link>GMap.NET.Projections\MapsLVProjection.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\MapyCZProjection.cs">
+      <Link>GMap.NET.Projections\MapyCZProjection.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\MercatorProjection.cs">
       <Link>GMap.NET.Projections\MercatorProjection.cs</Link>
