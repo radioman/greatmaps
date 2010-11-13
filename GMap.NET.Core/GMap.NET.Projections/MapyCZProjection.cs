@@ -167,11 +167,11 @@ namespace GMap.NET.Projections
 
       #endregion
 
-      public override Size TileSize
+      public override GSize TileSize
       {
          get
          {
-            return new Size(256, 256);
+            return new GSize(256, 256);
          }
       }
 
@@ -191,9 +191,9 @@ namespace GMap.NET.Projections
          }
       }
 
-      public override Point FromLatLngToPixel(double lat, double lng, int zoom)
+      public override GPoint FromLatLngToPixel(double lat, double lng, int zoom)
       {
-         Point ret = Point.Empty;
+         GPoint ret = GPoint.Empty;
 
          lat = Clip(lat, MinLatitude, MaxLatitude);
          lng = Clip(lng, MinLongitude, MaxLongitude);
@@ -209,7 +209,7 @@ namespace GMap.NET.Projections
 
       public override PointLatLng FromPixelToLatLng(int x, int y, int zoom)
       {
-         PointLatLng ret = PointLatLng.Empty;
+         PointLatLng ret = PointLatLng.Zero;
 
          var size = GetTileMatrixSizePixel(zoom);
 
@@ -223,27 +223,27 @@ namespace GMap.NET.Projections
          return ret;
       }
 
-      public override Size GetTileMatrixSizeXY(int zoom)
+      public override GSize GetTileMatrixSizeXY(int zoom)
       {
-         return new Size((int) Math.Pow(2, zoom), (int) Math.Pow(2, zoom));
+         return new GSize((int) Math.Pow(2, zoom), (int) Math.Pow(2, zoom));
       }
 
-      public override Size GetTileMatrixSizePixel(int zoom)
+      public override GSize GetTileMatrixSizePixel(int zoom)
       {
-         Size s = GetTileMatrixSizeXY(zoom);
-         return new Size(s.Width << 8, s.Height << 8);
+         GSize s = GetTileMatrixSizeXY(zoom);
+         return new GSize(s.Width << 8, s.Height << 8);
       }
 
-      public override Size GetTileMatrixMinXY(int zoom)
+      public override GSize GetTileMatrixMinXY(int zoom)
       {
          int wh = zoom > 3 ? (3 * (int) Math.Pow(2, zoom - 4)) : 1;
-         return new Size(wh, wh);
+         return new GSize(wh, wh);
       }
 
-      public override Size GetTileMatrixMaxXY(int zoom)
+      public override GSize GetTileMatrixMaxXY(int zoom)
       {
          int wh = (int) Math.Pow(2, zoom) - (int) Math.Pow(2, zoom - 2);
-         return new Size(wh, wh);
+         return new GSize(wh, wh);
       }
    }
 }

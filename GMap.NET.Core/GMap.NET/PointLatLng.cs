@@ -10,7 +10,7 @@ namespace GMap.NET
    [Serializable]
    public struct PointLatLng
    {
-      public static readonly PointLatLng Empty;
+      public static readonly PointLatLng Zero;
       private double lat;
       private double lng;
 
@@ -20,7 +20,7 @@ namespace GMap.NET
          this.lng = lng;
       }
 
-      public bool IsEmpty
+      public bool IsZero
       {
          get
          {
@@ -105,7 +105,7 @@ namespace GMap.NET
 
       public override int GetHashCode()
       {
-         return base.GetHashCode();
+         return (this.Lng.GetHashCode() ^ this.Lat.GetHashCode());
       }
 
       public override string ToString()
@@ -115,7 +115,7 @@ namespace GMap.NET
 
       static PointLatLng()
       {
-         Empty = new PointLatLng();
+         Zero = new PointLatLng();
       }
    }
 }

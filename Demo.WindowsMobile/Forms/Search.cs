@@ -31,7 +31,7 @@ namespace Demo.WindowsMobile
                   address.ToolTipText = textAddress.Text;
                   Main.objects.Markers.Add(address);
 
-                  Main.MainMap.CurrentPosition = address.Position;
+                  Main.MainMap.Position = address.Position;
                   Main.menuItemGotoMap_Click(null, null);
                }
                else

@@ -13,8 +13,8 @@ namespace GMap.NET.Projections
       static readonly double DEG_RAD = Math.PI / 180;
       static readonly double MathPiDiv4 = Math.PI / 4;
 
-      Size tileSize = new Size(256, 256);
-      public override Size TileSize
+      GSize tileSize = new GSize(256, 256);
+      public override GSize TileSize
       {
          get
          {
@@ -38,7 +38,7 @@ namespace GMap.NET.Projections
          }
       }
 
-      public override Point FromLatLngToPixel(double lat, double lng, int zoom)
+      public override GPoint FromLatLngToPixel(double lat, double lng, int zoom)
       {
          lat = Clip(lat, MinLatitude, MaxLatitude);
          lng = Clip(lng, MinLongitude, MaxLongitude);
@@ -55,7 +55,7 @@ namespace GMap.NET.Projections
          double DX =  ((20037508.342789 + a * rLon) * 53.5865938 /  z1);
          double DY = ((20037508.342789 - a * Math.Log(z)) * 53.5865938 / z1);
 
-         Point ret = Point.Empty;
+         GPoint ret = GPoint.Empty;
          ret.X = (int) DX;
          ret.Y = (int) DY;
 
@@ -64,7 +64,7 @@ namespace GMap.NET.Projections
 
       public override PointLatLng FromPixelToLatLng(int x, int y, int zoom)
       {
-         Size s = GetTileMatrixSizePixel(zoom);
+         GSize s = GetTileMatrixSizePixel(zoom);
 
          double mapSizeX = s.Width;
          double mapSizeY = s.Height;
@@ -81,22 +81,22 @@ namespace GMap.NET.Projections
          double g = Math.PI /2 - 2 *Math.Atan(1 / Math.Exp(mercY /a));
          double z = g + c1 * Math.Sin(2 * g) + c2 * Math.Sin(4 * g) + c3 * Math.Sin(6 * g) + c4 * Math.Sin(8 * g);
 
-         PointLatLng ret = PointLatLng.Empty;
+         PointLatLng ret = PointLatLng.Zero;
          ret.Lat = z * RAD_DEG;
          ret.Lng = mercX / a * RAD_DEG;
 
          return ret;
       }
 
-      public override Size GetTileMatrixMinXY(int zoom)
+      public override GSize GetTileMatrixMinXY(int zoom)
       {
-         return new Size(0, 0);
+         return new GSize(0, 0);
       }
 
-      public override Size GetTileMatrixMaxXY(int zoom)
+      public override GSize GetTileMatrixMaxXY(int zoom)
       {
          int xy = (1 << zoom);
-         return new Size(xy - 1, xy - 1);
+         return new GSize(xy - 1, xy - 1);
       }
    }
 }

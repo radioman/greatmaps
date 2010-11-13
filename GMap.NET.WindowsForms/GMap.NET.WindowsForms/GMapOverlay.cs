@@ -203,7 +203,7 @@ namespace GMap.NET.WindowsForms
                {
                   for(int i = 0; i < r.LocalPoints.Count; i++)
                   {
-                     GMap.NET.Point p2 = r.LocalPoints[i];
+                     GPoint p2 = r.LocalPoints[i];
 
                      if(i == 0)
                      {
@@ -259,7 +259,7 @@ namespace GMap.NET.WindowsForms
                {
                   for(int i = 0; i < r.LocalPoints.Count; i++)
                   {
-                     GMap.NET.Point p2 = r.LocalPoints[i];
+                     GPoint p2 = r.LocalPoints[i];
 
                      if(i == 0)
                      {

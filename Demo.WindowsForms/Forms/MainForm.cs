@@ -93,7 +93,6 @@ namespace Demo.WindowsForms
             comboBoxMapType.DataSource = Enum.GetValues(typeof(MapType));
             comboBoxMapType.SelectedItem = MainMap.MapType;
 
-
             // acccess mode
             comboBoxMode.DataSource = Enum.GetValues(typeof(AccessMode));
             comboBoxMode.SelectedItem = GMaps.Instance.Mode;
@@ -163,6 +162,7 @@ namespace Demo.WindowsForms
 
             // set current marker
             currentMarker = new GMapMarkerGoogleRed(MainMap.Position);
+            currentMarker.IsHitTestVisible = false;
             top.Markers.Add(currentMarker);
 
             // map center
@@ -1227,6 +1227,11 @@ namespace Demo.WindowsForms
             if(currentMarker.IsVisible)
             {
                currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
+
+               var px = MainMap.Projection.FromLatLngToPixel(currentMarker.Position.Lat, currentMarker.Position.Lng, (int) MainMap.Zoom);
+               var tile = MainMap.Projection.FromPixelToTileXY(px);
+
+               Debug.WriteLine("marker: " + currentMarker.LocalPosition + " | geo: " + currentMarker.Position + " | px: " + px + " | tile: " + tile);
             }
          }
       }
@@ -1241,11 +1246,6 @@ namespace Demo.WindowsForms
                if(currentMarker.IsVisible)
                {
                   currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
-
-                  var px = MainMap.Projection.FromLatLngToPixel(currentMarker.Position.Lat, currentMarker.Position.Lng, (int) MainMap.Zoom);
-                  var tile = MainMap.Projection.FromPixelToTileXY(px);
-
-                  Debug.WriteLine("CM loc: " + currentMarker.LocalPosition + " | geo: " + currentMarker.Position + " | px: " + px + " | tile: " + tile);
                }
             }
             else // move rect marker

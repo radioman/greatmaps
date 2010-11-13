@@ -1,7 +1,7 @@
 ﻿
 namespace GMap.NET
 {
-   public interface IGControl
+   public interface Interface
    {
       PointLatLng Position
       {
@@ -9,7 +9,7 @@ namespace GMap.NET
          set;
       }
 
-      Point CurrentPositionGPixel
+      GPoint CurrentPositionGPixel
       {
          get;
       }
@@ -63,7 +63,7 @@ namespace GMap.NET
       void ReloadMap();
 
       PointLatLng FromLocalToLatLng(int x, int y);
-      Point FromLatLngToLocal(PointLatLng point);
+      GPoint FromLatLngToLocal(PointLatLng point);
 
 #if !PocketPC
 #if SQLite

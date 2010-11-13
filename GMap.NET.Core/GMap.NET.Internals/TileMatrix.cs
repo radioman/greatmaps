@@ -11,14 +11,14 @@ namespace GMap.NET.Internals
    /// </summary>
    internal class TileMatrix
    {
-      readonly List<Dictionary<Point, Tile>> Levels = new List<Dictionary<Point, Tile>>(33);
+      readonly List<Dictionary<GPoint, Tile>> Levels = new List<Dictionary<GPoint, Tile>>(33);
       readonly FastReaderWriterLock Lock = new FastReaderWriterLock();
 
       public TileMatrix()
       {
          for(int i = 0; i < Levels.Capacity; i++)
          {
-            Levels.Add(new Dictionary<Point, Tile>(55));
+            Levels.Add(new Dictionary<GPoint, Tile>(55));
          }
       }
 
@@ -65,9 +65,9 @@ namespace GMap.NET.Internals
          }
       }
 
-      readonly List<KeyValuePair<Point, Tile>> tmp = new List<KeyValuePair<Point, Tile>>(44);
+      readonly List<KeyValuePair<GPoint, Tile>> tmp = new List<KeyValuePair<GPoint, Tile>>(44);
 
-      public void ClearLevelAndPointsNotIn(int zoom, List<Point> list)
+      public void ClearLevelAndPointsNotIn(int zoom, List<GPoint> list)
       {
          Lock.AcquireWriterLock();
          try
@@ -163,7 +163,7 @@ namespace GMap.NET.Internals
          Lock.ReleaseReaderLock();
       }
 
-      public Tile GetTileWithNoLock(int zoom, Point p)
+      public Tile GetTileWithNoLock(int zoom, GPoint p)
       {
          Tile ret = null;
 
@@ -175,7 +175,7 @@ namespace GMap.NET.Internals
          return ret;
       }
 
-      public Tile GetTileWithReadLock(int zoom, Point p)
+      public Tile GetTileWithReadLock(int zoom, GPoint p)
       {
          Tile ret = null;
 

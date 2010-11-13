@@ -11,5 +11,5 @@ namespace GMap.NET
    public delegate void MapZoomChanged();
    public delegate void MapTypeChanged(MapType type);
 
-   public delegate void EmptyTileError(int zoom, Point pos);
+   public delegate void EmptyTileError(int zoom, GPoint pos);
 }

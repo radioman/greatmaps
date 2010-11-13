@@ -86,7 +86,7 @@ namespace Demo.WindowsMobile
          MainMap.MaxZoom = 11;
          MainMap.MinZoom = 1;
          MainMap.Zoom = MainMap.MinZoom + 1;
-         MainMap.CurrentPosition = start;
+         MainMap.Position = start;
 
          MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
          MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
@@ -105,12 +105,12 @@ namespace Demo.WindowsMobile
          }
 
          // map center
-         center = new GMapMarkerCross(MainMap.CurrentPosition);
+         center = new GMapMarkerCross(MainMap.Position);
          top.Markers.Add(center);
 
 #if DEBUG
          // transparent marker test
-         GMapMarkerTransparentGoogleGreen goo = new GMapMarkerTransparentGoogleGreen(MainMap.CurrentPosition);
+         GMapMarkerTransparentGoogleGreen goo = new GMapMarkerTransparentGoogleGreen(MainMap.Position);
          goo.ToolTipMode = MarkerTooltipMode.Always;
          goo.ToolTipText = "Welcome to Lithuania! ;}";
          objects.Markers.Add(goo);
@@ -269,12 +269,12 @@ namespace Demo.WindowsMobile
 
       private void menuItem25_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.ArcGIS_Map;
+         MainMap.MapType = MapType.ArcGIS_World_Topo_Map;
       }
 
       private void menuItem26_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.ArcGIS_Satellite;
+         MainMap.MapType = MapType.ArcGIS_World_Physical_Map;
       }
 
       private void menuItem27_Click(object sender, EventArgs e)
@@ -860,7 +860,7 @@ namespace Demo.WindowsMobile
                      // center map
                      if(menuItemGPSenabled.Checked)
                      {
-                        MainMap.CurrentPosition = new PointLatLng(data.Latitude.Value, data.Longitude.Value);
+                        MainMap.Position = new PointLatLng(data.Latitude.Value, data.Longitude.Value);
                      }
                   }
                }

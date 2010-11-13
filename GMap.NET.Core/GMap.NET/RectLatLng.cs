@@ -55,7 +55,17 @@ namespace GMap.NET
          {
             PointLatLng ret = new PointLatLng(this.Lat, this.Lng);
             ret.Offset(HeightLat, WidthLng);
-            return ret;            
+            return ret;
+         }
+      }
+
+      public PointLatLng LocationMiddle
+      {
+         get
+         {
+            PointLatLng ret = new PointLatLng(this.Lat, this.Lng);
+            ret.Offset(HeightLat/2, WidthLng/2);
+            return ret;
          }
       }
 
@@ -192,7 +202,7 @@ namespace GMap.NET
       public bool Contains(PointLatLng pt)
       {
          return this.Contains(pt.Lat, pt.Lng);
-      }        
+      }
 
       public bool Contains(RectLatLng rect)
       {
@@ -201,7 +211,11 @@ namespace GMap.NET
 
       public override int GetHashCode()
       {
-         return (int) (((((uint) this.Lng) ^ ((((uint) this.Lat) << 13) | (((uint) this.Lat) >> 0x13))) ^ ((((uint) this.WidthLng) << 0x1a) | (((uint) this.WidthLng) >> 6))) ^ ((((uint) this.HeightLat) << 7) | (((uint) this.HeightLat) >> 0x19)));
+         if(this.IsEmpty)
+         {
+            return 0;
+         }
+         return (((this.Lng.GetHashCode() ^ this.Lat.GetHashCode()) ^ this.WidthLng.GetHashCode()) ^ this.HeightLat.GetHashCode());
       }
 
       // from here down need to test each function to be sure they work good
@@ -243,13 +257,13 @@ namespace GMap.NET
       {
          double lng = Math.Max(a.Lng, b.Lng);
          double num2 = Math.Min((double) (a.Lng + a.WidthLng), (double) (b.Lng + b.WidthLng));
-        
+
          double lat = Math.Max(a.Lat, b.Lat);
          double num4 = Math.Min((double) (a.Lat + a.HeightLat), (double) (b.Lat + b.HeightLat));
-        
+
          if((num2 >= lng) && (num4 >= lat))
          {
-            return new RectLatLng(lng, lat, num2 - lng, num4 - lat);
+            return new RectLatLng(lat, lng, num2 - lng, num4 - lat);
          }
          return Empty;
       }
@@ -268,7 +282,7 @@ namespace GMap.NET
          double lat = Math.Min(a.Lat, b.Lat);
          double num4 = Math.Max((double) (a.Lat + a.HeightLat), (double) (b.Lat + b.HeightLat));
          return new RectLatLng(lng, lat, num2 - lng, num4 - lat);
-      } 
+      }
       #endregion
 
       // .
@@ -295,5 +309,5 @@ namespace GMap.NET
       {
          Empty = new RectLatLng();
       }
-   }   
+   }
 }

@@ -168,7 +168,7 @@ namespace GMap.NET.CacheProviders
       #endregion
 
       #region PureImageCache Members
-      public bool PutImageToCache(MemoryStream tile, MapType type, Point pos, int zoom)
+      public bool PutImageToCache(MemoryStream tile, MapType type, GPoint pos, int zoom)
       {
          bool ret = true;
          {
@@ -197,7 +197,7 @@ namespace GMap.NET.CacheProviders
          return ret;
       }
 
-      public PureImage GetImageFromCache(MapType type, Point pos, int zoom)
+      public PureImage GetImageFromCache(MapType type, GPoint pos, int zoom)
       {
          PureImage ret = null;
          {

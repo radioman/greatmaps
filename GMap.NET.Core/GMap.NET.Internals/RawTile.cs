@@ -8,10 +8,10 @@
    internal struct RawTile
    {
       public MapType Type;
-      public Point Pos;
+      public GPoint Pos;
       public int Zoom;
 
-      public RawTile(MapType Type, Point Pos, int Zoom)
+      public RawTile(MapType Type, GPoint Pos, int Zoom)
       {
          this.Type = Type;
          this.Pos = Pos;

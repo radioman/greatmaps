@@ -28,7 +28,7 @@ namespace BigMapMaker
          {
             try
             {
-               List<GMap.NET.Point> tileArea = prj.GetAreaTileList(area, zoom, 0);
+               List<GPoint> tileArea = prj.GetAreaTileList(area, zoom, 0);
                string bigImage = zoom + "-" + type + "-vilnius.png";
 
                Console.WriteLine("Preparing: " + bigImage);
@@ -39,9 +39,9 @@ namespace BigMapMaker
                var types = GMaps.Instance.GetAllLayersOfType(type);
 
                // current area
-               GMap.NET.Point topLeftPx = prj.FromLatLngToPixel(area.LocationTopLeft, zoom);
-               GMap.NET.Point rightButtomPx = prj.FromLatLngToPixel(area.Bottom, area.Right, zoom);
-               GMap.NET.Point pxDelta = new GMap.NET.Point(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
+               GPoint topLeftPx = prj.FromLatLngToPixel(area.LocationTopLeft, zoom);
+               GPoint rightButtomPx = prj.FromLatLngToPixel(area.Bottom, area.Right, zoom);
+               GPoint pxDelta = new GPoint(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
 
                int padding = 22;
                {

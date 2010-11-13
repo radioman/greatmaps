@@ -6,26 +6,26 @@ namespace GMap.NET
    /// <summary>
    /// the point ;}
    /// </summary>
-   public struct Point
+   public struct GPoint
    {
-      public static readonly Point Empty = new Point();
+      public static readonly GPoint Empty = new GPoint();
 
       private int x;
       private int y;
 
-      public Point(int x, int y)
+      public GPoint(int x, int y)
       {
          this.x = x;
          this.y = y;
       }
 
-      public Point(Size sz)
+      public GPoint(GSize sz)
       {
          this.x = sz.Width;
          this.y = sz.Height;
       }
 
-      public Point(int dw)
+      public GPoint(int dw)
       {
          this.x = (short) LOWORD(dw);
          this.y = (short) HIWORD(dw);
@@ -63,46 +63,46 @@ namespace GMap.NET
          }
       }
 
-      public static explicit operator Size(Point p)
+      public static explicit operator GSize(GPoint p)
       {
-         return new Size(p.X, p.Y);
+         return new GSize(p.X, p.Y);
       }
 
-      public static Point operator+(Point pt, Size sz)
+      public static GPoint operator+(GPoint pt, GSize sz)
       {
          return Add(pt, sz);
       }
 
-      public static Point operator-(Point pt, Size sz)
+      public static GPoint operator-(GPoint pt, GSize sz)
       {
          return Subtract(pt, sz);
       }
 
-      public static bool operator==(Point left, Point right)
+      public static bool operator==(GPoint left, GPoint right)
       {
          return left.X == right.X && left.Y == right.Y;
       }
 
-      public static bool operator!=(Point left, Point right)
+      public static bool operator!=(GPoint left, GPoint right)
       {
          return !(left == right);
       }
 
-      public static Point Add(Point pt, Size sz)
+      public static GPoint Add(GPoint pt, GSize sz)
       {
-         return new Point(pt.X + sz.Width, pt.Y + sz.Height);
+         return new GPoint(pt.X + sz.Width, pt.Y + sz.Height);
       }
 
-      public static Point Subtract(Point pt, Size sz)
+      public static GPoint Subtract(GPoint pt, GSize sz)
       {
-         return new Point(pt.X - sz.Width, pt.Y - sz.Height);
+         return new GPoint(pt.X - sz.Width, pt.Y - sz.Height);
       }
 
       public override bool Equals(object obj)
       {
-         if(!(obj is Point))
+         if(!(obj is GPoint))
             return false;
-         Point comp = (Point) obj;
+         GPoint comp = (GPoint) obj;
          return comp.X == this.X && comp.Y == this.Y;
       }
 
@@ -117,7 +117,7 @@ namespace GMap.NET
          Y += dy;
       }
 
-      public void Offset(Point p)
+      public void Offset(GPoint p)
       {
          Offset(p.X, p.Y);
       }

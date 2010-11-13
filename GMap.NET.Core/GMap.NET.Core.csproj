@@ -106,15 +106,15 @@
     <Compile Include="GMap.NET\gpx.cs" />
     <Compile Include="GMap.NET\LanguageType.cs" />
     <Compile Include="GMap.NET\PureProjection.cs" />
-    <Compile Include="GMap.NET\IGControl.cs" />
+    <Compile Include="GMap.NET\Interface.cs" />
     <Compile Include="GMap.NET\AccessMode.cs" />
     <Compile Include="GMap.NET\Delegates.cs" />
     <Compile Include="GMap.NET\MapRoute.cs" />
     <Compile Include="GMap.NET\MapType.cs" />
     <Compile Include="GMap.NET.CacheProviders\MsSQLPureImageCache.cs" />
-    <Compile Include="GMap.NET\Point.cs" />
+    <Compile Include="GMap.NET\GPoint.cs" />
     <Compile Include="GMap.NET\PureImageCache.cs" />
-    <Compile Include="GMap.NET\Rectangle.cs" />
+    <Compile Include="GMap.NET\GRect.cs" />
     <Compile Include="GMap.NET\Singleton.cs" />
     <Compile Include="GMap.NET\MouseWheelZoomType.cs" />
     <Compile Include="GMap.NET\VehicleData.cs" />
@@ -133,7 +133,7 @@
     <Compile Include="GMap.NET\PointLatLng.cs" />
     <Compile Include="GMap.NET\RectLatLng.cs" />
     <Compile Include="GMap.NET\RenderMode.cs" />
-    <Compile Include="GMap.NET\Size.cs" />
+    <Compile Include="GMap.NET\GSize.cs" />
     <Compile Include="GMap.NET\SizeLatLng.cs" />
     <Compile Include="GMap.NET.Internals\Stuff.cs" />
     <Compile Include="Web References\Analytics\Reference.cs">

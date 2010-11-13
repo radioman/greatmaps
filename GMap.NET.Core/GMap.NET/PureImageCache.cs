@@ -16,7 +16,7 @@ namespace GMap.NET
       /// <param name="pos"></param>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      bool PutImageToCache(MemoryStream tile, MapType type, Point pos, int zoom);
+      bool PutImageToCache(MemoryStream tile, MapType type, GPoint pos, int zoom);
 
       /// <summary>
       /// gets image from db
@@ -25,6 +25,6 @@ namespace GMap.NET
       /// <param name="pos"></param>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      PureImage GetImageFromCache(MapType type, Point pos, int zoom);
+      PureImage GetImageFromCache(MapType type, GPoint pos, int zoom);
    }
 }

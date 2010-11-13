@@ -17,7 +17,7 @@ namespace Demo.WindowsForms
       MainForm Main;
 
       BackgroundWorker bg = new BackgroundWorker();
-      readonly List<GMap.NET.Point> tileArea = new List<GMap.NET.Point>();
+      readonly List<GPoint> tileArea = new List<GPoint>();
 
       public StaticImage(MainForm main)
       {
@@ -66,7 +66,7 @@ namespace Demo.WindowsForms
       {
          progressBar1.Value = e.ProgressPercentage;
 
-         GMap.NET.Point p = (GMap.NET.Point) e.UserState;
+         GPoint p = (GPoint) e.UserState;
          this.Text = "Static Map maker: Downloading[" + p + "]: " + tileArea.IndexOf(p) + " of " + tileArea.Count;
       }
 
@@ -81,10 +81,10 @@ namespace Demo.WindowsForms
             e.Result = bigImage;
 
             // current area
-            GMap.NET.Point topLeftPx = info.Projection.FromLatLngToPixel(info.Area.LocationTopLeft, info.Zoom);
-            GMap.NET.Point rightButtomPx = info.Projection.FromLatLngToPixel(info.Area.Bottom, info.Area.Right, info.Zoom);
-            GMap.NET.Point pxDelta = new GMap.NET.Point(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
-            GMap.NET.Size maxOfTiles = info.Projection.GetTileMatrixMaxXY(info.Zoom);
+            GPoint topLeftPx = info.Projection.FromLatLngToPixel(info.Area.LocationTopLeft, info.Zoom);
+            GPoint rightButtomPx = info.Projection.FromLatLngToPixel(info.Area.Bottom, info.Area.Right, info.Zoom);
+            GPoint pxDelta = new GPoint(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
+            GMap.NET.GSize maxOfTiles = info.Projection.GetTileMatrixMaxXY(info.Zoom);
 
             int padding = info.MakeWorldFile ? 0 : 22;
             {
@@ -119,7 +119,7 @@ namespace Demo.WindowsForms
                               // tile number inversion(BottomLeft -> TopLeft) for pergo maps
                               if(tp == MapType.PergoTurkeyMap)
                               {
-                                 tile = GMaps.Instance.GetImageFrom(tp, new GMap.NET.Point(p.X, maxOfTiles.Height - p.Y), info.Zoom, out ex) as WindowsFormsImage;
+                                 tile = GMaps.Instance.GetImageFrom(tp, new GPoint(p.X, maxOfTiles.Height - p.Y), info.Zoom, out ex) as WindowsFormsImage;
                               }
                               else // ok
                               {
@@ -150,12 +150,12 @@ namespace Demo.WindowsForms
                               for(int j = 0; j < r.Points.Count; j++)
                               {
                                  var pr = r.Points[j];
-                                 GMap.NET.Point px = info.Projection.FromLatLngToPixel(pr.Lat, pr.Lng, info.Zoom);
+                                 GPoint px = info.Projection.FromLatLngToPixel(pr.Lat, pr.Lng, info.Zoom);
 
                                  px.Offset(padding, padding);
                                  px.Offset(-topLeftPx.X, -topLeftPx.Y);
 
-                                 GMap.NET.Point p2 = px;
+                                 GPoint p2 = px;
 
                                  if(j == 0)
                                  {
@@ -185,12 +185,12 @@ namespace Demo.WindowsForms
                               for(int j = 0; j < r.Points.Count; j++)
                               {
                                  var pr = r.Points[j];
-                                 GMap.NET.Point px = info.Projection.FromLatLngToPixel(pr.Lat, pr.Lng, info.Zoom);
+                                 GPoint px = info.Projection.FromLatLngToPixel(pr.Lat, pr.Lng, info.Zoom);
 
                                  px.Offset(padding, padding);
                                  px.Offset(-topLeftPx.X, -topLeftPx.Y);
 
-                                 GMap.NET.Point p2 = px;
+                                 GPoint p2 = px;
 
                                  if(j == 0)
                                  {
@@ -220,7 +220,7 @@ namespace Demo.WindowsForms
                         foreach(GMapMarker r in Main.objects.Markers)
                         {
                            var pr = r.Position;
-                           GMap.NET.Point px = info.Projection.FromLatLngToPixel(pr.Lat, pr.Lng, info.Zoom);
+                           GPoint px = info.Projection.FromLatLngToPixel(pr.Lat, pr.Lng, info.Zoom);
 
                            px.Offset(padding, padding);
                            px.Offset(-topLeftPx.X, -topLeftPx.Y);

@@ -8,11 +8,11 @@ namespace GMap.NET.Internals
    /// </summary>
    internal class Tile
    {
-      Point pos;
+      GPoint pos;
       int zoom;
       public readonly List<PureImage> Overlays = new List<PureImage>(1);
 
-      public Tile(int zoom, Point pos)
+      public Tile(int zoom, GPoint pos)
       {
          this.Zoom = zoom;
          this.Pos = pos;
@@ -43,7 +43,7 @@ namespace GMap.NET.Internals
          }
       }
 
-      public Point Pos
+      public GPoint Pos
       {
          get
          {

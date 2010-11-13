@@ -148,14 +148,23 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET\GMaps.cs">
       <Link>GMap.NET\GMaps.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\GPoint.cs">
+      <Link>GMap.NET\GPoint.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET\GpsLog.cs">
       <Link>GMap.NET\GpsLog.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET\gpx.cs">
       <Link>GMap.NET\gpx.cs</Link>
     </Compile>
-    <Compile Include="..\GMap.NET.Core\GMap.NET\IGControl.cs">
-      <Link>GMap.NET\IGControl.cs</Link>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\GRect.cs">
+      <Link>GMap.NET\GRect.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\GSize.cs">
+      <Link>GMap.NET\GSize.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\Interface.cs">
+      <Link>GMap.NET\Interface.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET\LanguageType.cs">
       <Link>GMap.NET\LanguageType.cs</Link>
@@ -172,9 +181,6 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET\Placemark.cs">
       <Link>GMap.NET\Placemark.cs</Link>
     </Compile>
-    <Compile Include="..\GMap.NET.Core\GMap.NET\Point.cs">
-      <Link>GMap.NET\Point.cs</Link>
-    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET\PointLatLng.cs">
       <Link>GMap.NET\PointLatLng.cs</Link>
     </Compile>
@@ -184,9 +190,6 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET\PureProjection.cs">
       <Link>GMap.NET\PureProjection.cs</Link>
     </Compile>
-    <Compile Include="..\GMap.NET.Core\GMap.NET\Rectangle.cs">
-      <Link>GMap.NET\Rectangle.cs</Link>
-    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET\RectLatLng.cs">
       <Link>GMap.NET\RectLatLng.cs</Link>
     </Compile>
@@ -195,9 +198,6 @@
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET\Singleton.cs">
       <Link>GMap.NET\Singleton.cs</Link>
-    </Compile>
-    <Compile Include="..\GMap.NET.Core\GMap.NET\Size.cs">
-      <Link>GMap.NET\Size.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET\SizeLatLng.cs">
       <Link>GMap.NET\SizeLatLng.cs</Link>

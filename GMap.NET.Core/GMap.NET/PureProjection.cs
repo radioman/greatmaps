@@ -9,22 +9,22 @@ namespace GMap.NET
    /// </summary>
    public abstract class PureProjection
    {
-      readonly List<Dictionary<PointLatLng, Point>> FromLatLngToPixelCache = new List<Dictionary<PointLatLng, Point>>(33);
-      readonly List<Dictionary<Point, PointLatLng>> FromPixelToLatLngCache = new List<Dictionary<Point, PointLatLng>>(33);
+      readonly List<Dictionary<PointLatLng, GPoint>> FromLatLngToPixelCache = new List<Dictionary<PointLatLng, GPoint>>(33);
+      readonly List<Dictionary<GPoint, PointLatLng>> FromPixelToLatLngCache = new List<Dictionary<GPoint, PointLatLng>>(33);
 
       public PureProjection()
       {
          for(int i = 0; i < FromLatLngToPixelCache.Capacity; i++)
          {
-            FromLatLngToPixelCache.Add(new Dictionary<PointLatLng, Point>(4444));
-            FromPixelToLatLngCache.Add(new Dictionary<Point, PointLatLng>(4444));
+            FromLatLngToPixelCache.Add(new Dictionary<PointLatLng, GPoint>(4444));
+            FromPixelToLatLngCache.Add(new Dictionary<GPoint, PointLatLng>(4444));
          }
       }
 
       /// <summary>
       /// size of tile
       /// </summary>
-      public abstract Size TileSize
+      public abstract GSize TileSize
       {
          get;
       }
@@ -52,7 +52,7 @@ namespace GMap.NET
       /// <param name="lng"></param>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public abstract Point FromLatLngToPixel(double lat, double lng, int zoom);
+      public abstract GPoint FromLatLngToPixel(double lat, double lng, int zoom);
 
       /// <summary>
       /// gets lat/lng coordinates from pixel coordinates
@@ -69,9 +69,9 @@ namespace GMap.NET
       /// <param name="p"></param>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public Point FromLatLngToPixel(PointLatLng p, int zoom)
+      public GPoint FromLatLngToPixel(PointLatLng p, int zoom)
       {
-         Point ret = Point.Empty;
+         GPoint ret = GPoint.Empty;
          if(!FromLatLngToPixelCache[zoom].TryGetValue(p, out ret))
          {
             ret = FromLatLngToPixel(p.Lat, p.Lng, zoom);
@@ -86,9 +86,9 @@ namespace GMap.NET
       /// <param name="p"></param>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public PointLatLng FromPixelToLatLng(Point p, int zoom)
+      public PointLatLng FromPixelToLatLng(GPoint p, int zoom)
       {
-         PointLatLng ret = PointLatLng.Empty;
+         PointLatLng ret = PointLatLng.Zero;
          if(!FromPixelToLatLngCache[zoom].TryGetValue(p, out ret))
          {
             ret = FromPixelToLatLng(p.X, p.Y, zoom);
@@ -102,9 +102,9 @@ namespace GMap.NET
       /// </summary>
       /// <param name="p"></param>
       /// <returns></returns>
-      public virtual Point FromPixelToTileXY(Point p)
+      public virtual GPoint FromPixelToTileXY(GPoint p)
       {
-         return new Point((int) (p.X / TileSize.Width), (int) (p.Y / TileSize.Height));
+         return new GPoint((int) (p.X / TileSize.Width), (int) (p.Y / TileSize.Height));
       }
 
       /// <summary>
@@ -112,9 +112,9 @@ namespace GMap.NET
       /// </summary>
       /// <param name="p"></param>
       /// <returns></returns>
-      public virtual Point FromTileXYToPixel(Point p)
+      public virtual GPoint FromTileXYToPixel(GPoint p)
       {
-         return new Point((p.X * TileSize.Width), (p.Y * TileSize.Height));
+         return new GPoint((p.X * TileSize.Width), (p.Y * TileSize.Height));
       }
 
       /// <summary>
@@ -122,26 +122,26 @@ namespace GMap.NET
       /// </summary>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public abstract Size GetTileMatrixMinXY(int zoom);
+      public abstract GSize GetTileMatrixMinXY(int zoom);
 
       /// <summary>
       /// max. tile in tiles at custom zoom level
       /// </summary>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public abstract Size GetTileMatrixMaxXY(int zoom);
+      public abstract GSize GetTileMatrixMaxXY(int zoom);
 
       /// <summary>
       /// gets matrix size in tiles
       /// </summary>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public virtual Size GetTileMatrixSizeXY(int zoom)
+      public virtual GSize GetTileMatrixSizeXY(int zoom)
       {
-         Size sMin = GetTileMatrixMinXY(zoom);
-         Size sMax = GetTileMatrixMaxXY(zoom);
+         GSize sMin = GetTileMatrixMinXY(zoom);
+         GSize sMax = GetTileMatrixMaxXY(zoom);
 
-         return new Size(sMax.Width - sMin.Width + 1, sMax.Height - sMin.Height + 1);
+         return new GSize(sMax.Width - sMin.Width + 1, sMax.Height - sMin.Height + 1);
       }
 
       /// <summary>
@@ -151,7 +151,7 @@ namespace GMap.NET
       /// <returns></returns>
       public int GetTileMatrixItemCount(int zoom)
       {
-         Size s = GetTileMatrixSizeXY(zoom);
+         GSize s = GetTileMatrixSizeXY(zoom);
          return (s.Width * s.Height);
       }
 
@@ -160,27 +160,27 @@ namespace GMap.NET
       /// </summary>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public virtual Size GetTileMatrixSizePixel(int zoom)
+      public virtual GSize GetTileMatrixSizePixel(int zoom)
       {
-         Size s = GetTileMatrixSizeXY(zoom);
-         return new Size(s.Width * TileSize.Width, s.Height * TileSize.Height);
+         GSize s = GetTileMatrixSizeXY(zoom);
+         return new GSize(s.Width * TileSize.Width, s.Height * TileSize.Height);
       }
 
       /// <summary>
       /// gets all tiles in rect at specific zoom
       /// </summary>
-      public List<Point> GetAreaTileList(RectLatLng rect, int zoom, int padding)
+      public List<GPoint> GetAreaTileList(RectLatLng rect, int zoom, int padding)
       {
-         List<Point> ret = new List<Point>();
+         List<GPoint> ret = new List<GPoint>();
 
-         Point topLeft = FromPixelToTileXY(FromLatLngToPixel(rect.LocationTopLeft, zoom));
-         Point rightBottom = FromPixelToTileXY(FromLatLngToPixel(rect.LocationRightBottom, zoom));
+         GPoint topLeft = FromPixelToTileXY(FromLatLngToPixel(rect.LocationTopLeft, zoom));
+         GPoint rightBottom = FromPixelToTileXY(FromLatLngToPixel(rect.LocationRightBottom, zoom));
 
          for(int x = (topLeft.X - padding); x <= (rightBottom.X + padding); x++)
          {
             for(int y = (topLeft.Y - padding); y <= (rightBottom.Y + padding); y++)
             {
-               Point p = new Point(x, y);
+               GPoint p = new GPoint(x, y);
                if(!ret.Contains(p) && p.X >= 0 && p.Y >= 0)
                {
                   ret.Add(p);

@@ -28,8 +28,8 @@ namespace GMap.NET.Projections
       static readonly double COS_67P5 = 0.38268343236508977; // cosine of 67.5 degrees
       static readonly double AD_C = 1.0026000;               // Toms region 1 constant
 
-      Size tileSize = new Size(256, 256);
-      public override Size TileSize
+      GSize tileSize = new GSize(256, 256);
+      public override GSize TileSize
       {
          get
          {
@@ -53,9 +53,9 @@ namespace GMap.NET.Projections
          }
       }
 
-      public override Point FromLatLngToPixel(double lat, double lng, int zoom)
+      public override GPoint FromLatLngToPixel(double lat, double lng, int zoom)
       {
-         Point ret = Point.Empty;
+         GPoint ret = GPoint.Empty;
 
          lat = Clip(lat, MinLatitude, MaxLatitude);
          lng = Clip(lng, MinLongitude, MaxLongitude);
@@ -75,7 +75,7 @@ namespace GMap.NET.Projections
 
       public override PointLatLng FromPixelToLatLng(int x, int y, int zoom)
       {
-         PointLatLng ret = PointLatLng.Empty;
+         PointLatLng ret = PointLatLng.Zero;
 
          double res = GetTileMatrixResolution(zoom);
 
@@ -545,82 +545,82 @@ namespace GMap.NET.Projections
          return GetTileMatrixResolution(zoom);
       }
 
-      public override Size GetTileMatrixMinXY(int zoom)
+      public override GSize GetTileMatrixMinXY(int zoom)
       {
-         Size ret = Size.Empty;
+         GSize ret = GSize.Empty;
 
          switch(zoom)
          {
             #region -- sizes --
             case 0:
             {
-               ret = new Size(13, 8);
+               ret = new GSize(13, 8);
             }
             break;
 
             case 1:
             {
-               ret = new Size(26, 17);
+               ret = new GSize(26, 17);
             }
             break;
 
             case 2:
             {
-               ret = new Size(39, 26);
+               ret = new GSize(39, 26);
             }
             break;
 
             case 3:
             {
-               ret = new Size(79, 52);
+               ret = new GSize(79, 52);
             }
             break;
 
             case 4:
             {
-               ret = new Size(159, 105);
+               ret = new GSize(159, 105);
             }
             break;
 
             case 5:
             {
-               ret = new Size(399, 262);
+               ret = new GSize(399, 262);
             }
             break;
 
             case 6:
             {
-               ret = new Size(798, 525);
+               ret = new GSize(798, 525);
             }
             break;
 
             case 7:
             {
-               ret = new Size(1597, 1050);
+               ret = new GSize(1597, 1050);
             }
             break;
 
             case 8:
             {
-               ret = new Size(3195, 2101);
+               ret = new GSize(3195, 2101);
             }
             break;
 
             case 9:
             {
-               ret = new Size(7989, 5254);
+               ret = new GSize(7989, 5254);
             }
             break;
 
             case 10:
             {
-               ret = new Size(15978, 10509);
+               ret = new GSize(15978, 10509);
             }
             break;
 
             case 11:
             {
-               ret = new Size(39945, 26273);
+               ret = new GSize(39945, 26273);
             }
             break;
             #endregion
@@ -629,82 +629,82 @@ namespace GMap.NET.Projections
          return ret;
       }
 
-      public override Size GetTileMatrixMaxXY(int zoom)
+      public override GSize GetTileMatrixMaxXY(int zoom)
       {
-         Size ret = Size.Empty;
+         GSize ret = GSize.Empty;
 
          switch(zoom)
          {
             #region -- sizes --
             case 0:
             {
-               ret = new Size(14, 9);
+               ret = new GSize(14, 9);
             }
             break;
 
             case 1:
             {
-               ret = new Size(28, 18);
+               ret = new GSize(28, 18);
             }
             break;
 
             case 2:
             {
-               ret = new Size(43, 28);
+               ret = new GSize(43, 28);
             }
             break;
 
             case 3:
             {
-               ret = new Size(86, 56);
+               ret = new GSize(86, 56);
             }
             break;
 
             case 4:
             {
-               ret = new Size(173, 112);
+               ret = new GSize(173, 112);
             }
             break;
 
             case 5:
             {
-               ret = new Size(434, 282);
+               ret = new GSize(434, 282);
             }
             break;
 
             case 6:
             {
-               ret = new Size(868, 564);
+               ret = new GSize(868, 564);
             }
             break;
 
             case 7:
             {
-               ret = new Size(1737, 1129);
+               ret = new GSize(1737, 1129);
             }
             break;
 
             case 8:
             {
-               ret = new Size(3474, 2258);
+               ret = new GSize(3474, 2258);
             }
             break;
 
             case 9:
             {
-               ret = new Size(8686, 5647);
+               ret = new GSize(8686, 5647);
             }
             break;
 
             case 10:
             {
-               ret = new Size(17372, 11294);
+               ret = new GSize(17372, 11294);
             }
             break;
 
             case 11:
             {
-               ret = new Size(43430, 28236);
+               ret = new GSize(43430, 28236);
             }
             break;
             #endregion

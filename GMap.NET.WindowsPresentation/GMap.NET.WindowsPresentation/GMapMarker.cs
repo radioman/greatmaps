@@ -285,7 +285,7 @@ namespace GMap.NET.WindowsPresentation
       {
          if(Map != null)
          {
-            GMap.NET.Point p = Map.FromLatLngToLocal(Position);
+            GPoint p = Map.FromLatLngToLocal(Position);
 
             LocalPositionX = p.X + (int) Offset.X;
             LocalPositionY = p.Y + (int) Offset.Y;

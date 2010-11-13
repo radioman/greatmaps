@@ -15,7 +15,7 @@ namespace GMap.NET.WindowsPresentation
    public partial class TilePrefetcher : Window
    {
       BackgroundWorker worker = new BackgroundWorker();
-      List<GMap.NET.Point> list = new List<GMap.NET.Point>();
+      List<GPoint> list = new List<GPoint>();
       int zoom;
       MapType type;
       int sleep;
@@ -23,7 +23,7 @@ namespace GMap.NET.WindowsPresentation
       public bool ShowCompleteMessage = false;
       PureProjection prj;
       RectLatLng area;
-      GMap.NET.Size maxOfTiles;
+      GMap.NET.GSize maxOfTiles;
 
       public TilePrefetcher()
       {
@@ -86,7 +86,7 @@ namespace GMap.NET.WindowsPresentation
          this.Close();
       }
 
-      bool CacheTiles(ref MapType[] types, int zoom, GMap.NET.Point p)
+      bool CacheTiles(ref MapType[] types, int zoom, GPoint p)
       {
          foreach(MapType type in types)
          {
@@ -96,7 +96,7 @@ namespace GMap.NET.WindowsPresentation
             // tile number inversion(BottomLeft -> TopLeft) for pergo maps
             if(type == MapType.PergoTurkeyMap)
             {
-               img = GMaps.Instance.GetImageFrom(type, new GMap.NET.Point(p.X, maxOfTiles.Height - p.Y), zoom, out ex);
+               img = GMaps.Instance.GetImageFrom(type, new GPoint(p.X, maxOfTiles.Height - p.Y), zoom, out ex);
             }
             else // ok
             {
@@ -130,7 +130,7 @@ namespace GMap.NET.WindowsPresentation
          int countOk = 0;
          int retry = 0;
 
-         Stuff.Shuffle<GMap.NET.Point>(list);
+         Stuff.Shuffle<GPoint>(list);
          var types = GMaps.Instance.GetAllLayersOfType(type);
 
          for(int i = 0; i < all; i++)
@@ -138,7 +138,7 @@ namespace GMap.NET.WindowsPresentation
             if(worker.CancellationPending)
                break;
 
-            GMap.NET.Point p = list[i];
+            GPoint p = list[i];
             {
                if(CacheTiles(ref types, zoom, p))
                {

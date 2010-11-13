@@ -373,7 +373,7 @@ namespace GMap.NET.CacheProviders
 
       #region PureImageCache Members
 
-      bool PureImageCache.PutImageToCache(MemoryStream tile, MapType type, Point pos, int zoom)
+      bool PureImageCache.PutImageToCache(MemoryStream tile, MapType type, GPoint pos, int zoom)
       {
          bool ret = true;
          if(Created)
@@ -444,7 +444,7 @@ namespace GMap.NET.CacheProviders
       static readonly string sqlSelect = "SELECT Tile FROM TilesData WHERE id = (SELECT id FROM Tiles WHERE X={0} AND Y={1} AND Zoom={2} AND Type={3})";
       string ConnectionString;
 
-      PureImage PureImageCache.GetImageFromCache(MapType type, Point pos, int zoom)
+      PureImage PureImageCache.GetImageFromCache(MapType type, GPoint pos, int zoom)
       {
          PureImage ret = null;
          try

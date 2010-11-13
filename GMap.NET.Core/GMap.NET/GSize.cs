@@ -6,48 +6,48 @@ namespace GMap.NET
    /// <summary>
    /// the size
    /// </summary>
-   public struct Size
+   public struct GSize
    {
-      public static readonly Size Empty = new Size();
+      public static readonly GSize Empty = new GSize();
 
       private int width;
       private int height;
 
-      public Size(Point pt)
+      public GSize(GPoint pt)
       {
          width = pt.X;
          height = pt.Y;
       }
 
-      public Size(int width, int height)
+      public GSize(int width, int height)
       {
          this.width = width;
          this.height = height;
       }
 
-      public static Size operator+(Size sz1, Size sz2)
+      public static GSize operator+(GSize sz1, GSize sz2)
       {
          return Add(sz1, sz2);
       }
 
-      public static Size operator-(Size sz1, Size sz2)
+      public static GSize operator-(GSize sz1, GSize sz2)
       {
          return Subtract(sz1, sz2);
       }
 
-      public static bool operator==(Size sz1, Size sz2)
+      public static bool operator==(GSize sz1, GSize sz2)
       {
          return sz1.Width == sz2.Width && sz1.Height == sz2.Height;
       }
 
-      public static bool operator!=(Size sz1, Size sz2)
+      public static bool operator!=(GSize sz1, GSize sz2)
       {
          return !(sz1 == sz2);
       }
 
-      public static explicit operator Point(Size size)
+      public static explicit operator GPoint(GSize size)
       {
-         return new Point(size.Width, size.Height);
+         return new GPoint(size.Width, size.Height);
       }
 
       public bool IsEmpty
@@ -82,22 +82,22 @@ namespace GMap.NET
          }
       }
 
-      public static Size Add(Size sz1, Size sz2)
+      public static GSize Add(GSize sz1, GSize sz2)
       {
-         return new Size(sz1.Width + sz2.Width, sz1.Height + sz2.Height);
+         return new GSize(sz1.Width + sz2.Width, sz1.Height + sz2.Height);
       }
 
-      public static Size Subtract(Size sz1, Size sz2)
+      public static GSize Subtract(GSize sz1, GSize sz2)
       {
-         return new Size(sz1.Width - sz2.Width, sz1.Height - sz2.Height);
+         return new GSize(sz1.Width - sz2.Width, sz1.Height - sz2.Height);
       }
 
       public override bool Equals(object obj)
       {
-         if(!(obj is Size))
+         if(!(obj is GSize))
             return false;
 
-         Size comp = (Size) obj;
+         GSize comp = (GSize) obj;
          // Note value types can't have derived classes, so we don't need to
          //
          return (comp.width == this.width) &&
@@ -106,7 +106,11 @@ namespace GMap.NET
 
       public override int GetHashCode()
       {
-         return width ^ height;
+         if(this.IsEmpty)
+         {
+            return 0;
+         }
+         return (Width.GetHashCode() ^ Height.GetHashCode());
       }
 
       public override string ToString()

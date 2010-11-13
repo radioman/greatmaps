@@ -75,7 +75,7 @@ namespace GMap.NET.WindowsForms
       public Pen Stroke = new Pen(Color.MidnightBlue);
 #endif
 
-      public readonly List<GMap.NET.Point> LocalPoints = new List<GMap.NET.Point>();
+      public readonly List<GPoint> LocalPoints = new List<GPoint>();
 
       public GMapRoute(List<PointLatLng> points, string name)
          : base(points, name)

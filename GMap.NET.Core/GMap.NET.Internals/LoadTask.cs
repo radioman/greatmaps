@@ -6,10 +6,10 @@ namespace GMap.NET.Internals
    /// </summary>
    internal struct LoadTask
    {
-      public Point Pos;
+      public GPoint Pos;
       public int Zoom;
 
-      public LoadTask(Point pos, int zoom)
+      public LoadTask(GPoint pos, int zoom)
       {
          Pos = pos;
          Zoom = zoom;

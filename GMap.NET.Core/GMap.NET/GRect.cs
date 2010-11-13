@@ -7,16 +7,16 @@ namespace GMap.NET
    /// <summary>
    /// the rect
    /// </summary>
-   public struct Rectangle
+   public struct GRect
    {
-      public static readonly Rectangle Empty = new Rectangle();
+      public static readonly GRect Empty = new GRect();
 
       private int x;
       private int y;
       private int width;
       private int height;
 
-      public Rectangle(int x, int y, int width, int height)
+      public GRect(int x, int y, int width, int height)
       {
          this.x = x;
          this.y = y;
@@ -24,7 +24,7 @@ namespace GMap.NET
          this.height = height;
       }
 
-      public Rectangle(Point location, Size size)
+      public GRect(GPoint location, GSize size)
       {
          this.x = location.X;
          this.y = location.Y;
@@ -32,19 +32,19 @@ namespace GMap.NET
          this.height = size.Height;
       }
 
-      public static Rectangle FromLTRB(int left, int top, int right, int bottom)
+      public static GRect FromLTRB(int left, int top, int right, int bottom)
       {
-         return new Rectangle(left,
+         return new GRect(left,
                               top,
                               right - left,
                               bottom - top);
       }
 
-      public Point Location
+      public GPoint Location
       {
          get
          {
-            return new Point(X, Y);
+            return new GPoint(X, Y);
          }
          set
          {
@@ -53,11 +53,11 @@ namespace GMap.NET
          }
       }
 
-      public Size Size
+      public GSize Size
       {
          get
          {
-            return new Size(Width, Height);
+            return new GSize(Width, Height);
          }
          set
          {
@@ -156,10 +156,10 @@ namespace GMap.NET
 
       public override bool Equals(object obj)
       {
-         if(!(obj is Rectangle))
+         if(!(obj is GRect))
             return false;
 
-         Rectangle comp = (Rectangle) obj;
+         GRect comp = (GRect) obj;
 
          return (comp.X == this.X) &&
             (comp.Y == this.Y) &&
@@ -167,7 +167,7 @@ namespace GMap.NET
             (comp.Height == this.Height);
       }
 
-      public static bool operator==(Rectangle left, Rectangle right)
+      public static bool operator==(GRect left, GRect right)
       {
          return (left.X == right.X 
                     && left.Y == right.Y 
@@ -175,7 +175,7 @@ namespace GMap.NET
                     && left.Height == right.Height);
       }
 
-      public static bool operator!=(Rectangle left, Rectangle right)
+      public static bool operator!=(GRect left, GRect right)
       {
          return !(left == right);
       }
@@ -188,12 +188,12 @@ namespace GMap.NET
             y < this.Y + this.Height;
       }
 
-      public bool Contains(Point pt)
+      public bool Contains(GPoint pt)
       {
          return Contains(pt.X, pt.Y);
       }
 
-      public bool Contains(Rectangle rect)
+      public bool Contains(GRect rect)
       {
          return (this.X <= rect.X) &&
             ((rect.X + rect.Width) <= (this.X + this.Width)) && 
@@ -203,10 +203,11 @@ namespace GMap.NET
 
       public override int GetHashCode()
       {
-         return (int) ((UInt32) X ^ 
-                        (((UInt32) Y << 13) | ((UInt32) Y >> 19)) ^ 
-                        (((UInt32) Width << 26) | ((UInt32) Width >>  6)) ^
-                        (((UInt32) Height <<  7) | ((UInt32) Height >> 25)));
+         if(this.IsEmpty)
+         {
+            return 0;
+         }
+         return (((this.X ^ ((this.Y << 13) | (this.Y >> 0x13))) ^ ((this.Width << 0x1a) | (this.Width >> 6))) ^ ((this.Height << 7) | (this.Height >> 0x19)));
       }
 
       public void Inflate(int width, int height)
@@ -217,22 +218,22 @@ namespace GMap.NET
          this.Height += 2*height;
       }
 
-      public void Inflate(Size size)
+      public void Inflate(GSize size)
       {
 
          Inflate(size.Width, size.Height);
       }
 
-      public static Rectangle Inflate(Rectangle rect, int x, int y)
+      public static GRect Inflate(GRect rect, int x, int y)
       {
-         Rectangle r = rect;
+         GRect r = rect;
          r.Inflate(x, y);
          return r;
       }
 
-      public void Intersect(Rectangle rect)
+      public void Intersect(GRect rect)
       {
-         Rectangle result = Rectangle.Intersect(rect, this);
+         GRect result = GRect.Intersect(rect, this);
 
          this.X = result.X;
          this.Y = result.Y;
@@ -240,7 +241,7 @@ namespace GMap.NET
          this.Height = result.Height;
       }
 
-      public static Rectangle Intersect(Rectangle a, Rectangle b)
+      public static GRect Intersect(GRect a, GRect b)
       {
          int x1 = Math.Max(a.X, b.X);
          int x2 = Math.Min(a.X + a.Width, b.X + b.Width);
@@ -251,12 +252,12 @@ namespace GMap.NET
                 && y2 >= y1)
          {
 
-            return new Rectangle(x1, y1, x2 - x1, y2 - y1);
+            return new GRect(x1, y1, x2 - x1, y2 - y1);
          }
-         return Rectangle.Empty;
+         return GRect.Empty;
       }
 
-      public bool IntersectsWith(Rectangle rect)
+      public bool IntersectsWith(GRect rect)
       {
          return (rect.X < this.X + this.Width) &&
             (this.X < (rect.X + rect.Width)) && 
@@ -264,17 +265,17 @@ namespace GMap.NET
             (this.Y < rect.Y + rect.Height);
       }
 
-      public static Rectangle Union(Rectangle a, Rectangle b)
+      public static GRect Union(GRect a, GRect b)
       {
          int x1 = Math.Min(a.X, b.X);
          int x2 = Math.Max(a.X + a.Width, b.X + b.Width);
          int y1 = Math.Min(a.Y, b.Y);
          int y2 = Math.Max(a.Y + a.Height, b.Y + b.Height);
 
-         return new Rectangle(x1, y1, x2 - x1, y2 - y1);
+         return new GRect(x1, y1, x2 - x1, y2 - y1);
       }
 
-      public void Offset(Point pos)
+      public void Offset(GPoint pos)
       {
          Offset(pos.X, pos.Y);
       }

@@ -9,12 +9,12 @@ namespace GMap.NET.Internals
    internal struct CacheItemQueue
    {
       public MapType Type;
-      public Point Pos;
+      public GPoint Pos;
       public int Zoom;
       public MemoryStream Img;
       public CacheUsage CacheType;
 
-      public CacheItemQueue(MapType Type, Point Pos, int Zoom, MemoryStream Img, CacheUsage cacheType)
+      public CacheItemQueue(MapType Type, GPoint Pos, int Zoom, MemoryStream Img, CacheUsage cacheType)
       {
          this.Type = Type;
          this.Pos = Pos;

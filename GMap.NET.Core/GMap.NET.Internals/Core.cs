@@ -12,7 +12,25 @@ namespace GMap.NET.Internals
    using OpenNETCF.ComponentModel;
    using OpenNETCF.Threading;
    using Thread=OpenNETCF.Threading.Thread2;
-   using Monitor=OpenNETCF.Threading.Monitor2;
+   //using Monitor=OpenNETCF.Threading.Monitor2;
+#endif
+
+#if PocketPC
+   class Monitor
+   {
+      static readonly Monitor2 wait = new Monitor2();
+
+      public static bool Wait(Queue<LoadTask> tileLoadQueue, int WaitForTileLoadThreadTimeout, bool p)
+      {
+         wait.Wait();
+         return true;
+      }
+
+      internal static void PulseAll(Queue<LoadTask> tileLoadQueue)
+      {
+         wait.PulseAll();
+      }
+   }
 #endif
 
    /// <summary>
@@ -21,35 +39,35 @@ namespace GMap.NET.Internals
    internal class Core
    {
       public PointLatLng currentPosition;
-      public Point currentPositionPixel;
+      public GPoint currentPositionPixel;
 
-      public Point renderOffset;
-      public Point centerTileXYLocation;
-      public Point centerTileXYLocationLast;
-      public Point dragPoint;
+      public GPoint renderOffset;
+      public GPoint centerTileXYLocation;
+      public GPoint centerTileXYLocationLast;
+      public GPoint dragPoint;
 
-      public Point mouseDown;
-      public Point mouseCurrent;
-      public Point mouseLastZoom;
+      public GPoint mouseDown;
+      public GPoint mouseCurrent;
+      public GPoint mouseLastZoom;
 
       public MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePositionAndCenter;
 
       public PointLatLng? LastLocationInBounds = null;
       public bool VirtualSizeEnabled = false;
 
-      public Size sizeOfMapArea;
-      public Size minOfTiles;
-      public Size maxOfTiles;
+      public GSize sizeOfMapArea;
+      public GSize minOfTiles;
+      public GSize maxOfTiles;
 
-      public Rectangle tileRect;
-      public Rectangle tileRectBearing;
-      public Rectangle currentRegion;
+      public GRect tileRect;
+      public GRect tileRectBearing;
+      public GRect currentRegion;
       public float bearing = 0;
       public bool IsRotated = false;
 
       public readonly TileMatrix Matrix = new TileMatrix();
 
-      public readonly List<Point> tileDrawingList = new List<Point>();
+      public readonly List<GPoint> tileDrawingList = new List<GPoint>();
       public readonly FastReaderWriterLock tileDrawingListLock = new FastReaderWriterLock();
 
       //readonly ManualResetEvent waitForTileLoad = new ManualResetEvent(false);
@@ -152,7 +170,7 @@ namespace GMap.NET.Internals
       /// <summary>
       /// current marker position in pixel coordinates
       /// </summary>
-      public Point CurrentPositionGPixel
+      public GPoint CurrentPositionGPixel
       {
          get
          {
@@ -217,7 +235,7 @@ namespace GMap.NET.Internals
 
                GMaps.Instance.AdjustProjection(mapType, ref Projection, out maxZoom);
 
-               tileRect = new Rectangle(new Point(0, 0), Projection.TileSize);
+               tileRect = new GRect(new GPoint(0, 0), Projection.TileSize);
                tileRectBearing = tileRect;
                if(IsRotated)
                {
@@ -662,7 +680,7 @@ namespace GMap.NET.Internals
       public void UpdateCenterTileXYLocation()
       {
          PointLatLng center = FromLocalToLatLng(Width / 2, Height / 2);
-         GMap.NET.Point centerPixel = Projection.FromLatLngToPixel(center, Zoom);
+         GPoint centerPixel = Projection.FromLatLngToPixel(center, Zoom);
          centerTileXYLocation = Projection.FromPixelToTileXY(centerPixel);
       }
 
@@ -676,7 +694,11 @@ namespace GMap.NET.Internals
 
          if(IsRotated)
          {
+#if !PocketPC
             int diag = (int) Math.Round(Math.Sqrt(Width * Width + Height * Height) / Projection.TileSize.Width, MidpointRounding.AwayFromZero);
+#else
+            int diag = (int) Math.Round(Math.Sqrt(Width * Width + Height * Height) / Projection.TileSize.Width);
+#endif
             sizeOfMapArea.Width = 1 + (diag / 2);
             sizeOfMapArea.Height = 1 + (diag / 2);
          }
@@ -741,7 +763,7 @@ namespace GMap.NET.Internals
       /// <returns></returns>
       public PointLatLng FromLocalToLatLng(int x, int y)
       {
-         return Projection.FromPixelToLatLng(new Point(x - renderOffset.X, y - renderOffset.Y), Zoom);
+         return Projection.FromPixelToLatLng(new GPoint(x - renderOffset.X, y - renderOffset.Y), Zoom);
       }
 
       /// <summary>
@@ -749,9 +771,9 @@ namespace GMap.NET.Internals
       /// </summary>
       /// <param name="latlng"></param>
       /// <returns></returns>
-      public Point FromLatLngToLocal(PointLatLng latlng)
+      public GPoint FromLatLngToLocal(PointLatLng latlng)
       {
-         Point pLocal = Projection.FromLatLngToPixel(latlng, Zoom);
+         GPoint pLocal = Projection.FromLatLngToPixel(latlng, Zoom);
          pLocal.Offset(renderOffset);
          return pLocal;
       }
@@ -767,8 +789,8 @@ namespace GMap.NET.Internals
 
          for(int i = zoom; i <= maxZoom; i++)
          {
-            Point p1 = Projection.FromLatLngToPixel(rect.LocationTopLeft, i);
-            Point p2 = Projection.FromLatLngToPixel(rect.LocationRightBottom, i);
+            GPoint p1 = Projection.FromLatLngToPixel(rect.LocationTopLeft, i);
+            GPoint p2 = Projection.FromLatLngToPixel(rect.LocationRightBottom, i);
 
             if(((p2.X - p1.X) <= Width + 10) && (p2.Y - p1.Y) <= Height + 10)
             {
@@ -787,7 +809,7 @@ namespace GMap.NET.Internals
       /// initiates map dragging
       /// </summary>
       /// <param name="pt"></param>
-      public void BeginDrag(Point pt)
+      public void BeginDrag(GPoint pt)
       {
          dragPoint.X = pt.X - renderOffset.X;
          dragPoint.Y = pt.Y - renderOffset.Y;
@@ -847,12 +869,12 @@ namespace GMap.NET.Internals
       public void GoToCurrentPosition()
       {
          // reset stuff
-         renderOffset = Point.Empty;
-         centerTileXYLocationLast = Point.Empty;
-         dragPoint = Point.Empty;
+         renderOffset = GPoint.Empty;
+         centerTileXYLocationLast = GPoint.Empty;
+         dragPoint = GPoint.Empty;
 
          // goto location
-         this.Drag(new Point(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2)));
+         this.Drag(new GPoint(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2)));
       }
 
       public bool MouseWheelZooming = false;
@@ -863,16 +885,16 @@ namespace GMap.NET.Internals
       internal void GoToCurrentPositionOnZoom()
       {
          // reset stuff
-         renderOffset = Point.Empty;
-         centerTileXYLocationLast = Point.Empty;
-         dragPoint = Point.Empty;
+         renderOffset = GPoint.Empty;
+         centerTileXYLocationLast = GPoint.Empty;
+         dragPoint = GPoint.Empty;
 
          // goto location and centering
          if(MouseWheelZooming)
          {
             if(MouseWheelZoomType != MouseWheelZoomType.MousePositionWithoutCenter)
             {
-               Point pt = new Point(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2));
+               GPoint pt = new GPoint(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2));
                renderOffset.X = pt.X - dragPoint.X;
                renderOffset.Y = pt.Y - dragPoint.Y;
             }
@@ -885,9 +907,9 @@ namespace GMap.NET.Internals
          }
          else // use current map center
          {
-            mouseLastZoom = Point.Empty;
+            mouseLastZoom = GPoint.Empty;
 
-            Point pt = new Point(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2));
+            GPoint pt = new GPoint(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2));
             renderOffset.X = pt.X - dragPoint.X;
             renderOffset.Y = pt.Y - dragPoint.Y;
          }
@@ -899,7 +921,7 @@ namespace GMap.NET.Internals
       /// darg map by offset in pixels
       /// </summary>
       /// <param name="offset"></param>
-      public void DragOffset(Point offset)
+      public void DragOffset(GPoint offset)
       {
          renderOffset.Offset(offset);
 
@@ -926,7 +948,7 @@ namespace GMap.NET.Internals
       /// drag map
       /// </summary>
       /// <param name="pt"></param>
-      public void Drag(Point pt)
+      public void Drag(GPoint pt)
       {
          renderOffset.X = pt.X - dragPoint.X;
          renderOffset.Y = pt.Y - dragPoint.Y;
@@ -973,10 +995,6 @@ namespace GMap.NET.Internals
       long loadWaitCount = 0;
       readonly object LastInvalidationLock = new object();
       readonly object LastTileLoadStartEndLock = new object();
-
-#if PocketPC
-      readonly Monitor wait = new Monitor();
-#endif
 
       void ProcessLoadTask()
       {
@@ -1060,15 +1078,12 @@ namespace GMap.NET.Internals
                         OnTileLoadComplete(lastTileLoadTimeMs);
                      }
                   }
-#if !PocketPC
+
                   if(false == Monitor.Wait(tileLoadQueue, WaitForTileLoadThreadTimeout, false))
                   {
                      stop = true;
                      break;
                   }
-#else
-                  wait.Wait();
-#endif
                }
 
                if(!stop || tileLoadQueue.Count > 0)
@@ -1102,7 +1117,7 @@ namespace GMap.NET.Internals
                            // tile number inversion(BottomLeft -> TopLeft) for pergo maps
                            if(tl == MapType.PergoTurkeyMap)
                            {
-                              img = GMaps.Instance.GetImageFrom(tl, new Point(task.Value.Pos.X, maxOfTiles.Height - task.Value.Pos.Y), task.Value.Zoom, out ex);
+                              img = GMaps.Instance.GetImageFrom(tl, new GPoint(task.Value.Pos.X, maxOfTiles.Height - task.Value.Pos.Y), task.Value.Zoom, out ex);
                            }
                            else // ok
                            {
@@ -1231,7 +1246,7 @@ namespace GMap.NET.Internals
                {
                   for(int j = -sizeOfMapArea.Height; j <= sizeOfMapArea.Height; j++)
                   {
-                     Point p = centerTileXYLocation;
+                     GPoint p = centerTileXYLocation;
                      p.X += i;
                      p.Y += j;
 
@@ -1261,11 +1276,11 @@ namespace GMap.NET.Internals
 
                if(GMaps.Instance.ShuffleTilesOnLoad)
                {
-                  Stuff.Shuffle<Point>(tileDrawingList);
+                  Stuff.Shuffle<GPoint>(tileDrawingList);
                }
                #endregion
 
-               foreach(Point p in tileDrawingList)
+               foreach(GPoint p in tileDrawingList)
                {
                   LoadTask task = new LoadTask(p, Zoom);
                   {
@@ -1310,11 +1325,7 @@ namespace GMap.NET.Internals
 
             loadWaitCount = 0;
 
-#if !PocketPC
             Monitor.PulseAll(tileLoadQueue);
-#else
-            wait.PulseAll();
-#endif
          }
 
          if(OnTileLoadStart != null)

@@ -23,7 +23,7 @@ namespace GMap.NET.WindowsPresentation
    /// <summary>
    /// GMap.NET control for Windows Presentation
    /// </summary>
-   public partial class GMapControl : ItemsControl, IGControl
+   public partial class GMapControl : ItemsControl, Interface
    {
       #region DependencyProperties and related stuff
 
@@ -155,7 +155,7 @@ namespace GMap.NET.WindowsPresentation
       #endregion
 
       readonly Core Core = new Core();
-      GMap.NET.Rectangle region;
+      GRect region;
       delegate void MethodInvoker();
       PointLatLng selectionStart;
       PointLatLng selectionEnd;
@@ -538,7 +538,7 @@ namespace GMap.NET.WindowsPresentation
          System.Windows.Size constraint = e.NewSize;
 
          // 50px outside control
-         region = new GMap.NET.Rectangle(-50, -50, (int) constraint.Width + 100, (int) constraint.Height + 100);
+         region = new GRect(-50, -50, (int) constraint.Width + 100, (int) constraint.Height + 100);
 
          Core.OnMapSizeChanged((int) constraint.Width, (int) constraint.Height);
 
@@ -1007,7 +1007,7 @@ namespace GMap.NET.WindowsPresentation
       {
          if(IsLoaded)
          {
-            Core.DragOffset(new GMap.NET.Point(x, y));
+            Core.DragOffset(new GPoint(x, y));
             UpdateMarkersOffset();
          }
       }
@@ -1163,8 +1163,8 @@ namespace GMap.NET.WindowsPresentation
          // selection
          if(!SelectedArea.IsEmpty)
          {
-            GMap.NET.Point p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
-            GMap.NET.Point p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
+            GPoint p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
+            GPoint p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
 
             p1.Offset((int) MapTranslateTransform.X, (int) MapTranslateTransform.Y);
             p2.Offset((int) MapTranslateTransform.X, (int) MapTranslateTransform.Y);
@@ -1378,7 +1378,7 @@ namespace GMap.NET.WindowsPresentation
                System.Windows.Point p = e.GetPosition(this);
                isSelected = true;
                SelectedArea = RectLatLng.Empty;
-               selectionEnd = PointLatLng.Empty;
+               selectionEnd = PointLatLng.Zero;
                selectionStart = FromLocalToLatLng((int) p.X, (int) p.Y);
             }
          }
@@ -1414,7 +1414,7 @@ namespace GMap.NET.WindowsPresentation
          }
          else
          {
-            if(!selectionEnd.IsEmpty && !selectionStart.IsEmpty)
+            if(!selectionEnd.IsZero && !selectionStart.IsZero)
             {
                if(!SelectedArea.IsEmpty && Keyboard.Modifiers == ModifierKeys.Shift)
                {
@@ -1479,7 +1479,7 @@ namespace GMap.NET.WindowsPresentation
          }
          else
          {
-            if(isSelected && !selectionStart.IsEmpty && (Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Alt))
+            if(isSelected && !selectionStart.IsZero && (Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Alt))
             {
                System.Windows.Point p = e.GetPosition(this);
                selectionEnd = FromLocalToLatLng((int) p.X, (int) p.Y);
@@ -1655,9 +1655,9 @@ namespace GMap.NET.WindowsPresentation
          return Core.FromLocalToLatLng(x, y);
       }
 
-      public GMap.NET.Point FromLatLngToLocal(PointLatLng point)
+      public GPoint FromLatLngToLocal(PointLatLng point)
       {
-         GMap.NET.Point ret = Core.FromLatLngToLocal(point);
+         GPoint ret = Core.FromLatLngToLocal(point);
 
          if(MapRenderTransform != null)
          {
@@ -1788,7 +1788,7 @@ namespace GMap.NET.WindowsPresentation
       }
 
       [Browsable(false)]
-      public GMap.NET.Point CurrentPositionGPixel
+      public GPoint CurrentPositionGPixel
       {
          get
          {

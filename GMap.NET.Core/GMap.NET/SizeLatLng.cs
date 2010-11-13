@@ -56,7 +56,6 @@ namespace GMap.NET
          return new PointLatLng(size.HeightLat, size.WidthLng);
       }
 
-
       public bool IsEmpty
       {
          get
@@ -111,7 +110,11 @@ namespace GMap.NET
 
       public override int GetHashCode()
       {
-         return base.GetHashCode();
+         if(this.IsEmpty)
+         {
+            return 0;
+         }
+         return (this.WidthLng.GetHashCode() ^ this.HeightLat.GetHashCode());
       }
 
       public PointLatLng ToPointLatLng()

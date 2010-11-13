@@ -22,7 +22,7 @@ namespace GMap.NET.WindowsForms
    /// <summary>
    /// GMap.NET control for Windows Forms
    /// </summary>   
-   public partial class GMapControl : UserControl, IGControl
+   public partial class GMapControl : UserControl, Interface
    {
       /// <summary>
       /// occurs when clicked on marker
@@ -338,7 +338,7 @@ namespace GMap.NET.WindowsForms
             Core.SystemType = "WindowsForms";
 
             RenderMode = RenderMode.GDI_PLUS;
-            Core.currentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width + 100, Size.Height + 100);
+            Core.currentRegion = new GRect(-50, -50, Size.Width + 100, Size.Height + 100);
 
             CenterFormat.Alignment = StringAlignment.Center;
             CenterFormat.LineAlignment = StringAlignment.Center;
@@ -347,7 +347,10 @@ namespace GMap.NET.WindowsForms
 
 #if !PocketPC
             BottomFormat.LineAlignment = StringAlignment.Far;
+#else
+            throw new Exception("this version isn't working, use http://greatmaps.codeplex.com/SourceControl/changeset/changes/22b93afd000c");
 #endif
+
             if(GMaps.Instance.IsRunningOnMono)
             {
                // no imports to move pointer
@@ -492,7 +495,7 @@ namespace GMap.NET.WindowsForms
                         while(ParentTile == null && (Core.Zoom - ZoomOffset) >= 1 && ZoomOffset <= LevelsKeepInMemmory)
                         {
                            Ix = (int) Math.Pow(2, ++ZoomOffset);
-                           ParentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - ZoomOffset, new GMap.NET.Point((int) (tilePoint.X / Ix), (int) (tilePoint.Y / Ix)));
+                           ParentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - ZoomOffset, new GPoint((int) (tilePoint.X / Ix), (int) (tilePoint.Y / Ix)));
                         }
 
                         if(ParentTile != null)
@@ -578,14 +581,9 @@ namespace GMap.NET.WindowsForms
       /// <param name="marker"></param>
       public void UpdateMarkerLocalPosition(GMapMarker marker)
       {
-         GMap.NET.Point p = FromLatLngToLocal(marker.Position);
+         GPoint p = FromLatLngToLocal(marker.Position);
          {
             var f = new System.Drawing.Point(p.X + marker.Offset.X, p.Y + marker.Offset.Y);
-            if(VirtualSizeEnabled)
-            {
-               f.X += (Width - Core.vWidth) / 2;
-               f.Y += (Height - Core.vHeight) / 2;
-            }
             marker.LocalPosition = f;
          }
       }
@@ -600,23 +598,19 @@ namespace GMap.NET.WindowsForms
 
          foreach(GMap.NET.PointLatLng pg in route.Points)
          {
-            GMap.NET.Point p = Projection.FromLatLngToPixel(pg, Core.Zoom);
+            GPoint p = Projection.FromLatLngToPixel(pg, Core.Zoom);
             p.Offset(Core.renderOffset);
 
             if(IsRotated)
             {
+#if !PocketPC
                System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(p.X, p.Y) };
                rotationMatrix.TransformPoints(tt);
                var f = tt[0];
 
-               if(VirtualSizeEnabled)
-               {
-                  f.X += (Width - Core.vWidth) / 2;
-                  f.Y += (Height - Core.vHeight) / 2;
-               }
-
                p.X = f.X;
                p.Y = f.Y;
+#endif
             }
 
             route.LocalPoints.Add(p);
@@ -633,23 +627,19 @@ namespace GMap.NET.WindowsForms
 
          foreach(GMap.NET.PointLatLng pg in polygon.Points)
          {
-            GMap.NET.Point p = Projection.FromLatLngToPixel(pg, Core.Zoom);
+            GPoint p = Projection.FromLatLngToPixel(pg, Core.Zoom);
             p.Offset(Core.renderOffset);
 
             if(IsRotated)
             {
+#if !PocketPC
                System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(p.X, p.Y) };
                rotationMatrix.TransformPoints(tt);
                var f = tt[0];
 
-               if(VirtualSizeEnabled)
-               {
-                  f.X += (Width - Core.vWidth) / 2;
-                  f.Y += (Height - Core.vHeight) / 2;
-               }
-
                p.X = f.X;
                p.Y = f.Y;
+#endif
             }
 
             polygon.LocalPoints.Add(p);
@@ -959,7 +949,7 @@ namespace GMap.NET.WindowsForms
          {
             // need to fix in rotated mode usinf rotationMatrix
             // ...
-            Core.DragOffset(new GMap.NET.Point(x, y));
+            Core.DragOffset(new GPoint(x, y));
          }
       }
 
@@ -1117,14 +1107,9 @@ namespace GMap.NET.WindowsForms
             else
 #endif
             {
-               if(VirtualSizeEnabled)
-               {
-                  e.Graphics.TranslateTransform((Width - Core.vWidth) / 2, (Height - Core.vHeight) / 2);
-               }
-
-               // test rotation
                if(IsRotated)
                {
+#if !PocketPC
                   e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
                   e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -1137,18 +1122,13 @@ namespace GMap.NET.WindowsForms
                   e.Graphics.ResetTransform();
 
                   OnPaintEtc(e.Graphics);
+#endif
                }
                else
                {
                   DrawMapGDIplus(e.Graphics);
                   OnPaintEtc(e.Graphics);
                }
-            }
-
-            if(VirtualSizeEnabled)
-            {
-               e.Graphics.ResetTransform();
-               e.Graphics.DrawRectangle(SelectionPen, (Width - Core.vWidth) / 2, (Height - Core.vHeight) / 2, Core.vWidth, Core.vHeight);
             }
          }
 
@@ -1165,6 +1145,7 @@ namespace GMap.NET.WindowsForms
       /// </summary>
       void UpdateRotationMatrix()
       {
+#if !PocketPC
          PointF center = new PointF(Core.Width / 2, Core.Height / 2);
 
          rotationMatrix.Reset();
@@ -1173,6 +1154,7 @@ namespace GMap.NET.WindowsForms
          rotationMatrixInvert.Reset();
          rotationMatrixInvert.RotateAt(-Bearing, center);
          rotationMatrixInvert.Invert();
+#endif
       }
 
       /// <summary>
@@ -1261,8 +1243,8 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
          if(!SelectedArea.IsEmpty)
          {
-            GMap.NET.Point p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
-            GMap.NET.Point p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
+            GPoint p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
+            GPoint p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
 
             int x1 = p1.X;
             int y1 = p1.Y;
@@ -1461,12 +1443,12 @@ namespace GMap.NET.WindowsForms
             if(!VirtualSizeEnabled)
             {
                Core.OnMapSizeChanged(Width, Height);
-               Core.currentRegion = new GMap.NET.Rectangle(-50, -50, Core.Width + 50, Core.Height + 50);
+               Core.currentRegion = new GRect(-50, -50, Core.Width + 50, Core.Height + 50);
             }
             else
             {
                Core.OnMapSizeChanged(Core.vWidth, Core.vHeight);
-               Core.currentRegion = new GMap.NET.Rectangle(-50, -50, Core.Width + 50, Core.Height + 50);
+               Core.currentRegion = new GRect(-50, -50, Core.Width + 50, Core.Height + 50);
             }
 
             if(Visible && IsHandleCreated)
@@ -1509,7 +1491,7 @@ namespace GMap.NET.WindowsForms
          Core.OnMapSizeChanged(Width, Height);
 
          // 50px outside control
-         Core.CurrentRegion = new GMap.NET.Rectangle(-50, -50, Size.Width+100, Size.Height+100);
+         Core.currentRegion = new GRect(-50, -50, Size.Width+100, Size.Height+100);
 
          if(Core.IsStarted)
          {
@@ -1547,7 +1529,7 @@ namespace GMap.NET.WindowsForms
             {
                isSelected = true;
                SelectedArea = RectLatLng.Empty;
-               selectionEnd = PointLatLng.Empty;
+               selectionEnd = PointLatLng.Zero;
                selectionStart = FromLocalToLatLng(e.X, e.Y);
             }
          }
@@ -1587,7 +1569,7 @@ namespace GMap.NET.WindowsForms
          else
          {
 #if !PocketPC
-            if(!selectionEnd.IsEmpty && !selectionStart.IsEmpty)
+            if(!selectionEnd.IsZero && !selectionStart.IsZero)
             {
                if(!SelectedArea.IsEmpty && Form.ModifierKeys == Keys.Shift)
                {
@@ -1633,24 +1615,20 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// apply transformation if in rotation mode
       /// </summary>
-      GMap.NET.Point ApplyRotationInversion(int x, int y)
+      GPoint ApplyRotationInversion(int x, int y)
       {
-         GMap.NET.Point ret = new GMap.NET.Point(x, y);
+         GPoint ret = new GPoint(x, y);
 
          if(IsRotated)
          {
+#if !PocketPC
             System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(x, y) };
             rotationMatrixInvert.TransformPoints(tt);
             var f = tt[0];
 
-            if(VirtualSizeEnabled)
-            {
-               f.X += (Width - Core.vWidth) / 2;
-               f.Y += (Height - Core.vHeight) / 2;
-            }
-
             ret.X = f.X;
             ret.Y = f.Y;
+#endif
          }
 
          return ret;
@@ -1659,24 +1637,20 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// apply transformation if in rotation mode
       /// </summary>
-      GMap.NET.Point ApplyRotation(int x, int y)
+      GPoint ApplyRotation(int x, int y)
       {
-         GMap.NET.Point ret = new GMap.NET.Point(x, y);
+         GPoint ret = new GPoint(x, y);
 
          if(IsRotated)
          {
+#if !PocketPC
             System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(x, y) };
             rotationMatrix.TransformPoints(tt);
             var f = tt[0];
 
-            if(VirtualSizeEnabled)
-            {
-               f.X += (Width - Core.vWidth) / 2;
-               f.Y += (Height - Core.vHeight) / 2;
-            }
-
             ret.X = f.X;
             ret.Y = f.Y;
+#endif
          }
 
          return ret;
@@ -1715,7 +1689,7 @@ namespace GMap.NET.WindowsForms
          else
          {
 #if !PocketPC
-            if(isSelected && !selectionStart.IsEmpty && (Form.ModifierKeys == Keys.Alt || Form.ModifierKeys == Keys.Shift))
+            if(isSelected && !selectionStart.IsZero && (Form.ModifierKeys == Keys.Alt || Form.ModifierKeys == Keys.Shift))
             {
                selectionEnd = FromLocalToLatLng(e.X, e.Y);
                {
@@ -1932,9 +1906,9 @@ namespace GMap.NET.WindowsForms
       /// </summary>
       /// <param name="point"></param>
       /// <returns></returns>
-      public GMap.NET.Point FromLatLngToLocal(PointLatLng point)
+      public GPoint FromLatLngToLocal(PointLatLng point)
       {
-         GMap.NET.Point ret = Core.FromLatLngToLocal(point);
+         GPoint ret = Core.FromLatLngToLocal(point);
 
 #if !PocketPC
          if(MapRenderTransform.HasValue)
@@ -2153,7 +2127,7 @@ namespace GMap.NET.WindowsForms
       /// current marker position in pixel coordinates
       /// </summary>
       [Browsable(false)]
-      public GMap.NET.Point CurrentPositionGPixel
+      public GPoint CurrentPositionGPixel
       {
          get
          {
