@@ -1415,6 +1415,14 @@ namespace GMap.NET
                return string.Format("http://{0}.tah.openstreetmap.org/Tiles/tile/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
             }
 
+            case MapType.OpenCycleMap:
+            {
+               //http://b.tile.opencyclemap.org/cycle/13/4428/2772.png
+
+               char letter = "abc"[GetServerNum(pos, 3)];
+               return string.Format("http://{0}.tile.opencyclemap.org/cycle/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
+            }
+
             case MapType.OpenStreetMapSurfer:
             {
                // http://tiles1.mapsurfer.net/tms_r.ashx?x=37378&y=20826&z=16
@@ -2856,6 +2864,12 @@ namespace GMap.NET
                      case MapType.OpenSeaMapLabels:
                      {
                         request.Referer = "http://openseamap.org/";
+                     }
+                     break;
+
+                     case MapType.OpenCycleMap:
+                     {
+                        request.Referer = "http://www.opencyclemap.org/";
                      }
                      break;
 
