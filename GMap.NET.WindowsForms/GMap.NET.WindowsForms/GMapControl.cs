@@ -1718,19 +1718,20 @@ namespace GMap.NET.WindowsForms
                         {
                            if(m.LocalArea.Contains(e.X, e.Y))
                            {
-#if !PocketPC
-                              this.Cursor = System.Windows.Forms.Cursors.Hand;
-#endif
-                              m.IsMouseOver = true;
-#if !PocketPC
-                              Invalidate(false);
-#else
-                              Invalidate();
-#endif
-
-                              if(OnMarkerEnter != null)
+                              if(!m.IsMouseOver)
                               {
-                                 OnMarkerEnter(m);
+#if !PocketPC
+                                 this.Cursor = System.Windows.Forms.Cursors.Hand;
+                                 Invalidate(false);
+#else
+                                 Invalidate();
+#endif
+                                 m.IsMouseOver = true;
+
+                                 if(OnMarkerEnter != null)
+                                 {
+                                    OnMarkerEnter(m);
+                                 }
                               }
                            }
                            else if(m.IsMouseOver)

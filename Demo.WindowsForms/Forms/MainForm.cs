@@ -273,7 +273,7 @@ namespace Demo.WindowsForms
                else
                {
                   marker.Position = new PointLatLng(d.Lat, d.Lng);
-                  (marker as GMapMarkerGoogleRed).Bearing = (float?) d.Bearing;
+                  (marker as GMapMarkerGoogleRed).Bearing = (float?)d.Bearing;
                }
                marker.ToolTipText = "Trolley " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
 
@@ -282,7 +282,7 @@ namespace Demo.WindowsForms
                   MainMap.Position = marker.Position;
                   if(d.Bearing.HasValue)
                   {
-                     MainMap.Bearing = (float) d.Bearing.Value;
+                     MainMap.Bearing = (float)d.Bearing.Value;
                   }
                }
             }
@@ -306,7 +306,7 @@ namespace Demo.WindowsForms
                else
                {
                   marker.Position = new PointLatLng(d.Lat, d.Lng);
-                  (marker as GMapMarkerGoogleGreen).Bearing = (float?) d.Bearing;
+                  (marker as GMapMarkerGoogleGreen).Bearing = (float?)d.Bearing;
                }
                marker.ToolTipText = "Bus " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
 
@@ -315,7 +315,7 @@ namespace Demo.WindowsForms
                   MainMap.Position = marker.Position;
                   if(d.Bearing.HasValue)
                   {
-                     MainMap.Bearing = (float) d.Bearing.Value;
+                     MainMap.Bearing = (float)d.Bearing.Value;
                   }
                }
             }
@@ -1177,6 +1177,8 @@ namespace Demo.WindowsForms
             GMapMarkerRect rc = item as GMapMarkerRect;
             rc.Pen.Color = Color.Blue;
             MainMap.Invalidate(false);
+
+            Debug.WriteLine("OnMarkerLeave: " + item.Position);
          }
       }
 
@@ -1189,6 +1191,8 @@ namespace Demo.WindowsForms
             MainMap.Invalidate(false);
 
             CurentRectMarker = rc;
+
+            Debug.WriteLine("OnMarkerEnter: " + item.Position);
          }
       }
 
@@ -1228,10 +1232,10 @@ namespace Demo.WindowsForms
             {
                currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
 
-               var px = MainMap.Projection.FromLatLngToPixel(currentMarker.Position.Lat, currentMarker.Position.Lng, (int) MainMap.Zoom);
+               var px = MainMap.Projection.FromLatLngToPixel(currentMarker.Position.Lat, currentMarker.Position.Lng, (int)MainMap.Zoom);
                var tile = MainMap.Projection.FromPixelToTileXY(px);
 
-               Debug.WriteLine("marker: " + currentMarker.LocalPosition + " | geo: " + currentMarker.Position + " | px: " + px + " | tile: " + tile);
+               Debug.WriteLine("MouseDown: " + currentMarker.LocalPosition + " | geo: " + currentMarker.Position + " | px: " + px + " | tile: " + tile);
             }
          }
       }
@@ -1252,7 +1256,7 @@ namespace Demo.WindowsForms
             {
                PointLatLng pnew = MainMap.FromLocalToLatLng(e.X, e.Y);
 
-               int? pIndex = (int?) CurentRectMarker.Tag;
+               int? pIndex = (int?)CurentRectMarker.Tag;
                if(pIndex.HasValue)
                {
                   if(pIndex < polygon.Points.Count)
@@ -1279,7 +1283,7 @@ namespace Demo.WindowsForms
       // MapZoomChanged
       void MainMap_OnMapZoomChanged()
       {
-         trackBar1.Value = (int) (MainMap.Zoom);
+         trackBar1.Value = (int)(MainMap.Zoom);
          textBoxZoomCurrent.Text = MainMap.Zoom.ToString();
          center.Position = MainMap.Position;
       }
@@ -1367,7 +1371,7 @@ namespace Demo.WindowsForms
          if(objects.Markers.Count > 0)
          {
             MainMap.ZoomAndCenterMarkers(null);
-            trackBar1.Value = (int) MainMap.Zoom;
+            trackBar1.Value = (int)MainMap.Zoom;
          }
       }
 
@@ -1404,13 +1408,13 @@ namespace Demo.WindowsForms
       // change map type
       private void comboBoxMapType_DropDownClosed(object sender, EventArgs e)
       {
-         MainMap.MapType = (MapType) comboBoxMapType.SelectedValue;
+         MainMap.MapType = (MapType)comboBoxMapType.SelectedValue;
       }
 
       // change mdoe
       private void comboBoxMode_DropDownClosed(object sender, EventArgs e)
       {
-         GMaps.Instance.Mode = (AccessMode) comboBoxMode.SelectedValue;
+         GMaps.Instance.Mode = (AccessMode)comboBoxMode.SelectedValue;
          MainMap.ReloadMap();
       }
 
@@ -1432,7 +1436,7 @@ namespace Demo.WindowsForms
       // goto by geocoder
       private void textBoxGeo_KeyPress(object sender, KeyPressEventArgs e)
       {
-         if((Keys) e.KeyChar == Keys.Enter)
+         if((Keys)e.KeyChar == Keys.Enter)
          {
             GeoCoderStatusCode status = MainMap.SetCurrentPositionByKeywords(textBoxGeo.Text);
             if(status != GeoCoderStatusCode.G_GEO_SUCCESS)
@@ -1475,7 +1479,7 @@ namespace Demo.WindowsForms
       // add test route
       private void button3_Click(object sender, EventArgs e)
       {
-         MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, (int) MainMap.Zoom);
+         MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, (int)MainMap.Zoom);
          if(route != null)
          {
             // add route
@@ -1606,7 +1610,7 @@ namespace Demo.WindowsForms
          RectLatLng area = MainMap.SelectedArea;
          if(!area.IsEmpty)
          {
-            for(int i = (int) MainMap.Zoom; i <= MainMap.MaxZoom; i++)
+            for(int i = (int)MainMap.Zoom; i <= MainMap.MaxZoom; i++)
             {
                DialogResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ?", "GMap.NET", MessageBoxButtons.YesNoCancel);
 
@@ -1930,7 +1934,7 @@ namespace Demo.WindowsForms
                            {
                               foreach(var p in seg.trkpt)
                               {
-                                 points.Add(new PointLatLng((double) p.lat, (double) p.lon));
+                                 points.Add(new PointLatLng((double)p.lat, (double)p.lon));
                               }
                            }
 
