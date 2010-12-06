@@ -16,7 +16,18 @@ namespace GMap.NET.WindowsForms
    public class GMapToolTip
 #endif
    {
-      internal GMapMarker Marker;
+      GMapMarker marker;
+      public GMapMarker Marker
+      {
+         get
+         {
+            return marker;
+         }
+         internal set
+         {
+            marker = value;
+         }
+      }
 
       public Point Offset;
 
