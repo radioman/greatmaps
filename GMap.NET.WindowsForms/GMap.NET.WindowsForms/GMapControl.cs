@@ -151,6 +151,11 @@ namespace GMap.NET.WindowsForms
       public bool MapScaleInfoEnabled = false;
 
       /// <summary>
+      /// enables filling empty tiles using lower level images
+      /// </summary>
+      public bool FillEmptyTiles = true;
+
+      /// <summary>
       /// retry count to get tile 
       /// </summary>
       [Browsable(false)]
@@ -486,7 +491,7 @@ namespace GMap.NET.WindowsForms
                         }
                      }
 #if !PocketPC
-                     else // testing smooth zooming
+                     else if(FillEmptyTiles)
                      {
                         int ZoomOffset = 0;
                         Tile ParentTile = null;
