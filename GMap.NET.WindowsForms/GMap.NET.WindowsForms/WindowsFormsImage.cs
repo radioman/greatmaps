@@ -39,7 +39,7 @@ namespace GMap.NET.WindowsForms
          new float[] {0, 0, 0, 0, 1}
       });
 
-      public bool GrayScale = true;
+      public bool GrayScale = false;
 
       public ColorMatrix ColorMatrixForNegative = new ColorMatrix(new float[][]
       {
