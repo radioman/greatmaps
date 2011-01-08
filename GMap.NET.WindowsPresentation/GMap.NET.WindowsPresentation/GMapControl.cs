@@ -37,7 +37,7 @@ namespace GMap.NET.WindowsPresentation
       {
          get
          {
-            return (MapType) (GetValue(MapTypeProperty));
+            return (MapType)(GetValue(MapTypeProperty));
          }
          set
          {
@@ -47,7 +47,7 @@ namespace GMap.NET.WindowsPresentation
 
       private static void MapTypePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
       {
-         GMapControl map = (GMapControl) d;
+         GMapControl map = (GMapControl)d;
          if(map != null)
          {
             Debug.WriteLine("MapType: " + e.OldValue + " -> " + e.NewValue);
@@ -62,7 +62,7 @@ namespace GMap.NET.WindowsPresentation
                viewarea = map.CurrentViewArea;
             }
 
-            map.Core.MapType = (MapType) e.NewValue;
+            map.Core.MapType = (MapType)e.NewValue;
 
             if(map.Core.IsStarted && map.Core.zoomToArea)
             {
@@ -89,7 +89,7 @@ namespace GMap.NET.WindowsPresentation
       {
          get
          {
-            return (double) (GetValue(ZoomProperty));
+            return (double)(GetValue(ZoomProperty));
          }
          set
          {
@@ -102,7 +102,7 @@ namespace GMap.NET.WindowsPresentation
          GMapControl map = o as GMapControl;
          if(map != null)
          {
-            double result = (double) value;
+            double result = (double)value;
             if(result > map.MaxZoom)
             {
                result = map.MaxZoom;
@@ -122,10 +122,10 @@ namespace GMap.NET.WindowsPresentation
 
       private static void ZoomPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
       {
-         GMapControl map = (GMapControl) d;
+         GMapControl map = (GMapControl)d;
          if(map != null && map.Projection != null)
          {
-            double value = (double) e.NewValue;
+            double value = (double)e.NewValue;
 
             Debug.WriteLine("Zoom: " + e.OldValue + " -> " + value);
 
@@ -472,7 +472,7 @@ namespace GMap.NET.WindowsPresentation
                ItemsSource = Markers;
             }
 
-            Core.Zoom = (int) ((double) ZoomProperty.DefaultMetadata.DefaultValue);
+            Core.Zoom = (int)((double)ZoomProperty.DefaultMetadata.DefaultValue);
 
             googleCopyright = new FormattedText(Core.googleCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             yahooMapCopyright = new FormattedText(Core.yahooMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
@@ -514,10 +514,13 @@ namespace GMap.NET.WindowsPresentation
 
          if(Application.Current != null)
          {
-            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.ApplicationIdle,
                new Action(delegate()
                {
-                  Application.Current.Exit += new ExitEventHandler(Current_Exit);
+                  if(Application.Current != null)
+                  {
+                     Application.Current.Exit += new ExitEventHandler(Current_Exit);
+                  }
                }
                ));
          }
@@ -538,9 +541,9 @@ namespace GMap.NET.WindowsPresentation
          System.Windows.Size constraint = e.NewSize;
 
          // 50px outside control
-         region = new GRect(-50, -50, (int) constraint.Width + 100, (int) constraint.Height + 100);
+         region = new GRect(-50, -50, (int)constraint.Width + 100, (int)constraint.Height + 100);
 
-         Core.OnMapSizeChanged((int) constraint.Width, (int) constraint.Height);
+         Core.OnMapSizeChanged((int)constraint.Width, (int)constraint.Height);
 
          // keep center on same position
          if(IsLoaded)
@@ -773,7 +776,7 @@ namespace GMap.NET.WindowsPresentation
          obj.Arrange(new Rect(size));
 
          RenderTargetBitmap bmp = new RenderTargetBitmap(
-         (int) size.Width, (int) size.Height, 96, 96, PixelFormats.Pbgra32);
+         (int)size.Width, (int)size.Height, 96, 96, PixelFormats.Pbgra32);
 
          bmp.Render(obj);
 
@@ -1077,7 +1080,7 @@ namespace GMap.NET.WindowsPresentation
 
                if(resize)
                {
-                  Core.OnMapSizeChanged((int) ActualWidth, (int) ActualHeight);
+                  Core.OnMapSizeChanged((int)ActualWidth, (int)ActualHeight);
                }
 
                Core_OnMapZoomChanged();
@@ -1166,8 +1169,8 @@ namespace GMap.NET.WindowsPresentation
             GPoint p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
             GPoint p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
 
-            p1.Offset((int) MapTranslateTransform.X, (int) MapTranslateTransform.Y);
-            p2.Offset((int) MapTranslateTransform.X, (int) MapTranslateTransform.Y);
+            p1.Offset((int)MapTranslateTransform.X, (int)MapTranslateTransform.Y);
+            p2.Offset((int)MapTranslateTransform.X, (int)MapTranslateTransform.Y);
 
             int x1 = p1.X;
             int y1 = p1.Y;
@@ -1290,30 +1293,30 @@ namespace GMap.NET.WindowsPresentation
             System.Windows.Point p = e.GetPosition(this);
             //p = ApplyRotationInversion(p.X, p.Y);
 
-            if(Core.mouseLastZoom.X != (int) p.X && Core.mouseLastZoom.Y != (int) p.Y)
+            if(Core.mouseLastZoom.X != (int)p.X && Core.mouseLastZoom.Y != (int)p.Y)
             {
                if(MouseWheelZoomType == MouseWheelZoomType.MousePositionAndCenter)
                {
-                  Core.currentPosition = FromLocalToLatLng((int) p.X, (int) p.Y);
+                  Core.currentPosition = FromLocalToLatLng((int)p.X, (int)p.Y);
                }
                else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
                {
-                  Core.currentPosition = FromLocalToLatLng((int) ActualWidth / 2, (int) ActualHeight / 2);
+                  Core.currentPosition = FromLocalToLatLng((int)ActualWidth / 2, (int)ActualHeight / 2);
                }
                else if(MouseWheelZoomType == MouseWheelZoomType.MousePositionWithoutCenter)
                {
-                  Core.currentPosition = FromLocalToLatLng((int) p.X, (int) p.Y);
+                  Core.currentPosition = FromLocalToLatLng((int)p.X, (int)p.Y);
                }
 
-               Core.mouseLastZoom.X = (int) p.X;
-               Core.mouseLastZoom.Y = (int) p.Y;
+               Core.mouseLastZoom.X = (int)p.X;
+               Core.mouseLastZoom.Y = (int)p.Y;
             }
 
             // set mouse position to map center
             if(MouseWheelZoomType != MouseWheelZoomType.MousePositionWithoutCenter)
             {
                System.Windows.Point ps = PointToScreen(new System.Windows.Point(ActualWidth / 2, ActualHeight / 2));
-               Stuff.SetCursorPos((int) ps.X, (int) ps.Y);
+               Stuff.SetCursorPos((int)ps.X, (int)ps.Y);
             }
 
             Core.MouseWheelZooming = true;
@@ -1322,22 +1325,22 @@ namespace GMap.NET.WindowsPresentation
             {
                if(!InvertedMouseWheelZooming)
                {
-                  Zoom = ((int) Zoom) + 1;
+                  Zoom = ((int)Zoom) + 1;
                }
                else
                {
-                  Zoom = ((int) (Zoom + 0.99)) - 1;
+                  Zoom = ((int)(Zoom + 0.99)) - 1;
                }
             }
             else
             {
                if(InvertedMouseWheelZooming)
                {
-                  Zoom = ((int) Zoom) + 1;
+                  Zoom = ((int)Zoom) + 1;
                }
                else
                {
-                  Zoom = ((int) (Zoom + 0.99)) - 1;
+                  Zoom = ((int)(Zoom + 0.99)) - 1;
                }
             }
 
@@ -1347,7 +1350,7 @@ namespace GMap.NET.WindowsPresentation
          base.OnMouseWheel(e);
       }
 
-      bool isSelected = false;         
+      bool isSelected = false;
 
       protected override void OnMouseDown(MouseButtonEventArgs e)
       {
@@ -1364,8 +1367,8 @@ namespace GMap.NET.WindowsPresentation
 
             p = ApplyRotationInversion(p.X, p.Y);
 
-            Core.mouseDown.X = (int) p.X;
-            Core.mouseDown.Y = (int) p.Y;
+            Core.mouseDown.X = (int)p.X;
+            Core.mouseDown.Y = (int)p.Y;
             {
                Core.BeginDrag(Core.mouseDown);
             }
@@ -1379,7 +1382,7 @@ namespace GMap.NET.WindowsPresentation
                isSelected = true;
                SelectedArea = RectLatLng.Empty;
                selectionEnd = PointLatLng.Zero;
-               selectionStart = FromLocalToLatLng((int) p.X, (int) p.Y);
+               selectionStart = FromLocalToLatLng((int)p.X, (int)p.Y);
             }
          }
          base.OnMouseDown(e);
@@ -1402,7 +1405,7 @@ namespace GMap.NET.WindowsPresentation
                Debug.WriteLine("IsDragging = " + isDragging);
                Cursor = cursorBefore;
             }
-            Core.EndDrag();                
+            Core.EndDrag();
 
             if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
             {
@@ -1460,8 +1463,8 @@ namespace GMap.NET.WindowsPresentation
 
                p = ApplyRotationInversion(p.X, p.Y);
 
-               Core.mouseCurrent.X = (int) p.X;
-               Core.mouseCurrent.Y = (int) p.Y;
+               Core.mouseCurrent.X = (int)p.X;
+               Core.mouseCurrent.Y = (int)p.Y;
                {
                   Core.Drag(Core.mouseCurrent);
                }
@@ -1482,7 +1485,7 @@ namespace GMap.NET.WindowsPresentation
             if(isSelected && !selectionStart.IsZero && (Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Alt))
             {
                System.Windows.Point p = e.GetPosition(this);
-               selectionEnd = FromLocalToLatLng((int) p.X, (int) p.Y);
+               selectionEnd = FromLocalToLatLng((int)p.X, (int)p.Y);
                {
                   GMap.NET.PointLatLng p1 = selectionStart;
                   GMap.NET.PointLatLng p2 = selectionEnd;
@@ -1515,8 +1518,8 @@ namespace GMap.NET.WindowsPresentation
 
             p = ApplyRotationInversion(p.X, p.Y);
 
-            Core.mouseDown.X = (int) p.X;
-            Core.mouseDown.Y = (int) p.Y;
+            Core.mouseDown.X = (int)p.X;
+            Core.mouseDown.Y = (int)p.Y;
             {
                Cursor = Cursors.SizeAll;
                Core.BeginDrag(Core.mouseDown);
@@ -1585,8 +1588,8 @@ namespace GMap.NET.WindowsPresentation
 
                p = ApplyRotationInversion(p.X, p.Y);
 
-               Core.mouseCurrent.X = (int) p.X;
-               Core.mouseCurrent.Y = (int) p.Y;
+               Core.mouseCurrent.X = (int)p.X;
+               Core.mouseCurrent.Y = (int)p.Y;
                {
                   Core.Drag(Core.mouseCurrent);
                }
@@ -1640,16 +1643,16 @@ namespace GMap.NET.WindowsPresentation
          if(MapRenderTransform != null)
          {
             var tp = MapRenderTransform.Inverse.Transform(new System.Windows.Point(x, y));
-            x = (int) tp.X;
-            y = (int) tp.Y;
+            x = (int)tp.X;
+            y = (int)tp.Y;
          }
 
          if(IsRotated)
          {
             var f = rotationMatrixInvert.Transform(new System.Windows.Point(x, y));
 
-            x = (int) f.X;
-            y = (int) f.Y;
+            x = (int)f.X;
+            y = (int)f.Y;
          }
 
          return Core.FromLocalToLatLng(x, y);
@@ -1662,19 +1665,19 @@ namespace GMap.NET.WindowsPresentation
          if(MapRenderTransform != null)
          {
             var tp = MapRenderTransform.Transform(new System.Windows.Point(ret.X, ret.Y));
-            ret.X = (int) tp.X;
-            ret.Y = (int) tp.Y;
+            ret.X = (int)tp.X;
+            ret.Y = (int)tp.Y;
          }
 
          if(IsRotated)
          {
             var f = rotationMatrix.Transform(new System.Windows.Point(ret.X, ret.Y));
 
-            ret.X = (int) f.X;
-            ret.Y = (int) f.Y;
+            ret.X = (int)f.X;
+            ret.Y = (int)f.Y;
          }
 
-         ret.Offset(-(int) MapTranslateTransform.X, -(int) MapTranslateTransform.Y);
+         ret.Offset(-(int)MapTranslateTransform.X, -(int)MapTranslateTransform.Y);
 
          return ret;
       }

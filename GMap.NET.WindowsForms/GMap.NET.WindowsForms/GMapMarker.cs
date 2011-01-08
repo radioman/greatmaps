@@ -12,7 +12,7 @@ namespace GMap.NET.WindowsForms
    /// </summary>
    [Serializable]
 #if !PocketPC
-   public class GMapMarker : ISerializable
+   public abstract class GMapMarker : ISerializable
 #else
    public class GMapMarker
 #endif
