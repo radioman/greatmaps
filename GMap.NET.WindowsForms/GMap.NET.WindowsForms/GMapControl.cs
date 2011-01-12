@@ -293,6 +293,29 @@ namespace GMap.NET.WindowsForms
             }
          }
       }
+
+       private bool _Negative = false;
+
+       [Category("GMap.NET")]
+       public bool NegativeMode
+       {
+           get
+           {
+               return _Negative;
+           }
+           set
+           {
+               _Negative = value;
+               if (GMaps.Instance.ImageProxy != null && GMaps.Instance.ImageProxy is WindowsFormsImageProxy)
+               {
+                   (GMaps.Instance.ImageProxy as WindowsFormsImageProxy).Negative = value;
+                   if (Core.IsStarted)
+                   {
+                       ReloadMap();
+                   }
+               }
+           }
+       }
 #endif
 
       // internal stuff
@@ -327,6 +350,7 @@ namespace GMap.NET.WindowsForms
 
 #if !PocketPC
             wimg.GrayScale = this.GrayScaleMode;
+            wimg.Negative = this.NegativeMode;
 
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -481,7 +505,6 @@ namespace GMap.NET.WindowsForms
                                  if(!found)
                                     found = true;
 #if !PocketPC
-
                                  g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRectBearing.Width, Core.tileRectBearing.Height);
 #else
                                  g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y);

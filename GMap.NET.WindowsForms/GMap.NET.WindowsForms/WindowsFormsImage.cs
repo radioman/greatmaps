@@ -40,6 +40,17 @@ namespace GMap.NET.WindowsForms
       });
 
       public bool GrayScale = false;
+
+      public ColorMatrix ColorMatrixForNegative = new ColorMatrix(new float[][]
+      {
+        new float[] {-1, 0, 0, 0, 0},
+        new float[] {0, -1, 0, 0, 0},
+        new float[] {0, 0, -1, 0, 0},
+        new float[] {0, 0, 0, 1, 0},
+        new float[] {1, 1, 1, 0, 1}
+      });
+
+      public bool Negative = false;
 #endif
 
       public override PureImage FromStream(Stream stream)
@@ -57,10 +68,11 @@ namespace GMap.NET.WindowsForms
                if(m != null)
                {
                   ret = new WindowsFormsImage();
-#if !PocketPC
-                  ret.Img = GrayScale ? MakeGrayscale(m) : m;
-#else
+
                   ret.Img = m;
+#if !PocketPC
+                  ret.Img = GrayScale ? MakeGrayscale(ret.Img) : ret.Img;
+                  ret.Img = Negative ? MakeNegative(ret.Img) : ret.Img;
 #endif
                }
             }
@@ -74,10 +86,11 @@ namespace GMap.NET.WindowsForms
                if(m != null)
                {
                   ret = new WindowsFormsImage();
-#if !PocketPC
-                  ret.Img = GrayScale ? MakeGrayscale(m) : m;
-#else
+
                   ret.Img = m;
+#if !PocketPC
+                  ret.Img = GrayScale ? MakeGrayscale(ret.Img) : ret.Img;
+                  ret.Img = Negative ? MakeNegative(ret.Img) : ret.Img;
 #endif
                }
             }
@@ -150,23 +163,33 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
       Bitmap MakeGrayscale(Image original)
       {
-         // create a blank bitmap the same size as original
-         Bitmap newBitmap = newBitmap = new Bitmap(original.Width, original.Height);
-         using(original) // destroy original
-         {
-            // get a graphics object from the new image
-            using(Graphics g = Graphics.FromImage(newBitmap))
-            {
-               // set the color matrix attribute
-               using(ImageAttributes attributes = new ImageAttributes())
-               {
-                  attributes.SetColorMatrix(ColorMatrixForGrayScale);
-                  g.DrawImage(original, new Rectangle(0, 0, original.Width, original.Height), 0, 0, original.Width, original.Height, GraphicsUnit.Pixel, attributes);
-               }
-            }
-         }
+          return ApplyColorMatrix(original, ColorMatrixForGrayScale);
+      }
 
-         return newBitmap;
+      Bitmap MakeNegative(Image original)
+      {
+          return ApplyColorMatrix(original, ColorMatrixForNegative);
+      }
+
+      Bitmap ApplyColorMatrix(Image original, ColorMatrix matrix)
+      {
+          // create a blank bitmap the same size as original
+          Bitmap newBitmap = newBitmap = new Bitmap(original.Width, original.Height);
+          using (original) // destroy original
+          {
+              // get a graphics object from the new image
+              using (Graphics g = Graphics.FromImage(newBitmap))
+              {
+                  // set the color matrix attribute
+                  using (ImageAttributes attributes = new ImageAttributes())
+                  {
+                      attributes.SetColorMatrix(matrix);
+                      g.DrawImage(original, new Rectangle(0, 0, original.Width, original.Height), 0, 0, original.Width, original.Height, GraphicsUnit.Pixel, attributes);
+                  }
+              }
+          }
+
+          return newBitmap;
       }
 #endif
    }
