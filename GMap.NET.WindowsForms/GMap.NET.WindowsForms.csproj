@@ -44,6 +44,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GMap.NET.WindowsForms\ColorMatrixs.cs" />
     <Compile Include="GMap.NET.WindowsForms\GMapPolygon.cs" />
     <Compile Include="GMap.NET.WindowsForms\ToolTips\GMapBaloonToolTip.cs" />
     <Compile Include="GMap.NET.WindowsForms\ToolTips\GMapRoundedToolTip.cs" />

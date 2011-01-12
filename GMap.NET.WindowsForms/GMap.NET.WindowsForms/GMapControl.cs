@@ -283,9 +283,42 @@ namespace GMap.NET.WindowsForms
          set
          {
             _GrayScale = value;
-            if(GMaps.Instance.ImageProxy != null && GMaps.Instance.ImageProxy is WindowsFormsImageProxy)
+            ColorMatrix = (value == true ? ColorMatrixs.GrayScale : null);
+         }
+      }
+
+      private bool _Negative = false;
+
+      [Category("GMap.NET")]
+      public bool NegativeMode
+      {
+         get
+         {
+            return _Negative;
+         }
+         set
+         {
+            _Negative = value;
+            ColorMatrix = (value == true ? ColorMatrixs.Negative : null);
+         }
+      }
+
+      ColorMatrix colorMatrix;
+
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      [Browsable(false)]
+      public ColorMatrix ColorMatrix
+      {
+         get
+         {
+            return colorMatrix;
+         }
+         set
+         {
+            colorMatrix = value;
+            if(Manager.ImageProxy != null && Manager.ImageProxy is WindowsFormsImageProxy)
             {
-               (GMaps.Instance.ImageProxy as WindowsFormsImageProxy).GrayScale = value;
+               (Manager.ImageProxy as WindowsFormsImageProxy).ColorMatrix = value;
                if(Core.IsStarted)
                {
                   ReloadMap();
@@ -293,29 +326,6 @@ namespace GMap.NET.WindowsForms
             }
          }
       }
-
-       private bool _Negative = false;
-
-       [Category("GMap.NET")]
-       public bool NegativeMode
-       {
-           get
-           {
-               return _Negative;
-           }
-           set
-           {
-               _Negative = value;
-               if (GMaps.Instance.ImageProxy != null && GMaps.Instance.ImageProxy is WindowsFormsImageProxy)
-               {
-                   (GMaps.Instance.ImageProxy as WindowsFormsImageProxy).Negative = value;
-                   if (Core.IsStarted)
-                   {
-                       ReloadMap();
-                   }
-               }
-           }
-       }
 #endif
 
       // internal stuff
@@ -349,9 +359,6 @@ namespace GMap.NET.WindowsForms
             WindowsFormsImageProxy wimg = new WindowsFormsImageProxy();
 
 #if !PocketPC
-            wimg.GrayScale = this.GrayScaleMode;
-            wimg.Negative = this.NegativeMode;
-
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             this.SetStyle(ControlStyles.UserPaint, true);
@@ -360,7 +367,11 @@ namespace GMap.NET.WindowsForms
 
             TileFlipXYAttributes.SetWrapMode(WrapMode.TileFlipXY);
 #endif
-            GMaps.Instance.ImageProxy = wimg;
+            Manager.ImageProxy = wimg;
+
+            // only one mode will be active, to get mixed mode create new ColorMatrix
+            GrayScaleMode = GrayScaleMode;
+            NegativeMode = NegativeMode;
 
             // to know when to invalidate
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
