@@ -49,6 +49,9 @@ namespace GMap.NET
       [Description("eu")]
       Basque,
 
+      [Description("fa")]
+      FARSI,
+
       [Description("fi")]
       Finnish,
 
@@ -144,7 +147,10 @@ namespace GMap.NET
       Serbian,
 
       [Description("sv")]
-      Swedish,
+      Swedish,  
+
+      [Description("tl")]
+      TAGALOG,
 
       [Description("ta")]
       Tamil,
