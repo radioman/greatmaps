@@ -96,5 +96,10 @@ namespace GMap.NET
       MapyCZ_Hybrid = 7004,
       MapyCZ_History = 7005,
       MapyCZ_HistoryHybrid = 7006,
+
+      NearMap = 8000,
+      NearMapSatellite = 8001,
+      NearMapLabels = 8002,
+      NearMapHybrid = 8003,
    }
 }
