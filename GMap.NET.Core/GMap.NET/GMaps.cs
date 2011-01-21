@@ -40,17 +40,17 @@ namespace GMap.NET
    public class GMaps : Singleton<GMaps>
    {
       // Google version strings
-      public string VersionGoogleMap = "m@132";
-      public string VersionGoogleSatellite = "71";
-      public string VersionGoogleLabels = "h@132";
-      public string VersionGoogleTerrain = "t@125,r@132";
+      public string VersionGoogleMap = "m@142";
+      public string VersionGoogleSatellite = "76";
+      public string VersionGoogleLabels = "h@142";
+      public string VersionGoogleTerrain = "t@126,r@142";
       public string SecGoogleWord = "Galileo";
 
       // Google (China) version strings
-      public string VersionGoogleMapChina = "m@132";
-      public string VersionGoogleSatelliteChina = "s@71";
-      public string VersionGoogleLabelsChina = "h@132";
-      public string VersionGoogleTerrainChina = "t@125,r@132";
+      public string VersionGoogleMapChina = "m@142";
+      public string VersionGoogleSatelliteChina = "s@76";
+      public string VersionGoogleLabelsChina = "h@142";
+      public string VersionGoogleTerrainChina = "t@126,r@142";
 
       // Google (Korea) version strings
       public string VersionGoogleMapKorea = "kr1.12";
@@ -69,7 +69,7 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.3";
 
       // BingMaps
-      public string VersionBingMaps = "563";
+      public string VersionBingMaps = "631";
 
       // YandexMap
       public string VersionYandexMap = "2.16.0";
@@ -461,6 +461,14 @@ namespace GMap.NET
                   types = new MapType[2];
                   types[0] = MapType.MapyCZ_History;
                   types[1] = MapType.MapyCZ_Labels;
+               }
+               break;
+
+               case MapType.NearMapHybrid:
+               {
+                  types = new MapType[2];
+                  types[0] = MapType.NearMapSatellite;
+                  types[1] = MapType.NearMapLabels;
                }
                break;
 
@@ -1736,6 +1744,30 @@ namespace GMap.NET
             }
 
             #endregion
+
+            #region -- NearMap --
+            case MapType.NearMap:
+            {
+               // http://web1.nearmap.com/maps/hl=en&x=18681&y=10415&z=15&nml=Map_&nmg=1&s=kY8lZssipLIJ7c5
+
+               return string.Format("http://web{0}.nearmap.com/maps/hl=en&x={1}&y={2}&z={3}&nml=Map_&nmg=1", GetServerNum(pos, 3), pos.X, pos.Y, zoom);
+            }
+
+            case MapType.NearMapSatellite:
+            {
+               // http://web2.nearmap.com/maps/hl=en&x=34&y=20&z=6&nml=Vert&s=2NYYKGF
+
+               return string.Format("http://web{0}.nearmap.com/maps/hl=en&x={1}&y={2}&z={3}&nml=Vert", GetServerNum(pos, 3), pos.X, pos.Y, zoom);
+            }
+
+            case MapType.NearMapLabels:
+            {
+               //http://web1.nearmap.com/maps/hl=en&x=37&y=19&z=6&nml=MapT&nmg=1&s=2KbhmZZ             
+
+               return string.Format("http://web{0}.nearmap.com/maps/hl=en&x={1}&y={2}&z={3}&nml=MapT&nmg=1", GetServerNum(pos, 3), pos.X, pos.Y, zoom);
+            }
+
+            #endregion
          }
 
          return null;
@@ -2891,6 +2923,14 @@ namespace GMap.NET
                      case MapType.MapyCZ_HistoryHybrid:
                      {
                         request.Referer = "http://www.mapy.cz/";
+                     }
+                     break;
+
+                     case MapType.NearMap:
+                     case MapType.NearMapLabels:
+                     case MapType.NearMapSatellite:
+                     {
+                        request.Referer = "http://www.nearmap.com/";
                      }
                      break;
                   }
