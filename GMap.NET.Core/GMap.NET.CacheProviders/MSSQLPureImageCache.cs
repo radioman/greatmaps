@@ -244,6 +244,11 @@ namespace GMap.NET.CacheProviders
          }
          return ret;
       }
+
+      int PureImageCache.DeleteOlderThan(System.TimeSpan timeSpan)
+      {
+         throw new System.NotImplementedException();
+      }
       #endregion
    }
 }

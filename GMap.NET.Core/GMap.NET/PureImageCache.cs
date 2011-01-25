@@ -26,5 +26,12 @@ namespace GMap.NET
       /// <param name="zoom"></param>
       /// <returns></returns>
       PureImage GetImageFromCache(MapType type, GPoint pos, int zoom);
+
+      /// <summary>
+      /// delete old tiles beyond a supplied timespan
+      /// </summary>
+      /// <param name="timeSpan">Tiles older than this will be deleted.</param>
+      /// <returns>The number of deleted tiles.</returns>
+      int DeleteOlderThan(System.TimeSpan timeSpan);
    }
 }
