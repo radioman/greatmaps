@@ -30,7 +30,7 @@ namespace GMap.NET.WindowsForms.ToolTips
             gp.AddArc(h, v + height - (radius * 2), radius * 2, radius * 2, 90, 90);
             gp.AddLine(h, v + height - (radius * 2), h, v + radius);
             gp.AddArc(h, v, radius * 2, radius * 2, 180, 90);
-           
+
             gp.CloseFigure();
 
             g.FillPath(Fill, gp);
@@ -45,7 +45,7 @@ namespace GMap.NET.WindowsForms.ToolTips
          System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y - st.Height, st.Width + TextPadding.Width * 2, st.Height + TextPadding.Height);
          rect.Offset(Offset.X, Offset.Y);
 
-         g.DrawLine(Stroke, Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y, rect.X + Radius/2, rect.Y + rect.Height - Radius/2);
+         g.DrawLine(Stroke, Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y, rect.X + Radius / 2, rect.Y + rect.Height - Radius / 2);
 
          DrawRoundRectangle(g, Stroke, rect.X, rect.Y, rect.Width, rect.Height, Radius);
 
@@ -54,7 +54,7 @@ namespace GMap.NET.WindowsForms.ToolTips
          {
             rect.Offset(TextPadding.Width, 0);
          }
-         g.DrawString(Marker.ToolTipText, Font, Brushes.Navy, rect, Format);
+         g.DrawString(Marker.ToolTipText, Font, Foreground, rect, Format);
 #else
          g.DrawString(ToolTipText, ToolTipFont, TooltipForeground, rect, ToolTipFormat);
 #endif

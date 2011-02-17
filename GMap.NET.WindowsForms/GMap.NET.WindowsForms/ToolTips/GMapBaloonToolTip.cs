@@ -51,7 +51,7 @@ namespace GMap.NET.WindowsForms.ToolTips
          }
 
 #if !PocketPC
-         g.DrawString(Marker.ToolTipText, Font, Brushes.Navy, rect, Format);
+         g.DrawString(Marker.ToolTipText, Font, Foreground, rect, Format);
 #else
          g.DrawString(ToolTipText, ToolTipFont, TooltipForeground, rect, ToolTipFormat);
 #endif

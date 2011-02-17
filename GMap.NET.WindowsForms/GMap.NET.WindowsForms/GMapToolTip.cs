@@ -61,12 +61,12 @@ namespace GMap.NET.WindowsForms
       public Brush Fill = new SolidBrush(Color.FromArgb(222, Color.AliceBlue));
 #else
       public Brush Fill = new System.Drawing.SolidBrush(Color.AliceBlue);
+#endif
 
       /// <summary>
       /// text foreground
       /// </summary>
-      public Brush Foreground = new System.Drawing.SolidBrush(Color.Navy);
-#endif
+      public Brush Foreground = new SolidBrush(Color.Navy);
 
       /// <summary>
       /// text padding
@@ -100,11 +100,7 @@ namespace GMap.NET.WindowsForms
          g.FillRectangle(Fill, rect);
          g.DrawRectangle(Stroke, rect);
 
-#if !PocketPC
-         g.DrawString(Marker.ToolTipText, Font, Brushes.Navy, rect, Format);
-#else
          g.DrawString(Marker.ToolTipText, Font, Foreground, rect, Format);
-#endif
       }
 
 #if !PocketPC
@@ -117,6 +113,7 @@ namespace GMap.NET.WindowsForms
       /// <param name="context">The context.</param>
       protected GMapToolTip(SerializationInfo info, StreamingContext context)
       {
+         this.Foreground = Extensions.GetValue(info, "Foreground", new SolidBrush(Color.Navy));
          this.Fill = Extensions.GetValue(info, "Fill", new SolidBrush(Color.FromArgb(222, Color.AliceBlue)));
          this.Font = Extensions.GetValue(info, "Font", new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold, GraphicsUnit.Pixel));
          this.Format = Extensions.GetValue(info, "Format", new StringFormat());
@@ -136,6 +133,7 @@ namespace GMap.NET.WindowsForms
       public void GetObjectData(SerializationInfo info, StreamingContext context)
       {
          info.AddValue("Fill", this.Fill);
+         info.AddValue("Foreground", this.Foreground);
          info.AddValue("Font", this.Font);
          info.AddValue("Format", this.Format);
          info.AddValue("Offset", this.Offset);

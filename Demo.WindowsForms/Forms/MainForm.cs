@@ -394,7 +394,7 @@ namespace Demo.WindowsForms
 
                lock(TcpStateNeedLocationInfo)
                {
-                  int count = 0;
+                  //int count = 0;
                   foreach(var info in TcpStateNeedLocationInfo)
                   {
                      if(iplist.Length > 0)
