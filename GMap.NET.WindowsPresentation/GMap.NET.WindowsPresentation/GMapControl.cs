@@ -1369,9 +1369,7 @@ namespace GMap.NET.WindowsPresentation
 
             Core.mouseDown.X = (int)p.X;
             Core.mouseDown.Y = (int)p.Y;
-            {
-               Core.BeginDrag(Core.mouseDown);
-            }
+
             InvalidateVisual();
          }
          else
@@ -1390,6 +1388,11 @@ namespace GMap.NET.WindowsPresentation
 
       protected override void OnMouseUp(MouseButtonEventArgs e)
       {
+         if(e.ChangedButton == DragButton)
+         {
+            Core.mouseDown = GPoint.Empty;
+         }
+
          if(isSelected)
          {
             isSelected = false;
@@ -1437,6 +1440,24 @@ namespace GMap.NET.WindowsPresentation
 
       protected override void OnMouseMove(MouseEventArgs e)
       {
+         if (!Core.IsDragging && !Core.mouseDown.IsEmpty)
+         {
+            //Drag button is down, but cursor has not moved beyond drag tolerance
+            System.Windows.Point p = e.GetPosition(this);
+
+            if (MapRenderTransform != null)
+            {
+               p = MapRenderTransform.Inverse.Transform(p);
+            }
+
+            p = ApplyRotationInversion(p.X, p.Y);
+
+            if (Math.Abs(p.X - Core.mouseDown.X) * 2 >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(p.Y - Core.mouseDown.Y) * 2 >= SystemParameters.MinimumVerticalDragDistance)
+            {
+               Core.BeginDrag(Core.mouseDown);
+            }
+         }
+
          if(Core.IsDragging)
          {
             if(!isDragging)
@@ -1522,7 +1543,6 @@ namespace GMap.NET.WindowsPresentation
             Core.mouseDown.Y = (int)p.Y;
             {
                Cursor = Cursors.SizeAll;
-               Core.BeginDrag(Core.mouseDown);
             }
             InvalidateVisual();
          }
@@ -1534,6 +1554,8 @@ namespace GMap.NET.WindowsPresentation
       {
          if(TouchEnabled)
          {
+            Core.mouseDown = GPoint.Empty;
+
             if(isSelected)
             {
                isSelected = false;
@@ -1565,45 +1587,66 @@ namespace GMap.NET.WindowsPresentation
 
       protected override void OnStylusMove(StylusEventArgs e)
       {
-         if(TouchEnabled && Core.IsDragging)
+         if(TouchEnabled)
          {
-            if(!isDragging)
+            if(!Core.IsDragging && !Core.mouseDown.IsEmpty)
             {
-               isDragging = true;
-               Debug.WriteLine("IsDragging = " + isDragging);
-            }
-
-            if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
-            {
-               // ...
-            }
-            else
-            {
+               //Drag button is down, but cursor has not moved beyond drag tolerance
                System.Windows.Point p = e.GetPosition(this);
 
-               if(MapRenderTransform != null)
+               if (MapRenderTransform != null)
                {
                   p = MapRenderTransform.Inverse.Transform(p);
                }
 
                p = ApplyRotationInversion(p.X, p.Y);
 
-               Core.mouseCurrent.X = (int)p.X;
-               Core.mouseCurrent.Y = (int)p.Y;
+               if (Math.Abs(p.X - Core.mouseDown.X) * 2 >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(p.Y - Core.mouseDown.Y) * 2 >= SystemParameters.MinimumVerticalDragDistance)
                {
-                  Core.Drag(Core.mouseCurrent);
+                  Core.BeginDrag(Core.mouseDown);
+               }
+            }
+
+            if(Core.IsDragging)
+            {
+               if(!isDragging)
+               {
+                  isDragging = true;
+                  Debug.WriteLine("IsDragging = " + isDragging);
                }
 
-               if(IsRotated)
+               if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
                {
-                  Core_OnMapZoomChanged();
+                  // ...
                }
                else
                {
-                  UpdateMarkersOffset();
+                  System.Windows.Point p = e.GetPosition(this);
+
+                  if(MapRenderTransform != null)
+                  {
+                     p = MapRenderTransform.Inverse.Transform(p);
+                  }
+
+                  p = ApplyRotationInversion(p.X, p.Y);
+
+                  Core.mouseCurrent.X = (int)p.X;
+                  Core.mouseCurrent.Y = (int)p.Y;
+                  {
+                     Core.Drag(Core.mouseCurrent);
+                  }
+
+                  if(IsRotated)
+                  {
+                     Core_OnMapZoomChanged();
+                  }
+                  else
+                  {
+                     UpdateMarkersOffset();
+                  }
                }
+               InvalidateVisual();
             }
-            InvalidateVisual();
          }
 
          base.OnStylusMove(e);

@@ -1556,7 +1556,6 @@ namespace GMap.NET.WindowsForms
 #endif
             {
                Core.mouseDown = ApplyRotationInversion(e.X, e.Y);
-               Core.BeginDrag(Core.mouseDown);
 
 #if !PocketPC
                this.Invalidate(false);
@@ -1579,6 +1578,11 @@ namespace GMap.NET.WindowsForms
       protected override void OnMouseUp(MouseEventArgs e)
       {
          base.OnMouseUp(e);
+
+         if(e.Button == DragButton)
+         {
+            Core.mouseDown = GPoint.Empty;
+         }
 
          if(isSelected)
          {
@@ -1701,6 +1705,17 @@ namespace GMap.NET.WindowsForms
 
       protected override void OnMouseMove(MouseEventArgs e)
       {
+         if(!Core.IsDragging && !Core.mouseDown.IsEmpty)
+         {
+            //Drag button is down, but cursor has not moved beyond drag tolerance
+            GPoint p = ApplyRotationInversion(e.X, e.Y);
+
+            if(Math.Abs(p.X - Core.mouseDown.X) * 2 >= System.Windows.Forms.SystemInformation.DragSize.Width || Math.Abs(p.Y - Core.mouseDown.Y) * 2 >= System.Windows.Forms.SystemInformation.DragSize.Height)
+            {
+               Core.BeginDrag(Core.mouseDown);
+            }
+         }
+
          if(Core.IsDragging)
          {
             if(!isDragging)
