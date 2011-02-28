@@ -6,8 +6,8 @@ namespace GMap.NET.CacheProviders
    using System.Data;
    using System.Diagnostics;
    using System.IO;
-   using SqlCommand=System.Data.SqlServerCe.SqlCeCommand;
-   using SqlConnection=System.Data.SqlServerCe.SqlCeConnection;
+   using SqlCommand = System.Data.SqlServerCe.SqlCeCommand;
+   using SqlConnection = System.Data.SqlServerCe.SqlCeConnection;
 
    /// <summary>
    /// image cache for ms sql server
@@ -186,7 +186,7 @@ namespace GMap.NET.CacheProviders
                      cmdInsert.Parameters["@x"].Value = pos.X;
                      cmdInsert.Parameters["@y"].Value = pos.Y;
                      cmdInsert.Parameters["@zoom"].Value = zoom;
-                     cmdInsert.Parameters["@type"].Value = (int) type;
+                     cmdInsert.Parameters["@type"].Value = (int)type;
                      cmdInsert.Parameters["@tile"].Value = tile.GetBuffer();
                      cmdInsert.ExecuteNonQuery();
                   }
@@ -216,13 +216,13 @@ namespace GMap.NET.CacheProviders
                      cmdFetch.Parameters["@x"].Value = pos.X;
                      cmdFetch.Parameters["@y"].Value = pos.Y;
                      cmdFetch.Parameters["@zoom"].Value = zoom;
-                     cmdFetch.Parameters["@type"].Value = (int) type;
+                     cmdFetch.Parameters["@type"].Value = (int)type;
                      odata = cmdFetch.ExecuteScalar();
                   }
 
                   if(odata != null && odata != DBNull.Value)
                   {
-                     byte[] tile = (byte[]) odata;
+                     byte[] tile = (byte[])odata;
                      if(tile != null && tile.Length > 0)
                      {
                         if(GMaps.Instance.ImageProxy != null)
@@ -230,7 +230,7 @@ namespace GMap.NET.CacheProviders
                            MemoryStream stm = new MemoryStream(tile, 0, tile.Length, false, true);
 
                            ret = GMaps.Instance.ImageProxy.FromStream(stm);
-                           if(ret!= null)
+                           if(ret != null)
                            {
                               ret.Data = stm;
                            }
@@ -248,6 +248,11 @@ namespace GMap.NET.CacheProviders
             }
          }
          return ret;
+      }
+
+      int PureImageCache.DeleteOlderThan(DateTime date)
+      {
+         throw new NotImplementedException();
       }
       #endregion
    }

@@ -2,6 +2,7 @@
 namespace GMap.NET
 {
    using System.IO;
+   using System;
 
    /// <summary>
    /// pure abstraction for image cache
@@ -28,10 +29,10 @@ namespace GMap.NET
       PureImage GetImageFromCache(MapType type, GPoint pos, int zoom);
 
       /// <summary>
-      /// delete old tiles beyond a supplied timespan
+      /// delete old tiles beyond a supplied date
       /// </summary>
-      /// <param name="timeSpan">Tiles older than this will be deleted.</param>
+      /// <param name="date">Tiles older than this will be deleted.</param>
       /// <returns>The number of deleted tiles.</returns>
-      int DeleteOlderThan(System.TimeSpan timeSpan);
+      int DeleteOlderThan(DateTime date);
    }
 }

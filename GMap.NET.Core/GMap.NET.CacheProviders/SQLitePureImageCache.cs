@@ -80,7 +80,7 @@ namespace GMap.NET.CacheProviders
          }
       }
 
-      #region -- import / export --
+   #region -- import / export --
       public static bool CreateEmptyDB(string file)
       {
          bool ret = true;
@@ -371,7 +371,7 @@ namespace GMap.NET.CacheProviders
       }
       #endregion
 
-      #region PureImageCache Members
+   #region PureImageCache Members
 
       bool PureImageCache.PutImageToCache(MemoryStream tile, MapType type, GPoint pos, int zoom)
       {
@@ -397,7 +397,7 @@ namespace GMap.NET.CacheProviders
                               cmd.Parameters.Add(new SQLiteParameter("@p1", pos.X));
                               cmd.Parameters.Add(new SQLiteParameter("@p2", pos.Y));
                               cmd.Parameters.Add(new SQLiteParameter("@p3", zoom));
-                              cmd.Parameters.Add(new SQLiteParameter("@p4", (int) type));
+                              cmd.Parameters.Add(new SQLiteParameter("@p4", (int)type));
                               cmd.Parameters.Add(new SQLiteParameter("@p5", DateTime.Now));
 
                               cmd.ExecuteNonQuery();
@@ -456,7 +456,7 @@ namespace GMap.NET.CacheProviders
                {
                   using(DbCommand com = cn.CreateCommand())
                   {
-                     com.CommandText = string.Format(sqlSelect, pos.X, pos.Y, zoom, (int) type);
+                     com.CommandText = string.Format(sqlSelect, pos.X, pos.Y, zoom, (int)type);
 
                      using(DbDataReader rd = com.ExecuteReader(System.Data.CommandBehavior.SequentialAccess))
                      {
@@ -498,26 +498,26 @@ namespace GMap.NET.CacheProviders
          return ret;
       }
 
-      int PureImageCache.DeleteOlderThan(System.TimeSpan timeSpan)
+      int PureImageCache.DeleteOlderThan(DateTime date)
       {
          int affectedRows = 0;
 
          try
          {
-            using (SQLiteConnection cn = new SQLiteConnection())
+            using(SQLiteConnection cn = new SQLiteConnection())
             {
                cn.ConnectionString = ConnectionString;
                cn.Open();
                {
-                  using (DbCommand com = cn.CreateCommand())
+                  using(DbCommand com = cn.CreateCommand())
                   {
-                     com.CommandText = string.Format("DELETE FROM Tiles WHERE CacheTime < datetime('{0}')", System.DateTime.Now.Subtract(timeSpan).ToString("s"));
+                     com.CommandText = string.Format("DELETE FROM Tiles WHERE CacheTime is not NULL and CacheTime < datetime('{0}')", date.ToString("s"));
                      affectedRows = com.ExecuteNonQuery();
                   }
                }
             }
          }
-         catch (Exception ex)
+         catch(Exception ex)
          {
 #if MONO
             Console.WriteLine("DeleteOlderThan: " + ex.ToString());

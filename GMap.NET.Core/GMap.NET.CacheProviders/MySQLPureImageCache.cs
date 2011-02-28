@@ -74,7 +74,7 @@ namespace GMap.NET.CacheProviders
          {
             if(!initialized)
             {
-   #region prepare mssql & cache table
+               #region prepare mssql & cache table
                try
                {
                   // different connections so the multi-thread inserts and selects don't collide on open readers.
@@ -120,13 +120,13 @@ namespace GMap.NET.CacheProviders
                   this.initialized = false;
                   Debug.WriteLine(ex.Message);
                }
-   #endregion
+               #endregion
             }
             return initialized;
          }
       }
 
-   #region IDisposable Members
+      #region IDisposable Members
 
       public void Dispose()
       {
@@ -142,7 +142,7 @@ namespace GMap.NET.CacheProviders
             {
                cnSet.Dispose();
                cnSet = null;
-            }              
+            }
          }
 
          lock(cmdFetch)
@@ -157,14 +157,14 @@ namespace GMap.NET.CacheProviders
             {
                cnGet.Dispose();
                cnGet = null;
-            }              
+            }
          }
          Initialized = false;
       }
-   #endregion
+      #endregion
 
-   #region PureImageCache Members
-      public bool PutImageToCache(MemoryStream tile, MapType type, Point pos, int zoom)
+      #region PureImageCache Members
+      public bool PutImageToCache(MemoryStream tile, MapType type, GPoint pos, int zoom)
       {
          bool ret = true;
          {
@@ -181,7 +181,7 @@ namespace GMap.NET.CacheProviders
                         cnSet.Open();
                      }
 
-                     cmdInsert.Parameters["@type"].Value = (int) type;
+                     cmdInsert.Parameters["@type"].Value = (int)type;
                      cmdInsert.Parameters["@zoom"].Value = zoom;
                      cmdInsert.Parameters["@x"].Value = pos.X;
                      cmdInsert.Parameters["@y"].Value = pos.Y;
@@ -200,7 +200,7 @@ namespace GMap.NET.CacheProviders
          return ret;
       }
 
-      public PureImage GetImageFromCache(MapType type, Point pos, int zoom)
+      public PureImage GetImageFromCache(MapType type, GPoint pos, int zoom)
       {
          PureImage ret = null;
          {
@@ -218,7 +218,7 @@ namespace GMap.NET.CacheProviders
                         cnGet.Open();
                      }
 
-                     cmdFetch.Parameters["@type"].Value = (int) type;
+                     cmdFetch.Parameters["@type"].Value = (int)type;
                      cmdFetch.Parameters["@zoom"].Value = zoom;
                      cmdFetch.Parameters["@x"].Value = pos.X;
                      cmdFetch.Parameters["@y"].Value = pos.Y;
@@ -227,15 +227,15 @@ namespace GMap.NET.CacheProviders
 
                   if(odata != null && odata != DBNull.Value)
                   {
-                     byte[] tile = (byte[]) odata;
+                     byte[] tile = (byte[])odata;
                      if(tile != null && tile.Length > 0)
                      {
                         if(GMaps.Instance.ImageProxy != null)
                         {
                            MemoryStream stm = new MemoryStream(tile, 0, tile.Length, false, true);
-                           
+
                            ret = GMaps.Instance.ImageProxy.FromStream(stm);
-                           if(ret!= null)
+                           if(ret != null)
                            {
                               ret.Data = stm;
                            }
@@ -254,7 +254,12 @@ namespace GMap.NET.CacheProviders
          }
          return ret;
       }
-   #endregion
+
+      int PureImageCache.DeleteOlderThan(DateTime date)
+      {
+         throw new NotImplementedException();
+      }
+      #endregion
    }
 #endif
 }
