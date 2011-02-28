@@ -498,6 +498,36 @@ namespace GMap.NET.CacheProviders
          return ret;
       }
 
+      int PureImageCache.DeleteOlderThan(System.TimeSpan timeSpan)
+      {
+         int affectedRows = 0;
+
+         try
+         {
+            using (SQLiteConnection cn = new SQLiteConnection())
+            {
+               cn.ConnectionString = ConnectionString;
+               cn.Open();
+               {
+                  using (DbCommand com = cn.CreateCommand())
+                  {
+                     com.CommandText = string.Format("DELETE FROM Tiles WHERE CacheTime < datetime('{0}')", System.DateTime.Now.Subtract(timeSpan).ToString("s"));
+                     affectedRows = com.ExecuteNonQuery();
+                  }
+               }
+            }
+         }
+         catch (Exception ex)
+         {
+#if MONO
+            Console.WriteLine("DeleteOlderThan: " + ex.ToString());
+#endif
+            Debug.WriteLine("DeleteOlderThan: " + ex.ToString());
+         }
+
+         return affectedRows;
+      }
+
       #endregion
    }
 #endif
