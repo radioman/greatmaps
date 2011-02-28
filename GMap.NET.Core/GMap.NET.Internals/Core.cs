@@ -371,7 +371,7 @@ namespace GMap.NET.Internals
                mmaxZoom = maxZoom;
             }
 
-            if((int) Zoom != mmaxZoom)
+            if((int)Zoom != mmaxZoom)
             {
                Zoom = mmaxZoom;
             }
@@ -695,7 +695,7 @@ namespace GMap.NET.Internals
          if(IsRotated)
          {
 #if !PocketPC
-            int diag = (int) Math.Round(Math.Sqrt(Width * Width + Height * Height) / Projection.TileSize.Width, MidpointRounding.AwayFromZero);
+            int diag = (int)Math.Round(Math.Sqrt(Width * Width + Height * Height) / Projection.TileSize.Width, MidpointRounding.AwayFromZero);
 #else
             int diag = (int) Math.Round(Math.Sqrt(Width * Width + Height * Height) / Projection.TileSize.Width);
 #endif
@@ -822,6 +822,8 @@ namespace GMap.NET.Internals
       public void EndDrag()
       {
          IsDragging = false;
+         mouseDown = GPoint.Empty;
+
          if(OnNeedInvalidation != null)
          {
             OnNeedInvalidation();
@@ -935,7 +937,7 @@ namespace GMap.NET.Internals
 
          {
             LastLocationInBounds = CurrentPosition;
-            CurrentPosition = FromLocalToLatLng((int) Width / 2, (int) Height / 2);
+            CurrentPosition = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
          }
 
          if(OnMapDrag != null)
@@ -964,7 +966,7 @@ namespace GMap.NET.Internals
          if(IsDragging)
          {
             LastLocationInBounds = CurrentPosition;
-            CurrentPosition = FromLocalToLatLng((int) Width / 2, (int) Height / 2);
+            CurrentPosition = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
 
             if(OnMapDrag != null)
             {
@@ -1037,7 +1039,7 @@ namespace GMap.NET.Internals
                      lock(LastTileLoadStartEndLock)
                      {
                         LastTileLoadEnd = DateTime.Now;
-                        lastTileLoadTimeMs = (long) (LastTileLoadEnd - LastTileLoadStart).TotalMilliseconds;
+                        lastTileLoadTimeMs = (long)(LastTileLoadEnd - LastTileLoadStart).TotalMilliseconds;
                      }
 
                      #region -- clear stuff--
@@ -1340,12 +1342,12 @@ namespace GMap.NET.Internals
       void UpdateGroundResolution()
       {
          double rez = Projection.GetGroundResolution(Zoom, CurrentPosition.Lat);
-         pxRes100m = (int) (100.0 / rez); // 100 meters
-         pxRes1000m = (int) (1000.0 / rez); // 1km  
-         pxRes10km = (int) (10000.0 / rez); // 10km
-         pxRes100km = (int) (100000.0 / rez); // 100km
-         pxRes1000km = (int) (1000000.0 / rez); // 1000km
-         pxRes5000km = (int) (5000000.0 / rez); // 5000km
+         pxRes100m = (int)(100.0 / rez); // 100 meters
+         pxRes1000m = (int)(1000.0 / rez); // 1km  
+         pxRes10km = (int)(10000.0 / rez); // 10km
+         pxRes100km = (int)(100000.0 / rez); // 100km
+         pxRes1000km = (int)(1000000.0 / rez); // 1000km
+         pxRes5000km = (int)(5000000.0 / rez); // 5000km
       }
    }
 }

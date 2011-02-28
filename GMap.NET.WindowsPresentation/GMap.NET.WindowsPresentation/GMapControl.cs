@@ -1356,9 +1356,7 @@ namespace GMap.NET.WindowsPresentation
       {
          if(CanDragMap && e.ChangedButton == DragButton && e.ButtonState == MouseButtonState.Pressed)
          {
-            Mouse.Capture(this);
-
-            System.Windows.Point p = e.GetPosition(this);
+            Point p = e.GetPosition(this);
 
             if(MapRenderTransform != null)
             {
@@ -1376,7 +1374,7 @@ namespace GMap.NET.WindowsPresentation
          {
             if(!isSelected)
             {
-               System.Windows.Point p = e.GetPosition(this);
+               Point p = e.GetPosition(this);
                isSelected = true;
                SelectedArea = RectLatLng.Empty;
                selectionEnd = PointLatLng.Zero;
@@ -1388,11 +1386,6 @@ namespace GMap.NET.WindowsPresentation
 
       protected override void OnMouseUp(MouseButtonEventArgs e)
       {
-         if(e.ChangedButton == DragButton)
-         {
-            Core.mouseDown = GPoint.Empty;
-         }
-
          if(isSelected)
          {
             isSelected = false;
@@ -1400,10 +1393,10 @@ namespace GMap.NET.WindowsPresentation
 
          if(Core.IsDragging)
          {
-            Mouse.Capture(null);
-
             if(isDragging)
             {
+               Mouse.Capture(null);
+
                isDragging = false;
                Debug.WriteLine("IsDragging = " + isDragging);
                Cursor = cursorBefore;
@@ -1429,6 +1422,10 @@ namespace GMap.NET.WindowsPresentation
             }
             else
             {
+               if(e.ChangedButton == DragButton)
+               {
+                  Core.mouseDown = GPoint.Empty;
+               }
                InvalidateVisual();
             }
          }
@@ -1440,19 +1437,19 @@ namespace GMap.NET.WindowsPresentation
 
       protected override void OnMouseMove(MouseEventArgs e)
       {
-         if (!Core.IsDragging && !Core.mouseDown.IsEmpty)
+         if(!Core.IsDragging && !Core.mouseDown.IsEmpty)
          {
-            //Drag button is down, but cursor has not moved beyond drag tolerance
-            System.Windows.Point p = e.GetPosition(this);
+            Point p = e.GetPosition(this);
 
-            if (MapRenderTransform != null)
+            if(MapRenderTransform != null)
             {
                p = MapRenderTransform.Inverse.Transform(p);
             }
 
             p = ApplyRotationInversion(p.X, p.Y);
 
-            if (Math.Abs(p.X - Core.mouseDown.X) * 2 >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(p.Y - Core.mouseDown.Y) * 2 >= SystemParameters.MinimumVerticalDragDistance)
+            // cursor has moved beyond drag tolerance
+            if(Math.Abs(p.X - Core.mouseDown.X) * 2 >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(p.Y - Core.mouseDown.Y) * 2 >= SystemParameters.MinimumVerticalDragDistance)
             {
                Core.BeginDrag(Core.mouseDown);
             }
@@ -1462,6 +1459,8 @@ namespace GMap.NET.WindowsPresentation
          {
             if(!isDragging)
             {
+               Mouse.Capture(this);
+
                isDragging = true;
                Debug.WriteLine("IsDragging = " + isDragging);
 
@@ -1475,7 +1474,7 @@ namespace GMap.NET.WindowsPresentation
             }
             else
             {
-               System.Windows.Point p = e.GetPosition(this);
+               Point p = e.GetPosition(this);
 
                if(MapRenderTransform != null)
                {
@@ -1528,9 +1527,7 @@ namespace GMap.NET.WindowsPresentation
       {
          if(TouchEnabled && CanDragMap && !e.InAir)
          {
-            Mouse.Capture(this);
-
-            System.Windows.Point p = e.GetPosition(this);
+            Point p = e.GetPosition(this);
 
             if(MapRenderTransform != null)
             {
@@ -1541,9 +1538,7 @@ namespace GMap.NET.WindowsPresentation
 
             Core.mouseDown.X = (int)p.X;
             Core.mouseDown.Y = (int)p.Y;
-            {
-               Cursor = Cursors.SizeAll;
-            }
+
             InvalidateVisual();
          }
 
@@ -1554,8 +1549,6 @@ namespace GMap.NET.WindowsPresentation
       {
          if(TouchEnabled)
          {
-            Core.mouseDown = GPoint.Empty;
-
             if(isSelected)
             {
                isSelected = false;
@@ -1563,15 +1556,15 @@ namespace GMap.NET.WindowsPresentation
 
             if(Core.IsDragging)
             {
-               Mouse.Capture(null);
-
                if(isDragging)
                {
+                  Mouse.Capture(null);
+
                   isDragging = false;
                   Debug.WriteLine("IsDragging = " + isDragging);
+                  Cursor = cursorBefore;
                }
                Core.EndDrag();
-               Cursor = Cursors.Arrow;
 
                if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
                {
@@ -1580,6 +1573,11 @@ namespace GMap.NET.WindowsPresentation
                      Position = Core.LastLocationInBounds.Value;
                   }
                }
+            }
+            else
+            {
+               Core.mouseDown = GPoint.Empty;
+               InvalidateVisual();
             }
          }
          base.OnStylusUp(e);
@@ -1591,17 +1589,17 @@ namespace GMap.NET.WindowsPresentation
          {
             if(!Core.IsDragging && !Core.mouseDown.IsEmpty)
             {
-               //Drag button is down, but cursor has not moved beyond drag tolerance
-               System.Windows.Point p = e.GetPosition(this);
+               Point p = e.GetPosition(this);
 
-               if (MapRenderTransform != null)
+               if(MapRenderTransform != null)
                {
                   p = MapRenderTransform.Inverse.Transform(p);
                }
 
                p = ApplyRotationInversion(p.X, p.Y);
 
-               if (Math.Abs(p.X - Core.mouseDown.X) * 2 >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(p.Y - Core.mouseDown.Y) * 2 >= SystemParameters.MinimumVerticalDragDistance)
+               // cursor has moved beyond drag tolerance
+               if(Math.Abs(p.X - Core.mouseDown.X) * 2 >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(p.Y - Core.mouseDown.Y) * 2 >= SystemParameters.MinimumVerticalDragDistance)
                {
                   Core.BeginDrag(Core.mouseDown);
                }
@@ -1611,8 +1609,13 @@ namespace GMap.NET.WindowsPresentation
             {
                if(!isDragging)
                {
+                  Mouse.Capture(this);
+
                   isDragging = true;
                   Debug.WriteLine("IsDragging = " + isDragging);
+
+                  cursorBefore = Cursor;
+                  Cursor = Cursors.SizeAll;
                }
 
                if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
@@ -1621,7 +1624,7 @@ namespace GMap.NET.WindowsPresentation
                }
                else
                {
-                  System.Windows.Point p = e.GetPosition(this);
+                  Point p = e.GetPosition(this);
 
                   if(MapRenderTransform != null)
                   {
