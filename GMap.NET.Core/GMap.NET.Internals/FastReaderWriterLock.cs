@@ -35,21 +35,21 @@ namespace GMap.NET.Internals
 
       public FastReaderWriterLock()
       {
-         if(VistaOrLater)
+         if(UseNativeSRWLock)
          {
             NativeMethods.InitializeSRWLock(out this.LockSRW);
          }
       }
 #endif
 
-      static readonly bool VistaOrLater = Stuff.IsRunningOnVistaOrLater();
+      static readonly bool UseNativeSRWLock = Stuff.IsRunningOnVistaOrLater() && IntPtr.Size == 4; // works only in 32-bit mode, any ideas on native 64-bit support? 
       Int32 busy = 0;
       Int32 readCount = 0;
 
       public void AcquireReaderLock()
       {
 #if !MONO
-         if(VistaOrLater)
+         if(UseNativeSRWLock)
          {
             NativeMethods.AcquireSRWLockShared(ref LockSRW);
          }
@@ -81,7 +81,7 @@ namespace GMap.NET.Internals
       public void ReleaseReaderLock()
       {
 #if !MONO
-         if(VistaOrLater)
+         if(UseNativeSRWLock)
          {
             NativeMethods.ReleaseSRWLockShared(ref LockSRW);
          }
@@ -96,7 +96,7 @@ namespace GMap.NET.Internals
       public void AcquireWriterLock()
       {
 #if !MONO
-         if(VistaOrLater)
+         if(UseNativeSRWLock)
          {
             NativeMethods.AcquireSRWLockExclusive(ref LockSRW);
          }
@@ -120,7 +120,7 @@ namespace GMap.NET.Internals
       public void ReleaseWriterLock()
       {
 #if !MONO
-         if(VistaOrLater)
+         if(UseNativeSRWLock)
          {
             NativeMethods.ReleaseSRWLockExclusive(ref LockSRW);
          }
