@@ -1723,8 +1723,6 @@ namespace GMap.NET.WindowsPresentation
             ret.Y = (int)f.Y;
          }
 
-         ret.Offset(-(int)MapTranslateTransform.X, -(int)MapTranslateTransform.Y);
-
          return ret;
       }
 

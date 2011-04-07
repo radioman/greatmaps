@@ -71,7 +71,7 @@ namespace Demo.WindowsForms
 
             // config map 
             MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
-            MainMap.MapType = MapType.GoogleMap;
+            MainMap.MapType = MapType.OpenStreetMap;
             MainMap.MinZoom = 1;
             MainMap.MaxZoom = 17;
             MainMap.Zoom = 3;
