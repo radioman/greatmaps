@@ -13,10 +13,12 @@ namespace GMap.NET.WindowsForms.Markers
    {
       public float? Bearing;
 
+      static readonly System.Drawing.Size SizeSt = new System.Drawing.Size(Resources.bigMarkerGreen.Width, Resources.bigMarkerGreen.Height);
+
       public GMapMarkerGoogleGreen(PointLatLng p)
          : base(p)
       {
-         Size = new System.Drawing.Size(Resources.bigMarkerGreen.Width, Resources.bigMarkerGreen.Height);
+         Size = SizeSt;
          Offset = new Point(-10, -34);
       }
 

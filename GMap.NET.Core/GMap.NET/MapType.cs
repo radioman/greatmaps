@@ -1,6 +1,8 @@
 ﻿
 namespace GMap.NET
 {
+   using System;
+
    /// <summary>
    /// types of great maps
    /// </summary>
@@ -8,16 +10,26 @@ namespace GMap.NET
    {
       None = 0, // displays no map
 
+      [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleMap = 1,
+      [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleSatellite = 4,
+      [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleLabels = 8,
+      [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleTerrain = 16,
+      [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleHybrid = 20,
 
+      [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleMapChina = 22,
+      [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleSatelliteChina = 24,
+      [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleLabelsChina = 26,
+      [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleTerrainChina = 28,
+      [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleHybridChina = 29,
 
       OpenStreetMap = 32,
@@ -77,9 +89,13 @@ namespace GMap.NET
       PergoTurkeyMap = 2001,
       SigPacSpainMap = 3001,
 
+      [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleMapKorea = 4001,
+      [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleSatelliteKorea = 4002,
+      [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleLabelsKorea = 4003,
+      [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleHybridKorea = 4005,
 
       YandexMapRu = 5000,
