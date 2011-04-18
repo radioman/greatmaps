@@ -310,7 +310,29 @@ namespace GMap.NET
       /// cache worker
       /// </summary>
       Thread CacheEngine;
-      AutoResetEvent WaitForCache = new AutoResetEvent(false);
+
+      readonly AutoResetEvent WaitForCache = new AutoResetEvent(false);
+
+#if !PocketPC
+#if !MONO
+#if SQLite
+      static GMaps()
+      {
+         AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+      }
+
+      static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+      {
+         if(args.Name.StartsWith("System.Data.SQLite", StringComparison.OrdinalIgnoreCase))
+         {
+            string dir = AppDomain.CurrentDomain.BaseDirectory + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar;
+            return System.Reflection.Assembly.LoadFile(dir + "System.Data.SQLite.dll");
+         }
+         return null;
+      }
+#endif
+#endif
+#endif
 
       public GMaps()
       {
@@ -926,21 +948,21 @@ namespace GMap.NET
                      {
                         GpsLog log = new GpsLog();
                         {
-                           log.TimeUTC = (DateTime) rd["TimeUTC"];
-                           log.SessionCounter = (long) rd["SessionCounter"];
+                           log.TimeUTC = (DateTime)rd["TimeUTC"];
+                           log.SessionCounter = (long)rd["SessionCounter"];
                            log.Delta = rd["Delta"] as double?;
                            log.Speed = rd["Speed"] as double?;
                            log.SeaLevelAltitude = rd["SeaLevelAltitude"] as double?;
                            log.EllipsoidAltitude = rd["EllipsoidAltitude"] as double?;
                            log.SatellitesInView = rd["SatellitesInView"] as System.Byte?;
                            log.SatelliteCount = rd["SatelliteCount"] as System.Byte?;
-                           log.Position = new PointLatLng((double) rd["Lat"], (double) rd["Lng"]);
+                           log.Position = new PointLatLng((double)rd["Lat"], (double)rd["Lng"]);
                            log.PositionDilutionOfPrecision = rd["PositionDilutionOfPrecision"] as double?;
                            log.HorizontalDilutionOfPrecision = rd["HorizontalDilutionOfPrecision"] as double?;
                            log.VerticalDilutionOfPrecision = rd["VerticalDilutionOfPrecision"] as double?;
-                           log.FixQuality = (FixQuality) ((byte) rd["FixQuality"]);
-                           log.FixType = (FixType) ((byte) rd["FixType"]);
-                           log.FixSelection = (FixSelection) ((byte) rd["FixSelection"]);
+                           log.FixQuality = (FixQuality)((byte)rd["FixQuality"]);
+                           log.FixType = (FixType)((byte)rd["FixType"]);
+                           log.FixSelection = (FixSelection)((byte)rd["FixSelection"]);
                         }
 
                         if(log.SessionCounter == 0 && points.Count > 0)
@@ -1698,7 +1720,7 @@ namespace GMap.NET
                // http://m1.mapserver.mapy.cz/base-n/3_8000000_8000000
 
                int xx = pos.X << (28 - zoom);
-               int yy = ((((int) Math.Pow(2.0, (double) zoom)) - 1) - pos.Y) << (28 - zoom);
+               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
 
                return string.Format("http://m{0}.mapserver.mapy.cz/base-n/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
             }
@@ -1708,7 +1730,7 @@ namespace GMap.NET
                // http://m1.mapserver.mapy.cz/turist/3_8000000_8000000
 
                int xx = pos.X << (28 - zoom);
-               int yy = ((((int) Math.Pow(2.0, (double) zoom)) - 1) - pos.Y) << (28 - zoom);
+               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
 
                return string.Format("http://m{0}.mapserver.mapy.cz/turist/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
             }
@@ -1718,7 +1740,7 @@ namespace GMap.NET
                //http://m3.mapserver.mapy.cz/ophoto/9_7a80000_7a80000
 
                int xx = pos.X << (28 - zoom);
-               int yy = ((((int) Math.Pow(2.0, (double) zoom)) - 1) - pos.Y) << (28 - zoom);
+               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
 
                return string.Format("http://m{0}.mapserver.mapy.cz/ophoto/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
             }
@@ -1728,7 +1750,7 @@ namespace GMap.NET
                // http://m2.mapserver.mapy.cz/hybrid/9_7d00000_7b80000
 
                int xx = pos.X << (28 - zoom);
-               int yy = ((((int) Math.Pow(2.0, (double) zoom)) - 1) - pos.Y) << (28 - zoom);
+               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
 
                return string.Format("http://m{0}.mapserver.mapy.cz/hybrid/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
             }
@@ -1738,7 +1760,7 @@ namespace GMap.NET
                // http://m4.mapserver.mapy.cz/army2/9_7d00000_8080000
 
                int xx = pos.X << (28 - zoom);
-               int yy = ((((int) Math.Pow(2.0, (double) zoom)) - 1) - pos.Y) << (28 - zoom);
+               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
 
                return string.Format("http://m{0}.mapserver.mapy.cz/army2/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
             }
@@ -1956,7 +1978,7 @@ namespace GMap.NET
             string url = @"http://maps.google.com";
             try
             {
-               HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+               HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                if(Proxy != null)
                {
                   request.Proxy = Proxy;
@@ -2056,7 +2078,7 @@ namespace GMap.NET
             string url = @"http://www.bing.com/maps";
             try
             {
-               HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+               HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                if(Proxy != null)
                {
                   request.Proxy = Proxy;
@@ -2114,7 +2136,7 @@ namespace GMap.NET
 
          try
          {
-            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.ServicePoint.ConnectionLimit = 50;
             if(Proxy != null)
             {
@@ -2195,7 +2217,7 @@ namespace GMap.NET
 
             if(string.IsNullOrEmpty(geo))
             {
-               HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+               HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                if(Proxy != null)
                {
                   request.Proxy = Proxy;
@@ -2234,7 +2256,7 @@ namespace GMap.NET
                string[] values = geo.Split(',');
                if(values.Length == 4)
                {
-                  status = (GeoCoderStatusCode) int.Parse(values[0]);
+                  status = (GeoCoderStatusCode)int.Parse(values[0]);
                   if(status == GeoCoderStatusCode.G_GEO_SUCCESS)
                   {
                      double lat = double.Parse(values[2], CultureInfo.InvariantCulture);
@@ -2295,7 +2317,7 @@ namespace GMap.NET
 
             if(string.IsNullOrEmpty(reverse))
             {
-               HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+               HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                if(Proxy != null)
                {
                   request.Proxy = Proxy;
@@ -2415,7 +2437,7 @@ namespace GMap.NET
                            nn = n.SelectSingleNode("//sm:Status/sm:code", nsMgr);
                            if(nn != null)
                            {
-                              ret.Status = (GeoCoderStatusCode) int.Parse(nn.InnerText);
+                              ret.Status = (GeoCoderStatusCode)int.Parse(nn.InnerText);
                            }
 
                            nn = n.SelectSingleNode("//sm:Placemark/sn:AddressDetails/@Accuracy", nsMgr);
@@ -2482,7 +2504,7 @@ namespace GMap.NET
 
             if(string.IsNullOrEmpty(route))
             {
-               HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+               HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                request.ServicePoint.ConnectionLimit = 50;
                if(Proxy != null)
                {
@@ -2808,7 +2830,7 @@ namespace GMap.NET
                {
                   string url = MakeImageUrl(type, pos, zoom, LanguageStr);
 
-                  HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+                  HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                   if(Proxy != null)
                   {
                      request.Proxy = Proxy;
@@ -3025,7 +3047,7 @@ namespace GMap.NET
          url += "&app=GMap.NET.WindowsMobile";
 #endif
 
-         HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
          {
 #if !PocketPC
             request.Proxy = WebRequest.DefaultWebProxy;
