@@ -5,6 +5,7 @@ using System.Text;
 using GMap.NET.Projections;
 using DotSpatial.Projections;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace ConsoleApplication
 {
@@ -32,7 +33,7 @@ namespace ConsoleApplication
             ProjectionInfo pEnd = new ProjectionInfo("+proj=tmerc +lat_0=0 +lon_0=15 +k=0.9996 +x_0=4200000 +y_0=-1300000 +ellps=WGS84 +datum=WGS84 +to_meter=0.03125 +no_defs");
             Reproject.ReprojectPoints(xy, z, pStart, pEnd, 0, 1);
 
-            Debug.WriteLine(" true1: " + (int) xy[0] + "; " + (int) xy[1]);
+            Debug.WriteLine(" true1: " + (int)xy[0] + "; " + (int)xy[1]);
 
             var prj = new MapyCZProjection();
             {
@@ -52,6 +53,6 @@ namespace ConsoleApplication
          }
 
          Console.ReadLine();
-      }
+      }   
    }
 }

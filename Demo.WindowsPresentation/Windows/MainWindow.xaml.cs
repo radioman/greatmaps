@@ -44,7 +44,7 @@ namespace Demo.WindowsPresentation
          // set cache mode only if no internet avaible
          try
          {
-            System.Net.IPHostEntry e = System.Net.Dns.GetHostEntry("www.google.com");
+            System.Net.IPHostEntry e = System.Net.Dns.GetHostEntry("www.bing.com");
          }
          catch
          {

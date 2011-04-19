@@ -139,7 +139,7 @@ namespace Demo.StreetView
                }
                if(!File.Exists(fl))
                {
-                  ImageSource src = Get(string.Format("http://cbk{0}.google.com/cbk?output=tile&panoid={1}&zoom={2}&x={3}&y={4}&cb_client=maps_sv", (x + 2 * y) % 3, panoId, zoom, x, y));
+                  ImageSource src = Get(string.Format("http://cbk{0}.{5}/cbk?output=tile&panoid={1}&zoom={2}&x={3}&y={4}&cb_client=maps_sv", (x + 2 * y) % 3, panoId, zoom, x, y, GMap.NET.GMaps.Instance.GServer));
                   p.src = src;
                   SaveImg(src, fl);
                }
@@ -254,7 +254,7 @@ namespace Demo.StreetView
             request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
             request.Timeout = 10*1000;
             request.ReadWriteTimeout = request.Timeout*6;
-            request.Referer = "http://maps.google.com/";
+            request.Referer = string.Format("http://maps.{0}/", GMap.NET.GMaps.Instance.GServer);
             request.KeepAlive = true;
 
             using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)

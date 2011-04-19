@@ -20,6 +20,7 @@ namespace GMap.NET
 
 #if !MONO
    using System.Data.SQLite;
+   using System.Security.Cryptography;
 #else
    using SQLiteConnection=Mono.Data.SqliteClient.SqliteConnection;
    using SQLiteTransaction=Mono.Data.SqliteClient.SqliteTransaction;
@@ -39,27 +40,32 @@ namespace GMap.NET
    /// </summary>
    public class GMaps : Singleton<GMaps>
    {
+      public readonly string GServer = ThisIsLegalString("zOl/KnHzebJUqs6JWROaCQ==");
+      public readonly string GServerChina = ThisIsLegalString("zOl/KnHzebLqgdc2FRlQHg==");
+      public readonly string GServerKorea = ThisIsLegalString("ecw6OdJzJ/zgnFTB90qgtw==");
+      public readonly string GServerKoreaKr = ThisIsLegalString("zOl/KnHzebIhmuu+tK5lbw==");
+
       // Google version strings
-      public string VersionGoogleMap = "m@142";
-      public string VersionGoogleSatellite = "76";
-      public string VersionGoogleLabels = "h@142";
-      public string VersionGoogleTerrain = "t@126,r@142";
+      public string VersionGoogleMap = "m@151";
+      public string VersionGoogleSatellite = "83";
+      public string VersionGoogleLabels = "h@151";
+      public string VersionGoogleTerrain = "t@126,r@151";
       public string SecGoogleWord = "Galileo";
 
       // Google (China) version strings
-      public string VersionGoogleMapChina = "m@142";
-      public string VersionGoogleSatelliteChina = "s@76";
-      public string VersionGoogleLabelsChina = "h@142";
-      public string VersionGoogleTerrainChina = "t@126,r@142";
+      public string VersionGoogleMapChina = "m@151";
+      public string VersionGoogleSatelliteChina = "s@83";
+      public string VersionGoogleLabelsChina = "h@151";
+      public string VersionGoogleTerrainChina = "t@126,r@151";
 
       // Google (Korea) version strings
       public string VersionGoogleMapKorea = "kr1.12";
-      public string VersionGoogleSatelliteKorea = "71";
+      public string VersionGoogleSatelliteKorea = "83";
       public string VersionGoogleLabelsKorea = "kr1t.12";
 
       /// <summary>
       /// Google Maps API generated using http://greatmaps.codeplex.com/
-      /// from http://code.google.com/intl/en-us/apis/maps/signup.html
+      /// from http://tinyurl.com/3q6zhcw <- http://code.server.com/intl/en-us/apis/maps/signup.html
       /// </summary>
       public string GoogleMapsAPIKey = @"ABQIAAAAWaQgWiEBF3lW97ifKnAczhRAzBk5Igf8Z5n2W3hNnMT0j2TikxTLtVIGU7hCLLHMAuAMt-BO5UrEWA";
 
@@ -69,7 +75,7 @@ namespace GMap.NET
       public string VersionYahooLabels = "4.3";
 
       // BingMaps
-      public string VersionBingMaps = "631";
+      public string VersionBingMaps = "677";
 
       // YandexMap
       public string VersionYandexMap = "2.16.0";
@@ -1246,6 +1252,106 @@ namespace GMap.NET
          return true;
       }
 
+      static string EncryptString(string Message, string Passphrase)
+      {
+         byte[] Results;
+         System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
+
+         // Step 1. We hash the passphrase using MD5
+         // We use the MD5 hash generator as the result is a 128 bit byte array
+         // which is a valid length for the TripleDES encoder we use below
+
+         using(MD5CryptoServiceProvider HashProvider = new MD5CryptoServiceProvider())
+         {
+            byte[] TDESKey = HashProvider.ComputeHash(UTF8.GetBytes(Passphrase));
+
+            // Step 2. Create a new TripleDESCryptoServiceProvider object
+            using(TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider())
+            {
+               // Step 3. Setup the encoder
+               TDESAlgorithm.Key = TDESKey;
+               TDESAlgorithm.Mode = CipherMode.ECB;
+               TDESAlgorithm.Padding = PaddingMode.PKCS7;
+
+               // Step 4. Convert the input string to a byte[]
+               byte[] DataToEncrypt = UTF8.GetBytes(Message);
+
+               // Step 5. Attempt to encrypt the string
+               try
+               {
+                  using(ICryptoTransform Encryptor = TDESAlgorithm.CreateEncryptor())
+                  {
+                     Results = Encryptor.TransformFinalBlock(DataToEncrypt, 0, DataToEncrypt.Length);
+                  }
+               }
+               finally
+               {
+                  // Clear the TripleDes and Hashprovider services of any sensitive information
+                  TDESAlgorithm.Clear();
+                  HashProvider.Clear();
+               }
+            }
+         }
+
+         // Step 6. Return the encrypted string as a base64 encoded string
+         return Convert.ToBase64String(Results);
+      }
+
+      static string DecryptString(string Message, string Passphrase)
+      {
+         byte[] Results;
+         System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
+
+         // Step 1. We hash the passphrase using MD5
+         // We use the MD5 hash generator as the result is a 128 bit byte array
+         // which is a valid length for the TripleDES encoder we use below
+
+         using(MD5CryptoServiceProvider HashProvider = new MD5CryptoServiceProvider())
+         {
+            byte[] TDESKey = HashProvider.ComputeHash(UTF8.GetBytes(Passphrase));
+
+            // Step 2. Create a new TripleDESCryptoServiceProvider object
+            using(TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider())
+            {
+               // Step 3. Setup the decoder
+               TDESAlgorithm.Key = TDESKey;
+               TDESAlgorithm.Mode = CipherMode.ECB;
+               TDESAlgorithm.Padding = PaddingMode.PKCS7;
+
+               // Step 4. Convert the input string to a byte[]
+               byte[] DataToDecrypt = Convert.FromBase64String(Message);
+
+               // Step 5. Attempt to decrypt the string
+               try
+               {
+                  using(ICryptoTransform Decryptor = TDESAlgorithm.CreateDecryptor())
+                  {
+                     Results = Decryptor.TransformFinalBlock(DataToDecrypt, 0, DataToDecrypt.Length);
+                  }
+               }
+               finally
+               {
+                  // Clear the TripleDes and Hashprovider services of any sensitive information
+                  TDESAlgorithm.Clear();
+                  HashProvider.Clear();
+               }
+            }
+         }
+
+         // Step 6. Return the decrypted string in UTF8 format
+         return UTF8.GetString(Results);
+      }
+
+      public static string EncryptString(string Message)
+      {
+         return EncryptString(Message, "GMap.NET is great and Powerful, Free, cross platform, open source .NET control.");
+      }
+
+      public static string ThisIsLegalString(string Message)
+      {
+         return DecryptString(Message, "GMap.NET is great and Powerful, Free, cross platform, open source .NET control.");
+      }
+
       #endregion
 
       #region -- URL generation --
@@ -1271,9 +1377,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               // http://mt1.google.com/vt/lyrs=m@130&hl=lt&x=18683&s=&y=10413&z=15&s=Galile
-
-               return string.Format("http://{0}{1}.google.com/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMap, language, pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.{10}/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMap, language, pos.X, sec1, pos.Y, zoom, sec2, GServer);
             }
 
             case MapType.GoogleSatellite:
@@ -1284,7 +1388,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleSatellite, language, pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.{10}/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleSatellite, language, pos.X, sec1, pos.Y, zoom, sec2, GServer);
             }
 
             case MapType.GoogleLabels:
@@ -1295,10 +1399,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               // http://mt1.google.com/vt/lyrs=h@107&hl=lt&x=583&y=325&z=10&s=Ga
-               // http://mt0.google.com/vt/lyrs=h@130&hl=lt&x=1166&y=652&z=11&s=Galile
-
-               return string.Format("http://{0}{1}.google.com/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabels, language, pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.{10}/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabels, language, pos.X, sec1, pos.Y, zoom, sec2, GServer);
             }
 
             case MapType.GoogleTerrain:
@@ -1309,7 +1410,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               return string.Format("http://{0}{1}.google.com/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrain, language, pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.{10}/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrain, language, pos.X, sec1, pos.Y, zoom, sec2, GServer);
             }
             #endregion
 
@@ -1322,9 +1423,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               // http://mt3.google.cn/vt/lyrs=m@123&hl=zh-CN&gl=cn&x=3419&y=1720&z=12&s=G
-
-               return string.Format("http://{0}{1}.google.cn/{2}/lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.{10}/{2}/lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2, GServerChina);
             }
 
             case MapType.GoogleSatelliteChina:
@@ -1335,9 +1434,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               // http://mt1.google.cn/vt/lyrs=s@59&gl=cn&x=3417&y=1720&z=12&s=Gal
-
-               return string.Format("http://{0}{1}.google.cn/{2}/lyrs={3}&gl=cn&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteChina, pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.{9}/{2}/lyrs={3}&gl=cn&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteChina, pos.X, sec1, pos.Y, zoom, sec2, GServerChina);
             }
 
             case MapType.GoogleLabelsChina:
@@ -1348,9 +1445,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               // http://mt1.google.cn/vt/imgtp=png32&lyrs=h@123&hl=zh-CN&gl=cn&x=3417&y=1720&z=12&s=Gal
-
-               return string.Format("http://{0}{1}.google.cn/{2}/imgtp=png32&lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.{10}/{2}/imgtp=png32&lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2, GServerChina);
             }
 
             case MapType.GoogleTerrainChina:
@@ -1361,9 +1456,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               // http://mt2.google.cn/vt/lyrs=t@108,r@123&hl=zh-CN&gl=cn&x=3418&y=1718&z=12&s=Gali
-
-               return string.Format("http://{0}{1}.google.com/{2}/lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.{10}/{2}/lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2, GServer);
             }
             #endregion
 
@@ -1376,9 +1469,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               // http://mt0.gmaptiles.co.kr/mt/v=kr1.12&hl=lt&x=876&y=400&z=10&s=Gali
-
-               var ret = string.Format("http://{0}{1}.gmaptiles.co.kr/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapKorea, language, pos.X, sec1, pos.Y, zoom, sec2);
+               var ret = string.Format("http://{0}{1}.{10}/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapKorea, language, pos.X, sec1, pos.Y, zoom, sec2, GServerKorea);
                return ret;
             }
 
@@ -1390,9 +1481,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               // http://khm1.google.co.kr/kh/v=59&x=873&y=401&z=10&s=Gali
-
-               return string.Format("http://{0}{1}.google.co.kr/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteKorea, pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.{9}/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteKorea, pos.X, sec1, pos.Y, zoom, sec2, GServerKoreaKr);
             }
 
             case MapType.GoogleLabelsKorea:
@@ -1403,9 +1492,7 @@ namespace GMap.NET
                string sec2 = ""; // after &zoom=...
                GetSecGoogleWords(pos, out sec1, out sec2);
 
-               // http://mt3.gmaptiles.co.kr/mt/v=kr1t.12&hl=lt&x=873&y=401&z=10&s=Gali
-
-               return string.Format("http://{0}{1}.gmaptiles.co.kr/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsKorea, language, pos.X, sec1, pos.Y, zoom, sec2);
+               return string.Format("http://{0}{1}.{10}/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsKorea, language, pos.X, sec1, pos.Y, zoom, sec2, GServerKorea);
             }
             #endregion
 
@@ -1863,7 +1950,7 @@ namespace GMap.NET
       internal string MakeGeocoderUrl(string keywords, string language)
       {
          string key = keywords.Replace(' ', '+');
-         return string.Format("http://maps.google.com/maps/geo?q={0}&hl={1}&output=csv&key={2}", key, language, GoogleMapsAPIKey);
+         return string.Format("http://maps.{3}/maps/geo?q={0}&hl={1}&output=csv&key={2}", key, language, GoogleMapsAPIKey, GServer);
       }
 
       /// <summary>
@@ -1874,7 +1961,7 @@ namespace GMap.NET
       /// <returns></returns>
       internal string MakeReverseGeocoderUrl(PointLatLng pt, string language)
       {
-         return string.Format("http://maps.google.com/maps/geo?hl={0}&ll={1},{2}&output=xml&key={3}", language, pt.Lat.ToString(CultureInfo.InvariantCulture), pt.Lng.ToString(CultureInfo.InvariantCulture), GoogleMapsAPIKey);
+         return string.Format("http://maps.{4}/maps/geo?hl={0}&ll={1},{2}&output=xml&key={3}", language, pt.Lat.ToString(CultureInfo.InvariantCulture), pt.Lng.ToString(CultureInfo.InvariantCulture), GoogleMapsAPIKey, GServer);
       }
 
       /// <summary>
@@ -1889,7 +1976,7 @@ namespace GMap.NET
       {
          string highway = avoidHighways ? "&mra=ls&dirflg=dh" : "&mra=ls&dirflg=d";
 
-         return string.Format("http://maps.google.com/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, highway, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture));
+         return string.Format("http://maps.{6}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, highway, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture), GServer);
       }
 
       /// <summary>
@@ -1904,7 +1991,7 @@ namespace GMap.NET
       {
          string highway = avoidHighways ? "&mra=ls&dirflg=dh" : "&mra=ls&dirflg=d";
 
-         return string.Format("http://maps.google.com/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'));
+         return string.Format("http://maps.{4}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'), GServer);
       }
 
       /// <summary>
@@ -1919,7 +2006,7 @@ namespace GMap.NET
       {
          string highway = avoidHighways ? "&mra=ls&dirflg=dh" : "&mra=ls&dirflg=d";
 
-         return string.Format("http://maps.google.com/maps?f=q&output=kml&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, highway, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture));
+         return string.Format("http://maps.{6}/maps?f=q&output=kml&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, highway, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture), GServer);
       }
 
       /// <summary>
@@ -1934,7 +2021,7 @@ namespace GMap.NET
       {
          string highway = avoidHighways ? "&mra=ls&dirflg=dh" : "&mra=ls&dirflg=d";
 
-         return string.Format("http://maps.google.com/maps?f=q&output=kml&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'));
+         return string.Format("http://maps.{4}/maps?f=q&output=kml&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'), GServer);
       }
 
       /// <summary>
@@ -1948,7 +2035,7 @@ namespace GMap.NET
       {
          string directions = "&mra=ls&dirflg=w";
 
-         return string.Format("http://maps.google.com/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, directions, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture));
+         return string.Format("http://maps.{6}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, directions, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture), GServer);
       }
 
       /// <summary>
@@ -1961,7 +2048,7 @@ namespace GMap.NET
       internal string MakeWalkingRouteUrl(string start, string end, string language)
       {
          string directions = "&mra=ls&dirflg=w";
-         return string.Format("http://maps.google.com/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, directions, start.Replace(' ', '+'), end.Replace(' ', '+'));
+         return string.Format("http://maps.{4}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, directions, start.Replace(' ', '+'), end.Replace(' ', '+'), GServer);
       }
 
       #endregion
@@ -1975,7 +2062,7 @@ namespace GMap.NET
       {
          if(!IsCorrectedGoogleVersions)
          {
-            string url = @"http://maps.google.com";
+            string url = string.Format("http://maps.{0}", GServer);
             try
             {
                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -1999,7 +2086,7 @@ namespace GMap.NET
                      {
                         string html = read.ReadToEnd();
 
-                        Regex reg = new Regex("\"*http://mt0.google.com/vt/lyrs=m@(\\d*)", RegexOptions.IgnoreCase);
+                        Regex reg = new Regex(string.Format("\"*http://mt0.{0}/vt/lyrs=m@(\\d*)", GServer), RegexOptions.IgnoreCase);
                         Match mat = reg.Match(html);
                         if(mat.Success)
                         {
@@ -2013,7 +2100,7 @@ namespace GMap.NET
                            }
                         }
 
-                        reg = new Regex("\"*http://mt0.google.com/vt/lyrs=h@(\\d*)", RegexOptions.IgnoreCase);
+                        reg = new Regex(string.Format("\"*http://mt0.{0}/vt/lyrs=h@(\\d*)", GServer), RegexOptions.IgnoreCase);
                         mat = reg.Match(html);
                         if(mat.Success)
                         {
@@ -2027,7 +2114,7 @@ namespace GMap.NET
                            }
                         }
 
-                        reg = new Regex("\"*http://khm0.google.com/kh/v=(\\d*)", RegexOptions.IgnoreCase);
+                        reg = new Regex(string.Format("\"*http://khm0.{0}/kh/v=(\\d*)", GServer), RegexOptions.IgnoreCase);
                         mat = reg.Match(html);
                         if(mat.Success)
                         {
@@ -2042,7 +2129,7 @@ namespace GMap.NET
                            }
                         }
 
-                        reg = new Regex("\"*http://mt0.google.com/vt/lyrs=t@(\\d*),r@(\\d*)", RegexOptions.IgnoreCase);
+                        reg = new Regex(string.Format("\"*http://mt0.{0}/vt/lyrs=t@(\\d*),r@(\\d*)", GServer), RegexOptions.IgnoreCase);
                         mat = reg.Match(html);
                         if(mat.Success)
                         {
@@ -2351,7 +2438,7 @@ namespace GMap.NET
 
             #region -- kml response --
             //<?xml version="1.0" encoding="UTF-8" ?>
-            //<kml xmlns="http://earth.google.com/kml/2.0">
+            //<kml xmlns="http://earth.server.com/kml/2.0">
             // <Response>
             //  <name>55.023322,24.668408</name>
             //  <Status>
@@ -2420,7 +2507,7 @@ namespace GMap.NET
                   doc.LoadXml(reverse);
 
                   XmlNamespaceManager nsMgr = new XmlNamespaceManager(doc.NameTable);
-                  nsMgr.AddNamespace("sm", "http://earth.google.com/kml/2.0");
+                  nsMgr.AddNamespace("sm", string.Format("http://earth.{0}/kml/2.0", GServer));
                   nsMgr.AddNamespace("sn", "urn:oasis:names:tc:ciq:xsdschema:xAL:2.0");
 
                   XmlNodeList l = doc.SelectNodes("/sm:kml/sm:Response/sm:Placemark", nsMgr);
@@ -2588,7 +2675,8 @@ namespace GMap.NET
                         }
                         */
 
-                        // http://code.google.com/apis/maps/documentation/polylinealgorithm.html
+                        // http://tinyurl.com/3ds3scr
+                        // http://code.server.com/apis/maps/documentation/polylinealgorithm.html
                         //
                         string encoded = route.Substring(x, l).Replace("\\\\", "\\");
                         {
@@ -2852,7 +2940,7 @@ namespace GMap.NET
                      case MapType.GoogleTerrain:
                      case MapType.GoogleHybrid:
                      {
-                        request.Referer = "http://maps.google.com/";
+                        request.Referer = string.Format("http://maps.{0}/", GServer);
                      }
                      break;
 
@@ -2862,7 +2950,7 @@ namespace GMap.NET
                      case MapType.GoogleTerrainChina:
                      case MapType.GoogleHybridChina:
                      {
-                        request.Referer = "http://ditu.google.cn/";
+                        request.Referer = string.Format("http://ditu.{0}/", GServerChina);
                      }
                      break;
 

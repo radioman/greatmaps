@@ -22,7 +22,7 @@ namespace CloudsDemo
          {
             try
             {
-               System.Net.IPHostEntry e = System.Net.Dns.GetHostEntry("www.google.com");
+               System.Net.IPHostEntry e = System.Net.Dns.GetHostEntry("www.bing.com");
             }
             catch
             {
