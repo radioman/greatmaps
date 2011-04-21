@@ -117,5 +117,10 @@ namespace GMap.NET
       NearMapSatellite = 8001,
       NearMapLabels = 8002,
       NearMapHybrid = 8003,
+
+      OviMap = 9000,
+      OviMapSatellite = 9001,
+      OviMapHybrid = 9002,
+      OviMapTerrain = 9003,
    }
 }

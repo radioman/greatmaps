@@ -170,6 +170,7 @@ namespace GMap.NET.WindowsPresentation
       FormattedText arcGisMapCopyright;
       FormattedText hnitMapCopyright;
       FormattedText pergoMapCopyright;
+      FormattedText oviMapCopyright;
 
       /// <summary>
       /// max zoom
@@ -481,6 +482,7 @@ namespace GMap.NET.WindowsPresentation
             arcGisMapCopyright = new FormattedText(Core.arcGisCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             hnitMapCopyright = new FormattedText(Core.hnitCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
             pergoMapCopyright = new FormattedText(Core.pergoCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+            oviMapCopyright = new FormattedText(Core.oviCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
          }
       }
 
@@ -1262,6 +1264,15 @@ namespace GMap.NET.WindowsPresentation
             case MapType.PergoTurkeyMap:
             {
                drawingContext.DrawText(pergoMapCopyright, new System.Windows.Point(5, ActualHeight - pergoMapCopyright.Height - 5));
+            }
+            break;
+
+            case MapType.OviMap:
+            case MapType.OviMapHybrid:
+            case MapType.OviMapSatellite:
+            case MapType.OviMapTerrain:
+            {
+               drawingContext.DrawText(oviMapCopyright, new System.Windows.Point(5, ActualHeight - oviMapCopyright.Height - 5));
             }
             break;
          }

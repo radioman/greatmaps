@@ -74,7 +74,7 @@ namespace Demo.WindowsForms
             MainMap.MapType = MapType.OpenStreetMap;
             MainMap.MinZoom = 1;
             MainMap.MaxZoom = 17;
-            MainMap.Zoom = 3;
+            MainMap.Zoom = 9;
 
             // map events
             MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);

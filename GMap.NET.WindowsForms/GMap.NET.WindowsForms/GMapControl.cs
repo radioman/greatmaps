@@ -1394,6 +1394,19 @@ namespace GMap.NET.WindowsForms
 #endif
             }
             break;
+
+            case MapType.OviMap:
+            case MapType.OviMapHybrid:
+            case MapType.OviMapSatellite:
+            case MapType.OviMapTerrain:
+            {
+#if !PocketPC
+               g.DrawString(Core.oviCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#else
+               g.DrawString(Core.oviCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+#endif
+            }
+            break;
          }
 
          #endregion

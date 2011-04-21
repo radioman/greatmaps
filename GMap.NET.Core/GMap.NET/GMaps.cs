@@ -1874,8 +1874,41 @@ namespace GMap.NET
                //http://web1.nearmap.com/maps/hl=en&x=37&y=19&z=6&nml=MapT&nmg=1&s=2KbhmZZ             
 
                return string.Format("http://web{0}.nearmap.com/maps/hl=en&x={1}&y={2}&z={3}&nml=MapT&nmg=1", GetServerNum(pos, 3), pos.X, pos.Y, zoom);
+            } 
+            #endregion
+
+            #region -- OviMap --
+            case MapType.OviMap:
+            {
+               // http://c.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/normal.day/12/2321/1276/256/png8
+
+               char letter = "bcde"[GetServerNum(pos, 4)];
+               return string.Format("http://{0}.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/normal.day/{1}/{2}/{3}/256/png8", letter, zoom, pos.X, pos.Y);
             }
 
+            case MapType.OviMapHybrid:
+            {
+               // http://c.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/hybrid.day/12/2316/1277/256/png8
+
+               char letter = "bcde"[GetServerNum(pos, 4)];
+               return string.Format("http://{0}.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/hybrid.day/{1}/{2}/{3}/256/png8", letter, zoom, pos.X, pos.Y);
+            }
+
+            case MapType.OviMapSatellite:
+            {
+               // http://b.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/satellite.day/12/2313/1275/256/png8
+
+               char letter = "bcde"[GetServerNum(pos, 4)];
+               return string.Format("http://{0}.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/satellite.day/{1}/{2}/{3}/256/png8", letter, zoom, pos.X, pos.Y);
+            }
+
+            case MapType.OviMapTerrain:
+            {
+               // http://d.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/terrain.day/12/2317/1277/256/png8
+
+               char letter = "bcde"[GetServerNum(pos, 4)];
+               return string.Format("http://{0}.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/terrain.day/{1}/{2}/{3}/256/png8", letter, zoom, pos.X, pos.Y);
+            }
             #endregion
          }
 
@@ -3041,6 +3074,15 @@ namespace GMap.NET
                      case MapType.NearMapSatellite:
                      {
                         request.Referer = "http://www.nearmap.com/";
+                     }
+                     break;
+
+                     case MapType.OviMap:
+                     case MapType.OviMapHybrid:
+                     case MapType.OviMapSatellite:
+                     case MapType.OviMapTerrain:
+                     {
+                        request.Referer = "http://maps.ovi.com/";
                      }
                      break;
                   }
