@@ -26,6 +26,7 @@ namespace GMap.NET.CacheProviders
    {
       string cache;
       string gtileCache;
+      string dir;
       string db;
       bool Created = false;
 
@@ -51,9 +52,9 @@ namespace GMap.NET.CacheProviders
             cache = value;
             gtileCache = cache + "TileDBv3" + Path.DirectorySeparatorChar;
 
-            string dir = gtileCache + GMaps.Instance.LanguageStr + Path.DirectorySeparatorChar;
+            dir = gtileCache + GMaps.Instance.LanguageStr + Path.DirectorySeparatorChar;
 
-            // precrete dir
+            // precreate dir
             if(!Directory.Exists(dir))
             {
                Directory.CreateDirectory(dir);
@@ -77,10 +78,20 @@ namespace GMap.NET.CacheProviders
                ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Page Size=32768,Pooling=True", db);
 #endif
             }
+
+            // attach all databases from main cache location
+            var dbs = Directory.GetFiles(dir, "*.gmdb", SearchOption.AllDirectories);
+            foreach(var d in dbs)
+            {
+               if(d != db)
+               {
+                  Attach(d);
+               }
+            }
          }
       }
 
-   #region -- import / export --
+      #region -- import / export --
       public static bool CreateEmptyDB(string file)
       {
          bool ret = true;
@@ -371,7 +382,58 @@ namespace GMap.NET.CacheProviders
       }
       #endregion
 
-   #region PureImageCache Members
+      static readonly string singleSqlSelect = "SELECT Tile FROM main.TilesData WHERE id = (SELECT id FROM main.Tiles WHERE X={0} AND Y={1} AND Zoom={2} AND Type={3})";
+      static readonly string singleSqlInsert = "INSERT INTO main.Tiles(X, Y, Zoom, Type, CacheTime) VALUES(@p1, @p2, @p3, @p4, @p5)";
+      static readonly string singleSqlInsertLast = "INSERT INTO main.TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
+
+      string ConnectionString;
+
+      readonly List<string> AttachedCaches = new List<string>();
+      string finnalSqlSelect = singleSqlSelect;
+      string attachSqlQuery = string.Empty;
+      string detachSqlQuery = string.Empty;
+
+      void RebuildFinnalSelect()
+      {
+         finnalSqlSelect = null;
+         finnalSqlSelect = singleSqlSelect;
+
+         attachSqlQuery = null;
+         attachSqlQuery = string.Empty;
+
+         detachSqlQuery = null;
+         detachSqlQuery = string.Empty;
+
+         int i = 1;
+         foreach(var c in AttachedCaches)
+         {
+            finnalSqlSelect += string.Format("\nUNION SELECT Tile FROM db{0}.TilesData WHERE id = (SELECT id FROM db{0}.Tiles WHERE X={{0}} AND Y={{1}} AND Zoom={{2}} AND Type={{3}})", i);
+            attachSqlQuery += string.Format("\nATTACH '{0}' as db{1};", c, i);
+            detachSqlQuery += string.Format("\nDETACH DATABASE db{0};", i);
+
+            i++;
+         }
+      }
+
+      public void Attach(string db)
+      {
+         if(!AttachedCaches.Contains(db))
+         {
+            AttachedCaches.Add(db);
+            RebuildFinnalSelect();
+         }
+      }
+
+      public void Detach(string db)
+      {
+         if(AttachedCaches.Contains(db))
+         {
+            AttachedCaches.Remove(db);
+            RebuildFinnalSelect();
+         }
+      }
+
+      #region PureImageCache Members
 
       bool PureImageCache.PutImageToCache(MemoryStream tile, MapType type, GPoint pos, int zoom)
       {
@@ -392,7 +454,7 @@ namespace GMap.NET.CacheProviders
                            using(DbCommand cmd = cn.CreateCommand())
                            {
                               cmd.Transaction = tr;
-                              cmd.CommandText = "INSERT INTO Tiles(X, Y, Zoom, Type, CacheTime) VALUES(@p1, @p2, @p3, @p4, @p5)";
+                              cmd.CommandText = singleSqlInsert;
 
                               cmd.Parameters.Add(new SQLiteParameter("@p1", pos.X));
                               cmd.Parameters.Add(new SQLiteParameter("@p2", pos.Y));
@@ -407,7 +469,7 @@ namespace GMap.NET.CacheProviders
                            {
                               cmd.Transaction = tr;
 
-                              cmd.CommandText = "INSERT INTO TilesData(id, Tile) VALUES((SELECT last_insert_rowid()), @p1)";
+                              cmd.CommandText = singleSqlInsertLast;
                               cmd.Parameters.Add(new SQLiteParameter("@p1", tile.GetBuffer()));
 
                               cmd.ExecuteNonQuery();
@@ -441,9 +503,6 @@ namespace GMap.NET.CacheProviders
          return ret;
       }
 
-      static readonly string sqlSelect = "SELECT Tile FROM TilesData WHERE id = (SELECT id FROM Tiles WHERE X={0} AND Y={1} AND Zoom={2} AND Type={3})";
-      string ConnectionString;
-
       PureImage PureImageCache.GetImageFromCache(MapType type, GPoint pos, int zoom)
       {
          PureImage ret = null;
@@ -454,9 +513,19 @@ namespace GMap.NET.CacheProviders
                cn.ConnectionString = ConnectionString;
                cn.Open();
                {
+                  if(!string.IsNullOrEmpty(attachSqlQuery))
+                  {
+                     using(DbCommand com = cn.CreateCommand())
+                     {
+                        com.CommandText = attachSqlQuery;
+                        int x = com.ExecuteNonQuery();
+                        //Debug.WriteLine("Attach: " + x);
+                     }
+                  }
+
                   using(DbCommand com = cn.CreateCommand())
                   {
-                     com.CommandText = string.Format(sqlSelect, pos.X, pos.Y, zoom, (int)type);
+                     com.CommandText = string.Format(finnalSqlSelect, pos.X, pos.Y, zoom, (int)type);
 
                      using(DbDataReader rd = com.ExecuteReader(System.Data.CommandBehavior.SequentialAccess))
                      {
@@ -480,6 +549,16 @@ namespace GMap.NET.CacheProviders
                            tile = null;
                         }
                         rd.Close();
+                     }
+                  }
+
+                  if(!string.IsNullOrEmpty(detachSqlQuery))
+                  {
+                     using(DbCommand com = cn.CreateCommand())
+                     {
+                        com.CommandText = detachSqlQuery;
+                        int x = com.ExecuteNonQuery();
+                        //Debug.WriteLine("Detach: " + x);
                      }
                   }
                }
