@@ -9,17 +9,15 @@ using System.Windows;
 // associated with an assembly.
 [assembly: AssemblyTitle("GMap.NET.WindowsPresentation")]
 [assembly: AssemblyDescription("GMap.NET - Great Maps for Windows Presentation")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Universe")]
 [assembly: AssemblyProduct("GMap.NET.WindowsPresentation")]
-[assembly: AssemblyCopyright("Copyright © Universe 2010")]
-[assembly: AssemblyTrademark("email@radioman.lt")]
-[assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
+[assembly: ComVisible(true)]
+
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid("BB3E880B-18D8-4843-A2C1-47DC7CCC054C")]
 
 //In order to begin building localizable applications, set 
 //<UICulture>CultureYouAreCodingWith</UICulture> in your .csproj file
@@ -51,5 +49,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+//[assembly: AssemblyVersion("1.0.0.0")]
+//[assembly: AssemblyFileVersion("1.0.0.0")]

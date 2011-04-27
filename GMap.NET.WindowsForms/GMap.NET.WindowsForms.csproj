@@ -56,6 +56,9 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GMap.NET.Core\Properties\VersionInfo.cs">
+      <Link>Properties\VersionInfo.cs</Link>
+    </Compile>
     <Compile Include="GMap.NET.WindowsForms\ColorMatrixs.cs" />
     <Compile Include="GMap.NET.WindowsForms\GMapPolygon.cs" />
     <Compile Include="GMap.NET.WindowsForms\ToolTips\GMapBaloonToolTip.cs" />

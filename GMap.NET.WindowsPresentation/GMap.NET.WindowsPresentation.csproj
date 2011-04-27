@@ -68,6 +68,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GMap.NET.Core\Properties\VersionInfo.cs">
+      <Link>Properties\VersionInfo.cs</Link>
+    </Compile>
     <Compile Include="GMap.NET.WindowsPresentation\CompositionTargetEx.cs" />
     <Compile Include="GMap.NET.WindowsPresentation\GMapMarker.cs" />
     <Compile Include="GMap.NET.WindowsPresentation\PerfTimer.cs" />

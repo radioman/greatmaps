@@ -22,7 +22,9 @@ namespace GMap.NET.WindowsPresentation
 
    /// <summary>
    /// GMap.NET control for Windows Presentation
+   /// >> for testing purpose only >>
    /// </summary>
+   [ToolboxItem(false)]
    public partial class GMapControlNew : UserControl, Interface
    {
       readonly Core Core = new Core();

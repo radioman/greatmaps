@@ -106,6 +106,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="GMap.NET.CacheProviders\MsSQLCePureImageCache.cs" />
     <Compile Include="GMap.NET.CacheProviders\PostgreSQLPureImageCache.cs" />
     <Compile Include="GMap.NET.CacheProviders\SQLitePureImageCache.cs" />

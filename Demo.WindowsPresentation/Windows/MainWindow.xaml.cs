@@ -14,6 +14,7 @@ using System.Windows.Threading;
 using Demo.WindowsPresentation.CustomMarkers;
 using GMap.NET;
 using GMap.NET.WindowsPresentation;
+using System.IO;
 
 namespace Demo.WindowsPresentation
 {
@@ -93,6 +94,8 @@ namespace Demo.WindowsPresentation
 #if DEBUG
          checkBoxDebug.IsChecked = true;
 #endif
+
+         validator.Window = this;
 
          // set current marker
          currentMarker = new GMapMarker(MainMap.Position);
@@ -185,7 +188,7 @@ namespace Demo.WindowsPresentation
          obj.Measure(size);
          obj.Arrange(new Rect(size));
 
-         RenderTargetBitmap bmp = new RenderTargetBitmap((int) size.Width, (int) size.Height, 96, 96, PixelFormats.Pbgra32);
+         RenderTargetBitmap bmp = new RenderTargetBitmap((int)size.Width, (int)size.Height, 96, 96, PixelFormats.Pbgra32);
          bmp.Render(obj);
 
          if(bmp.CanFreeze)
@@ -430,8 +433,8 @@ namespace Demo.WindowsPresentation
          var pxCenter = MainMap.FromLatLngToLocal(c.Center);
          var pxBounds = MainMap.FromLatLngToLocal(c.Bound);
 
-         double a = (double) (pxBounds.X - pxCenter.X);
-         double b = (double) (pxBounds.Y - pxCenter.Y);
+         double a = (double)(pxBounds.X - pxCenter.X);
+         double b = (double)(pxBounds.Y - pxCenter.Y);
          var pxCircleRadius = Math.Sqrt(a * a + b * b);
 
          c.Width = 55 + pxCircleRadius * 2;
@@ -454,7 +457,7 @@ namespace Demo.WindowsPresentation
       void MainMap_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
       {
          System.Windows.Point p = e.GetPosition(MainMap);
-         currentMarker.Position = MainMap.FromLocalToLatLng((int) p.X, (int) p.Y);
+         currentMarker.Position = MainMap.FromLocalToLatLng((int)p.X, (int)p.Y);
       }
 
       // move current marker with left holding
@@ -463,7 +466,7 @@ namespace Demo.WindowsPresentation
          if(e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
          {
             System.Windows.Point p = e.GetPosition(MainMap);
-            currentMarker.Position = MainMap.FromLocalToLatLng((int) p.X, (int) p.Y);
+            currentMarker.Position = MainMap.FromLocalToLatLng((int)p.X, (int)p.Y);
          }
       }
 
@@ -593,13 +596,13 @@ namespace Demo.WindowsPresentation
       // zoom up
       private void czuZoomUp_Click(object sender, RoutedEventArgs e)
       {
-         MainMap.Zoom = ((int) MainMap.Zoom) + 1;
+         MainMap.Zoom = ((int)MainMap.Zoom) + 1;
       }
 
       // zoom down
       private void czuZoomDown_Click(object sender, RoutedEventArgs e)
       {
-         MainMap.Zoom = ((int) (MainMap.Zoom + 0.99)) - 1;
+         MainMap.Zoom = ((int)(MainMap.Zoom + 0.99)) - 1;
       }
 
       // prefetch
@@ -608,7 +611,7 @@ namespace Demo.WindowsPresentation
          RectLatLng area = MainMap.SelectedArea;
          if(!area.IsEmpty)
          {
-            for(int i = (int) MainMap.Zoom; i <= MainMap.MaxZoom; i++)
+            for(int i = (int)MainMap.Zoom; i <= MainMap.MaxZoom; i++)
             {
                MessageBoxResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ?", "GMap.NET", MessageBoxButton.YesNoCancel);
 
@@ -637,7 +640,7 @@ namespace Demo.WindowsPresentation
       // access mode
       private void comboBoxMode_DropDownClosed(object sender, EventArgs e)
       {
-         MainMap.Manager.Mode = (AccessMode) comboBoxMode.SelectedItem;
+         MainMap.Manager.Mode = (AccessMode)comboBoxMode.SelectedItem;
          MainMap.ReloadMap();
       }
 
@@ -784,7 +787,7 @@ namespace Demo.WindowsPresentation
       // adds route
       private void button12_Click(object sender, RoutedEventArgs e)
       {
-         MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, (int) MainMap.Zoom);
+         MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, (int)MainMap.Zoom);
          if(route != null)
          {
             GMapMarker m1 = new GMapMarker(start);
@@ -896,6 +899,49 @@ namespace Demo.WindowsPresentation
          {
             MainMap.Bearing++;
          }
+      }
+   }
+
+   public class MapValidationRule : ValidationRule
+   {
+      bool UserAcceptedLicenseOnce = false;
+      internal MainWindow Window;
+
+      public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+      {
+         if(!UserAcceptedLicenseOnce)
+         {
+            if(File.Exists("License.txt"))
+            {
+               string ctn = File.ReadAllText("License.txt");
+               int li = ctn.IndexOf("License");
+               string txt = ctn.Substring(li);
+
+               var d = new Demo.WindowsPresentation.Windows.Message();
+               d.richTextBox1.Text = txt;
+
+               if(true == d.ShowDialog())
+               {
+                  UserAcceptedLicenseOnce = true;
+                  if(Window != null)
+                  {
+                     Window.Title += " - license accepted by " + Environment.UserName + " at " + DateTime.Now;
+                  }
+               }
+            }
+            else
+            {
+               // user deleted License.txt ;}
+               UserAcceptedLicenseOnce = true;
+            }
+         }
+
+         if(!UserAcceptedLicenseOnce)
+         {
+            return new ValidationResult(false, "user do not accepted license ;/");
+         }
+
+         return new ValidationResult(true, null);
       }
    }
 }

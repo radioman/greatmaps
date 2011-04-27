@@ -6,7 +6,6 @@
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     KeyboardNavigation.DirectionalNavigation="Once"
-    xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
     xmlns:src="clr-namespace:Demo.WindowsPresentation"
     MinHeight="775" MinWidth="600" KeyUp="Window_KeyUp" PreviewKeyDown="Window_PreviewKeyDown">
     <Window.Resources>
@@ -70,7 +69,16 @@
         </GroupBox>
         <GroupBox Header="gmap" HorizontalAlignment="Right" Margin="0,158,12,0" Name="groupBox2" Width="169" VerticalAlignment="Top" Height="135">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <ComboBox SelectedItem="{Binding ElementName=MainMap, Path=MapType}" FontSize="12" Margin="6,6,45,0" Name="comboBoxMapType" Height="25.04" VerticalAlignment="Top" />
+                <ComboBox FontSize="12" Margin="6,6,45,0" Name="comboBoxMapType" Height="25.04" VerticalAlignment="Top">
+                <ComboBox.SelectedItem>
+                    <Binding Path="MapType" ElementName="MainMap">
+                        <Binding.ValidationRules>
+                            <src:MapValidationRule x:Name="validator"/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </ComboBox.SelectedItem>
+                </ComboBox>
+                
                 <Label HorizontalAlignment="Right" Margin="0,6,6,0" Name="label1" Width="33" Height="25.04" VerticalAlignment="Top">type</Label>
                 <CheckBox Margin="6,0,21,6" Name="checkBoxDragMap" IsChecked="True" Height="16.04" VerticalAlignment="Bottom" Checked="checkBoxDragMap_Checked" Unchecked="checkBoxDragMap_Unchecked">Drag Map</CheckBox>
                 <CheckBox Height="16" Margin="6,0,45,28" IsChecked="True" Name="checkBoxCurrentMarker" VerticalAlignment="Bottom" Checked="checkBoxCurrentMarker_Checked" Unchecked="checkBoxCurrentMarker_Unchecked">Current Marker</CheckBox>
