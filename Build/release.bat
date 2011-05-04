@@ -10,6 +10,9 @@ cd .\Release
 "C:\Program Files\7-Zip\7z.exe" a ..\GMap.NET.WindowsPresentation.zip x64\System.Data.SQLite.DLL
 "C:\Program Files\7-Zip\7z.exe" a ..\GMap.NET.WindowsPresentation.zip ..\..\Info\License.txt
 
+"C:\Program Files\7-Zip\7z.exe" t ..\GMap.NET.WindowsPresentation.zip
+
+pause
 
 "C:\Program Files\7-Zip\7z.exe" a ..\GMap.NET.WindowsForms.zip Demo.WindowsForms.exe
 "C:\Program Files\7-Zip\7z.exe" a ..\GMap.NET.WindowsForms.zip GMap.NET.Core.dll
@@ -20,5 +23,7 @@ cd .\Release
 "C:\Program Files\7-Zip\7z.exe" a ..\GMap.NET.WindowsForms.zip x64\System.Data.SQLite.DLL
 "C:\Program Files\7-Zip\7z.exe" a ..\GMap.NET.WindowsForms.zip BSE.Windows.Forms.dll
 "C:\Program Files\7-Zip\7z.exe" a ..\GMap.NET.WindowsForms.zip ..\..\Info\License.txt
+
+"C:\Program Files\7-Zip\7z.exe" t ..\GMap.NET.WindowsForms.zip
 
 pause

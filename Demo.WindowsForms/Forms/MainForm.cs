@@ -571,13 +571,14 @@ namespace Demo.WindowsForms
 
       void connectionsWorker_DoWork(object sender, DoWorkEventArgs e)
       {
+#if !MONO
          IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
 
          while(!connectionsWorker.CancellationPending)
          {
             try
             {
-               #region -- xml --
+         #region -- xml --
                // http://ipinfodb.com/ip_location_api.php
 
                // http://ipinfodb.com/ip_query2.php?ip=74.125.45.100,206.190.60.37&timezone=false
@@ -602,13 +603,16 @@ namespace Demo.WindowsForms
                {
                   //TcpConnectionInformation[] tcpInfoList = properties.GetActiveTcpConnections();
                   //foreach(TcpConnectionInformation i in tcpInfoList)
+                  //{
+                     
+                  //}
 
                   CountryStatus.Clear();
                   ManagedIpHelper.UpdateExtendedTcpTable(false);
 
                   foreach(TcpRow i in ManagedIpHelper.TcpRows)
                   {
-                     #region -- update TcpState --
+         #region -- update TcpState --
                      string Ip = i.RemoteEndPoint.Address.ToString();
 
                      // exclude local network
@@ -693,6 +697,7 @@ namespace Demo.WindowsForms
             Thread.Sleep(3333);
          }
          tcpConnections.Clear();
+#endif
       }
 
       void connectionsWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -1413,9 +1418,9 @@ namespace Demo.WindowsForms
       {
          if(!UserAcceptedLicenseOnce)
          {
-            if(File.Exists("License.txt"))
+            if(File.Exists(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "License.txt"))
             {
-               string ctn = File.ReadAllText("License.txt");
+               string ctn = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "License.txt");
                int li = ctn.IndexOf("License");
                string txt = ctn.Substring(li);
 

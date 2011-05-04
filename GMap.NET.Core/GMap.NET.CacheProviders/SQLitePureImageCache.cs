@@ -79,6 +79,10 @@ namespace GMap.NET.CacheProviders
 #endif
             }
 
+            // clear old attachments
+            AttachedCaches.Clear();
+            RebuildFinnalSelect();
+
             // attach all databases from main cache location
             var dbs = Directory.GetFiles(dir, "*.gmdb", SearchOption.AllDirectories);
             foreach(var d in dbs)

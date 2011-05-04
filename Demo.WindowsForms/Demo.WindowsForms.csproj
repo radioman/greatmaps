@@ -72,7 +72,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>..\Build\Release\</OutputPath>
-    <DefineConstants>TRACE;MONOdisabled; SQLite</DefineConstants>
+    <DefineConstants>TRACE;MONO_disabled; SQLite</DefineConstants>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <Optimize>true</Optimize>
     <PlatformTarget>AnyCPU</PlatformTarget>

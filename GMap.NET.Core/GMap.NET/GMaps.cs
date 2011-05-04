@@ -17,10 +17,10 @@ namespace GMap.NET
    using GMap.NET.CacheProviders;
    using GMap.NET.Projections;
    using GMap.NET.Internals;
+   using System.Security.Cryptography;
 
 #if !MONO
    using System.Data.SQLite;
-   using System.Security.Cryptography;
 #else
    using SQLiteConnection=Mono.Data.SqliteClient.SqliteConnection;
    using SQLiteTransaction=Mono.Data.SqliteClient.SqliteTransaction;
@@ -335,6 +335,17 @@ namespace GMap.NET
             return System.Reflection.Assembly.LoadFile(dir + "System.Data.SQLite.dll");
          }
          return null;
+      }
+
+      static int ping = 0;
+
+      /// <summary>
+      /// call this before you use sqlite for other reasons than caching maps
+      /// you can skip it if it's after loading the map
+      /// </summary>
+      public void SQLitePing()
+      {
+        ping++;
       }
 #endif
 #endif
