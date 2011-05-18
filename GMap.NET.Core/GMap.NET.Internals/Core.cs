@@ -7,6 +7,7 @@ namespace GMap.NET.Internals
    using System.Threading;
    using GMap.NET.Projections;
    using System.IO;
+   using GMap.NET.MapProviders;
 
 #if PocketPC
    using OpenNETCF.ComponentModel;
@@ -106,18 +107,13 @@ namespace GMap.NET.Internals
       internal int pxRes5000km; // 5000km
 
       /// <summary>
-      /// current peojection
-      /// </summary>
-      public PureProjection Projection;
-
-      /// <summary>
       /// is user dragging map
       /// </summary>
       public bool IsDragging = false;
 
       public Core()
       {
-         MapType = MapType.None;
+         Provider = EmptyProvider.Instance;
       }
 
       /// <summary>
@@ -135,10 +131,10 @@ namespace GMap.NET.Internals
             {
                zoom = value;
 
-               minOfTiles = Projection.GetTileMatrixMinXY(value);
-               maxOfTiles = Projection.GetTileMatrixMaxXY(value);
+               minOfTiles = Provider.Projection.GetTileMatrixMinXY(value);
+               maxOfTiles = Provider.Projection.GetTileMatrixMaxXY(value);
 
-               CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, value);
+               CurrentPositionGPixel = Provider.Projection.FromLatLngToPixel(CurrentPosition, value);
 
                if(IsStarted)
                {
@@ -198,7 +194,7 @@ namespace GMap.NET.Internals
             if(!IsDragging)
             {
                currentPosition = value;
-               CurrentPositionGPixel = Projection.FromLatLngToPixel(value, Zoom);
+               CurrentPositionGPixel = Provider.Projection.FromLatLngToPixel(value, Zoom);
 
                if(IsStarted)
                {
@@ -208,7 +204,7 @@ namespace GMap.NET.Internals
             else
             {
                currentPosition = value;
-               CurrentPositionGPixel = Projection.FromLatLngToPixel(value, Zoom);
+               CurrentPositionGPixel = Provider.Projection.FromLatLngToPixel(value, Zoom);
             }
 
             if(IsStarted)
@@ -219,33 +215,32 @@ namespace GMap.NET.Internals
          }
       }
 
-      internal bool zoomToArea = true;
-
-      MapType mapType;
-      public MapType MapType
+      public GMapProvider provider = EmptyProvider.Instance;
+      public GMapProvider Provider
       {
          get
          {
-            return mapType;
+            return provider;
          }
          set
          {
-            if(value != MapType || value == MapType.None)
+            if(!provider.Equals(value) || value.Equals(EmptyProvider.Instance))
             {
-               mapType = value;
+               provider = value;
 
-               GMaps.Instance.AdjustProjection(mapType, ref Projection, out maxZoom);
-
-               tileRect = new GRect(new GPoint(0, 0), Projection.TileSize);
-               tileRectBearing = tileRect;
-               if(IsRotated)
+               if(Provider.Projection != null)
                {
-                  tileRectBearing.Inflate(1, 1);
-               }
+                  tileRect = new GRect(new GPoint(0, 0), Provider.Projection.TileSize);
+                  tileRectBearing = tileRect;
+                  if(IsRotated)
+                  {
+                     tileRectBearing.Inflate(1, 1);
+                  }
 
-               minOfTiles = Projection.GetTileMatrixMinXY(Zoom);
-               maxOfTiles = Projection.GetTileMatrixMaxXY(Zoom);
-               CurrentPositionGPixel = Projection.FromLatLngToPixel(CurrentPosition, Zoom);
+                  minOfTiles = Provider.Projection.GetTileMatrixMinXY(Zoom);
+                  maxOfTiles = Provider.Projection.GetTileMatrixMaxXY(Zoom);
+                  CurrentPositionGPixel = Provider.Projection.FromLatLngToPixel(CurrentPosition, Zoom);
+               }
 
                if(IsStarted)
                {
@@ -258,101 +253,149 @@ namespace GMap.NET.Internals
                      OnMapTypeChanged(value);
                   }
 
-                  switch(mapType)
-                  {
-                     case MapType.MapsLT_Map_Hybrid:
-                     case MapType.MapsLT_Map_Labels:
-                     case MapType.MapsLT_Map:
-                     case MapType.MapsLT_OrtoFoto:
-                     {
-                        RectLatLng area = new RectLatLng(56.431489960361, 20.8962105239809, 5.8924169643369, 2.58940626652217);
-                        if(!area.Contains(CurrentPosition))
-                        {
-                           SetZoomToFitRect(area);
-                           zoomToArea = false;
-                        }
-                     }
-                     break;
-
-                     case MapType.KarteLV_Map:
-                     {
-                        RectLatLng area = new RectLatLng(58.0794870805093, 20.3286067123543, 7.90883164336887, 2.506129113082);
-                        if(!area.Contains(CurrentPosition))
-                        {
-                           SetZoomToFitRect(area);
-                           zoomToArea = false;
-                        }
-                     }
-                     break;
-
-                     case MapType.MapyCZ_Map:
-                     case MapType.MapyCZ_Satellite:
-                     case MapType.MapyCZ_MapTurist:
-                     case MapType.MapyCZ_Labels:
-                     case MapType.MapyCZ_Hybrid:
-                     case MapType.MapyCZ_History:
-                     case MapType.MapyCZ_HistoryHybrid:
-                     {
-                        RectLatLng area = new RectLatLng(51.2024819920053, 11.8401353319027, 7.22833716731277, 2.78312271922872);
-                        if(!area.Contains(CurrentPosition))
-                        {
-                           SetZoomToFitRect(area);
-                           zoomToArea = false;
-                        }
-                     }
-                     break;
-
-                     case MapType.PergoTurkeyMap:
-                     {
-                        RectLatLng area = new RectLatLng(42.5830078125, 25.48828125, 19.05029296875, 6.83349609375);
-                        if(!area.Contains(CurrentPosition))
-                        {
-                           SetZoomToFitRect(area);
-                           zoomToArea = false;
-                        }
-                     }
-                     break;
-
-                     case MapType.SigPacSpainMap:
-                     {
-                        if(minZoom < 5)
-                        {
-                           minZoom = 5;
-                        }
-
-                        RectLatLng area = new RectLatLng(43.8741381814747, -9.700927734375, 14.34814453125, 7.8605775962932);
-                        if(!area.Contains(CurrentPosition))
-                        {
-                           SetZoomToFitRect(area);
-                           zoomToArea = false;
-                        }
-                     }
-                     break;
-
-                     case MapType.GoogleMapKorea:
-                     case MapType.GoogleLabelsKorea:
-                     case MapType.GoogleHybridKorea:
-                     case MapType.GoogleSatelliteKorea:
-                     {
-                        RectLatLng area = new RectLatLng(38.6597777307125, 125.738525390625, 4.02099609375, 4.42072406219614);
-                        if(!area.Contains(CurrentPosition))
-                        {
-                           SetZoomToFitRect(area);
-                           zoomToArea = false;
-                        }
-                     }
-                     break;
-
-                     default:
-                     {
-                        zoomToArea = true;
-                     }
-                     break;
-                  }
+                  zoomToArea = true;
                }
             }
          }
       }
+
+      internal bool zoomToArea = true;
+
+      //MapType mapType;
+      //public MapType MapType
+      //{
+      //   get
+      //   {
+      //      return mapType;
+      //   }
+      //   set
+      //   {
+      //      if(value != MapType || value == MapType.None)
+      //      {
+      //         mapType = value;
+
+      //         if(Provider.Projection != null)
+      //         {
+      //            tileRect = new GRect(new GPoint(0, 0), Provider.Projection.TileSize);
+      //            tileRectBearing = tileRect;
+      //            if(IsRotated)
+      //            {
+      //               tileRectBearing.Inflate(1, 1);
+      //            }
+
+      //            minOfTiles = Provider.Projection.GetTileMatrixMinXY(Zoom);
+      //            maxOfTiles = Provider.Projection.GetTileMatrixMaxXY(Zoom);
+      //            CurrentPositionGPixel = Provider.Projection.FromLatLngToPixel(CurrentPosition, Zoom);
+      //         }
+
+      //         if(IsStarted)
+      //         {
+      //            CancelAsyncTasks();
+      //            OnMapSizeChanged(Width, Height);
+      //            ReloadMap();
+
+      //            if(OnMapTypeChanged != null)
+      //            {
+      //               OnMapTypeChanged(value);
+      //            }
+
+      //            zoomToArea = true;
+
+      //            //switch(mapType)
+      //            //{
+      //            //   case MapType.MapsLT_Map_Hybrid:
+      //            //   case MapType.MapsLT_Map_Labels:
+      //            //   case MapType.MapsLT_Map:
+      //            //   case MapType.MapsLT_OrtoFoto:
+      //            //   {
+      //            //      RectLatLng area = new RectLatLng(56.431489960361, 20.8962105239809, 5.8924169643369, 2.58940626652217);
+      //            //      if(!area.Contains(CurrentPosition))
+      //            //      {
+      //            //         SetZoomToFitRect(area);
+      //            //         zoomToArea = false;
+      //            //      }
+      //            //   }
+      //            //   break;
+
+      //            //   case MapType.KarteLV_Map:
+      //            //   {
+      //            //      RectLatLng area = new RectLatLng(58.0794870805093, 20.3286067123543, 7.90883164336887, 2.506129113082);
+      //            //      if(!area.Contains(CurrentPosition))
+      //            //      {
+      //            //         SetZoomToFitRect(area);
+      //            //         zoomToArea = false;
+      //            //      }
+      //            //   }
+      //            //   break;
+
+      //            //   case MapType.MapyCZ_Map:
+      //            //   case MapType.MapyCZ_Satellite:
+      //            //   case MapType.MapyCZ_MapTurist:
+      //            //   case MapType.MapyCZ_Labels:
+      //            //   case MapType.MapyCZ_Hybrid:
+      //            //   case MapType.MapyCZ_History:
+      //            //   case MapType.MapyCZ_HistoryHybrid:
+      //            //   {
+      //            //      RectLatLng area = new RectLatLng(51.2024819920053, 11.8401353319027, 7.22833716731277, 2.78312271922872);
+      //            //      if(!area.Contains(CurrentPosition))
+      //            //      {
+      //            //         SetZoomToFitRect(area);
+      //            //         zoomToArea = false;
+      //            //      }
+      //            //   }
+      //            //   break;
+
+      //            //   case MapType.PergoTurkeyMap:
+      //            //   {
+      //            //      RectLatLng area = new RectLatLng(42.5830078125, 25.48828125, 19.05029296875, 6.83349609375);
+      //            //      if(!area.Contains(CurrentPosition))
+      //            //      {
+      //            //         SetZoomToFitRect(area);
+      //            //         zoomToArea = false;
+      //            //      }
+      //            //   }
+      //            //   break;
+
+      //            //   case MapType.SigPacSpainMap:
+      //            //   {
+      //            //      if(minZoom < 5)
+      //            //      {
+      //            //         minZoom = 5;
+      //            //      }
+
+      //            //      RectLatLng area = new RectLatLng(43.8741381814747, -9.700927734375, 14.34814453125, 7.8605775962932);
+      //            //      if(!area.Contains(CurrentPosition))
+      //            //      {
+      //            //         SetZoomToFitRect(area);
+      //            //         zoomToArea = false;
+      //            //      }
+      //            //   }
+      //            //   break;
+
+      //            //   case MapType.GoogleMapKorea:
+      //            //   case MapType.GoogleLabelsKorea:
+      //            //   case MapType.GoogleHybridKorea:
+      //            //   case MapType.GoogleSatelliteKorea:
+      //            //   {
+      //            //      RectLatLng area = new RectLatLng(38.6597777307125, 125.738525390625, 4.02099609375, 4.42072406219614);
+      //            //      if(!area.Contains(CurrentPosition))
+      //            //      {
+      //            //         SetZoomToFitRect(area);
+      //            //         zoomToArea = false;
+      //            //      }
+      //            //   }
+      //            //   break;
+
+      //            //   default:
+      //            //   {
+      //            //      zoomToArea = true;
+      //            //   }
+      //            //   break;
+      //            //}
+      //         }
+      //      }
+      //   }
+      //}
 
       /// <summary>
       /// sets zoom to max to fit rect
@@ -428,7 +471,7 @@ namespace GMap.NET.Internals
       /// <summary>
       /// occurs when current position is changed
       /// </summary>
-      public event CurrentPositionChanged OnCurrentPositionChanged;
+      public event PositionChanged OnCurrentPositionChanged;
 
       /// <summary>
       /// occurs when tile set load is complete
@@ -465,7 +508,7 @@ namespace GMap.NET.Internals
       /// </summary>
       public event MapTypeChanged OnMapTypeChanged;
 
-      readonly List<Thread> GThreadPool = new List<Thread>();
+      static readonly List<Thread> GThreadPool = new List<Thread>();
 
       // windows forms or wpf
       internal string SystemType;
@@ -681,8 +724,8 @@ namespace GMap.NET.Internals
       public void UpdateCenterTileXYLocation()
       {
          PointLatLng center = FromLocalToLatLng(Width / 2, Height / 2);
-         GPoint centerPixel = Projection.FromLatLngToPixel(center, Zoom);
-         centerTileXYLocation = Projection.FromPixelToTileXY(centerPixel);
+         GPoint centerPixel = Provider.Projection.FromLatLngToPixel(center, Zoom);
+         centerTileXYLocation = Provider.Projection.FromPixelToTileXY(centerPixel);
       }
 
       public int vWidth = 800;
@@ -696,7 +739,7 @@ namespace GMap.NET.Internals
          if(IsRotated)
          {
 #if !PocketPC
-            int diag = (int)Math.Round(Math.Sqrt(Width * Width + Height * Height) / Projection.TileSize.Width, MidpointRounding.AwayFromZero);
+            int diag = (int)Math.Round(Math.Sqrt(Width * Width + Height * Height) / Provider.Projection.TileSize.Width, MidpointRounding.AwayFromZero);
 #else
             int diag = (int) Math.Round(Math.Sqrt(Width * Width + Height * Height) / Projection.TileSize.Width);
 #endif
@@ -705,8 +748,8 @@ namespace GMap.NET.Internals
          }
          else
          {
-            sizeOfMapArea.Width = 1 + (Width / Projection.TileSize.Width) / 2;
-            sizeOfMapArea.Height = 1 + (Height / Projection.TileSize.Height) / 2;
+            sizeOfMapArea.Width = 1 + (Width / Provider.Projection.TileSize.Width) / 2;
+            sizeOfMapArea.Height = 1 + (Height / Provider.Projection.TileSize.Height) / 2;
          }
 
          Debug.WriteLine("OnMapSizeChanged, w: " + width + ", h: " + height + ", size: " + sizeOfMapArea);
@@ -744,11 +787,11 @@ namespace GMap.NET.Internals
       {
          get
          {
-            if(Projection != null)
+            if(Provider.Projection != null)
             {
-               PointLatLng p = Projection.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y, Zoom);
-               double rlng = Projection.FromPixelToLatLng(-renderOffset.X + Width, -renderOffset.Y, Zoom).Lng;
-               double blat = Projection.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y + Height, Zoom).Lat;
+               PointLatLng p = Provider.Projection.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y, Zoom);
+               double rlng = Provider.Projection.FromPixelToLatLng(-renderOffset.X + Width, -renderOffset.Y, Zoom).Lng;
+               double blat = Provider.Projection.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y + Height, Zoom).Lat;
 
                return RectLatLng.FromLTRB(p.Lng, p.Lat, rlng, blat);
             }
@@ -764,7 +807,7 @@ namespace GMap.NET.Internals
       /// <returns></returns>
       public PointLatLng FromLocalToLatLng(int x, int y)
       {
-         return Projection.FromPixelToLatLng(new GPoint(x - renderOffset.X, y - renderOffset.Y), Zoom);
+         return Provider.Projection.FromPixelToLatLng(new GPoint(x - renderOffset.X, y - renderOffset.Y), Zoom);
       }
 
       /// <summary>
@@ -774,7 +817,7 @@ namespace GMap.NET.Internals
       /// <returns></returns>
       public GPoint FromLatLngToLocal(PointLatLng latlng)
       {
-         GPoint pLocal = Projection.FromLatLngToPixel(latlng, Zoom);
+         GPoint pLocal = Provider.Projection.FromLatLngToPixel(latlng, Zoom);
          pLocal.Offset(renderOffset);
          return pLocal;
       }
@@ -790,8 +833,8 @@ namespace GMap.NET.Internals
 
          for(int i = zoom; i <= maxZoom; i++)
          {
-            GPoint p1 = Projection.FromLatLngToPixel(rect.LocationTopLeft, i);
-            GPoint p2 = Projection.FromLatLngToPixel(rect.LocationRightBottom, i);
+            GPoint p1 = Provider.Projection.FromLatLngToPixel(rect.LocationTopLeft, i);
+            GPoint p2 = Provider.Projection.FromLatLngToPixel(rect.LocationRightBottom, i);
 
             if(((p2.X - p1.X) <= Width + 10) && (p2.Y - p1.Y) <= Height + 10)
             {
@@ -1102,14 +1145,14 @@ namespace GMap.NET.Internals
                   #region -- execute --
                   var m = Matrix.GetTileWithReadLock(task.Value.Zoom, task.Value.Pos);
 
-                  if(m == null || m.Overlays.Count == 0)
+                  if(m == Tile.Empty || m.Overlays.Count == 0)
                   {
                      Debug.WriteLine(ctid + " - Fill empty TileMatrix: " + task);
 
                      Tile t = new Tile(task.Value.Zoom, task.Value.Pos);
-                     var layers = GMaps.Instance.GetAllLayersOfType(MapType);
+                     //var layers = GMaps.Instance.GetAllLayersOfType(MapType);
 
-                     foreach(MapType tl in layers)
+                     foreach(var tl in provider.Overlays)
                      {
                         int retry = 0;
                         do
@@ -1118,11 +1161,11 @@ namespace GMap.NET.Internals
                            Exception ex;
 
                            // tile number inversion(BottomLeft -> TopLeft) for pergo maps
-                           if(tl == MapType.PergoTurkeyMap)
-                           {
-                              img = GMaps.Instance.GetImageFrom(tl, new GPoint(task.Value.Pos.X, maxOfTiles.Height - task.Value.Pos.Y), task.Value.Zoom, out ex);
-                           }
-                           else // ok
+                           //if(tl == MapType.PergoTurkeyMap)
+                           //{
+                           //   img = GMaps.Instance.GetImageFrom(tl, new GPoint(task.Value.Pos.X, maxOfTiles.Height - task.Value.Pos.Y), task.Value.Zoom, out ex);
+                           //}
+                           //else // ok
                            {
                               img = GMaps.Instance.GetImageFrom(tl, task.Value.Pos, task.Value.Zoom, out ex);
                            }
@@ -1176,10 +1219,10 @@ namespace GMap.NET.Internals
                      else
                      {
                         t.Clear();
-                        t = null;
+                        t.Dispose();
                      }
 
-                     layers = null;
+                     //layers = null;
                   }
                   #endregion
                }
@@ -1222,7 +1265,10 @@ namespace GMap.NET.Internals
          lock(tileLoadQueue)
          {
             Debug.WriteLine("Quit - " + ct.Name);
-            GThreadPool.Remove(ct);
+            lock(GThreadPool)
+            {
+               GThreadPool.Remove(ct);
+            }
          }
 #endif
       }
@@ -1232,7 +1278,7 @@ namespace GMap.NET.Internals
       /// </summary>
       void UpdateBounds()
       {
-         if(MapType == NET.MapType.None)
+         if(Provider.Equals(EmptyProvider.Instance))
          {
             return;
          }
@@ -1300,23 +1346,23 @@ namespace GMap.NET.Internals
             }
 
             #region -- starts loader threads if needed --
-#if !PocketPC
-            while(GThreadPool.Count < GThreadPoolSize)
-#else
-            while(GThreadPool.Count < GThreadPoolSize)
-#endif
+
+            lock(GThreadPool)
             {
-               Thread t = new Thread(new ThreadStart(ProcessLoadTask));
+               while(GThreadPool.Count < GThreadPoolSize)
                {
-                  t.Name = "GMap.NET TileLoader: " + GThreadPool.Count;
-                  t.IsBackground = true;
-                  t.Priority = ThreadPriority.BelowNormal;
+                  Thread t = new Thread(new ThreadStart(ProcessLoadTask));
+                  {
+                     t.Name = "GMap.NET TileLoader: " + GThreadPool.Count;
+                     t.IsBackground = true;
+                     t.Priority = ThreadPriority.BelowNormal;
+                  }
+                  GThreadPool.Add(t);
+
+                  Debug.WriteLine("add " + t.Name + " to GThreadPool");
+
+                  t.Start();
                }
-               GThreadPool.Add(t);
-
-               Debug.WriteLine("add " + t.Name + " to GThreadPool");
-
-               t.Start();
             }
             #endregion
 
@@ -1342,7 +1388,7 @@ namespace GMap.NET.Internals
       /// </summary>
       void UpdateGroundResolution()
       {
-         double rez = Projection.GetGroundResolution(Zoom, CurrentPosition.Lat);
+         double rez = Provider.Projection.GetGroundResolution(Zoom, CurrentPosition.Lat);
          pxRes100m = (int)(100.0 / rez); // 100 meters
          pxRes1000m = (int)(1000.0 / rez); // 1km  
          pxRes10km = (int)(10000.0 / rez); // 10km

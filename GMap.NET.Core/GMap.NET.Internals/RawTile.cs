@@ -1,17 +1,18 @@
 ﻿namespace GMap.NET.Internals
 {
    using System.IO;
+   using System;
 
    /// <summary>
    /// struct for raw tile
    /// </summary>
    internal struct RawTile
    {
-      public MapType Type;
+      public Guid Type;
       public GPoint Pos;
       public int Zoom;
 
-      public RawTile(MapType Type, GPoint Pos, int Zoom)
+      public RawTile(Guid Type, GPoint Pos, int Zoom)
       {
          this.Type = Type;
          this.Pos = Pos;

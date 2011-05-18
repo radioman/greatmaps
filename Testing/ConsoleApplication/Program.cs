@@ -6,13 +6,16 @@ using GMap.NET.Projections;
 using DotSpatial.Projections;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using GMap.NET.MapProviders;
+using GMap.NET.Internals;
 
 namespace ConsoleApplication
 {
    class Program
    {
       static void Main(string[] args)
-      {
+      {                   
+         if(false)
          {
             double x = 25;
             double y = 50;

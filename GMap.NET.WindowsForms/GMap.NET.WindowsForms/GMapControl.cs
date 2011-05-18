@@ -17,6 +17,7 @@ namespace GMap.NET.WindowsForms
 
 #if !PocketPC
    using System.Runtime.Serialization.Formatters.Binary;
+   using GMap.NET.MapProviders;
 #endif
 
    /// <summary>
@@ -316,9 +317,9 @@ namespace GMap.NET.WindowsForms
          set
          {
             colorMatrix = value;
-            if(Manager.ImageProxy != null && Manager.ImageProxy is WindowsFormsImageProxy)
+            if(GMapProvider.TileImageProxy != null && GMapProvider.TileImageProxy is WindowsFormsImageProxy)
             {
-               (Manager.ImageProxy as WindowsFormsImageProxy).ColorMatrix = value;
+               (GMapProvider.TileImageProxy as WindowsFormsImageProxy).ColorMatrix = value;
                if(Core.IsStarted)
                {
                   ReloadMap();
@@ -346,6 +347,8 @@ namespace GMap.NET.WindowsForms
       Bitmap backBuffer;
       Graphics gxOff;
 
+      static readonly WindowsFormsImageProxy wimg = new WindowsFormsImageProxy();
+
 #if !DESIGN
       /// <summary>
       /// construct
@@ -356,8 +359,6 @@ namespace GMap.NET.WindowsForms
          if(!DesignModeInConstruct && !IsDesignerHosted)
 #endif
          {
-            WindowsFormsImageProxy wimg = new WindowsFormsImageProxy();
-
 #if !PocketPC
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -367,7 +368,7 @@ namespace GMap.NET.WindowsForms
 
             TileFlipXYAttributes.SetWrapMode(WrapMode.TileFlipXY);
 #endif
-            Manager.ImageProxy = wimg;
+            GMapProvider.TileImageProxy = wimg;
 
             // only one mode will be active, to get mixed mode create new ColorMatrix
             GrayScaleMode = GrayScaleMode;
@@ -466,7 +467,7 @@ namespace GMap.NET.WindowsForms
       /// <param name="g"></param>
       void DrawMapGDIplus(Graphics g)
       {
-         if(MapType == NET.MapType.None)
+         if(MapProvider == EmptyProvider.Instance || MapProvider == null)
          {
             return;
          }
@@ -504,7 +505,7 @@ namespace GMap.NET.WindowsForms
 #else
                      Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tileToDraw);
 #endif
-                     if(t != null)
+                     if(t != Tile.Empty)
                      {
                         // render tile
                         lock(t.Overlays)
@@ -528,7 +529,7 @@ namespace GMap.NET.WindowsForms
                      else if(FillEmptyTiles)
                      {
                         int ZoomOffset = 0;
-                        Tile ParentTile = null;
+                        Tile ParentTile = Tile.Empty;
                         int Ix = 0;
 
                         while(ParentTile == null && (Core.Zoom - ZoomOffset) >= 1 && ZoomOffset <= LevelsKeepInMemmory)
@@ -537,7 +538,7 @@ namespace GMap.NET.WindowsForms
                            ParentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - ZoomOffset, new GPoint((int)(tilePoint.X / Ix), (int)(tilePoint.Y / Ix)));
                         }
 
-                        if(ParentTile != null)
+                        if(ParentTile != Tile.Empty)
                         {
                            int Xoff = Math.Abs(tilePoint.X - (ParentTile.Pos.X * Ix));
                            int Yoff = Math.Abs(tilePoint.Y - (ParentTile.Pos.Y * Ix));
@@ -637,7 +638,7 @@ namespace GMap.NET.WindowsForms
 
          foreach(GMap.NET.PointLatLng pg in route.Points)
          {
-            GPoint p = Projection.FromLatLngToPixel(pg, Core.Zoom);
+            GPoint p = MapProvider.Projection.FromLatLngToPixel(pg, Core.Zoom);
             p.Offset(Core.renderOffset);
 
             if(IsRotated)
@@ -666,7 +667,7 @@ namespace GMap.NET.WindowsForms
 
          foreach(GMap.NET.PointLatLng pg in polygon.Points)
          {
-            GPoint p = Projection.FromLatLngToPixel(pg, Core.Zoom);
+            GPoint p = MapProvider.Projection.FromLatLngToPixel(pg, Core.Zoom);
             p.Offset(Core.renderOffset);
 
             if(IsRotated)
@@ -1125,7 +1126,7 @@ namespace GMap.NET.WindowsForms
                   DrawMapGDIplus(gxOff);
                }
 
-               OnPaintEtc(gxOff);
+               OnPaintOverlays(gxOff);
 
                e.Graphics.DrawImage(backBuffer, 0, 0);
             }
@@ -1160,13 +1161,13 @@ namespace GMap.NET.WindowsForms
 
                   e.Graphics.ResetTransform();
 
-                  OnPaintEtc(e.Graphics);
+                  OnPaintOverlays(e.Graphics);
 #endif
                }
                else
                {
                   DrawMapGDIplus(e.Graphics);
-                  OnPaintEtc(e.Graphics);
+                  OnPaintOverlays(e.Graphics);
                }
             }
          }
@@ -1266,7 +1267,7 @@ namespace GMap.NET.WindowsForms
       /// override, to render something more
       /// </summary>
       /// <param name="g"></param>
-      protected virtual void OnPaintEtc(Graphics g)
+      protected virtual void OnPaintOverlays(Graphics g)
       {
 #if !PocketPC
          g.SmoothingMode = SmoothingMode.HighQuality;
@@ -1297,117 +1298,117 @@ namespace GMap.NET.WindowsForms
 
          #region -- copyright --
 
-         switch(Core.MapType)
-         {
-            case MapType.GoogleMap:
-            case MapType.GoogleSatellite:
-            case MapType.GoogleLabels:
-            case MapType.GoogleTerrain:
-            case MapType.GoogleHybrid:
-            {
-#if !PocketPC
-               g.DrawString(Core.googleCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#else
-               g.DrawString(Core.googleCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-#endif
-            }
-            break;
+         //         switch(Core.MapType)
+         //         {
+         //            case MapType.GoogleMap:
+         //            case MapType.GoogleSatellite:
+         //            case MapType.GoogleLabels:
+         //            case MapType.GoogleTerrain:
+         //            case MapType.GoogleHybrid:
+         //            {
+         //#if !PocketPC
+         //               g.DrawString(Core.googleCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+         //#else
+         //               g.DrawString(Core.googleCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+         //#endif
+         //            }
+         //            break;
 
-            case MapType.OpenStreetMap:
-            case MapType.OpenStreetOsm:
-            case MapType.OpenStreetMapSurfer:
-            case MapType.OpenStreetMapSurferTerrain:
-            case MapType.OpenSeaMapLabels:
-            case MapType.OpenSeaMapHybrid:
-            {
-#if !PocketPC
-               g.DrawString(Core.openStreetMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#else
-               g.DrawString(Core.openStreetMapCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-#endif
-            }
-            break;
+         //            case MapType.OpenStreetMap:
+         //            case MapType.OpenStreetOsm:
+         //            case MapType.OpenStreetMapSurfer:
+         //            case MapType.OpenStreetMapSurferTerrain:
+         //            case MapType.OpenSeaMapLabels:
+         //            case MapType.OpenSeaMapHybrid:
+         //            {
+         //#if !PocketPC
+         //               g.DrawString(Core.openStreetMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+         //#else
+         //               g.DrawString(Core.openStreetMapCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+         //#endif
+         //            }
+         //            break;
 
-            case MapType.YahooMap:
-            case MapType.YahooSatellite:
-            case MapType.YahooLabels:
-            case MapType.YahooHybrid:
-            {
-#if !PocketPC
-               g.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#else
-               g.DrawString(Core.yahooMapCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-#endif
-            }
-            break;
+         //            case MapType.YahooMap:
+         //            case MapType.YahooSatellite:
+         //            case MapType.YahooLabels:
+         //            case MapType.YahooHybrid:
+         //            {
+         //#if !PocketPC
+         //               g.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+         //#else
+         //               g.DrawString(Core.yahooMapCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+         //#endif
+         //            }
+         //            break;
 
-            case MapType.BingHybrid:
-            case MapType.BingMap:
-            case MapType.BingMap_New:
-            case MapType.BingSatellite:
-            {
-#if !PocketPC
-               g.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#else
-               g.DrawString(Core.virtualEarthCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-#endif
-            }
-            break;
+         //            case MapType.BingHybrid:
+         //            case MapType.BingMap:
+         //            case MapType.BingMap_New:
+         //            case MapType.BingSatellite:
+         //            {
+         //#if !PocketPC
+         //               g.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+         //#else
+         //               g.DrawString(Core.virtualEarthCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+         //#endif
+         //            }
+         //            break;
 
-            case MapType.ArcGIS_StreetMap_World_2D:
-            case MapType.ArcGIS_Imagery_World_2D:
-            case MapType.ArcGIS_ShadedRelief_World_2D:
-            case MapType.ArcGIS_Topo_US_2D:
-            case MapType.ArcGIS_World_Physical_Map:
-            case MapType.ArcGIS_World_Shaded_Relief:
-            case MapType.ArcGIS_World_Street_Map:
-            case MapType.ArcGIS_World_Terrain_Base:
-            case MapType.ArcGIS_World_Topo_Map:
-            {
-#if !PocketPC
-               g.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#else
-               g.DrawString(Core.arcGisCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-#endif
-            }
-            break;
+         //            case MapType.ArcGIS_StreetMap_World_2D:
+         //            case MapType.ArcGIS_Imagery_World_2D:
+         //            case MapType.ArcGIS_ShadedRelief_World_2D:
+         //            case MapType.ArcGIS_Topo_US_2D:
+         //            case MapType.ArcGIS_World_Physical_Map:
+         //            case MapType.ArcGIS_World_Shaded_Relief:
+         //            case MapType.ArcGIS_World_Street_Map:
+         //            case MapType.ArcGIS_World_Terrain_Base:
+         //            case MapType.ArcGIS_World_Topo_Map:
+         //            {
+         //#if !PocketPC
+         //               g.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+         //#else
+         //               g.DrawString(Core.arcGisCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+         //#endif
+         //            }
+         //            break;
 
-            case MapType.MapsLT_OrtoFoto:
-            case MapType.MapsLT_Map:
-            case MapType.MapsLT_Map_Hybrid:
-            case MapType.MapsLT_Map_Labels:
-            {
-#if !PocketPC
-               g.DrawString(Core.hnitCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#else
-               g.DrawString(Core.hnitCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-#endif
-            }
-            break;
+         //            case MapType.MapsLT_OrtoFoto:
+         //            case MapType.MapsLT_Map:
+         //            case MapType.MapsLT_Map_Hybrid:
+         //            case MapType.MapsLT_Map_Labels:
+         //            {
+         //#if !PocketPC
+         //               g.DrawString(Core.hnitCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+         //#else
+         //               g.DrawString(Core.hnitCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+         //#endif
+         //            }
+         //            break;
 
-            case MapType.PergoTurkeyMap:
-            {
-#if !PocketPC
-               g.DrawString(Core.pergoCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#else
-               g.DrawString(Core.pergoCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-#endif
-            }
-            break;
+         //            case MapType.PergoTurkeyMap:
+         //            {
+         //#if !PocketPC
+         //               g.DrawString(Core.pergoCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+         //#else
+         //               g.DrawString(Core.pergoCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+         //#endif
+         //            }
+         //            break;
 
-            case MapType.OviMap:
-            case MapType.OviMapHybrid:
-            case MapType.OviMapSatellite:
-            case MapType.OviMapTerrain:
-            {
-#if !PocketPC
-               g.DrawString(Core.oviCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-#else
-               g.DrawString(Core.oviCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-#endif
-            }
-            break;
-         }
+         //            case MapType.OviMap:
+         //            case MapType.OviMapHybrid:
+         //            case MapType.OviMapSatellite:
+         //            case MapType.OviMapTerrain:
+         //            {
+         //#if !PocketPC
+         //               g.DrawString(Core.oviCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+         //#else
+         //               g.DrawString(Core.oviCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+         //#endif
+         //            }
+         //            break;
+         //         }
 
          #endregion
 
@@ -1472,6 +1473,9 @@ namespace GMap.NET.WindowsForms
       protected override void OnSizeChanged(EventArgs e)
       {
          base.OnSizeChanged(e);
+
+         if(MapProvider == EmptyProvider.Instance)
+            return;
 
          if(!IsDesignerHosted && !DesignModeInConstruct)
          {
@@ -2259,21 +2263,17 @@ namespace GMap.NET.WindowsForms
          }
       }
 
-      /// <summary>
-      /// type of map
-      /// </summary>
-      [Category("GMap.NET"), DefaultValue(MapType.None)]
-      public MapType MapType
+      public GMapProvider MapProvider
       {
          get
          {
-            return Core.MapType;
+            return Core.Provider;
          }
          set
          {
-            if(Core.MapType != value)
+            if(Core.Provider == null || !Core.Provider.Equals(value))
             {
-               Debug.WriteLine("MapType: " + Core.MapType + " -> " + value);
+               Debug.WriteLine("MapType: " + Core.Provider.Name + " -> " + value.Name);
 
                RectLatLng viewarea = SelectedArea;
                if(viewarea != RectLatLng.Empty)
@@ -2285,7 +2285,7 @@ namespace GMap.NET.WindowsForms
                   viewarea = CurrentViewArea;
                }
 
-               Core.MapType = value;
+               Core.Provider = value;
 
                if(Core.IsStarted)
                {
@@ -2310,17 +2310,56 @@ namespace GMap.NET.WindowsForms
          }
       }
 
-      /// <summary>
-      /// map projection
-      /// </summary>
-      [Browsable(false)]
-      public PureProjection Projection
-      {
-         get
-         {
-            return Core.Projection;
-         }
-      }
+      ///// <summary>
+      ///// type of map
+      ///// </summary>
+      //[Category("GMap.NET"), DefaultValue(MapType.None)]
+      //public MapType MapType
+      //{
+      //   get
+      //   {
+      //      return Core.MapType;
+      //   }
+      //   set
+      //   {
+      //      if(Core.MapType != value)
+      //      {
+      //         Debug.WriteLine("MapType: " + Core.MapType + " -> " + value);
+
+      //         RectLatLng viewarea = SelectedArea;
+      //         if(viewarea != RectLatLng.Empty)
+      //         {
+      //            Position = new PointLatLng(viewarea.Lat - viewarea.HeightLat / 2, viewarea.Lng + viewarea.WidthLng / 2);
+      //         }
+      //         else
+      //         {
+      //            viewarea = CurrentViewArea;
+      //         }
+
+      //         Core.MapType = value;
+
+      //         if(Core.IsStarted)
+      //         {
+      //            if(Core.zoomToArea)
+      //            {
+      //               // restore zoomrect as close as possible
+      //               if(viewarea != RectLatLng.Empty && viewarea != CurrentViewArea)
+      //               {
+      //                  int bestZoom = Core.GetMaxZoomToFitRect(viewarea);
+      //                  if(bestZoom > 0 && Zoom != bestZoom)
+      //                  {
+      //                     Zoom = bestZoom;
+      //                  }
+      //               }
+      //            }
+      //            else
+      //            {
+      //               ForceUpdateOverlays();
+      //            }
+      //         }
+      //      }
+      //   }
+      //}
 
       /// <summary>
       /// is routes enabled
@@ -2422,7 +2461,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// occurs when current position is changed
       /// </summary>
-      public event CurrentPositionChanged OnCurrentPositionChanged
+      public event PositionChanged OnPositionChanged
       {
          add
          {

@@ -165,7 +165,7 @@ namespace GMap.NET.Internals
 
       public Tile GetTileWithNoLock(int zoom, GPoint p)
       {
-         Tile ret = null;
+         Tile ret = Tile.Empty;
 
          //if(zoom < Levels.Count)
          {
@@ -177,7 +177,7 @@ namespace GMap.NET.Internals
 
       public Tile GetTileWithReadLock(int zoom, GPoint p)
       {
-         Tile ret = null;
+         Tile ret = Tile.Empty;
 
          Lock.AcquireReaderLock();
          try

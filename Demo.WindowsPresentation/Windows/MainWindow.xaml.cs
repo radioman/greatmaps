@@ -15,6 +15,7 @@ using Demo.WindowsPresentation.CustomMarkers;
 using GMap.NET;
 using GMap.NET.WindowsPresentation;
 using System.IO;
+using GMap.NET.MapProviders;
 
 namespace Demo.WindowsPresentation
 {
@@ -54,10 +55,11 @@ namespace Demo.WindowsPresentation
          }
 
          // config map
+         MainMap.MapProvider = GMapProviders.OpenStreetMap;
          MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
 
          // map events
-         MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
+         MainMap.OnPositionChanged += new PositionChanged(MainMap_OnCurrentPositionChanged);
          MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
          MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
          MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
@@ -67,7 +69,9 @@ namespace Demo.WindowsPresentation
          MainMap.MouseEnter += new MouseEventHandler(MainMap_MouseEnter);
 
          // get map types
-         comboBoxMapType.ItemsSource = Enum.GetValues(typeof(MapType));
+         comboBoxMapType.ItemsSource = GMapProviders.List;
+         comboBoxMapType.DisplayMemberPath = "Name";
+         comboBoxMapType.SelectedItem = MainMap.MapProvider;
 
          // acccess mode
          comboBoxMode.ItemsSource = Enum.GetValues(typeof(AccessMode));
@@ -95,7 +99,7 @@ namespace Demo.WindowsPresentation
          checkBoxDebug.IsChecked = true;
 #endif
 
-         validator.Window = this;
+         //validator.Window = this;
 
          // set current marker
          currentMarker = new GMapMarker(MainMap.Position);
@@ -448,7 +452,7 @@ namespace Demo.WindowsPresentation
          MainMap.ZoomAndCenterMarkers(null);
       }
 
-      void MainMap_OnMapTypeChanged(MapType type)
+      void MainMap_OnMapTypeChanged(GMapProvider type)
       {
          sliderZoom.Minimum = MainMap.MinZoom;
          sliderZoom.Maximum = MainMap.MaxZoom;
@@ -619,7 +623,7 @@ namespace Demo.WindowsPresentation
                {
                   TilePrefetcher obj = new TilePrefetcher();
                   obj.ShowCompleteMessage = true;
-                  obj.Start(area, MainMap.Projection, i, MainMap.MapType, 100);
+                  obj.Start(area, i, MainMap.MapProvider, 100);
                }
                else if(res == MessageBoxResult.No)
                {

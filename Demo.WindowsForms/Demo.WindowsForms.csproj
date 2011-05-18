@@ -158,18 +158,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\References\Windows\System.Data.SQLite.DLL">
-      <Link>x86\System.Data.SQLite.DLL</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="..\References\Windows\System.Data.SQLite.XML">
-      <Link>x86\System.Data.SQLite.XML</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="..\References\Windows\x64\System.Data.SQLite.DLL">
-      <Link>x64\System.Data.SQLite.DLL</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Content Include="Resources\ImageReady.ico" />
   </ItemGroup>
   <ItemGroup>

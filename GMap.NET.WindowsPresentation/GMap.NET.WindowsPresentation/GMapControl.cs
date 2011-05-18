@@ -19,6 +19,7 @@ namespace GMap.NET.WindowsPresentation
    using GMap.NET;
    using GMap.NET.Internals;
    using System.Diagnostics;
+   using GMap.NET.MapProviders;
 
    /// <summary>
    /// GMap.NET control for Windows Presentation
@@ -27,25 +28,25 @@ namespace GMap.NET.WindowsPresentation
    {
       #region DependencyProperties and related stuff
 
-      public static readonly DependencyProperty MapTypeProperty = DependencyProperty.Register("MapType", typeof(MapType), typeof(GMapControl), new UIPropertyMetadata(MapType.None, new PropertyChangedCallback(MapTypePropertyChanged)));
+      public static readonly DependencyProperty MapProviderProperty = DependencyProperty.Register("MapProvider", typeof(GMapProvider), typeof(GMapControl), new UIPropertyMetadata(EmptyProvider.Instance, new PropertyChangedCallback(MapProviderPropertyChanged)));
 
       /// <summary>
       /// type of map
       /// </summary>
       [Category("GMap.NET")]
-      public MapType MapType
+      public GMapProvider MapProvider
       {
          get
          {
-            return (MapType)(GetValue(MapTypeProperty));
+            return GetValue(MapProviderProperty) as GMapProvider;
          }
          set
          {
-            SetValue(MapTypeProperty, value);
+            SetValue(MapProviderProperty, value);
          }
       }
 
-      private static void MapTypePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+      private static void MapProviderPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
       {
          GMapControl map = (GMapControl)d;
          if(map != null)
@@ -62,7 +63,7 @@ namespace GMap.NET.WindowsPresentation
                viewarea = map.CurrentViewArea;
             }
 
-            map.Core.MapType = (MapType)e.NewValue;
+            map.Core.Provider = e.NewValue as GMapProvider;
 
             if(map.Core.IsStarted && map.Core.zoomToArea)
             {
@@ -123,7 +124,7 @@ namespace GMap.NET.WindowsPresentation
       private static void ZoomPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
       {
          GMapControl map = (GMapControl)d;
-         if(map != null && map.Projection != null)
+         if(map != null && map.MapProvider.Projection != null)
          {
             double value = (double)e.NewValue;
 
@@ -456,7 +457,7 @@ namespace GMap.NET.WindowsPresentation
             ClipToBounds = true;
             SnapsToDevicePixels = true;
 
-            Manager.ImageProxy = new WindowsPresentationImageProxy();
+            GMapProvider.TileImageProxy = new WindowsPresentationImageProxy();
 
             Core.SystemType = "WindowsPresentation";
 
@@ -630,7 +631,7 @@ namespace GMap.NET.WindowsPresentation
       /// <param name="g"></param>
       void DrawMapWPF(DrawingContext g)
       {
-         if(MapType == NET.MapType.None)
+         if(MapProvider == EmptyProvider.Instance || MapProvider == null)
          {
             return;
          }
@@ -650,7 +651,7 @@ namespace GMap.NET.WindowsPresentation
                   bool found = false;
 
                   Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tilePoint);
-                  if(t != null)
+                  if(t != Tile.Empty)
                   {
                      lock(t.Overlays)
                      {
@@ -1197,85 +1198,85 @@ namespace GMap.NET.WindowsPresentation
 
          #region -- copyright --
 
-         switch(Core.MapType)
-         {
-            case MapType.GoogleMap:
-            case MapType.GoogleSatellite:
-            case MapType.GoogleLabels:
-            case MapType.GoogleTerrain:
-            case MapType.GoogleHybrid:
-            {
-               drawingContext.DrawText(googleCopyright, new System.Windows.Point(5, ActualHeight - googleCopyright.Height - 5));
-            }
-            break;
+         //switch(Core.MapType)
+         //{
+         //   case MapType.GoogleMap:
+         //   case MapType.GoogleSatellite:
+         //   case MapType.GoogleLabels:
+         //   case MapType.GoogleTerrain:
+         //   case MapType.GoogleHybrid:
+         //   {
+         //      drawingContext.DrawText(googleCopyright, new System.Windows.Point(5, ActualHeight - googleCopyright.Height - 5));
+         //   }
+         //   break;
 
-            case MapType.OpenStreetMap:
-            case MapType.OpenStreetOsm:
-            case MapType.OpenStreetMapSurfer:
-            case MapType.OpenStreetMapSurferTerrain:
-            case MapType.OpenSeaMapLabels:
-            case MapType.OpenSeaMapHybrid:
-            {
-               drawingContext.DrawText(openStreetMapCopyright, new System.Windows.Point(5, ActualHeight - openStreetMapCopyright.Height - 5));
-            }
-            break;
+         //   case MapType.OpenStreetMap:
+         //   case MapType.OpenStreetOsm:
+         //   case MapType.OpenStreetMapSurfer:
+         //   case MapType.OpenStreetMapSurferTerrain:
+         //   case MapType.OpenSeaMapLabels:
+         //   case MapType.OpenSeaMapHybrid:
+         //   {
+         //      drawingContext.DrawText(openStreetMapCopyright, new System.Windows.Point(5, ActualHeight - openStreetMapCopyright.Height - 5));
+         //   }
+         //   break;
 
-            case MapType.YahooMap:
-            case MapType.YahooSatellite:
-            case MapType.YahooLabels:
-            case MapType.YahooHybrid:
-            {
-               drawingContext.DrawText(yahooMapCopyright, new System.Windows.Point(5, ActualHeight - yahooMapCopyright.Height - 5));
-            }
-            break;
+         //   case MapType.YahooMap:
+         //   case MapType.YahooSatellite:
+         //   case MapType.YahooLabels:
+         //   case MapType.YahooHybrid:
+         //   {
+         //      drawingContext.DrawText(yahooMapCopyright, new System.Windows.Point(5, ActualHeight - yahooMapCopyright.Height - 5));
+         //   }
+         //   break;
 
-            case MapType.BingHybrid:
-            case MapType.BingMap:
-            case MapType.BingMap_New:
-            case MapType.BingSatellite:
-            {
-               drawingContext.DrawText(virtualEarthCopyright, new System.Windows.Point(5, ActualHeight - virtualEarthCopyright.Height - 5));
-            }
-            break;
+         //   case MapType.BingHybrid:
+         //   case MapType.BingMap:
+         //   case MapType.BingMap_New:
+         //   case MapType.BingSatellite:
+         //   {
+         //      drawingContext.DrawText(virtualEarthCopyright, new System.Windows.Point(5, ActualHeight - virtualEarthCopyright.Height - 5));
+         //   }
+         //   break;
 
-            case MapType.ArcGIS_StreetMap_World_2D:
-            case MapType.ArcGIS_Imagery_World_2D:
-            case MapType.ArcGIS_ShadedRelief_World_2D:
-            case MapType.ArcGIS_Topo_US_2D:
-            case MapType.ArcGIS_World_Physical_Map:
-            case MapType.ArcGIS_World_Shaded_Relief:
-            case MapType.ArcGIS_World_Street_Map:
-            case MapType.ArcGIS_World_Terrain_Base:
-            case MapType.ArcGIS_World_Topo_Map:
-            {
-               drawingContext.DrawText(arcGisMapCopyright, new System.Windows.Point(5, ActualHeight - arcGisMapCopyright.Height - 5));
-            }
-            break;
+         //   case MapType.ArcGIS_StreetMap_World_2D:
+         //   case MapType.ArcGIS_Imagery_World_2D:
+         //   case MapType.ArcGIS_ShadedRelief_World_2D:
+         //   case MapType.ArcGIS_Topo_US_2D:
+         //   case MapType.ArcGIS_World_Physical_Map:
+         //   case MapType.ArcGIS_World_Shaded_Relief:
+         //   case MapType.ArcGIS_World_Street_Map:
+         //   case MapType.ArcGIS_World_Terrain_Base:
+         //   case MapType.ArcGIS_World_Topo_Map:
+         //   {
+         //      drawingContext.DrawText(arcGisMapCopyright, new System.Windows.Point(5, ActualHeight - arcGisMapCopyright.Height - 5));
+         //   }
+         //   break;
 
-            case MapType.MapsLT_OrtoFoto:
-            case MapType.MapsLT_Map:
-            case MapType.MapsLT_Map_Hybrid:
-            case MapType.MapsLT_Map_Labels:
-            {
-               drawingContext.DrawText(hnitMapCopyright, new System.Windows.Point(5, ActualHeight - hnitMapCopyright.Height - 5));
-            }
-            break;
+         //   case MapType.MapsLT_OrtoFoto:
+         //   case MapType.MapsLT_Map:
+         //   case MapType.MapsLT_Map_Hybrid:
+         //   case MapType.MapsLT_Map_Labels:
+         //   {
+         //      drawingContext.DrawText(hnitMapCopyright, new System.Windows.Point(5, ActualHeight - hnitMapCopyright.Height - 5));
+         //   }
+         //   break;
 
-            case MapType.PergoTurkeyMap:
-            {
-               drawingContext.DrawText(pergoMapCopyright, new System.Windows.Point(5, ActualHeight - pergoMapCopyright.Height - 5));
-            }
-            break;
+         //   case MapType.PergoTurkeyMap:
+         //   {
+         //      drawingContext.DrawText(pergoMapCopyright, new System.Windows.Point(5, ActualHeight - pergoMapCopyright.Height - 5));
+         //   }
+         //   break;
 
-            case MapType.OviMap:
-            case MapType.OviMapHybrid:
-            case MapType.OviMapSatellite:
-            case MapType.OviMapTerrain:
-            {
-               drawingContext.DrawText(oviMapCopyright, new System.Windows.Point(5, ActualHeight - oviMapCopyright.Height - 5));
-            }
-            break;
-         }
+         //   case MapType.OviMap:
+         //   case MapType.OviMapHybrid:
+         //   case MapType.OviMapSatellite:
+         //   case MapType.OviMapTerrain:
+         //   {
+         //      drawingContext.DrawText(oviMapCopyright, new System.Windows.Point(5, ActualHeight - oviMapCopyright.Height - 5));
+         //   }
+         //   break;
+         //}
 
          #endregion
 
@@ -1888,15 +1889,6 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
-      [Browsable(false)]
-      public PureProjection Projection
-      {
-         get
-         {
-            return Core.Projection;
-         }
-      }
-
       [Category("GMap.NET")]
       public bool CanDragMap
       {
@@ -1922,7 +1914,7 @@ namespace GMap.NET.WindowsPresentation
 
       #region IGControl event Members
 
-      public event CurrentPositionChanged OnCurrentPositionChanged
+      public event PositionChanged OnPositionChanged
       {
          add
          {

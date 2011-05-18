@@ -64,11 +64,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite, Version=1.0.66.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\References\Windows\System.Data.SQLite.DLL</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -135,18 +130,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\references\windows\x64\System.Data.SQLite.DLL">
-      <Link>x64\System.Data.SQLite.DLL</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\references\windows\System.Data.SQLite.DLL">
-      <Link>x86\System.Data.SQLite.DLL</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\references\windows\System.Data.SQLite.XML">
-      <Link>x86\System.Data.SQLite.XML</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Content Include="Images\USOverlay.png" />
   </ItemGroup>
   <ItemGroup>

@@ -84,9 +84,6 @@
       <DependentUpon>TilePrefetcher.xaml</DependentUpon>
     </Compile>
     <AppDesigner Include="Properties\" />
-    <Compile Include="GMap.NET.WindowsPresentation\GMapControlNew.xaml.cs">
-      <DependentUpon>GMapControlNew.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GMap.NET.Core\GMap.NET.Core.csproj">
@@ -103,10 +100,6 @@
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="GMap.NET.WindowsPresentation\GMapControlNew.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

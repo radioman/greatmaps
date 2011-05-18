@@ -1198,7 +1198,7 @@ namespace GMap.NET.WindowsPresentation
 
       #region IGControl event Members
 
-      public event CurrentPositionChanged OnCurrentPositionChanged
+      public event PositionChanged OnPositionChanged
       {
          add
          {

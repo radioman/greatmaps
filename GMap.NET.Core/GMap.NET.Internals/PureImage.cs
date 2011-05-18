@@ -22,7 +22,7 @@ namespace GMap.NET
 
       #region IDisposable Members
 
-      abstract public void Dispose();
+      public abstract void Dispose();
 
       #endregion
    }

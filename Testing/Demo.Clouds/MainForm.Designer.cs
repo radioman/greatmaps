@@ -38,7 +38,6 @@
            this.mapControl.GrayScaleMode = false;
            this.mapControl.LevelsKeepInMemmory = 5;
            this.mapControl.Location = new System.Drawing.Point(0, 0);
-           this.mapControl.MapType = GMap.NET.MapType.YahooSatellite;
            this.mapControl.Margin = new System.Windows.Forms.Padding(5);
            this.mapControl.MarkersEnabled = true;
            this.mapControl.MaxZoom = 17;

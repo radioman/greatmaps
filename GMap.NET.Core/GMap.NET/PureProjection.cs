@@ -104,7 +104,7 @@ namespace GMap.NET
       /// <returns></returns>
       public virtual GPoint FromPixelToTileXY(GPoint p)
       {
-         return new GPoint((int) (p.X / TileSize.Width), (int) (p.Y / TileSize.Height));
+         return new GPoint((int)(p.X / TileSize.Width), (int)(p.Y / TileSize.Height));
       }
 
       /// <summary>
@@ -273,22 +273,22 @@ namespace GMap.NET
             if(Math.Abs(x) <= PI)
                break;
             else
-               if(((long) Math.Abs(x / Math.PI)) < 2)
+               if(((long)Math.Abs(x / Math.PI)) < 2)
                   x = x - (Sign(x) * TWO_PI);
                else
-                  if(((long) Math.Abs(x / TWO_PI)) < MAXLONG)
+                  if(((long)Math.Abs(x / TWO_PI)) < MAXLONG)
                   {
-                     x = x - (((long) (x / TWO_PI)) * TWO_PI);
+                     x = x - (((long)(x / TWO_PI)) * TWO_PI);
                   }
                   else
-                     if(((long) Math.Abs(x / (MAXLONG * TWO_PI))) < MAXLONG)
+                     if(((long)Math.Abs(x / (MAXLONG * TWO_PI))) < MAXLONG)
                      {
-                        x = x - (((long) (x / (MAXLONG * TWO_PI))) * (TWO_PI * MAXLONG));
+                        x = x - (((long)(x / (MAXLONG * TWO_PI))) * (TWO_PI * MAXLONG));
                      }
                      else
-                        if(((long) Math.Abs(x / (DBLLONG * TWO_PI))) < MAXLONG)
+                        if(((long)Math.Abs(x / (DBLLONG * TWO_PI))) < MAXLONG)
                         {
-                           x = x - (((long) (x / (DBLLONG * TWO_PI))) * (TWO_PI * DBLLONG));
+                           x = x - (((long)(x / (DBLLONG * TWO_PI))) * (TWO_PI * DBLLONG));
                         }
                         else
                            x = x - (Sign(x) * TWO_PI);
@@ -350,7 +350,7 @@ namespace GMap.NET
       /// <returns></returns>
       protected static long GetUTMzone(double lon)
       {
-         return ((long) (((lon + 180.0) / 6.0) + 1.0));
+         return ((long)(((lon + 180.0) / 6.0) + 1.0));
       }
 
       /// <summary>

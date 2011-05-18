@@ -17,7 +17,7 @@ namespace GMap.NET
       /// <param name="pos"></param>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      bool PutImageToCache(MemoryStream tile, MapType type, GPoint pos, int zoom);
+      bool PutImageToCache(MemoryStream tile, int type, GPoint pos, int zoom);
 
       /// <summary>
       /// gets image from db
@@ -26,7 +26,7 @@ namespace GMap.NET
       /// <param name="pos"></param>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      PureImage GetImageFromCache(MapType type, GPoint pos, int zoom);
+      PureImage GetImageFromCache(int type, GPoint pos, int zoom);
 
       /// <summary>
       /// delete old tiles beyond a supplied date

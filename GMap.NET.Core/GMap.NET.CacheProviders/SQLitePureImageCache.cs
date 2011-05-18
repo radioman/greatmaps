@@ -18,6 +18,7 @@ namespace GMap.NET.CacheProviders
    using System;
    using System.Diagnostics;
    using System.Globalization;
+   using GMap.NET.MapProviders;
 
    /// <summary>
    /// ultra fast cache system for tiles
@@ -50,7 +51,7 @@ namespace GMap.NET.CacheProviders
          set
          {
             cache = value;
-            gtileCache = cache + "TileDBv3" + Path.DirectorySeparatorChar;
+            gtileCache = cache + "TileDBv4" + Path.DirectorySeparatorChar;
 
             dir = gtileCache + GMaps.Instance.LanguageStr + Path.DirectorySeparatorChar;
 
@@ -365,11 +366,17 @@ namespace GMap.NET.CacheProviders
 
                                  tr.Commit();
                               }
-                              catch
+                              catch(Exception exx)
                               {
+                                 Debug.WriteLine("ExportMapDataToDB: " + exx.ToString());
                                  tr.Rollback();
                                  ret = false;
                               }
+                           }
+
+                           using(SQLiteCommand cmd = new SQLiteCommand(string.Format("DETACH DATABASE Source;", sourceFile), cn2))
+                           {
+                              cmd.ExecuteNonQuery();
                            }
                         }
                      }
@@ -439,7 +446,7 @@ namespace GMap.NET.CacheProviders
 
       #region PureImageCache Members
 
-      bool PureImageCache.PutImageToCache(MemoryStream tile, MapType type, GPoint pos, int zoom)
+      bool PureImageCache.PutImageToCache(MemoryStream tile, int type, GPoint pos, int zoom)
       {
          bool ret = true;
          if(Created)
@@ -463,7 +470,7 @@ namespace GMap.NET.CacheProviders
                               cmd.Parameters.Add(new SQLiteParameter("@p1", pos.X));
                               cmd.Parameters.Add(new SQLiteParameter("@p2", pos.Y));
                               cmd.Parameters.Add(new SQLiteParameter("@p3", zoom));
-                              cmd.Parameters.Add(new SQLiteParameter("@p4", (int)type));
+                              cmd.Parameters.Add(new SQLiteParameter("@p4", type));
                               cmd.Parameters.Add(new SQLiteParameter("@p5", DateTime.Now));
 
                               cmd.ExecuteNonQuery();
@@ -507,7 +514,7 @@ namespace GMap.NET.CacheProviders
          return ret;
       }
 
-      PureImage PureImageCache.GetImageFromCache(MapType type, GPoint pos, int zoom)
+      PureImage PureImageCache.GetImageFromCache(int type, GPoint pos, int zoom)
       {
          PureImage ret = null;
          try
@@ -529,7 +536,7 @@ namespace GMap.NET.CacheProviders
 
                   using(DbCommand com = cn.CreateCommand())
                   {
-                     com.CommandText = string.Format(finnalSqlSelect, pos.X, pos.Y, zoom, (int)type);
+                     com.CommandText = string.Format(finnalSqlSelect, pos.X, pos.Y, zoom, type);
 
                      using(DbDataReader rd = com.ExecuteReader(System.Data.CommandBehavior.SequentialAccess))
                      {
@@ -539,11 +546,11 @@ namespace GMap.NET.CacheProviders
                            byte[] tile = new byte[length];
                            rd.GetBytes(0, 0, tile, 0, tile.Length);
                            {
-                              if(GMaps.Instance.ImageProxy != null)
+                              if(GMapProvider.TileImageProxy != null)
                               {
                                  MemoryStream stm = new MemoryStream(tile, 0, tile.Length, false, true);
 
-                                 ret = GMaps.Instance.ImageProxy.FromStream(stm);
+                                 ret = GMapProvider.TileImageProxy.FromStream(stm);
                                  if(ret != null)
                                  {
                                     ret.Data = stm;

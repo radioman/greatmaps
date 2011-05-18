@@ -1,6 +1,8 @@
 ﻿
 namespace GMap.NET
 {
+   using GMap.NET.MapProviders;
+
    public interface Interface
    {
       PointLatLng Position
@@ -30,15 +32,10 @@ namespace GMap.NET
          get;
       }
 
-      MapType MapType
+      GMapProvider MapProvider
       {
          get;
          set;
-      }
-
-      PureProjection Projection
-      {
-         get;
       }
 
       bool CanDragMap
@@ -53,7 +50,7 @@ namespace GMap.NET
       }
 
       // events
-      event CurrentPositionChanged OnCurrentPositionChanged;
+      event PositionChanged OnPositionChanged;
       event TileLoadComplete OnTileLoadComplete;
       event TileLoadStart OnTileLoadStart;
       event MapDrag OnMapDrag;

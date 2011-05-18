@@ -5,6 +5,7 @@ using System.Drawing;
 using GMap.NET;
 using GMap.NET.Projections;
 using GMap.NET.WindowsForms;
+using GMap.NET.MapProviders;
 
 namespace BigMapMaker
 {
@@ -14,13 +15,8 @@ namespace BigMapMaker
       static void Main(string[] args)
       {
          GMaps.Instance.Mode = AccessMode.ServerAndCache;
-         GMaps.Instance.ImageProxy = new WindowsFormsImageProxy();
-
-         MapType type = MapType.GoogleMap;
-         PureProjection prj = null;
-         int maxZoom;
-
-         GMaps.Instance.AdjustProjection(type, ref prj, out maxZoom);
+         GMapProvider.TileImageProxy = new WindowsFormsImageProxy();  
+         GMapProvider provider = GMapProviders.OpenStreetMap;
 
          int zoom = 12;
          RectLatLng area = RectLatLng.FromLTRB(25.013809204101563, 54.832138557519563, 25.506134033203125, 54.615623046071839);
@@ -28,19 +24,17 @@ namespace BigMapMaker
          {
             try
             {
-               List<GPoint> tileArea = prj.GetAreaTileList(area, zoom, 0);
-               string bigImage = zoom + "-" + type + "-vilnius.png";
+               List<GPoint> tileArea = provider.Projection.GetAreaTileList(area, zoom, 0);
+               string bigImage = zoom + "-" + provider + "-vilnius.png";
 
                Console.WriteLine("Preparing: " + bigImage);
                Console.WriteLine("Zoom: " + zoom);
-               Console.WriteLine("Type: " + type.ToString());
+               Console.WriteLine("Type: " + provider.ToString());
                Console.WriteLine("Area: " + area);
 
-               var types = GMaps.Instance.GetAllLayersOfType(type);
-
                // current area
-               GPoint topLeftPx = prj.FromLatLngToPixel(area.LocationTopLeft, zoom);
-               GPoint rightButtomPx = prj.FromLatLngToPixel(area.Bottom, area.Right, zoom);
+               GPoint topLeftPx = provider.Projection.FromLatLngToPixel(area.LocationTopLeft, zoom);
+               GPoint rightButtomPx = provider.Projection.FromLatLngToPixel(area.Bottom, area.Right, zoom);
                GPoint pxDelta = new GPoint(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
 
                int padding = 22;
@@ -56,7 +50,7 @@ namespace BigMapMaker
                         {
                            Console.WriteLine("Downloading[" + p + "]: " + tileArea.IndexOf(p) + " of " + tileArea.Count);
 
-                           foreach(MapType tp in types)
+                           foreach(var tp in provider.Overlays)
                            {
                               Exception ex;
                               WindowsFormsImage tile = GMaps.Instance.GetImageFrom(tp, p, zoom, out ex) as WindowsFormsImage;
@@ -64,10 +58,10 @@ namespace BigMapMaker
                               {
                                  using(tile)
                                  {
-                                    int x = p.X*prj.TileSize.Width - topLeftPx.X + padding;
-                                    int y = p.Y*prj.TileSize.Width - topLeftPx.Y + padding;
+                                    int x = p.X * provider.Projection.TileSize.Width - topLeftPx.X + padding;
+                                    int y = p.Y * provider.Projection.TileSize.Width - topLeftPx.Y + padding;
                                     {
-                                       gfx.DrawImage(tile.Img, x, y, prj.TileSize.Width, prj.TileSize.Height);
+                                       gfx.DrawImage(tile.Img, x, y, provider.Projection.TileSize.Width, provider.Projection.TileSize.Height);
                                     }
                                  }
                               }
@@ -106,7 +100,7 @@ namespace BigMapMaker
                            // draw scale
                            using(Pen p = new Pen(Brushes.Blue, 1))
                            {
-                              double rez = prj.GetGroundResolution(zoom, area.Bottom);
+                              double rez = provider.Projection.GetGroundResolution(zoom, area.Bottom);
                               int px100 = (int) (100.0 / rez); // 100 meters
                               int px1000 = (int) (1000.0 / rez); // 1km   
 

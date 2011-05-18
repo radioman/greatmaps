@@ -32,13 +32,13 @@ namespace GMap.NET
       [Obsolete("check http://greatmaps.codeplex.com/discussions/252531", false)]
       GoogleHybridChina = 29,
 
-      OpenStreetMap = 32,
-      OpenStreetOsm = 33,
-      OpenStreetMapSurfer = 34,
-      OpenStreetMapSurferTerrain = 35,
-      OpenSeaMapLabels = 36,
-      OpenSeaMapHybrid = 37,
-      OpenCycleMap = 38,
+      OpenStreetMap = 32, //
+      OpenStreetOsm = 33, //
+      OpenStreetMapSurfer = 34, //
+      OpenStreetMapSurferTerrain = 35, //
+      OpenSeaMapLabels = 36, //
+      OpenSeaMapHybrid = 37, //
+      OpenCycleMap = 38,  //
 
       YahooMap = 64,
       YahooSatellite = 128,

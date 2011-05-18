@@ -88,7 +88,7 @@ namespace Sample3
 
                         amap.Position = before.Position;
 
-                        if(amap.Projection.ToString() == before.Projection.ToString())
+                        if(amap.MapProvider.Projection.ToString() == before.MapProvider.Projection.ToString())
                         {
                            amap.Zoom = before.Zoom;
                         }

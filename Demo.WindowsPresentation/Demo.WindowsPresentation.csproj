@@ -92,11 +92,6 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite, Version=1.0.66.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Windows\System.Data.SQLite.DLL</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="UIAutomationProvider">
@@ -229,20 +224,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="CustomMarkers\red-dot.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\References\Windows\System.Data.SQLite.DLL">
-      <Link>x86\System.Data.SQLite.DLL</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="..\References\Windows\System.Data.SQLite.XML">
-      <Link>x86\System.Data.SQLite.XML</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="..\References\Windows\x64\System.Data.SQLite.DLL">
-      <Link>x64\System.Data.SQLite.DLL</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

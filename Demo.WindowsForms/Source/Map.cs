@@ -21,9 +21,9 @@ namespace Demo.WindowsForms
       /// any custom drawing here
       /// </summary>
       /// <param name="drawingContext"></param>
-      protected override void OnPaintEtc(System.Drawing.Graphics g)
+      protected override void OnPaintOverlays(System.Drawing.Graphics g)
       {
-         base.OnPaintEtc(g);
+         base.OnPaintOverlays(g);
 
 #if DEBUG
          g.DrawString("render: " + counter++ + ", load: " + ElapsedMilliseconds + "ms", DebugFont, Brushes.Blue, 36, 36);

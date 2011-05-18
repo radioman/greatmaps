@@ -21,6 +21,8 @@ namespace GMap.NET
 
 #if !MONO
    using System.Data.SQLite;
+   using GMap.NET.MapProviders;
+   using System.Reflection;
 #else
    using SQLiteConnection=Mono.Data.SqliteClient.SqliteConnection;
    using SQLiteTransaction=Mono.Data.SqliteClient.SqliteTransaction;
@@ -199,11 +201,6 @@ namespace GMap.NET
       }
 
       /// <summary>
-      /// internal proxy for image managment
-      /// </summary>
-      public PureImageProxy ImageProxy;
-
-      /// <summary>
       /// load tiles in random sequence
       /// </summary>
       public bool ShuffleTilesOnLoad = true;
@@ -331,13 +328,28 @@ namespace GMap.NET
       {
          if(args.Name.StartsWith("System.Data.SQLite", StringComparison.OrdinalIgnoreCase))
          {
-            string dir = AppDomain.CurrentDomain.BaseDirectory + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar;
-            return System.Reflection.Assembly.LoadFile(dir + "System.Data.SQLite.dll");
+            // try local directory
+            //string dir = AppDomain.CurrentDomain.BaseDirectory + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar;
+
+            string rootDir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+
+            string dll = rootDir + "DllCache" + Path.DirectorySeparatorChar + "System.Data.SQLite.DLL";
+            if(!File.Exists(dll))
+            {
+               string dir = Path.GetDirectoryName(dll);
+               if(!Directory.Exists(dir))
+               {
+                  Directory.CreateDirectory(dir);
+               }
+               File.WriteAllBytes(dll, (IntPtr.Size == 8 ? Properties.Resources.System_Data_SQLite_x64 : Properties.Resources.System_Data_SQLite_x86));
+            }
+
+            return System.Reflection.Assembly.LoadFile(dll);
          }
          return null;
       }
 
-      static int ping = 0;
+      static int ping;
 
       /// <summary>
       /// call this before you use sqlite for other reasons than caching maps
@@ -345,7 +357,7 @@ namespace GMap.NET
       /// </summary>
       public void SQLitePing()
       {
-        ping++;
+         ping++;
       }
 #endif
 #endif
@@ -1885,7 +1897,7 @@ namespace GMap.NET
                //http://web1.nearmap.com/maps/hl=en&x=37&y=19&z=6&nml=MapT&nmg=1&s=2KbhmZZ             
 
                return string.Format("http://web{0}.nearmap.com/maps/hl=en&x={1}&y={2}&z={3}&nml=MapT&nmg=1", GetServerNum(pos, 3), pos.X, pos.Y, zoom);
-            } 
+            }
             #endregion
 
             #region -- OviMap --
@@ -2886,11 +2898,11 @@ namespace GMap.NET
       /// <summary>
       /// gets image from tile server
       /// </summary>
-      /// <param name="type"></param>
+      /// <param name="provider"></param>
       /// <param name="pos"></param>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public PureImage GetImageFrom(MapType type, GPoint pos, int zoom, out Exception result)
+      public PureImage GetImageFrom(GMapProvider provider, GPoint pos, int zoom, out Exception result)
       {
          PureImage ret = null;
          result = null;
@@ -2900,16 +2912,16 @@ namespace GMap.NET
             // let't check memmory first
             if(UseMemoryCache)
             {
-               MemoryStream m = GetTileFromMemoryCache(new RawTile(type, pos, zoom));
+               MemoryStream m = GetTileFromMemoryCache(new RawTile(provider.Id, pos, zoom));
                if(m != null)
                {
-                  if(GMaps.Instance.ImageProxy != null)
+                  if(GMapProvider.TileImageProxy != null)
                   {
-                     ret = GMaps.Instance.ImageProxy.FromStream(m);
+                     ret = GMapProvider.TileImageProxy.FromStream(m);
                      if(ret == null)
                      {
 #if DEBUG
-                        Debug.WriteLine("Image disposed in MemoryCache o.O, should never happen ;} " + new RawTile(type, pos, zoom));
+                        Debug.WriteLine("Image disposed in MemoryCache o.O, should never happen ;} " + new RawTile(provider.Id, pos, zoom));
                         if(Debugger.IsAttached)
                         {
                            Debugger.Break();
@@ -2922,6 +2934,10 @@ namespace GMap.NET
                         (m as IDisposable).Dispose();
 #endif
                      }
+                     else
+                     {
+                        ret.Data = m;
+                     }
                   }
                }
             }
@@ -2932,12 +2948,12 @@ namespace GMap.NET
                {
                   if(Cache.Instance.ImageCache != null)
                   {
-                     ret = Cache.Instance.ImageCache.GetImageFromCache(type, pos, zoom);
+                     ret = Cache.Instance.ImageCache.GetImageFromCache((provider as GMapProvider).DbId, pos, zoom);
                      if(ret != null)
                      {
                         if(UseMemoryCache)
                         {
-                           AddTileToMemoryCache(new RawTile(type, pos, zoom), ret.Data);
+                           AddTileToMemoryCache(new RawTile(provider.Id, pos, zoom), ret.Data);
                         }
                         return ret;
                      }
@@ -2945,14 +2961,14 @@ namespace GMap.NET
 
                   if(Cache.Instance.ImageCacheSecond != null)
                   {
-                     ret = Cache.Instance.ImageCacheSecond.GetImageFromCache(type, pos, zoom);
+                     ret = Cache.Instance.ImageCacheSecond.GetImageFromCache(provider.DbId, pos, zoom);
                      if(ret != null)
                      {
                         if(UseMemoryCache)
                         {
-                           AddTileToMemoryCache(new RawTile(type, pos, zoom), ret.Data);
+                           AddTileToMemoryCache(new RawTile(provider.Id, pos, zoom), ret.Data);
                         }
-                        EnqueueCacheTask(new CacheItemQueue(type, pos, zoom, ret.Data, CacheUsage.First));
+                        EnqueueCacheTask(new CacheItemQueue(provider.DbId, pos, zoom, ret.Data, CacheUsage.First));
                         return ret;
                      }
                   }
@@ -2960,179 +2976,146 @@ namespace GMap.NET
 
                if(Mode != AccessMode.CacheOnly)
                {
-                  string url = MakeImageUrl(type, pos, zoom, LanguageStr);
-
-                  HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                  if(Proxy != null)
+                  ret = provider.GetTileImage(pos, zoom);
                   {
-                     request.Proxy = Proxy;
-#if !PocketPC
-                     request.PreAuthenticate = true;
-#endif
-                  }
-
-                  request.UserAgent = UserAgent;
-                  request.Timeout = Timeout;
-                  request.ReadWriteTimeout = Timeout * 6;
-                  request.Accept = "*/*";
-
-                  switch(type)
-                  {
-                     case MapType.GoogleMap:
-                     case MapType.GoogleSatellite:
-                     case MapType.GoogleLabels:
-                     case MapType.GoogleTerrain:
-                     case MapType.GoogleHybrid:
+                     // Enqueue Cache
+                     if(ret != null && GMapProvider.TileImageProxy != null)
                      {
-                        request.Referer = string.Format("http://maps.{0}/", GServer);
-                     }
-                     break;
-
-                     case MapType.GoogleMapChina:
-                     case MapType.GoogleSatelliteChina:
-                     case MapType.GoogleLabelsChina:
-                     case MapType.GoogleTerrainChina:
-                     case MapType.GoogleHybridChina:
-                     {
-                        request.Referer = string.Format("http://ditu.{0}/", GServerChina);
-                     }
-                     break;
-
-                     case MapType.BingHybrid:
-                     case MapType.BingMap:
-                     case MapType.BingMap_New:
-                     case MapType.BingSatellite:
-                     {
-                        request.Referer = "http://www.bing.com/maps/";
-                     }
-                     break;
-
-                     case MapType.YahooHybrid:
-                     case MapType.YahooLabels:
-                     case MapType.YahooMap:
-                     case MapType.YahooSatellite:
-                     {
-                        request.Referer = "http://maps.yahoo.com/";
-                     }
-                     break;
-
-                     case MapType.MapsLT_Map_Labels:
-                     case MapType.MapsLT_Map:
-                     case MapType.MapsLT_OrtoFoto:
-                     case MapType.MapsLT_Map_Hybrid:
-                     case MapType.MapsLT_OrtoFoto_2010:
-                     case MapType.MapsLT_Map_Hybrid_2010:
-                     {
-                        request.Referer = "http://www.maps.lt/map/";
-                     }
-                     break;
-
-                     case MapType.KarteLV_Map:
-                     {
-                        request.Referer = "http://www.ikarte.lv/map/default.aspx?lang=lv";
-                     }
-                     break;
-
-                     case MapType.OpenStreetMapSurfer:
-                     case MapType.OpenStreetMapSurferTerrain:
-                     {
-                        request.Referer = "http://www.mapsurfer.net/";
-                     }
-                     break;
-
-                     case MapType.OpenStreetMap:
-                     case MapType.OpenStreetOsm:
-                     {
-                        request.Referer = "http://www.openstreetmap.org/";
-                     }
-                     break;
-
-                     case MapType.OpenSeaMapLabels:
-                     {
-                        request.Referer = "http://openseamap.org/";
-                     }
-                     break;
-
-                     case MapType.OpenCycleMap:
-                     {
-                        request.Referer = "http://www.opencyclemap.org/";
-                     }
-                     break;
-
-                     case MapType.YandexMapRu:
-                     case MapType.YandexMapRuHybrid:
-                     case MapType.YandexMapRuLabels:
-                     case MapType.YandexMapRuSatellite:
-                     {
-                        request.Referer = "http://maps.yandex.ru/";
-                     }
-                     break;
-
-                     case MapType.MapyCZ_Map:
-                     case MapType.MapyCZ_Hybrid:
-                     case MapType.MapyCZ_Labels:
-                     case MapType.MapyCZ_MapTurist:
-                     case MapType.MapyCZ_Satellite:
-                     case MapType.MapyCZ_History:
-                     case MapType.MapyCZ_HistoryHybrid:
-                     {
-                        request.Referer = "http://www.mapy.cz/";
-                     }
-                     break;
-
-                     case MapType.NearMap:
-                     case MapType.NearMapLabels:
-                     case MapType.NearMapSatellite:
-                     {
-                        request.Referer = "http://www.nearmap.com/";
-                     }
-                     break;
-
-                     case MapType.OviMap:
-                     case MapType.OviMapHybrid:
-                     case MapType.OviMapSatellite:
-                     case MapType.OviMapTerrain:
-                     {
-                        request.Referer = "http://maps.ovi.com/";
-                     }
-                     break;
-                  }
-
-                  Debug.WriteLine("Starting GetResponse: " + pos);
-
-                  using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-                  {
-                     Debug.WriteLine("GetResponse OK: " + pos);
-
-                     Debug.WriteLine("Starting GetResponseStream: " + pos);
-                     MemoryStream responseStream = Stuff.CopyStream(response.GetResponseStream(), false);
-                     {
-                        Debug.WriteLine("GetResponseStream OK: " + pos);
-
-                        if(GMaps.Instance.ImageProxy != null)
+                        if(UseMemoryCache)
                         {
-                           ret = GMaps.Instance.ImageProxy.FromStream(responseStream);
+                           AddTileToMemoryCache(new RawTile(provider.Id, pos, zoom), ret.Data);
+                        }
 
-                           // Enqueue Cache
-                           if(ret != null)
-                           {
-                              if(UseMemoryCache)
-                              {
-                                 AddTileToMemoryCache(new RawTile(type, pos, zoom), responseStream);
-                              }
-
-                              if(Mode != AccessMode.ServerOnly)
-                              {
-                                 EnqueueCacheTask(new CacheItemQueue(type, pos, zoom, responseStream, CacheUsage.Both));
-                              }
-                           }
+                        if(Mode != AccessMode.ServerOnly)
+                        {
+                           EnqueueCacheTask(new CacheItemQueue(provider.DbId, pos, zoom, ret.Data, CacheUsage.Both));
                         }
                      }
-#if PocketPC
-                     request.Abort();
-#endif
-                     response.Close();
                   }
+
+                  #region -- set referrer --
+                  //switch(type)
+                  //{
+                  //   case MapType.GoogleMap:
+                  //   case MapType.GoogleSatellite:
+                  //   case MapType.GoogleLabels:
+                  //   case MapType.GoogleTerrain:
+                  //   case MapType.GoogleHybrid:
+                  //   {
+                  //      request.Referer = string.Format("http://maps.{0}/", GServer);
+                  //   }
+                  //   break;
+
+                  //   case MapType.GoogleMapChina:
+                  //   case MapType.GoogleSatelliteChina:
+                  //   case MapType.GoogleLabelsChina:
+                  //   case MapType.GoogleTerrainChina:
+                  //   case MapType.GoogleHybridChina:
+                  //   {
+                  //      request.Referer = string.Format("http://ditu.{0}/", GServerChina);
+                  //   }
+                  //   break;
+
+                  //   case MapType.BingHybrid:
+                  //   case MapType.BingMap:
+                  //   case MapType.BingMap_New:
+                  //   case MapType.BingSatellite:
+                  //   {
+                  //      request.Referer = "http://www.bing.com/maps/";
+                  //   }
+                  //   break;
+
+                  //   case MapType.YahooHybrid:
+                  //   case MapType.YahooLabels:
+                  //   case MapType.YahooMap:
+                  //   case MapType.YahooSatellite:
+                  //   {
+                  //      request.Referer = "http://maps.yahoo.com/";
+                  //   }
+                  //   break;
+
+                  //   case MapType.MapsLT_Map_Labels:
+                  //   case MapType.MapsLT_Map:
+                  //   case MapType.MapsLT_OrtoFoto:
+                  //   case MapType.MapsLT_Map_Hybrid:
+                  //   case MapType.MapsLT_OrtoFoto_2010:
+                  //   case MapType.MapsLT_Map_Hybrid_2010:
+                  //   {
+                  //      request.Referer = "http://www.maps.lt/map/";
+                  //   }
+                  //   break;
+
+                  //   case MapType.KarteLV_Map:
+                  //   {
+                  //      request.Referer = "http://www.ikarte.lv/map/default.aspx?lang=lv";
+                  //   }
+                  //   break;
+
+                  //   case MapType.OpenStreetMapSurfer:
+                  //   case MapType.OpenStreetMapSurferTerrain:
+                  //   {
+                  //      request.Referer = "http://www.mapsurfer.net/";
+                  //   }
+                  //   break;
+
+                  //   case MapType.OpenStreetMap:
+                  //   case MapType.OpenStreetOsm:
+                  //   {
+                  //      request.Referer = "http://www.openstreetmap.org/";
+                  //   }
+                  //   break;
+
+                  //   case MapType.OpenSeaMapLabels:
+                  //   {
+                  //      request.Referer = "http://openseamap.org/";
+                  //   }
+                  //   break;
+
+                  //   case MapType.OpenCycleMap:
+                  //   {
+                  //      request.Referer = "http://www.opencyclemap.org/";
+                  //   }
+                  //   break;
+
+                  //   case MapType.YandexMapRu:
+                  //   case MapType.YandexMapRuHybrid:
+                  //   case MapType.YandexMapRuLabels:
+                  //   case MapType.YandexMapRuSatellite:
+                  //   {
+                  //      request.Referer = "http://maps.yandex.ru/";
+                  //   }
+                  //   break;
+
+                  //   case MapType.MapyCZ_Map:
+                  //   case MapType.MapyCZ_Hybrid:
+                  //   case MapType.MapyCZ_Labels:
+                  //   case MapType.MapyCZ_MapTurist:
+                  //   case MapType.MapyCZ_Satellite:
+                  //   case MapType.MapyCZ_History:
+                  //   case MapType.MapyCZ_HistoryHybrid:
+                  //   {
+                  //      request.Referer = "http://www.mapy.cz/";
+                  //   }
+                  //   break;
+
+                  //   case MapType.NearMap:
+                  //   case MapType.NearMapLabels:
+                  //   case MapType.NearMapSatellite:
+                  //   {
+                  //      request.Referer = "http://www.nearmap.com/";
+                  //   }
+                  //   break;
+
+                  //   case MapType.OviMap:
+                  //   case MapType.OviMapHybrid:
+                  //   case MapType.OviMapSatellite:
+                  //   case MapType.OviMapTerrain:
+                  //   {
+                  //      request.Referer = "http://maps.ovi.com/";
+                  //   }
+                  //   break;
+                  //} 
+                  #endregion
                }
                else
                {

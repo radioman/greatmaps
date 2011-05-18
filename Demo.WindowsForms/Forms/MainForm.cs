@@ -16,6 +16,7 @@ using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms.ToolTips;
+using GMap.NET.MapProviders;
 
 namespace Demo.WindowsForms
 {
@@ -70,14 +71,14 @@ namespace Demo.WindowsForms
             }
 
             // config map 
+            MainMap.MapProvider = GMapProviders.OpenStreetMap;
             MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
-            MainMap.MapType = MapType.OpenStreetMap;
             MainMap.MinZoom = 1;
             MainMap.MaxZoom = 17;
             MainMap.Zoom = 9;
 
             // map events
-            MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
+            MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);
             MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
             MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
             MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
@@ -89,9 +90,10 @@ namespace Demo.WindowsForms
             MainMap.OnMarkerEnter += new MarkerEnter(MainMap_OnMarkerEnter);
             MainMap.OnMarkerLeave += new MarkerLeave(MainMap_OnMarkerLeave);
 
-            // get map type
-            comboBoxMapType.DataSource = Enum.GetValues(typeof(MapType));
-            comboBoxMapType.SelectedItem = MainMap.MapType;
+            // get map types
+            comboBoxMapType.DataSource = GMapProviders.List;
+            comboBoxMapType.SelectedItem = MainMap.MapProvider;
+            comboBoxMapType.ValueMember = "Name";
 
             // acccess mode
             comboBoxMode.DataSource = Enum.GetValues(typeof(AccessMode));
@@ -137,6 +139,8 @@ namespace Demo.WindowsForms
             iptracerWorker.WorkerSupportsCancellation = true;
 
             GridConnections.AutoGenerateColumns = false;
+
+            //MainMap.Manager.SQLitePing();
             IpCache.CacheLocation = MainMap.CacheLocation;
 
             // perf
@@ -188,10 +192,26 @@ namespace Demo.WindowsForms
                }
 
                // add some points in lithuania
-               AddLocationLithuania("Kaunas");
-               AddLocationLithuania("Klaipėda");
-               AddLocationLithuania("Šiauliai");
-               AddLocationLithuania("Panevėžys");
+               //AddLocationLithuania("Kaunas");
+               //AddLocationLithuania("Klaipėda");
+               //AddLocationLithuania("Šiauliai");
+               //AddLocationLithuania("Panevėžys");
+
+               //     1,  54.483246,  23.384623	
+               //WP,D,2,  54.605095,  23.521299
+               //WP,D,3,  54.690020,  23.993697
+               //WP,D,4,  54.668329,  24.396657
+               //WP,D,5,  54.086510,  24.738176
+               //WP,D,6,  54.125640,  24.375135
+               //WP,D,7,  54.561234,  24.127164
+
+               AddTmpPoint("1", new PointLatLng(54.483246, 23.384623));
+               AddTmpPoint("2", new PointLatLng(54.605095, 23.521299));
+               AddTmpPoint("3", new PointLatLng(54.690020, 23.993697));
+               AddTmpPoint("4", new PointLatLng(54.668329, 24.396657));
+               AddTmpPoint("5", new PointLatLng(54.086510, 24.738176));
+               AddTmpPoint("6", new PointLatLng(54.125640, 24.375135));
+               AddTmpPoint("7", new PointLatLng(54.561234, 24.127164));
 
                RegeneratePolygon();
             }
@@ -578,7 +598,7 @@ namespace Demo.WindowsForms
          {
             try
             {
-         #region -- xml --
+               #region -- xml --
                // http://ipinfodb.com/ip_location_api.php
 
                // http://ipinfodb.com/ip_query2.php?ip=74.125.45.100,206.190.60.37&timezone=false
@@ -604,7 +624,7 @@ namespace Demo.WindowsForms
                   //TcpConnectionInformation[] tcpInfoList = properties.GetActiveTcpConnections();
                   //foreach(TcpConnectionInformation i in tcpInfoList)
                   //{
-                     
+
                   //}
 
                   CountryStatus.Clear();
@@ -612,7 +632,7 @@ namespace Demo.WindowsForms
 
                   foreach(TcpRow i in ManagedIpHelper.TcpRows)
                   {
-         #region -- update TcpState --
+                     #region -- update TcpState --
                      string Ip = i.RemoteEndPoint.Address.ToString();
 
                      // exclude local network
@@ -1170,6 +1190,27 @@ namespace Demo.WindowsForms
          }
       }
 
+      void AddTmpPoint(string place, PointLatLng pos)
+      {
+         {
+            GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(pos);
+            //m.ToolTip = new GMapRoundedToolTip(m);
+            m.ToolTipText = place;
+            m.ToolTipMode = MarkerTooltipMode.Always;
+
+            GMapMarkerRect mBorders = new GMapMarkerRect(pos);
+            {
+               mBorders.InnerMarker = m;
+               mBorders.ToolTipText = place;
+               mBorders.ToolTipMode = MarkerTooltipMode.Always;
+            }
+            mBorders.IsVisible = false;
+
+            objects.Markers.Add(m);
+            objects.Markers.Add(mBorders);
+         }
+      }
+
       #endregion
 
       #region -- map events --
@@ -1201,9 +1242,9 @@ namespace Demo.WindowsForms
          }
       }
 
-      void MainMap_OnMapTypeChanged(MapType type)
+      void MainMap_OnMapTypeChanged(GMapProvider type)
       {
-         comboBoxMapType.SelectedItem = MainMap.MapType;
+         comboBoxMapType.SelectedItem = type;
 
          trackBar1.Minimum = MainMap.MinZoom;
          trackBar1.Maximum = MainMap.MaxZoom;
@@ -1237,8 +1278,8 @@ namespace Demo.WindowsForms
             {
                currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
 
-               var px = MainMap.Projection.FromLatLngToPixel(currentMarker.Position.Lat, currentMarker.Position.Lng, (int)MainMap.Zoom);
-               var tile = MainMap.Projection.FromPixelToTileXY(px);
+               var px = MainMap.MapProvider.Projection.FromLatLngToPixel(currentMarker.Position.Lat, currentMarker.Position.Lng, (int)MainMap.Zoom);
+               var tile = MainMap.MapProvider.Projection.FromPixelToTileXY(px);
 
                Debug.WriteLine("MouseDown: " + currentMarker.LocalPosition + " | geo: " + currentMarker.Position + " | px: " + px + " | tile: " + tile);
             }
@@ -1363,7 +1404,7 @@ namespace Demo.WindowsForms
       }
 
       // current point changed
-      void MainMap_OnCurrentPositionChanged(PointLatLng point)
+      void MainMap_OnPositionChanged(PointLatLng point)
       {
          center.Position = point;
          textBoxLatCurrent.Text = point.Lat.ToString(CultureInfo.InvariantCulture);
@@ -1442,12 +1483,12 @@ namespace Demo.WindowsForms
 
          if(UserAcceptedLicenseOnce)
          {
-            MainMap.MapType = (MapType)comboBoxMapType.SelectedValue;
+            MainMap.MapProvider = comboBoxMapType.SelectedItem as GMapProvider;
          }
          else
          {
-            MainMap.MapType = MapType.OpenStreetMap;
-            comboBoxMapType.SelectedItem = MainMap.MapType;
+            MainMap.MapProvider = GMapProviders.EmptyProvider;
+            comboBoxMapType.SelectedItem = MainMap.MapProvider;
          }
       }
 
@@ -1658,7 +1699,7 @@ namespace Demo.WindowsForms
                {
                   TilePrefetcher obj = new TilePrefetcher();
                   obj.ShowCompleteMessage = true;
-                  obj.Start(area, MainMap.Projection, i, MainMap.MapType, 100);
+                  obj.Start(area, i, MainMap.MapProvider, 100);
                }
                else if(res == DialogResult.No)
                {
@@ -1871,10 +1912,10 @@ namespace Demo.WindowsForms
 
             if(!connectionsWorker.IsBusy)
             {
-               if(MainMap.MapType != MapType.GoogleMap)
-               {
-                  MainMap.MapType = MapType.GoogleMap;
-               }
+               //if(MainMap.Provider != MapType.GoogleMap)
+               //{
+               //   MainMap.MapType = MapType.GoogleMap;
+               //}
                MainMap.Zoom = 5;
 
                connectionsWorker.RunWorkerAsync();

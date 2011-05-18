@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using GMap.NET.WindowsPresentation;
+using GMap.NET.MapProviders;
 
 namespace TemplatedBinding
 {
@@ -67,7 +68,7 @@ namespace TemplatedBinding
          // 1
          {
             GMapControl map = new GMapControl();
-            map.MapType = GMap.NET.MapType.OpenStreetMap;
+            map.MapProvider = GMapProviders.OpenStreetMap;
             map.MinZoom = 4;
             map.MaxZoom = map.MinZoom + 3;
             map.Zoom = map.MinZoom;
@@ -77,7 +78,7 @@ namespace TemplatedBinding
          // 2
          {
             GMapControl map = new GMapControl();
-            map.MapType = GMap.NET.MapType.BingMap;
+            map.MapProvider = GMapProviders.OpenStreetMap;
             map.MinZoom = 4;
             map.MaxZoom = map.MinZoom + 3;
             map.Zoom = map.MinZoom;
@@ -87,7 +88,7 @@ namespace TemplatedBinding
          // 3
          {
             GMapControl map = new GMapControl();
-            map.MapType = GMap.NET.MapType.YahooMap;
+            map.MapProvider = GMapProviders.OpenStreetMap;
             map.MinZoom = 4;
             map.MaxZoom = map.MinZoom + 3;
             map.Zoom = map.MinZoom;
@@ -95,7 +96,7 @@ namespace TemplatedBinding
          }
 
          // main
-         UserMap.MapType = GMap.NET.MapType.GoogleMap;
+         UserMap.MapProvider = GMapProviders.OpenStreetMap;
          UserMap.MinZoom = 5;
          UserMap.MaxZoom = 13;
          UserMap.Zoom = 5;

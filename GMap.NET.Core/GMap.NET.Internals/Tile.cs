@@ -2,20 +2,24 @@
 namespace GMap.NET.Internals
 {
    using System.Collections.Generic;
+   using System;
 
    /// <summary>
    /// represent tile
    /// </summary>
-   internal class Tile
+   public struct Tile : IDisposable
    {
+      public static readonly Tile Empty = new Tile();
+
       GPoint pos;
       int zoom;
-      public readonly List<PureImage> Overlays = new List<PureImage>(1);
+      public List<PureImage> Overlays;
 
       public Tile(int zoom, GPoint pos)
       {
-         this.Zoom = zoom;
-         this.Pos = pos;
+         this.zoom = zoom;
+         this.pos = pos;
+         this.Overlays = new List<PureImage>();
       }
 
       public void Clear()
@@ -51,8 +55,37 @@ namespace GMap.NET.Internals
          }
          private set
          {
-            pos= value;
+            pos = value;
          }
+      }
+
+      #region IDisposable Members
+
+      public void Dispose()
+      {
+         Overlays = null;
+      }
+
+      #endregion
+
+      public static bool operator ==(Tile m1, Tile m2)
+      {
+         return m1.pos == m2.pos && m1.zoom == m2.zoom;
+      }
+
+      public static bool operator !=(Tile m1, Tile m2)
+      {
+         return !(m1 == m2);
+      }
+
+      public override bool Equals(object obj)
+      {
+         return base.Equals(obj);
+      }
+
+      public override int GetHashCode()
+      {
+         return base.GetHashCode();
       }
    }
 }

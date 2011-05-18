@@ -10,9 +10,9 @@ namespace CloudsDemo
          InitializeComponent();
       }
 
-      protected override void OnPaintEtc(System.Drawing.Graphics g)
+      protected override void OnPaintOverlays(System.Drawing.Graphics g)
       {
-         base.OnPaintEtc(g);
+         base.OnPaintOverlays(g);
       }
    }
 }
