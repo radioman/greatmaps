@@ -106,6 +106,13 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GMap.NET.MapProviders\BingMapOldProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\BingMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\BingSatelliteMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\BingHybridMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\YahooHybridMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\YahooSatelliteMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\YahooMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OpenSeaMapHybridProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OpenCycleMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OpenStreetMapSurferTerrainProvider.cs" />

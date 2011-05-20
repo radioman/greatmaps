@@ -73,6 +73,8 @@ namespace GMap.NET.CacheProviders
                {
                   Created = AlterDBAddTimeColumn(db);
                }
+
+               CheckPreAllocation();
 #if !MONO
                ConnectionString = string.Format("Data Source=\"{0}\";Page Size=32768;Pooling=True", db);
 #else
@@ -92,6 +94,58 @@ namespace GMap.NET.CacheProviders
                {
                   Attach(d);
                }
+            }
+         }
+      }
+
+      /// <summary>
+      /// pre-allocate 256MB free space 'ahead' if needed,
+      /// decreases fragmentation
+      /// </summary>
+      void CheckPreAllocation()
+      {
+         {
+            byte[] pageSizeBytes = new byte[2];
+            byte[] freePagesBytes = new byte[4];
+
+            using(var dbf = File.Open(db, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+               dbf.Seek(16, SeekOrigin.Begin);
+               dbf.Lock(16, 2);
+               dbf.Read(pageSizeBytes, 0, 2);
+               dbf.Unlock(16, 2);
+
+               dbf.Seek(36, SeekOrigin.Begin);
+               dbf.Lock(36, 4);
+               dbf.Read(freePagesBytes, 0, 4);
+               dbf.Unlock(36, 4);
+
+               dbf.Close();
+            }
+
+            if(BitConverter.IsLittleEndian)
+            {
+               Array.Reverse(pageSizeBytes);
+               Array.Reverse(freePagesBytes);
+            }
+            UInt16 pageSize = BitConverter.ToUInt16(pageSizeBytes, 0);
+            UInt32 freePages = BitConverter.ToUInt32(freePagesBytes, 0);
+
+            var freeMB = (pageSize * freePages) / (1024.0 * 1024.0);
+
+#if !PocketPC
+            int addSizeMB = 10;
+            int waitUntilMB = 9;
+#else
+            int addSizeMB = 32;
+            int waitUntilMB = 4;
+#endif
+
+            Debug.WriteLine("FreePageSpace in cache: " + freeMB + "MB, " + freePages);
+
+            if(freeMB <= waitUntilMB)
+            {
+               PreAllocateDB(db, addSizeMB);
             }
          }
       }
@@ -155,6 +209,61 @@ namespace GMap.NET.CacheProviders
             Console.WriteLine("CreateEmptyDB: " + ex.ToString());
 #endif
             Debug.WriteLine("CreateEmptyDB: " + ex.ToString());
+            ret = false;
+         }
+         return ret;
+      }
+
+      public static bool PreAllocateDB(string file, int addSizeInMBytes)
+      {
+         bool ret = true;
+
+         try
+         {
+            Debug.WriteLine("PreAllocateDB: " + file + ", +" + addSizeInMBytes + "MB");
+
+            using(SQLiteConnection cn = new SQLiteConnection())
+            {
+#if !MONO
+               cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=False;Page Size=32768;Pooling=True", file);
+#else
+               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=False,Page Size=32768,Pooling=True", file);
+#endif
+               cn.Open();
+               {
+                  using(DbTransaction tr = cn.BeginTransaction())
+                  {
+                     try
+                     {
+                        using(DbCommand cmd = cn.CreateCommand())
+                        {
+                           cmd.Transaction = tr;
+                           cmd.CommandText = string.Format("create table large (a); insert into large values (zeroblob({0})); drop table large;", addSizeInMBytes * 1024 * 1024);
+                           cmd.ExecuteNonQuery();
+                        }
+                        tr.Commit();
+                     }
+                     catch(Exception exx)
+                     {
+#if MONO
+                        Console.WriteLine("PreAllocateDB: " + exx.ToString());
+#endif
+                        Debug.WriteLine("PreAllocateDB: " + exx.ToString());
+
+                        tr.Rollback();
+                        ret = false;
+                     }
+                  }
+                  cn.Close();
+               }
+            }
+         }
+         catch(Exception ex)
+         {
+#if MONO
+            Console.WriteLine("PreAllocateDB: " + ex.ToString());
+#endif
+            Debug.WriteLine("PreAllocateDB: " + ex.ToString());
             ret = false;
          }
          return ret;
@@ -490,7 +599,7 @@ namespace GMap.NET.CacheProviders
                         catch(Exception ex)
                         {
 #if MONO
-                        Console.WriteLine("PutImageToCache: " + ex.ToString());
+                           Console.WriteLine("PutImageToCache: " + ex.ToString());
 #endif
                            Debug.WriteLine("PutImageToCache: " + ex.ToString());
 
@@ -501,11 +610,13 @@ namespace GMap.NET.CacheProviders
                   }
                   cn.Close();
                }
+
+               CheckPreAllocation();
             }
             catch(Exception ex)
             {
 #if MONO
-            Console.WriteLine("PutImageToCache: " + ex.ToString());
+               Console.WriteLine("PutImageToCache: " + ex.ToString());
 #endif
                Debug.WriteLine("PutImageToCache: " + ex.ToString());
                ret = false;
