@@ -67,7 +67,7 @@ namespace Demo.WindowsPresentation
          MainMap.MouseLeftButtonDown += new System.Windows.Input.MouseButtonEventHandler(MainMap_MouseLeftButtonDown);
          MainMap.Loaded += new RoutedEventHandler(MainMap_Loaded);
          MainMap.MouseEnter += new MouseEventHandler(MainMap_MouseEnter);
-
+         
          // get map types
          comboBoxMapType.ItemsSource = GMapProviders.List;
          comboBoxMapType.DisplayMemberPath = "Name";

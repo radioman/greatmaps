@@ -452,6 +452,8 @@ namespace GMap.NET.WindowsPresentation
             ItemContainerStyle = st;
             #endregion
 
+            Manager.SQLitePing();
+
             invalidator = new MethodInvoker(InvalidateVisual);
 
             ClipToBounds = true;

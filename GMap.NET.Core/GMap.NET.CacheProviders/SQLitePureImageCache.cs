@@ -19,6 +19,7 @@ namespace GMap.NET.CacheProviders
    using System.Diagnostics;
    using System.Globalization;
    using GMap.NET.MapProviders;
+   using System.Threading;
 
    /// <summary>
    /// ultra fast cache system for tiles
@@ -134,14 +135,14 @@ namespace GMap.NET.CacheProviders
             var freeMB = (pageSize * freePages) / (1024.0 * 1024.0);
 
 #if !PocketPC
-            int addSizeMB = 10;
-            int waitUntilMB = 9;
+            int addSizeMB = 256;
+            int waitUntilMB = 8;
 #else
             int addSizeMB = 32;
             int waitUntilMB = 4;
 #endif
 
-            Debug.WriteLine("FreePageSpace in cache: " + freeMB + "MB, " + freePages);
+            Debug.WriteLine("FreePageSpace in cache: " + freeMB + "MB in " + freePages + " pages");
 
             if(freeMB <= waitUntilMB)
             {
@@ -611,7 +612,10 @@ namespace GMap.NET.CacheProviders
                   cn.Close();
                }
 
-               CheckPreAllocation();
+               if(Interlocked.Increment(ref preAllocationPing) % 11 == 0)
+               {
+                  CheckPreAllocation();
+               }
             }
             catch(Exception ex)
             {
@@ -624,6 +628,8 @@ namespace GMap.NET.CacheProviders
          }
          return ret;
       }
+
+      long preAllocationPing = 0;
 
       PureImage PureImageCache.GetImageFromCache(int type, GPoint pos, int zoom)
       {
