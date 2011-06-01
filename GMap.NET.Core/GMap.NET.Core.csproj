@@ -110,6 +110,10 @@
     <Compile Include="GMap.NET.MapProviders\BingMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingSatelliteMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingHybridMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\GoogleChinaTerrainMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\GoogleChinaHybridMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\GoogleChinaSatelliteMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\GoogleChinaMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\GoogleTerrainMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\GoogleHybridMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\GoogleSatelliteMapProvider.cs" />

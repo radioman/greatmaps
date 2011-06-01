@@ -8,18 +8,11 @@ namespace GMap.NET.MapProviders
    public abstract class GoogleMapProviderBase : GMapProvider
    {
       public readonly string Server = ThisIsLegalString("zOl/KnHzebJUqs6JWROaCQ==");
-      public readonly string GServerChina = ThisIsLegalString("zOl/KnHzebLqgdc2FRlQHg==");
+      public readonly string ServerChina = ThisIsLegalString("zOl/KnHzebLqgdc2FRlQHg==");
       public readonly string GServerKorea = ThisIsLegalString("ecw6OdJzJ/zgnFTB90qgtw==");
       public readonly string GServerKoreaKr = ThisIsLegalString("zOl/KnHzebIhmuu+tK5lbw==");
-
-      // version strings         
-      public string SecGoogleWord = "Galileo";
-
-      // (China) version strings
-      public string VersionGoogleMapChina = "m@151";
-      public string VersionGoogleSatelliteChina = "s@83";
-      public string VersionGoogleLabelsChina = "h@151";
-      public string VersionGoogleTerrainChina = "t@126,r@151";
+      
+      public string SecureWord = "Galileo";
 
       // (Korea) version strings
       public string VersionGoogleMapKorea = "kr1.12";
@@ -82,7 +75,7 @@ namespace GMap.NET.MapProviders
          sec1 = string.Empty; // after &x=...
          sec2 = string.Empty; // after &zoom=...
          int seclen = ((pos.X * 3) + pos.Y) % 8;
-         sec2 = SecGoogleWord.Substring(0, seclen);
+         sec2 = SecureWord.Substring(0, seclen);
          if(pos.Y >= 10000 && pos.Y < 100000)
          {
             sec1 = Sec1;

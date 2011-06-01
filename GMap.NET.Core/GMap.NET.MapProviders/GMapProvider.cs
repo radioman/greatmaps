@@ -38,6 +38,11 @@ namespace GMap.NET.MapProviders
       public static readonly GoogleHybridMapProvider GoogleHybridMap = GoogleHybridMapProvider.Instance;
       public static readonly GoogleTerrainMapProvider GoogleTerrainMap = GoogleTerrainMapProvider.Instance;
 
+      public static readonly GoogleChinaMapProvider GoogleChinaMap = GoogleChinaMapProvider.Instance;
+      public static readonly GoogleChinaSatelliteMapProvider GoogleChinaSatelliteMap = GoogleChinaSatelliteMapProvider.Instance;
+      public static readonly GoogleChinaHybridMapProvider GoogleChinaHybridMap = GoogleChinaHybridMapProvider.Instance;
+      public static readonly GoogleChinaTerrainMapProvider GoogleChinaTerrainMap = GoogleChinaTerrainMapProvider.Instance;
+
       static List<GMapProvider> list;
 
       /// <summary>
@@ -322,52 +327,6 @@ namespace GMap.NET.MapProviders
       {
          switch(type)
          {
-            #region -- Google (China) version --
-            case MapType.GoogleMapChina:
-            {
-               string server = "mt";
-               string request = "vt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2, GServerChina);
-            }
-
-            case MapType.GoogleSatelliteChina:
-            {
-               string server = "mt";
-               string request = "vt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{9}/{2}/lyrs={3}&gl=cn&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteChina, pos.X, sec1, pos.Y, zoom, sec2, GServerChina);
-            }
-
-            case MapType.GoogleLabelsChina:
-            {
-               string server = "mt";
-               string request = "vt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/imgtp=png32&lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2, GServerChina);
-            }
-
-            case MapType.GoogleTerrainChina:
-            {
-               string server = "mt";
-               string request = "vt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2, GServer);
-            }
-            #endregion
-
             #region -- Google (Korea) version --
             case MapType.GoogleMapKorea:
             {
