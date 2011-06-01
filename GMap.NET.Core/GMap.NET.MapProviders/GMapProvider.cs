@@ -33,6 +33,11 @@ namespace GMap.NET.MapProviders
       public static readonly YahooSatelliteMapProvider YahooSatelliteMap = YahooSatelliteMapProvider.Instance;
       public static readonly YahooHybridMapProvider YahooHybridMap = YahooHybridMapProvider.Instance;
 
+      public static readonly GoogleMapProvider GoogleMap = GoogleMapProvider.Instance;
+      public static readonly GoogleSatelliteMapProvider GoogleSatelliteMap = GoogleSatelliteMapProvider.Instance;
+      public static readonly GoogleHybridMapProvider GoogleHybridMap = GoogleHybridMapProvider.Instance;
+      public static readonly GoogleTerrainMapProvider GoogleTerrainMap = GoogleTerrainMapProvider.Instance;
+
       static List<GMapProvider> list;
 
       /// <summary>
@@ -317,52 +322,6 @@ namespace GMap.NET.MapProviders
       {
          switch(type)
          {
-            #region -- Google --
-            case MapType.GoogleMap:
-            {
-               string server = "mt";
-               string request = "vt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMap, language, pos.X, sec1, pos.Y, zoom, sec2, GServer);
-            }
-
-            case MapType.GoogleSatellite:
-            {
-               string server = "khm";
-               string request = "kh";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleSatellite, language, pos.X, sec1, pos.Y, zoom, sec2, GServer);
-            }
-
-            case MapType.GoogleLabels:
-            {
-               string server = "mt";
-               string request = "vt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabels, language, pos.X, sec1, pos.Y, zoom, sec2, GServer);
-            }
-
-            case MapType.GoogleTerrain:
-            {
-               string server = "mt";
-               string request = "vt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrain, language, pos.X, sec1, pos.Y, zoom, sec2, GServer);
-            }
-            #endregion
-
             #region -- Google (China) version --
             case MapType.GoogleMapChina:
             {
