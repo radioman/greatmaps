@@ -48,7 +48,7 @@ namespace GMap.NET.MapProviders
          {
             if(overlays == null)
             {
-               overlays = new GMapProvider[] { GoogleChinaMapProvider.Instance, this };
+               overlays = new GMapProvider[] { GoogleChinaSatelliteMapProvider.Instance, this };
             }
             return overlays;
          }

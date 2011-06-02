@@ -327,44 +327,6 @@ namespace GMap.NET.MapProviders
       {
          switch(type)
          {
-            #region -- Google (Korea) version --
-            case MapType.GoogleMapKorea:
-            {
-               string server = "mt";
-               string request = "mt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               var ret = string.Format("http://{0}{1}.{10}/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapKorea, language, pos.X, sec1, pos.Y, zoom, sec2, GServerKorea);
-               return ret;
-            }
-
-            case MapType.GoogleSatelliteKorea:
-            {
-               string server = "khm";
-               string request = "kh";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{9}/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteKorea, pos.X, sec1, pos.Y, zoom, sec2, GServerKoreaKr);
-            }
-
-            case MapType.GoogleLabelsKorea:
-            {
-               string server = "mt";
-               string request = "mt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsKorea, language, pos.X, sec1, pos.Y, zoom, sec2, GServerKorea);
-            }
-            #endregion
-                                  
-
-
             #region -- ArcGIS --
             case MapType.ArcGIS_StreetMap_World_2D:
             {

@@ -9,15 +9,10 @@ namespace GMap.NET.MapProviders
    {
       public readonly string Server = ThisIsLegalString("zOl/KnHzebJUqs6JWROaCQ==");
       public readonly string ServerChina = ThisIsLegalString("zOl/KnHzebLqgdc2FRlQHg==");
-      public readonly string GServerKorea = ThisIsLegalString("ecw6OdJzJ/zgnFTB90qgtw==");
-      public readonly string GServerKoreaKr = ThisIsLegalString("zOl/KnHzebIhmuu+tK5lbw==");
-      
-      public string SecureWord = "Galileo";
+      public readonly string ServerKorea = ThisIsLegalString("ecw6OdJzJ/zgnFTB90qgtw==");
+      public readonly string ServerKoreaKr = ThisIsLegalString("zOl/KnHzebIhmuu+tK5lbw==");
 
-      // (Korea) version strings
-      public string VersionGoogleMapKorea = "kr1.12";
-      public string VersionGoogleSatelliteKorea = "83";
-      public string VersionGoogleLabelsKorea = "kr1t.12";
+      public string SecureWord = "Galileo";
 
       /// <summary>
       /// API generated using http://greatmaps.codeplex.com/
@@ -185,7 +180,7 @@ namespace GMap.NET.MapProviders
          return DecryptString(Message, manifesto);
       }
 
-      static readonly string manifesto = "GMap.NET is great and Powerful, Free, cross platform, open source .NET control."; 
+      static readonly string manifesto = "GMap.NET is great and Powerful, Free, cross platform, open source .NET control.";
       #endregion
    }
 
