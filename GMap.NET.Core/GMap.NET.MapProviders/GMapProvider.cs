@@ -43,6 +43,10 @@ namespace GMap.NET.MapProviders
       public static readonly GoogleChinaHybridMapProvider GoogleChinaHybridMap = GoogleChinaHybridMapProvider.Instance;
       public static readonly GoogleChinaTerrainMapProvider GoogleChinaTerrainMap = GoogleChinaTerrainMapProvider.Instance;
 
+      public static readonly NearMapProvider NearMap = NearMapProvider.Instance;
+      public static readonly NearSatelliteMapProvider NearSatelliteMap = NearSatelliteMapProvider.Instance;
+      public static readonly NearHybridMapProvider NearHybridMap = NearHybridMapProvider.Instance;
+
       static List<GMapProvider> list;
 
       /// <summary>
@@ -591,28 +595,6 @@ namespace GMap.NET.MapProviders
 
             #endregion
 
-            #region -- NearMap --
-            case MapType.NearMap:
-            {
-               // http://web1.nearmap.com/maps/hl=en&x=18681&y=10415&z=15&nml=Map_&nmg=1&s=kY8lZssipLIJ7c5
-
-               return string.Format("http://web{0}.nearmap.com/maps/hl=en&x={1}&y={2}&z={3}&nml=Map_&nmg=1", GetServerNum(pos, 3), pos.X, pos.Y, zoom);
-            }
-
-            case MapType.NearMapSatellite:
-            {
-               // http://web2.nearmap.com/maps/hl=en&x=34&y=20&z=6&nml=Vert&s=2NYYKGF
-
-               return string.Format("http://web{0}.nearmap.com/maps/hl=en&x={1}&y={2}&z={3}&nml=Vert", GetServerNum(pos, 3), pos.X, pos.Y, zoom);
-            }
-
-            case MapType.NearMapLabels:
-            {
-               //http://web1.nearmap.com/maps/hl=en&x=37&y=19&z=6&nml=MapT&nmg=1&s=2KbhmZZ             
-
-               return string.Format("http://web{0}.nearmap.com/maps/hl=en&x={1}&y={2}&z={3}&nml=MapT&nmg=1", GetServerNum(pos, 3), pos.X, pos.Y, zoom);
-            }
-            #endregion
 
             #region -- OviMap --
             case MapType.OviMap:
