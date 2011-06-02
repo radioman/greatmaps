@@ -47,6 +47,11 @@ namespace GMap.NET.MapProviders
       public static readonly NearSatelliteMapProvider NearSatelliteMap = NearSatelliteMapProvider.Instance;
       public static readonly NearHybridMapProvider NearHybridMap = NearHybridMapProvider.Instance;
 
+      public static readonly OviMapProvider OviMap = OviMapProvider.Instance;
+      public static readonly OviSatelliteMapProvider OviSatelliteMap = OviSatelliteMapProvider.Instance;
+      public static readonly OviHybridMapProvider OviHybridMap = OviHybridMapProvider.Instance;
+      public static readonly OviTerrainMapProvider OviTerrainMap = OviTerrainMapProvider.Instance;
+
       static List<GMapProvider> list;
 
       /// <summary>
@@ -593,42 +598,7 @@ namespace GMap.NET.MapProviders
                return string.Format("http://m{0}.mapserver.mapy.cz/army2/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
             }
 
-            #endregion
-
-
-            #region -- OviMap --
-            case MapType.OviMap:
-            {
-               // http://c.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/normal.day/12/2321/1276/256/png8
-
-               char letter = "bcde"[GetServerNum(pos, 4)];
-               return string.Format("http://{0}.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/normal.day/{1}/{2}/{3}/256/png8", letter, zoom, pos.X, pos.Y);
-            }
-
-            case MapType.OviMapHybrid:
-            {
-               // http://c.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/hybrid.day/12/2316/1277/256/png8
-
-               char letter = "bcde"[GetServerNum(pos, 4)];
-               return string.Format("http://{0}.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/hybrid.day/{1}/{2}/{3}/256/png8", letter, zoom, pos.X, pos.Y);
-            }
-
-            case MapType.OviMapSatellite:
-            {
-               // http://b.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/satellite.day/12/2313/1275/256/png8
-
-               char letter = "bcde"[GetServerNum(pos, 4)];
-               return string.Format("http://{0}.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/satellite.day/{1}/{2}/{3}/256/png8", letter, zoom, pos.X, pos.Y);
-            }
-
-            case MapType.OviMapTerrain:
-            {
-               // http://d.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/terrain.day/12/2317/1277/256/png8
-
-               char letter = "bcde"[GetServerNum(pos, 4)];
-               return string.Format("http://{0}.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/terrain.day/{1}/{2}/{3}/256/png8", letter, zoom, pos.X, pos.Y);
-            }
-            #endregion
+            #endregion  
          }
 
          return null;

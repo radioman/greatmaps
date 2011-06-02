@@ -110,6 +110,10 @@
     <Compile Include="GMap.NET.MapProviders\BingMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingSatelliteMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingHybridMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\OviHybridMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\OviTerrainMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\OviSatelliteMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\OviMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\NearHybridMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\NearSatelliteMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\NearMapProvider.cs" />
