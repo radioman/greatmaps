@@ -110,6 +110,9 @@
     <Compile Include="GMap.NET.MapProviders\BingMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingSatelliteMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingHybridMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\YandexHybridMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\YandexSatelliteMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\YandexMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OviHybridMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OviTerrainMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OviSatelliteMapProvider.cs" />

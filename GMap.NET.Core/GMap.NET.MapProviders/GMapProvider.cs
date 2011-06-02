@@ -52,6 +52,10 @@ namespace GMap.NET.MapProviders
       public static readonly OviHybridMapProvider OviHybridMap = OviHybridMapProvider.Instance;
       public static readonly OviTerrainMapProvider OviTerrainMap = OviTerrainMapProvider.Instance;
 
+      public static readonly YandexMapProvider YandexMap = YandexMapProvider.Instance;
+      public static readonly YandexSatelliteMapProvider YandexSatelliteMap = YandexSatelliteMapProvider.Instance;
+      public static readonly YandexHybridMapProvider YandexHybridMap = YandexHybridMapProvider.Instance;
+
       static List<GMapProvider> list;
 
       /// <summary>
@@ -496,36 +500,6 @@ namespace GMap.NET.MapProviders
             {
                return string.Format("http://sigpac.mapa.es/kmlserver/raster/{0}@3785/{1}.{2}.{3}.img", levelsForSigPacSpainMap[zoom], zoom, pos.X, ((2 << zoom - 1) - pos.Y - 1));
             }
-            #endregion
-
-            #region -- YandexMap --
-            case MapType.YandexMapRu:
-            {
-               string server = "vec";
-
-               //http://vec01.maps.yandex.ru/tiles?l=map&v=2.10.2&x=1494&y=650&z=11
-
-               return string.Format("http://{0}0{1}.maps.yandex.ru/tiles?l=map&v={2}&x={3}&y={4}&z={5}", server, GetServerNum(pos, 4) + 1, VersionYandexMap, pos.X, pos.Y, zoom);
-            }
-
-            case MapType.YandexMapRuSatellite:
-            {
-               string server = "sat";
-
-               //http://sat04.maps.yandex.ru/tiles?l=sat&v=1.18.0&x=149511&y=83513&z=18&g=Gagari
-
-               return string.Format("http://{0}0{1}.maps.yandex.ru/tiles?l=sat&v={2}&x={3}&y={4}&z={5}", server, GetServerNum(pos, 4) + 1, VersionYandexSatellite, pos.X, pos.Y, zoom);
-            }
-
-            case MapType.YandexMapRuLabels:
-            {
-               string server = "vec";
-
-               //http://vec03.maps.yandex.ru/tiles?l=skl&v=2.15.0&x=585&y=326&z=10&g=G
-
-               return string.Format("http://{0}0{1}.maps.yandex.ru/tiles?l=skl&v={2}&x={3}&y={4}&z={5}", server, GetServerNum(pos, 4) + 1, VersionYandexMap, pos.X, pos.Y, zoom);
-            }
-
             #endregion
 
             #region -- WMS demo --
