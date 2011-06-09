@@ -56,6 +56,15 @@ namespace GMap.NET.MapProviders
       public static readonly YandexSatelliteMapProvider YandexSatelliteMap = YandexSatelliteMapProvider.Instance;
       public static readonly YandexHybridMapProvider YandexHybridMap = YandexHybridMapProvider.Instance;
 
+      public static readonly LithuaniaMapProvider LithuaniaMap = LithuaniaMapProvider.Instance;
+      public static readonly Lithuania3dMapProvider Lithuania3dMap = Lithuania3dMapProvider.Instance;
+      public static readonly LithuaniaOrtoFotoMapProvider LithuaniaOrtoFotoMap = LithuaniaOrtoFotoMapProvider.Instance;
+      public static readonly LithuaniaOrtoFotoNewMapProvider LithuaniaOrtoFotoNewMap = LithuaniaOrtoFotoNewMapProvider.Instance;
+      public static readonly LithuaniaHybridMapProvider LithuaniaHybridMap = LithuaniaHybridMapProvider.Instance;
+      public static readonly LithuaniaHybridNewMapProvider LithuaniaHybridNewMap = LithuaniaHybridNewMapProvider.Instance;
+
+      public static readonly LatviaMapProvider LatviaMap = LatviaMapProvider.Instance;
+
       static List<GMapProvider> list;
 
       /// <summary>
@@ -412,17 +421,6 @@ namespace GMap.NET.MapProviders
                return string.Format("http://mapping.mapit.co.za/ArcGIS/rest/services/World/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
             }
 #endif
-            #endregion
-
-            #region -- KarteLV --
-
-            case MapType.KarteLV_Map:
-            {
-               // http://www.maps.lt/cache/ikartelv/map/_alllayers/L03/R00000037/C00000053.png
-
-               return string.Format("http://www.maps.lt/cache/ikartelv/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png", zoom, pos.Y, pos.X);
-            }
-
             #endregion
 
             #region -- Pergo --

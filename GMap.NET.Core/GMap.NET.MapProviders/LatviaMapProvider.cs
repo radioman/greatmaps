@@ -4,7 +4,7 @@ namespace GMap.NET.MapProviders
    using System;
    using GMap.NET.Projections;
 
-   public abstract class LithuaniaMapProviderBase : GMapProvider
+   public abstract class LatviaMapProviderBase : GMapProvider
    {
       #region GMapProvider Members
       public override Guid Id
@@ -23,7 +23,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly LKS94Projection projection = new LKS94Projection();
+      readonly LKS92Projection projection = new LKS92Projection();
       public override PureProjection Projection
       {
          get
@@ -53,24 +53,24 @@ namespace GMap.NET.MapProviders
    }
 
    /// <summary>
-   /// LithuaniaMap provider, http://www.maps.lt/map/
+   /// LatviaMap provider, http://www.ikarte.lv/
    /// </summary>
-   public class LithuaniaMapProvider : LithuaniaMapProviderBase
+   public class LatviaMapProvider : LatviaMapProviderBase
    {
-      public static readonly LithuaniaMapProvider Instance;
+      public static readonly LatviaMapProvider Instance;
 
-      LithuaniaMapProvider()
+      LatviaMapProvider()
       {
       }
 
-      static LithuaniaMapProvider()
+      static LatviaMapProvider()
       {
-         Instance = new LithuaniaMapProvider();
+         Instance = new LatviaMapProvider();
       }
 
       #region GMapProvider Members
 
-      readonly Guid id = new Guid("5859079F-1B5E-484B-B05C-41CE664D8A93");
+      readonly Guid id = new Guid("2A21CBB1-D37C-458D-905E-05F19536EF1F");
       public override Guid Id
       {
          get
@@ -79,7 +79,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly string name = "LithuaniaMap";
+      readonly string name = "LatviaMap";
       public override string Name
       {
          get
@@ -99,18 +99,11 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         // old stuff
-         // http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L02/R0000001b/C00000028.jpg
-         // http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto/MapServer/tile/0/9/13
-         // return string.Format("http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
-         // http://arcgis.maps.lt/ArcGIS/rest/services/mapslt/MapServer/tile/7/1162/1684.png
-         // http://dc1.maps.lt/cache/mapslt_512/map/_alllayers/L03/R0000001b/C00000029.png
-
-         // http://dc1.maps.lt/cache/mapslt/map/_alllayers/L02/R0000001c/C00000029.png
+         // http://www.maps.lt/cache/ikartelv/map/_alllayers/L03/R00000037/C00000053.png
 
          return string.Format(UrlFormat, zoom, pos.Y, pos.X);
       }
 
-      static readonly string UrlFormat = "http://dc1.maps.lt/cache/mapslt/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png";
+      static readonly string UrlFormat = "http://www.maps.lt/cache/ikartelv/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png";
    }
 }

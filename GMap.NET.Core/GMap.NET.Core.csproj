@@ -110,6 +110,7 @@
     <Compile Include="GMap.NET.MapProviders\BingMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingSatelliteMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingHybridMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\LatviaMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\LithuaniaHybridNewMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\LithuaniaHybridMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\LithuaniaOrtoFotoNewMapProvider.cs" />
