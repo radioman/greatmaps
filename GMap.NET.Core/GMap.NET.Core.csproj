@@ -110,6 +110,11 @@
     <Compile Include="GMap.NET.MapProviders\BingMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingSatelliteMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingHybridMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\CzechHistoryMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\CzechHybridMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\CzechSatelliteMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\CzechTuristMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\CzechMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\TurkeyMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\MapBenderWMSProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\SpainMapProvider.cs" />

@@ -73,6 +73,12 @@ namespace GMap.NET.MapProviders
 
       public static readonly TurkeyMapProvider TurkeyMap = TurkeyMapProvider.Instance;
 
+      public static readonly CzechMapProvider CzechMap = CzechMapProvider.Instance;
+      public static readonly CzechSatelliteMapProvider CzechSatelliteMap = CzechSatelliteMapProvider.Instance;
+      public static readonly CzechHybridMapProvider CzechHybridMap = CzechHybridMapProvider.Instance;
+      public static readonly CzechTuristMapProvider CzechTuristMap = CzechTuristMapProvider.Instance;
+      public static readonly CzechHistoryMapProvider CzechHistoryMap = CzechHistoryMapProvider.Instance;
+
       static List<GMapProvider> list;
 
       /// <summary>
@@ -430,60 +436,6 @@ namespace GMap.NET.MapProviders
             }
 #endif
             #endregion
-
-            #region -- MapyCZ --
-            case MapType.MapyCZ_Map:
-            {
-               // ['base','ophoto','turist','army2']  
-               // http://m1.mapserver.mapy.cz/base-n/3_8000000_8000000
-
-               int xx = pos.X << (28 - zoom);
-               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
-
-               return string.Format("http://m{0}.mapserver.mapy.cz/base-n/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
-            }
-
-            case MapType.MapyCZ_MapTurist:
-            {
-               // http://m1.mapserver.mapy.cz/turist/3_8000000_8000000
-
-               int xx = pos.X << (28 - zoom);
-               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
-
-               return string.Format("http://m{0}.mapserver.mapy.cz/turist/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
-            }
-
-            case MapType.MapyCZ_Satellite:
-            {
-               //http://m3.mapserver.mapy.cz/ophoto/9_7a80000_7a80000
-
-               int xx = pos.X << (28 - zoom);
-               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
-
-               return string.Format("http://m{0}.mapserver.mapy.cz/ophoto/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
-            }
-
-            case MapType.MapyCZ_Labels:
-            {
-               // http://m2.mapserver.mapy.cz/hybrid/9_7d00000_7b80000
-
-               int xx = pos.X << (28 - zoom);
-               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
-
-               return string.Format("http://m{0}.mapserver.mapy.cz/hybrid/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
-            }
-
-            case MapType.MapyCZ_History:
-            {
-               // http://m4.mapserver.mapy.cz/army2/9_7d00000_8080000
-
-               int xx = pos.X << (28 - zoom);
-               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
-
-               return string.Format("http://m{0}.mapserver.mapy.cz/army2/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
-            }
-
-            #endregion  
          }
 
          return null;
