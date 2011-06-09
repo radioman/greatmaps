@@ -110,6 +110,15 @@
     <Compile Include="GMap.NET.MapProviders\BingMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingSatelliteMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingHybridMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\ArcGIS_StreetMap_World_2D_MapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\ArcGIS_Imagery_World_2D_MapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\ArcGIS_ShadedRelief_World_2D_MapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\ArcGIS_Topo_US_2D_MapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\ArcGIS_World_Physical_MapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\ArcGIS_World_Shaded_Relief_MapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\ArcGIS_World_Street_MapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\ArcGIS_World_Terrain_Base_MapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\ArcGIS_World_Topo_MapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\CzechHistoryMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\CzechHybridMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\CzechSatelliteMapProvider.cs" />
