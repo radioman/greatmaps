@@ -55,7 +55,6 @@ namespace GMap.NET.MapProviders
          return string.Format(UrlFormat, UrlServerLetters[GetServerNum(pos, 4)], zoom, pos.X, pos.Y);
       }
 
-      static readonly string UrlServerLetters = "bcde";
       static readonly string UrlFormat = "http://{0}.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/satellite.day/{1}/{2}/{3}/256/png8";
    }
 }

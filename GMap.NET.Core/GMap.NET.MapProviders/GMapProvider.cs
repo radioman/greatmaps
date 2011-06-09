@@ -43,6 +43,10 @@ namespace GMap.NET.MapProviders
       public static readonly GoogleChinaHybridMapProvider GoogleChinaHybridMap = GoogleChinaHybridMapProvider.Instance;
       public static readonly GoogleChinaTerrainMapProvider GoogleChinaTerrainMap = GoogleChinaTerrainMapProvider.Instance;
 
+      public static readonly GoogleKoreaMapProvider GoogleKoreaMap = GoogleKoreaMapProvider.Instance;
+      public static readonly GoogleKoreaSatelliteMapProvider GoogleKoreaSatelliteMap = GoogleKoreaSatelliteMapProvider.Instance;
+      public static readonly GoogleKoreaHybridMapProvider GoogleKoreaHybridMap = GoogleKoreaHybridMapProvider.Instance;
+
       public static readonly NearMapProvider NearMap = NearMapProvider.Instance;
       public static readonly NearSatelliteMapProvider NearSatelliteMap = NearSatelliteMapProvider.Instance;
       public static readonly NearHybridMapProvider NearHybridMap = NearHybridMapProvider.Instance;
@@ -64,6 +68,10 @@ namespace GMap.NET.MapProviders
       public static readonly LithuaniaHybridNewMapProvider LithuaniaHybridNewMap = LithuaniaHybridNewMapProvider.Instance;
 
       public static readonly LatviaMapProvider LatviaMap = LatviaMapProvider.Instance;
+
+      public static readonly MapBenderWMSProvider MapBenderWMSdemoMap = MapBenderWMSProvider.Instance;
+
+      public static readonly TurkeyMapProvider TurkeyMap = TurkeyMapProvider.Instance;
 
       static List<GMapProvider> list;
 
@@ -421,49 +429,6 @@ namespace GMap.NET.MapProviders
                return string.Format("http://mapping.mapit.co.za/ArcGIS/rest/services/World/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
             }
 #endif
-            #endregion
-
-            #region -- Pergo --
-            case MapType.PergoTurkeyMap:
-            {
-               // http://{domain}/{layerName}/{zoomLevel}/{first3LetterOfTileX}/{second3LetterOfTileX}/{third3LetterOfTileX}/{first3LetterOfTileY}/{second3LetterOfTileY}/{third3LetterOfTileXY}.png
-
-               // http://map3.pergo.com.tr/tile/00/000/000/001/000/000/000.png    
-               // That means: Zoom Level: 0 TileX: 1 TileY: 0
-
-               // http://domain/tile/14/000/019/371/000/011/825.png
-               // That means: Zoom Level: 14 TileX: 19371 TileY:11825
-
-               string x = pos.X.ToString("000000000").Insert(3, "/").Insert(7, "/"); // - 000/000/001
-               string y = pos.Y.ToString("000000000").Insert(3, "/").Insert(7, "/"); // - 000/000/000
-
-               return string.Format("http://" + Server_PergoTurkeyMap + "/tile/{1:00}/{2}/{3}.png", GetServerNum(pos, 4), zoom, x, y);
-            }
-            #endregion
-
-            #region -- SigPac --
-            case MapType.SigPacSpainMap:
-            {
-               return string.Format("http://sigpac.mapa.es/kmlserver/raster/{0}@3785/{1}.{2}.{3}.img", levelsForSigPacSpainMap[zoom], zoom, pos.X, ((2 << zoom - 1) - pos.Y - 1));
-            }
-            #endregion
-
-            #region -- WMS demo --
-            case MapType.MapBenderWMS:
-            {
-               var px1 = ProjectionForWMS.FromTileXYToPixel(pos);
-               var px2 = px1;
-
-               px1.Offset(0, ProjectionForWMS.TileSize.Height);
-               PointLatLng p1 = ProjectionForWMS.FromPixelToLatLng(px1, zoom);
-
-               px2.Offset(ProjectionForWMS.TileSize.Width, 0);
-               PointLatLng p2 = ProjectionForWMS.FromPixelToLatLng(px2, zoom);
-
-               var ret = string.Format(CultureInfo.InvariantCulture, "http://mapbender.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&VERSION=1.1.1&REQUEST=GetMap&SERVICE=WMS&LAYERS=OSM_Basic&styles=&bbox={0},{1},{2},{3}&width={4}&height={5}&srs=EPSG:4326&format=image/png", p1.Lng, p1.Lat, p2.Lng, p2.Lat, ProjectionForWMS.TileSize.Width, ProjectionForWMS.TileSize.Height);
-
-               return ret;
-            }
             #endregion
 
             #region -- MapyCZ --
