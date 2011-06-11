@@ -9,6 +9,8 @@ namespace GMap.NET.Projections
    /// </summary>
    public class PlateCarreeProjection : PureProjection
    {
+      public static readonly PlateCarreeProjection Instance = new PlateCarreeProjection();
+
       static readonly double MinLatitude = -85.05112878;
       static readonly double MaxLatitude = 85.05112878;
       static readonly double MinLongitude = -180;

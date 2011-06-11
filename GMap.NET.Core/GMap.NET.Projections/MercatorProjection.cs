@@ -9,6 +9,8 @@ namespace GMap.NET.Projections
    /// </summary>
    public class MercatorProjection : PureProjection
    {
+      public static readonly MercatorProjection Instance = new MercatorProjection();
+
       static readonly double MinLatitude = -85.05112878;
       static readonly double MaxLatitude = 85.05112878;
       static readonly double MinLongitude = -180;

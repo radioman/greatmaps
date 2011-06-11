@@ -53,12 +53,11 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly MercatorProjection projection = new MercatorProjection();
       public override PureProjection Projection
       {
          get
          {
-            return projection;
+            return PlateCarreeProjectionPergo.Instance;
          }
       }
 
@@ -84,7 +83,7 @@ namespace GMap.NET.MapProviders
          string x = pos.X.ToString("000000000").Insert(3, "/").Insert(7, "/"); // - 000/000/001
          string y = pos.Y.ToString("000000000").Insert(3, "/").Insert(7, "/"); // - 000/000/000
 
-         return string.Format(UrlFormat, GetServerNum(pos, 4), zoom, x, y);
+         return string.Format(UrlFormat, GetServerNum(pos, 3), zoom, x, y);
       }
 
       static readonly string UrlFormat = "http://map{0}.pergo.com.tr/tile/{1:00}/{2}/{3}.png";

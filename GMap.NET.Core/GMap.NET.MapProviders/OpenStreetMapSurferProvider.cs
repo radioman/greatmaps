@@ -7,7 +7,7 @@ namespace GMap.NET.MapProviders
    /// <summary>
    /// OpenStreetMapSurfer provider
    /// </summary>
-   public class OpenStreetMapSurferProvider : GMapProvider
+   public class OpenStreetMapSurferProvider : OpenStreetMapProviderBase
    {
       public static readonly OpenStreetMapSurferProvider Instance;
 
@@ -37,14 +37,6 @@ namespace GMap.NET.MapProviders
          get
          {
             return name;
-         }
-      }
-
-      public override PureProjection Projection
-      {
-         get
-         {
-            return OpenStreetMapProviderBase.Projection;
          }
       }
 

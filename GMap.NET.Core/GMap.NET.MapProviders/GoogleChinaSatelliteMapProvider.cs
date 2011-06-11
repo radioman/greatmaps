@@ -19,11 +19,11 @@ namespace GMap.NET.MapProviders
          Instance = new GoogleChinaSatelliteMapProvider();
       }
 
-      public string Version = "s@83";
+      public string Version = "s@87";
 
       #region GMapProvider Members
 
-      readonly Guid id = new Guid("9CB89D76-67E9-47CF-8137-B9EE9FC46388");
+      readonly Guid id = new Guid("543009AC-3379-4893-B580-DBE6372B1753");
       public override Guid Id
       {
          get

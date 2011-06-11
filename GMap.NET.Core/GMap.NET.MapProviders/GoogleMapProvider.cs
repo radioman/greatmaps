@@ -37,12 +37,11 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly MercatorProjection projection = new MercatorProjection();
       public override PureProjection Projection
       {
          get
          {
-            return projection;
+            return MercatorProjection.Instance;
          }
       }
 
@@ -200,7 +199,7 @@ namespace GMap.NET.MapProviders
          Instance = new GoogleMapProvider();
       }
 
-      public string Version = "m@151";
+      public string Version = "m@156000000";
 
       #region GMapProvider Members
 

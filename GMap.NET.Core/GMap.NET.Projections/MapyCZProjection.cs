@@ -9,6 +9,8 @@ namespace GMap.NET.Projections
    /// </summary>
    public class MapyCZProjection : PureProjection
    {
+      public static readonly MapyCZProjection Instance = new MapyCZProjection();
+
       static readonly double MinLatitude = 26;
       static readonly double MaxLatitude = 76;
       static readonly double MinLongitude = -26;

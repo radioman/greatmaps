@@ -7,7 +7,7 @@ namespace GMap.NET.MapProviders
    /// <summary>
    /// OpenSeaMapHybrid provider
    /// </summary>
-   public class OpenSeaMapHybridProvider : GMapProvider
+   public class OpenSeaMapHybridProvider : OpenStreetMapProviderBase
    {
       public static readonly OpenSeaMapHybridProvider Instance;
 
@@ -37,14 +37,6 @@ namespace GMap.NET.MapProviders
          get
          {
             return name;
-         }
-      }
-
-      public override PureProjection Projection
-      {
-         get
-         {
-            return OpenStreetMapProviderBase.Projection;
          }
       }
 

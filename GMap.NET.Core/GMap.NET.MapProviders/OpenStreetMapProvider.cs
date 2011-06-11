@@ -4,16 +4,56 @@ namespace GMap.NET.MapProviders
    using System;
    using GMap.NET.Projections;
 
-   class OpenStreetMapProviderBase
+   public abstract class OpenStreetMapProviderBase : GMapProvider
    {
-      internal static readonly string ServerLetters = "abc";
-      internal static readonly MercatorProjection Projection = new MercatorProjection();
+      public readonly string ServerLetters = "abc";
+
+      #region GMapProvider Members
+
+      public override Guid Id
+      {
+         get
+         {
+            throw new NotImplementedException();
+         }
+      }
+
+      public override string Name
+      {
+         get
+         {
+            throw new NotImplementedException();
+         }
+      }
+
+      public override PureProjection Projection
+      {
+         get
+         {
+            return MercatorProjection.Instance;
+         }
+      }
+
+      public override GMapProvider[] Overlays
+      {
+         get
+         {
+            throw new NotImplementedException();
+         }
+      }
+
+      public override PureImage GetTileImage(GPoint pos, int zoom)
+      {
+         throw new NotImplementedException();
+      }
+
+      #endregion
    }
 
    /// <summary>
    /// OpenStreetMap provider
    /// </summary>
-   public class OpenStreetMapProvider : GMapProvider
+   public class OpenStreetMapProvider : OpenStreetMapProviderBase
    {
       public static readonly OpenStreetMapProvider Instance;
 
@@ -46,14 +86,6 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      public override PureProjection Projection
-      {
-         get
-         {
-            return OpenStreetMapProviderBase.Projection;
-         }
-      }
-
       GMapProvider[] overlays;
       public override GMapProvider[] Overlays
       {
@@ -78,7 +110,7 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         char letter = OpenStreetMapProviderBase.ServerLetters[GMapProvider.GetServerNum(pos, 3)];
+         char letter = ServerLetters[GMapProvider.GetServerNum(pos, 3)];
          return string.Format(UrlFormat, letter, zoom, pos.X, pos.Y);
       }
 

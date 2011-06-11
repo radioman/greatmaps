@@ -23,12 +23,11 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly MapyCZProjection projection = new MapyCZProjection();
       public override PureProjection Projection
       {
          get
          {
-            return projection;
+            return MapyCZProjection.Instance;
          }
       }
 

@@ -1161,11 +1161,11 @@ namespace GMap.NET.Internals
                            Exception ex;
 
                            // tile number inversion(BottomLeft -> TopLeft) for pergo maps
-                           //if(tl == MapType.PergoTurkeyMap)
-                           //{
-                           //   img = GMaps.Instance.GetImageFrom(tl, new GPoint(task.Value.Pos.X, maxOfTiles.Height - task.Value.Pos.Y), task.Value.Zoom, out ex);
-                           //}
-                           //else // ok
+                           if(tl is TurkeyMapProvider)
+                           {
+                              img = GMaps.Instance.GetImageFrom(tl, new GPoint(task.Value.Pos.X, maxOfTiles.Height - task.Value.Pos.Y), task.Value.Zoom, out ex);
+                           }
+                           else // ok
                            {
                               img = GMaps.Instance.GetImageFrom(tl, task.Value.Pos, task.Value.Zoom, out ex);
                            }

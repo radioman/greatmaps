@@ -23,12 +23,11 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly MercatorProjection projection = new MercatorProjection();
       public override PureProjection Projection
       {
          get
          {
-            return projection;
+            return MercatorProjectionYandex.Instance;
          }
       }
 
@@ -51,7 +50,7 @@ namespace GMap.NET.MapProviders
       }
       #endregion
 
-      protected string Version = "2.16.0";
+      protected string Version = "2.19.5";
    }
 
    /// <summary>
@@ -102,6 +101,7 @@ namespace GMap.NET.MapProviders
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
          // http://vec01.maps.yandex.ru/tiles?l=map&v=2.10.2&x=1494&y=650&z=11
+         // http://vec03.maps.yandex.net/tiles?l=map&v=2.19.5&x=579&y=326&z=10&g=Gagarin
 
          return string.Format(UrlFormat, UrlServer, GetServerNum(pos, 4) + 1, Version, pos.X, pos.Y, zoom);
       }

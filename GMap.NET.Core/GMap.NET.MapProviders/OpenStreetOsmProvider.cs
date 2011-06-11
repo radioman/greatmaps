@@ -7,7 +7,7 @@ namespace GMap.NET.MapProviders
    /// <summary>
    /// OpenStreetOsm provider
    /// </summary>
-   public class OpenStreetOsmProvider : GMapProvider
+   public class OpenStreetOsmProvider : OpenStreetMapProviderBase
    {
       public static readonly OpenStreetOsmProvider Instance;
 
@@ -40,14 +40,6 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      public override PureProjection Projection
-      {
-         get
-         {
-            return OpenStreetMapProviderBase.Projection;
-         }
-      }
-
       GMapProvider[] overlays;
       public override GMapProvider[] Overlays
       {
@@ -72,7 +64,7 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         char letter = OpenStreetMapProviderBase.ServerLetters[GMapProvider.GetServerNum(pos, 3)];
+         char letter = ServerLetters[GMapProvider.GetServerNum(pos, 3)];
          return string.Format(UrlFormat, letter, zoom, pos.X, pos.Y);
       }
 

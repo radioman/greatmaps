@@ -9,6 +9,8 @@ namespace GMap.NET.Projections
    /// </summary>
    public class LKS92Projection : PureProjection
    {
+      public static readonly LKS92Projection Instance = new LKS92Projection();
+
       static readonly double MinLatitude = 55.55;
       static readonly double MaxLatitude = 58.58;
       static readonly double MinLongitude = 20.22;

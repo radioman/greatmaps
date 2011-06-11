@@ -23,12 +23,11 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly PlateCarreeProjection projection = new PlateCarreeProjection();
       public override PureProjection Projection
       {
          get
          {
-            return projection;
+            return PlateCarreeProjection.Instance;
          }
       }
 
@@ -71,12 +70,11 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly MercatorProjection projection = new MercatorProjection();
       public override PureProjection Projection
       {
          get
          {
-            return projection;
+            return MercatorProjection.Instance;
          }
       }
 

@@ -23,12 +23,11 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly LKS94Projection projection = new LKS94Projection();
       public override PureProjection Projection
       {
          get
          {
-            return projection;
+            return LKS94Projection.Instance;
          }
       }
 

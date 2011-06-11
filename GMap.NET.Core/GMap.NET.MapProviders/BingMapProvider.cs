@@ -7,7 +7,7 @@ namespace GMap.NET.MapProviders
 
    public abstract class BingMapProviderBase : GMapProvider
    {
-      public string Version = "685";
+      public string Version = "687";
 
       /// <summary>
       /// Bing Maps Customer Identification, more info here
@@ -61,12 +61,11 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly MercatorProjection projection = new MercatorProjection();
       public override PureProjection Projection
       {
          get
          {
-            return projection;
+            return MercatorProjection.Instance;
          }
       }
 
