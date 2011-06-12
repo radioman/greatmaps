@@ -675,11 +675,10 @@ namespace Demo.WindowsMobile
          }
       }
 
-      void gps_LocationChanged(object sender, LocationChangedEventArgs args)
+      void gps_LocationChanged(object sender, GpsPosition position)
       {
          try
          {
-            var position = args.Position;
             if(position != null)
             {
                count++;
@@ -730,15 +729,20 @@ namespace Demo.WindowsMobile
                }
             }
          }
-         catch
+         catch(Exception ex)
          {
+            Debug.WriteLine("gps_LocationChanged: " + ex);
          }
       }
 
-      void gps_DeviceStateChanged(object sender, DeviceStateChangedEventArgs args)
+      void gps_DeviceStateChanged(object sender, GpsDeviceState args)
       {
-         device = args.DeviceState;
-         Invoke(updateDataHandler);
+         device = args;
+
+         if(IsVisible)
+         {
+            Invoke(updateDataHandler);
+         }
       }
 
       private void MainForm_Closed(object sender, EventArgs e)
@@ -779,91 +783,91 @@ namespace Demo.WindowsMobile
       {
          try
          {
-            var data = sender as GpsPosition;
+            var lastData = sender as GpsPosition;
 
             // update signals
             if(Controls.Contains(pageGps))
             {
                pageGps.panelSignals.Invalidate();
 
-               string str = "\n";
+               string str = Environment.NewLine;
 
-               if(data != null)
+               str += "GPS: " + device.DeviceState + ", Driver: " + device.ServiceState + ", " + count + " | " + countReal + "\n";
+
+               if(lastData != null)
                {
-                  if(data.Time.HasValue && data.Longitude.HasValue && data.Longitude.HasValue)
+                  if(lastData.Time.HasValue && lastData.Longitude.HasValue && lastData.Longitude.HasValue)
                   {
-                     str += "Time: " + data.Time.Value.ToLongDateString() + " " + data.Time.Value.ToLongTimeString() + "\n";
-                     str += "Delay: " + ((int) (DateTime.UtcNow - data.Time.Value).TotalSeconds) + "s, Count:  " + count + "|" + countReal + "\n";
-                     str += "Delta: " + string.Format("{0:0.00}m, total: {1:0.00m}\n", Delta*1000.0, Total*1000.0);
-                     str += "Latitude: " + data.Latitude.Value + "\n";
-                     str += "Longitude: " + data.Longitude.Value + "\n\n";
+                     str += "Time(UTC): " + lastData.Time.Value.ToLongTimeString() + ", delay: " + ((int) (DateTime.UtcNow - lastData.Time.Value).TotalSeconds) + "s \n";
+                     str += "Delta: " + string.Format("{0:0.00}m, total: {1:0.00km}\n", Delta*1000.0, Total);
+                     str += "Latitude: " + lastData.Latitude.Value + "\n";
+                     str += "Longitude: " + lastData.Longitude.Value + "\n\n";
                   }
                   else
                   {
-                     str += "Time: -" + "\n";
-                     str += "Delay: -" + "\n";
+                     str += "Time(UTC): -" + "\n";
                      str += "Delta: - \n";
                      str += "Latitude: -" + "\n";
                      str += "Longitude: -" + "\n\n";
                   }
 
-                  if(data.Speed.HasValue)
+                  if(lastData.Speed.HasValue)
                   {
-                     str += "Speed: " + string.Format("{0:0.00} km/h\n", data.Speed);
+                     str += "Speed: " + string.Format("{0:0.0}km/h | {1:0.0}m/s, head: {2}\n", lastData.Speed, lastData.Speed/3.6, (int)(lastData.Heading.HasValue ? lastData.Heading.Value : 0));
                   }
                   else
                   {
                      str += "Speed: -\n";
                   }
 
-                  if(data.SeaLevelAltitude.HasValue)
+                  if(lastData.SeaLevelAltitude.HasValue)
                   {
-                     str += "SeaLevelAltitude: " + string.Format("{0:0.00}m\n", data.SeaLevelAltitude);
+                     str += "SeaLevelAltitude: " + string.Format("{0:0.00}m\n", lastData.SeaLevelAltitude);
                   }
                   else
                   {
                      str += "SeaLevelAltitude: -\n";
                   }
 
-                  if(data.PositionDilutionOfPrecision.HasValue)
+                  if(lastData.PositionDilutionOfPrecision.HasValue)
                   {
-                     str += "PositionDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.PositionDilutionOfPrecision);
+                     str += "PositionDilutionOfPrecision: " + string.Format("{0:0.00}\n", lastData.PositionDilutionOfPrecision);
                   }
                   else
                   {
                      str += "PositionDilutionOfPrecision: -\n";
                   }
 
-                  if(data.HorizontalDilutionOfPrecision.HasValue)
+                  if(lastData.HorizontalDilutionOfPrecision.HasValue)
                   {
-                     str += "HorizontalDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.HorizontalDilutionOfPrecision);
+                     str += "HorizontalDilutionOfPrecision: " + string.Format("{0:0.00}\n", lastData.HorizontalDilutionOfPrecision);
                   }
                   else
                   {
                      str += "HorizontalDilutionOfPrecision: -\n";
                   }
 
-                  if(data.VerticalDilutionOfPrecision.HasValue)
+                  if(lastData.VerticalDilutionOfPrecision.HasValue)
                   {
-                     str += "VerticalDilutionOfPrecision: " + string.Format("{0:0.00}\n", data.VerticalDilutionOfPrecision);
+                     str += "VerticalDilutionOfPrecision: " + string.Format("{0:0.00}\n", lastData.VerticalDilutionOfPrecision);
                   }
                   else
                   {
                      str += "VerticalDilutionOfPrecision: -\n";
                   }
 
-                  if(data.SatellitesInViewCount.HasValue)
+                  if(lastData.SatellitesInViewCount.HasValue)
                   {
-                     str += "SatellitesInView: " + data.SatellitesInViewCount + "\n";
+                     str += "SatellitesInView: " + lastData.SatellitesInViewCount + "\n";
                   }
                   else
                   {
                      str += "SatellitesInView: -" + "\n";
                   }
 
-                  if(data.SatelliteCount.HasValue)
+                  if(lastData.SatelliteCount.HasValue)
                   {
-                     str += "SatelliteCount: " + data.SatelliteCount + "\n";
+                     str += "SatelliteCount: " + lastData.SatelliteCount + "\n";
                   }
                   else
                   {
@@ -874,14 +878,14 @@ namespace Demo.WindowsMobile
             }
             else if(Controls.Contains(MainMap))
             {
-               if(data != null)
+               if(lastData != null)
                {
-                  if(data.Time.HasValue && data.Longitude.HasValue && data.Longitude.HasValue)
+                  if(lastData.Time.HasValue && lastData.Longitude.HasValue && lastData.Longitude.HasValue)
                   {
                      // center map
                      if(menuItemGPSenabled.Checked)
                      {
-                        MainMap.CurrentPosition = new PointLatLng(data.Latitude.Value, data.Longitude.Value);
+                        MainMap.CurrentPosition = new PointLatLng(lastData.Latitude.Value, lastData.Longitude.Value);
                      }
                   }
                }

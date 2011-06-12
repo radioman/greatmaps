@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{421813B1-A007-44B2-8C53-32751C45113E}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -242,11 +242,9 @@
       <Link>GMap.NET.WindowsForms\WindowsFormsImage.cs</Link>
     </Compile>
     <Compile Include="GMap.NET.GPS\DegreesMinutesSeconds.cs" />
-    <Compile Include="GMap.NET.GPS\DeviceStateChangedEventArgs.cs" />
     <Compile Include="GMap.NET.GPS\GPS.cs" />
     <Compile Include="GMap.NET.GPS\GpsDeviceState.cs" />
     <Compile Include="GMap.NET.GPS\GpsPosition.cs" />
-    <Compile Include="GMap.NET.GPS\LocationChangedEventArgs.cs" />
     <Compile Include="GMap.NET.GPS\Utils.cs" />
     <Compile Include="GMap.NET.Internals\Native.cs" />
     <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerTransparent.cs" />
