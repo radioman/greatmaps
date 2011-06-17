@@ -167,9 +167,9 @@ namespace GMap.NET.CacheProviders
             using(SQLiteConnection cn = new SQLiteConnection())
             {
 #if !MONO
-               cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=False;Page Size=32768;Pooling=True", file);
+               cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=False;Page Size=32768", file);
 #else
-               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=False,Page Size=32768,Pooling=True", file);
+               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=False,Page Size=32768", file);
 #endif
                cn.Open();
                {
@@ -226,9 +226,9 @@ namespace GMap.NET.CacheProviders
             using(SQLiteConnection cn = new SQLiteConnection())
             {
 #if !MONO
-               cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=False;Page Size=32768;Pooling=True", file);
+               cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=False;Page Size=32768", file);
 #else
-               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=False,Page Size=32768,Pooling=True", file);
+               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=False,Page Size=32768", file);
 #endif
                cn.Open();
                {
@@ -372,9 +372,9 @@ namespace GMap.NET.CacheProviders
             using(SQLiteConnection cn = new SQLiteConnection())
             {
 #if !MONO
-               cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=True;Page Size=32768;Pooling=True", file);
+               cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=True;Page Size=32768", file);
 #else
-               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Page Size=32768,Pooling=True", file);
+               cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Page Size=32768", file);
 #endif
                cn.Open();
                {
@@ -411,9 +411,9 @@ namespace GMap.NET.CacheProviders
                using(SQLiteConnection cn1 = new SQLiteConnection())
                {
 #if !MONO
-                  cn1.ConnectionString = string.Format("Data Source=\"{0}\";Page Size=32768;Pooling=True", sourceFile);
+                  cn1.ConnectionString = string.Format("Data Source=\"{0}\";Page Size=32768", sourceFile);
 #else
-                  cn1.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Page Size=32768,Pooling=True", sourceFile);
+                  cn1.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Page Size=32768", sourceFile);
 #endif
 
                   cn1.Open();
@@ -422,9 +422,9 @@ namespace GMap.NET.CacheProviders
                      using(SQLiteConnection cn2 = new SQLiteConnection())
                      {
 #if !MONO
-                        cn2.ConnectionString = string.Format("Data Source=\"{0}\";Page Size=32768;Pooling=True", destFile);
+                        cn2.ConnectionString = string.Format("Data Source=\"{0}\";Page Size=32768", destFile);
 #else
-                        cn2.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Page Size=32768,Pooling=True", destFile);
+                        cn2.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Page Size=32768", destFile);
 #endif
                         cn2.Open();
                         if(cn2.State == System.Data.ConnectionState.Open)
