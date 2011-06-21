@@ -349,7 +349,7 @@ namespace GMap.NET
          return null;
       }
 
-      static int ping;
+      static int ping = 0;
 
       /// <summary>
       /// call this before you use sqlite for other reasons than caching maps

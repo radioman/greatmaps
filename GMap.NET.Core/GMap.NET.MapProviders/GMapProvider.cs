@@ -15,6 +15,14 @@ namespace GMap.NET.MapProviders
    /// </summary>
    public class GMapProviders
    {
+      static GMapProviders()
+      {
+      }
+
+      GMapProviders()
+      {
+      }
+
       public static readonly EmptyProvider EmptyProvider = EmptyProvider.Instance;
 
       public static readonly OpenStreetMapProvider OpenStreetMap = OpenStreetMapProvider.Instance;
