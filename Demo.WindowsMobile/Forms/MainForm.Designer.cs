@@ -70,15 +70,17 @@
          this.menuItem37 = new System.Windows.Forms.MenuItem();
          this.menuItem35 = new System.Windows.Forms.MenuItem();
          this.menuItem6 = new System.Windows.Forms.MenuItem();
-         this.menuItem33 = new System.Windows.Forms.MenuItem();
-         this.menuItem4 = new System.Windows.Forms.MenuItem();
-         this.menuItem5 = new System.Windows.Forms.MenuItem();
-         this.menuItem31 = new System.Windows.Forms.MenuItem();
          this.menuItem27 = new System.Windows.Forms.MenuItem();
          this.menuItem28 = new System.Windows.Forms.MenuItem();
          this.menuItem3 = new System.Windows.Forms.MenuItem();
          this.timerKeeperOfLife = new System.Windows.Forms.Timer();
          this.MainMap = new GMap.NET.WindowsForms.GMapControl();
+         this.menuItem38 = new System.Windows.Forms.MenuItem();
+         this.menuItem39 = new System.Windows.Forms.MenuItem();
+         this.menuItem40 = new System.Windows.Forms.MenuItem();
+         this.menuItem41 = new System.Windows.Forms.MenuItem();
+         this.menuItem42 = new System.Windows.Forms.MenuItem();
+         this.menuItem43 = new System.Windows.Forms.MenuItem();
          this.SuspendLayout();
          // 
          // mainMenu1
@@ -128,16 +130,13 @@
          // 
          // menuItem2
          // 
+         this.menuItem2.MenuItems.Add(this.menuItem29);
          this.menuItem2.MenuItems.Add(this.menuItem8);
          this.menuItem2.MenuItems.Add(this.menuItem7);
-         this.menuItem2.MenuItems.Add(this.menuItem29);
          this.menuItem2.MenuItems.Add(this.menuItem30);
-         this.menuItem2.MenuItems.Add(this.menuItem36);
          this.menuItem2.MenuItems.Add(this.menuItem6);
-         this.menuItem2.MenuItems.Add(this.menuItem33);
-         this.menuItem2.MenuItems.Add(this.menuItem4);
-         this.menuItem2.MenuItems.Add(this.menuItem5);
-         this.menuItem2.MenuItems.Add(this.menuItem31);
+         this.menuItem2.MenuItems.Add(this.menuItem36);
+         this.menuItem2.MenuItems.Add(this.menuItem38);
          this.menuItem2.MenuItems.Add(this.menuItem27);
          this.menuItem2.MenuItems.Add(this.menuItem28);
          this.menuItem2.MenuItems.Add(this.menuItem3);
@@ -314,30 +313,11 @@
          // menuItem35
          // 
          this.menuItem35.Text = "Fit to All";
+         this.menuItem35.Click += new System.EventHandler(this.menuItem35_Click);
          // 
          // menuItem6
          // 
          this.menuItem6.Text = "-";
-         // 
-         // menuItem33
-         // 
-         this.menuItem33.Text = "Zoom Max";
-         this.menuItem33.Click += new System.EventHandler(this.menuItem33_Click);
-         // 
-         // menuItem4
-         // 
-         this.menuItem4.Text = "Zoom In";
-         this.menuItem4.Click += new System.EventHandler(this.menuItem4_Click);
-         // 
-         // menuItem5
-         // 
-         this.menuItem5.Text = "Zoom out";
-         this.menuItem5.Click += new System.EventHandler(this.menuItem5_Click);
-         // 
-         // menuItem31
-         // 
-         this.menuItem31.Text = "Zoom Min";
-         this.menuItem31.Click += new System.EventHandler(this.menuItem31_Click);
          // 
          // menuItem27
          // 
@@ -362,18 +342,54 @@
          this.MainMap.BackColor = System.Drawing.Color.White;
          this.MainMap.CanDragMap = true;
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.MainMap.LevelsKeepInMemmory = 1;
          this.MainMap.Location = new System.Drawing.Point(0, 0);
+         this.MainMap.MapType = GMap.NET.MapType.GoogleMap;
          this.MainMap.MarkersEnabled = true;
          this.MainMap.MaxZoom = 2;
          this.MainMap.MinZoom = 2;
          this.MainMap.MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionAndCenter;
          this.MainMap.Name = "MainMap";
          this.MainMap.PolygonsEnabled = true;
+         this.MainMap.RetryLoadTile = 1;
          this.MainMap.RoutesEnabled = true;
          this.MainMap.ShowTileGridLines = false;
          this.MainMap.Size = new System.Drawing.Size(480, 696);
          this.MainMap.TabIndex = 0;
          this.MainMap.Zoom = 0;
+         // 
+         // menuItem38
+         // 
+         this.menuItem38.MenuItems.Add(this.menuItem41);
+         this.menuItem38.MenuItems.Add(this.menuItem42);
+         this.menuItem38.MenuItems.Add(this.menuItem43);
+         this.menuItem38.MenuItems.Add(this.menuItem40);
+         this.menuItem38.MenuItems.Add(this.menuItem39);
+         this.menuItem38.Text = "Zoom";
+         // 
+         // menuItem39
+         // 
+         this.menuItem39.Text = "Min";
+         this.menuItem39.Click += new System.EventHandler(this.menuItem31_Click);
+         // 
+         // menuItem40
+         // 
+         this.menuItem40.Text = "Max";
+         this.menuItem40.Click += new System.EventHandler(this.menuItem33_Click);
+         // 
+         // menuItem41
+         // 
+         this.menuItem41.Text = "In";
+         this.menuItem41.Click += new System.EventHandler(this.menuItem4_Click);
+         // 
+         // menuItem42
+         // 
+         this.menuItem42.Text = "Out";
+         this.menuItem42.Click += new System.EventHandler(this.menuItem5_Click);
+         // 
+         // menuItem43
+         // 
+         this.menuItem43.Text = "-";
          // 
          // MainForm
          // 
@@ -401,8 +417,6 @@
       private System.Windows.Forms.MenuItem menuItem2;
       private System.Windows.Forms.MenuItem menuItem3;
       private System.Windows.Forms.MenuItem menuItem6;
-      private System.Windows.Forms.MenuItem menuItem4;
-      private System.Windows.Forms.MenuItem menuItem5;
       private System.Windows.Forms.MenuItem menuItem8;
       private System.Windows.Forms.MenuItem menuItem12;
       private System.Windows.Forms.MenuItem menuItem13;
@@ -438,13 +452,17 @@
       private System.Windows.Forms.MenuItem menuItem34;
       private System.Windows.Forms.MenuItem menuItem32;
       private System.Windows.Forms.MenuItem menuItemServerOnly;
-      private System.Windows.Forms.MenuItem menuItem33;
-      private System.Windows.Forms.MenuItem menuItem31;
       private System.Windows.Forms.MenuItem menuItemGotoTransport;
       private System.Windows.Forms.MenuItem menuItem36;
       private System.Windows.Forms.MenuItem menuItem37;
       private System.Windows.Forms.MenuItem menuItem35;
       private System.Windows.Forms.MenuItem menuItemSearch;
+      private System.Windows.Forms.MenuItem menuItem38;
+      private System.Windows.Forms.MenuItem menuItem41;
+      private System.Windows.Forms.MenuItem menuItem42;
+      private System.Windows.Forms.MenuItem menuItem43;
+      private System.Windows.Forms.MenuItem menuItem40;
+      private System.Windows.Forms.MenuItem menuItem39;
    }
 }
 

@@ -18,12 +18,13 @@ using System.Text;
 using OpenNETCF.ComponentModel;
 using OpenNETCF.Threading;
 using Thread=OpenNETCF.Threading.Thread2;
+using System.Diagnostics;
 #endif
 
 namespace GMap.NET.GPS
 {
-   public delegate void LocationChangedEventHandler(object sender, LocationChangedEventArgs args);
-   public delegate void DeviceStateChangedEventHandler(object sender, DeviceStateChangedEventArgs args);
+   public delegate void LocationChangedEventHandler(object sender, GpsPosition args);
+   public delegate void DeviceStateChangedEventHandler(object sender, GpsDeviceState args);
 
    /// <summary>
    /// Summary description for GPS.
@@ -198,7 +199,7 @@ namespace GMap.NET.GPS
                if(maxAge != TimeSpan.Zero)
                {
                   // check to see if the data is recent enough.
-                  if(!gpsPosition.Time.HasValue || DateTime.Now - maxAge > gpsPosition.Time)
+                  if(!gpsPosition.Time.HasValue || DateTime.UtcNow - maxAge > gpsPosition.Time)
                   {
                      gpsPosition = null;
                   }
@@ -287,18 +288,20 @@ namespace GMap.NET.GPS
                      // we've been signalled to stop
                      listening = false;
                      break;
+
                      case 1:
                      // device state has changed
                      if(deviceStateChanged != null)
                      {
-                        deviceStateChanged(this, new DeviceStateChangedEventArgs(GetDeviceState()));
+                        deviceStateChanged(this, GetDeviceState());
                      }
                      break;
+
                      case 2:
                      // location has changed
                      if(locationChanged != null)
                      {
-                        locationChanged(this, new LocationChangedEventArgs(GetPosition()));
+                        locationChanged(this, GetPosition());
                      }
                      break;
                   }
@@ -329,6 +332,8 @@ namespace GMap.NET.GPS
             // clear our gpsEventThread so that we can recreate this thread again
             // if the events are hooked up again.
             gpsEventThread = null;
+
+            Debug.WriteLine("gps device stopped...");
          }
       }
 

@@ -15,11 +15,16 @@ namespace Demo.WindowsMobile
       Pen penForSat = new Pen(Color.White, 3.0f);
       Brush brushForSatOk = new SolidBrush(Color.LimeGreen);
       Brush brushForSatNo = new SolidBrush(Color.Red);
+      Font fSignal = new Font(FontFamily.GenericSansSerif, 6, FontStyle.Regular);
+      Brush bSignal = new SolidBrush(Color.Blue);
+      StringFormat sformat = new StringFormat();
 
       public GPS(MainForm main)
       {
          InitializeComponent();
          Main = main;
+         sformat.LineAlignment = StringAlignment.Far;
+         sformat.Alignment = StringAlignment.Center;
       }
 
       private void panelSignals_Paint(object sender, PaintEventArgs e)
@@ -31,7 +36,7 @@ namespace Demo.WindowsMobile
                int cc = Width / Main.Satellites.Count;
                for(int i = 0; i < Main.Satellites.Count; i++)
                {
-                  int str = (int) ((panelSignals.Height * Main.Satellites[i].SignalStrength)/100.0);
+                  int str = (int) (2.0 * (panelSignals.Height * Main.Satellites[i].SignalStrength)/100.0);
 
                   if(Main.Satellites[i].InSolution)
                   {
@@ -43,6 +48,8 @@ namespace Demo.WindowsMobile
                   }
 
                   e.Graphics.DrawRectangle(penForSat, new Rectangle(i*cc + (int) penForSat.Width/2, 0, cc - (int) penForSat.Width/2, panelSignals.Height));
+
+                  e.Graphics.DrawString(Main.Satellites[i].SignalStrength + "dB", fSignal, bSignal, new Rectangle(i*cc, 0, cc, (int)(panelSignals.Height-fSignal.Size/2)), sformat);
                }
             }
          }
