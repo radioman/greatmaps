@@ -90,7 +90,7 @@ namespace GMap.NET.CacheProviders
             // attach all databases from main cache location
 #if !PocketPC
             var dbs = Directory.GetFiles(dir, "*.gmdb", SearchOption.AllDirectories);
-#else            
+#else
             var dbs = Directory.GetFiles(dir, "*.gmdb");
 #endif
             foreach(var d in dbs)
@@ -103,8 +103,6 @@ namespace GMap.NET.CacheProviders
          }
       }
 
-      static object _lock = new object();
-
       /// <summary>
       /// pre-allocate 256MB free space 'ahead' if needed,
       /// decreases fragmentation
@@ -115,22 +113,28 @@ namespace GMap.NET.CacheProviders
             byte[] pageSizeBytes = new byte[2];
             byte[] freePagesBytes = new byte[4];
 
-            lock (_lock)
+            lock(this)
             {
-                using (var dbf = File.Open(db, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    dbf.Seek(16, SeekOrigin.Begin);
-                    //dbf.Lock(16, 2);
-                    dbf.Read(pageSizeBytes, 0, 2);
-                    //dbf.Unlock(16, 2);
-
-                    dbf.Seek(36, SeekOrigin.Begin);
-                    //dbf.Lock(36, 4);
-                    dbf.Read(freePagesBytes, 0, 4);
-                    //dbf.Unlock(36, 4);
-
-                    dbf.Close();
-                }
+               using(var dbf = File.Open(db, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+               {
+                  dbf.Seek(16, SeekOrigin.Begin);
+#if !PocketPC
+                  dbf.Lock(16, 2);
+#endif
+                  dbf.Read(pageSizeBytes, 0, 2);
+#if !PocketPC
+                  dbf.Unlock(16, 2);
+#endif
+                  dbf.Seek(36, SeekOrigin.Begin);
+#if !PocketPC
+                  dbf.Lock(36, 4);
+#endif
+                  dbf.Read(freePagesBytes, 0, 4);
+#if !PocketPC
+                  dbf.Unlock(36, 4);
+#endif
+                  dbf.Close();
+               }
             }
 
             if(BitConverter.IsLittleEndian)
@@ -147,7 +151,12 @@ namespace GMap.NET.CacheProviders
             int addSizeMB = 256;
             int waitUntilMB = 8;
 #else
+
+#if DEBUG
             int addSizeMB = 8; // reduce due to test in emulator
+#else
+            int addSizeMB = 32;
+#endif
             int waitUntilMB = 4;
 #endif
 
@@ -565,7 +574,7 @@ namespace GMap.NET.CacheProviders
 
       #region PureImageCache Members
 
-      static int preAllocationPing = 0;
+      int preAllocationPing = 0;
 
       bool PureImageCache.PutImageToCache(MemoryStream tile, int type, GPoint pos, int zoom)
       {

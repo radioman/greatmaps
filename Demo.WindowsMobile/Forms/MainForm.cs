@@ -83,7 +83,7 @@ namespace Demo.WindowsMobile
          MainMap.Manager.Mode = AccessMode.CacheOnly;
          menuItemCacheOnly.Checked = true;
 #endif
-         MainMap.MapProvider = GMapProviders.OpenStreetMap;
+         MainMap.MapProvider = GMapProviders.LithuaniaMap;
          MainMap.MaxZoom = 11;
          MainMap.MinZoom = 1;
          MainMap.Zoom = MainMap.MinZoom + 1;

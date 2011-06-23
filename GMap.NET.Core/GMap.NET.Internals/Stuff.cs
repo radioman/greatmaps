@@ -79,4 +79,37 @@ namespace GMap.NET.Internals
          return false;
       }
    }
+
+#if PocketPC
+   static class Monitor
+   {
+      static readonly OpenNETCF.Threading.Monitor2 wait = new OpenNETCF.Threading.Monitor2();
+
+      public static void Enter(object tileLoadQueue)
+      {
+         wait.Enter();
+      }
+
+      public static void Exit(object tileLoadQueue)
+      {
+         wait.Exit();
+      }
+
+      public static void Wait(object tileLoadQueue)
+      {
+         wait.Wait();
+      }
+
+      public static bool Wait(Queue<LoadTask> tileLoadQueue, int WaitForTileLoadThreadTimeout, bool p)
+      {
+         wait.Wait();
+         return true;
+      }
+
+      internal static void PulseAll(Queue<LoadTask> tileLoadQueue)
+      {
+         wait.PulseAll();
+      }
+   }
+#endif
 }

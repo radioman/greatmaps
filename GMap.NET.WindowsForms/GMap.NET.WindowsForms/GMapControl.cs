@@ -373,7 +373,7 @@ namespace GMap.NET.WindowsForms
             GrayScaleMode = GrayScaleMode;
             NegativeMode = NegativeMode;
 #endif
-            GMapProvider.TileImageProxy = wimg;            
+            GMapProvider.TileImageProxy = wimg;
 
             // to know when to invalidate
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
@@ -387,7 +387,9 @@ namespace GMap.NET.WindowsForms
 
             BottomFormat.Alignment = StringAlignment.Center;
 
+#if !PocketPC
             BottomFormat.LineAlignment = StringAlignment.Far;
+#endif
 
             if(GMaps.Instance.IsRunningOnMono)
             {
@@ -701,7 +703,7 @@ namespace GMap.NET.WindowsForms
                maxZoom = MaxZoom;
             }
 
-            if((int)Zoom != maxZoom)
+            if((int) Zoom != maxZoom)
             {
                Zoom = maxZoom;
             }
@@ -1728,7 +1730,7 @@ namespace GMap.NET.WindowsForms
 #else
             DragSize = SystemInformation.DragSize;
 #endif
-            if (Math.Abs(p.X - Core.mouseDown.X) * 2 >= DragSize.Width || Math.Abs(p.Y - Core.mouseDown.Y) * 2 >= DragSize.Height)
+            if(Math.Abs(p.X - Core.mouseDown.X) * 2 >= DragSize.Width || Math.Abs(p.Y - Core.mouseDown.Y) * 2 >= DragSize.Height)
             {
                Core.BeginDrag(Core.mouseDown);
             }
@@ -2113,7 +2115,7 @@ namespace GMap.NET.WindowsForms
                   zoomReal = value;
                }
 
-               float remainder = (float)System.Decimal.Remainder((Decimal)value, (Decimal)1);
+               float remainder = (float) System.Decimal.Remainder((Decimal) value, (Decimal) 1);
                if(remainder != 0)
                {
                   float scaleValue = remainder + 1;

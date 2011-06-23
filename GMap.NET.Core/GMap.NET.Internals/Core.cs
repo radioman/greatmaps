@@ -13,40 +13,6 @@ namespace GMap.NET.Internals
    using OpenNETCF.ComponentModel;
    using OpenNETCF.Threading;
    using Thread=OpenNETCF.Threading.Thread2;
-   //using Monitor=OpenNETCF.Threading.Monitor2;
-#endif
-
-#if PocketPC
-   class Monitor
-   {
-      static readonly Monitor2 wait = new Monitor2();
-
-      public static void Enter(object tileLoadQueue)
-      {
-          wait.Enter();
-      }
-
-      public static void Exit(object tileLoadQueue)
-      {
-          wait.Exit();
-      }
-
-      public static void Wait(object tileLoadQueue)
-      {
-          wait.Wait();
-      }
-      
-      public static bool Wait(Queue<LoadTask> tileLoadQueue, int WaitForTileLoadThreadTimeout, bool p)
-      {
-         wait.Wait();
-         return true;
-      }
-
-      internal static void PulseAll(Queue<LoadTask> tileLoadQueue)
-      {
-         wait.PulseAll();
-      }
-   }
 #endif
 
    /// <summary>
@@ -86,9 +52,7 @@ namespace GMap.NET.Internals
       public readonly List<GPoint> tileDrawingList = new List<GPoint>();
       public readonly FastReaderWriterLock tileDrawingListLock = new FastReaderWriterLock();
 
-      //readonly ManualResetEvent waitForTileLoad = new ManualResetEvent(false);
       public readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>();
-      private static bool isThreadReady;
 
       public static readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       public static readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
@@ -431,7 +395,7 @@ namespace GMap.NET.Internals
                mmaxZoom = maxZoom;
             }
 
-            if((int)Zoom != mmaxZoom)
+            if((int) Zoom != mmaxZoom)
             {
                Zoom = mmaxZoom;
             }
@@ -757,7 +721,7 @@ namespace GMap.NET.Internals
 #if !PocketPC
             int diag = (int)Math.Round(Math.Sqrt(Width * Width + Height * Height) / Provider.Projection.TileSize.Width, MidpointRounding.AwayFromZero);
 #else
-            int diag = (int)Math.Round(Math.Sqrt(Width * Width + Height * Height) / Provider.Projection.TileSize.Width);
+            int diag = (int) Math.Round(Math.Sqrt(Width * Width + Height * Height) / Provider.Projection.TileSize.Width);
 #endif
             sizeOfMapArea.Width = 1 + (diag / 2);
             sizeOfMapArea.Height = 1 + (diag / 2);
@@ -902,11 +866,11 @@ namespace GMap.NET.Internals
             Monitor.Enter(tileLoadQueue);
             try
             {
-                tileLoadQueue.Clear();
+               tileLoadQueue.Clear();
             }
             finally
             {
-                Monitor.Exit(tileLoadQueue);
+               Monitor.Exit(tileLoadQueue);
             }
 
             Matrix.ClearAllLevels();
@@ -1002,7 +966,7 @@ namespace GMap.NET.Internals
 
          {
             LastLocationInBounds = CurrentPosition;
-            CurrentPosition = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
+            CurrentPosition = FromLocalToLatLng((int) Width / 2, (int) Height / 2);
          }
 
          if(OnMapDrag != null)
@@ -1031,7 +995,7 @@ namespace GMap.NET.Internals
          if(IsDragging)
          {
             LastLocationInBounds = CurrentPosition;
-            CurrentPosition = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
+            CurrentPosition = FromLocalToLatLng((int) Width / 2, (int) Height / 2);
 
             if(OnMapDrag != null)
             {
@@ -1047,15 +1011,15 @@ namespace GMap.NET.Internals
       {
          if(IsStarted)
          {
-             Monitor.Enter(tileLoadQueue);
-             try
-             {
-                 tileLoadQueue.Clear();
-             }
-             finally
-             {
-                 Monitor.Exit(tileLoadQueue);
-             }
+            Monitor.Enter(tileLoadQueue);
+            try
+            {
+               tileLoadQueue.Clear();
+            }
+            finally
+            {
+               Monitor.Exit(tileLoadQueue);
+            }
          }
       }
 
@@ -1064,13 +1028,11 @@ namespace GMap.NET.Internals
 
       internal static readonly int WaitForTileLoadThreadTimeout = 5 * 1000 * 60; // 5 min.
 
-      long loadWaitCount = 0;
+      byte loadWaitCount = 0;
       readonly object LastInvalidationLock = new object();
       readonly object LastTileLoadStartEndLock = new object();
 
-      /**
-       * Consumer Threads 
-       */
+      // tile consumer thread
       void ProcessLoadTask()
       {
          bool invalidate = false;
@@ -1084,10 +1046,6 @@ namespace GMap.NET.Internals
 #else
          int ctid = 0;
 #endif
-         /* 
-          * producer / consumer queue
-          * implementation        
-          */
          while(!stop)
          {
             invalidate = false;
@@ -1096,10 +1054,6 @@ namespace GMap.NET.Internals
             Monitor.Enter(tileLoadQueue);
             try
             {
-               // for details see: http://www.albahari.com/threading/part4.aspx#_Wait_and_Pulse 
-               isThreadReady = true;
-               Monitor.PulseAll(tileLoadQueue);
-
                while(tileLoadQueue.Count == 0)
                {
                   Debug.WriteLine(ctid + " - Wait " + loadWaitCount + " - " + DateTime.Now.TimeOfDay);
@@ -1108,6 +1062,7 @@ namespace GMap.NET.Internals
                   {
                      loadWaitCount = 0;
 
+                     #region -- last thread takes action --
                      lock(LastInvalidationLock)
                      {
                         LastInvalidation = DateTime.Now;
@@ -1121,7 +1076,7 @@ namespace GMap.NET.Internals
                      lock(LastTileLoadStartEndLock)
                      {
                         LastTileLoadEnd = DateTime.Now;
-                        lastTileLoadTimeMs = (long)(LastTileLoadEnd - LastTileLoadStart).TotalMilliseconds;
+                        lastTileLoadTimeMs = (long) (LastTileLoadEnd - LastTileLoadStart).TotalMilliseconds;
                      }
 
                      #region -- clear stuff--
@@ -1161,6 +1116,7 @@ namespace GMap.NET.Internals
                      {
                         OnTileLoadComplete(lastTileLoadTimeMs);
                      }
+                     #endregion
                   }
 
                   if(false == Monitor.Wait(tileLoadQueue, WaitForTileLoadThreadTimeout, false))
@@ -1177,7 +1133,7 @@ namespace GMap.NET.Internals
             }
             finally
             {
-                Monitor.Exit(tileLoadQueue);
+               Monitor.Exit(tileLoadQueue);
             }
 
             if(task.HasValue)
@@ -1305,7 +1261,7 @@ namespace GMap.NET.Internals
 
 #if !PocketPC
          Monitor.Enter(tileLoadQueue);
-         try 
+         try
          {
             Debug.WriteLine("Quit - " + ct.Name);
             lock(GThreadPool)
@@ -1313,7 +1269,7 @@ namespace GMap.NET.Internals
                GThreadPool.Remove(ct);
             }
          }
-         finally 
+         finally
          {
             Monitor.Exit(tileLoadQueue);
          }
@@ -1421,17 +1377,11 @@ namespace GMap.NET.Internals
             }
 
             loadWaitCount = 0;
-
-            // for details see: http://www.albahari.com/threading/part4.aspx#_Wait_and_Pulse 
-            while (!isThreadReady) Monitor.Wait(tileLoadQueue);
-            isThreadReady = false;
-            Monitor.PulseAll(tileLoadQueue);
-
             Monitor.PulseAll(tileLoadQueue);
          }
          finally
          {
-             Monitor.Exit(tileLoadQueue);
+            Monitor.Exit(tileLoadQueue);
          }
 
          if(OnTileLoadStart != null)
@@ -1446,12 +1396,12 @@ namespace GMap.NET.Internals
       void UpdateGroundResolution()
       {
          double rez = Provider.Projection.GetGroundResolution(Zoom, CurrentPosition.Lat);
-         pxRes100m = (int)(100.0 / rez); // 100 meters
-         pxRes1000m = (int)(1000.0 / rez); // 1km  
-         pxRes10km = (int)(10000.0 / rez); // 10km
-         pxRes100km = (int)(100000.0 / rez); // 100km
-         pxRes1000km = (int)(1000000.0 / rez); // 1000km
-         pxRes5000km = (int)(5000000.0 / rez); // 5000km
+         pxRes100m = (int) (100.0 / rez); // 100 meters
+         pxRes1000m = (int) (1000.0 / rez); // 1km  
+         pxRes10km = (int) (10000.0 / rez); // 10km
+         pxRes100km = (int) (100000.0 / rez); // 100km
+         pxRes1000km = (int) (1000000.0 / rez); // 1000km
+         pxRes5000km = (int) (5000000.0 / rez); // 5000km
       }
    }
 }
