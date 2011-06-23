@@ -1,21 +1,20 @@
 ﻿using System;
-
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
+using System.Data.SQLite;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using GMap.NET;
-using System.Runtime.InteropServices;
-using System.IO;
+using GMap.NET.GPS;
+using GMap.NET.Internals;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
-using GMap.NET.GPS;
-using System.Diagnostics;
-using System.Data.Common;
-using System.Data.SQLite;
-using GMap.NET.Internals;
 using Microsoft.Win32;
 using Microsoft.WindowsCE.Forms;
 using GMap.NET.MapProviders;
@@ -41,7 +40,7 @@ namespace Demo.WindowsMobile
       DateTime LastFlush = DateTime.Now;
       TimeSpan FlushDelay = TimeSpan.FromSeconds(60);
 
-      Gps gps = new Gps();
+      readonly Gps gps = new Gps();
       GpsDeviceState device = null;
 
       int count = 0;
@@ -62,7 +61,7 @@ namespace Demo.WindowsMobile
       Transport pageTransport;
       Search pageSearch;
 
-      MsgWindow msgW;
+      readonly HookKeys hook = new HookKeys();
       #endregion
 
       public MainForm()
@@ -117,11 +116,8 @@ namespace Demo.WindowsMobile
          objects.Markers.Add(goo);
 #endif
 
-         UnregisterFunc1(0, 0x75); // VOLUME UP
-         UnregisterFunc1(0, 0x76); // VOLUME DOWN 
-         msgW = new MsgWindow(this);
-         RegisterHotKey(msgW.Hwnd, 3, 0, 0x75);
-         RegisterHotKey(msgW.Hwnd, 4, 0, 0x76);
+         // hook for volume up/down zooming
+         hook.HookEvent += new HookKeys.HookEventHandler(hook_HookEvent);
 
          // test performance
          if(PerfTestEnabled)
@@ -130,6 +126,27 @@ namespace Demo.WindowsMobile
             timer.Tick += new EventHandler(timer_Tick);
             timer.Enabled = true;
          }
+      }
+
+      readonly IntPtr volumeUp = new IntPtr(257);
+
+      bool hook_HookEvent(HookEventArgs e, KeyBoardInfo keyBoardInfo)
+      {
+         if(keyBoardInfo.vkCode == 117)
+         {
+            if(e.wParam == volumeUp)
+            {
+               MainMap.Zoom = (int) (MainMap.Zoom) + 1;
+            }
+         }
+         else if(keyBoardInfo.vkCode == 118)
+         {
+            if(e.wParam == volumeUp)
+            {
+               MainMap.Zoom = (int) (MainMap.Zoom) - 1;
+            }
+         }
+         return true;
       }
 
       #region -- performance test--
@@ -358,6 +375,8 @@ namespace Demo.WindowsMobile
          Native.ShowWindow(this.Handle, Native.SW_MINIMIZED);
          timerKeeperOfLife.Enabled = false;
          IsVisible = false;
+
+         hook.Stop();
       }
 
       object visibleLock = new object();
@@ -725,6 +744,8 @@ namespace Demo.WindowsMobile
 
       private void MainForm_Closed(object sender, EventArgs e)
       {
+         hook.Stop();
+
          if(gps.Opened)
          {
             gps.Close();
@@ -933,6 +954,7 @@ namespace Demo.WindowsMobile
       {
          timerKeeperOfLife.Enabled = menuItemDisableAutoSleep.Checked;
          IsVisible = true;
+         hook.Start();
       }
 
       private void menuItem32_Click(object sender, EventArgs e)
@@ -1020,35 +1042,6 @@ namespace Demo.WindowsMobile
 
       [DllImport("coredll.dll")]
       protected static extern short GetAsyncKeyState(int vKey);
-
-      public class MsgWindow : MessageWindow
-      {
-         MainForm MainForm;
-
-         public MsgWindow(MainForm f)
-         {
-            MainForm = f;
-         }
-
-         // Override the default WndProc behavior to examine messages.
-         protected override void WndProc(ref Message msg)
-         {
-            if(msg.WParam != IntPtr.Zero)
-            {
-               if(msg.WParam.ToInt32() == 3)
-               {
-                  MainForm.MainMap.Zoom = (int) (MainForm.MainMap.Zoom) + 1;
-               }
-               else if(msg.WParam.ToInt32() == 4)
-               {
-                  MainForm.MainMap.Zoom = (int) (MainForm.MainMap.Zoom) - 1;
-               }
-            }
-
-            // Call the base WndProc method
-            base.WndProc(ref msg);
-         }
-      }
 
       // clear markers
       private void menuItem37_Click(object sender, EventArgs e)
