@@ -344,7 +344,6 @@
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
          this.MainMap.LevelsKeepInMemmory = 1;
          this.MainMap.Location = new System.Drawing.Point(0, 0);
-         this.MainMap.MapType = GMap.NET.MapType.GoogleMap;
          this.MainMap.MarkersEnabled = true;
          this.MainMap.MaxZoom = 2;
          this.MainMap.MinZoom = 2;

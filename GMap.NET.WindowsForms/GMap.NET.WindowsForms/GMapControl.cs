@@ -443,7 +443,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
                this.BeginInvoke(m);
 #else
-               this.Invoke(m);
+               this.BeginInvoke(m);
 #endif
             }
             catch

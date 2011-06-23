@@ -52,7 +52,7 @@ namespace GMap.NET.CacheProviders
          set
          {
             cache = value;
-            gtileCache = cache + "TileDBv4" + Path.DirectorySeparatorChar;
+            gtileCache = cache + "TileDBv5" + Path.DirectorySeparatorChar;
 
             dir = gtileCache + GMaps.Instance.LanguageStr + Path.DirectorySeparatorChar;
 
@@ -151,13 +151,8 @@ namespace GMap.NET.CacheProviders
             int addSizeMB = 256;
             int waitUntilMB = 8;
 #else
-
-#if DEBUG
-            int addSizeMB = 8; // reduce due to test in emulator
-#else
-            int addSizeMB = 32;
-#endif
-            int waitUntilMB = 4;
+            int addSizeMB = 4; // reduce due to test in emulator
+            int waitUntilMB = 2;
 #endif
 
             Debug.WriteLine("FreePageSpace in cache: " + freeMB + "MB | " + freePages + " pages");
@@ -632,7 +627,7 @@ namespace GMap.NET.CacheProviders
                   cn.Close();
                }
 
-               if(Interlocked.Increment(ref preAllocationPing) % 11 == 0)
+               if(Interlocked.Increment(ref preAllocationPing) % 22 == 0)
                {
                   CheckPreAllocation();
                }

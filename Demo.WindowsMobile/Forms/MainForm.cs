@@ -1038,15 +1038,6 @@ namespace Demo.WindowsMobile
          MainMap.Zoom = MainMap.MaxZoom;
       }
 
-      [DllImport("coredll.dll")]
-      protected static extern uint RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
-
-      [DllImport("coredll.dll")]
-      protected static extern bool UnregisterFunc1(uint fsModifiers, int id);
-
-      [DllImport("coredll.dll")]
-      protected static extern short GetAsyncKeyState(int vKey);
-
       // clear markers
       private void menuItem37_Click(object sender, EventArgs e)
       {

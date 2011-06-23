@@ -198,11 +198,11 @@ namespace GMap.NET.MapProviders
 
       protected GMapProvider()
       {
-         DbId = BitConverter.ToInt32(HashProvider.ComputeHash(Id.ToByteArray()), 0);
+         DbId = Math.Abs(BitConverter.ToInt32(HashProvider.ComputeHash(Id.ToByteArray()), 0));
 
          if(MapProviders.Exists(p => p.Id == Id || p.DbId == DbId))
          {
-            throw new Exception("such provider id already exsists, try regenerate your provider id...");
+            throw new Exception("such provider id already exsists, try regenerate your provider guid...");
          }
          MapProviders.Add(this);
       }
