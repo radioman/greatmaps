@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{421813B1-A007-44B2-8C53-32751C45113E}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -114,6 +114,183 @@
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\TileMatrix.cs">
       <Link>GMap.NET.Internals\TileMatrix.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\ArcGIS_Imagery_World_2D_MapProvider.cs">
+      <Link>GMap.NET.MapProviders\ArcGIS_Imagery_World_2D_MapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\ArcGIS_ShadedRelief_World_2D_MapProvider.cs">
+      <Link>GMap.NET.MapProviders\ArcGIS_ShadedRelief_World_2D_MapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\ArcGIS_StreetMap_World_2D_MapProvider.cs">
+      <Link>GMap.NET.MapProviders\ArcGIS_StreetMap_World_2D_MapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\ArcGIS_Topo_US_2D_MapProvider.cs">
+      <Link>GMap.NET.MapProviders\ArcGIS_Topo_US_2D_MapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\ArcGIS_World_Physical_MapProvider.cs">
+      <Link>GMap.NET.MapProviders\ArcGIS_World_Physical_MapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\ArcGIS_World_Shaded_Relief_MapProvider.cs">
+      <Link>GMap.NET.MapProviders\ArcGIS_World_Shaded_Relief_MapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\ArcGIS_World_Street_MapProvider.cs">
+      <Link>GMap.NET.MapProviders\ArcGIS_World_Street_MapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\ArcGIS_World_Terrain_Base_MapProvider.cs">
+      <Link>GMap.NET.MapProviders\ArcGIS_World_Terrain_Base_MapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\ArcGIS_World_Topo_MapProvider.cs">
+      <Link>GMap.NET.MapProviders\ArcGIS_World_Topo_MapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\BingHybridMapProvider.cs">
+      <Link>GMap.NET.MapProviders\BingHybridMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\BingMapOldProvider.cs">
+      <Link>GMap.NET.MapProviders\BingMapOldProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\BingMapProvider.cs">
+      <Link>GMap.NET.MapProviders\BingMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\BingSatelliteMapProvider.cs">
+      <Link>GMap.NET.MapProviders\BingSatelliteMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\CzechHistoryMapProvider.cs">
+      <Link>GMap.NET.MapProviders\CzechHistoryMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\CzechHybridMapProvider.cs">
+      <Link>GMap.NET.MapProviders\CzechHybridMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\CzechMapProvider.cs">
+      <Link>GMap.NET.MapProviders\CzechMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\CzechSatelliteMapProvider.cs">
+      <Link>GMap.NET.MapProviders\CzechSatelliteMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\CzechTuristMapProvider.cs">
+      <Link>GMap.NET.MapProviders\CzechTuristMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\GMapProvider.cs">
+      <Link>GMap.NET.MapProviders\GMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\GoogleChinaHybridMapProvider.cs">
+      <Link>GMap.NET.MapProviders\GoogleChinaHybridMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\GoogleChinaMapProvider.cs">
+      <Link>GMap.NET.MapProviders\GoogleChinaMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\GoogleChinaSatelliteMapProvider.cs">
+      <Link>GMap.NET.MapProviders\GoogleChinaSatelliteMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\GoogleChinaTerrainMapProvider.cs">
+      <Link>GMap.NET.MapProviders\GoogleChinaTerrainMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\GoogleHybridMapProvider.cs">
+      <Link>GMap.NET.MapProviders\GoogleHybridMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\GoogleKoreaHybridMapProvider.cs">
+      <Link>GMap.NET.MapProviders\GoogleKoreaHybridMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\GoogleKoreaMapProvider.cs">
+      <Link>GMap.NET.MapProviders\GoogleKoreaMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\GoogleKoreaSatelliteMapProvider.cs">
+      <Link>GMap.NET.MapProviders\GoogleKoreaSatelliteMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\GoogleMapProvider.cs">
+      <Link>GMap.NET.MapProviders\GoogleMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\GoogleSatelliteMapProvider.cs">
+      <Link>GMap.NET.MapProviders\GoogleSatelliteMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\GoogleTerrainMapProvider.cs">
+      <Link>GMap.NET.MapProviders\GoogleTerrainMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\LatviaMapProvider.cs">
+      <Link>GMap.NET.MapProviders\LatviaMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\Lithuania3dMapProvider.cs">
+      <Link>GMap.NET.MapProviders\Lithuania3dMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\LithuaniaHybridMapProvider.cs">
+      <Link>GMap.NET.MapProviders\LithuaniaHybridMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\LithuaniaHybridNewMapProvider.cs">
+      <Link>GMap.NET.MapProviders\LithuaniaHybridNewMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\LithuaniaMapProvider.cs">
+      <Link>GMap.NET.MapProviders\LithuaniaMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\LithuaniaOrtoFotoMapProvider.cs">
+      <Link>GMap.NET.MapProviders\LithuaniaOrtoFotoMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\LithuaniaOrtoFotoNewMapProvider.cs">
+      <Link>GMap.NET.MapProviders\LithuaniaOrtoFotoNewMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\MapBenderWMSProvider.cs">
+      <Link>GMap.NET.MapProviders\MapBenderWMSProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\NearHybridMapProvider.cs">
+      <Link>GMap.NET.MapProviders\NearHybridMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\NearMapProvider.cs">
+      <Link>GMap.NET.MapProviders\NearMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\NearSatelliteMapProvider.cs">
+      <Link>GMap.NET.MapProviders\NearSatelliteMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenCycleMapProvider.cs">
+      <Link>GMap.NET.MapProviders\OpenCycleMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenSeaMapHybridProvider.cs">
+      <Link>GMap.NET.MapProviders\OpenSeaMapHybridProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMapProvider.cs">
+      <Link>GMap.NET.MapProviders\OpenStreetMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMapSurferProvider.cs">
+      <Link>GMap.NET.MapProviders\OpenStreetMapSurferProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMapSurferTerrainProvider.cs">
+      <Link>GMap.NET.MapProviders\OpenStreetMapSurferTerrainProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetOsmProvider.cs">
+      <Link>GMap.NET.MapProviders\OpenStreetOsmProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OviHybridMapProvider.cs">
+      <Link>GMap.NET.MapProviders\OviHybridMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OviMapProvider.cs">
+      <Link>GMap.NET.MapProviders\OviMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OviSatelliteMapProvider.cs">
+      <Link>GMap.NET.MapProviders\OviSatelliteMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OviTerrainMapProvider.cs">
+      <Link>GMap.NET.MapProviders\OviTerrainMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\SpainMapProvider.cs">
+      <Link>GMap.NET.MapProviders\SpainMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\TurkeyMapProvider.cs">
+      <Link>GMap.NET.MapProviders\TurkeyMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\YahooHybridMapProvider.cs">
+      <Link>GMap.NET.MapProviders\YahooHybridMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\YahooMapProvider.cs">
+      <Link>GMap.NET.MapProviders\YahooMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\YahooSatelliteMapProvider.cs">
+      <Link>GMap.NET.MapProviders\YahooSatelliteMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\YandexHybridMapProvider.cs">
+      <Link>GMap.NET.MapProviders\YandexHybridMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\YandexMapProvider.cs">
+      <Link>GMap.NET.MapProviders\YandexMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\YandexSatelliteMapProvider.cs">
+      <Link>GMap.NET.MapProviders\YandexSatelliteMapProvider.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\MapsLTProjection.cs">
       <Link>GMap.NET.Projections\MapsLTProjection.cs</Link>

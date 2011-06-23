@@ -16,8 +16,8 @@ namespace GMap.NET
       {
          for(int i = 0; i < FromLatLngToPixelCache.Capacity; i++)
          {
-            FromLatLngToPixelCache.Add(new Dictionary<PointLatLng, GPoint>(4444));
-            FromPixelToLatLngCache.Add(new Dictionary<GPoint, PointLatLng>(4444));
+            FromLatLngToPixelCache.Add(new Dictionary<PointLatLng, GPoint>(55));
+            FromPixelToLatLngCache.Add(new Dictionary<GPoint, PointLatLng>(55));
          }
       }
 

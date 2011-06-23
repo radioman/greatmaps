@@ -14,10 +14,11 @@ namespace GMap.NET.WindowsForms
    using GMap.NET.ObjectModel;
    using System.Diagnostics;
    using System.Drawing.Text;
+   using GMap.NET.MapProviders;
 
 #if !PocketPC
    using System.Runtime.Serialization.Formatters.Binary;
-   using GMap.NET.MapProviders;
+   
 #endif
 
    /// <summary>
@@ -367,12 +368,12 @@ namespace GMap.NET.WindowsForms
             ResizeRedraw = true;
 
             TileFlipXYAttributes.SetWrapMode(WrapMode.TileFlipXY);
-#endif
-            GMapProvider.TileImageProxy = wimg;
 
             // only one mode will be active, to get mixed mode create new ColorMatrix
             GrayScaleMode = GrayScaleMode;
             NegativeMode = NegativeMode;
+#endif
+            GMapProvider.TileImageProxy = wimg;            
 
             // to know when to invalidate
             Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
@@ -386,11 +387,7 @@ namespace GMap.NET.WindowsForms
 
             BottomFormat.Alignment = StringAlignment.Center;
 
-#if !PocketPC
             BottomFormat.LineAlignment = StringAlignment.Far;
-#else
-            throw new Exception("this version isn't working, use http://greatmaps.codeplex.com/SourceControl/changeset/changes/22b93afd000c");
-#endif
 
             if(GMaps.Instance.IsRunningOnMono)
             {
@@ -1724,8 +1721,14 @@ namespace GMap.NET.WindowsForms
          {
             GPoint p = ApplyRotationInversion(e.X, e.Y);
 
-            // cursor has moved beyond drag tolerance
-            if(Math.Abs(p.X - Core.mouseDown.X) * 2 >= SystemInformation.DragSize.Width || Math.Abs(p.Y - Core.mouseDown.Y) * 2 >= SystemInformation.DragSize.Height)
+            Size DragSize = new Size();
+#if PocketPC
+            DragSize.Height = 4;
+            DragSize.Width = 4;
+#else
+            DragSize = SystemInformation.DragSize;
+#endif
+            if (Math.Abs(p.X - Core.mouseDown.X) * 2 >= DragSize.Width || Math.Abs(p.Y - Core.mouseDown.Y) * 2 >= DragSize.Height)
             {
                Core.BeginDrag(Core.mouseDown);
             }

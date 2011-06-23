@@ -1362,7 +1362,7 @@ namespace GMap.NET
          }
 
          // Step 6. Return the decrypted string in UTF8 format
-         return UTF8.GetString(Results);
+         return UTF8.GetString(Results, 0, Results.Length);
       }
 
       public static string EncryptString(string Message)

@@ -18,6 +18,7 @@ using System.Data.SQLite;
 using GMap.NET.Internals;
 using Microsoft.Win32;
 using Microsoft.WindowsCE.Forms;
+using GMap.NET.MapProviders;
 
 namespace Demo.WindowsMobile
 {
@@ -82,14 +83,14 @@ namespace Demo.WindowsMobile
          MainMap.Manager.Mode = AccessMode.CacheOnly;
          menuItemCacheOnly.Checked = true;
 #endif
-         MainMap.MapType = MapType.MapsLT_Map;
+         MainMap.MapProvider = GMapProviders.OpenStreetMap;
          MainMap.MaxZoom = 11;
          MainMap.MinZoom = 1;
          MainMap.Zoom = MainMap.MinZoom + 1;
          MainMap.Position = start;
 
          MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
-         MainMap.OnCurrentPositionChanged += new CurrentPositionChanged(MainMap_OnCurrentPositionChanged);
+         MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);
          MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
 
          // add custom layers  
@@ -182,12 +183,12 @@ namespace Demo.WindowsMobile
          this.Text = "GMap.NET: " + (int) MainMap.Zoom;
       }
 
-      void MainMap_OnCurrentPositionChanged(PointLatLng point)
+      void MainMap_OnPositionChanged(PointLatLng point)
       {
          center.Position = point;
       }
 
-      void MainMap_OnMapTypeChanged(MapType type)
+      void MainMap_OnMapTypeChanged(GMapProvider type)
       {
          //if(routes.Routes.Count > 0)
          //{
@@ -214,67 +215,67 @@ namespace Demo.WindowsMobile
 
       private void menuItem15_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.MapsLT_OrtoFoto;
+          MainMap.MapProvider = GMapProviders.LithuaniaOrtoFotoMap;
       }
 
       private void menuItem10_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.GoogleHybrid;
+          MainMap.MapProvider = GMapProviders.GoogleHybridMap;
       }
 
       private void menuItem12_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.OpenStreetMap;
+          MainMap.MapProvider = GMapProviders.OpenStreetMap;
       }
 
       private void menuItem22_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.OpenStreetMapSurfer;
+          MainMap.MapProvider = GMapProviders.OpenStreetMapSurfer;
       }
 
       private void menuItem23_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.OpenStreetOsm;
+          MainMap.MapProvider = GMapProviders.OpenStreetOsm;
       }
 
       private void menuItem9_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.GoogleMap;
+          MainMap.MapProvider = GMapProviders.GoogleMap;
       }
 
       private void menuItem16_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.BingMap;
+          MainMap.MapProvider = GMapProviders.BingMap;
       }
 
       private void menuItem18_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.BingHybrid;
+          MainMap.MapProvider = GMapProviders.BingHybridMap;
       }
 
       private void menuItem20_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.YahooMap;
+          MainMap.MapProvider = GMapProviders.YahooMap;
       }
 
       private void menuItem21_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.YahooHybrid;
+          MainMap.MapProvider = GMapProviders.YahooHybridMap;
       }
 
       private void menuItem14_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.MapsLT_Map;
+          MainMap.MapProvider = GMapProviders.LithuaniaMap;
       }
 
       private void menuItem25_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.ArcGIS_World_Topo_Map;
+          MainMap.MapProvider = GMapProviders.ArcGIS_World_Topo_Map;
       }
 
       private void menuItem26_Click(object sender, EventArgs e)
       {
-         MainMap.MapType = MapType.ArcGIS_World_Physical_Map;
+          MainMap.MapProvider = GMapProviders.ArcGIS_World_Physical_Map;
       }
 
       private void menuItem27_Click(object sender, EventArgs e)

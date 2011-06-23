@@ -21,6 +21,21 @@ namespace GMap.NET.Internals
    {
       static readonly Monitor2 wait = new Monitor2();
 
+      public static void Enter(object tileLoadQueue)
+      {
+          wait.Enter();
+      }
+
+      public static void Exit(object tileLoadQueue)
+      {
+          wait.Exit();
+      }
+
+      public static void Wait(object tileLoadQueue)
+      {
+          wait.Wait();
+      }
+      
       public static bool Wait(Queue<LoadTask> tileLoadQueue, int WaitForTileLoadThreadTimeout, bool p)
       {
          wait.Wait();
@@ -73,6 +88,7 @@ namespace GMap.NET.Internals
 
       //readonly ManualResetEvent waitForTileLoad = new ManualResetEvent(false);
       public readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>();
+      private static bool isThreadReady;
 
       public static readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       public static readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
@@ -741,7 +757,7 @@ namespace GMap.NET.Internals
 #if !PocketPC
             int diag = (int)Math.Round(Math.Sqrt(Width * Width + Height * Height) / Provider.Projection.TileSize.Width, MidpointRounding.AwayFromZero);
 #else
-            int diag = (int) Math.Round(Math.Sqrt(Width * Width + Height * Height) / Projection.TileSize.Width);
+            int diag = (int)Math.Round(Math.Sqrt(Width * Width + Height * Height) / Provider.Projection.TileSize.Width);
 #endif
             sizeOfMapArea.Width = 1 + (diag / 2);
             sizeOfMapArea.Height = 1 + (diag / 2);
@@ -883,9 +899,14 @@ namespace GMap.NET.Internals
          {
             Debug.WriteLine("------------------");
 
-            lock(tileLoadQueue)
+            Monitor.Enter(tileLoadQueue);
+            try
             {
-               tileLoadQueue.Clear();
+                tileLoadQueue.Clear();
+            }
+            finally
+            {
+                Monitor.Exit(tileLoadQueue);
             }
 
             Matrix.ClearAllLevels();
@@ -1026,10 +1047,15 @@ namespace GMap.NET.Internals
       {
          if(IsStarted)
          {
-            lock(tileLoadQueue)
-            {
-               tileLoadQueue.Clear();
-            }
+             Monitor.Enter(tileLoadQueue);
+             try
+             {
+                 tileLoadQueue.Clear();
+             }
+             finally
+             {
+                 Monitor.Exit(tileLoadQueue);
+             }
          }
       }
 
@@ -1042,6 +1068,9 @@ namespace GMap.NET.Internals
       readonly object LastInvalidationLock = new object();
       readonly object LastTileLoadStartEndLock = new object();
 
+      /**
+       * Consumer Threads 
+       */
       void ProcessLoadTask()
       {
          bool invalidate = false;
@@ -1055,13 +1084,22 @@ namespace GMap.NET.Internals
 #else
          int ctid = 0;
 #endif
+         /* 
+          * producer / consumer queue
+          * implementation        
+          */
          while(!stop)
          {
             invalidate = false;
             task = null;
 
-            lock(tileLoadQueue)
+            Monitor.Enter(tileLoadQueue);
+            try
             {
+               // for details see: http://www.albahari.com/threading/part4.aspx#_Wait_and_Pulse 
+               isThreadReady = true;
+               Monitor.PulseAll(tileLoadQueue);
+
                while(tileLoadQueue.Count == 0)
                {
                   Debug.WriteLine(ctid + " - Wait " + loadWaitCount + " - " + DateTime.Now.TimeOfDay);
@@ -1136,6 +1174,10 @@ namespace GMap.NET.Internals
                {
                   task = tileLoadQueue.Dequeue();
                }
+            }
+            finally
+            {
+                Monitor.Exit(tileLoadQueue);
             }
 
             if(task.HasValue)
@@ -1262,13 +1304,18 @@ namespace GMap.NET.Internals
          }
 
 #if !PocketPC
-         lock(tileLoadQueue)
+         Monitor.Enter(tileLoadQueue);
+         try 
          {
             Debug.WriteLine("Quit - " + ct.Name);
             lock(GThreadPool)
             {
                GThreadPool.Remove(ct);
             }
+         }
+         finally 
+         {
+            Monitor.Exit(tileLoadQueue);
          }
 #endif
       }
@@ -1283,7 +1330,8 @@ namespace GMap.NET.Internals
             return;
          }
 
-         lock(tileLoadQueue)
+         Monitor.Enter(tileLoadQueue);
+         try
          {
             tileDrawingListLock.AcquireWriterLock();
             try
@@ -1374,7 +1422,16 @@ namespace GMap.NET.Internals
 
             loadWaitCount = 0;
 
+            // for details see: http://www.albahari.com/threading/part4.aspx#_Wait_and_Pulse 
+            while (!isThreadReady) Monitor.Wait(tileLoadQueue);
+            isThreadReady = false;
             Monitor.PulseAll(tileLoadQueue);
+
+            Monitor.PulseAll(tileLoadQueue);
+         }
+         finally
+         {
+             Monitor.Exit(tileLoadQueue);
          }
 
          if(OnTileLoadStart != null)
