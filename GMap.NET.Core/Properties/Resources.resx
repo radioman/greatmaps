@@ -150,7 +150,14 @@ END;</value>
   <data name="System_Data_SQLite_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\System.Data.SQLite.x64.DLL;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="System_Data_SQLite_x64_NET4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\System.Data.SQLite.x64.NET4.dll;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="System_Data_SQLite_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\System.Data.SQLite.x86.DLL;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="System_Data_SQLite_x86_NET4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\System.Data.SQLite.x86.NET4.dll;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

@@ -225,7 +225,7 @@ namespace GMap.NET.MapProviders
       /// <summary>
       /// timeout for provider connections
       /// </summary>
-      public static int TimeoutMs = 30 * 1000;
+      public static int TimeoutMs = 11 * 1000;
 
       /// <summary>
       /// Gets or sets the value of the Referer HTTP header.

@@ -14,7 +14,7 @@ namespace Demo.WindowsForms
 
 #if DEBUG
       private int counter;
-      readonly Font DebugFont = new Font(FontFamily.GenericSansSerif, 36, FontStyle.Regular);
+      readonly Font DebugFont = new Font(FontFamily.GenericSansSerif, 24, FontStyle.Regular);
 #endif
 
       /// <summary>
