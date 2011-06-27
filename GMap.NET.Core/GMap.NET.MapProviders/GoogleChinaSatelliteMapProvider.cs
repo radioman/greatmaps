@@ -19,7 +19,7 @@ namespace GMap.NET.MapProviders
          Instance = new GoogleChinaSatelliteMapProvider();
       }
 
-      public string Version = "s@87";
+      public string Version = "s@88";
 
       #region GMapProvider Members
 

@@ -208,6 +208,12 @@ namespace GMap.NET.Internals
             {
                provider = value;
 
+               if(!provider.IsInitialized)
+               {
+                  provider.IsInitialized = true;
+                  provider.OnInitialized();
+               }
+
                if(Provider.Projection != null)
                {
                   tileRect = new GRect(new GPoint(0, 0), Provider.Projection.TileSize);
@@ -233,149 +239,29 @@ namespace GMap.NET.Internals
                      OnMapTypeChanged(value);
                   }
 
+                  if(minZoom < provider.MinZoom)
+                  {
+                     minZoom = provider.MinZoom;
+                  }
+
+                  if(provider.MaxZoom.HasValue && maxZoom > provider.MaxZoom)
+                  {
+                     maxZoom = provider.MaxZoom.Value;
+                  }
+
                   zoomToArea = true;
+
+                  if(provider.Area.HasValue && !provider.Area.Value.Contains(CurrentPosition))
+                  {
+                     SetZoomToFitRect(provider.Area.Value);
+                     zoomToArea = false;
+                  }
                }
             }
          }
       }
 
       internal bool zoomToArea = true;
-
-      //MapType mapType;
-      //public MapType MapType
-      //{
-      //   get
-      //   {
-      //      return mapType;
-      //   }
-      //   set
-      //   {
-      //      if(value != MapType || value == MapType.None)
-      //      {
-      //         mapType = value;
-
-      //         if(Provider.Projection != null)
-      //         {
-      //            tileRect = new GRect(new GPoint(0, 0), Provider.Projection.TileSize);
-      //            tileRectBearing = tileRect;
-      //            if(IsRotated)
-      //            {
-      //               tileRectBearing.Inflate(1, 1);
-      //            }
-
-      //            minOfTiles = Provider.Projection.GetTileMatrixMinXY(Zoom);
-      //            maxOfTiles = Provider.Projection.GetTileMatrixMaxXY(Zoom);
-      //            CurrentPositionGPixel = Provider.Projection.FromLatLngToPixel(CurrentPosition, Zoom);
-      //         }
-
-      //         if(IsStarted)
-      //         {
-      //            CancelAsyncTasks();
-      //            OnMapSizeChanged(Width, Height);
-      //            ReloadMap();
-
-      //            if(OnMapTypeChanged != null)
-      //            {
-      //               OnMapTypeChanged(value);
-      //            }
-
-      //            zoomToArea = true;
-
-      //            //switch(mapType)
-      //            //{
-      //            //   case MapType.MapsLT_Map_Hybrid:
-      //            //   case MapType.MapsLT_Map_Labels:
-      //            //   case MapType.MapsLT_Map:
-      //            //   case MapType.MapsLT_OrtoFoto:
-      //            //   {
-      //            //      RectLatLng area = new RectLatLng(56.431489960361, 20.8962105239809, 5.8924169643369, 2.58940626652217);
-      //            //      if(!area.Contains(CurrentPosition))
-      //            //      {
-      //            //         SetZoomToFitRect(area);
-      //            //         zoomToArea = false;
-      //            //      }
-      //            //   }
-      //            //   break;
-
-      //            //   case MapType.KarteLV_Map:
-      //            //   {
-      //            //      RectLatLng area = new RectLatLng(58.0794870805093, 20.3286067123543, 7.90883164336887, 2.506129113082);
-      //            //      if(!area.Contains(CurrentPosition))
-      //            //      {
-      //            //         SetZoomToFitRect(area);
-      //            //         zoomToArea = false;
-      //            //      }
-      //            //   }
-      //            //   break;
-
-      //            //   case MapType.MapyCZ_Map:
-      //            //   case MapType.MapyCZ_Satellite:
-      //            //   case MapType.MapyCZ_MapTurist:
-      //            //   case MapType.MapyCZ_Labels:
-      //            //   case MapType.MapyCZ_Hybrid:
-      //            //   case MapType.MapyCZ_History:
-      //            //   case MapType.MapyCZ_HistoryHybrid:
-      //            //   {
-      //            //      RectLatLng area = new RectLatLng(51.2024819920053, 11.8401353319027, 7.22833716731277, 2.78312271922872);
-      //            //      if(!area.Contains(CurrentPosition))
-      //            //      {
-      //            //         SetZoomToFitRect(area);
-      //            //         zoomToArea = false;
-      //            //      }
-      //            //   }
-      //            //   break;
-
-      //            //   case MapType.PergoTurkeyMap:
-      //            //   {
-      //            //      RectLatLng area = new RectLatLng(42.5830078125, 25.48828125, 19.05029296875, 6.83349609375);
-      //            //      if(!area.Contains(CurrentPosition))
-      //            //      {
-      //            //         SetZoomToFitRect(area);
-      //            //         zoomToArea = false;
-      //            //      }
-      //            //   }
-      //            //   break;
-
-      //            //   case MapType.SigPacSpainMap:
-      //            //   {
-      //            //      if(minZoom < 5)
-      //            //      {
-      //            //         minZoom = 5;
-      //            //      }
-
-      //            //      RectLatLng area = new RectLatLng(43.8741381814747, -9.700927734375, 14.34814453125, 7.8605775962932);
-      //            //      if(!area.Contains(CurrentPosition))
-      //            //      {
-      //            //         SetZoomToFitRect(area);
-      //            //         zoomToArea = false;
-      //            //      }
-      //            //   }
-      //            //   break;
-
-      //            //   case MapType.GoogleMapKorea:
-      //            //   case MapType.GoogleLabelsKorea:
-      //            //   case MapType.GoogleHybridKorea:
-      //            //   case MapType.GoogleSatelliteKorea:
-      //            //   {
-      //            //      RectLatLng area = new RectLatLng(38.6597777307125, 125.738525390625, 4.02099609375, 4.42072406219614);
-      //            //      if(!area.Contains(CurrentPosition))
-      //            //      {
-      //            //         SetZoomToFitRect(area);
-      //            //         zoomToArea = false;
-      //            //      }
-      //            //   }
-      //            //   break;
-
-      //            //   default:
-      //            //   {
-      //            //      zoomToArea = true;
-      //            //   }
-      //            //   break;
-      //            //}
-      //         }
-      //      }
-      //   }
-      //}
 
       /// <summary>
       /// sets zoom to max to fit rect
@@ -395,9 +281,9 @@ namespace GMap.NET.Internals
                mmaxZoom = maxZoom;
             }
 
-            if((int) Zoom != mmaxZoom)
+            if(Zoom != mmaxZoom)
             {
-               Zoom = mmaxZoom;
+               Zoom = (int)mmaxZoom;
             }
 
             return true;
@@ -811,7 +697,7 @@ namespace GMap.NET.Internals
       {
          int zoom = minZoom;
 
-         for(int i = zoom; i <= maxZoom; i++)
+         for(int i = (int)zoom; i <= maxZoom; i++)
          {
             GPoint p1 = Provider.Projection.FromLatLngToPixel(rect.LocationTopLeft, i);
             GPoint p2 = Provider.Projection.FromLatLngToPixel(rect.LocationRightBottom, i);
@@ -966,7 +852,7 @@ namespace GMap.NET.Internals
 
          {
             LastLocationInBounds = CurrentPosition;
-            CurrentPosition = FromLocalToLatLng((int) Width / 2, (int) Height / 2);
+            CurrentPosition = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
          }
 
          if(OnMapDrag != null)
@@ -995,7 +881,7 @@ namespace GMap.NET.Internals
          if(IsDragging)
          {
             LastLocationInBounds = CurrentPosition;
-            CurrentPosition = FromLocalToLatLng((int) Width / 2, (int) Height / 2);
+            CurrentPosition = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
 
             if(OnMapDrag != null)
             {
@@ -1076,7 +962,7 @@ namespace GMap.NET.Internals
                      lock(LastTileLoadStartEndLock)
                      {
                         LastTileLoadEnd = DateTime.Now;
-                        lastTileLoadTimeMs = (long) (LastTileLoadEnd - LastTileLoadStart).TotalMilliseconds;
+                        lastTileLoadTimeMs = (long)(LastTileLoadEnd - LastTileLoadStart).TotalMilliseconds;
                      }
 
                      #region -- clear stuff--
@@ -1396,12 +1282,12 @@ namespace GMap.NET.Internals
       void UpdateGroundResolution()
       {
          double rez = Provider.Projection.GetGroundResolution(Zoom, CurrentPosition.Lat);
-         pxRes100m = (int) (100.0 / rez); // 100 meters
-         pxRes1000m = (int) (1000.0 / rez); // 1km  
-         pxRes10km = (int) (10000.0 / rez); // 10km
-         pxRes100km = (int) (100000.0 / rez); // 100km
-         pxRes1000km = (int) (1000000.0 / rez); // 1000km
-         pxRes5000km = (int) (5000000.0 / rez); // 5000km
+         pxRes100m = (int)(100.0 / rez); // 100 meters
+         pxRes1000m = (int)(1000.0 / rez); // 1km  
+         pxRes10km = (int)(10000.0 / rez); // 10km
+         pxRes100km = (int)(100000.0 / rez); // 100km
+         pxRes1000km = (int)(1000000.0 / rez); // 1000km
+         pxRes5000km = (int)(5000000.0 / rez); // 5000km
       }
    }
 }

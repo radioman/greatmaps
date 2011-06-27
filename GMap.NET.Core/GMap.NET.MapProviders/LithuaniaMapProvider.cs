@@ -6,6 +6,12 @@ namespace GMap.NET.MapProviders
 
    public abstract class LithuaniaMapProviderBase : GMapProvider
    {
+      public LithuaniaMapProviderBase()
+      {
+         MaxZoom = 11;
+         Area = new RectLatLng(56.431489960361, 20.8962105239809, 5.8924169643369, 2.58940626652217);
+      }
+
       #region GMapProvider Members
       public override Guid Id
       {

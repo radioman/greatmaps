@@ -208,7 +208,7 @@ namespace GMap.NET.Internals
             {
                using(StreamReader r = new StreamReader(file.ToString(), Encoding.UTF8))
                {
-                  ret= r.ReadToEnd();
+                  ret = r.ReadToEnd();
                }
             }
          }
@@ -256,7 +256,7 @@ namespace GMap.NET.Internals
             {
                using(StreamReader r = new StreamReader(file.ToString(), Encoding.UTF8))
                {
-                  ret= r.ReadToEnd();
+                  ret = r.ReadToEnd();
                }
             }
          }

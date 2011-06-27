@@ -6,6 +6,11 @@ namespace GMap.NET.MapProviders
 
    public abstract class CzechMapProviderBase : GMapProvider
    {
+      public CzechMapProviderBase()
+      {
+         Area = new RectLatLng(51.2024819920053, 11.8401353319027, 7.22833716731277, 2.78312271922872);
+      }
+
       #region GMapProvider Members
       public override Guid Id
       {

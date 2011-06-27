@@ -207,10 +207,59 @@ namespace GMap.NET.MapProviders
          MapProviders.Add(this);
       }
 
+      static GMapProvider()
+      {
+#if PocketPC
+         WebProxy = GlobalProxySelection.GetEmptyWebProxy();
+#else
+         WebProxy = WebRequest.DefaultWebProxy;
+#endif
+      }
+
+      bool isInitialized = false;
+
+      /// <summary>
+      /// was provider initialized
+      /// </summary>
+      public bool IsInitialized
+      {
+         get
+         {
+            return isInitialized;
+         }
+         internal set
+         {
+            isInitialized = value;
+         }
+      }
+
+      /// <summary>
+      /// called before first use
+      /// </summary>
+      public virtual void OnInitialized()
+      {
+         // nice place to detect current provider version
+      }
+
       /// <summary>
       /// id for database, a hash of provider guid
       /// </summary>
       public readonly int DbId;
+
+      /// <summary>
+      /// area of map
+      /// </summary>
+      public RectLatLng? Area;
+
+      /// <summary>
+      /// minimum level of zoom
+      /// </summary>
+      public int MinZoom;
+
+      /// <summary>
+      /// maximum level of zoom
+      /// </summary>
+      public int? MaxZoom;
 
       /// <summary>
       /// proxy for net access

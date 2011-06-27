@@ -70,13 +70,13 @@
         <GroupBox Header="gmap" HorizontalAlignment="Right" Margin="0,158,12,0" Name="groupBox2" Width="169" VerticalAlignment="Top" Height="135">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <ComboBox FontSize="12" Margin="6,6,45,0" Name="comboBoxMapType" Height="25.04" VerticalAlignment="Top">
-                <!--<ComboBox.SelectedItem>
+                <ComboBox.SelectedItem>
                     <Binding Path="MapProvider" ElementName="MainMap">
                         <Binding.ValidationRules>
                             <src:MapValidationRule x:Name="validator"/>
                         </Binding.ValidationRules>
                     </Binding>
-                </ComboBox.SelectedItem>-->
+                </ComboBox.SelectedItem>
                 </ComboBox>
                 
                 <Label HorizontalAlignment="Right" Margin="0,6,6,0" Name="label1" Width="33" Height="25.04" VerticalAlignment="Top">type</Label>

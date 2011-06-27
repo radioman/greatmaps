@@ -342,7 +342,7 @@ namespace GMap.NET
                   Directory.CreateDirectory(dir);
                }
 
-               Debug.WriteLine("Saving to DllCache: " + dll);    
+               Debug.WriteLine("Saving to DllCache: " + dll);
 
                if(Environment.Version.Major == 2)
                {
@@ -391,12 +391,6 @@ namespace GMap.NET
          Proxy = GlobalProxySelection.GetEmptyWebProxy();
 #else
          Proxy = WebRequest.DefaultWebProxy;
-
-         ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object obj)
-            {
-               TryCorrectGoogleVersions();
-               TryCorrectBingVersions();
-            }));
 #endif
       }
 
@@ -2128,163 +2122,6 @@ namespace GMap.NET
       #endregion
 
       #region -- Content download --
-
-      /// <summary>
-      /// try to correct google versions
-      /// </summary>    
-      internal void TryCorrectGoogleVersions()
-      {
-         if(!IsCorrectedGoogleVersions)
-         {
-            string url = string.Format("http://maps.{0}", GServer);
-            try
-            {
-               HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-               if(Proxy != null)
-               {
-                  request.Proxy = Proxy;
-#if !PocketPC
-                  request.PreAuthenticate = true;
-#endif
-               }
-
-               request.UserAgent = UserAgent;
-               request.Timeout = Timeout;
-               request.ReadWriteTimeout = Timeout * 6;
-
-               using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-               {
-                  using(Stream responseStream = response.GetResponseStream())
-                  {
-                     using(StreamReader read = new StreamReader(responseStream))
-                     {
-                        string html = read.ReadToEnd();
-
-                        Regex reg = new Regex(string.Format("\"*http://mt0.{0}/vt/lyrs=m@(\\d*)", GServer), RegexOptions.IgnoreCase);
-                        Match mat = reg.Match(html);
-                        if(mat.Success)
-                        {
-                           GroupCollection gc = mat.Groups;
-                           int count = gc.Count;
-                           if(count > 0)
-                           {
-                              VersionGoogleMap = string.Format("m@{0}", gc[1].Value);
-                              VersionGoogleMapChina = VersionGoogleMap;
-                              Debug.WriteLine("TryCorrectGoogleVersions, VersionGoogleMap: " + VersionGoogleMap);
-                           }
-                        }
-
-                        reg = new Regex(string.Format("\"*http://mt0.{0}/vt/lyrs=h@(\\d*)", GServer), RegexOptions.IgnoreCase);
-                        mat = reg.Match(html);
-                        if(mat.Success)
-                        {
-                           GroupCollection gc = mat.Groups;
-                           int count = gc.Count;
-                           if(count > 0)
-                           {
-                              VersionGoogleLabels = string.Format("h@{0}", gc[1].Value);
-                              VersionGoogleLabelsChina = VersionGoogleLabels;
-                              Debug.WriteLine("TryCorrectGoogleVersions, VersionGoogleLabels: " + VersionGoogleLabels);
-                           }
-                        }
-
-                        reg = new Regex(string.Format("\"*http://khm0.{0}/kh/v=(\\d*)", GServer), RegexOptions.IgnoreCase);
-                        mat = reg.Match(html);
-                        if(mat.Success)
-                        {
-                           GroupCollection gc = mat.Groups;
-                           int count = gc.Count;
-                           if(count > 0)
-                           {
-                              VersionGoogleSatellite = gc[1].Value;
-                              VersionGoogleSatelliteKorea = VersionGoogleSatellite;
-                              VersionGoogleSatelliteChina = "s@" + VersionGoogleSatellite;
-                              Debug.WriteLine("TryCorrectGoogleVersions, VersionGoogleSatellite: " + VersionGoogleSatellite);
-                           }
-                        }
-
-                        reg = new Regex(string.Format("\"*http://mt0.{0}/vt/lyrs=t@(\\d*),r@(\\d*)", GServer), RegexOptions.IgnoreCase);
-                        mat = reg.Match(html);
-                        if(mat.Success)
-                        {
-                           GroupCollection gc = mat.Groups;
-                           int count = gc.Count;
-                           if(count > 1)
-                           {
-                              VersionGoogleTerrain = string.Format("t@{0},r@{1}", gc[1].Value, gc[2].Value);
-                              VersionGoogleTerrainChina = VersionGoogleTerrain;
-                              Debug.WriteLine("TryCorrectGoogleVersions, VersionGoogleTerrain: " + VersionGoogleTerrain);
-                           }
-                        }
-                     }
-                  }
-               }
-               IsCorrectedGoogleVersions = true; // try it only once
-            }
-            catch(Exception ex)
-            {
-               IsCorrectedGoogleVersions = false;
-               Debug.WriteLine("TryCorrectGoogleVersions failed: " + ex.ToString());
-            }
-         }
-      }
-
-      /// <summary>
-      /// try to correct google versions
-      /// </summary>    
-      internal void TryCorrectBingVersions()
-      {
-         if(!IsCorrectedBingVersions)
-         {
-            string url = @"http://www.bing.com/maps";
-            try
-            {
-               HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-               if(Proxy != null)
-               {
-                  request.Proxy = Proxy;
-#if !PocketPC
-                  request.PreAuthenticate = true;
-#endif
-               }
-
-               request.UserAgent = UserAgent;
-               request.Timeout = Timeout;
-               request.ReadWriteTimeout = Timeout * 6;
-
-               using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-               {
-                  using(Stream responseStream = response.GetResponseStream())
-                  {
-                     using(StreamReader read = new StreamReader(responseStream))
-                     {
-                        string html = read.ReadToEnd();
-
-                        Regex reg = new Regex("http://ecn.t(\\d*).tiles.virtualearth.net/tiles/r(\\d*)[?*]g=(\\d*)", RegexOptions.IgnoreCase);
-                        Match mat = reg.Match(html);
-                        if(mat.Success)
-                        {
-                           GroupCollection gc = mat.Groups;
-                           int count = gc.Count;
-                           if(count > 2)
-                           {
-                              VersionBingMaps = gc[3].Value;
-                              Debug.WriteLine("TryCorrectBingVersions, VersionBingMaps: " + VersionBingMaps);
-                           }
-                        }
-
-                     }
-                  }
-               }
-               IsCorrectedBingVersions = true; // try it only once
-            }
-            catch(Exception ex)
-            {
-               IsCorrectedBingVersions = false;
-               Debug.WriteLine("TryCorrectBingVersions failed: " + ex.ToString());
-            }
-         }
-      }
 
       /// <summary>
       /// get route between two points, kml format

@@ -4,6 +4,10 @@ namespace GMap.NET.MapProviders
    using System;
    using GMap.NET.Projections;
    using System.Security.Cryptography;
+   using System.Diagnostics;
+   using System.Net;
+   using System.IO;
+   using System.Text.RegularExpressions;
 
    public abstract class GoogleMapProviderBase : GMapProvider
    {
@@ -63,6 +67,105 @@ namespace GMap.NET.MapProviders
          throw new NotImplementedException();
       }
       #endregion
+
+      public bool TryCorrectVersion = true;
+      static bool init = false;
+
+      public override void OnInitialized()
+      {
+         if(!init && TryCorrectVersion)
+         {
+            string url = string.Format("http://maps.{0}", Server);
+            try
+            {
+               HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+               if(WebProxy != null)
+               {
+                  request.Proxy = WebProxy;
+#if !PocketPC
+                  request.PreAuthenticate = true;
+#endif
+               }
+
+               request.UserAgent = UserAgent;
+               request.Timeout = TimeoutMs;
+               request.ReadWriteTimeout = TimeoutMs * 6;
+
+               using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+               {
+                  using(Stream responseStream = response.GetResponseStream())
+                  {
+                     using(StreamReader read = new StreamReader(responseStream))
+                     {
+                        string html = read.ReadToEnd();
+
+                        Regex reg = new Regex(string.Format("\"*http://mt0.{0}/vt/lyrs=m@(\\d*)", Server), RegexOptions.IgnoreCase);
+                        Match mat = reg.Match(html);
+                        if(mat.Success)
+                        {
+                           GroupCollection gc = mat.Groups;
+                           int count = gc.Count;
+                           if(count > 0)
+                           {
+                              GMapProviders.GoogleMap.Version = string.Format("m@{0}", gc[1].Value);
+                              GMapProviders.GoogleChinaMap.Version = GMapProviders.GoogleMap.Version;
+                              Debug.WriteLine("GMapProviders.GoogleMap.Version: " + GMapProviders.GoogleMap.Version);
+                           }
+                        }
+
+                        reg = new Regex(string.Format("\"*http://mt0.{0}/vt/lyrs=h@(\\d*)", Server), RegexOptions.IgnoreCase);
+                        mat = reg.Match(html);
+                        if(mat.Success)
+                        {
+                           GroupCollection gc = mat.Groups;
+                           int count = gc.Count;
+                           if(count > 0)
+                           {
+                              GMapProviders.GoogleHybridMap.Version = string.Format("h@{0}", gc[1].Value);
+                              GMapProviders.GoogleChinaHybridMap.Version = GMapProviders.GoogleHybridMap.Version;
+                              Debug.WriteLine("GMapProviders.GoogleHybridMap.Version: " + GMapProviders.GoogleHybridMap.Version);
+                           }
+                        }
+
+                        reg = new Regex(string.Format("\"*http://khm0.{0}/kh/v=(\\d*)", Server), RegexOptions.IgnoreCase);
+                        mat = reg.Match(html);
+                        if(mat.Success)
+                        {
+                           GroupCollection gc = mat.Groups;
+                           int count = gc.Count;
+                           if(count > 0)
+                           {
+                              GMapProviders.GoogleSatelliteMap.Version = gc[1].Value;
+                              GMapProviders.GoogleKoreaSatelliteMap.Version = GMapProviders.GoogleSatelliteMap.Version;
+                              GMapProviders.GoogleChinaSatelliteMap.Version = "s@" + GMapProviders.GoogleSatelliteMap.Version;
+                              Debug.WriteLine("GMapProviders.GoogleSatelliteMap.Version: " + GMapProviders.GoogleSatelliteMap.Version);
+                           }
+                        }
+
+                        reg = new Regex(string.Format("\"*http://mt0.{0}/vt/lyrs=t@(\\d*),r@(\\d*)", Server), RegexOptions.IgnoreCase);
+                        mat = reg.Match(html);
+                        if(mat.Success)
+                        {
+                           GroupCollection gc = mat.Groups;
+                           int count = gc.Count;
+                           if(count > 1)
+                           {
+                              GMapProviders.GoogleTerrainMap.Version = string.Format("t@{0},r@{1}", gc[1].Value, gc[2].Value);
+                              GMapProviders.GoogleChinaTerrainMap.Version = GMapProviders.GoogleTerrainMap.Version;
+                              Debug.WriteLine("GMapProviders.GoogleTerrainMap.Version: " + GMapProviders.GoogleTerrainMap.Version);
+                           }
+                        }
+                     }
+                  }
+               }
+               init = true; // try it only once
+            }
+            catch(Exception ex)
+            {
+               Debug.WriteLine("TryCorrectGoogleVersions failed: " + ex.ToString());
+            }
+         }
+      }
 
       internal void GetSecureWords(GPoint pos, out string sec1, out string sec2)
       {

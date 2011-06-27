@@ -12,6 +12,7 @@ namespace GMap.NET.MapProviders
 
       GoogleKoreaMapProvider()
       {
+         Area = new RectLatLng(38.6597777307125, 125.738525390625, 4.02099609375, 4.42072406219614);
       }
 
       static GoogleKoreaMapProvider()

@@ -19,7 +19,7 @@ namespace GMap.NET.MapProviders
          Instance = new GoogleKoreaSatelliteMapProvider();
       }
 
-      public string Version = "87";
+      public string Version = "88";
 
       #region GMapProvider Members
 

@@ -13,6 +13,8 @@ namespace GMap.NET.MapProviders
 
       SpainMapProvider()
       {
+         MinZoom = 5;
+         Area = new RectLatLng(43.8741381814747, -9.700927734375, 14.34814453125, 7.8605775962932);
       }
 
       static SpainMapProvider()

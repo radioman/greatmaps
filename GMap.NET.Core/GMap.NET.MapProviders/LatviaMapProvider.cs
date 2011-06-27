@@ -6,6 +6,11 @@ namespace GMap.NET.MapProviders
 
    public abstract class LatviaMapProviderBase : GMapProvider
    {
+      public LatviaMapProviderBase()
+      {
+         Area = new RectLatLng(58.0794870805093, 20.3286067123543, 7.90883164336887, 2.506129113082);
+      }
+
       #region GMapProvider Members
       public override Guid Id
       {

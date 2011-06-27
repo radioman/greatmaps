@@ -13,6 +13,7 @@ namespace GMap.NET.MapProviders
 
       TurkeyMapProvider()
       {
+         Area = new RectLatLng(42.5830078125, 25.48828125, 19.05029296875, 6.83349609375);
       }
 
       static TurkeyMapProvider()
