@@ -10,32 +10,32 @@
                 <ad:ResizingPanel Orientation="Vertical" ad:ResizingPanel.ResizeWidth="0.44*">
                     <ad:DocumentPane SelectedIndex="0">
                         <ad:DocumentContent Title="   Bing   ">
-                            <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" MapType="BingMap" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            <map:GMapControl x:Name="MapBingOld" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                         </ad:DocumentContent>
                         <ad:DocumentContent Title="   Bing New  ">
-                            <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" MapType="BingMap_New" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            <map:GMapControl x:Name="MapBing" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                         </ad:DocumentContent>
                         <ad:DocumentContent Title="   Bing Hybrid   ">
-                            <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" MapType="BingHybrid" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            <map:GMapControl x:Name="MapBingHybrid" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                         </ad:DocumentContent>
                     </ad:DocumentPane>
                     <ad:DocumentPane SelectedIndex="0">
                         <ad:DocumentContent Title="   Yahoo!   ">
-                            <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" MapType="YahooMap" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            <map:GMapControl x:Name="MapYahoo" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                         </ad:DocumentContent>
                         <ad:DocumentContent Title="   Yahoo! Hybrid   ">
-                            <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" MapType="YahooHybrid" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            <map:GMapControl x:Name="MapYahooHybrid" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                         </ad:DocumentContent>
                     </ad:DocumentPane>
                     <ad:DocumentPane SelectedIndex="0">
                         <ad:DocumentContent Title="   OpenStreetMap   ">
-                            <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" MapType="OpenStreetMap" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            <map:GMapControl x:Name="MapOpenStreet" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                         </ad:DocumentContent>
                         <ad:DocumentContent Title="   OpenStreetOsm   ">
-                            <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" MapType="OpenStreetOsm" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            <map:GMapControl x:Name="MapOpenStreetOsm" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                         </ad:DocumentContent>
                         <ad:DocumentContent Title="   OpenStreetMapSurfer   ">
-                            <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" MapType="OpenStreetMapSurfer" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                            <map:GMapControl x:Name="MapOpenStreetSurfer" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                         </ad:DocumentContent>
                     </ad:DocumentPane>
                 </ad:ResizingPanel>
@@ -43,28 +43,28 @@
                     <ad:ResizingPanel Orientation="Horizontal">
                         <ad:DocumentPane SelectedIndex="0" SelectionChanged="DocumentPane_SelectionChanged">
                             <ad:DocumentContent Title="   Google   " IsCloseable="False" IsFloatingAllowed="True">
-                                <map:GMapControl x:Name="MainMap" MinZoom="1" MaxZoom="17" Zoom="3" MapType="GoogleMap" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged" />
+                                <map:GMapControl x:Name="MainMap" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged" />
                             </ad:DocumentContent>
                             <ad:DocumentContent Title="   Google Hybrid   ">
-                                <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" MapType="GoogleHybrid" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                                <map:GMapControl x:Name="MapGoogleHybrid" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                             </ad:DocumentContent>
                             <ad:DocumentContent Title="   Google Terrain   ">
-                                <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" MapType="GoogleTerrain" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                                <map:GMapControl x:Name="MapGoogleTerrain" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                             </ad:DocumentContent>
                             <ad:DocumentContent Title="   YandexMapRu   ">
-                                <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" MapType="YandexMapRu" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                                <map:GMapControl x:Name="MapYandexRu" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                             </ad:DocumentContent>
                             <ad:DocumentContent Title="   YandexMapRu Hybrid   ">
-                                <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" MapType="YandexMapRuHybrid" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                                <map:GMapControl x:Name="MapYandexMapRuHybrid" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                             </ad:DocumentContent>
                             <ad:DocumentContent Title="   Maps.lt   ">
-                                <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="11" Zoom="3" MapType="MapsLT_Map" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                                <map:GMapControl x:Name="MapLt" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="11" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                             </ad:DocumentContent>
                             <ad:DocumentContent Title="   Maps.lt Hybrid  ">
-                                <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="11" Zoom="3" MapType="MapsLT_Map_Hybrid" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                                <map:GMapControl x:Name="MapLtHybrid" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="11" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                             </ad:DocumentContent>
                             <ad:DocumentContent Title="   ArcGIS_World_Topo_Map  ">
-                                <map:GMapControl Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="11" Zoom="3" MapType="ArcGIS_World_Topo_Map" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                                <map:GMapControl x:Name="MapArcGISworldTopo" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="11" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                             </ad:DocumentContent>
                         </ad:DocumentPane>
                     </ad:ResizingPanel>

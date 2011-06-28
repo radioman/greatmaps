@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Diagnostics;
 using System.Threading;
+using GMap.NET.MapProviders;
 
 namespace Sample3
 {
@@ -13,6 +14,31 @@ namespace Sample3
       public MainWindow()
       {
          InitializeComponent();
+
+         MainMap.MapProvider = GMapProviders.GoogleMap;
+         MapArcGISworldTopo.MapProvider = GMapProviders.ArcGIS_World_Topo_Map;
+
+         MapBing.MapProvider = GMapProviders.BingMap;
+         MapBingHybrid.MapProvider = GMapProviders.BingHybridMap;
+         MapBingOld.MapProvider = GMapProviders.BingMapOld;
+
+         MapGoogleHybrid.MapProvider = GMapProviders.GoogleHybridMap;
+         MapGoogleTerrain.MapProvider = GMapProviders.GoogleTerrainMap;
+
+         MapYahoo.MapProvider = GMapProviders.YahooMap;
+         MapYahooHybrid.MapProvider = GMapProviders.YahooHybridMap;
+
+         MapYandexMapRuHybrid.MapProvider = GMapProviders.YandexHybridMap;
+         MapYandexRu.MapProvider = GMapProviders.YandexMap;
+
+         MapLt.MapProvider = GMapProviders.LithuaniaMap;
+         MapLtHybrid.MapProvider = GMapProviders.LithuaniaOrtoFotoMap;
+
+         MapOpenStreet.MapProvider = GMapProviders.OpenStreetMap;
+         MapOpenStreetOsm.MapProvider = GMapProviders.OpenStreetOsm;
+         MapOpenStreetSurfer.MapProvider = GMapProviders.OpenStreetMapSurfer;
+
+         this.WindowState = System.Windows.WindowState.Minimized;
       }
 
       private void OnMapZoomChanged()
@@ -28,7 +54,7 @@ namespace Sample3
 
                   if(map != null && map != amap)
                   {
-                     if(map.Projection.ToString() == amap.Projection.ToString())
+                     if(map.MapProvider.Projection.ToString() == amap.MapProvider.Projection.ToString())
                      {
                         map.Zoom = amap.Zoom;
                      }
@@ -114,7 +140,7 @@ namespace Sample3
          {
             map.Position = lastMap.Position;
 
-            if(map.Projection.ToString() == lastMap.Projection.ToString())
+            if(map.MapProvider.Projection.ToString() == lastMap.MapProvider.Projection.ToString())
             {
                map.Zoom = lastMap.Zoom;
             }

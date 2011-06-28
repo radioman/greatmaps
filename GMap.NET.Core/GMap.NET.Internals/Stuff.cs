@@ -43,7 +43,7 @@ namespace GMap.NET.Internals
 
       public static MemoryStream CopyStream(Stream inputStream, bool SeekOriginBegin)
       {
-         const int readSize = 4 * 1024;
+         const int readSize = 32 * 1024;
          byte[] buffer = new byte[readSize];
          MemoryStream ms = new MemoryStream();
          {

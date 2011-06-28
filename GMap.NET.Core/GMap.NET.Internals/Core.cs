@@ -52,7 +52,9 @@ namespace GMap.NET.Internals
       public readonly List<GPoint> tileDrawingList = new List<GPoint>();
       public readonly FastReaderWriterLock tileDrawingListLock = new FastReaderWriterLock();
 
-      public readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>();
+      static readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>(); 
+      static readonly List<Thread> GThreadPool = new List<Thread>();
+      //readonly List<Thread> GThreadPool = new List<Thread>();
 
       public static readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       public static readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
@@ -118,9 +120,14 @@ namespace GMap.NET.Internals
 
                if(IsStarted)
                {
-                  lock(tileLoadQueue)
+                  Monitor.Enter(tileLoadQueue);
+                  try
                   {
                      tileLoadQueue.Clear();
+                  }
+                  finally
+                  {
+                     Monitor.Exit(tileLoadQueue);
                   }
 
                   Matrix.ClearLevelsBelove(zoom - LevelsKeepInMemmory);
@@ -373,8 +380,6 @@ namespace GMap.NET.Internals
       /// occurs on map type changed
       /// </summary>
       public event MapTypeChanged OnMapTypeChanged;
-
-      static readonly List<Thread> GThreadPool = new List<Thread>();
 
       // windows forms or wpf
       internal string SystemType;
@@ -914,7 +919,7 @@ namespace GMap.NET.Internals
 
       internal static readonly int WaitForTileLoadThreadTimeout = 5 * 1000 * 60; // 5 min.
 
-      byte loadWaitCount = 0;
+      static byte loadWaitCount = 0;
       readonly object LastInvalidationLock = new object();
       readonly object LastTileLoadStartEndLock = new object();
 
