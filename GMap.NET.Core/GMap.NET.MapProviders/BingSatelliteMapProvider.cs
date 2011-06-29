@@ -51,7 +51,7 @@ namespace GMap.NET.MapProviders
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
          string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-         return string.Format(UrlFormat, GetServerNum(pos, 4), key, Version, language, (!string.IsNullOrEmpty(ClientToken) ? "&token=" + ClientToken : string.Empty));
+         return string.Format(UrlFormat, GetServerNum(pos, 4), key, Version, language, (!string.IsNullOrEmpty(ClientKey) ? "&key=" + ClientKey : string.Empty));
       }
 
       static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}{4}";

@@ -17,7 +17,7 @@ namespace GMap.NET.MapProviders
       /// Bing Maps Customer Identification, more info here
       /// http://msdn.microsoft.com/en-us/library/bb924353.aspx
       /// </summary>
-      public string ClientToken = null;
+      public string ClientKey = null;
 
       /// <summary>
       /// Converts tile XY coordinates into a QuadKey at a specified level of detail.
@@ -200,9 +200,9 @@ namespace GMap.NET.MapProviders
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
          string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-         return string.Format(UrlFormat, GetServerNum(pos, 4), key, Version, language, (!string.IsNullOrEmpty(ClientToken) ? "&token=" + ClientToken : string.Empty));
+         return string.Format(UrlFormat, GetServerNum(pos, 4), key, Version, language, (!string.IsNullOrEmpty(ClientKey) ? "&key=" + ClientKey : string.Empty));
       }
 
-      static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}{4}&lbl=l1&stl=h&shading=hill&n=z";
+      static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}&lbl=l1&stl=h&shading=hill&n=z{4}";
    }
 }
