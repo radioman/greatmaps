@@ -81,6 +81,8 @@ namespace GMap.NET.MapProviders
 
       public static readonly TurkeyMapProvider TurkeyMap = TurkeyMapProvider.Instance;
 
+      public static readonly CloudMadeMapProvider CloudMadeMap = CloudMadeMapProvider.Instance;
+
       public static readonly CzechMapProvider CzechMap = CzechMapProvider.Instance;
       public static readonly CzechSatelliteMapProvider CzechSatelliteMap = CzechSatelliteMapProvider.Instance;
       public static readonly CzechHybridMapProvider CzechHybridMap = CzechHybridMapProvider.Instance;

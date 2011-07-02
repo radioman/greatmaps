@@ -1054,7 +1054,7 @@ namespace GMap.NET.WindowsForms
          {
             MethodInvoker m = delegate
             {
-               Thread.Sleep(222);
+               Thread.Sleep(444);
                Core.StartSystem();
 
                ForceUpdateOverlays();

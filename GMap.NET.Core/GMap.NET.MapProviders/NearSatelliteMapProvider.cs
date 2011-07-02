@@ -50,7 +50,7 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         // http://web2.nearmap.com/maps/hl=en&x=34&y=20&z=6&nml=Vert&s=2NYYKGF  
+         // http://web2.nearmap.com/maps/hl=en&x=14&y=8&z=5&nml=Vert&s=kdj00
 
          return string.Format(UrlFormat, GetServerNum(pos, 3), pos.X, pos.Y, zoom);
       }

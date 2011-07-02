@@ -4,8 +4,13 @@ namespace GMap.NET.MapProviders
    using System;
    using GMap.NET.Projections;
 
-   public abstract class NearMapProviderBase : GMapProvider
+   public abstract class CloudMadeMapProviderBase : GMapProvider
    {
+      public readonly string ServerLetters = "abc";
+      public readonly string DoubleResolutionString = "@2x";
+
+      public bool DoubleResolution = true;
+
       #region GMapProvider Members
       public override Guid Id
       {
@@ -52,24 +57,27 @@ namespace GMap.NET.MapProviders
    }
 
    /// <summary>
-   /// NearMap provider
+   /// CloudMadeMap demo provider
    /// </summary>
-   public class NearMapProvider : NearMapProviderBase
+   public class CloudMadeMapProvider : CloudMadeMapProviderBase
    {
-      public static readonly NearMapProvider Instance;
+      public static readonly CloudMadeMapProvider Instance;
 
-      NearMapProvider()
+      readonly string Key = "9c8d5daf12344694ad416589fcf9e9dc"; // demo key of CloudMade
+      readonly int StyleID = 1;
+
+      CloudMadeMapProvider()
       {
       }
 
-      static NearMapProvider()
+      static CloudMadeMapProvider()
       {
-         Instance = new NearMapProvider();
+         Instance = new CloudMadeMapProvider();
       }
 
       #region GMapProvider Members
 
-      readonly Guid id = new Guid("E33803DF-22CB-4FFA-B8E3-15383ED9969D");
+      readonly Guid id = new Guid("00403A36-725F-4BC4-934F-BFC1C164D003");
       public override Guid Id
       {
          get
@@ -78,7 +86,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly string name = "NearMap";
+      readonly string name = "CloudMade, Demo";
       public override string Name
       {
          get
@@ -98,12 +106,9 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         // http://web1.nearmap.com/maps/hl=en&x=18681&y=10415&z=15&nml=Map_&nmg=1&s=kY8lZssipLIJ7c5
-         // http://web1.nearmap.com/kh/v=nm&hl=en&x=20&y=8&z=5&nml=Map_&s=55KUZ
-
-         return string.Format(UrlFormat, GetServerNum(pos, 3), pos.X, pos.Y, zoom);
+         return string.Format(UrlFormat, ServerLetters[GetServerNum(pos, 3)], Key, StyleID, (DoubleResolution ? DoubleResolutionString : string.Empty), zoom, pos.X, pos.Y);
       }
 
-      static readonly string UrlFormat = "http://web{0}.nearmap.com/kh/v=nm&hl=en&x={1}&y={2}&z={3}&nml=Map_";
+      static readonly string UrlFormat = "http://{0}.tile.cloudmade.com/{1}/{2}{3}/256/{4}/{5}/{6}.png";
    }
 }
