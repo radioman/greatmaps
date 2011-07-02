@@ -65,6 +65,12 @@ namespace GMap.NET.WindowsPresentation
 
             map.Core.Provider = e.NewValue as GMapProvider;
 
+            map.Copyright = null;
+            if(!string.IsNullOrEmpty(map.Core.Provider.Copyright))
+            {
+               map.Copyright = new FormattedText(map.Core.Provider.Copyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
+            }
+
             if(map.Core.IsStarted && map.Core.zoomToArea)
             {
                // restore zoomrect as close as possible
@@ -164,14 +170,7 @@ namespace GMap.NET.WindowsPresentation
       bool showTileGridLines = false;
       MethodInvoker invalidator;
 
-      FormattedText googleCopyright;
-      FormattedText yahooMapCopyright;
-      FormattedText virtualEarthCopyright;
-      FormattedText openStreetMapCopyright;
-      FormattedText arcGisMapCopyright;
-      FormattedText hnitMapCopyright;
-      FormattedText pergoMapCopyright;
-      FormattedText oviMapCopyright;
+      FormattedText Copyright;
 
       /// <summary>
       /// max zoom
@@ -477,15 +476,6 @@ namespace GMap.NET.WindowsPresentation
             }
 
             Core.Zoom = (int)((double)ZoomProperty.DefaultMetadata.DefaultValue);
-
-            googleCopyright = new FormattedText(Core.googleCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
-            yahooMapCopyright = new FormattedText(Core.yahooMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
-            virtualEarthCopyright = new FormattedText(Core.virtualEarthCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
-            openStreetMapCopyright = new FormattedText(Core.openStreetMapCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
-            arcGisMapCopyright = new FormattedText(Core.arcGisCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
-            hnitMapCopyright = new FormattedText(Core.hnitCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
-            pergoMapCopyright = new FormattedText(Core.pergoCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
-            oviMapCopyright = new FormattedText(Core.oviCopyright, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("GenericSansSerif"), 9, Brushes.Navy);
          }
       }
 
@@ -1200,85 +1190,10 @@ namespace GMap.NET.WindowsPresentation
 
          #region -- copyright --
 
-         //switch(Core.MapType)
-         //{
-         //   case MapType.GoogleMap:
-         //   case MapType.GoogleSatellite:
-         //   case MapType.GoogleLabels:
-         //   case MapType.GoogleTerrain:
-         //   case MapType.GoogleHybrid:
-         //   {
-         //      drawingContext.DrawText(googleCopyright, new System.Windows.Point(5, ActualHeight - googleCopyright.Height - 5));
-         //   }
-         //   break;
-
-         //   case MapType.OpenStreetMap:
-         //   case MapType.OpenStreetOsm:
-         //   case MapType.OpenStreetMapSurfer:
-         //   case MapType.OpenStreetMapSurferTerrain:
-         //   case MapType.OpenSeaMapLabels:
-         //   case MapType.OpenSeaMapHybrid:
-         //   {
-         //      drawingContext.DrawText(openStreetMapCopyright, new System.Windows.Point(5, ActualHeight - openStreetMapCopyright.Height - 5));
-         //   }
-         //   break;
-
-         //   case MapType.YahooMap:
-         //   case MapType.YahooSatellite:
-         //   case MapType.YahooLabels:
-         //   case MapType.YahooHybrid:
-         //   {
-         //      drawingContext.DrawText(yahooMapCopyright, new System.Windows.Point(5, ActualHeight - yahooMapCopyright.Height - 5));
-         //   }
-         //   break;
-
-         //   case MapType.BingHybrid:
-         //   case MapType.BingMap:
-         //   case MapType.BingMap_New:
-         //   case MapType.BingSatellite:
-         //   {
-         //      drawingContext.DrawText(virtualEarthCopyright, new System.Windows.Point(5, ActualHeight - virtualEarthCopyright.Height - 5));
-         //   }
-         //   break;
-
-         //   case MapType.ArcGIS_StreetMap_World_2D:
-         //   case MapType.ArcGIS_Imagery_World_2D:
-         //   case MapType.ArcGIS_ShadedRelief_World_2D:
-         //   case MapType.ArcGIS_Topo_US_2D:
-         //   case MapType.ArcGIS_World_Physical_Map:
-         //   case MapType.ArcGIS_World_Shaded_Relief:
-         //   case MapType.ArcGIS_World_Street_Map:
-         //   case MapType.ArcGIS_World_Terrain_Base:
-         //   case MapType.ArcGIS_World_Topo_Map:
-         //   {
-         //      drawingContext.DrawText(arcGisMapCopyright, new System.Windows.Point(5, ActualHeight - arcGisMapCopyright.Height - 5));
-         //   }
-         //   break;
-
-         //   case MapType.MapsLT_OrtoFoto:
-         //   case MapType.MapsLT_Map:
-         //   case MapType.MapsLT_Map_Hybrid:
-         //   case MapType.MapsLT_Map_Labels:
-         //   {
-         //      drawingContext.DrawText(hnitMapCopyright, new System.Windows.Point(5, ActualHeight - hnitMapCopyright.Height - 5));
-         //   }
-         //   break;
-
-         //   case MapType.PergoTurkeyMap:
-         //   {
-         //      drawingContext.DrawText(pergoMapCopyright, new System.Windows.Point(5, ActualHeight - pergoMapCopyright.Height - 5));
-         //   }
-         //   break;
-
-         //   case MapType.OviMap:
-         //   case MapType.OviMapHybrid:
-         //   case MapType.OviMapSatellite:
-         //   case MapType.OviMapTerrain:
-         //   {
-         //      drawingContext.DrawText(oviMapCopyright, new System.Windows.Point(5, ActualHeight - oviMapCopyright.Height - 5));
-         //   }
-         //   break;
-         //}
+         if(Copyright != null)
+         {
+            drawingContext.DrawText(Copyright, new System.Windows.Point(5, ActualHeight - Copyright.Height - 5));
+         }
 
          #endregion
 

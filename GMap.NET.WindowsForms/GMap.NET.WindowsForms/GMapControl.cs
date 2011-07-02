@@ -18,7 +18,7 @@ namespace GMap.NET.WindowsForms
 
 #if !PocketPC
    using System.Runtime.Serialization.Formatters.Binary;
-   
+
 #endif
 
    /// <summary>
@@ -705,7 +705,7 @@ namespace GMap.NET.WindowsForms
                maxZoom = MaxZoom;
             }
 
-            if((int) Zoom != maxZoom)
+            if((int)Zoom != maxZoom)
             {
                Zoom = maxZoom;
             }
@@ -1299,117 +1299,14 @@ namespace GMap.NET.WindowsForms
 
          #region -- copyright --
 
-         //         switch(Core.MapType)
-         //         {
-         //            case MapType.GoogleMap:
-         //            case MapType.GoogleSatellite:
-         //            case MapType.GoogleLabels:
-         //            case MapType.GoogleTerrain:
-         //            case MapType.GoogleHybrid:
-         //            {
-         //#if !PocketPC
-         //               g.DrawString(Core.googleCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-         //#else
-         //               g.DrawString(Core.googleCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-         //#endif
-         //            }
-         //            break;
-
-         //            case MapType.OpenStreetMap:
-         //            case MapType.OpenStreetOsm:
-         //            case MapType.OpenStreetMapSurfer:
-         //            case MapType.OpenStreetMapSurferTerrain:
-         //            case MapType.OpenSeaMapLabels:
-         //            case MapType.OpenSeaMapHybrid:
-         //            {
-         //#if !PocketPC
-         //               g.DrawString(Core.openStreetMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-         //#else
-         //               g.DrawString(Core.openStreetMapCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-         //#endif
-         //            }
-         //            break;
-
-         //            case MapType.YahooMap:
-         //            case MapType.YahooSatellite:
-         //            case MapType.YahooLabels:
-         //            case MapType.YahooHybrid:
-         //            {
-         //#if !PocketPC
-         //               g.DrawString(Core.yahooMapCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-         //#else
-         //               g.DrawString(Core.yahooMapCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-         //#endif
-         //            }
-         //            break;
-
-         //            case MapType.BingHybrid:
-         //            case MapType.BingMap:
-         //            case MapType.BingMap_New:
-         //            case MapType.BingSatellite:
-         //            {
-         //#if !PocketPC
-         //               g.DrawString(Core.virtualEarthCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-         //#else
-         //               g.DrawString(Core.virtualEarthCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-         //#endif
-         //            }
-         //            break;
-
-         //            case MapType.ArcGIS_StreetMap_World_2D:
-         //            case MapType.ArcGIS_Imagery_World_2D:
-         //            case MapType.ArcGIS_ShadedRelief_World_2D:
-         //            case MapType.ArcGIS_Topo_US_2D:
-         //            case MapType.ArcGIS_World_Physical_Map:
-         //            case MapType.ArcGIS_World_Shaded_Relief:
-         //            case MapType.ArcGIS_World_Street_Map:
-         //            case MapType.ArcGIS_World_Terrain_Base:
-         //            case MapType.ArcGIS_World_Topo_Map:
-         //            {
-         //#if !PocketPC
-         //               g.DrawString(Core.arcGisCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-         //#else
-         //               g.DrawString(Core.arcGisCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-         //#endif
-         //            }
-         //            break;
-
-         //            case MapType.MapsLT_OrtoFoto:
-         //            case MapType.MapsLT_Map:
-         //            case MapType.MapsLT_Map_Hybrid:
-         //            case MapType.MapsLT_Map_Labels:
-         //            {
-         //#if !PocketPC
-         //               g.DrawString(Core.hnitCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-         //#else
-         //               g.DrawString(Core.hnitCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-         //#endif
-         //            }
-         //            break;
-
-         //            case MapType.PergoTurkeyMap:
-         //            {
-         //#if !PocketPC
-         //               g.DrawString(Core.pergoCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-         //#else
-         //               g.DrawString(Core.pergoCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-         //#endif
-         //            }
-         //            break;
-
-         //            case MapType.OviMap:
-         //            case MapType.OviMapHybrid:
-         //            case MapType.OviMapSatellite:
-         //            case MapType.OviMapTerrain:
-         //            {
-         //#if !PocketPC
-         //               g.DrawString(Core.oviCopyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
-         //#else
-         //               g.DrawString(Core.oviCopyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
-         //#endif
-         //            }
-         //            break;
-         //         }
+         if(!string.IsNullOrEmpty(Core.provider.Copyright))
+         {
+#if !PocketPC
+            g.DrawString(Core.provider.Copyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
+#else
+            g.DrawString(Core.provider.Copyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+#endif
+         }
 
          #endregion
 
@@ -2117,7 +2014,7 @@ namespace GMap.NET.WindowsForms
                   zoomReal = value;
                }
 
-               float remainder = (float) System.Decimal.Remainder((Decimal) value, (Decimal) 1);
+               float remainder = (float)System.Decimal.Remainder((Decimal)value, (Decimal)1);
                if(remainder != 0)
                {
                   float scaleValue = remainder + 1;
