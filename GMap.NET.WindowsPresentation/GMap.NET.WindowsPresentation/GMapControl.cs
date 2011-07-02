@@ -1164,9 +1164,6 @@ namespace GMap.NET.WindowsPresentation
             GPoint p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
             GPoint p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
 
-            p1.Offset((int)MapTranslateTransform.X, (int)MapTranslateTransform.Y);
-            p2.Offset((int)MapTranslateTransform.X, (int)MapTranslateTransform.Y);
-
             int x1 = p1.X;
             int y1 = p1.Y;
             int x2 = p2.X;
