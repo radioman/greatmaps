@@ -110,6 +110,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Demo.WindowsForms\Source\DemoStuff.cs">
+      <Link>Source\DemoStuff.cs</Link>
+    </Compile>
     <Compile Include="Windows\Message.xaml.cs">
       <DependentUpon>Message.xaml</DependentUpon>
     </Compile>

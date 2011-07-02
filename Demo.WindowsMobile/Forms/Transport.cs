@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
+using Demo.WindowsForms;
 
 namespace Demo.WindowsMobile
 {
@@ -69,7 +70,7 @@ namespace Demo.WindowsMobile
                      Main.objects.Markers.Remove(b);
                   }
 
-                  GMaps.Instance.GetVilniusTransportData(TransportType.Bus, textBoxBus.Text, Bus);
+                  Stuff.GetVilniusTransportData(TransportType.Bus, textBoxBus.Text, Bus);
 
                   foreach(var t in Bus)
                   {
@@ -91,7 +92,7 @@ namespace Demo.WindowsMobile
                      Main.objects.Markers.Remove(b);
                   }
 
-                  GMaps.Instance.GetVilniusTransportData(TransportType.TrolleyBus, textBoxTrolley.Text, Trolley);
+                  Stuff.GetVilniusTransportData(TransportType.TrolleyBus, textBoxTrolley.Text, Trolley);
 
                   foreach(var t in Trolley)
                   {

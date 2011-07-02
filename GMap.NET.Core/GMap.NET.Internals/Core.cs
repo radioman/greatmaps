@@ -52,7 +52,7 @@ namespace GMap.NET.Internals
       public readonly List<GPoint> tileDrawingList = new List<GPoint>();
       public readonly FastReaderWriterLock tileDrawingListLock = new FastReaderWriterLock();
 
-      public readonly Queue<LoadTask> tileLoadQueue = new Queue<LoadTask>();
+      public readonly Stack<LoadTask> tileLoadQueue = new Stack<LoadTask>();
 
       public static readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       public static readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
@@ -118,9 +118,14 @@ namespace GMap.NET.Internals
 
                if(IsStarted)
                {
-                  lock(tileLoadQueue)
+                  Monitor.Enter(tileLoadQueue);
+                  try
                   {
                      tileLoadQueue.Clear();
+                  }
+                  finally
+                  {
+                     Monitor.Exit(tileLoadQueue);
                   }
 
                   Matrix.ClearLevelsBelove(zoom - LevelsKeepInMemmory);
@@ -234,17 +239,12 @@ namespace GMap.NET.Internals
                   OnMapSizeChanged(Width, Height);
                   ReloadMap();
 
-                  if(OnMapTypeChanged != null)
-                  {
-                     OnMapTypeChanged(value);
-                  }
-
                   if(minZoom < provider.MinZoom)
                   {
                      minZoom = provider.MinZoom;
                   }
 
-                  if(provider.MaxZoom.HasValue && maxZoom > provider.MaxZoom)
+                  if(provider.MaxZoom.HasValue)
                   {
                      maxZoom = provider.MaxZoom.Value;
                   }
@@ -255,6 +255,11 @@ namespace GMap.NET.Internals
                   {
                      SetZoomToFitRect(provider.Area.Value);
                      zoomToArea = false;
+                  }
+
+                  if(OnMapTypeChanged != null)
+                  {
+                     OnMapTypeChanged(value);
                   }
                }
             }
@@ -374,7 +379,10 @@ namespace GMap.NET.Internals
       /// </summary>
       public event MapTypeChanged OnMapTypeChanged;
 
-      static readonly List<Thread> GThreadPool = new List<Thread>();
+      readonly List<Thread> GThreadPool = new List<Thread>();
+      // ^
+      // should be only one pool for multiply controls, any ideas how to fix?
+      //static readonly List<Thread> GThreadPool = new List<Thread>();
 
       // windows forms or wpf
       internal string SystemType;
@@ -396,7 +404,7 @@ namespace GMap.NET.Internals
 #if !DEBUG
 #if !PocketPC
             // in case there a few controls in one app
-            if(!AnalyticsStartDone)
+            if(!AnalyticsStartDone && !GMaps.Instance.DisableCodeplexAnalyticsPing)
             {
                AnalyticsStartDone = true;
 
@@ -407,9 +415,9 @@ namespace GMap.NET.Internals
                   {
                      using(Analytics.MessagingServiceV2 s = new Analytics.MessagingServiceV2())
                      {
-                        if(GMaps.Instance.Proxy != null)
+                        if(GMapProvider.WebProxy != null)
                         {
-                           s.Proxy = GMaps.Instance.Proxy;
+                           s.Proxy = GMapProvider.WebProxy;
                            s.PreAuthenticate = true;
                         }
 
@@ -485,7 +493,7 @@ namespace GMap.NET.Internals
          // send end ping to codeplex Analytics service
          try
          {
-            if(!AnalyticsStopDone)
+            if(!AnalyticsStopDone && !GMaps.Instance.DisableCodeplexAnalyticsPing)
             {
                AnalyticsStopDone = true;
 
@@ -493,9 +501,9 @@ namespace GMap.NET.Internals
                {
                   s.Timeout = 10 * 1000;
 
-                  if(GMaps.Instance.Proxy != null)
+                  if(GMapProvider.WebProxy != null)
                   {
-                     s.Proxy = GMaps.Instance.Proxy;
+                     s.Proxy = GMapProvider.WebProxy;
                      s.PreAuthenticate = true;
                   }
 
@@ -1014,7 +1022,7 @@ namespace GMap.NET.Internals
 
                if(!stop || tileLoadQueue.Count > 0)
                {
-                  task = tileLoadQueue.Dequeue();
+                  task = tileLoadQueue.Pop();
                }
             }
             finally
@@ -1031,10 +1039,9 @@ namespace GMap.NET.Internals
 
                   if(m == Tile.Empty || m.Overlays.Count == 0)
                   {
-                     Debug.WriteLine(ctid + " - Fill empty TileMatrix: " + task);
+                     Debug.WriteLine(ctid + " - try load: " + task);
 
                      Tile t = new Tile(task.Value.Zoom, task.Value.Pos);
-                     //var layers = GMaps.Instance.GetAllLayersOfType(MapType);
 
                      foreach(var tl in provider.Overlays)
                      {
@@ -1056,6 +1063,8 @@ namespace GMap.NET.Internals
 
                            if(img != null)
                            {
+                              Debug.WriteLine(ctid + " - tile loaded: " + img.Data.Length / 1024 + "KB, " + task);
+
                               lock(t.Overlays)
                               {
                                  t.Overlays.Add(img);
@@ -1105,8 +1114,6 @@ namespace GMap.NET.Internals
                         t.Clear();
                         t.Dispose();
                      }
-
-                     //layers = null;
                   }
                   #endregion
                }
@@ -1225,7 +1232,7 @@ namespace GMap.NET.Internals
                   {
                      if(!tileLoadQueue.Contains(task))
                      {
-                        tileLoadQueue.Enqueue(task);
+                        tileLoadQueue.Push(task);
                      }
                   }
                }

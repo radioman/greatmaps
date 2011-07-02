@@ -259,7 +259,7 @@ namespace GMap.NET.MapProviders
       /// <summary>
       /// maximum level of zoom
       /// </summary>
-      public int? MaxZoom;
+      public int? MaxZoom = 17;
 
       /// <summary>
       /// proxy for net access
@@ -274,8 +274,11 @@ namespace GMap.NET.MapProviders
       /// <summary>
       /// timeout for provider connections
       /// </summary>
+#if !PocketPC
       public static int TimeoutMs = 11 * 1000;
-
+#else
+      public static int TimeoutMs = 22 * 1000; 
+#endif
       /// <summary>
       /// Gets or sets the value of the Referer HTTP header.
       /// </summary>

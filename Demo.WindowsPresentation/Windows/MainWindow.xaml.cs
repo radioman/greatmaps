@@ -16,6 +16,7 @@ using GMap.NET;
 using GMap.NET.WindowsPresentation;
 using System.IO;
 using GMap.NET.MapProviders;
+using Demo.WindowsForms;
 
 namespace Demo.WindowsPresentation
 {
@@ -67,7 +68,7 @@ namespace Demo.WindowsPresentation
          MainMap.MouseLeftButtonDown += new System.Windows.Input.MouseButtonEventHandler(MainMap_MouseLeftButtonDown);
          MainMap.Loaded += new RoutedEventHandler(MainMap_Loaded);
          MainMap.MouseEnter += new MouseEventHandler(MainMap_MouseEnter);
-         
+
          // get map types
          comboBoxMapType.ItemsSource = GMapProviders.List;
          comboBoxMapType.DisplayMemberPath = "Name";
@@ -360,12 +361,12 @@ namespace Demo.WindowsPresentation
             {
                lock(trolleybus)
                {
-                  MainMap.Manager.GetVilniusTransportData(TransportType.TrolleyBus, string.Empty, trolleybus);
+                  Stuff.GetVilniusTransportData(TransportType.TrolleyBus, string.Empty, trolleybus);
                }
 
                lock(bus)
                {
-                  MainMap.Manager.GetVilniusTransportData(TransportType.Bus, string.Empty, bus);
+                  Stuff.GetVilniusTransportData(TransportType.Bus, string.Empty, bus);
                }
 
                transport.ReportProgress(100);

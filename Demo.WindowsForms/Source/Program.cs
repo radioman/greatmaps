@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.Net;
-using System.Collections;
 
 namespace Demo.WindowsForms
 {
@@ -286,13 +286,13 @@ namespace Demo.WindowsForms
                tcpTable = Marshal.AllocHGlobal(tcpTableLength);
                if(IpHelper.GetExtendedTcpTable(tcpTable, ref tcpTableLength, true, IpHelper.AfInet, IpHelper.TcpTableType.OwnerPidConnections, 0) == 0)
                {
-                  IpHelper.TcpTable table = (IpHelper.TcpTable) Marshal.PtrToStructure(tcpTable, typeof(IpHelper.TcpTable));
+                  IpHelper.TcpTable table = (IpHelper.TcpTable)Marshal.PtrToStructure(tcpTable, typeof(IpHelper.TcpTable));
 
-                  IntPtr rowPtr = (IntPtr) ((long) tcpTable + Marshal.SizeOf(table.Length));
+                  IntPtr rowPtr = (IntPtr)((long)tcpTable + Marshal.SizeOf(table.Length));
                   for(int i = 0; i < table.Length; ++i)
                   {
-                     TcpRows.Add(new TcpRow((IpHelper.TcpRow) Marshal.PtrToStructure(rowPtr, typeof(IpHelper.TcpRow))));
-                     rowPtr = (IntPtr) ((long) rowPtr + Marshal.SizeOf(typeof(IpHelper.TcpRow)));
+                     TcpRows.Add(new TcpRow((IpHelper.TcpRow)Marshal.PtrToStructure(rowPtr, typeof(IpHelper.TcpRow))));
+                     rowPtr = (IntPtr)((long)rowPtr + Marshal.SizeOf(typeof(IpHelper.TcpRow)));
                   }
                }
             }
@@ -330,7 +330,7 @@ namespace Demo.WindowsForms
       /// <summary>
       /// <see cref="http://msdn2.microsoft.com/en-us/library/aa365928.aspx"/>
       /// </summary>
-      [DllImport(IpHelper.DllName, SetLastError=true)]
+      [DllImport(IpHelper.DllName, SetLastError = true)]
       public static extern uint GetExtendedTcpTable(IntPtr tcpTable, ref int tcpTableLength, bool sort, int ipVersion, TcpTableType tcpTableType, int reserved);
 
       #endregion

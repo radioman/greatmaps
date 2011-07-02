@@ -96,7 +96,7 @@ namespace TemplatedBinding
          }
 
          // main
-         UserMap.MapProvider = GMapProviders.OpenStreetMap;
+         UserMap.MapProvider = GMapProviders.GoogleMap;
          UserMap.MinZoom = 5;
          UserMap.MaxZoom = 13;
          UserMap.Zoom = 5;

@@ -31,7 +31,7 @@ namespace CloudsDemo
                MessageBox.Show("No internet connection avaible, going to CacheOnly mode.", "GMap.NET - CloudsDemo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            mapControl.MapProvider = GMapProviders.OpenStreetMap;
+            mapControl.MapProvider = GMapProviders.BingSatelliteMap;
             mapControl.OnMapZoomChanged += new MapZoomChanged(mapControl_OnMapZoomChanged);
 
             mainOverlay = new GMapOverlay(mapControl, "top");

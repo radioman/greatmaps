@@ -3,33 +3,17 @@ namespace GMap.NET
 {
    using System;
    using System.Collections.Generic;
-   using System.ComponentModel;
    using System.Diagnostics;
    using System.Globalization;
    using System.IO;
    using System.Net;
    using System.Text;
-   using System.Text.RegularExpressions;
    using System.Threading;
-   using System.Xml.Serialization;
-   using System.Data.Common;
    using System.Xml;
+   using System.Xml.Serialization;
    using GMap.NET.CacheProviders;
-   using GMap.NET.Projections;
    using GMap.NET.Internals;
-   using System.Security.Cryptography;
-
-#if !MONO
-   using System.Data.SQLite;
    using GMap.NET.MapProviders;
-   using System.Reflection;
-#else
-   using SQLiteConnection=Mono.Data.SqliteClient.SqliteConnection;
-   using SQLiteTransaction=Mono.Data.SqliteClient.SqliteTransaction;
-   using SQLiteCommand=Mono.Data.SqliteClient.SqliteCommand;
-   using SQLiteDataReader=Mono.Data.SqliteClient.SqliteDataReader;
-   using SQLiteParameter=Mono.Data.SqliteClient.SqliteParameter;
-#endif
 
 #if PocketPC
    using OpenNETCF.ComponentModel;
@@ -42,79 +26,6 @@ namespace GMap.NET
    /// </summary>
    public class GMaps : Singleton<GMaps>
    {
-      public readonly string GServer = ThisIsLegalString("zOl/KnHzebJUqs6JWROaCQ==");
-      public readonly string GServerChina = ThisIsLegalString("zOl/KnHzebLqgdc2FRlQHg==");
-      public readonly string GServerKorea = ThisIsLegalString("ecw6OdJzJ/zgnFTB90qgtw==");
-      public readonly string GServerKoreaKr = ThisIsLegalString("zOl/KnHzebIhmuu+tK5lbw==");
-
-      // Google version strings
-      public string VersionGoogleMap = "m@151";
-      public string VersionGoogleSatellite = "83";
-      public string VersionGoogleLabels = "h@151";
-      public string VersionGoogleTerrain = "t@126,r@151";
-      public string SecGoogleWord = "Galileo";
-
-      // Google (China) version strings
-      public string VersionGoogleMapChina = "m@151";
-      public string VersionGoogleSatelliteChina = "s@83";
-      public string VersionGoogleLabelsChina = "h@151";
-      public string VersionGoogleTerrainChina = "t@126,r@151";
-
-      // Google (Korea) version strings
-      public string VersionGoogleMapKorea = "kr1.12";
-      public string VersionGoogleSatelliteKorea = "83";
-      public string VersionGoogleLabelsKorea = "kr1t.12";
-
-      /// <summary>
-      /// Google Maps API generated using http://greatmaps.codeplex.com/
-      /// from http://tinyurl.com/3q6zhcw <- http://code.server.com/intl/en-us/apis/maps/signup.html
-      /// </summary>
-      public string GoogleMapsAPIKey = @"ABQIAAAAWaQgWiEBF3lW97ifKnAczhRAzBk5Igf8Z5n2W3hNnMT0j2TikxTLtVIGU7hCLLHMAuAMt-BO5UrEWA";
-
-      // Yahoo version strings
-      public string VersionYahooMap = "4.3";
-      public string VersionYahooSatellite = "1.9";
-      public string VersionYahooLabels = "4.3";
-
-      // BingMaps
-      public string VersionBingMaps = "677";
-
-      // YandexMap
-      public string VersionYandexMap = "2.16.0";
-      public string VersionYandexSatellite = "1.19.0";
-
-      /// <summary>
-      /// Bing Maps Customer Identification, more info here
-      /// http://msdn.microsoft.com/en-us/library/bb924353.aspx
-      /// </summary>
-      public string BingMapsClientToken = null;
-
-      readonly string[] levelsForSigPacSpainMap = {"0", "1", "2", "3", "4", 
-                          "MTNSIGPAC", 
-                          "MTN2000", "MTN2000", "MTN2000", "MTN2000", "MTN2000", 
-                          "MTN200", "MTN200", "MTN200", 
-                          "MTN25", "MTN25",
-                          "ORTOFOTOS","ORTOFOTOS","ORTOFOTOS","ORTOFOTOS"};
-      /// <summary>
-      /// default tile server for Pergo maps
-      /// </summary>
-      public string Server_PergoTurkeyMap = "map{0}.pergo.com.tr";
-
-      /// <summary>
-      /// Gets or sets the value of the User-agent HTTP header.
-      /// </summary>
-      public string UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.7) Gecko/20091221 Firefox/3.5.7";
-
-      /// <summary>
-      /// timeout for map connections
-      /// </summary>
-      public int Timeout = 30 * 1000;
-
-      /// <summary>
-      /// proxy for net access
-      /// </summary>
-      public IWebProxy Proxy;
-
       /// <summary>
       /// tile access mode
       /// </summary>
@@ -150,6 +61,12 @@ namespace GMap.NET
       public bool UseGeocoderCache = true;
 
       /// <summary>
+      /// set to True if you don't want provide on/off pings to codeplex.com
+      /// </summary>
+#if !PocketPC
+      public bool DisableCodeplexAnalyticsPing = false;
+#endif
+      /// <summary>
       /// is map using cache for placemarks
       /// </summary>
       public bool UsePlacemarkCache = true;
@@ -158,11 +75,6 @@ namespace GMap.NET
       /// is map using memory cache for tiles
       /// </summary>
       public bool UseMemoryCache = true;
-
-      /// <summary>
-      /// max zoom for maps, 17 is max fo many maps
-      /// </summary>
-      public readonly int MaxZoom = 17;
 
       /// <summary>
       /// Radius of the Earth
@@ -300,80 +212,11 @@ namespace GMap.NET
       }
 
       /// <summary>
-      /// true if google versions was corrected
-      /// </summary>
-      bool IsCorrectedGoogleVersions = false;
-
-      /// <summary>
-      /// true if google versions was corrected
-      /// </summary>
-      bool IsCorrectedBingVersions = false;
-
-      /// <summary>
       /// cache worker
       /// </summary>
       Thread CacheEngine;
 
       readonly AutoResetEvent WaitForCache = new AutoResetEvent(false);
-
-#if !PocketPC
-#if !MONO
-#if SQLite
-      static GMaps()
-      {
-         AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
-      }
-
-      static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-      {
-         if(args.Name.StartsWith("System.Data.SQLite", StringComparison.OrdinalIgnoreCase))
-         {
-            // try local directory
-            //string dir = AppDomain.CurrentDomain.BaseDirectory + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar;
-
-            string rootDir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
-            string dllDir = rootDir + "DllCache" + Path.DirectorySeparatorChar;
-            string dll = dllDir + "v73_NET" + Environment.Version.Major + "_" + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar + "System.Data.SQLite.DLL";
-            if(!File.Exists(dll))
-            {
-               string dir = Path.GetDirectoryName(dll);
-               if(!Directory.Exists(dir))
-               {
-                  Directory.CreateDirectory(dir);
-               }
-
-               Debug.WriteLine("Saving to DllCache: " + dll);
-
-               if(Environment.Version.Major == 2)
-               {
-                  File.WriteAllBytes(dll, (IntPtr.Size == 8 ? Properties.Resources.System_Data_SQLite_x64 : Properties.Resources.System_Data_SQLite_x86));
-               }
-               else if(Environment.Version.Major == 4)
-               {
-                  File.WriteAllBytes(dll, (IntPtr.Size == 8 ? Properties.Resources.System_Data_SQLite_x64_NET4 : Properties.Resources.System_Data_SQLite_x86_NET4));
-               }
-            }
-
-            Debug.WriteLine("Assembly.LoadFile: " + dll);
-
-            return System.Reflection.Assembly.LoadFile(dll);
-         }
-         return null;
-      }
-
-      static int ping = 0;
-
-      /// <summary>
-      /// call this before you use sqlite for other reasons than caching maps
-      /// you can skip it if it's after loading the map
-      /// </summary>
-      public void SQLitePing()
-      {
-         ping++;
-      }
-#endif
-#endif
-#endif
 
       public GMaps()
       {
@@ -385,14 +228,23 @@ namespace GMap.NET
          #endregion
 
          Language = LanguageType.English;
-         ServicePointManager.DefaultConnectionLimit = 444;
+         ServicePointManager.DefaultConnectionLimit = 5;
+      }
 
-#if PocketPC
-         Proxy = GlobalProxySelection.GetEmptyWebProxy();
-#else
-         Proxy = WebRequest.DefaultWebProxy;
+#if !PocketPC
+      /// <summary>
+      /// triggers dynamic sqlite loading, 
+      /// call this before you use sqlite for other reasons than caching maps
+      /// </summary>
+      public void SQLitePing()
+      {
+#if SQLite
+#if !MONO
+         SQLitePureImageCache.Ping();
+#endif
 #endif
       }
+#endif
 
       #region -- Stuff --
 
@@ -427,252 +279,6 @@ namespace GMap.NET
          finally
          {
             kiberCacheLock.ReleaseWriterLock();
-         }
-      }
-
-      /// <summary>
-      /// gets all layers of map type
-      /// </summary>
-      /// <param name="type"></param>
-      /// <returns></returns>
-      public MapType[] GetAllLayersOfType(MapType type)
-      {
-         MapType[] types = null;
-         {
-            switch(type)
-            {
-               case MapType.GoogleHybrid:
-               {
-                  types = new MapType[2];
-                  types[0] = MapType.GoogleSatellite;
-                  types[1] = MapType.GoogleLabels;
-               }
-               break;
-
-               case MapType.GoogleHybridChina:
-               {
-                  types = new MapType[2];
-                  types[0] = MapType.GoogleSatelliteChina;
-                  types[1] = MapType.GoogleLabelsChina;
-               }
-               break;
-
-               case MapType.GoogleHybridKorea:
-               {
-                  types = new MapType[2];
-                  types[0] = MapType.GoogleSatelliteKorea;
-                  types[1] = MapType.GoogleLabelsKorea;
-               }
-               break;
-
-               case MapType.YahooHybrid:
-               {
-                  types = new MapType[2];
-                  types[0] = MapType.YahooSatellite;
-                  types[1] = MapType.YahooLabels;
-               }
-               break;
-
-               case MapType.MapsLT_Map_Hybrid:
-               {
-                  types = new MapType[2];
-                  types[0] = MapType.MapsLT_OrtoFoto;
-                  types[1] = MapType.MapsLT_Map_Labels;
-               }
-               break;
-
-               case MapType.MapsLT_Map_Hybrid_2010:
-               {
-                  types = new MapType[2];
-                  types[0] = MapType.MapsLT_OrtoFoto_2010;
-                  types[1] = MapType.MapsLT_Map_Labels;
-               }
-               break;
-
-               case MapType.YandexMapRuHybrid:
-               {
-                  types = new MapType[2];
-                  types[0] = MapType.YandexMapRuSatellite;
-                  types[1] = MapType.YandexMapRuLabels;
-               }
-               break;
-
-               case MapType.OpenSeaMapHybrid:
-               {
-                  types = new MapType[2];
-                  types[0] = MapType.OpenStreetMap;
-                  types[1] = MapType.OpenSeaMapLabels;
-               }
-               break;
-
-               case MapType.MapyCZ_Hybrid:
-               {
-                  types = new MapType[2];
-                  types[0] = MapType.MapyCZ_Satellite;
-                  types[1] = MapType.MapyCZ_Labels;
-               }
-               break;
-
-               case MapType.MapyCZ_HistoryHybrid:
-               {
-                  types = new MapType[2];
-                  types[0] = MapType.MapyCZ_History;
-                  types[1] = MapType.MapyCZ_Labels;
-               }
-               break;
-
-               case MapType.NearMapHybrid:
-               {
-                  types = new MapType[2];
-                  types[0] = MapType.NearMapSatellite;
-                  types[1] = MapType.NearMapLabels;
-               }
-               break;
-
-               default:
-               {
-                  types = new MapType[1];
-                  types[0] = type;
-               }
-               break;
-            }
-         }
-
-         return types;
-      }
-
-      /// <summary>
-      /// sets projection using specific map
-      /// </summary>
-      /// <param name="type"></param>
-      /// <param name="Projection"></param>
-      public void AdjustProjection(MapType type, ref PureProjection Projection, out int maxZoom)
-      {
-         maxZoom = MaxZoom;
-
-         switch(type)
-         {
-            case MapType.ArcGIS_StreetMap_World_2D:
-            case MapType.ArcGIS_Imagery_World_2D:
-            case MapType.ArcGIS_ShadedRelief_World_2D:
-            case MapType.ArcGIS_Topo_US_2D:
-            {
-               if(false == (Projection is PlateCarreeProjection))
-               {
-                  Projection = new PlateCarreeProjection();
-               }
-               maxZoom = 13;
-            }
-            break;
-
-            case MapType.ArcGIS_World_Physical_Map:
-            {
-               if(false == (Projection is MercatorProjection))
-               {
-                  Projection = new MercatorProjection();
-               }
-               maxZoom = 8;
-            }
-            break;
-
-            case MapType.ArcGIS_World_Shaded_Relief:
-            case MapType.ArcGIS_World_Terrain_Base:
-            {
-               if(false == (Projection is MercatorProjection))
-               {
-                  Projection = new MercatorProjection();
-               }
-               maxZoom = 13;
-            }
-            break;
-
-            case MapType.MapsLT_Map_Hybrid:
-            case MapType.MapsLT_Map_Labels:
-            case MapType.MapsLT_Map:
-            case MapType.MapsLT_OrtoFoto:
-            case MapType.MapsLT_OrtoFoto_2010:
-            case MapType.MapsLT_Map_Hybrid_2010:
-            case MapType.MapsLT_Map_2_5D:
-            {
-               if(false == (Projection is LKS94Projection))
-               {
-                  Projection = new LKS94Projection();
-               }
-               maxZoom = 11;
-            }
-            break;
-
-            case MapType.KarteLV_Map:
-            {
-               if(false == (Projection is LKS92Projection))
-               {
-                  Projection = new LKS92Projection();
-               }
-               maxZoom = 11;
-            }
-            break;
-
-            case MapType.PergoTurkeyMap:
-            {
-               if(false == (Projection is PlateCarreeProjectionPergo))
-               {
-                  Projection = new PlateCarreeProjectionPergo();
-               }
-               maxZoom = 17;
-            }
-            break;
-
-            case MapType.YandexMapRu:
-            case MapType.YandexMapRuHybrid:
-            case MapType.YandexMapRuLabels:
-            case MapType.YandexMapRuSatellite:
-            {
-               if(false == (Projection is MercatorProjectionYandex))
-               {
-                  Projection = new MercatorProjectionYandex();
-               }
-               maxZoom = 18;
-            }
-            break;
-
-            case MapType.OpenStreetMapSurfer:
-            case MapType.OpenStreetMapSurferTerrain:
-            case MapType.SigPacSpainMap:
-            case MapType.ArcGIS_World_Topo_Map:
-            {
-               if(false == (Projection is MercatorProjection))
-               {
-                  Projection = new MercatorProjection();
-               }
-               maxZoom = 19;
-            }
-            break;
-
-            case MapType.MapyCZ_Map:
-            case MapType.MapyCZ_Satellite:
-            case MapType.MapyCZ_MapTurist:
-            case MapType.MapyCZ_Labels:
-            case MapType.MapyCZ_Hybrid:
-            case MapType.MapyCZ_History:
-            case MapType.MapyCZ_HistoryHybrid:
-            {
-               if(false == (Projection is MapyCZProjection))
-               {
-                  Projection = new MapyCZProjection();
-               }
-               maxZoom = 17;
-            }
-            break;
-
-            default:
-            {
-               if(false == (Projection is MercatorProjection))
-               {
-                  Projection = new MercatorProjection();
-                  maxZoom = GMaps.Instance.MaxZoom;
-               }
-            }
-            break;
          }
       }
 
@@ -910,130 +516,6 @@ namespace GMap.NET
 #endif
 
 #endif
-
-      /// <summary>
-      /// gets routes from gpsd log file
-      /// </summary>
-      /// <param name="gpsdLogFile"></param>
-      /// <param name="start">start time(UTC) of route, null to read from very start</param>
-      /// <param name="end">end time(UTC) of route, null to read to the very end</param>
-      /// <param name="maxPositionDilutionOfPrecision">max value of PositionDilutionOfPrecision, null to get all</param>
-      /// <returns></returns>
-      public IEnumerable<List<GpsLog>> GetRoutesFromMobileLog(string gpsdLogFile, DateTime? start, DateTime? end, double? maxPositionDilutionOfPrecision)
-      {
-#if SQLite
-         using(SQLiteConnection cn = new SQLiteConnection())
-         {
-#if !MONO
-            cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=True;", gpsdLogFile);
-#else
-            cn.ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True", gpsdLogFile);
-#endif
-
-            cn.Open();
-            {
-               using(DbCommand cmd = cn.CreateCommand())
-               {
-                  cmd.CommandText = "SELECT * FROM GPS ";
-                  int initLenght = cmd.CommandText.Length;
-
-                  if(start.HasValue)
-                  {
-                     cmd.CommandText += "WHERE TimeUTC >= @t1 ";
-                     SQLiteParameter lookupValue = new SQLiteParameter("@t1", start);
-                     cmd.Parameters.Add(lookupValue);
-                  }
-
-                  if(end.HasValue)
-                  {
-                     if(cmd.CommandText.Length <= initLenght)
-                     {
-                        cmd.CommandText += "WHERE ";
-                     }
-                     else
-                     {
-                        cmd.CommandText += "AND ";
-                     }
-
-                     cmd.CommandText += "TimeUTC <= @t2 ";
-                     SQLiteParameter lookupValue = new SQLiteParameter("@t2", end);
-                     cmd.Parameters.Add(lookupValue);
-                  }
-
-                  if(maxPositionDilutionOfPrecision.HasValue)
-                  {
-                     if(cmd.CommandText.Length <= initLenght)
-                     {
-                        cmd.CommandText += "WHERE ";
-                     }
-                     else
-                     {
-                        cmd.CommandText += "AND ";
-                     }
-
-                     cmd.CommandText += "PositionDilutionOfPrecision <= @p3 ";
-                     SQLiteParameter lookupValue = new SQLiteParameter("@p3", maxPositionDilutionOfPrecision);
-                     cmd.Parameters.Add(lookupValue);
-                  }
-
-                  using(DbDataReader rd = cmd.ExecuteReader())
-                  {
-                     List<GpsLog> points = new List<GpsLog>();
-                     while(rd.Read())
-                     {
-                        GpsLog log = new GpsLog();
-                        {
-                           log.TimeUTC = (DateTime)rd["TimeUTC"];
-                           log.SessionCounter = (long)rd["SessionCounter"];
-                           log.Delta = rd["Delta"] as double?;
-                           log.Speed = rd["Speed"] as double?;
-                           log.SeaLevelAltitude = rd["SeaLevelAltitude"] as double?;
-                           log.EllipsoidAltitude = rd["EllipsoidAltitude"] as double?;
-                           log.SatellitesInView = rd["SatellitesInView"] as System.Byte?;
-                           log.SatelliteCount = rd["SatelliteCount"] as System.Byte?;
-                           log.Position = new PointLatLng((double)rd["Lat"], (double)rd["Lng"]);
-                           log.PositionDilutionOfPrecision = rd["PositionDilutionOfPrecision"] as double?;
-                           log.HorizontalDilutionOfPrecision = rd["HorizontalDilutionOfPrecision"] as double?;
-                           log.VerticalDilutionOfPrecision = rd["VerticalDilutionOfPrecision"] as double?;
-                           log.FixQuality = (FixQuality)((byte)rd["FixQuality"]);
-                           log.FixType = (FixType)((byte)rd["FixType"]);
-                           log.FixSelection = (FixSelection)((byte)rd["FixSelection"]);
-                        }
-
-                        if(log.SessionCounter == 0 && points.Count > 0)
-                        {
-                           List<GpsLog> ret = new List<GpsLog>(points);
-                           points.Clear();
-                           {
-                              yield return ret;
-                           }
-                        }
-
-                        points.Add(log);
-                     }
-
-                     if(points.Count > 0)
-                     {
-                        List<GpsLog> ret = new List<GpsLog>(points);
-                        points.Clear();
-                        {
-                           yield return ret;
-                        }
-                     }
-
-                     points.Clear();
-                     points = null;
-
-                     rd.Close();
-                  }
-               }
-            }
-            cn.Close();
-         }
-#else
-         return null;
-#endif
-      }
 
       /// <summary>
       /// enqueueens tile to cache
@@ -1287,727 +769,9 @@ namespace GMap.NET
          return true;
       }
 
-      static string EncryptString(string Message, string Passphrase)
-      {
-         byte[] Results;
-         System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
-
-         // Step 1. We hash the passphrase using MD5
-         // We use the MD5 hash generator as the result is a 128 bit byte array
-         // which is a valid length for the TripleDES encoder we use below
-
-         using(MD5CryptoServiceProvider HashProvider = new MD5CryptoServiceProvider())
-         {
-            byte[] TDESKey = HashProvider.ComputeHash(UTF8.GetBytes(Passphrase));
-
-            // Step 2. Create a new TripleDESCryptoServiceProvider object
-            using(TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider())
-            {
-               // Step 3. Setup the encoder
-               TDESAlgorithm.Key = TDESKey;
-               TDESAlgorithm.Mode = CipherMode.ECB;
-               TDESAlgorithm.Padding = PaddingMode.PKCS7;
-
-               // Step 4. Convert the input string to a byte[]
-               byte[] DataToEncrypt = UTF8.GetBytes(Message);
-
-               // Step 5. Attempt to encrypt the string
-               try
-               {
-                  using(ICryptoTransform Encryptor = TDESAlgorithm.CreateEncryptor())
-                  {
-                     Results = Encryptor.TransformFinalBlock(DataToEncrypt, 0, DataToEncrypt.Length);
-                  }
-               }
-               finally
-               {
-                  // Clear the TripleDes and Hashprovider services of any sensitive information
-                  TDESAlgorithm.Clear();
-                  HashProvider.Clear();
-               }
-            }
-         }
-
-         // Step 6. Return the encrypted string as a base64 encoded string
-         return Convert.ToBase64String(Results);
-      }
-
-      static string DecryptString(string Message, string Passphrase)
-      {
-         byte[] Results;
-         System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
-
-         // Step 1. We hash the passphrase using MD5
-         // We use the MD5 hash generator as the result is a 128 bit byte array
-         // which is a valid length for the TripleDES encoder we use below
-
-         using(MD5CryptoServiceProvider HashProvider = new MD5CryptoServiceProvider())
-         {
-            byte[] TDESKey = HashProvider.ComputeHash(UTF8.GetBytes(Passphrase));
-
-            // Step 2. Create a new TripleDESCryptoServiceProvider object
-            using(TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider())
-            {
-               // Step 3. Setup the decoder
-               TDESAlgorithm.Key = TDESKey;
-               TDESAlgorithm.Mode = CipherMode.ECB;
-               TDESAlgorithm.Padding = PaddingMode.PKCS7;
-
-               // Step 4. Convert the input string to a byte[]
-               byte[] DataToDecrypt = Convert.FromBase64String(Message);
-
-               // Step 5. Attempt to decrypt the string
-               try
-               {
-                  using(ICryptoTransform Decryptor = TDESAlgorithm.CreateDecryptor())
-                  {
-                     Results = Decryptor.TransformFinalBlock(DataToDecrypt, 0, DataToDecrypt.Length);
-                  }
-               }
-               finally
-               {
-                  // Clear the TripleDes and Hashprovider services of any sensitive information
-                  TDESAlgorithm.Clear();
-                  HashProvider.Clear();
-               }
-            }
-         }
-
-         // Step 6. Return the decrypted string in UTF8 format
-         return UTF8.GetString(Results, 0, Results.Length);
-      }
-
-      public static string EncryptString(string Message)
-      {
-         return EncryptString(Message, "GMap.NET is great and Powerful, Free, cross platform, open source .NET control.");
-      }
-
-      public static string ThisIsLegalString(string Message)
-      {
-         return DecryptString(Message, "GMap.NET is great and Powerful, Free, cross platform, open source .NET control.");
-      }
-
       #endregion
 
       #region -- URL generation --
-
-      /// <summary>
-      /// makes url for image
-      /// </summary>
-      /// <param name="type"></param>
-      /// <param name="pos"></param>
-      /// <param name="zoom"></param>
-      /// <param name="language"></param>
-      /// <returns></returns>
-      internal string MakeImageUrl(MapType type, GPoint pos, int zoom, string language)
-      {
-         switch(type)
-         {
-            #region -- Google --
-            case MapType.GoogleMap:
-            {
-               string server = "mt";
-               string request = "vt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMap, language, pos.X, sec1, pos.Y, zoom, sec2, GServer);
-            }
-
-            case MapType.GoogleSatellite:
-            {
-               string server = "khm";
-               string request = "kh";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleSatellite, language, pos.X, sec1, pos.Y, zoom, sec2, GServer);
-            }
-
-            case MapType.GoogleLabels:
-            {
-               string server = "mt";
-               string request = "vt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabels, language, pos.X, sec1, pos.Y, zoom, sec2, GServer);
-            }
-
-            case MapType.GoogleTerrain:
-            {
-               string server = "mt";
-               string request = "vt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrain, language, pos.X, sec1, pos.Y, zoom, sec2, GServer);
-            }
-            #endregion
-
-            #region -- Google (China) version --
-            case MapType.GoogleMapChina:
-            {
-               string server = "mt";
-               string request = "vt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2, GServerChina);
-            }
-
-            case MapType.GoogleSatelliteChina:
-            {
-               string server = "mt";
-               string request = "vt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{9}/{2}/lyrs={3}&gl=cn&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteChina, pos.X, sec1, pos.Y, zoom, sec2, GServerChina);
-            }
-
-            case MapType.GoogleLabelsChina:
-            {
-               string server = "mt";
-               string request = "vt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/imgtp=png32&lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2, GServerChina);
-            }
-
-            case MapType.GoogleTerrainChina:
-            {
-               string server = "mt";
-               string request = "vt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleTerrainChina, "zh-CN", pos.X, sec1, pos.Y, zoom, sec2, GServer);
-            }
-            #endregion
-
-            #region -- Google (Korea) version --
-            case MapType.GoogleMapKorea:
-            {
-               string server = "mt";
-               string request = "mt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               var ret = string.Format("http://{0}{1}.{10}/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleMapKorea, language, pos.X, sec1, pos.Y, zoom, sec2, GServerKorea);
-               return ret;
-            }
-
-            case MapType.GoogleSatelliteKorea:
-            {
-               string server = "khm";
-               string request = "kh";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{9}/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}", server, GetServerNum(pos, 4), request, VersionGoogleSatelliteKorea, pos.X, sec1, pos.Y, zoom, sec2, GServerKoreaKr);
-            }
-
-            case MapType.GoogleLabelsKorea:
-            {
-               string server = "mt";
-               string request = "mt";
-               string sec1 = ""; // after &x=...
-               string sec2 = ""; // after &zoom=...
-               GetSecGoogleWords(pos, out sec1, out sec2);
-
-               return string.Format("http://{0}{1}.{10}/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}", server, GetServerNum(pos, 4), request, VersionGoogleLabelsKorea, language, pos.X, sec1, pos.Y, zoom, sec2, GServerKorea);
-            }
-            #endregion
-
-            #region -- Yahoo --
-            case MapType.YahooMap:
-            {
-               // http://maps1.yimg.com/hx/tl?b=1&v=4.3&.intl=en&x=12&y=7&z=7&r=1
-
-               return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&.intl={2}&x={3}&y={4}&z={5}&r=1", ((GetServerNum(pos, 2)) + 1), VersionYahooMap, language, pos.X, (((1 << zoom) >> 1) - 1 - pos.Y), (zoom + 1));
-            }
-
-            case MapType.YahooSatellite:
-            {
-               // http://maps3.yimg.com/ae/ximg?v=1.9&t=a&s=256&.intl=en&x=15&y=7&z=7&r=1
-
-               return string.Format("http://maps{0}.yimg.com/ae/ximg?v={1}&t=a&s=256&.intl={2}&x={3}&y={4}&z={5}&r=1", 3, VersionYahooSatellite, language, pos.X, (((1 << zoom) >> 1) - 1 - pos.Y), (zoom + 1));
-            }
-
-            case MapType.YahooLabels:
-            {
-               // http://maps1.yimg.com/hx/tl?b=1&v=4.3&t=h&.intl=en&x=14&y=5&z=7&r=1
-
-               return string.Format("http://maps{0}.yimg.com/hx/tl?v={1}&t=h&.intl={2}&x={3}&y={4}&z={5}&r=1", 1, VersionYahooLabels, language, pos.X, (((1 << zoom) >> 1) - 1 - pos.Y), (zoom + 1));
-            }
-            #endregion
-
-            #region -- OpenStreet --
-            case MapType.OpenStreetMap:
-            {
-               char letter = "abc"[GetServerNum(pos, 3)];
-               return string.Format("http://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
-            }
-
-            case MapType.OpenStreetOsm:
-            {
-               char letter = "abc"[GetServerNum(pos, 3)];
-               return string.Format("http://{0}.tah.openstreetmap.org/Tiles/tile/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
-            }
-
-            case MapType.OpenCycleMap:
-            {
-               //http://b.tile.opencyclemap.org/cycle/13/4428/2772.png
-
-               char letter = "abc"[GetServerNum(pos, 3)];
-               return string.Format("http://{0}.tile.opencyclemap.org/cycle/{1}/{2}/{3}.png", letter, zoom, pos.X, pos.Y);
-            }
-
-            case MapType.OpenStreetMapSurfer:
-            {
-               // http://tiles1.mapsurfer.net/tms_r.ashx?x=37378&y=20826&z=16
-
-               return string.Format("http://tiles1.mapsurfer.net/tms_r.ashx?x={0}&y={1}&z={2}", pos.X, pos.Y, zoom);
-            }
-
-            case MapType.OpenStreetMapSurferTerrain:
-            {
-               // http://tiles2.mapsurfer.net/tms_t.ashx?x=9346&y=5209&z=14
-
-               return string.Format("http://tiles2.mapsurfer.net/tms_t.ashx?x={0}&y={1}&z={2}", pos.X, pos.Y, zoom);
-            }
-
-            case MapType.OpenSeaMapLabels:
-            {
-               // http://tiles.openseamap.org/seamark/15/17481/10495.png
-
-               return string.Format("http://tiles.openseamap.org/seamark/{0}/{1}/{2}.png", zoom, pos.X, pos.Y);
-            }
-            #endregion
-
-            #region -- Bing --
-            case MapType.BingMap:
-            {
-               string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}{4}", GetServerNum(pos, 4), key, VersionBingMaps, language, (!string.IsNullOrEmpty(BingMapsClientToken) ? "&token=" + BingMapsClientToken : string.Empty));
-            }
-
-            case MapType.BingMap_New:
-            {
-               // http://ecn.t3.tiles.virtualearth.net/tiles/r12030012020233?g=559&mkt=en-us&lbl=l1&stl=h&shading=hill&n=z
-
-               string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}{4}&lbl=l1&stl=h&shading=hill&n=z", GetServerNum(pos, 4), key, VersionBingMaps, language, (!string.IsNullOrEmpty(BingMapsClientToken) ? "&token=" + BingMapsClientToken : string.Empty));
-            }
-
-            case MapType.BingSatellite:
-            {
-               string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}{4}", GetServerNum(pos, 4), key, VersionBingMaps, language, (!string.IsNullOrEmpty(BingMapsClientToken) ? "&token=" + BingMapsClientToken : string.Empty));
-            }
-
-            case MapType.BingHybrid:
-            {
-               string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-               return string.Format("http://ecn.t{0}.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}{4}", GetServerNum(pos, 4), key, VersionBingMaps, language, (!string.IsNullOrEmpty(BingMapsClientToken) ? "&token=" + BingMapsClientToken : string.Empty));
-            }
-            #endregion
-
-            #region -- ArcGIS --
-            case MapType.ArcGIS_StreetMap_World_2D:
-            {
-               // http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_StreetMap_World_2D/MapServer/tile/0/0/0.jpg
-
-               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_StreetMap_World_2D/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
-            }
-
-            case MapType.ArcGIS_Imagery_World_2D:
-            {
-               // http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_Imagery_World_2D/MapServer/tile/1/0/1.jpg
-
-               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_Imagery_World_2D/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
-            }
-
-            case MapType.ArcGIS_ShadedRelief_World_2D:
-            {
-               // http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_ShadedRelief_World_2D/MapServer/tile/1/0/1.jpg
-
-               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_ShadedRelief_World_2D/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
-            }
-
-            case MapType.ArcGIS_Topo_US_2D:
-            {
-               // http://server.arcgisonline.com/ArcGIS/rest/services/NGS_Topo_US_2D/MapServer/tile/4/3/15
-
-               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/NGS_Topo_US_2D/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
-            }
-
-            case MapType.ArcGIS_World_Physical_Map:
-            {
-               // http://services.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/2/0/2.jpg
-
-               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
-            }
-
-            case MapType.ArcGIS_World_Shaded_Relief:
-            {
-               // http://services.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/0/0/0jpg
-
-               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
-            }
-
-            case MapType.ArcGIS_World_Street_Map:
-            {
-               // http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/0/0/0jpg
-
-               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
-            }
-
-            case MapType.ArcGIS_World_Terrain_Base:
-            {
-               // http://services.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/0/0/0jpg
-
-               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
-            }
-
-            case MapType.ArcGIS_World_Topo_Map:
-            {
-               // http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/0/0/0jpg
-
-               return string.Format("http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
-            }
-
-#if TESTpjbcoetzer
-            case MapType.ArcGIS_TestPjbcoetzer:
-            {
-               // http://mapping.mapit.co.za/ArcGIS/rest/services/World/MapServer/tile/Zoom/X/Y
-
-               return string.Format("http://mapping.mapit.co.za/ArcGIS/rest/services/World/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
-            }
-#endif
-            #endregion
-
-            #region -- MapsLT --
-            case MapType.MapsLT_OrtoFoto:
-            {
-               // http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L02/R0000001b/C00000028.jpg
-               // http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto/MapServer/tile/0/9/13
-               // return string.Format("http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
-               // http://dc1.maps.lt/cache/mapslt_ortofoto_512/map/_alllayers/L03/R0000001c/C00000029.jpg
-               // return string.Format("http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
-               // http://dc1.maps.lt/cache/mapslt_ortofoto_512/map/_alllayers/L03/R0000001d/C0000002a.jpg
-
-               return string.Format("http://dc1.maps.lt/cache/mapslt_ortofoto/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
-            }
-
-            case MapType.MapsLT_OrtoFoto_2010:
-            {
-               return string.Format("http://dc1.maps.lt/cache/mapslt_ortofoto_2010/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
-            }
-
-            case MapType.MapsLT_Map:
-            {
-               // http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L02/R0000001b/C00000028.jpg
-               // http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto/MapServer/tile/0/9/13
-               // return string.Format("http://www.maps.lt/ortofoto/mapslt_ortofoto_vector_512/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg", zoom, pos.Y, pos.X);
-               // http://arcgis.maps.lt/ArcGIS/rest/services/mapslt/MapServer/tile/7/1162/1684.png
-               // http://dc1.maps.lt/cache/mapslt_512/map/_alllayers/L03/R0000001b/C00000029.png
-
-               // http://dc1.maps.lt/cache/mapslt/map/_alllayers/L02/R0000001c/C00000029.png
-               return string.Format("http://dc1.maps.lt/cache/mapslt/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png", zoom, pos.Y, pos.X);
-            }
-
-            case MapType.MapsLT_Map_2_5D:
-            {
-               // http://dc1.maps.lt/cache/mapslt_25d_vkkp/map/_alllayers/L01/R00007194/C0000a481.png
-               int z = zoom;
-               if(zoom >= 10)
-               {
-                  z -= 10;
-               }
-
-               return string.Format("http://dc1.maps.lt/cache/mapslt_25d_vkkp/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png", z, pos.Y, pos.X);
-            }
-
-            case MapType.MapsLT_Map_Labels:
-            {
-               //http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto_overlay/MapServer/tile/0/9/13
-               //return string.Format("http://arcgis.maps.lt/ArcGIS/rest/services/mapslt_ortofoto_overlay/MapServer/tile/{0}/{1}/{2}", zoom, pos.Y, pos.X);
-               //http://dc1.maps.lt/cache/mapslt_ortofoto_overlay_512/map/_alllayers/L03/R0000001d/C00000029.png
-
-               return string.Format("http://dc1.maps.lt/cache/mapslt_ortofoto_overlay/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png", zoom, pos.Y, pos.X);
-            }
-            #endregion
-
-            #region -- KarteLV --
-
-            case MapType.KarteLV_Map:
-            {
-               // http://www.maps.lt/cache/ikartelv/map/_alllayers/L03/R00000037/C00000053.png
-
-               return string.Format("http://www.maps.lt/cache/ikartelv/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png", zoom, pos.Y, pos.X);
-            }
-
-            #endregion
-
-            #region -- Pergo --
-            case MapType.PergoTurkeyMap:
-            {
-               // http://{domain}/{layerName}/{zoomLevel}/{first3LetterOfTileX}/{second3LetterOfTileX}/{third3LetterOfTileX}/{first3LetterOfTileY}/{second3LetterOfTileY}/{third3LetterOfTileXY}.png
-
-               // http://map3.pergo.com.tr/tile/00/000/000/001/000/000/000.png    
-               // That means: Zoom Level: 0 TileX: 1 TileY: 0
-
-               // http://domain/tile/14/000/019/371/000/011/825.png
-               // That means: Zoom Level: 14 TileX: 19371 TileY:11825
-
-               string x = pos.X.ToString("000000000").Insert(3, "/").Insert(7, "/"); // - 000/000/001
-               string y = pos.Y.ToString("000000000").Insert(3, "/").Insert(7, "/"); // - 000/000/000
-
-               return string.Format("http://" + Server_PergoTurkeyMap + "/tile/{1:00}/{2}/{3}.png", GetServerNum(pos, 4), zoom, x, y);
-            }
-            #endregion
-
-            #region -- SigPac --
-            case MapType.SigPacSpainMap:
-            {
-               return string.Format("http://sigpac.mapa.es/kmlserver/raster/{0}@3785/{1}.{2}.{3}.img", levelsForSigPacSpainMap[zoom], zoom, pos.X, ((2 << zoom - 1) - pos.Y - 1));
-            }
-            #endregion
-
-            #region -- YandexMap --
-            case MapType.YandexMapRu:
-            {
-               string server = "vec";
-
-               //http://vec01.maps.yandex.ru/tiles?l=map&v=2.10.2&x=1494&y=650&z=11
-
-               return string.Format("http://{0}0{1}.maps.yandex.ru/tiles?l=map&v={2}&x={3}&y={4}&z={5}", server, GetServerNum(pos, 4) + 1, VersionYandexMap, pos.X, pos.Y, zoom);
-            }
-
-            case MapType.YandexMapRuSatellite:
-            {
-               string server = "sat";
-
-               //http://sat04.maps.yandex.ru/tiles?l=sat&v=1.18.0&x=149511&y=83513&z=18&g=Gagari
-
-               return string.Format("http://{0}0{1}.maps.yandex.ru/tiles?l=sat&v={2}&x={3}&y={4}&z={5}", server, GetServerNum(pos, 4) + 1, VersionYandexSatellite, pos.X, pos.Y, zoom);
-            }
-
-            case MapType.YandexMapRuLabels:
-            {
-               string server = "vec";
-
-               //http://vec03.maps.yandex.ru/tiles?l=skl&v=2.15.0&x=585&y=326&z=10&g=G
-
-               return string.Format("http://{0}0{1}.maps.yandex.ru/tiles?l=skl&v={2}&x={3}&y={4}&z={5}", server, GetServerNum(pos, 4) + 1, VersionYandexMap, pos.X, pos.Y, zoom);
-            }
-
-            #endregion
-
-            #region -- WMS demo --
-            case MapType.MapBenderWMS:
-            {
-               var px1 = ProjectionForWMS.FromTileXYToPixel(pos);
-               var px2 = px1;
-
-               px1.Offset(0, ProjectionForWMS.TileSize.Height);
-               PointLatLng p1 = ProjectionForWMS.FromPixelToLatLng(px1, zoom);
-
-               px2.Offset(ProjectionForWMS.TileSize.Width, 0);
-               PointLatLng p2 = ProjectionForWMS.FromPixelToLatLng(px2, zoom);
-
-               var ret = string.Format(CultureInfo.InvariantCulture, "http://mapbender.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&VERSION=1.1.1&REQUEST=GetMap&SERVICE=WMS&LAYERS=OSM_Basic&styles=&bbox={0},{1},{2},{3}&width={4}&height={5}&srs=EPSG:4326&format=image/png", p1.Lng, p1.Lat, p2.Lng, p2.Lat, ProjectionForWMS.TileSize.Width, ProjectionForWMS.TileSize.Height);
-
-               return ret;
-            }
-            #endregion
-
-            #region -- MapyCZ --
-            case MapType.MapyCZ_Map:
-            {
-               // ['base','ophoto','turist','army2']  
-               // http://m1.mapserver.mapy.cz/base-n/3_8000000_8000000
-
-               int xx = pos.X << (28 - zoom);
-               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
-
-               return string.Format("http://m{0}.mapserver.mapy.cz/base-n/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
-            }
-
-            case MapType.MapyCZ_MapTurist:
-            {
-               // http://m1.mapserver.mapy.cz/turist/3_8000000_8000000
-
-               int xx = pos.X << (28 - zoom);
-               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
-
-               return string.Format("http://m{0}.mapserver.mapy.cz/turist/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
-            }
-
-            case MapType.MapyCZ_Satellite:
-            {
-               //http://m3.mapserver.mapy.cz/ophoto/9_7a80000_7a80000
-
-               int xx = pos.X << (28 - zoom);
-               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
-
-               return string.Format("http://m{0}.mapserver.mapy.cz/ophoto/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
-            }
-
-            case MapType.MapyCZ_Labels:
-            {
-               // http://m2.mapserver.mapy.cz/hybrid/9_7d00000_7b80000
-
-               int xx = pos.X << (28 - zoom);
-               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
-
-               return string.Format("http://m{0}.mapserver.mapy.cz/hybrid/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
-            }
-
-            case MapType.MapyCZ_History:
-            {
-               // http://m4.mapserver.mapy.cz/army2/9_7d00000_8080000
-
-               int xx = pos.X << (28 - zoom);
-               int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
-
-               return string.Format("http://m{0}.mapserver.mapy.cz/army2/{1}_{2:x7}_{3:x7}", GetServerNum(pos, 3) + 1, zoom, xx, yy);
-            }
-
-            #endregion
-
-            #region -- NearMap --
-            case MapType.NearMap:
-            {
-               // http://web1.nearmap.com/maps/hl=en&x=18681&y=10415&z=15&nml=Map_&nmg=1&s=kY8lZssipLIJ7c5
-
-               return string.Format("http://web{0}.nearmap.com/maps/hl=en&x={1}&y={2}&z={3}&nml=Map_&nmg=1", GetServerNum(pos, 3), pos.X, pos.Y, zoom);
-            }
-
-            case MapType.NearMapSatellite:
-            {
-               // http://web2.nearmap.com/maps/hl=en&x=34&y=20&z=6&nml=Vert&s=2NYYKGF
-
-               return string.Format("http://web{0}.nearmap.com/maps/hl=en&x={1}&y={2}&z={3}&nml=Vert", GetServerNum(pos, 3), pos.X, pos.Y, zoom);
-            }
-
-            case MapType.NearMapLabels:
-            {
-               //http://web1.nearmap.com/maps/hl=en&x=37&y=19&z=6&nml=MapT&nmg=1&s=2KbhmZZ             
-
-               return string.Format("http://web{0}.nearmap.com/maps/hl=en&x={1}&y={2}&z={3}&nml=MapT&nmg=1", GetServerNum(pos, 3), pos.X, pos.Y, zoom);
-            }
-            #endregion
-
-            #region -- OviMap --
-            case MapType.OviMap:
-            {
-               // http://c.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/normal.day/12/2321/1276/256/png8
-
-               char letter = "bcde"[GetServerNum(pos, 4)];
-               return string.Format("http://{0}.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/normal.day/{1}/{2}/{3}/256/png8", letter, zoom, pos.X, pos.Y);
-            }
-
-            case MapType.OviMapHybrid:
-            {
-               // http://c.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/hybrid.day/12/2316/1277/256/png8
-
-               char letter = "bcde"[GetServerNum(pos, 4)];
-               return string.Format("http://{0}.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/hybrid.day/{1}/{2}/{3}/256/png8", letter, zoom, pos.X, pos.Y);
-            }
-
-            case MapType.OviMapSatellite:
-            {
-               // http://b.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/satellite.day/12/2313/1275/256/png8
-
-               char letter = "bcde"[GetServerNum(pos, 4)];
-               return string.Format("http://{0}.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/satellite.day/{1}/{2}/{3}/256/png8", letter, zoom, pos.X, pos.Y);
-            }
-
-            case MapType.OviMapTerrain:
-            {
-               // http://d.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/terrain.day/12/2317/1277/256/png8
-
-               char letter = "bcde"[GetServerNum(pos, 4)];
-               return string.Format("http://{0}.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/terrain.day/{1}/{2}/{3}/256/png8", letter, zoom, pos.X, pos.Y);
-            }
-            #endregion
-         }
-
-         return null;
-      }
-
-      Projections.MercatorProjection ProjectionForWMS = new Projections.MercatorProjection();
-
-      /// <summary>
-      /// gets secure google words based on position
-      /// </summary>
-      /// <param name="pos"></param>
-      /// <param name="sec1"></param>
-      /// <param name="sec2"></param>
-      internal void GetSecGoogleWords(GPoint pos, out string sec1, out string sec2)
-      {
-         sec1 = ""; // after &x=...
-         sec2 = ""; // after &zoom=...
-         int seclen = ((pos.X * 3) + pos.Y) % 8;
-         sec2 = SecGoogleWord.Substring(0, seclen);
-         if(pos.Y >= 10000 && pos.Y < 100000)
-         {
-            sec1 = "&s=";
-         }
-      }
-
-      /// <summary>
-      /// gets server num based on position
-      /// </summary>
-      /// <param name="pos"></param>
-      /// <returns></returns>
-      internal int GetServerNum(GPoint pos, int max)
-      {
-         return (pos.X + 2 * pos.Y) % max;
-      }
-
-      /// <summary>
-      /// Converts tile XY coordinates into a QuadKey at a specified level of detail.
-      /// </summary>
-      /// <param name="tileX">Tile X coordinate.</param>
-      /// <param name="tileY">Tile Y coordinate.</param>
-      /// <param name="levelOfDetail">Level of detail, from 1 (lowest detail)
-      /// to 23 (highest detail).</param>
-      /// <returns>A string containing the QuadKey.</returns>
-      internal string TileXYToQuadKey(int tileX, int tileY, int levelOfDetail)
-      {
-         StringBuilder quadKey = new StringBuilder();
-         for(int i = levelOfDetail; i > 0; i--)
-         {
-            char digit = '0';
-            int mask = 1 << (i - 1);
-            if((tileX & mask) != 0)
-            {
-               digit++;
-            }
-            if((tileY & mask) != 0)
-            {
-               digit++;
-               digit++;
-            }
-            quadKey.Append(digit);
-         }
-         return quadKey.ToString();
-      }
 
       /// <summary>
       /// makes url for geocoder
@@ -2018,18 +782,18 @@ namespace GMap.NET
       internal string MakeGeocoderUrl(string keywords, string language)
       {
          string key = keywords.Replace(' ', '+');
-         return string.Format("http://maps.{3}/maps/geo?q={0}&hl={1}&output=csv&key={2}", key, language, GoogleMapsAPIKey, GServer);
+         return string.Format("http://maps.{3}/maps/geo?q={0}&hl={1}&output=csv&key={2}", key, language, GMapProviders.GoogleMap.APIKey, GMapProviders.GoogleMap.Server);
       }
 
-      /// <summary>
       /// makes url for reverse geocoder
+      /// <summary>
       /// </summary>
       /// <param name="pt"></param>
       /// <param name="language"></param>
       /// <returns></returns>
       internal string MakeReverseGeocoderUrl(PointLatLng pt, string language)
       {
-         return string.Format("http://maps.{4}/maps/geo?hl={0}&ll={1},{2}&output=xml&key={3}", language, pt.Lat.ToString(CultureInfo.InvariantCulture), pt.Lng.ToString(CultureInfo.InvariantCulture), GoogleMapsAPIKey, GServer);
+         return string.Format("http://maps.{4}/maps/geo?hl={0}&ll={1},{2}&output=xml&key={3}", language, pt.Lat.ToString(CultureInfo.InvariantCulture), pt.Lng.ToString(CultureInfo.InvariantCulture), GMapProviders.GoogleMap.APIKey, GMapProviders.GoogleMap.Server);
       }
 
       /// <summary>
@@ -2044,7 +808,7 @@ namespace GMap.NET
       {
          string highway = avoidHighways ? "&mra=ls&dirflg=dh" : "&mra=ls&dirflg=d";
 
-         return string.Format("http://maps.{6}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, highway, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture), GServer);
+         return string.Format("http://maps.{6}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, highway, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture), GMapProviders.GoogleMap.Server);
       }
 
       /// <summary>
@@ -2059,7 +823,7 @@ namespace GMap.NET
       {
          string highway = avoidHighways ? "&mra=ls&dirflg=dh" : "&mra=ls&dirflg=d";
 
-         return string.Format("http://maps.{4}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'), GServer);
+         return string.Format("http://maps.{4}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'), GMapProviders.GoogleMap.Server);
       }
 
       /// <summary>
@@ -2074,7 +838,7 @@ namespace GMap.NET
       {
          string highway = avoidHighways ? "&mra=ls&dirflg=dh" : "&mra=ls&dirflg=d";
 
-         return string.Format("http://maps.{6}/maps?f=q&output=kml&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, highway, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture), GServer);
+         return string.Format("http://maps.{6}/maps?f=q&output=kml&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, highway, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture), GMapProviders.GoogleMap.Server);
       }
 
       /// <summary>
@@ -2089,7 +853,7 @@ namespace GMap.NET
       {
          string highway = avoidHighways ? "&mra=ls&dirflg=dh" : "&mra=ls&dirflg=d";
 
-         return string.Format("http://maps.{4}/maps?f=q&output=kml&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'), GServer);
+         return string.Format("http://maps.{4}/maps?f=q&output=kml&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'), GMapProviders.GoogleMap.Server);
       }
 
       /// <summary>
@@ -2103,7 +867,7 @@ namespace GMap.NET
       {
          string directions = "&mra=ls&dirflg=w";
 
-         return string.Format("http://maps.{6}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, directions, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture), GServer);
+         return string.Format("http://maps.{6}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}", language, directions, start.Lat.ToString(CultureInfo.InvariantCulture), start.Lng.ToString(CultureInfo.InvariantCulture), end.Lat.ToString(CultureInfo.InvariantCulture), end.Lng.ToString(CultureInfo.InvariantCulture), GMapProviders.GoogleMap.Server);
       }
 
       /// <summary>
@@ -2116,7 +880,7 @@ namespace GMap.NET
       internal string MakeWalkingRouteUrl(string start, string end, string language)
       {
          string directions = "&mra=ls&dirflg=w";
-         return string.Format("http://maps.{4}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, directions, start.Replace(' ', '+'), end.Replace(' ', '+'), GServer);
+         return string.Format("http://maps.{4}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}", language, directions, start.Replace(' ', '+'), end.Replace(' ', '+'), GMapProviders.GoogleMap.Server);
       }
 
       #endregion
@@ -2136,17 +900,17 @@ namespace GMap.NET
          {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.ServicePoint.ConnectionLimit = 50;
-            if(Proxy != null)
+            if(GMapProvider.WebProxy != null)
             {
-               request.Proxy = Proxy;
+               request.Proxy = GMapProvider.WebProxy;
 #if !PocketPC
                request.PreAuthenticate = true;
 #endif
             }
 
-            request.UserAgent = UserAgent;
-            request.Timeout = Timeout;
-            request.ReadWriteTimeout = Timeout * 6;
+            request.UserAgent = GMapProvider.UserAgent;
+            request.Timeout = GMapProvider.TimeoutMs;
+            request.ReadWriteTimeout = GMapProvider.TimeoutMs * 6;
 
             using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
             {
@@ -2216,17 +980,17 @@ namespace GMap.NET
             if(string.IsNullOrEmpty(geo))
             {
                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-               if(Proxy != null)
+               if(GMapProvider.WebProxy != null)
                {
-                  request.Proxy = Proxy;
+                  request.Proxy = GMapProvider.WebProxy;
 #if !PocketPC
                   request.PreAuthenticate = true;
 #endif
                }
 
-               request.UserAgent = UserAgent;
-               request.Timeout = Timeout;
-               request.ReadWriteTimeout = Timeout * 6;
+               request.UserAgent = GMapProvider.UserAgent;
+               request.Timeout = GMapProvider.TimeoutMs;
+               request.ReadWriteTimeout = GMapProvider.TimeoutMs * 6;
                request.KeepAlive = false;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
@@ -2316,17 +1080,17 @@ namespace GMap.NET
             if(string.IsNullOrEmpty(reverse))
             {
                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-               if(Proxy != null)
+               if(GMapProvider.WebProxy != null)
                {
-                  request.Proxy = Proxy;
+                  request.Proxy = GMapProvider.WebProxy;
 #if !PocketPC
                   request.PreAuthenticate = true;
 #endif
                }
 
-               request.UserAgent = UserAgent;
-               request.Timeout = Timeout;
-               request.ReadWriteTimeout = Timeout * 6;
+               request.UserAgent = GMapProvider.UserAgent;
+               request.Timeout = GMapProvider.TimeoutMs;
+               request.ReadWriteTimeout = GMapProvider.TimeoutMs * 6;
                request.KeepAlive = false;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
@@ -2418,7 +1182,7 @@ namespace GMap.NET
                   doc.LoadXml(reverse);
 
                   XmlNamespaceManager nsMgr = new XmlNamespaceManager(doc.NameTable);
-                  nsMgr.AddNamespace("sm", string.Format("http://earth.{0}/kml/2.0", GServer));
+                  nsMgr.AddNamespace("sm", string.Format("http://earth.{0}/kml/2.0", GMapProviders.GoogleMap.Server));
                   nsMgr.AddNamespace("sn", "urn:oasis:names:tc:ciq:xsdschema:xAL:2.0");
 
                   XmlNodeList l = doc.SelectNodes("/sm:kml/sm:Response/sm:Placemark", nsMgr);
@@ -2504,17 +1268,17 @@ namespace GMap.NET
             {
                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                request.ServicePoint.ConnectionLimit = 50;
-               if(Proxy != null)
+               if(GMapProvider.WebProxy != null)
                {
-                  request.Proxy = Proxy;
+                  request.Proxy = GMapProvider.WebProxy;
 #if !PocketPC
                   request.PreAuthenticate = true;
 #endif
                }
 
-               request.UserAgent = UserAgent;
-               request.Timeout = Timeout;
-               request.ReadWriteTimeout = Timeout * 6;
+               request.UserAgent = GMapProvider.UserAgent;
+               request.Timeout = GMapProvider.TimeoutMs;
+               request.ReadWriteTimeout = GMapProvider.TimeoutMs * 6;
                request.KeepAlive = false;
 
                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
@@ -2857,7 +1621,7 @@ namespace GMap.NET
                   //   case MapType.GoogleTerrain:
                   //   case MapType.GoogleHybrid:
                   //   {
-                  //      request.Referer = string.Format("http://maps.{0}/", GServer);
+                  //      request.Referer = string.Format("http://maps.{0}/", GMapProviders.GoogleMap.Server);
                   //   }
                   //   break;
 
@@ -2867,7 +1631,7 @@ namespace GMap.NET
                   //   case MapType.GoogleTerrainChina:
                   //   case MapType.GoogleHybridChina:
                   //   {
-                  //      request.Referer = string.Format("http://ditu.{0}/", GServerChina);
+                  //      request.Referer = string.Format("http://ditu.{0}/", GMapProviders.GoogleMap.ServerChina);
                   //   }
                   //   break;
 
@@ -2986,151 +1750,6 @@ namespace GMap.NET
          }
 
          return ret;
-      }
-
-      /// <summary>
-      /// gets realtime data from public transport in city vilnius of lithuania
-      /// </summary>
-      /// <param name="type">type of transport</param>
-      /// <param name="line">linenum or null to get all</param>
-      /// <param name="ret"></param>
-      public void GetVilniusTransportData(TransportType type, string line, List<VehicleData> ret)
-      {
-         ret.Clear();
-
-         string url = "http://www.troleibusai.lt/puslapiai/services/vehiclestate.php?type=";
-
-         switch(type)
-         {
-            case TransportType.Bus:
-            {
-               url += "bus";
-            }
-            break;
-
-            case TransportType.TrolleyBus:
-            {
-               url += "trolley";
-            }
-            break;
-         }
-
-         if(!string.IsNullOrEmpty(line))
-         {
-            url += "&line=" + line;
-         }
-
-#if !PocketPC
-         url += "&app=GMap.NET.Desktop";
-#else
-         url += "&app=GMap.NET.WindowsMobile";
-#endif
-
-         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-         {
-#if !PocketPC
-            request.Proxy = WebRequest.DefaultWebProxy;
-#else
-            request.Proxy = GlobalProxySelection.GetEmptyWebProxy();
-#endif
-         }
-
-         request.Timeout = Timeout;
-         request.ReadWriteTimeout = request.Timeout;
-         request.Accept = "*/*";
-         request.KeepAlive = false;
-
-         string xml = string.Empty;
-
-         using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-         {
-            using(Stream responseStream = response.GetResponseStream())
-            {
-               using(StreamReader read = new StreamReader(responseStream))
-               {
-                  xml = read.ReadToEnd();
-               }
-            }
-         }
-
-         XmlDocument doc = new XmlDocument();
-         {
-            doc.LoadXml(xml);
-
-            XmlNodeList devices = doc.GetElementsByTagName("Device");
-            foreach(XmlNode dev in devices)
-            {
-               VehicleData d = new VehicleData();
-               d.Id = int.Parse(dev.Attributes["ID"].InnerText);
-
-               foreach(XmlElement elem in dev.ChildNodes)
-               {
-                  // Debug.WriteLine(d.Id + "->" + elem.Name + ": " + elem.InnerText);
-
-                  switch(elem.Name)
-                  {
-                     case "Lat":
-                     {
-                        d.Lat = double.Parse(elem.InnerText, CultureInfo.InvariantCulture);
-                     }
-                     break;
-
-                     case "Lng":
-                     {
-                        d.Lng = double.Parse(elem.InnerText, CultureInfo.InvariantCulture);
-                     }
-                     break;
-
-                     case "Bearing":
-                     {
-                        if(!string.IsNullOrEmpty(elem.InnerText))
-                        {
-                           d.Bearing = double.Parse(elem.InnerText, CultureInfo.InvariantCulture);
-                        }
-                     }
-                     break;
-
-                     case "LineNum":
-                     {
-                        d.Line = elem.InnerText;
-                     }
-                     break;
-
-                     case "AreaName":
-                     {
-                        d.AreaName = elem.InnerText;
-                     }
-                     break;
-
-                     case "StreetName":
-                     {
-                        d.StreetName = elem.InnerText;
-                     }
-                     break;
-
-                     case "TrackType":
-                     {
-                        d.TrackType = elem.InnerText;
-                     }
-                     break;
-
-                     case "LastStop":
-                     {
-                        d.LastStop = elem.InnerText;
-                     }
-                     break;
-
-                     case "Time":
-                     {
-                        d.Time = elem.InnerText;
-                     }
-                     break;
-                  }
-               }
-               ret.Add(d);
-            }
-         }
-         doc = null;
       }
 
       #endregion

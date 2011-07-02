@@ -16,13 +16,13 @@ namespace GMap.NET.Internals
       {
          FieldInfo fi = value.GetType().GetField(value.ToString());
          DescriptionAttribute[] attributes =
-                (DescriptionAttribute[]) fi.GetCustomAttributes(
+                (DescriptionAttribute[])fi.GetCustomAttributes(
                typeof(DescriptionAttribute), false);
 
          return (attributes.Length > 0) ? attributes[0].Description : value.ToString();
       }
 
-      [System.Runtime.InteropServices.DllImportAttribute("user32.dll", EntryPoint="SetCursorPos")]
+      [System.Runtime.InteropServices.DllImportAttribute("user32.dll", EntryPoint = "SetCursorPos")]
       [return: System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.Bool)]
       public static extern bool SetCursorPos(int X, int Y);
 
@@ -34,7 +34,7 @@ namespace GMap.NET.Internals
 
          for(int i = 0; i < N; ++i)
          {
-            int r = i + (int) (random.Next(N - i));
+            int r = i + (int)(random.Next(N - i));
             T t = deck[r];
             deck[r] = deck[i];
             deck[i] = t;
@@ -43,7 +43,7 @@ namespace GMap.NET.Internals
 
       public static MemoryStream CopyStream(Stream inputStream, bool SeekOriginBegin)
       {
-         const int readSize = 4 * 1024;
+         const int readSize = 32 * 1024;
          byte[] buffer = new byte[readSize];
          MemoryStream ms = new MemoryStream();
          {
@@ -85,28 +85,28 @@ namespace GMap.NET.Internals
    {
       static readonly OpenNETCF.Threading.Monitor2 wait = new OpenNETCF.Threading.Monitor2();
 
-      public static void Enter(object tileLoadQueue)
+      public static void Enter(Stack<LoadTask> tileLoadQueue)
       {
          wait.Enter();
       }
 
-      public static void Exit(object tileLoadQueue)
+      public static void Exit(Stack<LoadTask> tileLoadQueue)
       {
          wait.Exit();
       }
 
-      public static void Wait(object tileLoadQueue)
+      public static void Wait(Stack<LoadTask> tileLoadQueue)
       {
          wait.Wait();
       }
 
-      public static bool Wait(Queue<LoadTask> tileLoadQueue, int WaitForTileLoadThreadTimeout, bool p)
+      public static bool Wait(Stack<LoadTask> tileLoadQueue, int WaitForTileLoadThreadTimeout, bool p)
       {
          wait.Wait();
          return true;
       }
 
-      internal static void PulseAll(Queue<LoadTask> tileLoadQueue)
+      internal static void PulseAll(Stack<LoadTask> tileLoadQueue)
       {
          wait.PulseAll();
       }

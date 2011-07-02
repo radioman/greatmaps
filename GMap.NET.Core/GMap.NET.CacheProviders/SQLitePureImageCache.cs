@@ -2,8 +2,17 @@
 namespace GMap.NET.CacheProviders
 {
 #if SQLite
+
    using System.Collections.Generic;
    using System.Data.Common;
+   using System.IO;
+   using System.Text;
+   using System;
+   using System.Diagnostics;
+   using System.Globalization;
+   using GMap.NET.MapProviders;
+   using System.Threading;
+
 #if !MONO
    using System.Data.SQLite;
 #else
@@ -13,19 +22,68 @@ namespace GMap.NET.CacheProviders
    using SQLiteDataReader=Mono.Data.SqliteClient.SqliteDataReader;
    using SQLiteParameter=Mono.Data.SqliteClient.SqliteParameter;
 #endif
-   using System.IO;
-   using System.Text;
-   using System;
-   using System.Diagnostics;
-   using System.Globalization;
-   using GMap.NET.MapProviders;
-   using System.Threading;
 
    /// <summary>
    /// ultra fast cache system for tiles
    /// </summary>
    internal class SQLitePureImageCache : PureImageCache
    {
+#if !PocketPC
+#if !MONO
+      static SQLitePureImageCache()
+      {
+         AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+      }
+
+      static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+      {
+         if(args.Name.StartsWith("System.Data.SQLite", StringComparison.OrdinalIgnoreCase))
+         {
+            // try local directory
+            //string dir = AppDomain.CurrentDomain.BaseDirectory + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar;
+
+            string rootDir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+            string dllDir = rootDir + "DllCache" + Path.DirectorySeparatorChar;
+            string dll = dllDir + "v73_NET" + Environment.Version.Major + "_" + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar + "System.Data.SQLite.DLL";
+            if(!File.Exists(dll))
+            {
+               string dir = Path.GetDirectoryName(dll);
+               if(!Directory.Exists(dir))
+               {
+                  Directory.CreateDirectory(dir);
+               }
+
+               Debug.WriteLine("Saving to DllCache: " + dll);
+
+               if(Environment.Version.Major == 2)
+               {
+                  File.WriteAllBytes(dll, (IntPtr.Size == 8 ? Properties.Resources.System_Data_SQLite_x64 : Properties.Resources.System_Data_SQLite_x86));
+               }
+               else if(Environment.Version.Major == 4)
+               {
+                  File.WriteAllBytes(dll, (IntPtr.Size == 8 ? Properties.Resources.System_Data_SQLite_x64_NET4 : Properties.Resources.System_Data_SQLite_x86_NET4));
+               }
+            }
+
+            Debug.WriteLine("Assembly.LoadFile: " + dll);
+
+            return System.Reflection.Assembly.LoadFile(dll);
+         }
+         return null;
+      }
+
+      static int ping = 0;
+
+      /// <summary>
+      /// triggers dynamic sqlite loading
+      /// </summary>
+      public static void Ping()
+      {
+         ping++;
+      }
+#endif
+#endif
+
       string cache;
       string gtileCache;
       string dir;
