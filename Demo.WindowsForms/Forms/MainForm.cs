@@ -191,26 +191,10 @@ namespace Demo.WindowsForms
                }
 
                // add some points in lithuania
-               //AddLocationLithuania("Kaunas");
-               //AddLocationLithuania("Klaipėda");
-               //AddLocationLithuania("Šiauliai");
-               //AddLocationLithuania("Panevėžys");
-
-               //     1,  54.483246,  23.384623	
-               //WP,D,2,  54.605095,  23.521299
-               //WP,D,3,  54.690020,  23.993697
-               //WP,D,4,  54.668329,  24.396657
-               //WP,D,5,  54.086510,  24.738176
-               //WP,D,6,  54.125640,  24.375135
-               //WP,D,7,  54.561234,  24.127164
-
-               AddTmpPoint("1", new PointLatLng(54.483246, 23.384623));
-               AddTmpPoint("2", new PointLatLng(54.605095, 23.521299));
-               AddTmpPoint("3", new PointLatLng(54.690020, 23.993697));
-               AddTmpPoint("4", new PointLatLng(54.668329, 24.396657));
-               AddTmpPoint("5", new PointLatLng(54.086510, 24.738176));
-               AddTmpPoint("6", new PointLatLng(54.125640, 24.375135));
-               AddTmpPoint("7", new PointLatLng(54.561234, 24.127164));
+               AddLocationLithuania("Kaunas");
+               AddLocationLithuania("Klaipėda");
+               AddLocationLithuania("Šiauliai");
+               AddLocationLithuania("Panevėžys");
 
                RegeneratePolygon();
             }
@@ -356,12 +340,12 @@ namespace Demo.WindowsForms
             {
                lock(trolleybus)
                {
-                  MainMap.Manager.GetVilniusTransportData(GMap.NET.TransportType.TrolleyBus, string.Empty, trolleybus);
+                  Stuff.GetVilniusTransportData(TransportType.TrolleyBus, string.Empty, trolleybus);
                }
 
                lock(bus)
                {
-                  MainMap.Manager.GetVilniusTransportData(GMap.NET.TransportType.Bus, string.Empty, bus);
+                  Stuff.GetVilniusTransportData(TransportType.Bus, string.Empty, bus);
                }
 
                transport.ReportProgress(100);
@@ -1129,7 +1113,7 @@ namespace Demo.WindowsForms
                dateEnd = MobileLogTo.Value.ToUniversalTime();
             }
 
-            var log = GMaps.Instance.GetRoutesFromMobileLog(file, date, dateEnd, 3.3);
+            var log = Stuff.GetRoutesFromMobileLog(file, date, dateEnd, 3.3);
 
             if(routes != null)
             {
@@ -1963,7 +1947,7 @@ namespace Demo.WindowsForms
 
                if(sfd.ShowDialog() == DialogResult.OK)
                {
-                  var log = GMaps.Instance.GetRoutesFromMobileLog(mobileGpsLog, date, dateEnd, 3.3);
+                  var log = Stuff.GetRoutesFromMobileLog(mobileGpsLog, date, dateEnd, 3.3);
                   if(log != null)
                   {
                      if(MainMap.Manager.ExportGPX(log, sfd.FileName))

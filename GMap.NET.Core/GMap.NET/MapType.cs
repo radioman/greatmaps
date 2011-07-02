@@ -4,7 +4,8 @@ namespace GMap.NET
    using System;
 
    /// <summary>
-   /// types of great maps
+   /// types of great maps, legacy, not used anymore,
+   /// left for old ids                                          
    /// </summary>
    public enum MapType
    {

@@ -360,9 +360,9 @@ namespace GMap.NET.WindowsForms
          if(!DesignModeInConstruct && !IsDesignerHosted)
 #endif
          {
+#if !PocketPC
             Manager.SQLitePing();
 
-#if !PocketPC
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             this.SetStyle(ControlStyles.UserPaint, true);

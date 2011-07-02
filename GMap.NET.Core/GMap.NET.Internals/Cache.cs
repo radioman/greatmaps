@@ -18,6 +18,7 @@ namespace GMap.NET.Internals
       string routeCache;
       string geoCache;
       string placemarkCache;
+      string urlCache;
 
       /// <summary>
       /// abstract image cache
@@ -44,6 +45,7 @@ namespace GMap.NET.Internals
             routeCache = cache + "RouteCache" + Path.DirectorySeparatorChar;
             geoCache = cache + "GeocoderCache" + Path.DirectorySeparatorChar;
             placemarkCache = cache + "PlacemarkCache" + Path.DirectorySeparatorChar;
+            urlCache = cache + "UrlCache" + Path.DirectorySeparatorChar;
 
 #if SQLite
             if(ImageCache is SQLitePureImageCache)
@@ -209,6 +211,104 @@ namespace GMap.NET.Internals
                using(StreamReader r = new StreamReader(file.ToString(), Encoding.UTF8))
                {
                   ret = r.ReadToEnd();
+               }
+            }
+         }
+         catch
+         {
+            ret = null;
+         }
+
+         return ret;
+      }
+
+      public void CacheURLContent(string urlEnd, string content)
+      {
+         try
+         {
+#if !PocketPC
+            char[] ilg = Path.GetInvalidFileNameChars();
+#else
+            char[] ilg = new char[41];
+            for(int i = 0; i < 32; i++)
+               ilg[i] = (char) i;
+
+            ilg[32] = '"';
+            ilg[33] = '<';
+            ilg[34] = '>';
+            ilg[35] = '|';
+            ilg[36] = '?';
+            ilg[37] = ':';
+            ilg[38] = '/';
+            ilg[39] = '\\';
+            ilg[39] = '*';
+#endif
+
+            foreach(char c in ilg)
+            {
+               urlEnd = urlEnd.Replace(c, '_');
+            }
+
+            // precrete dir
+            if(!Directory.Exists(urlCache))
+            {
+               Directory.CreateDirectory(urlCache);
+            }
+
+            StringBuilder file = new StringBuilder(urlCache);
+            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.url", urlEnd);
+
+            using(StreamWriter writer = new StreamWriter(file.ToString(), false, Encoding.UTF8))
+            {
+               writer.Write(content);
+            }
+         }
+         catch
+         {
+         }
+      }
+
+      public string GetURLContentFromCache(string urlEnd, TimeSpan stayInCache)
+      {
+         string ret = null;
+
+         try
+         {
+#if !PocketPC
+            char[] ilg = Path.GetInvalidFileNameChars();
+#else
+            char[] ilg = new char[41];
+            for(int i = 0; i < 32; i++)
+               ilg[i] = (char) i;
+
+            ilg[32] = '"';
+            ilg[33] = '<';
+            ilg[34] = '>';
+            ilg[35] = '|';
+            ilg[36] = '?';
+            ilg[37] = ':';
+            ilg[38] = '/';
+            ilg[39] = '\\';
+            ilg[39] = '*';
+#endif
+
+            foreach(char c in ilg)
+            {
+               urlEnd = urlEnd.Replace(c, '_');
+            }
+
+            StringBuilder file = new StringBuilder(urlCache);
+            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.url", urlEnd);
+
+            if(File.Exists(file.ToString()))
+            {
+               var writeTime = File.GetLastWriteTime(file.ToString());
+               if(DateTime.Now - writeTime < stayInCache)
+               {
+                  using(StreamReader r = new StreamReader(file.ToString(), Encoding.UTF8))
+                  {
+                     ret = r.ReadToEnd();
+                  }
                }
             }
          }

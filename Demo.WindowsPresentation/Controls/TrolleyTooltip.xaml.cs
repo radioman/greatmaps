@@ -1,5 +1,6 @@
 ﻿using System.Windows.Controls;
 using GMap.NET;
+using Demo.WindowsForms;
 
 namespace Demo.WindowsPresentation.Controls
 {

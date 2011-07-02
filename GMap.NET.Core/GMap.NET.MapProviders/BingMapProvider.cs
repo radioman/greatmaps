@@ -8,10 +8,12 @@ namespace GMap.NET.MapProviders
    using System.Net;
    using System.IO;
    using System.Text.RegularExpressions;
+   using System.Threading;
+   using GMap.NET.Internals;
 
    public abstract class BingMapProviderBase : GMapProvider
    {
-      public string Version = "689";
+      public string Version = "695";
 
       /// <summary>
       /// Bing Maps Customer Identification, more info here
@@ -100,48 +102,76 @@ namespace GMap.NET.MapProviders
          if(!init && TryCorrectVersion)
          {
             string url = @"http://www.bing.com/maps";
+
             try
             {
-               HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-               if(WebProxy != null)
-               {
-                  request.Proxy = WebProxy;
-#if !PocketPC
-                  request.PreAuthenticate = true;
-#endif
-               }
+               string html = Cache.Instance.GetURLContentFromCache(url, TimeSpan.FromHours(8));
 
-               request.UserAgent = UserAgent;
-               request.Timeout = TimeoutMs;
-               request.ReadWriteTimeout = TimeoutMs * 6;
-
-               using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+               if(string.IsNullOrEmpty(html))
                {
-                  using(Stream responseStream = response.GetResponseStream())
+                  #region -- get fresh url content --
+                  HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                  if(WebProxy != null)
                   {
-                     using(StreamReader read = new StreamReader(responseStream))
+                     request.Proxy = WebProxy;
+#if !PocketPC
+                     request.PreAuthenticate = true;
+#endif
+                  }
+
+                  request.UserAgent = UserAgent;
+                  request.Timeout = TimeoutMs;
+                  request.ReadWriteTimeout = TimeoutMs * 6;
+
+                  using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                  {
+                     using(Stream responseStream = response.GetResponseStream())
                      {
-                        string html = read.ReadToEnd();
-
-                        Regex reg = new Regex("http://ecn.t(\\d*).tiles.virtualearth.net/tiles/r(\\d*)[?*]g=(\\d*)", RegexOptions.IgnoreCase);
-                        Match mat = reg.Match(html);
-                        if(mat.Success)
+                        using(StreamReader read = new StreamReader(responseStream))
                         {
-                           GroupCollection gc = mat.Groups;
-                           int count = gc.Count;
-                           if(count > 2)
-                           {
-                              GMapProviders.BingMap.Version = gc[3].Value;
-                              GMapProviders.BingMapOld.Version = GMapProviders.BingMap.Version;
-                              GMapProviders.BingSatelliteMap.Version = GMapProviders.BingMap.Version;
-                              GMapProviders.BingHybridMap.Version = GMapProviders.BingMap.Version;
-
-                              Debug.WriteLine("GMapProviders.BingMap.Version: " + GMapProviders.BingMap.Version);
-                           }
+                           html = read.ReadToEnd();
+                           Cache.Instance.CacheURLContent(url, html);
                         }
                      }
                   }
+                  #endregion
                }
+
+               if(!string.IsNullOrEmpty(html))
+               {
+                  #region -- match versions --
+                  Regex reg = new Regex("http://ecn.t(\\d*).tiles.virtualearth.net/tiles/r(\\d*)[?*]g=(\\d*)", RegexOptions.IgnoreCase);
+                  Match mat = reg.Match(html);
+                  if(mat.Success)
+                  {
+                     GroupCollection gc = mat.Groups;
+                     int count = gc.Count;
+                     if(count > 2)
+                     {
+                        string ver = gc[3].Value;
+                        string old = GMapProviders.BingMap.Version;
+                        if(ver != old)
+                        {
+                           GMapProviders.BingMap.Version = ver;
+                           GMapProviders.BingMapOld.Version = ver;
+                           GMapProviders.BingSatelliteMap.Version = ver;
+                           GMapProviders.BingHybridMap.Version = ver;
+
+                           Debug.WriteLine("GMapProviders.BingMap.Version: " + ver + ", old: " + old + ", consider updating source");
+                           if(Debugger.IsAttached)
+                           {
+                              Thread.Sleep(5555);
+                           }
+                        }
+                        else
+                        {
+                           Debug.WriteLine("GMapProviders.BingMap.Version: " + ver + ", OK");
+                        }
+                     }
+                  }
+                  #endregion
+               }
+
                init = true; // try it only once
             }
             catch(Exception ex)

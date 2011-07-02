@@ -41,15 +41,15 @@ namespace Demo.StreetView
 
          Canvas canvas = new Canvas();
          canvas.Children.Add(buff);
-         canvas.Width = 512*13;
-         canvas.Height = 512*7;
+         canvas.Width = 512 * 13;
+         canvas.Height = 512 * 7;
 
          canvas.UpdateLayout();
 
-         canvas.Measure(new Size((int) canvas.Width, (int) canvas.Height));
-         canvas.Arrange(new Rect(new Size((int) canvas.Width, (int) canvas.Height)));
-         int Height = ((int) (canvas.ActualHeight));
-         int Width = ((int) (canvas.ActualWidth));
+         canvas.Measure(new Size((int)canvas.Width, (int)canvas.Height));
+         canvas.Arrange(new Rect(new Size((int)canvas.Width, (int)canvas.Height)));
+         int Height = ((int)(canvas.ActualHeight));
+         int Width = ((int)(canvas.ActualWidth));
 
          RenderTargetBitmap _RenderTargetBitmap = new RenderTargetBitmap(Width, Height, 96, 96, PixelFormats.Pbgra32);
          _RenderTargetBitmap.Render(buff);
@@ -97,7 +97,7 @@ namespace Demo.StreetView
             Image i = new Image();
 
             i.Source = p.src;
-            (buff.Children[buff.Children.Count-1] as StackPanel).Children.Add(i);
+            (buff.Children[buff.Children.Count - 1] as StackPanel).Children.Add(i);
          }
          else if(e.ProgressPercentage == 0)
          {
@@ -121,7 +121,7 @@ namespace Demo.StreetView
          //4, 13  
          //5, 26  
 
-         for(int y = 0; y <= zoom+1; y++)
+         for(int y = 0; y <= zoom + 1; y++)
          {
             loader.ReportProgress(0);
 
@@ -139,7 +139,7 @@ namespace Demo.StreetView
                }
                if(!File.Exists(fl))
                {
-                  ImageSource src = Get(string.Format("http://cbk{0}.{5}/cbk?output=tile&panoid={1}&zoom={2}&x={3}&y={4}&cb_client=maps_sv", (x + 2 * y) % 3, panoId, zoom, x, y, GMap.NET.GMaps.Instance.GServer));
+                  ImageSource src = Get(string.Format("http://cbk{0}.{5}/cbk?output=tile&panoid={1}&zoom={2}&x={3}&y={4}&cb_client=maps_sv", (x + 2 * y) % 3, panoId, zoom, x, y, GMap.NET.MapProviders.GoogleMapProvider.Instance.Server));
                   p.src = src;
                   SaveImg(src, fl);
                }
@@ -247,14 +247,14 @@ namespace Demo.StreetView
          ImageSource ret = null;
          try
          {
-            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.ServicePoint.ConnectionLimit = 50;
             request.Proxy = WebRequest.DefaultWebProxy;
 
             request.UserAgent = "Opera/9.62 (Windows NT 5.1; U; en) Presto/2.1.1";
-            request.Timeout = 10*1000;
-            request.ReadWriteTimeout = request.Timeout*6;
-            request.Referer = string.Format("http://maps.{0}/", GMap.NET.GMaps.Instance.GServer);
+            request.Timeout = 10 * 1000;
+            request.ReadWriteTimeout = request.Timeout * 6;
+            request.Referer = string.Format("http://maps.{0}/", GMap.NET.MapProviders.GoogleMapProvider.Instance.Server);
             request.KeepAlive = true;
 
             using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
