@@ -555,7 +555,7 @@ namespace GMap.NET.CacheProviders
                               }
                            }
 
-                           using(SQLiteCommand cmd = new SQLiteCommand(string.Format("DETACH DATABASE Source;", sourceFile), cn2))
+                           using(SQLiteCommand cmd = new SQLiteCommand("DETACH DATABASE Source;", cn2))
                            {
                               cmd.ExecuteNonQuery();
                            }
