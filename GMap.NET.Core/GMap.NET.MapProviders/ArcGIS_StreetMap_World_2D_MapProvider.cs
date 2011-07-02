@@ -6,6 +6,11 @@ namespace GMap.NET.MapProviders
 
    public abstract class ArcGISMapPlateCarreeProviderBase : GMapProvider
    {
+      public ArcGISMapPlateCarreeProviderBase()
+      {
+         Copyright = string.Format("©{0} ESRI - Map data ©{0} ArcGIS", DateTime.Today.Year);
+      }
+
       #region GMapProvider Members
       public override Guid Id
       {
@@ -53,6 +58,11 @@ namespace GMap.NET.MapProviders
 
    public abstract class ArcGISMapMercatorProviderBase : GMapProvider
    {
+      public ArcGISMapMercatorProviderBase()
+      {
+         Copyright = string.Format("©{0} ESRI - Map data ©{0} ArcGIS", DateTime.Today.Year);
+      }
+
       #region GMapProvider Members
       public override Guid Id
       {

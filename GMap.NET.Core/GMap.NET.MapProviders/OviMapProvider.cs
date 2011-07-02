@@ -6,6 +6,11 @@ namespace GMap.NET.MapProviders
 
    public abstract class OviMapProviderBase : GMapProvider
    {
+      public OviMapProviderBase()
+      {
+         Copyright = string.Format("©{0} OVI Nokia - Map data ©{0} NAVTEQ, Imagery ©{0} DigitalGlobe", DateTime.Today.Year);
+      }
+
       #region GMapProvider Members
       public override Guid Id
       {

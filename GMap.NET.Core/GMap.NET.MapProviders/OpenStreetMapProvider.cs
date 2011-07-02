@@ -6,6 +6,11 @@ namespace GMap.NET.MapProviders
 
    public abstract class OpenStreetMapProviderBase : GMapProvider
    {
+      public OpenStreetMapProviderBase()
+      {
+         Copyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
+      }
+
       public readonly string ServerLetters = "abc";
 
       #region GMapProvider Members

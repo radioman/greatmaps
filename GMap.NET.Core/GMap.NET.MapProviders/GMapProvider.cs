@@ -284,6 +284,8 @@ namespace GMap.NET.MapProviders
       /// </summary>
       public string RefererUrl = string.Empty;
 
+      public string Copyright = string.Empty;
+
       public static string Language = "en";
 
       /// <summary>

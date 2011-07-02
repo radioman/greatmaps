@@ -13,6 +13,11 @@ namespace GMap.NET.MapProviders
 
    public abstract class GoogleMapProviderBase : GMapProvider
    {
+      public GoogleMapProviderBase()
+      {
+         Copyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
+      }
+
       public readonly string Server = ThisIsLegalString("zOl/KnHzebJUqs6JWROaCQ==");
       public readonly string ServerChina = ThisIsLegalString("zOl/KnHzebLqgdc2FRlQHg==");
       public readonly string ServerKorea = ThisIsLegalString("ecw6OdJzJ/zgnFTB90qgtw==");

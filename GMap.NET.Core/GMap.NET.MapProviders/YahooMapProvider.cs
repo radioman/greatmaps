@@ -6,6 +6,11 @@ namespace GMap.NET.MapProviders
 
    public abstract class YahooMapProviderBase : GMapProvider
    {
+      public YahooMapProviderBase()
+      {
+         Copyright = string.Format("© Yahoo! Inc. - Map data & Imagery ©{0} NAVTEQ", DateTime.Today.Year);
+      }
+
       #region GMapProvider Members
       public override Guid Id
       {

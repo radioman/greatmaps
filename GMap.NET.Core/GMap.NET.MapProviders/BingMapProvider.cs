@@ -13,6 +13,11 @@ namespace GMap.NET.MapProviders
 
    public abstract class BingMapProviderBase : GMapProvider
    {
+      public BingMapProviderBase()
+      {
+         Copyright = string.Format("©{0} Microsoft Corporation, ©{0} NAVTEQ, ©{0} Image courtesy of NASA", DateTime.Today.Year);
+      }
+
       public string Version = "695";
 
       /// <summary>

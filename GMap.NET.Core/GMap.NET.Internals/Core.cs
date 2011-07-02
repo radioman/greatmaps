@@ -54,15 +54,6 @@ namespace GMap.NET.Internals
 
       public readonly Stack<LoadTask> tileLoadQueue = new Stack<LoadTask>();
 
-      public static readonly string googleCopyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
-      public static readonly string openStreetMapCopyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
-      public static readonly string yahooMapCopyright = string.Format("© Yahoo! Inc. - Map data & Imagery ©{0} NAVTEQ", DateTime.Today.Year);
-      public static readonly string virtualEarthCopyright = string.Format("©{0} Microsoft Corporation, ©{0} NAVTEQ, ©{0} Image courtesy of NASA", DateTime.Today.Year);
-      public static readonly string arcGisCopyright = string.Format("©{0} ESRI - Map data ©{0} ArcGIS", DateTime.Today.Year);
-      public static readonly string hnitCopyright = string.Format("©{0} Hnit-Baltic - Map data ©{0} ESRI", DateTime.Today.Year);
-      public static readonly string pergoCopyright = string.Format("©{0} Pergo - Map data ©{0} Fideltus Advanced Technology", DateTime.Today.Year);
-      public static readonly string oviCopyright = string.Format("©{0} OVI Nokia - Map data ©{0} NAVTEQ, Imagery ©{0} DigitalGlobe", DateTime.Today.Year);
-
 #if !PocketPC
       static readonly int GThreadPoolSize = 5;
 #else
@@ -260,10 +251,10 @@ namespace GMap.NET.Internals
                   if(OnMapTypeChanged != null)
                   {
                      OnMapTypeChanged(value);
+                  }
                }
             }
          }
-      }
       }
 
       internal bool zoomToArea = true;
