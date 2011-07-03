@@ -83,6 +83,8 @@ namespace GMap.NET.MapProviders
 
       public static readonly CloudMadeMapProvider CloudMadeMap = CloudMadeMapProvider.Instance;
 
+      public static readonly SpainMapProvider SpainMap = SpainMapProvider.Instance;
+
       public static readonly CzechMapProvider CzechMap = CzechMapProvider.Instance;
       public static readonly CzechSatelliteMapProvider CzechSatelliteMap = CzechSatelliteMapProvider.Instance;
       public static readonly CzechHybridMapProvider CzechHybridMap = CzechHybridMapProvider.Instance;
@@ -211,11 +213,11 @@ namespace GMap.NET.MapProviders
 
       static GMapProvider()
       {
-#if PocketPC
-         WebProxy = GlobalProxySelection.GetEmptyWebProxy();
-#else
-         WebProxy = WebRequest.DefaultWebProxy;
-#endif
+//#if PocketPC
+//         WebProxy = GlobalProxySelection.GetEmptyWebProxy();
+//#else
+//         WebProxy = WebRequest.DefaultWebProxy;
+//#endif
       }
 
       bool isInitialized = false;

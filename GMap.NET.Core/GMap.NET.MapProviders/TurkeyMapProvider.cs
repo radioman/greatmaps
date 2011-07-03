@@ -5,7 +5,7 @@ namespace GMap.NET.MapProviders
    using GMap.NET.Projections;
 
    /// <summary>
-   /// TurkeyMap provider, http://www.pergo.com.tr/
+   /// TurkeyMap provider, http://maps.pergo.com.tr/
    /// </summary>
    public class TurkeyMapProvider : GMapProvider
    {
@@ -59,7 +59,7 @@ namespace GMap.NET.MapProviders
       {
          get
          {
-            return PlateCarreeProjectionPergo.Instance;
+            return MercatorProjection.Instance;
          }
       }
 
@@ -76,18 +76,23 @@ namespace GMap.NET.MapProviders
       {
          // http://{domain}/{layerName}/{zoomLevel}/{first3LetterOfTileX}/{second3LetterOfTileX}/{third3LetterOfTileX}/{first3LetterOfTileY}/{second3LetterOfTileY}/{third3LetterOfTileXY}.png
 
-         // http://map3.pergo.com.tr/tile/00/000/000/001/000/000/000.png    
+         // http://map3.pergo.com.tr/tile/00/000/000/001/000/000/000.png   
          // That means: Zoom Level: 0 TileX: 1 TileY: 0
 
          // http://domain/tile/14/000/019/371/000/011/825.png
          // That means: Zoom Level: 14 TileX: 19371 TileY:11825
 
-         string x = pos.X.ToString("000000000").Insert(3, "/").Insert(7, "/"); // - 000/000/001
-         string y = pos.Y.ToString("000000000").Insert(3, "/").Insert(7, "/"); // - 000/000/000
+         // updated version
+         // http://map1.pergo.com.tr/publish/tile/tile9913/06/000/000/038/000/000/039.png
+
+         string x = pos.X.ToString(Zeros).Insert(3, Slash).Insert(7, Slash); // - 000/000/001
+         string y = pos.Y.ToString(Zeros).Insert(3, Slash).Insert(7, Slash); // - 000/000/000
 
          return string.Format(UrlFormat, GetServerNum(pos, 3), zoom, x, y);
       }
 
-      static readonly string UrlFormat = "http://map{0}.pergo.com.tr/tile/{1:00}/{2}/{3}.png";
+      static readonly string Zeros = "000000000";
+      static readonly string Slash = "/";
+      static readonly string UrlFormat = "http://map{0}.pergo.com.tr/publish/tile/tile9913/{1:00}/{2}/{3}.png";
    }
 }
