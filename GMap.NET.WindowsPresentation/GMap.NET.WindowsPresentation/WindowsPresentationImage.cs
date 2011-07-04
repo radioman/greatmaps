@@ -168,7 +168,7 @@ namespace GMap.NET.WindowsPresentation
             // try png decoder
             try
             {
-               PngBitmapDecoder bitmapDecoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+               PngBitmapDecoder bitmapDecoder = new PngBitmapDecoder(stream, BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.OnLoad);
                ImageSource m = bitmapDecoder.Frames[0];
 
                if(m != null)
@@ -191,7 +191,7 @@ namespace GMap.NET.WindowsPresentation
                {
                   stream.Seek(0, System.IO.SeekOrigin.Begin);
 
-                  JpegBitmapDecoder bitmapDecoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+                  JpegBitmapDecoder bitmapDecoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.OnLoad);
                   ImageSource m = bitmapDecoder.Frames[0];
 
                   if(m != null)
@@ -233,7 +233,7 @@ namespace GMap.NET.WindowsPresentation
 
       public override bool Save(System.IO.Stream stream, PureImage image)
       {
-         WindowsPresentationImage ret = (WindowsPresentationImage) image;
+         WindowsPresentationImage ret = (WindowsPresentationImage)image;
          if(ret.Img != null)
          {
             try

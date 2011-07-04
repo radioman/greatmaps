@@ -92,6 +92,10 @@
       <Project>{E06DEF77-F933-42FB-AFD7-DB2D0D8D6A98}</Project>
       <Name>GMap.NET.WindowsForms</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\GMap.NET.WindowsPresentation\GMap.NET.WindowsPresentation.csproj">
+      <Project>{644FE7D4-0184-400F-B2D7-99CB41360658}</Project>
+      <Name>GMap.NET.WindowsPresentation</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

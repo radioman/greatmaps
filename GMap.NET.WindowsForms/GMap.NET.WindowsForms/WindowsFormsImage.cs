@@ -39,40 +39,21 @@ namespace GMap.NET.WindowsForms
          WindowsFormsImage ret = null;
          try
          {
-            if(!GMaps.Instance.IsRunningOnMono)
+#if !PocketPC
+            Image m = Image.FromStream(stream, true, false);
+#else
+            Image m = new Bitmap(stream);
+#endif
+            if(m != null)
             {
+               ret = new WindowsFormsImage();
 #if !PocketPC
-               Image m = Image.FromStream(stream, true, true);
+               ret.Img = ColorMatrix != null ? ApplyColorMatrix(m, ColorMatrix) : m;
 #else
-               Image m = new Bitmap(stream);
+               ret.Img = m;
 #endif
-               if(m != null)
-               {
-                  ret = new WindowsFormsImage();
-#if !PocketPC
-                  ret.Img = ColorMatrix != null ? ApplyColorMatrix(m, ColorMatrix) : m;
-#else
-                  ret.Img = m;
-#endif
-               }
             }
-            else // mono yet do not support validation
-            {
-#if !PocketPC
-               Image m = Image.FromStream(stream);
-#else
-               Image m = new Bitmap(stream);
-#endif
-               if(m != null)
-               {
-                  ret = new WindowsFormsImage();
-#if !PocketPC
-                  ret.Img = ColorMatrix != null ? ApplyColorMatrix(m, ColorMatrix) : m;
-#else
-                  ret.Img = m;
-#endif
-               }
-            }
+
          }
          catch(Exception ex)
          {
