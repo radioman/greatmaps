@@ -44,7 +44,7 @@ namespace GMap.NET.WindowsForms
                {
                   if(!Control.HoldInvalidation)
                   {
-                     Control.Invalidate();
+                     Control.Core.Refresh.Set();
                   }
                }
             }
@@ -103,7 +103,7 @@ namespace GMap.NET.WindowsForms
 
          if(!Control.HoldInvalidation)
          {
-            Control.Core_OnNeedInvalidation();
+            Control.Core.Refresh.Set();
          }
       }
 
@@ -123,7 +123,7 @@ namespace GMap.NET.WindowsForms
 
          if(!Control.HoldInvalidation)
          {
-            Control.Core_OnNeedInvalidation();
+            Control.Core.Refresh.Set();
          }
       }
 
@@ -154,7 +154,7 @@ namespace GMap.NET.WindowsForms
 
          if(!Control.HoldInvalidation)
          {
-            Control.Core_OnNeedInvalidation();
+            Control.Core.Refresh.Set();
          }
       }
 

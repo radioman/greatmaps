@@ -58,7 +58,7 @@ namespace GMap.NET.WindowsForms
                   {
                      if(!Overlay.Control.HoldInvalidation)
                      {
-                        Overlay.Control.Invalidate();
+                        Overlay.Control.Core.Refresh.Set();
                      }
                   }
                }

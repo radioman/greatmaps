@@ -1306,6 +1306,8 @@ namespace Demo.WindowsForms
                   CurentRectMarker.InnerMarker.Position = pnew;
                }
             }
+
+            MainMap.Refresh(); // force instant invalidation
          }
       }
 

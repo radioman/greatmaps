@@ -60,7 +60,6 @@ namespace GMap.NET.Internals
       static readonly int GThreadPoolSize = 2;
 #endif
 
-      DateTime LastInvalidation = DateTime.Now;
       DateTime LastTileLoadStart = DateTime.Now;
       DateTime LastTileLoadEnd = DateTime.Now;
       internal bool IsStarted = false;
@@ -349,11 +348,6 @@ namespace GMap.NET.Internals
       /// occurs on empty tile displayed
       /// </summary>
       public event EmptyTileError OnEmptyTileError;
-
-      /// <summary>
-      /// occurs on tile loaded
-      /// </summary>
-      public event NeedInvalidation OnNeedInvalidation;
 
       /// <summary>
       /// occurs on map drag
@@ -733,10 +727,7 @@ namespace GMap.NET.Internals
          IsDragging = false;
          mouseDown = GPoint.Empty;
 
-         if(OnNeedInvalidation != null)
-         {
-            OnNeedInvalidation();
-         }
+         Refresh.Set();
       }
 
       /// <summary>
@@ -766,10 +757,7 @@ namespace GMap.NET.Internals
                RaiseEmptyTileError = true;
             }
 
-            if(OnNeedInvalidation != null)
-            {
-               OnNeedInvalidation();
-            }
+            Refresh.Set();
 
             UpdateBounds();
          }
@@ -915,13 +903,9 @@ namespace GMap.NET.Internals
 
       byte loadWaitCount = 0;
 
-      readonly object LastInvalidationLock = new object();
-      readonly object LastTileLoadStartEndLock = new object();
-
       // tile consumer thread
       void ProcessLoadTask()
       {
-         bool invalidate = false;
          LoadTask? task = null;
          long lastTileLoadTimeMs;
          bool stop = false;
@@ -934,7 +918,6 @@ namespace GMap.NET.Internals
 #endif
          while(!stop)
          {
-            invalidate = false;
             task = null;
 
             Monitor.Enter(tileLoadQueue);
@@ -949,17 +932,7 @@ namespace GMap.NET.Internals
                      loadWaitCount = 0;
 
                      #region -- last thread takes action --
-                     lock(LastInvalidationLock)
-                     {
-                        LastInvalidation = DateTime.Now;
-                     }
 
-                     if(OnNeedInvalidation != null)
-                     {
-                        OnNeedInvalidation();
-                     }
-
-                     lock(LastTileLoadStartEndLock)
                      {
                         LastTileLoadEnd = DateTime.Now;
                         lastTileLoadTimeMs = (long)(LastTileLoadEnd - LastTileLoadStart).TotalMilliseconds;
@@ -1115,31 +1088,7 @@ namespace GMap.NET.Internals
                }
                finally
                {
-                  lock(LastInvalidationLock)
-                  {
-                     invalidate = ((DateTime.Now - LastInvalidation).TotalMilliseconds > 111);
-                     if(invalidate)
-                     {
-                        LastInvalidation = DateTime.Now;
-                     }
-                  }
-
-                  if(invalidate)
-                  {
-                     if(OnNeedInvalidation != null)
-                     {
-                        OnNeedInvalidation();
-                     }
-                  }
-#if DEBUG
-                  //else
-                  //{
-                  //   lock(LastInvalidationLock)
-                  //   {
-                  //      Debug.WriteLine(ctid + " - SkipInvalidation, Delta: " + (DateTime.Now - LastInvalidation).TotalMilliseconds + "ms");
-                  //   }
-                  //}
-#endif
+                  Refresh.Set();
                }
             }
          }
@@ -1160,6 +1109,8 @@ namespace GMap.NET.Internals
          }
 #endif
       }
+
+      public readonly AutoResetEvent Refresh = new AutoResetEvent(false);
 
       /// <summary>
       /// updates map bounds
@@ -1255,7 +1206,6 @@ namespace GMap.NET.Internals
             }
             #endregion
 
-            lock(LastTileLoadStartEndLock)
             {
                LastTileLoadStart = DateTime.Now;
                Debug.WriteLine("OnTileLoadStart - at zoom " + Zoom + ", time: " + LastTileLoadStart.TimeOfDay);

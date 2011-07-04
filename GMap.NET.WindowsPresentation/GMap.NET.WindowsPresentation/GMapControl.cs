@@ -148,13 +148,13 @@ namespace GMap.NET.WindowsPresentation
 
                map.Core_OnMapZoomChanged();
 
-               map.InvalidateVisual();
+               map.InvalidateVisual(true);
             }
             else
             {
                map.MapRenderTransform = null;
                map.Core.Zoom = Convert.ToInt32(value);
-               map.InvalidateVisual();
+               map.InvalidateVisual(true);
             }
          }
       }
@@ -453,8 +453,6 @@ namespace GMap.NET.WindowsPresentation
 
             Manager.SQLitePing();
 
-            invalidator = new MethodInvoker(InvalidateVisual);
-
             ClipToBounds = true;
             SnapsToDevicePixels = true;
 
@@ -463,7 +461,6 @@ namespace GMap.NET.WindowsPresentation
             Core.SystemType = "WindowsPresentation";
 
             Core.RenderMode = GMap.NET.RenderMode.WPF;
-            Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
             Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
             Loaded += new RoutedEventHandler(GMapControl_Loaded);
             Unloaded += new RoutedEventHandler(GMapControl_Unloaded);
@@ -476,6 +473,79 @@ namespace GMap.NET.WindowsPresentation
             }
 
             Core.Zoom = (int)((double)ZoomProperty.DefaultMetadata.DefaultValue);
+         }
+      }
+
+      void invalidatorEngage(object sender, ProgressChangedEventArgs e)
+      {
+         base.InvalidateVisual();
+      }
+
+      readonly object invalidationLock = new object();
+      DateTime last = DateTime.Now;
+
+      void invalidatorWatch(object sender, DoWorkEventArgs e)
+      {
+         var w = sender as BackgroundWorker;
+
+         TimeSpan span = TimeSpan.FromMilliseconds(111);
+         bool skiped = false;
+         TimeSpan delta;
+         DateTime now = DateTime.Now;
+
+         while(!skiped && Core.Refresh.WaitOne() || (Core.Refresh.WaitOne(span) || true))
+         {
+            now = DateTime.Now;
+            lock(invalidationLock)
+            {
+               delta = now - last;
+            }
+
+            if(delta > span)
+            {
+               lock(invalidationLock)
+               {
+                  last = now;
+               }
+               skiped = false;
+
+               w.ReportProgress(1);
+               Debug.WriteLine("Invalidate delta: " + (int)delta.TotalMilliseconds + "ms");
+            }
+            else
+            {
+               skiped = true;
+            }
+         }
+      }
+
+      /// <summary>
+      /// enque built-in thread safe invalidation
+      /// </summary>
+      public new void InvalidateVisual()
+      {
+         Core.Refresh.Set();
+      }
+
+      /// <summary>
+      /// Invalidates the rendering of the element, and forces a complete new layout
+      /// pass. System.Windows.UIElement.OnRender(System.Windows.Media.DrawingContext)
+      /// is called after the layout cycle is completed. If not forced enques built-in thread safe invalidation
+      /// </summary>
+      /// <param name="forced"></param>
+      public void InvalidateVisual(bool forced)
+      {
+         if(forced)
+         {
+            lock(invalidationLock)
+            {
+               last = DateTime.Now;
+            }
+            base.InvalidateVisual();
+         }
+         else
+         {
+            InvalidateVisual();
          }
       }
 
@@ -504,6 +574,13 @@ namespace GMap.NET.WindowsPresentation
       /// <param name="e"></param>
       void GMapControl_Loaded(object sender, RoutedEventArgs e)
       {
+         // start tile loading monitor
+         BackgroundWorker invalidator = new BackgroundWorker();
+         invalidator.WorkerReportsProgress = true;
+         invalidator.DoWork += new DoWorkEventHandler(invalidatorWatch);
+         invalidator.ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
+         invalidator.RunWorkerAsync();
+
          Core.StartSystem();
          Core_OnMapZoomChanged();
 
@@ -577,20 +654,6 @@ namespace GMap.NET.WindowsPresentation
                   i.RegeneratePolygonShape(this);
                }
             }
-         }
-      }
-
-      /// <summary>
-      /// on core needs invalidation
-      /// </summary>
-      void Core_OnNeedInvalidation()
-      {
-         try
-         {
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Render, invalidator);
-         }
-         catch
-         {
          }
       }
 
@@ -1424,7 +1487,7 @@ namespace GMap.NET.WindowsPresentation
                   UpdateMarkersOffset();
                }
             }
-            InvalidateVisual();
+            InvalidateVisual(true);
          }
          else
          {

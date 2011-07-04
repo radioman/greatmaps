@@ -261,15 +261,26 @@ namespace GMap.NET.WindowsForms
       public bool HoldInvalidation = false;
 
       /// <summary>
-      /// call this to stop HoldInvalidation and perform single refresh 
+      /// call this to stop HoldInvalidation and perform single forced instant refresh 
       /// </summary>
       public override void Refresh()
       {
-         if(HoldInvalidation)
+         HoldInvalidation = false;
+
+         lock(invalidationLock)
          {
-            HoldInvalidation = false;
+            last = DateTime.Now;
          }
+
          base.Refresh();
+      }
+
+      /// <summary>
+      /// enque built-in thread safe invalidation
+      /// </summary>
+      public new void Invalidate()
+      {
+         Core.Refresh.Set();
       }
 
 #if !PocketPC
@@ -377,8 +388,6 @@ namespace GMap.NET.WindowsForms
 #endif
             GMapProvider.TileImageProxy = wimg;
 
-            // to know when to invalidate
-            Core.OnNeedInvalidation += new NeedInvalidation(Core_OnNeedInvalidation);
             Core.SystemType = "WindowsForms";
 
             RenderMode = RenderMode.GDI_PLUS;
@@ -397,6 +406,56 @@ namespace GMap.NET.WindowsForms
             {
                // no imports to move pointer
                MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionWithoutCenter;
+            }
+
+            // start tile loading monitor
+            BackgroundWorker invalidator = new BackgroundWorker();
+            invalidator.WorkerReportsProgress = true;
+            invalidator.DoWork += new DoWorkEventHandler(invalidatorWatch);
+            invalidator.ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
+            invalidator.RunWorkerAsync();
+         }
+      }
+
+      void invalidatorEngage(object sender, ProgressChangedEventArgs e)
+      {
+         base.Invalidate();
+      }
+
+      readonly object invalidationLock = new object();
+      DateTime last = DateTime.Now;
+
+      void invalidatorWatch(object sender, DoWorkEventArgs e)
+      {
+         var w = sender as BackgroundWorker;
+
+         TimeSpan span = TimeSpan.FromMilliseconds(111);
+         bool skiped = false;
+         TimeSpan delta;
+         DateTime now = DateTime.Now;
+
+         while(!skiped && Core.Refresh.WaitOne() || (Core.Refresh.WaitOne(span) || true))
+         {
+            now = DateTime.Now;
+            lock(invalidationLock)
+            {
+               delta = now - last;
+            }
+
+            if(delta > span)
+            {
+               lock(invalidationLock)
+               {
+                  last = now;
+               }
+               skiped = false;
+
+               w.ReportProgress(1);
+               Debug.WriteLine("Invalidate delta: " + (int)delta.TotalMilliseconds + "ms");
+            }
+            else
+            {
+               skiped = true;
             }
          }
       }
@@ -422,43 +481,6 @@ namespace GMap.NET.WindowsForms
          finally
          {
             Refresh();
-         }
-      }
-
-      /// <summary>
-      /// thread safe invalidation
-      /// </summary>
-      internal void Core_OnNeedInvalidation()
-      {
-         if(this.InvokeRequired)
-         {
-            MethodInvoker m = delegate
-            {
-#if !PocketPC
-               Invalidate(false);
-#else
-               Invalidate();
-#endif
-            };
-            try
-            {
-#if !PocketPC
-               this.BeginInvoke(m);
-#else
-               this.BeginInvoke(m);
-#endif
-            }
-            catch
-            {
-            }
-         }
-         else
-         {
-#if !PocketPC
-            Invalidate(false);
-#else
-            Invalidate();
-#endif
          }
       }
 
