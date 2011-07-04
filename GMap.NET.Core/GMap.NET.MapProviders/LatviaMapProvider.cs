@@ -8,6 +8,7 @@ namespace GMap.NET.MapProviders
    {
       public LatviaMapProviderBase()
       {
+         RefererUrl = "http://www.ikarte.lv/map/default.aspx?lang=en";
          Copyright = string.Format("©{0} Hnit-Baltic - Map data ©{0} LR Valsts zemes dieniests, SIA Envirotech", DateTime.Today.Year);
          MaxZoom = 11;
          Area = new RectLatLng(58.0794870805093, 20.3286067123543, 7.90883164336887, 2.506129113082);

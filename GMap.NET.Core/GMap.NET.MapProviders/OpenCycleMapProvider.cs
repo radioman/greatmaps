@@ -13,6 +13,7 @@ namespace GMap.NET.MapProviders
 
       OpenCycleMapProvider()
       {
+         RefererUrl = "http://www.opencyclemap.org/";
       }
 
       static OpenCycleMapProvider()

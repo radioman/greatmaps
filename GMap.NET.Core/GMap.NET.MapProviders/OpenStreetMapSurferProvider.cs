@@ -13,6 +13,7 @@ namespace GMap.NET.MapProviders
 
       OpenStreetMapSurferProvider()
       {
+         RefererUrl = "http://www.mapsurfer.net/";
       }
 
       static OpenStreetMapSurferProvider()

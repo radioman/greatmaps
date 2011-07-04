@@ -8,6 +8,7 @@ namespace GMap.NET.MapProviders
    {
       public OpenStreetMapProviderBase()
       {
+         RefererUrl = "http://www.openstreetmap.org/";
          Copyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
       }
 

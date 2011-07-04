@@ -13,6 +13,7 @@ namespace GMap.NET.MapProviders
 
       OpenSeaMapHybridProvider()
       {
+         RefererUrl = "http://openseamap.org/";
       }
 
       static OpenSeaMapHybridProvider()

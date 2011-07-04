@@ -15,6 +15,7 @@ namespace GMap.NET.MapProviders
    {
       public GoogleMapProviderBase()
       {
+         RefererUrl = string.Format("http://maps.{0}/", Server);
          Copyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       }
 

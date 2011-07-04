@@ -15,6 +15,7 @@ namespace GMap.NET.MapProviders
    {
       public BingMapProviderBase()
       {
+         RefererUrl = "http://www.bing.com/maps/";
          Copyright = string.Format("©{0} Microsoft Corporation, ©{0} NAVTEQ, ©{0} Image courtesy of NASA", DateTime.Today.Year);
       }
 

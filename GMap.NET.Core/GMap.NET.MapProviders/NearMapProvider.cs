@@ -60,6 +60,7 @@ namespace GMap.NET.MapProviders
 
       NearMapProvider()
       {
+         RefererUrl = "http://www.nearmap.com/";
       }
 
       static NearMapProvider()

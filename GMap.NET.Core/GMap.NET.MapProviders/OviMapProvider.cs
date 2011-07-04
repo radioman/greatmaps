@@ -8,6 +8,7 @@ namespace GMap.NET.MapProviders
    {
       public OviMapProviderBase()
       {
+         RefererUrl = "http://maps.ovi.com/";
          Copyright = string.Format("©{0} OVI Nokia - Map data ©{0} NAVTEQ, Imagery ©{0} DigitalGlobe", DateTime.Today.Year);
       }
 

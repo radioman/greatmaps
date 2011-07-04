@@ -62,6 +62,7 @@ namespace GMap.NET.MapProviders
 
       YandexMapProvider()
       {
+         RefererUrl = "http://maps.yandex.ru/";
       }
 
       static YandexMapProvider()

@@ -8,6 +8,7 @@ namespace GMap.NET.MapProviders
    {
       public CzechMapProviderBase()
       {
+         RefererUrl = "http://www.mapy.cz/";
          Area = new RectLatLng(51.2024819920053, 11.8401353319027, 7.22833716731277, 2.78312271922872);
       }
 

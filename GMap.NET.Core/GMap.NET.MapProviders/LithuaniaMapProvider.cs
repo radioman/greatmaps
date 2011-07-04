@@ -8,6 +8,7 @@ namespace GMap.NET.MapProviders
    {
       public LithuaniaMapProviderBase()
       {
+         RefererUrl = "http://www.maps.lt/map/";
          Copyright = string.Format("©{0} Hnit-Baltic - Map data ©{0} ESRI", DateTime.Today.Year);
          MaxZoom = 11;
          Area = new RectLatLng(56.431489960361, 20.8962105239809, 5.8924169643369, 2.58940626652217);

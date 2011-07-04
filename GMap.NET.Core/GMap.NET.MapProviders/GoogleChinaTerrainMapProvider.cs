@@ -12,6 +12,7 @@ namespace GMap.NET.MapProviders
 
       GoogleChinaTerrainMapProvider()
       {
+         RefererUrl = string.Format("http://ditu.{0}/", ServerChina);
       }
 
       static GoogleChinaTerrainMapProvider()
