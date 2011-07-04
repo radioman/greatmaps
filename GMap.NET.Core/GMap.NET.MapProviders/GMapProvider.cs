@@ -213,11 +213,7 @@ namespace GMap.NET.MapProviders
 
       static GMapProvider()
       {
-//#if PocketPC
-//         WebProxy = GlobalProxySelection.GetEmptyWebProxy();
-//#else
-//         WebProxy = WebRequest.DefaultWebProxy;
-//#endif
+         WebProxy = GlobalProxySelection.GetEmptyWebProxy();
       }
 
       bool isInitialized = false;

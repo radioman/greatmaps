@@ -14,8 +14,11 @@ namespace BigMapMaker
       [STAThread]
       static void Main(string[] args)
       {
+         GMaps.Instance.UseMemoryCache = false;
          GMaps.Instance.Mode = AccessMode.ServerAndCache;
-         GMapProvider.TileImageProxy = new WindowsFormsImageProxy();  
+
+         GMapProvider.TileImageProxy = new WindowsFormsImageProxy();
+  
          GMapProvider provider = GMapProviders.BingMap;
          provider.OnInitialized();
 
