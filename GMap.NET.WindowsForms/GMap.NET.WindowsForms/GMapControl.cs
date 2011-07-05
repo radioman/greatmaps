@@ -14,11 +14,12 @@ namespace GMap.NET.WindowsForms
    using GMap.NET.ObjectModel;
    using System.Diagnostics;
    using System.Drawing.Text;
-   using GMap.NET.MapProviders;
+   using GMap.NET.MapProviders;    
 
 #if !PocketPC
-   using System.Runtime.Serialization.Formatters.Binary;
-
+   using System.Runtime.Serialization.Formatters.Binary; 
+#else
+   using OpenNETCF.ComponentModel;
 #endif
 
    /// <summary>
@@ -430,11 +431,12 @@ namespace GMap.NET.WindowsForms
          var w = sender as BackgroundWorker;
 
          TimeSpan span = TimeSpan.FromMilliseconds(111);
+         int spanMs = (int)span.TotalMilliseconds;
          bool skiped = false;
          TimeSpan delta;
          DateTime now = DateTime.Now;
 
-         while(!skiped && Core.Refresh.WaitOne() || (Core.Refresh.WaitOne(span) || true))
+         while(!skiped && Core.Refresh.WaitOne() || (Core.Refresh.WaitOne(spanMs, false) || true))
          {
             now = DateTime.Now;
             lock(invalidationLock)

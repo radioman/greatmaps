@@ -154,6 +154,9 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\BingSatelliteMapProvider.cs">
       <Link>GMap.NET.MapProviders\BingSatelliteMapProvider.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\CloudMadeMapProvider.cs">
+      <Link>GMap.NET.MapProviders\CloudMadeMapProvider.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\CzechHistoryMapProvider.cs">
       <Link>GMap.NET.MapProviders\CzechHistoryMapProvider.cs</Link>
     </Compile>
