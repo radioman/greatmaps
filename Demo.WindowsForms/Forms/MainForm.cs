@@ -56,8 +56,8 @@ namespace Demo.WindowsForms
             //MainMap.Manager.ImageCacheSecond = ch;
 
             // set your proxy here if need
-            //MainMap.Manager.Proxy = new WebProxy("10.2.0.100", 8080);
-            //MainMap.Manager.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeada");
+            //GMapProvider.WebProxy = new WebProxy("10.2.0.100", 8080);
+            //GMapProvider.WebProxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeada");
 
             // set cache mode only if no internet avaible
             try
@@ -91,10 +91,11 @@ namespace Demo.WindowsForms
             MainMap.OnMarkerLeave += new MarkerLeave(MainMap_OnMarkerLeave);
 
             // get map types
-            comboBoxMapType.DataSource = GMapProviders.List;
-            comboBoxMapType.SelectedItem = MainMap.MapProvider;
+#if !MONO   // mono doesn't handle it, so we 'lost' provider list ;]
             comboBoxMapType.ValueMember = "Name";
-
+            comboBoxMapType.DataSource = GMapProviders.List;    
+            comboBoxMapType.SelectedItem = MainMap.MapProvider;                
+#endif
             // acccess mode
             comboBoxMode.DataSource = Enum.GetValues(typeof(AccessMode));
             comboBoxMode.SelectedItem = GMaps.Instance.Mode;
@@ -581,7 +582,7 @@ namespace Demo.WindowsForms
          {
             try
             {
-               #region -- xml --
+         #region -- xml --
                // http://ipinfodb.com/ip_location_api.php
 
                // http://ipinfodb.com/ip_query2.php?ip=74.125.45.100,206.190.60.37&timezone=false
@@ -615,7 +616,7 @@ namespace Demo.WindowsForms
 
                   foreach(TcpRow i in ManagedIpHelper.TcpRows)
                   {
-                     #region -- update TcpState --
+         #region -- update TcpState --
                      string Ip = i.RemoteEndPoint.Address.ToString();
 
                      // exclude local network

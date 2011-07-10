@@ -41,8 +41,8 @@ namespace Demo.WindowsPresentation
          //MainMap.Manager.ImageCacheSecond = ch;
 
          // set your proxy here if need
-         //MainMap.Manager.Proxy = new WebProxy("10.2.0.100", 8080);
-         //MainMap.Manager.Proxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeadam");
+         //GMapProvider.WebProxy = new WebProxy("10.2.0.100", 8080);
+         //GMapProvider.WebProxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeada");
 
          // set cache mode only if no internet avaible
          try

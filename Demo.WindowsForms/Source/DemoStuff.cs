@@ -5,11 +5,11 @@ using System.IO;
 using System.Net;
 using System.Xml;
 using GMap.NET;
+using System.Data.Common;  
 
 #if !MONO
 #if SQLite
-using System.Data.SQLite;
-using System.Data.Common;  
+using System.Data.SQLite;    
 #endif
 #else
    using SQLiteConnection=Mono.Data.SqliteClient.SqliteConnection;

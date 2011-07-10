@@ -176,21 +176,23 @@ namespace GMap.NET.CacheProviders
                using(var dbf = File.Open(db, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                {
                   dbf.Seek(16, SeekOrigin.Begin);
-#if !PocketPC
+
+#if (!PocketPC && !MONO)
                   dbf.Lock(16, 2);
-#endif
-                  dbf.Read(pageSizeBytes, 0, 2);
-#if !PocketPC
+                   dbf.Read(pageSizeBytes, 0, 2);
                   dbf.Unlock(16, 2);
-#endif
+
                   dbf.Seek(36, SeekOrigin.Begin);
-#if !PocketPC
+
                   dbf.Lock(36, 4);
-#endif
-                  dbf.Read(freePagesBytes, 0, 4);
-#if !PocketPC
+                   dbf.Read(freePagesBytes, 0, 4);
                   dbf.Unlock(36, 4);
+#else
+                  dbf.Read(pageSizeBytes, 0, 2);
+                  dbf.Seek(36, SeekOrigin.Begin);
+                  dbf.Read(freePagesBytes, 0, 4);
 #endif
+
                   dbf.Close();
                }
             }
