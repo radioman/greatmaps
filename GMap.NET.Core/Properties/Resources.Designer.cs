@@ -76,30 +76,30 @@ namespace GMap.NET.Properties {
             }
         }
         
-        internal static byte[] System_Data_SQLite_x64 {
+        internal static byte[] System_Data_SQLite_x64_NET2_dll {
             get {
-                object obj = ResourceManager.GetObject("System_Data_SQLite_x64", resourceCulture);
+                object obj = ResourceManager.GetObject("System_Data_SQLite_x64_NET2_dll", resourceCulture);
                 return ((byte[])(obj));
             }
         }
         
-        internal static byte[] System_Data_SQLite_x64_NET4 {
+        internal static byte[] System_Data_SQLite_x64_NET4_dll {
             get {
-                object obj = ResourceManager.GetObject("System_Data_SQLite_x64_NET4", resourceCulture);
+                object obj = ResourceManager.GetObject("System_Data_SQLite_x64_NET4_dll", resourceCulture);
                 return ((byte[])(obj));
             }
         }
         
-        internal static byte[] System_Data_SQLite_x86 {
+        internal static byte[] System_Data_SQLite_x86_NET2_dll {
             get {
-                object obj = ResourceManager.GetObject("System_Data_SQLite_x86", resourceCulture);
+                object obj = ResourceManager.GetObject("System_Data_SQLite_x86_NET2_dll", resourceCulture);
                 return ((byte[])(obj));
             }
         }
         
-        internal static byte[] System_Data_SQLite_x86_NET4 {
+        internal static byte[] System_Data_SQLite_x86_NET4_dll {
             get {
-                object obj = ResourceManager.GetObject("System_Data_SQLite_x86_NET4", resourceCulture);
+                object obj = ResourceManager.GetObject("System_Data_SQLite_x86_NET4_dll", resourceCulture);
                 return ((byte[])(obj));
             }
         }

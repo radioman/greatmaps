@@ -1,8 +1,5 @@
 <?xml version="1.0"?>
 <doc>
-    <assembly>
-        <name>System.Data.SQLite</name>
-    </assembly>
     <members>
         <member name="T:System.Data.SQLite.SQLite3">
             <summary>

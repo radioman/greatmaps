@@ -236,6 +236,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\System.Data.SQLite.x64.NET2.dll.gz" />
+    <None Include="Resources\System.Data.SQLite.x64.NET4.dll.gz" />
+    <None Include="Resources\System.Data.SQLite.x86.NET2.dll.gz" />
+    <None Include="Resources\System.Data.SQLite.x86.NET4.dll.gz" />
     <None Include="sn.snk" />
     <None Include="Web References\Analytics\MessagingServiceV2.wsdl" />
     <None Include="Web References\Analytics\Reference.map">
@@ -273,18 +277,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\Analytics\MessagingServiceV2.disco" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\System.Data.SQLite.x86.DLL" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\System.Data.SQLite.x64.DLL" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\System.Data.SQLite.x86.NET4.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\System.Data.SQLite.x64.NET4.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

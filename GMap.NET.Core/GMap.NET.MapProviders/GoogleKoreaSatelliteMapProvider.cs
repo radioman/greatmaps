@@ -19,7 +19,7 @@ namespace GMap.NET.MapProviders
          Instance = new GoogleKoreaSatelliteMapProvider();
       }
 
-      public string Version = "88";
+      public string Version = "89";
 
       #region GMapProvider Members
 
@@ -61,6 +61,6 @@ namespace GMap.NET.MapProviders
 
       static readonly string UrlFormatServer = "khm";
       static readonly string UrlFormatRequest = "kh";
-      static readonly string UrlFormat = "http://{0}{1}.{9}/{2}/v={3}&x={4}{5}&y={6}&z={7}&s={8}";
+      static readonly string UrlFormat = "http://{0}{1}.{10}/{2}/v={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}";
    }
 }

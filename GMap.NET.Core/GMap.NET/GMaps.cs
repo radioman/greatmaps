@@ -1190,7 +1190,7 @@ namespace GMap.NET
                   {
                      foreach(XmlNode n in l)
                      {
-                        XmlNode nn = n.SelectSingleNode("//sm:Placemark/sm:address", nsMgr);
+                        XmlNode nnd, nnl, nn = n.SelectSingleNode("sm:address", nsMgr);
                         if(nn != null)
                         {
                            ret = new Placemark(nn.InnerText);
@@ -1202,25 +1202,64 @@ namespace GMap.NET
                               ret.Status = (GeoCoderStatusCode)int.Parse(nn.InnerText);
                            }
 
-                           nn = n.SelectSingleNode("//sm:Placemark/sn:AddressDetails/@Accuracy", nsMgr);
-                           if(nn != null)
+                           nnd = n.SelectSingleNode("sn:AddressDetails", nsMgr);
+                           if(nnd != null)
                            {
-                              ret.Accuracy = int.Parse(nn.InnerText);
-                           }
+                              nn = nnd.SelectSingleNode("@Accuracy", nsMgr);
+                              if(nn != null)
+                              {
+                                 ret.Accuracy = int.Parse(nn.InnerText);
+                              }
 
-                           nn = n.SelectSingleNode("//sm:Placemark/sn:AddressDetails/sn:Country/sn:CountryNameCode", nsMgr);
-                           if(nn != null)
-                           {
-                              ret.CountryNameCode = nn.InnerText;
-                           }
+                              nn = nnd.SelectSingleNode("sn:Country/sn:CountryNameCode", nsMgr);
+                              if(nn != null)
+                              {
+                                 ret.CountryNameCode = nn.InnerText;
+                              }
 
-                           nn = n.SelectSingleNode("//sm:Placemark/sn:AddressDetails/sn:Country/sn:CountryName", nsMgr);
-                           if(nn != null)
-                           {
-                              ret.CountryName = nn.InnerText;
+                              nn = nnd.SelectSingleNode("sn:Country/sn:CountryName", nsMgr);
+                              if(nn != null)
+                              {
+                                 ret.CountryName = nn.InnerText;
+                              }
+
+                              nn = nnd.SelectSingleNode("descendant::sn:AdministrativeArea/sn:AdministrativeAreaName", nsMgr);
+                              if(nn != null)
+                              {
+                                 ret.AdministrativeAreaName = nn.InnerText;
+                              }
+
+                              nn = nnd.SelectSingleNode("descendant::sn:SubAdministrativeArea/sn:SubAdministrativeAreaName", nsMgr);
+                              if(nn != null)
+                              {
+                                 ret.SubAdministrativeAreaName = nn.InnerText;
+                              }
+
+                              // Locality or DependentLocality tag ?
+                              nnl = nnd.SelectSingleNode("descendant::sn:Locality", nsMgr) ?? nnd.SelectSingleNode("descendant::sn:DependentLocality", nsMgr);
+                              if(nnl != null)
+                              {
+                                 nn = nnl.SelectSingleNode(string.Format("sn:{0}Name", nnl.Name), nsMgr);
+                                 if(nn != null)
+                                 {
+                                    ret.LocalityName = nn.InnerText;
+                                 }
+
+                                 nn = nnl.SelectSingleNode("sn:Thoroughfare/sn:ThoroughfareName", nsMgr);
+                                 if(nn != null)
+                                 {
+                                    ret.ThoroughfareName = nn.InnerText;
+                                 }
+
+                                 nn = nnl.SelectSingleNode("sn:PostalCode/sn:PostalCodeNumber", nsMgr);
+                                 if(nn != null)
+                                 {
+                                    ret.PostalCodeNumber = nn.InnerText;
+                                 }
+                              }
                            }
-                           break;
                         }
+                        break;
                      }
                   }
                }

@@ -91,11 +91,11 @@ namespace GMap.NET
             PureImage img;
 
             // tile number inversion(BottomLeft -> TopLeft) for pergo maps
-            //if(type == MapType.PergoTurkeyMap)
-            //{
-            //   img = GMaps.Instance.GetImageFrom(type, new GPoint(p.X, maxOfTiles.Height - p.Y), zoom, out ex);
-            //}
-            //else // ok
+            if(pr is TurkeyMapProvider)
+            {
+               img = GMaps.Instance.GetImageFrom(pr, new GPoint(p.X, maxOfTiles.Height - p.Y), zoom, out ex);
+            }
+            else // ok
             {
                img = GMaps.Instance.GetImageFrom(pr, p, zoom, out ex);
             }
@@ -128,7 +128,6 @@ namespace GMap.NET
          int retry = 0;
 
          Stuff.Shuffle<GPoint>(list);
-         //var types = GMaps.Instance.GetAllLayersOfType(type);
 
          for(int i = 0; i < all; i++)
          {

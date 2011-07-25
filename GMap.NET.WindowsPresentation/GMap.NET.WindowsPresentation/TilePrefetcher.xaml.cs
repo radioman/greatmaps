@@ -22,7 +22,6 @@ namespace GMap.NET.WindowsPresentation
       int sleep;
       int all;
       public bool ShowCompleteMessage = false;
-      PureProjection prj;
       RectLatLng area;
       GMap.NET.GSize maxOfTiles;
 
@@ -94,11 +93,11 @@ namespace GMap.NET.WindowsPresentation
             PureImage img;
 
             // tile number inversion(BottomLeft -> TopLeft) for pergo maps
-            //if(type == MapType.PergoTurkeyMap)
-            //{
-            //   img = GMaps.Instance.GetImageFrom(type, new GPoint(p.X, maxOfTiles.Height - p.Y), zoom, out ex);
-            //}
-            //else // ok
+            if(type is TurkeyMapProvider)
+            {
+               img = GMaps.Instance.GetImageFrom(type, new GPoint(p.X, maxOfTiles.Height - p.Y), zoom, out ex);
+            }
+            else // ok
             {
                img = GMaps.Instance.GetImageFrom(type, p, zoom, out ex);
             }
@@ -123,8 +122,8 @@ namespace GMap.NET.WindowsPresentation
             list.Clear();
             list = null;
          }
-         list = prj.GetAreaTileList(area, zoom, 0);
-         maxOfTiles = prj.GetTileMatrixMaxXY(zoom);
+         list = provider.Projection.GetAreaTileList(area, zoom, 0);
+         maxOfTiles = provider.Projection.GetTileMatrixMaxXY(zoom);
          all = list.Count;
 
          int countOk = 0;

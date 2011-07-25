@@ -1717,92 +1717,76 @@ namespace GMap.NET.WindowsPresentation
 
       public bool ShowExportDialog()
       {
-#if SQLite
-         if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
+         Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
          {
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.CheckPathExists = true;
+            dlg.CheckFileExists = false;
+            dlg.AddExtension = true;
+            dlg.DefaultExt = "gmdb";
+            dlg.ValidateNames = true;
+            dlg.Title = "GMap.NET: Export map to db, if file exsist only new data will be added";
+            dlg.FileName = "DataExp";
+            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
+            dlg.FilterIndex = 1;
+            dlg.RestoreDirectory = true;
+
+            if(dlg.ShowDialog() == true)
             {
-               dlg.CheckPathExists = true;
-               dlg.CheckFileExists = false;
-               dlg.AddExtension = true;
-               dlg.DefaultExt = "gmdb";
-               dlg.ValidateNames = true;
-               dlg.Title = "GMap.NET: Export map to db, if file exsist only new data will be added";
-               dlg.FileName = "DataExp";
-               dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-               dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
-               dlg.FilterIndex = 1;
-               dlg.RestoreDirectory = true;
-
-               if(dlg.ShowDialog() == true)
+               bool ok = GMaps.Instance.ExportToGMDB(dlg.FileName);
+               if(ok)
                {
-                  bool ok = GMaps.Instance.ExportToGMDB(dlg.FileName);
-                  if(ok)
-                  {
-                     MessageBox.Show("Complete!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Information);
-                  }
-                  else
-                  {
-                     MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
-                  }
-
-                  return ok;
+                  MessageBox.Show("Complete!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Information);
                }
+               else
+               {
+                  MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
+               }
+
+               return ok;
             }
          }
-         else
-         {
-            MessageBox.Show("Failed! Only SQLite support ;/", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
-         }
-#endif
+
          return false;
       }
 
       public bool ShowImportDialog()
       {
-#if SQLite
-         if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
+         Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
          {
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.CheckPathExists = true;
+            dlg.CheckFileExists = false;
+            dlg.AddExtension = true;
+            dlg.DefaultExt = "gmdb";
+            dlg.ValidateNames = true;
+            dlg.Title = "GMap.NET: Import to db, only new data will be added";
+            dlg.FileName = "DataImport";
+            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
+            dlg.FilterIndex = 1;
+            dlg.RestoreDirectory = true;
+
+            if(dlg.ShowDialog() == true)
             {
-               dlg.CheckPathExists = true;
-               dlg.CheckFileExists = false;
-               dlg.AddExtension = true;
-               dlg.DefaultExt = "gmdb";
-               dlg.ValidateNames = true;
-               dlg.Title = "GMap.NET: Import to db, only new data will be added";
-               dlg.FileName = "DataImport";
-               dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-               dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
-               dlg.FilterIndex = 1;
-               dlg.RestoreDirectory = true;
+               Cursor = Cursors.Wait;
 
-               if(dlg.ShowDialog() == true)
+               bool ok = GMaps.Instance.ImportFromGMDB(dlg.FileName);
+               if(ok)
                {
-                  Cursor = Cursors.Wait;
-
-                  bool ok = GMaps.Instance.ImportFromGMDB(dlg.FileName);
-                  if(ok)
-                  {
-                     MessageBox.Show("Complete!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Information);
-                     ReloadMap();
-                  }
-                  else
-                  {
-                     MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
-                  }
-
-                  Cursor = Cursors.Arrow;
-
-                  return ok;
+                  MessageBox.Show("Complete!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Information);
+                  ReloadMap();
                }
+               else
+               {
+                  MessageBox.Show("  Failed!", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
+               }
+
+               Cursor = Cursors.Arrow;
+
+               return ok;
             }
          }
-         else
-         {
-            MessageBox.Show("Failed! Only SQLite support ;/", "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Warning);
-         }
-#endif
+
          return false;
       }
 

@@ -39,12 +39,9 @@ namespace GMap.NET.CacheProviders
       {
          if(args.Name.StartsWith("System.Data.SQLite", StringComparison.OrdinalIgnoreCase))
          {
-            // try local directory
-            //string dir = AppDomain.CurrentDomain.BaseDirectory + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar;
-
             string rootDir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
             string dllDir = rootDir + "DllCache" + Path.DirectorySeparatorChar;
-            string dll = dllDir + "v73_NET" + Environment.Version.Major + "_" + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar + "System.Data.SQLite.DLL";
+            string dll = dllDir + "SQLite_v74_NET" + Environment.Version.Major + "_" + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar + "System.Data.SQLite.DLL";
             if(!File.Exists(dll))
             {
                string dir = Path.GetDirectoryName(dll);
@@ -57,11 +54,41 @@ namespace GMap.NET.CacheProviders
 
                if(Environment.Version.Major == 2)
                {
-                  File.WriteAllBytes(dll, (IntPtr.Size == 8 ? Properties.Resources.System_Data_SQLite_x64 : Properties.Resources.System_Data_SQLite_x86));
+                  using(MemoryStream gzipDll = new MemoryStream((IntPtr.Size == 8 ? Properties.Resources.System_Data_SQLite_x64_NET2_dll : Properties.Resources.System_Data_SQLite_x86_NET2_dll)))
+                  {
+                     using(var gs = new System.IO.Compression.GZipStream(gzipDll, System.IO.Compression.CompressionMode.Decompress))
+                     {
+                        using(MemoryStream exctDll = new MemoryStream())
+                        {
+                           byte[] tmp = new byte[1024 * 256];
+                           int r = 0;
+                           while((r = gs.Read(tmp, 0, tmp.Length)) > 0)
+                           {
+                              exctDll.Write(tmp, 0, r);
+                           }
+                           File.WriteAllBytes(dll, exctDll.ToArray());
+                        }
+                     }
+                  }
                }
                else if(Environment.Version.Major == 4)
                {
-                  File.WriteAllBytes(dll, (IntPtr.Size == 8 ? Properties.Resources.System_Data_SQLite_x64_NET4 : Properties.Resources.System_Data_SQLite_x86_NET4));
+                  using(MemoryStream gzipDll = new MemoryStream((IntPtr.Size == 8 ? Properties.Resources.System_Data_SQLite_x64_NET4_dll : Properties.Resources.System_Data_SQLite_x86_NET4_dll)))
+                  {
+                     using(var gs = new System.IO.Compression.GZipStream(gzipDll, System.IO.Compression.CompressionMode.Decompress))
+                     {
+                        using(MemoryStream exctDll = new MemoryStream())
+                        {
+                           byte[] tmp = new byte[1024 * 256];
+                           int r = 0;
+                           while((r = gs.Read(tmp, 0, tmp.Length)) > 0)
+                           {
+                              exctDll.Write(tmp, 0, r);
+                           }
+                           File.WriteAllBytes(dll, exctDll.ToArray());
+                        }
+                     }
+                  }
                }
             }
 
@@ -179,13 +206,13 @@ namespace GMap.NET.CacheProviders
 
 #if (!PocketPC && !MONO)
                   dbf.Lock(16, 2);
-                   dbf.Read(pageSizeBytes, 0, 2);
+                  dbf.Read(pageSizeBytes, 0, 2);
                   dbf.Unlock(16, 2);
 
                   dbf.Seek(36, SeekOrigin.Begin);
 
                   dbf.Lock(36, 4);
-                   dbf.Read(freePagesBytes, 0, 4);
+                  dbf.Read(freePagesBytes, 0, 4);
                   dbf.Unlock(36, 4);
 #else
                   dbf.Read(pageSizeBytes, 0, 2);
