@@ -8,11 +8,11 @@
    /// </summary>
    internal struct RawTile
    {
-      public Guid Type;
+      public int Type;
       public GPoint Pos;
       public int Zoom;
 
-      public RawTile(Guid Type, GPoint Pos, int Zoom)
+      public RawTile(int Type, GPoint Pos, int Zoom)
       {
          this.Type = Type;
          this.Pos = Pos;

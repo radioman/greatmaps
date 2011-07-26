@@ -658,7 +658,7 @@ namespace GMap.NET.CacheProviders
 
       int preAllocationPing = 0;
 
-      bool PureImageCache.PutImageToCache(MemoryStream tile, int type, GPoint pos, int zoom)
+      bool PureImageCache.PutImageToCache(byte[] tile, int type, GPoint pos, int zoom)
       {
          bool ret = true;
          if(Created)
@@ -693,7 +693,7 @@ namespace GMap.NET.CacheProviders
                               cmd.Transaction = tr;
 
                               cmd.CommandText = singleSqlInsertLast;
-                              cmd.Parameters.Add(new SQLiteParameter("@p1", tile.GetBuffer()));
+                              cmd.Parameters.Add(new SQLiteParameter("@p1", tile));
 
                               cmd.ExecuteNonQuery();
                            }
@@ -765,13 +765,7 @@ namespace GMap.NET.CacheProviders
                            {
                               if(GMapProvider.TileImageProxy != null)
                               {
-                                 MemoryStream stm = new MemoryStream(tile, 0, tile.Length, false, true);
-
-                                 ret = GMapProvider.TileImageProxy.FromStream(stm);
-                                 if(ret != null)
-                                 {
-                                    ret.Data = stm;
-                                 }
+                                 ret = GMapProvider.TileImageProxy.FromArray(tile);
                               }
                            }
                            tile = null;

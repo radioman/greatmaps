@@ -169,7 +169,7 @@ namespace GMap.NET.CacheProviders
       #endregion
 
       #region PureImageCache Members
-      public bool PutImageToCache(MemoryStream tile, int type, GPoint pos, int zoom)
+      public bool PutImageToCache(byte[] tile, int type, GPoint pos, int zoom)
       {
          bool ret = true;
          {
@@ -183,7 +183,7 @@ namespace GMap.NET.CacheProviders
                      cmdInsert.Parameters["@y"].Value = pos.Y;
                      cmdInsert.Parameters["@zoom"].Value = zoom;
                      cmdInsert.Parameters["@type"].Value = type;
-                     cmdInsert.Parameters["@tile"].Value = tile.GetBuffer();
+                     cmdInsert.Parameters["@tile"].Value = tile;
                      cmdInsert.ExecuteNonQuery();
                   }
                }
@@ -223,13 +223,7 @@ namespace GMap.NET.CacheProviders
                      {
                         if(GMapProvider.TileImageProxy != null)
                         {
-                           MemoryStream stm = new MemoryStream(tile, 0, tile.Length, false, true);
-
-                           ret = GMapProvider.TileImageProxy.FromStream(stm);
-                           if(ret != null)
-                           {
-                              ret.Data = stm;
-                           }
+                           ret = GMapProvider.TileImageProxy.FromArray(tile);
                         }
                      }
                      tile = null;

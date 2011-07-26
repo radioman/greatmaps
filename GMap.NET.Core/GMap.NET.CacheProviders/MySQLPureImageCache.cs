@@ -230,15 +230,9 @@ namespace GMap.NET.CacheProviders
                      byte[] tile = (byte[])odata;
                      if(tile != null && tile.Length > 0)
                      {
-                        if(GMaps.Instance.ImageProxy != null)
+                        if(GMapProvider.TileImageProxy != null)
                         {
-                           MemoryStream stm = new MemoryStream(tile, 0, tile.Length, false, true);
-
-                           ret = GMaps.Instance.ImageProxy.FromStream(stm);
-                           if(ret != null)
-                           {
-                              ret.Data = stm;
-                           }
+                           ret = GMapProvider.TileImageProxy.FromArray(tile);
                         }
                      }
                      tile = null;

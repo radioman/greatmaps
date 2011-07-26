@@ -47,11 +47,10 @@ namespace GMap.NET.Internals
          byte[] buffer = new byte[readSize];
          MemoryStream ms = new MemoryStream();
          {
-            int count = inputStream.Read(buffer, 0, readSize);
-            while(count > 0)
+            int count = 0;
+            while((count = inputStream.Read(buffer, 0, readSize)) > 0)
             {
                ms.Write(buffer, 0, count);
-               count = inputStream.Read(buffer, 0, readSize);
             }
          }
          buffer = null;

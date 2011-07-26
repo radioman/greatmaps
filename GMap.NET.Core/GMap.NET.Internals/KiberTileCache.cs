@@ -8,7 +8,7 @@ namespace GMap.NET.Internals
    /// <summary>
    /// kiber speed memory cache for tiles with history support ;}
    /// </summary>
-   internal class KiberTileCache : Dictionary<RawTile, MemoryStream>
+   internal class KiberTileCache : Dictionary<RawTile, byte[]>
    {
       readonly Queue<RawTile> Queue = new Queue<RawTile>();
 
@@ -34,7 +34,7 @@ namespace GMap.NET.Internals
          }
       }
 
-      public new void Add(RawTile key, MemoryStream value)
+      public new void Add(RawTile key, byte[] value)
       {
          Queue.Enqueue(key);
          base.Add(key, value);
@@ -57,11 +57,12 @@ namespace GMap.NET.Internals
                RawTile first = Queue.Dequeue();
                try
                {
-                  using(MemoryStream m = base[first])
+                  var m = base[first];
                   {
                      base.Remove(first);
                      memoryCacheSize -= m.Length;
                   }
+                  m = null;
                }
                catch
                {

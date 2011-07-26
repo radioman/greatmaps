@@ -170,7 +170,7 @@
     <Compile Include="GMap.NET.CacheProviders\MsSQLCePureImageCache.cs" />
     <Compile Include="GMap.NET.CacheProviders\PostgreSQLPureImageCache.cs" />
     <Compile Include="GMap.NET.CacheProviders\SQLitePureImageCache.cs" />
-    <Compile Include="GMap.NET.Internals\CacheQueue.cs" />
+    <Compile Include="GMap.NET.Internals\CacheQueueItem.cs" />
     <Compile Include="GMap.NET.Internals\FastReaderWriterLock.cs" />
     <Compile Include="GMap.NET.Internals\KiberTileCache.cs" />
     <Compile Include="GMap.NET.Internals\PureImage.cs" />

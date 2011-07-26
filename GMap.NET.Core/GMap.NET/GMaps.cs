@@ -120,7 +120,7 @@ namespace GMap.NET
       /// <summary>
       /// tile queue to cache
       /// </summary>
-      readonly Queue<CacheItemQueue> tileCacheQueue = new Queue<CacheItemQueue>();
+      readonly Queue<CacheQueueItem> tileCacheQueue = new Queue<CacheQueueItem>();
 
       /// <summary>
       /// tiles in memmory
@@ -248,12 +248,12 @@ namespace GMap.NET
 
       #region -- Stuff --
 
-      MemoryStream GetTileFromMemoryCache(RawTile tile)
+      byte[] GetTileFromMemoryCache(RawTile tile)
       {
          kiberCacheLock.AcquireReaderLock();
          try
          {
-            MemoryStream ret = null;
+            byte[] ret = null;
             if(TilesInMemory.TryGetValue(tile, out ret))
             {
                return ret;
@@ -266,20 +266,33 @@ namespace GMap.NET
          return null;
       }
 
-      void AddTileToMemoryCache(RawTile tile, MemoryStream data)
+      void AddTileToMemoryCache(RawTile tile, byte[] data)
       {
-         kiberCacheLock.AcquireWriterLock();
-         try
+         if(data != null)
          {
-            if(!TilesInMemory.ContainsKey(tile))
+            kiberCacheLock.AcquireWriterLock();
+            try
             {
-               TilesInMemory.Add(tile, Stuff.CopyStream(data, true));
+               if(!TilesInMemory.ContainsKey(tile))
+               {
+                  TilesInMemory.Add(tile, data);
+               }
+            }
+            finally
+            {
+               kiberCacheLock.ReleaseWriterLock();
             }
          }
-         finally
+#if DEBUG
+         else
          {
-            kiberCacheLock.ReleaseWriterLock();
+            Debug.WriteLine("adding empty data to MemoryCache ;} ");
+            if(Debugger.IsAttached)
+            {
+               Debugger.Break();
+            }
          }
+#endif
       }
 
       /// <summary>
@@ -521,13 +534,13 @@ namespace GMap.NET
       /// enqueueens tile to cache
       /// </summary>
       /// <param name="task"></param>
-      void EnqueueCacheTask(CacheItemQueue task)
+      void EnqueueCacheTask(CacheQueueItem task)
       {
          lock(tileCacheQueue)
          {
             if(!tileCacheQueue.Contains(task))
             {
-               Debug.WriteLine("EnqueueCacheTask: " + task.Pos.ToString());
+               Debug.WriteLine("EnqueueCacheTask: " + task);
 
                tileCacheQueue.Enqueue(task);
 
@@ -543,7 +556,7 @@ namespace GMap.NET
                {
                   CacheEngine = null;
                   CacheEngine = new Thread(new ThreadStart(CacheEngineLoop));
-                  CacheEngine.Name = "GMap.NET CacheEngine";
+                  CacheEngine.Name = "CacheEngine";
                   CacheEngine.IsBackground = false;
                   CacheEngine.Priority = ThreadPriority.Lowest;
                   CacheEngine.Start();
@@ -564,7 +577,7 @@ namespace GMap.NET
          {
             try
             {
-               CacheItemQueue? task = null;
+               CacheQueueItem? task = null;
 
                lock(tileCacheQueue)
                {
@@ -577,20 +590,21 @@ namespace GMap.NET
                if(task.HasValue)
                {
                   // check if stream wasn't disposed somehow
-                  if(task.Value.Img != null && task.Value.Img.CanRead)
+                  if(task.Value.Img != null)
                   {
                      Debug.WriteLine("CacheEngine: storing tile " + task.Value + "...");
 
                      if((task.Value.CacheType & CacheUsage.First) == CacheUsage.First && ImageCacheLocal != null)
                      {
-                        ImageCacheLocal.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
+                        ImageCacheLocal.PutImageToCache(task.Value.Img, task.Value.Tile.Type, task.Value.Tile.Pos, task.Value.Tile.Zoom);
                      }
 
                      if((task.Value.CacheType & CacheUsage.Second) == CacheUsage.Second && ImageCacheSecond != null)
                      {
-                        ImageCacheSecond.PutImageToCache(task.Value.Img, task.Value.Type, task.Value.Pos, task.Value.Zoom);
+                        ImageCacheSecond.PutImageToCache(task.Value.Img, task.Value.Tile.Type, task.Value.Tile.Pos, task.Value.Tile.Zoom);
                      }
 
+                     task.Value.Clear();
 #if PocketPC
                      Thread.Sleep(3333);
 #else
@@ -601,6 +615,7 @@ namespace GMap.NET
                   {
                      Debug.WriteLine("CacheEngineLoop: skip, tile disposed to early -> " + task.Value);
                   }
+                  task = null;
                }
                else
                {
@@ -1567,34 +1582,27 @@ namespace GMap.NET
 
          try
          {
+            var rtile = new RawTile(provider.DbId, pos, zoom);
+
             // let't check memmory first
             if(UseMemoryCache)
             {
-               MemoryStream m = GetTileFromMemoryCache(new RawTile(provider.Id, pos, zoom));
+               var m = GetTileFromMemoryCache(rtile);
                if(m != null)
                {
                   if(GMapProvider.TileImageProxy != null)
                   {
-                     ret = GMapProvider.TileImageProxy.FromStream(m);
+                     ret = GMapProvider.TileImageProxy.FromArray(m);
                      if(ret == null)
                      {
 #if DEBUG
-                        Debug.WriteLine("Image disposed in MemoryCache o.O, should never happen ;} " + new RawTile(provider.Id, pos, zoom));
+                        Debug.WriteLine("Image disposed in MemoryCache o.O, should never happen ;} " + new RawTile(provider.DbId, pos, zoom));
                         if(Debugger.IsAttached)
                         {
                            Debugger.Break();
                         }
 #endif
-
-#if !PocketPC
-                        m.Dispose();
-#else
-                        (m as IDisposable).Dispose();
-#endif
-                     }
-                     else
-                     {
-                        ret.Data = m;
+                        m = null;
                      }
                   }
                }
@@ -1606,12 +1614,12 @@ namespace GMap.NET
                {
                   if(Cache.Instance.ImageCache != null)
                   {
-                     ret = Cache.Instance.ImageCache.GetImageFromCache((provider as GMapProvider).DbId, pos, zoom);
+                     ret = Cache.Instance.ImageCache.GetImageFromCache(provider.DbId, pos, zoom);
                      if(ret != null)
                      {
                         if(UseMemoryCache)
                         {
-                           AddTileToMemoryCache(new RawTile(provider.Id, pos, zoom), ret.Data);
+                           AddTileToMemoryCache(rtile, ret.Data.GetBuffer());
                         }
                         return ret;
                      }
@@ -1624,9 +1632,9 @@ namespace GMap.NET
                      {
                         if(UseMemoryCache)
                         {
-                           AddTileToMemoryCache(new RawTile(provider.Id, pos, zoom), ret.Data);
+                           AddTileToMemoryCache(rtile, ret.Data.GetBuffer());
                         }
-                        EnqueueCacheTask(new CacheItemQueue(provider.DbId, pos, zoom, ret.Data, CacheUsage.First));
+                        EnqueueCacheTask(new CacheQueueItem(rtile, ret.Data.GetBuffer(), CacheUsage.First));
                         return ret;
                      }
                   }
@@ -1641,12 +1649,12 @@ namespace GMap.NET
                      {
                         if(UseMemoryCache)
                         {
-                           AddTileToMemoryCache(new RawTile(provider.Id, pos, zoom), ret.Data);
+                           AddTileToMemoryCache(rtile, ret.Data.GetBuffer());
                         }
 
                         if(Mode != AccessMode.ServerOnly)
                         {
-                           EnqueueCacheTask(new CacheItemQueue(provider.DbId, pos, zoom, ret.Data, CacheUsage.Both));
+                           EnqueueCacheTask(new CacheQueueItem(rtile, ret.Data.GetBuffer(), CacheUsage.Both));
                         }
                      }
                   }

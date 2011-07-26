@@ -21,7 +21,12 @@ namespace GMap.NET.WindowsForms
             Img.Dispose();
             Img = null;
          }
-         Data = null;
+
+         if(Data != null)
+         {
+            Data.Dispose();
+            Data = null;
+         }
       }
    }
 
