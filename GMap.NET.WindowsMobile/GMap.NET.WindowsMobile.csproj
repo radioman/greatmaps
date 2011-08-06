@@ -88,8 +88,8 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\Cache.cs">
       <Link>GMap.NET.Internals\Cache.cs</Link>
     </Compile>
-    <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\CacheQueue.cs">
-      <Link>GMap.NET.Internals\CacheQueue.cs</Link>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\CacheQueueItem.cs">
+      <Link>GMap.NET.Internals\CacheQueueItem.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\Core.cs">
       <Link>GMap.NET.Internals\Core.cs</Link>

@@ -438,7 +438,6 @@ namespace GMap.NET.WindowsForms
 
          while(!skiped && Core.Refresh.WaitOne() || (Core.Refresh.WaitOne(spanMs, false) || true))
          {
-
             now = DateTime.Now;
             lock(invalidationLock)
             {
