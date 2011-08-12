@@ -14,10 +14,10 @@ namespace GMap.NET.WindowsForms
    using GMap.NET.ObjectModel;
    using System.Diagnostics;
    using System.Drawing.Text;
-   using GMap.NET.MapProviders;    
+   using GMap.NET.MapProviders;
 
 #if !PocketPC
-   using System.Runtime.Serialization.Formatters.Binary; 
+   using System.Runtime.Serialization.Formatters.Binary;
 #else
    using OpenNETCF.ComponentModel;
 #endif
@@ -410,13 +410,15 @@ namespace GMap.NET.WindowsForms
             }
 
             // start tile loading monitor
-            BackgroundWorker invalidator = new BackgroundWorker();
+            invalidator.WorkerSupportsCancellation = true;
             invalidator.WorkerReportsProgress = true;
             invalidator.DoWork += new DoWorkEventHandler(invalidatorWatch);
             invalidator.ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
             invalidator.RunWorkerAsync();
          }
       }
+
+      readonly BackgroundWorker invalidator = new BackgroundWorker();
 
       void invalidatorEngage(object sender, ProgressChangedEventArgs e)
       {
@@ -436,7 +438,7 @@ namespace GMap.NET.WindowsForms
          TimeSpan delta;
          DateTime now = DateTime.Now;
 
-         while(!skiped && Core.Refresh.WaitOne() || (Core.Refresh.WaitOne(spanMs, false) || true))
+         while(!w.CancellationPending && (!skiped && Core.Refresh.WaitOne() || (Core.Refresh.WaitOne(spanMs, false) || true)))
          {
             now = DateTime.Now;
             lock(invalidationLock)
@@ -1110,11 +1112,41 @@ namespace GMap.NET.WindowsForms
       }
 #endif
 
+#if !PocketPC
+      protected override void OnCreateControl()
+      {
+         base.OnCreateControl();
+
+         var f = ParentForm;
+         if(f != null)
+         {
+            while(f.ParentForm != null)
+            {
+               f = f.ParentForm;
+            }
+
+            if(f != null)
+            {
+               f.FormClosing += new FormClosingEventHandler(ParentForm_FormClosing);
+            }
+         }
+      }
+
+      void ParentForm_FormClosing(object sender, FormClosingEventArgs e)
+      {
+         if(e.CloseReason == CloseReason.WindowsShutDown || e.CloseReason == CloseReason.TaskManagerClosing)
+         {
+            Manager.CancelTileCaching();
+         }
+
+         Core.ApplicationExit();
+      }
+#endif
+
       protected override void OnHandleDestroyed(EventArgs e)
       {
          Core.OnMapClose();
-         Core.ApplicationExit();
-
+         //invalidator
          base.OnHandleDestroyed(e);
       }
 

@@ -216,7 +216,7 @@ namespace GMap.NET
       /// </summary>
       Thread CacheEngine;
 
-      readonly AutoResetEvent WaitForCache = new AutoResetEvent(false);
+      internal readonly AutoResetEvent WaitForCache = new AutoResetEvent(false);
 
       public GMaps()
       {
@@ -559,9 +559,29 @@ namespace GMap.NET
                   CacheEngine.Name = "CacheEngine";
                   CacheEngine.IsBackground = false;
                   CacheEngine.Priority = ThreadPriority.Lowest;
+
+                  abortCacheLoop = false;
                   CacheEngine.Start();
                }
             }
+         }
+      }
+
+      volatile bool abortCacheLoop = false;
+      internal volatile bool applicationExit = false;
+
+      /// <summary>
+      /// immediately stops background tile caching, call it if you want fast exit the process
+      /// </summary>
+      public void CancelTileCaching()
+      {
+         Debug.WriteLine("CacheEngine: CancelTileCaching...");
+
+         abortCacheLoop = true;
+         lock(tileCacheQueue)
+         {
+            tileCacheQueue.Clear();
+            WaitForCache.Set();
          }
       }
 
@@ -573,7 +593,7 @@ namespace GMap.NET
       void CacheEngineLoop()
       {
          Debug.WriteLine("CacheEngine: start");
-         while(true)
+         while(!abortCacheLoop)
          {
             try
             {
@@ -619,7 +639,7 @@ namespace GMap.NET
                }
                else
                {
-                  if(!WaitForCache.WaitOne(11111, false))
+                  if(abortCacheLoop || !WaitForCache.WaitOne(33333, false) || applicationExit)     
                   {
                      break;
                   }

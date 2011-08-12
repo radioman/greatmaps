@@ -34,6 +34,8 @@ namespace GMap.NET.WindowsPresentation
          worker.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
          worker.DoWork += new DoWorkEventHandler(worker_DoWork);
          worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+
+         Owner = Application.Current.MainWindow;
       }
 
       public void Start(RectLatLng area, int zoom, GMapProvider provider, int sleep)

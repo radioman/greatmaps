@@ -8,13 +8,25 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 using GMap.NET.MapProviders;
 using GMap.NET.Internals;
+using GMap.NET;
+using System.Net;
 
 namespace ConsoleApplication
 {
    class Program
    {
       static void Main(string[] args)
-      {                   
+      {
+         //if(false)
+         {
+            //var p1 = new PointLatLng(10.2475, -67.6067);
+            //var p2 = new PointLatLng(10.2471, -67.5991);
+
+            var p1 = new PointLatLng(54.6961334816182, 25.2985095977783);
+            var p2 = new PointLatLng(54.7061334816182, 25.3085095977783);
+
+         }
+
          if(false)
          {
             double x = 25;
@@ -55,7 +67,10 @@ namespace ConsoleApplication
             // 134400000],PARAMETER["false_northing",-41600000
          }
 
+         // stop caching immediately
+         GMaps.Instance.CancelTileCaching();
+
          Console.ReadLine();
-      }   
+      }
    }
 }

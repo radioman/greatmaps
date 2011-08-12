@@ -62,7 +62,7 @@ namespace GMap.NET.Internals
 
       DateTime LastTileLoadStart = DateTime.Now;
       DateTime LastTileLoadEnd = DateTime.Now;
-      internal bool IsStarted = false;
+      internal volatile bool IsStarted = false;
       int zoom;
       internal int maxZoom = 2;
       internal int minZoom = 2;
@@ -473,6 +473,11 @@ namespace GMap.NET.Internals
 
       internal void ApplicationExit()
       {
+         Debug.WriteLine("ApplicationExit...");
+
+         GMaps.Instance.applicationExit = true;
+         GMaps.Instance.WaitForCache.Set();
+
 #if !DEBUG
 #if !PocketPC
          // send end ping to codeplex Analytics service
@@ -484,7 +489,7 @@ namespace GMap.NET.Internals
 
                using(Analytics.MessagingServiceV2 s = new Analytics.MessagingServiceV2())
                {
-                  s.Timeout = 10 * 1000;
+                  s.Timeout = 5 * 1000;
 
                   if(GMapProvider.WebProxy != null)
                   {
@@ -626,6 +631,8 @@ namespace GMap.NET.Internals
 
       public void OnMapClose()
       {
+         Debug.WriteLine("OnMapClose...");
+
          CancelAsyncTasks();
          IsStarted = false;
 
@@ -635,6 +642,17 @@ namespace GMap.NET.Internals
          {
             FailedLoads.Clear();
             RaiseEmptyTileError = false;
+         }
+
+         // cancel waiting loaders
+         Monitor.Enter(tileLoadQueue);
+         try
+         {
+            Monitor.PulseAll(tileLoadQueue);
+         }
+         finally
+         {
+            Monitor.Exit(tileLoadQueue);
          }
       }
 
@@ -916,7 +934,7 @@ namespace GMap.NET.Internals
 #else
          int ctid = 0;
 #endif
-         while(!stop)
+         while(!stop && IsStarted)
          {
             task = null;
 
@@ -985,7 +1003,7 @@ namespace GMap.NET.Internals
                   }
                }
 
-               if(!stop || tileLoadQueue.Count > 0)
+               if(IsStarted && !stop || tileLoadQueue.Count > 0)
                {
                   task = tileLoadQueue.Pop();
                }
@@ -1117,6 +1135,9 @@ namespace GMap.NET.Internals
       /// </summary>
       void UpdateBounds()
       {
+         if(!IsStarted)
+            break;
+
          if(Provider.Equals(EmptyProvider.Instance))
          {
             return;

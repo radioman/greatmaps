@@ -549,11 +549,6 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
-      void Current_Exit(object sender, ExitEventArgs e)
-      {
-         Core.ApplicationExit();
-      }
-
       protected override void OnItemsChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
       {
          if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
@@ -591,11 +586,22 @@ namespace GMap.NET.WindowsPresentation
                {
                   if(Application.Current != null)
                   {
-                     Application.Current.Exit += new ExitEventHandler(Current_Exit);
+                     Application.Current.Exit += new ExitEventHandler(Current_Exit); 
+                     Application.Current.SessionEnding += new SessionEndingCancelEventHandler(Current_SessionEnding);
                   }
                }
                ));
          }
+      }
+
+      void Current_SessionEnding(object sender, SessionEndingCancelEventArgs e)
+      {                
+         GMaps.Instance.CancelTileCaching();
+      }
+
+      void Current_Exit(object sender, ExitEventArgs e)
+      {
+         Core.ApplicationExit();
       }
 
       void GMapControl_Unloaded(object sender, RoutedEventArgs e)
