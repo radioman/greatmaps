@@ -51,6 +51,7 @@ namespace GMap.NET.WindowsPresentation
             this.sleep = sleep;
 
             GMaps.Instance.UseMemoryCache = false;
+            GMaps.Instance.CacheOnIdleRead = false;
 
             worker.RunWorkerAsync();
 
@@ -83,6 +84,7 @@ namespace GMap.NET.WindowsPresentation
          list.Clear();
 
          GMaps.Instance.UseMemoryCache = true;
+         GMaps.Instance.CacheOnIdleRead = true;
 
          this.Close();
       }

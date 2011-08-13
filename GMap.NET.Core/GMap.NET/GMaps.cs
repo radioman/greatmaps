@@ -74,7 +74,7 @@ namespace GMap.NET
       /// <summary>
       /// is map using memory cache for tiles
       /// </summary>
-      public bool UseMemoryCache = true;
+      public bool UseMemoryCache = true;        
 
       /// <summary>
       /// Radius of the Earth
@@ -585,6 +585,13 @@ namespace GMap.NET
          }
       }
 
+      int readingCache = 0;    
+
+      /// <summary>
+      /// delays writing tiles to cache while performing reads
+      /// </summary>
+      public volatile bool CacheOnIdleRead = true;
+
       /// <summary>
       /// live for cache ;}
       /// </summary>
@@ -616,11 +623,25 @@ namespace GMap.NET
 
                      if((task.Value.CacheType & CacheUsage.First) == CacheUsage.First && ImageCacheLocal != null)
                      {
+                        if(CacheOnIdleRead)
+                        {
+                           while(Interlocked.Decrement(ref readingCache) > 0)
+                           {
+                              Thread.Sleep(1000);
+                           }
+                        }     
                         ImageCacheLocal.PutImageToCache(task.Value.Img, task.Value.Tile.Type, task.Value.Tile.Pos, task.Value.Tile.Zoom);
                      }
 
                      if((task.Value.CacheType & CacheUsage.Second) == CacheUsage.Second && ImageCacheSecond != null)
                      {
+                        if(CacheOnIdleRead)
+                        {
+                           while(Interlocked.Decrement(ref readingCache) > 0)
+                           {
+                              Thread.Sleep(1000);
+                           }
+                        } 
                         ImageCacheSecond.PutImageToCache(task.Value.Img, task.Value.Tile.Type, task.Value.Tile.Pos, task.Value.Tile.Zoom);
                      }
 
@@ -1634,6 +1655,12 @@ namespace GMap.NET
                {
                   if(Cache.Instance.ImageCache != null)
                   {
+                     // hold writer for 5s
+                     if(CacheOnIdleRead)
+                     {
+                        Interlocked.Exchange(ref readingCache, 5);
+                     }
+
                      ret = Cache.Instance.ImageCache.GetImageFromCache(provider.DbId, pos, zoom);
                      if(ret != null)
                      {
@@ -1647,6 +1674,12 @@ namespace GMap.NET
 
                   if(Cache.Instance.ImageCacheSecond != null)
                   {
+                     // hold writer for 5s
+                     if(CacheOnIdleRead)
+                     {
+                        Interlocked.Exchange(ref readingCache, 5);
+                     }
+
                      ret = Cache.Instance.ImageCacheSecond.GetImageFromCache(provider.DbId, pos, zoom);
                      if(ret != null)
                      {

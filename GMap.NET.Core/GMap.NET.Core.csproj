@@ -106,6 +106,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GMap.NET.Internals\FastResourceLock.cs" />
     <Compile Include="GMap.NET.MapProviders\BingMapOldProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingSatelliteMapProvider.cs" />
