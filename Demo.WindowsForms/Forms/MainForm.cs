@@ -1684,6 +1684,7 @@ namespace Demo.WindowsForms
                if(res == DialogResult.Yes)
                {
                   TilePrefetcher obj = new TilePrefetcher();
+                  obj.Owner = this;
                   obj.ShowCompleteMessage = true;
                   obj.Start(area, i, MainMap.MapProvider, 100);
                }
