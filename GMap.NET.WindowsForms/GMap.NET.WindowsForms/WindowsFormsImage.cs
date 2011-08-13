@@ -6,6 +6,7 @@ namespace GMap.NET.WindowsForms
    using System.Drawing.Imaging;
    using System;
    using System.Diagnostics;
+   using GMap.NET.Internals;
 
    /// <summary>
    /// image abstraction
@@ -39,13 +40,15 @@ namespace GMap.NET.WindowsForms
       internal ColorMatrix ColorMatrix;
 #endif
 
+      static readonly bool VistaOrLater = Stuff.IsRunningOnVistaOrLater();
+
       public override PureImage FromStream(Stream stream)
       {
          WindowsFormsImage ret = null;
          try
          {
 #if !PocketPC
-            Image m = Image.FromStream(stream, true, false);
+            Image m = Image.FromStream(stream, true, VistaOrLater ? false : true);
 #else
             Image m = new Bitmap(stream);
 #endif

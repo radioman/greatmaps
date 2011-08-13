@@ -50,21 +50,6 @@ namespace Demo.WindowsForms
 
          if(!DesignMode)
          {
-            this.WindowState = FormWindowState.Minimized;               
-
-            Thread t = new Thread(() =>
-            {
-               while(true)
-               {
-                  Debug.WriteLine(".");
-                  Thread.Sleep(444);
-               }
-            });
-            t.IsBackground = false;
-            t.Start();
-            
-            
-
             // add your custom map db provider
             //GMap.NET.CacheProviders.MySQLPureImageCache ch = new GMap.NET.CacheProviders.MySQLPureImageCache();
             //ch.ConnectionString = @"server=sql2008;User Id=trolis;Persist Security Info=True;database=gmapnetcache;password=trolis;";

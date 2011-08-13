@@ -168,7 +168,7 @@ namespace GMap.NET.WindowsPresentation
       PointLatLng selectionEnd;
       Typeface tileTypeface = new Typeface("Arial");
       bool showTileGridLines = false;
-      MethodInvoker invalidator;
+      //MethodInvoker invalidator;
 
       FormattedText Copyright;
 
@@ -396,8 +396,6 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
-      Slider slider = new Slider();
-
       public GMapControl()
       {
          if(!DesignModeInConstruct)
@@ -481,44 +479,6 @@ namespace GMap.NET.WindowsPresentation
          base.InvalidateVisual();
       }
 
-      readonly object invalidationLock = new object();
-      DateTime last = DateTime.Now;
-
-      void invalidatorWatch(object sender, DoWorkEventArgs e)
-      {
-         var w = sender as BackgroundWorker;
-
-         TimeSpan span = TimeSpan.FromMilliseconds(111);
-         bool skiped = false;
-         TimeSpan delta;
-         DateTime now = DateTime.Now;
-
-         while(!skiped && Core.Refresh.WaitOne() || (Core.Refresh.WaitOne(span) || true))
-         {
-            now = DateTime.Now;
-            lock(invalidationLock)
-            {
-               delta = now - last;
-            }
-
-            if(delta > span)
-            {
-               lock(invalidationLock)
-               {
-                  last = now;
-               }
-               skiped = false;
-
-               w.ReportProgress(1);
-               Debug.WriteLine("Invalidate delta: " + (int)delta.TotalMilliseconds + "ms");
-            }
-            else
-            {
-               skiped = true;
-            }
-         }
-      }
-
       /// <summary>
       /// enque built-in thread safe invalidation
       /// </summary>
@@ -537,9 +497,9 @@ namespace GMap.NET.WindowsPresentation
       {
          if(forced)
          {
-            lock(invalidationLock)
+            lock(Core.invalidationLock)
             {
-               last = DateTime.Now;
+               Core.lastInvalidation = DateTime.Now;
             }
             base.InvalidateVisual();
          }
@@ -569,14 +529,7 @@ namespace GMap.NET.WindowsPresentation
       /// <param name="e"></param>
       void GMapControl_Loaded(object sender, RoutedEventArgs e)
       {
-         // start tile loading monitor
-         BackgroundWorker invalidator = new BackgroundWorker();
-         invalidator.WorkerReportsProgress = true;
-         invalidator.DoWork += new DoWorkEventHandler(invalidatorWatch);
-         invalidator.ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
-         invalidator.RunWorkerAsync();
-
-         Core.StartSystem();
+         Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
          Core_OnMapZoomChanged();
 
          if(Application.Current != null)
@@ -586,7 +539,6 @@ namespace GMap.NET.WindowsPresentation
                {
                   if(Application.Current != null)
                   {
-                     Application.Current.Exit += new ExitEventHandler(Current_Exit); 
                      Application.Current.SessionEnding += new SessionEndingCancelEventHandler(Current_SessionEnding);
                   }
                }
@@ -595,13 +547,8 @@ namespace GMap.NET.WindowsPresentation
       }
 
       void Current_SessionEnding(object sender, SessionEndingCancelEventArgs e)
-      {                
-         GMaps.Instance.CancelTileCaching();
-      }
-
-      void Current_Exit(object sender, ExitEventArgs e)
       {
-         Core.ApplicationExit();
+         GMaps.Instance.CancelTileCaching();
       }
 
       void GMapControl_Unloaded(object sender, RoutedEventArgs e)

@@ -568,7 +568,7 @@ namespace GMap.NET
       }
 
       volatile bool abortCacheLoop = false;
-      internal volatile bool applicationExit = false;
+      internal volatile bool noMapInstances = false;
 
       /// <summary>
       /// immediately stops background tile caching, call it if you want fast exit the process
@@ -639,7 +639,7 @@ namespace GMap.NET
                }
                else
                {
-                  if(abortCacheLoop || !WaitForCache.WaitOne(33333, false) || applicationExit)     
+                  if(abortCacheLoop || noMapInstances || !WaitForCache.WaitOne(33333, false) || noMapInstances)     
                   {
                      break;
                   }

@@ -8,6 +8,7 @@ namespace GMap.NET.Internals
    using GMap.NET.Projections;
    using System.IO;
    using GMap.NET.MapProviders;
+   using System.ComponentModel;
 
 #if PocketPC
    using OpenNETCF.ComponentModel;
@@ -376,16 +377,34 @@ namespace GMap.NET.Internals
       internal static readonly Guid ApplicationIdGuid = new Guid("FF328040-77B0-4546-ACF3-7C6EC0827BBB");
       internal static volatile bool AnalyticsStartDone = false;
       internal static volatile bool AnalyticsStopDone = false;
+      internal static int instances = 0;
 
-      /// <summary>
-      /// starts core system
-      /// </summary>
-      public void StartSystem()
+      BackgroundWorker invalidator;
+
+      public BackgroundWorker OnMapOpen()
       {
          if(!IsStarted)
          {
+            int x = Interlocked.Increment(ref instances);
+            Debug.WriteLine("OnMapOpen: " + x);
+
             IsStarted = true;
+
+            if(x == 1)
+            {
+               GMaps.Instance.noMapInstances = false;
+            }
+
             GoToCurrentPosition();
+
+            invalidator = new BackgroundWorker();
+            invalidator.WorkerSupportsCancellation = true;
+            invalidator.WorkerReportsProgress = true;
+            invalidator.DoWork += new DoWorkEventHandler(invalidatorWatch);
+            invalidator.RunWorkerAsync();
+
+            if(x == 1)
+            {
 #if !DEBUG
 #if !PocketPC
             // in case there a few controls in one app
@@ -468,15 +487,48 @@ namespace GMap.NET.Internals
             }
 #endif
 #endif
+            }
          }
+         return invalidator;
       }
 
-      internal void ApplicationExit()
+      public void OnMapClose()
       {
-         Debug.WriteLine("ApplicationExit...");
+         if(invalidator != null)
+         {
+            invalidator.CancelAsync();
+            Refresh.Set();
+         }
 
-         GMaps.Instance.applicationExit = true;
-         GMaps.Instance.WaitForCache.Set();
+         int x = Interlocked.Decrement(ref instances);
+         Debug.WriteLine("OnMapClose: " + x);
+
+         CancelAsyncTasks();
+         IsStarted = false;
+
+         Matrix.ClearAllLevels();
+
+         lock(FailedLoads)
+         {
+            FailedLoads.Clear();
+            RaiseEmptyTileError = false;
+         }
+
+         // cancel waiting loaders
+         Monitor.Enter(tileLoadQueue);
+         try
+         {
+            Monitor.PulseAll(tileLoadQueue);
+         }
+         finally
+         {
+            Monitor.Exit(tileLoadQueue);
+         }
+
+         if(x == 0)
+         {
+            GMaps.Instance.noMapInstances = true;
+            GMaps.Instance.WaitForCache.Set();
 
 #if !DEBUG
 #if !PocketPC
@@ -558,6 +610,49 @@ namespace GMap.NET.Internals
          }
 #endif
 #endif
+         }
+      }
+
+      internal readonly object invalidationLock = new object();
+      internal DateTime lastInvalidation = DateTime.Now;
+
+      void invalidatorWatch(object sender, DoWorkEventArgs e)
+      {
+         var w = sender as BackgroundWorker;
+
+         TimeSpan span = TimeSpan.FromMilliseconds(111);
+         int spanMs = (int)span.TotalMilliseconds;
+         bool skiped = false;
+         TimeSpan delta;
+         DateTime now = DateTime.Now;
+
+         while(!skiped && Refresh.WaitOne() || (Refresh.WaitOne(spanMs, false) || true))
+         {
+            if(w.CancellationPending)
+               break;
+
+            now = DateTime.Now;
+            lock(invalidationLock)
+            {
+               delta = now - lastInvalidation;
+            }
+
+            if(delta > span)
+            {
+               lock(invalidationLock)
+               {
+                  lastInvalidation = now;
+               }
+               skiped = false;
+
+               w.ReportProgress(1);
+               Debug.WriteLine("Invalidate delta: " + (int)delta.TotalMilliseconds + "ms");
+            }
+            else
+            {
+               skiped = true;
+            }
+         }
       }
 
 #if !PocketPC
@@ -626,33 +721,6 @@ namespace GMap.NET.Internals
 
             if(OnCurrentPositionChanged != null)
                OnCurrentPositionChanged(currentPosition);
-         }
-      }
-
-      public void OnMapClose()
-      {
-         Debug.WriteLine("OnMapClose...");
-
-         CancelAsyncTasks();
-         IsStarted = false;
-
-         Matrix.ClearAllLevels();
-
-         lock(FailedLoads)
-         {
-            FailedLoads.Clear();
-            RaiseEmptyTileError = false;
-         }
-
-         // cancel waiting loaders
-         Monitor.Enter(tileLoadQueue);
-         try
-         {
-            Monitor.PulseAll(tileLoadQueue);
-         }
-         finally
-         {
-            Monitor.Exit(tileLoadQueue);
          }
       }
 
@@ -996,7 +1064,7 @@ namespace GMap.NET.Internals
                      #endregion
                   }
 
-                  if(false == Monitor.Wait(tileLoadQueue, WaitForTileLoadThreadTimeout, false))
+                  if(!IsStarted || false == Monitor.Wait(tileLoadQueue, WaitForTileLoadThreadTimeout, false) || !IsStarted)
                   {
                      stop = true;
                      break;
@@ -1135,10 +1203,7 @@ namespace GMap.NET.Internals
       /// </summary>
       void UpdateBounds()
       {
-         if(!IsStarted)
-            break;
-
-         if(Provider.Equals(EmptyProvider.Instance))
+         if(!IsStarted || Provider.Equals(EmptyProvider.Instance))
          {
             return;
          }
@@ -1214,7 +1279,7 @@ namespace GMap.NET.Internals
                {
                   Thread t = new Thread(new ThreadStart(ProcessLoadTask));
                   {
-                     t.Name = "GMap.NET TileLoader: " + GThreadPool.Count;
+                     t.Name = "TileLoader: " + GThreadPool.Count;
                      t.IsBackground = true;
                      t.Priority = ThreadPriority.BelowNormal;
                   }

@@ -268,9 +268,9 @@ namespace GMap.NET.WindowsForms
       {
          HoldInvalidation = false;
 
-         lock(invalidationLock)
+         lock(Core.invalidationLock)
          {
-            last = DateTime.Now;
+            Core.lastInvalidation = DateTime.Now;
          }
 
          base.Refresh();
@@ -407,63 +407,16 @@ namespace GMap.NET.WindowsForms
             {
                // no imports to move pointer
                MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionWithoutCenter;
-            }
-
-            // start tile loading monitor
-            invalidator.WorkerSupportsCancellation = true;
-            invalidator.WorkerReportsProgress = true;
-            invalidator.DoWork += new DoWorkEventHandler(invalidatorWatch);
-            invalidator.ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
-            invalidator.RunWorkerAsync();
+            }  
          }
       }
-
-      readonly BackgroundWorker invalidator = new BackgroundWorker();
+     
+#endif
 
       void invalidatorEngage(object sender, ProgressChangedEventArgs e)
       {
          base.Invalidate();
       }
-
-      readonly object invalidationLock = new object();
-      DateTime last = DateTime.Now;
-
-      void invalidatorWatch(object sender, DoWorkEventArgs e)
-      {
-         var w = sender as BackgroundWorker;
-
-         TimeSpan span = TimeSpan.FromMilliseconds(111);
-         int spanMs = (int)span.TotalMilliseconds;
-         bool skiped = false;
-         TimeSpan delta;
-         DateTime now = DateTime.Now;
-
-         while(!w.CancellationPending && (!skiped && Core.Refresh.WaitOne() || (Core.Refresh.WaitOne(spanMs, false) || true)))
-         {
-            now = DateTime.Now;
-            lock(invalidationLock)
-            {
-               delta = now - last;
-            }
-
-            if(delta > span)
-            {
-               lock(invalidationLock)
-               {
-                  last = now;
-               }
-               skiped = false;
-
-               w.ReportProgress(1);
-               Debug.WriteLine("Invalidate delta: " + (int)delta.TotalMilliseconds + "ms");
-            }
-            else
-            {
-               skiped = true;
-            }
-         }
-      }
-#endif
 
       /// <summary>
       /// update objects when map is draged/zoomed
@@ -1080,9 +1033,10 @@ namespace GMap.NET.WindowsForms
          {
             MethodInvoker m = delegate
             {
-               Thread.Sleep(444);
-               Core.StartSystem();
-
+               Thread.Sleep(444);   
+               
+               OnSizeChanged(null);
+               Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
                ForceUpdateOverlays();
             };
             this.BeginInvoke(m);
@@ -1096,14 +1050,18 @@ namespace GMap.NET.WindowsForms
       {
          base.OnHandleCreated(e);
          {
+            IsHandleCreated = true;
+
             MethodInvoker m = delegate
             {
-               Thread.Sleep(222);
-               Core.StartSystem();
+                Thread.Sleep(444);
+
+                OnResize(null);
+                Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
+                ForceUpdateOverlays();
             };
             this.BeginInvoke(m);
-         }
-         IsHandleCreated = true;
+         }         
       }
 
       protected override void OnPaintBackground(PaintEventArgs e)
@@ -1138,15 +1096,13 @@ namespace GMap.NET.WindowsForms
          {
             Manager.CancelTileCaching();
          }
-
-         Core.ApplicationExit();
       }
 #endif
 
       protected override void OnHandleDestroyed(EventArgs e)
       {
          Core.OnMapClose();
-         //invalidator
+
          base.OnHandleDestroyed(e);
       }
 
@@ -1461,7 +1417,7 @@ namespace GMap.NET.WindowsForms
                Core.currentRegion = new GRect(-50, -50, Core.Width + 50, Core.Height + 50);
             }
 
-            if(Visible && IsHandleCreated)
+            if(Visible && IsHandleCreated && Core.IsStarted)
             {
                // keep center on same position
                Core.GoToCurrentPosition();
@@ -1480,6 +1436,9 @@ namespace GMap.NET.WindowsForms
       protected override void OnResize(EventArgs e)
       {
          base.OnResize(e);
+
+         if (MapProvider == EmptyProvider.Instance)
+             return;
 
          if(ForceDoubleBuffer)
          {
@@ -1503,13 +1462,10 @@ namespace GMap.NET.WindowsForms
          // 50px outside control
          Core.currentRegion = new GRect(-50, -50, Size.Width+100, Size.Height+100);
 
-         if(Core.IsStarted)
+         if (Visible && Core.IsStarted && IsHandleCreated)
          {
-            if(Visible) // && IsHandleCreated
-            {
-               // keep center on same position
-               Core.GoToCurrentPosition();
-            }
+            // keep center on same position
+            Core.GoToCurrentPosition();
          }
       }
 #endif
