@@ -1022,6 +1022,8 @@ namespace GMap.NET.WindowsPresentation
          if(IsLoaded)
          {
             Core.DragOffset(new GPoint(x, y));
+
+            InvalidateVisual(true);
             UpdateMarkersOffset();
          }
       }

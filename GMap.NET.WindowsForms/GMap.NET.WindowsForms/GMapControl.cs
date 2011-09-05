@@ -970,6 +970,8 @@ namespace GMap.NET.WindowsForms
             // need to fix in rotated mode usinf rotationMatrix
             // ...
             Core.DragOffset(new GPoint(x, y));
+
+            ForceUpdateOverlays();
          }
       }
 
