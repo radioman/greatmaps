@@ -407,10 +407,10 @@ namespace GMap.NET.WindowsForms
             {
                // no imports to move pointer
                MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionWithoutCenter;
-            }  
+            }
          }
       }
-     
+
 #endif
 
       void invalidatorEngage(object sender, ProgressChangedEventArgs e)
@@ -1035,8 +1035,8 @@ namespace GMap.NET.WindowsForms
          {
             MethodInvoker m = delegate
             {
-               Thread.Sleep(444);   
-               
+               Thread.Sleep(444);
+
                OnSizeChanged(null);
                Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
                ForceUpdateOverlays();
@@ -1516,6 +1516,7 @@ namespace GMap.NET.WindowsForms
                Debug.WriteLine("IsDragging = " + isDragging);
 #if !PocketPC
                this.Cursor = cursorBefore;
+               cursorBefore = null;
 #endif
             }
             Core.EndDrag();
@@ -1708,6 +1709,7 @@ namespace GMap.NET.WindowsForms
                               if(!m.IsMouseOver)
                               {
 #if !PocketPC
+                                 cursorBefore = this.Cursor;
                                  this.Cursor = Cursors.Hand;
 #endif
                                  Invalidate();
@@ -1723,7 +1725,8 @@ namespace GMap.NET.WindowsForms
                            else if(m.IsMouseOver)
                            {
 #if !PocketPC
-                              this.Cursor = Cursors.Default;
+                              this.Cursor = this.cursorBefore;
+                              cursorBefore = null;
 #endif
                               m.IsMouseOver = false;
                               Invalidate();
