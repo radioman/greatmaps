@@ -66,6 +66,9 @@
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xaml" Condition="'$(TargetFrameworkVersion)' == 'v4.0'">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\GMap.NET.Core\Properties\VersionInfo.cs">
