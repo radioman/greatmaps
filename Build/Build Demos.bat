@@ -15,4 +15,7 @@ del /q /s .\Release\*.*
 
 %msbuildexe% /nologo /p:WarningLevel=0;Optimize=True;Platform=AnyCPU;TargetFrameworkVersion=%TargetFrameworkVersion3% /clp:Verbosity=m; /t:Rebuild /p:Configuration=Release ..\Demo.WindowsPresentation\Demo.WindowsPresentation.csproj
 
+del /q /s .\Release\*.application
+del /q /s .\Release\*.exe.manifest
+
 pause
