@@ -74,12 +74,7 @@ namespace GMap.NET
       /// <summary>
       /// is map using memory cache for tiles
       /// </summary>
-      public bool UseMemoryCache = true;        
-
-      /// <summary>
-      /// Radius of the Earth
-      /// </summary>
-      public double EarthRadiusKm = 6378.137; // WGS-84
+      public bool UseMemoryCache = true;
 
       /// <summary>
       /// pure image cache provider, by default: ultra fast SQLite!
@@ -293,61 +288,6 @@ namespace GMap.NET
             }
          }
 #endif
-      }
-
-      /// <summary>
-      /// distance (in km) between two points specified by latitude/longitude
-      /// The Haversine formula, http://www.movable-type.co.uk/scripts/latlong.html
-      /// </summary>
-      /// <param name="p1"></param>
-      /// <param name="p2"></param>
-      /// <returns></returns>
-      public double GetDistance(PointLatLng p1, PointLatLng p2)
-      {
-         double dLat1InRad = p1.Lat * (Math.PI / 180);
-         double dLong1InRad = p1.Lng * (Math.PI / 180);
-         double dLat2InRad = p2.Lat * (Math.PI / 180);
-         double dLong2InRad = p2.Lng * (Math.PI / 180);
-         double dLongitude = dLong2InRad - dLong1InRad;
-         double dLatitude = dLat2InRad - dLat1InRad;
-         double a = Math.Pow(Math.Sin(dLatitude / 2), 2) + Math.Cos(dLat1InRad) * Math.Cos(dLat2InRad) * Math.Pow(Math.Sin(dLongitude / 2), 2);
-         double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-         double dDistance = EarthRadiusKm * c;
-         return dDistance;
-      }
-
-      /// <summary>
-      /// Accepts two coordinates in degrees.
-      /// </summary>
-      /// <returns>A double value in degrees. From 0 to 360.</returns>
-      public double GetBearing(PointLatLng p1, PointLatLng p2)
-      {
-         var latitude1 = ToRadian(p1.Lat);
-         var latitude2 = ToRadian(p2.Lat);
-         var longitudeDifference = ToRadian(p2.Lng - p1.Lng);
-
-         var y = Math.Sin(longitudeDifference) * Math.Cos(latitude2);
-         var x = Math.Cos(latitude1) * Math.Sin(latitude2) - Math.Sin(latitude1) * Math.Cos(latitude2) * Math.Cos(longitudeDifference);
-
-         return (ToDegree(Math.Atan2(y, x)) + 360) % 360;
-      }
-
-      /// <summary>
-      /// Converts degrees to Radians.
-      /// </summary>
-      /// <returns>Returns a radian from degrees.</returns>
-      public static Double ToRadian(Double degree)
-      {
-         return (degree * Math.PI / 180.0);
-      }
-
-      /// <summary>
-      /// To degress from a radian value.
-      /// </summary>
-      /// <returns>Returns degrees from radians.</returns>
-      public static Double ToDegree(Double radian)
-      {
-         return (radian / Math.PI * 180.0);
       }
 
       /// <summary>
@@ -585,7 +525,7 @@ namespace GMap.NET
          }
       }
 
-      int readingCache = 0;    
+      int readingCache = 0;
 
       /// <summary>
       /// delays writing tiles to cache while performing reads
@@ -629,7 +569,7 @@ namespace GMap.NET
                            {
                               Thread.Sleep(1000);
                            }
-                        }     
+                        }
                         ImageCacheLocal.PutImageToCache(task.Value.Img, task.Value.Tile.Type, task.Value.Tile.Pos, task.Value.Tile.Zoom);
                      }
 
@@ -641,7 +581,7 @@ namespace GMap.NET
                            {
                               Thread.Sleep(1000);
                            }
-                        } 
+                        }
                         ImageCacheSecond.PutImageToCache(task.Value.Img, task.Value.Tile.Type, task.Value.Tile.Pos, task.Value.Tile.Zoom);
                      }
 
@@ -660,7 +600,7 @@ namespace GMap.NET
                }
                else
                {
-                  if(abortCacheLoop || noMapInstances || !WaitForCache.WaitOne(33333, false) || noMapInstances)     
+                  if(abortCacheLoop || noMapInstances || !WaitForCache.WaitOne(33333, false) || noMapInstances)
                   {
                      break;
                   }
@@ -1653,7 +1593,7 @@ namespace GMap.NET
             {
                if(Mode != AccessMode.ServerOnly)
                {
-                  if(Cache.Instance.ImageCache != null)
+                  if(ImageCacheLocal != null)
                   {
                      // hold writer for 5s
                      if(CacheOnIdleRead)
@@ -1661,7 +1601,7 @@ namespace GMap.NET
                         Interlocked.Exchange(ref readingCache, 5);
                      }
 
-                     ret = Cache.Instance.ImageCache.GetImageFromCache(provider.DbId, pos, zoom);
+                     ret = ImageCacheLocal.GetImageFromCache(provider.DbId, pos, zoom);
                      if(ret != null)
                      {
                         if(UseMemoryCache)
@@ -1672,7 +1612,7 @@ namespace GMap.NET
                      }
                   }
 
-                  if(Cache.Instance.ImageCacheSecond != null)
+                  if(ImageCacheSecond != null)
                   {
                      // hold writer for 5s
                      if(CacheOnIdleRead)
@@ -1680,7 +1620,7 @@ namespace GMap.NET
                         Interlocked.Exchange(ref readingCache, 5);
                      }
 
-                     ret = Cache.Instance.ImageCacheSecond.GetImageFromCache(provider.DbId, pos, zoom);
+                     ret = ImageCacheSecond.GetImageFromCache(provider.DbId, pos, zoom);
                      if(ret != null)
                      {
                         if(UseMemoryCache)
@@ -1698,7 +1638,7 @@ namespace GMap.NET
                   ret = provider.GetTileImage(pos, zoom);
                   {
                      // Enqueue Cache
-                     if(ret != null && GMapProvider.TileImageProxy != null)
+                     if(ret != null)
                      {
                         if(UseMemoryCache)
                         {
@@ -1714,7 +1654,7 @@ namespace GMap.NET
                }
                else
                {
-                  result = new Exception("No data in local tile cache...");
+                  result = noDataException;
                }
             }
          }
@@ -1727,6 +1667,8 @@ namespace GMap.NET
 
          return ret;
       }
+
+      readonly Exception noDataException = new Exception("No data in local tile cache...");
 
       #endregion
    }

@@ -387,11 +387,11 @@ namespace Demo.WindowsPresentation
       void AddDemoZone(double areaRadius, PointLatLng center, List<PointAndInfo> objects)
       {
          var objectsInArea = from p in objects
-                             where GMaps.Instance.GetDistance(center, p.Point) <= areaRadius
+                             where MainMap.MapProvider.Projection.GetDistance(center, p.Point) <= areaRadius
                              select new
                              {
                                 Obj = p,
-                                Dist = GMaps.Instance.GetDistance(center, p.Point)
+                                Dist = MainMap.MapProvider.Projection.GetDistance(center, p.Point)
                              };
          if(objectsInArea.Any())
          {
