@@ -276,6 +276,7 @@ namespace GMap.NET.WindowsForms
          base.Refresh();
       }
 
+#if !DESIGN
       /// <summary>
       /// enque built-in thread safe invalidation
       /// </summary>
@@ -283,6 +284,7 @@ namespace GMap.NET.WindowsForms
       {
          Core.Refresh.Set();
       }
+#endif
 
 #if !PocketPC
       private bool _GrayScale = false;
@@ -344,6 +346,7 @@ namespace GMap.NET.WindowsForms
 
       // internal stuff
       internal readonly Core Core = new Core();
+
       internal readonly Font CopyrightFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
 #if !PocketPC
       internal readonly Font MissingDataFont = new Font(FontFamily.GenericSansSerif, 11, FontStyle.Bold);
@@ -1048,6 +1051,7 @@ namespace GMap.NET.WindowsForms
       delegate void MethodInvoker();
       bool IsHandleCreated = false;
 
+#if !DESIGN
       protected override void OnHandleCreated(EventArgs e)
       {
          base.OnHandleCreated(e);
@@ -1065,6 +1069,7 @@ namespace GMap.NET.WindowsForms
             this.BeginInvoke(m);
          }         
       }
+#endif
 
       protected override void OnPaintBackground(PaintEventArgs e)
       {
@@ -1117,6 +1122,7 @@ namespace GMap.NET.WindowsForms
 
       public Color EmptyMapBackground = Color.WhiteSmoke;
 
+#if !DESIGN
       protected override void OnPaint(PaintEventArgs e)
       {
          if(ForceDoubleBuffer)
@@ -1189,6 +1195,7 @@ namespace GMap.NET.WindowsForms
 
          base.OnPaint(e);
       }
+#endif
 
 #if !PocketPC
       readonly Matrix rotationMatrix = new Matrix();
@@ -2131,11 +2138,17 @@ namespace GMap.NET.WindowsForms
       {
          get
          {
-            return Cache.Instance.CacheLocation;
+#if !DESIGN
+             return Cache.Instance.CacheLocation;
+#else
+             return string.Empty;
+#endif
          }
          set
          {
+#if !DESIGN
             Cache.Instance.CacheLocation = value;
+#endif
          }
       }
 
