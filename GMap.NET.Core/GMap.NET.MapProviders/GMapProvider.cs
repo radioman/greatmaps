@@ -9,6 +9,7 @@ namespace GMap.NET.MapProviders
    using System.Security.Cryptography;
    using GMap.NET.Internals;
    using GMap.NET.Projections;
+   using System.Text;
 
    /// <summary>
    /// providers that are already build in
@@ -275,9 +276,9 @@ namespace GMap.NET.MapProviders
       /// timeout for provider connections
       /// </summary>
 #if !PocketPC
-      public static int TimeoutMs = 11 * 1000;
+      public static int TimeoutMs = 22 * 1000;
 #else
-      public static int TimeoutMs = 33 * 1000; 
+      public static int TimeoutMs = 44 * 1000; 
 #endif
       /// <summary>
       /// Gets or sets the value of the Referer HTTP header.
@@ -327,12 +328,57 @@ namespace GMap.NET.MapProviders
                {
                   ret.Data = responseStream;
                }
+               else
+               {
+                  responseStream.Dispose();
+                  responseStream = null;
+               }
             }
 #if PocketPC
             request.Abort();
 #endif
             response.Close();
          }
+         return ret;
+      }
+
+      public string GetContentUsingHttp(string url)
+      {
+         string ret = string.Empty;
+
+         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+         if(WebProxy != null)
+         {
+            request.Proxy = WebProxy;
+#if !PocketPC
+            request.PreAuthenticate = true;
+#endif
+         }
+
+         request.UserAgent = UserAgent;
+         request.Timeout = TimeoutMs;
+         request.ReadWriteTimeout = TimeoutMs * 6;
+         request.Accept = requestAccept;
+         if(!string.IsNullOrEmpty(RefererUrl))
+         {
+            request.Referer = RefererUrl;
+         }
+
+         using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+         {
+            using(Stream responseStream = response.GetResponseStream())
+            {
+               using(StreamReader read = new StreamReader(responseStream, Encoding.UTF8))
+               {
+                  ret = read.ReadToEnd();
+               }
+            }
+#if PocketPC
+            request.Abort();
+#endif
+            response.Close();
+         }
+
          return ret;
       }
 

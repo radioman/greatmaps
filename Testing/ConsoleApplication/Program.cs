@@ -25,6 +25,9 @@ namespace ConsoleApplication
             var p1 = new PointLatLng(54.6961334816182, 25.2985095977783);
             var p2 = new PointLatLng(54.7061334816182, 25.3085095977783);
 
+            var route = GMapProviders.OpenStreetMap.GetRouteBetweenPoints(p1, p2, false, 10);
+
+            //var route = GMaps.Instance.GetRouteBetweenPoints(p1, p2, false, 10);
          }
 
          if(false)

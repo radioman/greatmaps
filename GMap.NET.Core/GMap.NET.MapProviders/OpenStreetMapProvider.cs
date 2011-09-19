@@ -2,9 +2,14 @@
 namespace GMap.NET.MapProviders
 {
    using System;
+   using System.Collections.Generic;
+   using System.Diagnostics;
+   using System.Globalization;
+   using System.Xml;
+   using GMap.NET.Internals;
    using GMap.NET.Projections;
 
-   public abstract class OpenStreetMapProviderBase : GMapProvider
+   public abstract class OpenStreetMapProviderBase : GMapProvider, GMapRoutingProvider
    {
       public OpenStreetMapProviderBase()
       {
@@ -52,6 +57,106 @@ namespace GMap.NET.MapProviders
       {
          throw new NotImplementedException();
       }
+
+      #endregion
+
+      #region GMapRoutingProvider Members
+
+      public MapRoute GetRouteBetweenPoints(PointLatLng start, PointLatLng end, bool avoidHighways, int Zoom)
+      {
+         List<PointLatLng> points = GetRoutePoints(MakeRoutingUrl(start, end, TravelTypeMotorCar));
+         MapRoute route = points != null ? new MapRoute(points, DrivingStr) : null;
+         return route;
+      }
+
+      public MapRoute GetRouteBetweenPoints(string start, string end, bool avoidHighways, int Zoom)
+      {
+         throw new NotImplementedException();
+      }
+
+      public MapRoute GetWalkingRouteBetweenPoints(PointLatLng start, PointLatLng end, int Zoom)
+      {
+         List<PointLatLng> points = GetRoutePoints(MakeRoutingUrl(start, end, TravelTypeFoot));
+         MapRoute route = points != null ? new MapRoute(points, WalkingStr) : null;
+         return route;
+      }
+
+      public MapRoute GetWalkingRouteBetweenPoints(string start, string end, int Zoom)
+      {
+         throw new NotImplementedException();
+      }
+
+      #region -- internals --
+      string MakeRoutingUrl(PointLatLng start, PointLatLng end, string travelType)
+      {
+         return string.Format(CultureInfo.InvariantCulture, RoutingUrlFormat, start.Lat, start.Lng, end.Lat, end.Lng, travelType);
+      }
+
+      List<PointLatLng> GetRoutePoints(string url)
+      {
+         List<PointLatLng> points = null;
+         try
+         {
+            string route = GMaps.Instance.UseRouteCache ? Cache.Instance.GetContent(url, CacheType.RouteCache) : string.Empty;
+            if(string.IsNullOrEmpty(route))
+            {
+               route = GetContentUsingHttp(url);
+               if(!string.IsNullOrEmpty(route))
+               {
+                  if(GMaps.Instance.UseRouteCache)
+                  {
+                     Cache.Instance.SaveContent(url, CacheType.RouteCache, route);
+                  }
+               }
+            }
+
+            if(!string.IsNullOrEmpty(route))
+            {
+               XmlDocument xmldoc = new XmlDocument();
+               xmldoc.LoadXml(route);
+               System.Xml.XmlNamespaceManager xmlnsManager = new System.Xml.XmlNamespaceManager(xmldoc.NameTable);
+               xmlnsManager.AddNamespace("sm", "http://earth.google.com/kml/2.0");
+
+               ///Folder/Placemark/LineString/coordinates
+               var coordNode = xmldoc.SelectSingleNode("/sm:kml/sm:Document/sm:Folder/sm:Placemark/sm:LineString/sm:coordinates", xmlnsManager);
+
+               string[] coordinates = coordNode.InnerText.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+               if(coordinates.Length > 0)
+               {
+                  points = new List<PointLatLng>();
+
+                  foreach(string coordinate in coordinates)
+                  {
+                     if(coordinate != string.Empty)
+                     {
+                        string[] XY = coordinate.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                        if(XY.Length == 2)
+                        {
+                           double lat = double.Parse(XY[1], CultureInfo.InvariantCulture);
+                           double lng = double.Parse(XY[0], CultureInfo.InvariantCulture);
+                           points.Add(new PointLatLng(lat, lng));
+                        }
+                     }
+                  }
+               }
+            }
+         }
+         catch(Exception ex)
+         {
+            Debug.WriteLine("GetRoutePoints: " + ex);
+         }
+
+         return points;
+      }
+
+      static readonly string RoutingUrlFormat = "http://www.yournavigation.org/api/1.0/gosmore.php?format=kml&flat={0}&flon={1}&tlat={2}&tlon={3}&v={4}&fast=1&layer=mapnik";
+      static readonly string TravelTypeFoot = "foot";
+      static readonly string TravelTypeMotorCar = "motorcar";
+
+      static readonly string WalkingStr = "Walking";
+      static readonly string DrivingStr = "Driving";
+      #endregion
 
       #endregion
    }
@@ -121,5 +226,31 @@ namespace GMap.NET.MapProviders
       }
 
       static readonly string UrlFormat = "http://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png";
+   }
+
+   /// <summary>
+   /// routing interface
+   /// </summary>
+   interface GMapRoutingProvider
+   {
+      /// <summary>
+      /// get route between two points
+      /// </summary>
+      MapRoute GetRouteBetweenPoints(PointLatLng start, PointLatLng end, bool avoidHighways, int Zoom);
+
+      /// <summary>
+      /// get route between two points
+      /// </summary>
+      MapRoute GetRouteBetweenPoints(string start, string end, bool avoidHighways, int Zoom);
+
+      /// <summary>
+      /// Gets a walking route (if supported)
+      /// </summary>
+      MapRoute GetWalkingRouteBetweenPoints(PointLatLng start, PointLatLng end, int Zoom);
+
+      /// <summary>
+      /// Gets a walking route (if supported)
+      /// </summary>
+      MapRoute GetWalkingRouteBetweenPoints(string start, string end, int Zoom);
    }
 }

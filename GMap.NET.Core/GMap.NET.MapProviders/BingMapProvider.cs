@@ -111,36 +111,15 @@ namespace GMap.NET.MapProviders
 
             try
             {
-               string html = Cache.Instance.GetURLContentFromCache(url, TimeSpan.FromHours(8));
+               string html = Cache.Instance.GetContent(url, CacheType.UrlCache, TimeSpan.FromHours(8));
 
                if(string.IsNullOrEmpty(html))
                {
-                  #region -- get fresh url content --
-                  HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                  if(WebProxy != null)
+                  html = GetContentUsingHttp(url);
+                  if(!string.IsNullOrEmpty(html))
                   {
-                     request.Proxy = WebProxy;
-#if !PocketPC
-                     request.PreAuthenticate = true;
-#endif
+                     Cache.Instance.SaveContent(url, CacheType.UrlCache, html);
                   }
-
-                  request.UserAgent = UserAgent;
-                  request.Timeout = TimeoutMs;
-                  request.ReadWriteTimeout = TimeoutMs * 6;
-
-                  using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-                  {
-                     using(Stream responseStream = response.GetResponseStream())
-                     {
-                        using(StreamReader read = new StreamReader(responseStream))
-                        {
-                           html = read.ReadToEnd();
-                           Cache.Instance.CacheURLContent(url, html);
-                        }
-                     }
-                  }
-                  #endregion
                }
 
                if(!string.IsNullOrEmpty(html))

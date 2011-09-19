@@ -1,25 +1,17 @@
 ﻿
 namespace GMap.NET.Internals
 {
-   using System.Collections.Generic;
-   using System.IO;
-   using System.Text;
    using System;
    using System.Diagnostics;
+   using System.IO;
+   using System.Text;
    using GMap.NET.CacheProviders;
-   using System.Globalization;
 
    /// <summary>
    /// cache system for tiles, geocoding, etc...
    /// </summary>
    internal class Cache : Singleton<Cache>
    {
-      string cache;
-      string routeCache;
-      string geoCache;
-      string placemarkCache;
-      string urlCache;
-
       /// <summary>
       /// abstract image cache
       /// </summary>
@@ -29,6 +21,8 @@ namespace GMap.NET.Internals
       /// second level abstract image cache
       /// </summary>
       public PureImageCache ImageCacheSecond;
+
+      string cache;
 
       /// <summary>
       /// local cache location
@@ -42,11 +36,6 @@ namespace GMap.NET.Internals
          set
          {
             cache = value;
-            routeCache = cache + "RouteCache" + Path.DirectorySeparatorChar;
-            geoCache = cache + "GeocoderCache" + Path.DirectorySeparatorChar;
-            placemarkCache = cache + "PlacemarkCache" + Path.DirectorySeparatorChar;
-            urlCache = cache + "UrlCache" + Path.DirectorySeparatorChar;
-
 #if SQLite
             if(ImageCache is SQLitePureImageCache)
             {
@@ -126,108 +115,11 @@ namespace GMap.NET.Internals
       }
 
       #region -- etc cache --
-      public void CacheGeocoder(string urlEnd, string content)
+
+      void RemoveInvalidSymbols(ref string url)
       {
-         try
-         {
-            // precrete dir
-            if(!Directory.Exists(geoCache))
-            {
-               Directory.CreateDirectory(geoCache);
-            }
-
-            StringBuilder file = new StringBuilder(geoCache);
-            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.geo", urlEnd);
-
-            using(StreamWriter writer = new StreamWriter(file.ToString(), false, Encoding.UTF8))
-            {
-               writer.Write(content);
-            }
-         }
-         catch
-         {
-         }
-      }
-
-      public string GetGeocoderFromCache(string urlEnd)
-      {
-         string ret = null;
-
-         try
-         {
-            StringBuilder file = new StringBuilder(geoCache);
-            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.geo", urlEnd);
-
-            if(File.Exists(file.ToString()))
-            {
-               using(StreamReader r = new StreamReader(file.ToString(), Encoding.UTF8))
-               {
-                  ret = r.ReadToEnd();
-               }
-            }
-         }
-         catch
-         {
-            ret = null;
-         }
-
-         return ret;
-      }
-
-      public void CachePlacemark(string urlEnd, string content)
-      {
-         try
-         {
-            // precrete dir
-            if(!Directory.Exists(placemarkCache))
-            {
-               Directory.CreateDirectory(placemarkCache);
-            }
-
-            StringBuilder file = new StringBuilder(placemarkCache);
-            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.plc", urlEnd);
-
-            using(StreamWriter writer = new StreamWriter(file.ToString(), false, Encoding.UTF8))
-            {
-               writer.Write(content);
-            }
-         }
-         catch
-         {
-         }
-      }
-
-      public string GetPlacemarkFromCache(string urlEnd)
-      {
-         string ret = null;
-
-         try
-         {
-            StringBuilder file = new StringBuilder(placemarkCache);
-            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.plc", urlEnd);
-
-            if(File.Exists(file.ToString()))
-            {
-               using(StreamReader r = new StreamReader(file.ToString(), Encoding.UTF8))
-               {
-                  ret = r.ReadToEnd();
-               }
-            }
-         }
-         catch
-         {
-            ret = null;
-         }
-
-         return ret;
-      }
-
-      public void CacheURLContent(string urlEnd, string content)
-      {
-         try
-         {
 #if !PocketPC
-            char[] ilg = Path.GetInvalidFileNameChars();
+         char[] ilg = Path.GetInvalidFileNameChars();
 #else
             char[] ilg = new char[41];
             for(int i = 0; i < 32; i++)
@@ -243,130 +135,130 @@ namespace GMap.NET.Internals
             ilg[39] = '\\';
             ilg[39] = '*';
 #endif
+         foreach(char c in ilg)
+         {
+            url = url.Replace(c, '_');
+         }
+      }
 
-            foreach(char c in ilg)
-            {
-               urlEnd = urlEnd.Replace(c, '_');
-            }
+      public void SaveContent(string urlEnd, CacheType type, string content)
+      {
+         try
+         {
+            RemoveInvalidSymbols(ref urlEnd);
+
+            string dir = cache + type + Path.DirectorySeparatorChar;
 
             // precrete dir
-            if(!Directory.Exists(urlCache))
+            if(!Directory.Exists(dir))
             {
-               Directory.CreateDirectory(urlCache);
+               Directory.CreateDirectory(dir);
             }
 
-            StringBuilder file = new StringBuilder(urlCache);
-            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.url", urlEnd);
+            string file = dir + urlEnd;
 
-            using(StreamWriter writer = new StreamWriter(file.ToString(), false, Encoding.UTF8))
+            switch(type)
+            {
+               case CacheType.GeocoderCache:
+               file += ".geo";
+               break;
+
+               case CacheType.PlacemarkCache:
+               file += ".plc";
+               break;
+
+               case CacheType.RouteCache:
+               file += ".dragdir";
+               break;
+
+               case CacheType.UrlCache:
+               file += ".url";
+               break;
+
+               default:
+               file += ".txt";
+               break;
+            }
+
+            using(StreamWriter writer = new StreamWriter(file, false, Encoding.UTF8))
             {
                writer.Write(content);
             }
          }
-         catch
+         catch(Exception ex)
          {
+            Debug.WriteLine("SaveContent: " + ex);
          }
       }
 
-      public string GetURLContentFromCache(string urlEnd, TimeSpan stayInCache)
+      public string GetContent(string urlEnd, CacheType type, TimeSpan stayInCache)
       {
          string ret = null;
 
          try
          {
-#if !PocketPC
-            char[] ilg = Path.GetInvalidFileNameChars();
-#else
-            char[] ilg = new char[41];
-            for(int i = 0; i < 32; i++)
-               ilg[i] = (char) i;
+            RemoveInvalidSymbols(ref urlEnd);
 
-            ilg[32] = '"';
-            ilg[33] = '<';
-            ilg[34] = '>';
-            ilg[35] = '|';
-            ilg[36] = '?';
-            ilg[37] = ':';
-            ilg[38] = '/';
-            ilg[39] = '\\';
-            ilg[39] = '*';
-#endif
+            string dir = cache + type + Path.DirectorySeparatorChar;
+            string file = dir + urlEnd;
 
-            foreach(char c in ilg)
+            switch(type)
             {
-               urlEnd = urlEnd.Replace(c, '_');
+               case CacheType.GeocoderCache:
+               file += ".geo";
+               break;
+
+               case CacheType.PlacemarkCache:
+               file += ".plc";
+               break;
+
+               case CacheType.RouteCache:
+               file += ".dragdir";
+               break;
+
+               case CacheType.UrlCache:
+               file += ".url";
+               break;
+
+               default:
+               file += ".txt";
+               break;
             }
 
-            StringBuilder file = new StringBuilder(urlCache);
-            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.url", urlEnd);
-
-            if(File.Exists(file.ToString()))
+            if(File.Exists(file))
             {
-               var writeTime = File.GetLastWriteTime(file.ToString());
+               var writeTime = File.GetLastWriteTime(file);
                if(DateTime.Now - writeTime < stayInCache)
                {
-                  using(StreamReader r = new StreamReader(file.ToString(), Encoding.UTF8))
+                  using(StreamReader r = new StreamReader(file, Encoding.UTF8))
                   {
                      ret = r.ReadToEnd();
                   }
                }
             }
          }
-         catch
+         catch(Exception ex)
          {
             ret = null;
+            Debug.WriteLine("GetContent: " + ex);
          }
 
          return ret;
       }
 
-      public void CacheRoute(string urlEnd, string content)
+      public string GetContent(string urlEnd, CacheType type)
       {
-         try
-         {
-            // precrete dir
-            if(!Directory.Exists(routeCache))
-            {
-               Directory.CreateDirectory(routeCache);
-            }
-
-            StringBuilder file = new StringBuilder(routeCache);
-            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.dragdir", urlEnd);
-
-            using(StreamWriter writer = new StreamWriter(file.ToString(), false, Encoding.UTF8))
-            {
-               writer.Write(content);
-            }
-         }
-         catch
-         {
-         }
+         return GetContent(urlEnd, type, TimeSpan.FromDays(88));
       }
 
-      public string GetRouteFromCache(string urlEnd)
-      {
-         string ret = null;
-
-         try
-         {
-            StringBuilder file = new StringBuilder(routeCache);
-            file.AppendFormat(CultureInfo.InvariantCulture, "{0}.dragdir", urlEnd);
-
-            if(File.Exists(file.ToString()))
-            {
-               using(StreamReader r = new StreamReader(file.ToString(), Encoding.UTF8))
-               {
-                  ret = r.ReadToEnd();
-               }
-            }
-         }
-         catch
-         {
-            ret = null;
-         }
-
-         return ret;
-      }
       #endregion
+   }
+
+   internal enum CacheType
+   {
+      GeocoderCache,
+      PlacemarkCache,
+      RouteCache,
+      UrlCache,
    }
 }

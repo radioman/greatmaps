@@ -971,7 +971,7 @@ namespace GMap.NET
                urlEnd = urlEnd.Replace(c, '_');
             }
 
-            string geo = useCache ? Cache.Instance.GetGeocoderFromCache(urlEnd) : string.Empty;
+            string geo = useCache ? Cache.Instance.GetContent(urlEnd, CacheType.GeocoderCache) : string.Empty;
 
             if(string.IsNullOrEmpty(geo))
             {
@@ -1003,7 +1003,7 @@ namespace GMap.NET
                // cache geocoding
                if(useCache && geo.StartsWith("200"))
                {
-                  Cache.Instance.CacheGeocoder(urlEnd, geo);
+                  Cache.Instance.SaveContent(urlEnd, CacheType.GeocoderCache, geo);
                }
             }
 
@@ -1071,7 +1071,7 @@ namespace GMap.NET
                urlEnd = urlEnd.Replace(c, '_');
             }
 
-            string reverse = useCache ? Cache.Instance.GetPlacemarkFromCache(urlEnd) : string.Empty;
+            string reverse = useCache ? Cache.Instance.GetContent(urlEnd, CacheType.PlacemarkCache) : string.Empty;
 
             if(string.IsNullOrEmpty(reverse))
             {
@@ -1103,7 +1103,7 @@ namespace GMap.NET
                // cache geocoding
                if(useCache)
                {
-                  Cache.Instance.CachePlacemark(urlEnd, reverse);
+                  Cache.Instance.SaveContent(urlEnd, CacheType.PlacemarkCache, reverse);
                }
             }
 
@@ -1297,7 +1297,7 @@ namespace GMap.NET
                urlEnd = urlEnd.Replace(c, '_');
             }
 
-            string route = useCache ? Cache.Instance.GetRouteFromCache(urlEnd) : string.Empty;
+            string route = useCache ? Cache.Instance.GetContent(urlEnd, CacheType.RouteCache) : string.Empty;
 
             if(string.IsNullOrEmpty(route))
             {
@@ -1330,7 +1330,7 @@ namespace GMap.NET
                // cache routing
                if(useCache)
                {
-                  Cache.Instance.CacheRoute(urlEnd, route);
+                  Cache.Instance.SaveContent(urlEnd, CacheType.RouteCache, route);
                }
             }
 
