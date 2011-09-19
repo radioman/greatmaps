@@ -77,6 +77,31 @@ namespace GMap.NET.Internals
 
          return false;
       }
+
+      public static void RemoveInvalidPathSymbols(ref string url)
+      {
+#if !PocketPC
+         char[] ilg = Path.GetInvalidFileNameChars();
+#else
+            char[] ilg = new char[41];
+            for(int i = 0; i < 32; i++)
+               ilg[i] = (char) i;
+
+            ilg[32] = '"';
+            ilg[33] = '<';
+            ilg[34] = '>';
+            ilg[35] = '|';
+            ilg[36] = '?';
+            ilg[37] = ':';
+            ilg[38] = '/';
+            ilg[39] = '\\';
+            ilg[39] = '*';
+#endif
+         foreach(char c in ilg)
+         {
+            url = url.Replace(c, '_');
+         }
+      }
    }
 
 #if PocketPC

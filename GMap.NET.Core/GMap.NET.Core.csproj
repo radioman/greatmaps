@@ -167,6 +167,7 @@
     <Compile Include="GMap.NET.MapProviders\OpenStreetOsmProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OpenStreetMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\GMapProvider.cs" />
+    <Compile Include="GMap.NET\GMapRoutingProvider.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="GMap.NET.CacheProviders\MsSQLCePureImageCache.cs" />
     <Compile Include="GMap.NET.CacheProviders\PostgreSQLPureImageCache.cs" />
