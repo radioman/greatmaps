@@ -20,6 +20,7 @@ namespace GMap.NET.WindowsPresentation
    using GMap.NET.Internals;
    using System.Diagnostics;
    using GMap.NET.MapProviders;
+   using System.Windows.Media.Animation;
 
    /// <summary>
    /// GMap.NET control for Windows Presentation
@@ -27,6 +28,31 @@ namespace GMap.NET.WindowsPresentation
    public partial class GMapControl : ItemsControl, Interface
    {
       #region DependencyProperties and related stuff
+
+      public System.Windows.Point MapPoint
+      {
+         get
+         {
+            return (System.Windows.Point)GetValue(MapPointProperty);
+         }
+         set
+         {
+            SetValue(MapPointProperty, value);
+         }
+      }
+
+
+      // Using a DependencyProperty as the backing store for point.  This enables animation, styling, binding, etc...
+      public static readonly DependencyProperty MapPointProperty =
+             DependencyProperty.Register("MapPoint", typeof(System.Windows.Point), typeof(GMapControl), new PropertyMetadata(new Point(), OnMapPointPropertyChanged));
+
+
+      private static void OnMapPointPropertyChanged(DependencyObject source,
+      DependencyPropertyChangedEventArgs e)
+      {
+         Point temp = (Point)e.NewValue;
+         (source as GMapControl).Position = new PointLatLng(temp.X, temp.Y);
+      }
 
       public static readonly DependencyProperty MapProviderProperty = DependencyProperty.Register("MapProvider", typeof(GMapProvider), typeof(GMapControl), new UIPropertyMetadata(EmptyProvider.Instance, new PropertyChangedCallback(MapProviderPropertyChanged)));
 
@@ -543,7 +569,7 @@ namespace GMap.NET.WindowsPresentation
                   }
                }
                ));
-         }
+         }           
       }
 
       void Current_SessionEnding(object sender, SessionEndingCancelEventArgs e)

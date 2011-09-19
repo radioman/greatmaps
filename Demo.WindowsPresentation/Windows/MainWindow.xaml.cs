@@ -17,6 +17,7 @@ using GMap.NET.WindowsPresentation;
 using System.IO;
 using GMap.NET.MapProviders;
 using Demo.WindowsForms;
+using System.Windows.Media.Animation;
 
 namespace Demo.WindowsPresentation
 {
@@ -479,6 +480,19 @@ namespace Demo.WindowsPresentation
       private void button13_Click(object sender, RoutedEventArgs e)
       {
          MainMap.ZoomAndCenterMarkers(null);
+
+         /*
+         PointAnimation panMap = new PointAnimation();
+         panMap.Duration = TimeSpan.FromSeconds(1);
+         panMap.From = new Point(MainMap.Position.Lat, MainMap.Position.Lng);
+         panMap.To = new Point(0, 0);
+         Storyboard.SetTarget(panMap, MainMap);
+         Storyboard.SetTargetProperty(panMap, new PropertyPath(GMapControl.MapPointProperty));
+
+         Storyboard panMapStoryBoard = new Storyboard();
+         panMapStoryBoard.Children.Add(panMap);
+         panMapStoryBoard.Begin(this);
+          */ 
       }
 
       // tile louading starts
@@ -793,7 +807,7 @@ namespace Demo.WindowsPresentation
       // adds route
       private void button12_Click(object sender, RoutedEventArgs e)
       {
-         MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, (int)MainMap.Zoom);
+         MapRoute route = GMapProviders.GoogleMap.GetRouteBetweenPoints(start, end, false, (int)MainMap.Zoom);
          if(route != null)
          {
             GMapMarker m1 = new GMapMarker(start);

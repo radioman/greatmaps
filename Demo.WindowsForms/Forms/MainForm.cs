@@ -1546,7 +1546,7 @@ namespace Demo.WindowsForms
       // add test route
       private void button3_Click(object sender, EventArgs e)
       {
-         MapRoute route = GMaps.Instance.GetRouteBetweenPoints(start, end, false, (int)MainMap.Zoom);
+         MapRoute route = GMapProviders.GoogleMap.GetRouteBetweenPoints(start, end, false, (int)MainMap.Zoom);
          if(route != null)
          {
             // add route
@@ -1566,13 +1566,6 @@ namespace Demo.WindowsForms
             objects.Markers.Add(m2);
 
             MainMap.ZoomAndCenterRoute(r);
-
-            // testing kml support
-            //KmlType info = GMaps.Instance.GetRouteBetweenPointsKml(start, end, false);
-            //if(info != null)
-            //{
-
-            //}
          }
       }
 
