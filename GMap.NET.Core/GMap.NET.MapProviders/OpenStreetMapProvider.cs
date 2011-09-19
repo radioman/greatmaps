@@ -120,7 +120,7 @@ namespace GMap.NET.MapProviders
                ///Folder/Placemark/LineString/coordinates
                var coordNode = xmldoc.SelectSingleNode("/sm:kml/sm:Document/sm:Folder/sm:Placemark/sm:LineString/sm:coordinates", xmlnsManager);
 
-               string[] coordinates = coordNode.InnerText.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
+               string[] coordinates = coordNode.InnerText.Split('\n');
 
                if(coordinates.Length > 0)
                {
@@ -130,7 +130,7 @@ namespace GMap.NET.MapProviders
                   {
                      if(coordinate != string.Empty)
                      {
-                        string[] XY = coordinate.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] XY = coordinate.Split(',');
                         if(XY.Length == 2)
                         {
                            double lat = double.Parse(XY[1], CultureInfo.InvariantCulture);

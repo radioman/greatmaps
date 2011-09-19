@@ -325,6 +325,9 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET\GeoCoderStatusCode.cs">
       <Link>GMap.NET\GeoCoderStatusCode.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\GMapRoutingProvider.cs">
+      <Link>GMap.NET\GMapRoutingProvider.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET\GMaps.cs">
       <Link>GMap.NET\GMaps.cs</Link>
     </Compile>
