@@ -198,7 +198,6 @@ namespace GMap.NET.WindowsForms
          {
              r.OnRender(g);
          }
-
       }
 
       /// <summary>

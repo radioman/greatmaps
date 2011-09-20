@@ -92,7 +92,7 @@ namespace GMap.NET.WindowsForms
                       rp.CloseFigure();
 
                       g.FillPath(Fill, rp);
-
+                      
                       g.DrawPath(Stroke, rp);
                   }
               }

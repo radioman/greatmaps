@@ -87,7 +87,7 @@ namespace GMap.NET.WindowsForms
                            rp.AddLine(p.X, p.Y, p2.X, p2.Y);
                        }
                    }
-
+                   
                    if (rp.PointCount > 0)
                    {
                        g.DrawPath(Stroke, rp);
