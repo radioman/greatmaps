@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
+using GMap.NET.MapProviders;
 
 namespace Demo.WindowsMobile
 {
@@ -23,7 +24,7 @@ namespace Demo.WindowsMobile
          {
             GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
             {
-               PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder(textAddress.Text, out status);
+               PointLatLng? pos = GMapProviders.GoogleMap.GetPoint(textAddress.Text, out status);
                if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
                {
                   GMapMarker address = new GMapMarkerTransparentGoogleGreen(pos.Value);

@@ -322,11 +322,14 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET\Delegates.cs">
       <Link>GMap.NET\Delegates.cs</Link>
     </Compile>
-    <Compile Include="..\GMap.NET.Core\GMap.NET\GeoCoderStatusCode.cs">
-      <Link>GMap.NET\GeoCoderStatusCode.cs</Link>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\DirectionsProvider.cs">
+      <Link>GMap.NET\DirectionsProvider.cs</Link>
     </Compile>
-    <Compile Include="..\GMap.NET.Core\GMap.NET\GMapRoutingProvider.cs">
-      <Link>GMap.NET\GMapRoutingProvider.cs</Link>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\GDirections.cs">
+      <Link>GMap.NET\GDirections.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\GeocodingProvider.cs">
+      <Link>GMap.NET\GeocodingProvider.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET\GMaps.cs">
       <Link>GMap.NET\GMaps.cs</Link>
@@ -379,11 +382,17 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET\RenderMode.cs">
       <Link>GMap.NET\RenderMode.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\RoutingProvider.cs">
+      <Link>GMap.NET\RoutingProvider.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET\Singleton.cs">
       <Link>GMap.NET\Singleton.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET\SizeLatLng.cs">
       <Link>GMap.NET\SizeLatLng.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET\StatusCodes.cs">
+      <Link>GMap.NET\StatusCodes.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.ObjectModel\ObservableCollection.cs">
       <Link>GMap.NET.ObjectModel\ObservableCollection.cs</Link>

@@ -1331,7 +1331,7 @@ namespace GMap.NET.MapProviders
                XmlNode nn = doc.SelectSingleNode("/DirectionsResponse/status");
                if(nn != null)
                {
-                  ret = (DirectionsStatusCode)Enum.Parse(typeof(DirectionsStatusCode), nn.InnerText);
+                  ret = (DirectionsStatusCode)Enum.Parse(typeof(DirectionsStatusCode), nn.InnerText, false);
                   if(ret == DirectionsStatusCode.OK)
                   {
                      direction = new GDirections();
