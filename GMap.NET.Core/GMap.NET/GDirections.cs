@@ -93,6 +93,11 @@ namespace GMap.NET
       /// </summary>
       public string HtmlInstructions;
 
+      /// <summary>
+      /// points of the step
+      /// </summary>
+      public List<PointLatLng> Points;
+
       public override string ToString()
       {
          return TravelMode + " | " + HtmlInstructions;

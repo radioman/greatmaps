@@ -478,55 +478,10 @@ namespace GMap.NET.MapProviders
                            {
                               l--;
                            }
-                           */
+                           */ 
 
                            points = new List<PointLatLng>();
-
-                           // http://tinyurl.com/3ds3scr
-                           // http://code.server.com/apis/maps/documentation/polylinealgorithm.html
-                           //
-                           string encoded = route.Substring(x, l).Replace("\\\\", "\\");
-                           {
-                              int len = encoded.Length;
-                              int index = 0;
-                              double dlat = 0;
-                              double dlng = 0;
-
-                              while(index < len)
-                              {
-                                 int b;
-                                 int shift = 0;
-                                 int result = 0;
-
-                                 do
-                                 {
-                                    b = encoded[index++] - 63;
-                                    result |= (b & 0x1f) << shift;
-                                    shift += 5;
-
-                                 } while(b >= 0x20 && index < len);
-
-                                 dlat += ((result & 1) == 1 ? ~(result >> 1) : (result >> 1));
-
-                                 shift = 0;
-                                 result = 0;
-
-                                 if(index < len)
-                                 {
-                                    do
-                                    {
-                                       b = encoded[index++] - 63;
-                                       result |= (b & 0x1f) << shift;
-                                       shift += 5;
-                                    }
-                                    while(b >= 0x20 && index < len);
-
-                                    dlng += ((result & 1) == 1 ? ~(result >> 1) : (result >> 1));
-
-                                    points.Add(new PointLatLng(dlat * 1e-5, dlng * 1e-5));
-                                 }
-                              }
-                           }
+                           DecodePointsInto(points, route.Substring(x, l));
                         }
                      }
                   }
@@ -1544,6 +1499,17 @@ namespace GMap.NET.MapProviders
                               Debug.WriteLine("html_instructions: " + step.HtmlInstructions);
                            }
 
+                           nn = s.SelectSingleNode("polyline");
+                           if(nn != null)
+                           {
+                              nn = nn.SelectSingleNode("points");
+                              if(nn != null)
+                              {
+                                 step.Points = new List<PointLatLng>();
+                                 DecodePointsInto(step.Points, nn.InnerText);
+                              }
+                           }
+
                            direction.Steps.Add(step);
                         }
                      }
@@ -1558,6 +1524,55 @@ namespace GMap.NET.MapProviders
             Debug.WriteLine("GetDirectionsUrl: " + ex);
          }
          return ret;
+      }
+
+      static void DecodePointsInto(List<PointLatLng> list, string encodedPoints)
+      {
+         // http://tinyurl.com/3ds3scr
+         // http://code.server.com/apis/maps/documentation/polylinealgorithm.html
+         //
+         string encoded = encodedPoints.Replace("\\\\", "\\");
+         {
+            int len = encoded.Length;
+            int index = 0;
+            double dlat = 0;
+            double dlng = 0;
+
+            while(index < len)
+            {
+               int b;
+               int shift = 0;
+               int result = 0;
+
+               do
+               {
+                  b = encoded[index++] - 63;
+                  result |= (b & 0x1f) << shift;
+                  shift += 5;
+
+               } while(b >= 0x20 && index < len);
+
+               dlat += ((result & 1) == 1 ? ~(result >> 1) : (result >> 1));
+
+               shift = 0;
+               result = 0;
+
+               if(index < len)
+               {
+                  do
+                  {
+                     b = encoded[index++] - 63;
+                     result |= (b & 0x1f) << shift;
+                     shift += 5;
+                  }
+                  while(b >= 0x20 && index < len);
+
+                  dlng += ((result & 1) == 1 ? ~(result >> 1) : (result >> 1));
+
+                  list.Add(new PointLatLng(dlat * 1e-5, dlng * 1e-5));
+               }
+            }
+         }
       }
 
       static readonly string DirectionUrlFormatStr = "http://maps.googleapis.com/maps/api/directions/xml?origin={0}&destination={1}&sensor={2}&language={3}{4}{5}{6}";
