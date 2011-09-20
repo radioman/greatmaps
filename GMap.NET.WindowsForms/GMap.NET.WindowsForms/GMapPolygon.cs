@@ -65,7 +65,62 @@ namespace GMap.NET.WindowsForms
          }
       }
 
-      //public double Area
+      public virtual void OnRender(Graphics g)
+      {
+#if !PocketPC
+          if (IsVisible)
+          {
+              using (GraphicsPath rp = new GraphicsPath())
+              {
+                  for (int i = 0; i < LocalPoints.Count; i++)
+                  {
+                      GPoint p2 = LocalPoints[i];
+
+                      if (i == 0)
+                      {
+                          rp.AddLine(p2.X, p2.Y, p2.X, p2.Y);
+                      }
+                      else
+                      {
+                          System.Drawing.PointF p = rp.GetLastPoint();
+                          rp.AddLine(p.X, p.Y, p2.X, p2.Y);
+                      }
+                  }
+
+                  if (rp.PointCount > 0)
+                  {
+                      rp.CloseFigure();
+
+                      g.FillPath(Fill, rp);
+
+                      g.DrawPath(Stroke, rp);
+                  }
+              }
+          }
+#else
+         foreach(GMapPolygon r in Polygons)
+         {
+            if(r.IsVisible)
+            {
+               Point[] pnts = new Point[r.LocalPoints.Count];
+               for(int i = 0; i < r.LocalPoints.Count; i++)
+               {
+                  Point p2 = new Point(r.LocalPoints[i].X, r.LocalPoints[i].Y);
+                  pnts[pnts.Length - 1 - i] = p2;
+               }
+
+               if(pnts.Length > 0)
+               {
+                  g.FillPolygon(r.Fill, pnts);
+                  g.DrawPolygon(r.Stroke, pnts);
+               }
+            }
+         }
+#endif
+
+      }
+
+       //public double Area
       //{
       //   get
       //   {

@@ -194,54 +194,11 @@ namespace GMap.NET.WindowsForms
       /// <param name="g"></param>
       protected virtual void DrawRoutes(Graphics g)
       {
-#if !PocketPC
          foreach(GMapRoute r in Routes)
          {
-            if(r.IsVisible)
-            {
-               using(GraphicsPath rp = new GraphicsPath())
-               {
-                  for(int i = 0; i < r.LocalPoints.Count; i++)
-                  {
-                     GPoint p2 = r.LocalPoints[i];
-
-                     if(i == 0)
-                     {
-                        rp.AddLine(p2.X, p2.Y, p2.X, p2.Y);
-                     }
-                     else
-                     {
-                        System.Drawing.PointF p = rp.GetLastPoint();
-                        rp.AddLine(p.X, p.Y, p2.X, p2.Y);
-                     }
-                  }
-
-                  if(rp.PointCount > 0)
-                  {
-                     g.DrawPath(r.Stroke, rp);
-                  }
-               }
-            }
+             r.OnRender(g);
          }
-#else
-         foreach(GMapRoute r in Routes)
-         {
-            if(r.IsVisible)
-            {
-               Point[] pnts = new Point[r.LocalPoints.Count];
-               for(int i = 0; i < r.LocalPoints.Count; i++)
-               {
-                  Point p2 = new Point(r.LocalPoints[i].X, r.LocalPoints[i].Y);
-                  pnts[pnts.Length - 1 - i] = p2;
-               }
 
-               if(pnts.Length > 0)
-               {
-                  g.DrawLines(r.Stroke, pnts);
-               }
-            }
-         }
-#endif
       }
 
       /// <summary>
@@ -250,59 +207,10 @@ namespace GMap.NET.WindowsForms
       /// <param name="g"></param>
       protected virtual void DrawPolygons(Graphics g)
       {
-#if !PocketPC
-         foreach(GMapPolygon r in Polygons)
-         {
-            if(r.IsVisible)
-            {
-               using(GraphicsPath rp = new GraphicsPath())
-               {
-                  for(int i = 0; i < r.LocalPoints.Count; i++)
-                  {
-                     GPoint p2 = r.LocalPoints[i];
-
-                     if(i == 0)
-                     {
-                        rp.AddLine(p2.X, p2.Y, p2.X, p2.Y);
-                     }
-                     else
-                     {
-                        System.Drawing.PointF p = rp.GetLastPoint();
-                        rp.AddLine(p.X, p.Y, p2.X, p2.Y);
-                     }
-                  }
-
-                  if(rp.PointCount > 0)
-                  {
-                     rp.CloseFigure();
-
-                     g.FillPath(r.Fill, rp);
-
-                     g.DrawPath(r.Stroke, rp);
-                  }
-               }
-            }
-         }
-#else
-         foreach(GMapPolygon r in Polygons)
-         {
-            if(r.IsVisible)
-            {
-               Point[] pnts = new Point[r.LocalPoints.Count];
-               for(int i = 0; i < r.LocalPoints.Count; i++)
-               {
-                  Point p2 = new Point(r.LocalPoints[i].X, r.LocalPoints[i].Y);
-                  pnts[pnts.Length - 1 - i] = p2;
-               }
-
-               if(pnts.Length > 0)
-               {
-                  g.FillPolygon(r.Fill, pnts);
-                  g.DrawPolygon(r.Stroke, pnts);
-               }
-            }
-         }
-#endif
+          foreach (GMapPolygon r in Polygons)
+          {
+              r.OnRender(g);
+          }
       }
 
       /// <summary>

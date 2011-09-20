@@ -66,6 +66,53 @@ namespace GMap.NET.WindowsForms
          }
       }
 
+       public virtual void OnRender(Graphics g)
+       {
+#if !PocketPC
+           if (IsVisible)
+           {
+               using (GraphicsPath rp = new GraphicsPath())
+               {
+                   for (int i = 0; i < LocalPoints.Count; i++)
+                   {
+                       GPoint p2 = LocalPoints[i];
+
+                       if (i == 0)
+                       {
+                           rp.AddLine(p2.X, p2.Y, p2.X, p2.Y);
+                       }
+                       else
+                       {
+                           System.Drawing.PointF p = rp.GetLastPoint();
+                           rp.AddLine(p.X, p.Y, p2.X, p2.Y);
+                       }
+                   }
+
+                   if (rp.PointCount > 0)
+                   {
+                       g.DrawPath(Stroke, rp);
+                   }
+               }
+           }
+#else
+            if(r.IsVisible)
+            {
+               Point[] pnts = new Point[r.LocalPoints.Count];
+               for(int i = 0; i < LocalPoints.Count; i++)
+               {
+                  Point p2 = new Point(LocalPoints[i].X, LocalPoints[i].Y);
+                  pnts[pnts.Length - 1 - i] = p2;
+               }
+
+               if(pnts.Length > 0)
+               {
+                  g.DrawLines(Stroke, pnts);
+               }
+            }
+#endif
+       }
+
+        
       /// <summary>
       /// specifies how the outline is painted
       /// </summary>
