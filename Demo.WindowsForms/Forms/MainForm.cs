@@ -93,8 +93,8 @@ namespace Demo.WindowsForms
             // get map types
 #if !MONO   // mono doesn't handle it, so we 'lost' provider list ;]
             comboBoxMapType.ValueMember = "Name";
-            comboBoxMapType.DataSource = GMapProviders.List;    
-            comboBoxMapType.SelectedItem = MainMap.MapProvider;                
+            comboBoxMapType.DataSource = GMapProviders.List;
+            comboBoxMapType.SelectedItem = MainMap.MapProvider;
 #endif
             // acccess mode
             comboBoxMode.DataSource = Enum.GetValues(typeof(AccessMode));
@@ -179,7 +179,7 @@ namespace Demo.WindowsForms
                // add my city location for demo
                GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
                {
-                  PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius", out status);
+                  PointLatLng? pos = GMapProviders.GoogleMap.GetPoint("Lithuania, Vilnius", out status);
                   if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
                   {
                      currentMarker.Position = pos.Value;
@@ -582,7 +582,7 @@ namespace Demo.WindowsForms
          {
             try
             {
-         #region -- xml --
+               #region -- xml --
                // http://ipinfodb.com/ip_location_api.php
 
                // http://ipinfodb.com/ip_query2.php?ip=74.125.45.100,206.190.60.37&timezone=false
@@ -616,7 +616,7 @@ namespace Demo.WindowsForms
 
                   foreach(TcpRow i in ManagedIpHelper.TcpRows)
                   {
-         #region -- update TcpState --
+                     #region -- update TcpState --
                      string Ip = i.RemoteEndPoint.Address.ToString();
 
                      // exclude local network
@@ -1156,7 +1156,7 @@ namespace Demo.WindowsForms
       void AddLocationLithuania(string place)
       {
          GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
-         PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, " + place, out status);
+         PointLatLng? pos = GMapProviders.GoogleMap.GetPoint("Lithuania, " + place, out status);
          if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
          {
             GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(pos.Value);
@@ -1232,11 +1232,6 @@ namespace Demo.WindowsForms
 
          trackBar1.Minimum = MainMap.MinZoom;
          trackBar1.Maximum = MainMap.MaxZoom;
-
-         if(routes.Routes.Count > 0)
-         {
-            MainMap.ZoomAndCenterRoutes(null);
-         }
 
          if(radioButtonTransport.Checked)
          {
@@ -1327,8 +1322,9 @@ namespace Demo.WindowsForms
          {
             if(item is GMapMarkerRect)
             {
-               Placemark pos = GMaps.Instance.GetPlacemarkFromGeocoder(item.Position);
-               if(pos != null)
+               GeoCoderStatusCode status;
+               var pos = GMapProviders.GoogleMap.GetPlacemark(item.Position, out status);
+               if(status == GeoCoderStatusCode.G_GEO_SUCCESS && pos != null)
                {
                   GMapMarkerRect v = item as GMapMarkerRect;
                   {
@@ -1546,7 +1542,13 @@ namespace Demo.WindowsForms
       // add test route
       private void button3_Click(object sender, EventArgs e)
       {
-         MapRoute route = GMapProviders.GoogleMap.GetRouteBetweenPoints(start, end, false, (int)MainMap.Zoom);
+         RoutingProvider rp = MainMap.MapProvider as RoutingProvider;
+         if(rp == null)
+         {
+            rp = GMapProviders.GoogleMap; // use google if provider does not implement routing
+         }
+
+         MapRoute route = rp.GetRouteBetweenPoints(start, end, false, (int)MainMap.Zoom);
          if(route != null)
          {
             // add route
@@ -1586,7 +1588,12 @@ namespace Demo.WindowsForms
          Placemark p = null;
          if(checkBoxPlacemarkInfo.Checked)
          {
-            p = GMaps.Instance.GetPlacemarkFromGeocoder(currentMarker.Position);
+            GeoCoderStatusCode status;
+            var ret = GMapProviders.GoogleMap.GetPlacemark(currentMarker.Position, out status);
+            if(status == GeoCoderStatusCode.G_GEO_SUCCESS && ret != null)
+            {
+               p = ret;
+            }
          }
 
          if(p != null)

@@ -9,7 +9,7 @@ namespace GMap.NET.MapProviders
    using GMap.NET.Internals;
    using GMap.NET.Projections;
 
-   public abstract class OpenStreetMapProviderBase : GMapProvider, GMapRoutingProvider
+   public abstract class OpenStreetMapProviderBase : GMapProvider, RoutingProvider
    {
       public OpenStreetMapProviderBase()
       {

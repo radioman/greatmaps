@@ -139,7 +139,7 @@ namespace GMap.NET.CacheProviders
             cache = value;
             gtileCache = cache + "TileDBv5" + Path.DirectorySeparatorChar;
 
-            dir = gtileCache + GMaps.Instance.LanguageStr + Path.DirectorySeparatorChar;
+            dir = gtileCache + GMapProvider.LanguageStr + Path.DirectorySeparatorChar;
 
             // precreate dir
             if(!Directory.Exists(dir))

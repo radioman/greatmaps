@@ -147,7 +147,7 @@ namespace GMap.NET
       Serbian,
 
       [Description("sv")]
-      Swedish,  
+      Swedish,
 
       [Description("tl")]
       TAGALOG,

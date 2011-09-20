@@ -6,9 +6,6 @@ namespace GMap.NET
    /// </summary>
    public class Placemark
    {
-      public GeoCoderStatusCode Status = GeoCoderStatusCode.Unknow;
-      public string XmlData;
-
       string address;
 
       /// <summary>
@@ -43,15 +40,6 @@ namespace GMap.NET
       public Placemark(string address)
       {
          this.address = address;
-      }
-
-      /// <summary>
-      /// parse address
-      /// </summary>
-      /// <returns></returns>
-      protected virtual bool ParseAddress()
-      {
-         return false;
       }
    }
 }

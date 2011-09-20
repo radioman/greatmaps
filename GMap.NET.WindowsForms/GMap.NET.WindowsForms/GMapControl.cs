@@ -18,6 +18,7 @@ namespace GMap.NET.WindowsForms
 
 #if !PocketPC
    using System.Runtime.Serialization.Formatters.Binary;
+   using System.Collections.Generic;
 #else
    using OpenNETCF.ComponentModel;
 #endif
@@ -1848,10 +1849,15 @@ namespace GMap.NET.WindowsForms
       public GeoCoderStatusCode SetCurrentPositionByKeywords(string keys)
       {
          GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
-         PointLatLng? pos = Manager.GetLatLngFromGeocoder(keys, out status);
-         if(pos.HasValue && status == GeoCoderStatusCode.G_GEO_SUCCESS)
+
+         GeocodingProvider gp = GMapProviders.GoogleMap as GeocodingProvider;
+         if(gp != null)
          {
-            Position = pos.Value;
+            var pt = gp.GetPoint(keys, out status);
+            if(status == GeoCoderStatusCode.G_GEO_SUCCESS && pt.HasValue)
+            {
+               Position = pt.Value;
+            }
          }
 
          return status;
@@ -2139,7 +2145,7 @@ namespace GMap.NET.WindowsForms
          get
          {
 #if !DESIGN
-             return Cache.Instance.CacheLocation;
+            return Cache.Instance.CacheLocation;
 #else
              return string.Empty;
 #endif

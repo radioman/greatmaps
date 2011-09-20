@@ -27,7 +27,8 @@ namespace ConsoleApplication
 
             //var route = GMapProviders.OpenStreetMap.GetRouteBetweenPoints(p1, p2, false, 10);
 
-            var route = GMapProviders.GoogleMap.GetRouteBetweenPoints(p1, p2, false, 10);
+            GDirections s;
+            var x = GMapProviders.GoogleMap.GetDirections(out s, "Lithuania,Vilnius", "Lithuania,Kaunas", false, true, false, true);
          }
 
          if(false)

@@ -117,7 +117,7 @@ namespace Demo.WindowsPresentation
             // add my city location for demo
             GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
 
-            PointLatLng? city = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius", out status);
+            PointLatLng? city = GMapProviders.GoogleMap.GetPoint("Lithuania, Vilnius", out status);
             if(city != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
             {
                GMapMarker it = new GMapMarker(city.Value);
@@ -132,7 +132,7 @@ namespace Demo.WindowsPresentation
                   List<PointAndInfo> objects = new List<PointAndInfo>();
                   {
                      string area = "Antakalnis";
-                     PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius, " + area, out status);
+                     PointLatLng? pos = GMapProviders.GoogleMap.GetPoint("Lithuania, Vilnius, " + area, out status);
                      if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
                      {
                         objects.Add(new PointAndInfo(pos.Value, area));
@@ -140,7 +140,7 @@ namespace Demo.WindowsPresentation
                   }
                   {
                      string area = "Senamiestis";
-                     PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius, " + area, out status);
+                     PointLatLng? pos = GMapProviders.GoogleMap.GetPoint("Lithuania, Vilnius, " + area, out status);
                      if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
                      {
                         objects.Add(new PointAndInfo(pos.Value, area));
@@ -148,7 +148,7 @@ namespace Demo.WindowsPresentation
                   }
                   {
                      string area = "Pilaite";
-                     PointLatLng? pos = GMaps.Instance.GetLatLngFromGeocoder("Lithuania, Vilnius, " + area, out status);
+                     PointLatLng? pos = GMapProviders.GoogleMap.GetPoint("Lithuania, Vilnius, " + area, out status);
                      if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
                      {
                         objects.Add(new PointAndInfo(pos.Value, area));
@@ -492,7 +492,7 @@ namespace Demo.WindowsPresentation
          Storyboard panMapStoryBoard = new Storyboard();
          panMapStoryBoard.Children.Add(panMap);
          panMapStoryBoard.Begin(this);
-          */ 
+          */
       }
 
       // tile louading starts
@@ -773,7 +773,12 @@ namespace Demo.WindowsPresentation
             Placemark p = null;
             if(checkBoxPlace.IsChecked.Value)
             {
-               p = GMaps.Instance.GetPlacemarkFromGeocoder(currentMarker.Position);
+               GeoCoderStatusCode status;
+               var plret = GMapProviders.GoogleMap.GetPlacemark(currentMarker.Position, out status);
+               if(status == GeoCoderStatusCode.G_GEO_SUCCESS && plret != null)
+               {
+                  p = plret;
+               }
             }
 
             string ToolTipText;
@@ -807,7 +812,13 @@ namespace Demo.WindowsPresentation
       // adds route
       private void button12_Click(object sender, RoutedEventArgs e)
       {
-         MapRoute route = GMapProviders.GoogleMap.GetRouteBetweenPoints(start, end, false, (int)MainMap.Zoom);
+         RoutingProvider rp = MainMap.MapProvider as RoutingProvider;
+         if(rp == null)
+         {
+            rp = GMapProviders.GoogleMap; // use google if provider does not implement routing
+         }
+
+         MapRoute route = rp.GetRouteBetweenPoints(start, end, false, (int)MainMap.Zoom);
          if(route != null)
          {
             GMapMarker m1 = new GMapMarker(start);
@@ -827,6 +838,8 @@ namespace Demo.WindowsPresentation
             MainMap.Markers.Add(m1);
             MainMap.Markers.Add(m2);
             MainMap.Markers.Add(mRoute);
+
+            MainMap.ZoomAndCenterMarkers(null);
          }
       }
 

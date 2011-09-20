@@ -19,7 +19,7 @@ namespace GMap.NET.MapProviders
          Copyright = string.Format("©{0} Microsoft Corporation, ©{0} NAVTEQ, ©{0} Image courtesy of NASA", DateTime.Today.Year);
       }
 
-      public string Version = "733";
+      public string Version = "790";
 
       /// <summary>
       /// Bing Maps Customer Identification, more info here
@@ -205,7 +205,7 @@ namespace GMap.NET.MapProviders
 
       public override PureImage GetTileImage(GPoint pos, int zoom)
       {
-         string url = MakeTileImageUrl(pos, zoom, Language);
+         string url = MakeTileImageUrl(pos, zoom, LanguageStr);
 
          return GetTileImageUsingHttp(url);
       }

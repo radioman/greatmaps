@@ -31,25 +31,6 @@ namespace GMap.NET
       /// </summary>
       public AccessMode Mode = AccessMode.ServerAndCache;
 
-      internal string LanguageStr;
-      LanguageType language = LanguageType.English;
-
-      /// <summary>
-      /// map language
-      /// </summary>
-      public LanguageType Language
-      {
-         get
-         {
-            return language;
-         }
-         set
-         {
-            language = value;
-            LanguageStr = Stuff.EnumToString(Language);
-         }
-      }
-
       /// <summary>
       /// is map ussing cache for routing
       /// </summary>
@@ -61,11 +42,10 @@ namespace GMap.NET
       public bool UseGeocoderCache = true;
 
       /// <summary>
-      /// set to True if you don't want provide on/off pings to codeplex.com
+      /// is map using cache for directions
       /// </summary>
-#if !PocketPC
-      public bool DisableCodeplexAnalyticsPing = false;
-#endif
+      public bool UseDirectionsCache = true;
+
       /// <summary>
       /// is map using cache for placemarks
       /// </summary>
@@ -75,6 +55,13 @@ namespace GMap.NET
       /// is map using memory cache for tiles
       /// </summary>
       public bool UseMemoryCache = true;
+
+      /// <summary>
+      /// set to True if you don't want provide on/off pings to codeplex.com
+      /// </summary>
+#if !PocketPC
+      public bool DisableCodeplexAnalyticsPing = false;
+#endif
 
       /// <summary>
       /// pure image cache provider, by default: ultra fast SQLite!
@@ -222,7 +209,6 @@ namespace GMap.NET
          }
          #endregion
 
-         Language = LanguageType.English;
          ServicePointManager.DefaultConnectionLimit = 5;
       }
 
@@ -290,27 +276,6 @@ namespace GMap.NET
 #endif
       }
 
-      /// <summary>
-      /// gets lat, lng from geocoder keys
-      /// </summary>
-      /// <param name="keywords"></param>
-      /// <param name="status"></param>
-      /// <returns></returns>
-      public PointLatLng? GetLatLngFromGeocoder(string keywords, out GeoCoderStatusCode status)
-      {
-         return GetLatLngFromGeocoderUrl(MakeGeocoderUrl(keywords, LanguageStr), UseGeocoderCache, out status);
-      }
-
-      /// <summary>
-      /// gets placemark from location
-      /// </summary>
-      /// <param name="location"></param>
-      /// <returns></returns>
-      public Placemark GetPlacemarkFromGeocoder(PointLatLng location)
-      {
-         return GetPlacemarkFromReverseGeocoderUrl(MakeReverseGeocoderUrl(location, LanguageStr), UsePlacemarkCache);
-      }
-
 #if !PocketPC
 
       /// <summary>
@@ -326,7 +291,7 @@ namespace GMap.NET
          if(Cache.Instance.ImageCache is SQLitePureImageCache)
          {
             StringBuilder db = new StringBuilder((Cache.Instance.ImageCache as SQLitePureImageCache).GtileCache);
-            db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
+            db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMapProvider.LanguageStr, Path.DirectorySeparatorChar);
 
             return SQLitePureImageCache.ExportMapDataToDB(db.ToString(), file);
          }
@@ -346,7 +311,7 @@ namespace GMap.NET
          if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
             StringBuilder db = new StringBuilder((Cache.Instance.ImageCache as SQLitePureImageCache).GtileCache);
-            db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
+            db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMapProvider.LanguageStr, Path.DirectorySeparatorChar);
 
             return SQLitePureImageCache.ExportMapDataToDB(file, db.ToString());
          }
@@ -368,7 +333,7 @@ namespace GMap.NET
             if(string.IsNullOrEmpty(file))
             {
                StringBuilder db = new StringBuilder((Cache.Instance.ImageCache as SQLitePureImageCache).GtileCache);
-               db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMaps.Instance.LanguageStr, Path.DirectorySeparatorChar);
+               db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMapProvider.LanguageStr, Path.DirectorySeparatorChar);
 
                return SQLitePureImageCache.VacuumDb(db.ToString());
             }
@@ -681,372 +646,6 @@ namespace GMap.NET
 
       #endregion
 
-      #region -- URL generation --
-
-      /// <summary>
-      /// makes url for geocoder
-      /// </summary>
-      /// <param name="keywords"></param>
-      /// <param name="language"></param>
-      /// <returns></returns>
-      internal string MakeGeocoderUrl(string keywords, string language)
-      {
-         string key = keywords.Replace(' ', '+');
-         return string.Format("http://maps.{3}/maps/geo?q={0}&hl={1}&output=csv&key={2}", key, language, GMapProviders.GoogleMap.APIKey, GMapProviders.GoogleMap.Server);
-      }
-
-      /// makes url for reverse geocoder
-      /// <summary>
-      /// </summary>
-      /// <param name="pt"></param>
-      /// <param name="language"></param>
-      /// <returns></returns>
-      internal string MakeReverseGeocoderUrl(PointLatLng pt, string language)
-      {
-         return string.Format("http://maps.{4}/maps/geo?hl={0}&ll={1},{2}&output=xml&key={3}", language, pt.Lat.ToString(CultureInfo.InvariantCulture), pt.Lng.ToString(CultureInfo.InvariantCulture), GMapProviders.GoogleMap.APIKey, GMapProviders.GoogleMap.Server);
-      }  
-      
-      #endregion
-
-      #region -- Content download --
-
-      /// <summary>
-      /// gets lat and lng from geocoder url
-      /// </summary>
-      /// <param name="url"></param>
-      /// <param name="useCache"></param>
-      /// <param name="status"></param>
-      /// <returns></returns>
-      internal PointLatLng? GetLatLngFromGeocoderUrl(string url, bool useCache, out GeoCoderStatusCode status)
-      {
-         status = GeoCoderStatusCode.Unknow;
-         PointLatLng? ret = null;
-         try
-         {
-            string urlEnd = url.Substring(url.IndexOf("geo?q="));
-
-#if !PocketPC
-            char[] ilg = Path.GetInvalidFileNameChars();
-#else
-            char[] ilg = new char[41];
-            for(int i = 0; i < 32; i++)
-               ilg[i] = (char) i;
-
-            ilg[32] = '"';
-            ilg[33] = '<';
-            ilg[34] = '>';
-            ilg[35] = '|';
-            ilg[36] = '?';
-            ilg[37] = ':';
-            ilg[38] = '/';
-            ilg[39] = '\\';
-            ilg[39] = '*';
-#endif
-
-            foreach(char c in ilg)
-            {
-               urlEnd = urlEnd.Replace(c, '_');
-            }
-
-            string geo = useCache ? Cache.Instance.GetContent(urlEnd, CacheType.GeocoderCache) : string.Empty;
-
-            if(string.IsNullOrEmpty(geo))
-            {
-               HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-               if(GMapProvider.WebProxy != null)
-               {
-                  request.Proxy = GMapProvider.WebProxy;
-#if !PocketPC
-                  request.PreAuthenticate = true;
-#endif
-               }
-
-               request.UserAgent = GMapProvider.UserAgent;
-               request.Timeout = GMapProvider.TimeoutMs;
-               request.ReadWriteTimeout = GMapProvider.TimeoutMs * 6;
-               request.KeepAlive = false;
-
-               using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-               {
-                  using(Stream responseStream = response.GetResponseStream())
-                  {
-                     using(StreamReader read = new StreamReader(responseStream))
-                     {
-                        geo = read.ReadToEnd();
-                     }
-                  }
-               }
-
-               // cache geocoding
-               if(useCache && geo.StartsWith("200"))
-               {
-                  Cache.Instance.SaveContent(urlEnd, CacheType.GeocoderCache, geo);
-               }
-            }
-
-            // parse values
-            // true : 200,4,56.1451640,22.0681787
-            // false: 602,0,0,0
-            {
-               string[] values = geo.Split(',');
-               if(values.Length == 4)
-               {
-                  status = (GeoCoderStatusCode)int.Parse(values[0]);
-                  if(status == GeoCoderStatusCode.G_GEO_SUCCESS)
-                  {
-                     double lat = double.Parse(values[2], CultureInfo.InvariantCulture);
-                     double lng = double.Parse(values[3], CultureInfo.InvariantCulture);
-
-                     ret = new PointLatLng(lat, lng);
-                  }
-               }
-            }
-         }
-         catch(Exception ex)
-         {
-            ret = null;
-            Debug.WriteLine("GetLatLngFromGeocoderUrl: " + ex.ToString());
-         }
-
-         return ret;
-      }
-
-      /// <summary>
-      /// gets Placemark from reverse geocoder url
-      /// </summary>
-      /// <param name="url"></param>
-      /// <param name="useCache"></param>
-      /// <returns></returns>
-      internal Placemark GetPlacemarkFromReverseGeocoderUrl(string url, bool useCache)
-      {
-         Placemark ret = null;
-
-         try
-         {
-            string urlEnd = url.Substring(url.IndexOf("geo?hl="));
-
-#if !PocketPC
-            char[] ilg = Path.GetInvalidFileNameChars();
-#else
-            char[] ilg = new char[41];
-            for(int i = 0; i < 32; i++)
-               ilg[i] = (char) i;
-
-            ilg[32] = '"';
-            ilg[33] = '<';
-            ilg[34] = '>';
-            ilg[35] = '|';
-            ilg[36] = '?';
-            ilg[37] = ':';
-            ilg[38] = '/';
-            ilg[39] = '\\';
-            ilg[39] = '*';
-#endif
-
-            foreach(char c in ilg)
-            {
-               urlEnd = urlEnd.Replace(c, '_');
-            }
-
-            string reverse = useCache ? Cache.Instance.GetContent(urlEnd, CacheType.PlacemarkCache) : string.Empty;
-
-            if(string.IsNullOrEmpty(reverse))
-            {
-               HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-               if(GMapProvider.WebProxy != null)
-               {
-                  request.Proxy = GMapProvider.WebProxy;
-#if !PocketPC
-                  request.PreAuthenticate = true;
-#endif
-               }
-
-               request.UserAgent = GMapProvider.UserAgent;
-               request.Timeout = GMapProvider.TimeoutMs;
-               request.ReadWriteTimeout = GMapProvider.TimeoutMs * 6;
-               request.KeepAlive = false;
-
-               using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-               {
-                  using(Stream responseStream = response.GetResponseStream())
-                  {
-                     using(StreamReader read = new StreamReader(responseStream))
-                     {
-                        reverse = read.ReadToEnd();
-                     }
-                  }
-               }
-
-               // cache geocoding
-               if(useCache)
-               {
-                  Cache.Instance.SaveContent(urlEnd, CacheType.PlacemarkCache, reverse);
-               }
-            }
-
-            #region -- kml response --
-            //<?xml version="1.0" encoding="UTF-8" ?>
-            //<kml xmlns="http://earth.server.com/kml/2.0">
-            // <Response>
-            //  <name>55.023322,24.668408</name>
-            //  <Status>
-            //    <code>200</code>
-            //    <request>geocode</request>
-            //  </Status>
-
-            //  <Placemark id="p1">
-            //    <address>4313, Širvintos 19023, Lithuania</address>
-            //    <AddressDetails Accuracy="6" xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0"><Country><CountryNameCode>LT</CountryNameCode><CountryName>Lithuania</CountryName><SubAdministrativeArea><SubAdministrativeAreaName>Vilnius Region</SubAdministrativeAreaName><Locality><LocalityName>Širvintos</LocalityName><Thoroughfare><ThoroughfareName>4313</ThoroughfareName></Thoroughfare><PostalCode><PostalCodeNumber>19023</PostalCodeNumber></PostalCode></Locality></SubAdministrativeArea></Country></AddressDetails>
-            //    <ExtendedData>
-            //      <LatLonBox north="55.0270661" south="55.0207709" east="24.6711965" west="24.6573382" />
-            //    </ExtendedData>
-            //    <Point><coordinates>24.6642677,55.0239187,0</coordinates></Point>
-            //  </Placemark>
-
-            //  <Placemark id="p2">
-            //    <address>Širvintos 19023, Lithuania</address>
-            //    <AddressDetails Accuracy="5" xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0"><Country><CountryNameCode>LT</CountryNameCode><CountryName>Lithuania</CountryName><SubAdministrativeArea><SubAdministrativeAreaName>Vilnius Region</SubAdministrativeAreaName><Locality><LocalityName>Širvintos</LocalityName><PostalCode><PostalCodeNumber>19023</PostalCodeNumber></PostalCode></Locality></SubAdministrativeArea></Country></AddressDetails>
-            //    <ExtendedData>
-            //      <LatLonBox north="55.1109513" south="54.9867479" east="24.7563286" west="24.5854650" />
-            //    </ExtendedData>
-            //    <Point><coordinates>24.6778290,55.0561428,0</coordinates></Point>
-            //  </Placemark>
-
-            //  <Placemark id="p3">
-            //    <address>Širvintos, Lithuania</address>
-            //    <AddressDetails Accuracy="4" xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0"><Country><CountryNameCode>LT</CountryNameCode><CountryName>Lithuania</CountryName><SubAdministrativeArea><SubAdministrativeAreaName>Vilnius Region</SubAdministrativeAreaName><Locality><LocalityName>Širvintos</LocalityName></Locality></SubAdministrativeArea></Country></AddressDetails>
-            //    <ExtendedData>
-            //      <LatLonBox north="55.1597127" south="54.8595715" east="25.2358124" west="24.5536348" />
-            //    </ExtendedData>
-            //    <Point><coordinates>24.9447696,55.0482439,0</coordinates></Point>
-            //  </Placemark>
-
-            //  <Placemark id="p4">
-            //    <address>Vilnius Region, Lithuania</address>
-            //    <AddressDetails Accuracy="3" xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0"><Country><CountryNameCode>LT</CountryNameCode><CountryName>Lithuania</CountryName><SubAdministrativeArea><SubAdministrativeAreaName>Vilnius Region</SubAdministrativeAreaName></SubAdministrativeArea></Country></AddressDetails>
-            //    <ExtendedData>
-            //      <LatLonBox north="55.5177330" south="54.1276791" east="26.7590747" west="24.3866334" />
-            //    </ExtendedData>
-            //    <Point><coordinates>25.2182138,54.8086502,0</coordinates></Point>
-            //  </Placemark>
-
-            //  <Placemark id="p5">
-            //    <address>Lithuania</address>
-            //    <AddressDetails Accuracy="1" xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0"><Country><CountryNameCode>LT</CountryNameCode><CountryName>Lithuania</CountryName></Country></AddressDetails>
-            //    <ExtendedData>
-            //      <LatLonBox north="56.4503174" south="53.8986720" east="26.8356500" west="20.9310000" />
-            //    </ExtendedData>
-            //    <Point><coordinates>23.8812750,55.1694380,0</coordinates></Point>
-            //  </Placemark>
-            //</Response>
-            //</kml> 
-            #endregion
-
-            {
-               if(reverse.StartsWith("200"))
-               {
-                  string acc = reverse.Substring(0, reverse.IndexOf('\"'));
-                  ret = new Placemark(reverse.Substring(reverse.IndexOf('\"')));
-                  ret.Accuracy = int.Parse(acc.Split(',').GetValue(1) as string);
-               }
-               else if(reverse.StartsWith("<?xml")) // kml version
-               {
-                  XmlDocument doc = new XmlDocument();
-                  doc.LoadXml(reverse);
-
-                  XmlNamespaceManager nsMgr = new XmlNamespaceManager(doc.NameTable);
-                  nsMgr.AddNamespace("sm", string.Format("http://earth.{0}/kml/2.0", GMapProviders.GoogleMap.Server));
-                  nsMgr.AddNamespace("sn", "urn:oasis:names:tc:ciq:xsdschema:xAL:2.0");
-
-                  XmlNodeList l = doc.SelectNodes("/sm:kml/sm:Response/sm:Placemark", nsMgr);
-                  if(l != null)
-                  {
-                     foreach(XmlNode n in l)
-                     {
-                        XmlNode nnd, nnl, nn = n.SelectSingleNode("sm:address", nsMgr);
-                        if(nn != null)
-                        {
-                           ret = new Placemark(nn.InnerText);
-                           ret.XmlData = n.OuterXml;
-
-                           nn = n.SelectSingleNode("//sm:Status/sm:code", nsMgr);
-                           if(nn != null)
-                           {
-                              ret.Status = (GeoCoderStatusCode)int.Parse(nn.InnerText);
-                           }
-
-                           nnd = n.SelectSingleNode("sn:AddressDetails", nsMgr);
-                           if(nnd != null)
-                           {
-                              nn = nnd.SelectSingleNode("@Accuracy", nsMgr);
-                              if(nn != null)
-                              {
-                                 ret.Accuracy = int.Parse(nn.InnerText);
-                              }
-
-                              nn = nnd.SelectSingleNode("sn:Country/sn:CountryNameCode", nsMgr);
-                              if(nn != null)
-                              {
-                                 ret.CountryNameCode = nn.InnerText;
-                              }
-
-                              nn = nnd.SelectSingleNode("sn:Country/sn:CountryName", nsMgr);
-                              if(nn != null)
-                              {
-                                 ret.CountryName = nn.InnerText;
-                              }
-
-                              nn = nnd.SelectSingleNode("descendant::sn:AdministrativeArea/sn:AdministrativeAreaName", nsMgr);
-                              if(nn != null)
-                              {
-                                 ret.AdministrativeAreaName = nn.InnerText;
-                              }
-
-                              nn = nnd.SelectSingleNode("descendant::sn:SubAdministrativeArea/sn:SubAdministrativeAreaName", nsMgr);
-                              if(nn != null)
-                              {
-                                 ret.SubAdministrativeAreaName = nn.InnerText;
-                              }
-
-                              // Locality or DependentLocality tag ?
-                              nnl = nnd.SelectSingleNode("descendant::sn:Locality", nsMgr) ?? nnd.SelectSingleNode("descendant::sn:DependentLocality", nsMgr);
-                              if(nnl != null)
-                              {
-                                 nn = nnl.SelectSingleNode(string.Format("sn:{0}Name", nnl.Name), nsMgr);
-                                 if(nn != null)
-                                 {
-                                    ret.LocalityName = nn.InnerText;
-                                 }
-
-                                 nn = nnl.SelectSingleNode("sn:Thoroughfare/sn:ThoroughfareName", nsMgr);
-                                 if(nn != null)
-                                 {
-                                    ret.ThoroughfareName = nn.InnerText;
-                                 }
-
-                                 nn = nnl.SelectSingleNode("sn:PostalCode/sn:PostalCodeNumber", nsMgr);
-                                 if(nn != null)
-                                 {
-                                    ret.PostalCodeNumber = nn.InnerText;
-                                 }
-                              }
-                           }
-                        }
-                        break;
-                     }
-                  }
-               }
-            }
-         }
-         catch(Exception ex)
-         {
-            ret = null;
-            Debug.WriteLine("GetPlacemarkReverseGeocoderUrl: " + ex.ToString());
-         }
-
-         return ret;
-      }
-
       /// <summary>
       /// gets image from tile server
       /// </summary>
@@ -1167,7 +766,5 @@ namespace GMap.NET
       }
 
       readonly Exception noDataException = new Exception("No data in local tile cache...");
-
-      #endregion
    }
 }

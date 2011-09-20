@@ -4,7 +4,7 @@ namespace GMap.NET
    /// <summary>
    /// routing interface
    /// </summary>
-   interface GMapRoutingProvider
+   public interface RoutingProvider
    {
       /// <summary>
       /// get route between two points

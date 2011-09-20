@@ -150,6 +150,10 @@ namespace GMap.NET.Internals
                file += ".url";
                break;
 
+               case CacheType.DirectionsCache:
+               file += ".dir";
+               break;
+
                default:
                file += ".txt";
                break;
@@ -235,5 +239,6 @@ namespace GMap.NET.Internals
       PlacemarkCache,
       RouteCache,
       UrlCache,
+      DirectionsCache,
    }
 }

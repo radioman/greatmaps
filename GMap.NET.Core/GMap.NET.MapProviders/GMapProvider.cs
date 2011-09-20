@@ -287,7 +287,31 @@ namespace GMap.NET.MapProviders
 
       public string Copyright = string.Empty;
 
-      public static string Language = "en";
+      static string languageStr = "en";
+      public static string LanguageStr
+      {
+         get
+         {
+            return languageStr;
+         }
+      }
+      static LanguageType language = LanguageType.English;
+
+      /// <summary>
+      /// map language
+      /// </summary>
+      public static LanguageType Language
+      {
+         get
+         {
+            return language;
+         }
+         set
+         {
+            language = value;
+            languageStr = Stuff.EnumToString(Language);
+         }
+      }
 
       /// <summary>
       /// internal proxy for image managment

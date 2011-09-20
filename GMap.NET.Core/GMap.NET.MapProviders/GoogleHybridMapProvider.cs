@@ -19,7 +19,7 @@ namespace GMap.NET.MapProviders
          Instance = new GoogleHybridMapProvider();
       }
 
-      public string Version = "h@158";
+      public string Version = "h@160000000";
 
       #region GMapProvider Members
 
@@ -56,7 +56,7 @@ namespace GMap.NET.MapProviders
 
       public override PureImage GetTileImage(GPoint pos, int zoom)
       {
-         string url = MakeTileImageUrl(pos, zoom, Language);
+         string url = MakeTileImageUrl(pos, zoom, LanguageStr);
 
          return GetTileImageUsingHttp(url);
       }

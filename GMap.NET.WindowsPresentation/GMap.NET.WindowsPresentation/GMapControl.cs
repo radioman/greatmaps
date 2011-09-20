@@ -569,7 +569,7 @@ namespace GMap.NET.WindowsPresentation
                   }
                }
                ));
-         }           
+         }
       }
 
       void Current_SessionEnding(object sender, SessionEndingCancelEventArgs e)
@@ -1645,10 +1645,15 @@ namespace GMap.NET.WindowsPresentation
       public GeoCoderStatusCode SetCurrentPositionByKeywords(string keys)
       {
          GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
-         PointLatLng? pos = Manager.GetLatLngFromGeocoder(keys, out status);
-         if(pos.HasValue && status == GeoCoderStatusCode.G_GEO_SUCCESS)
+
+         GeocodingProvider gp = GMapProviders.GoogleMap as GeocodingProvider;
+         if(gp != null)
          {
-            Position = pos.Value;
+            var pt = gp.GetPoint(keys, out status);
+            if(status == GeoCoderStatusCode.G_GEO_SUCCESS && pt.HasValue)
+            {
+               Position = pt.Value;
+            }
          }
 
          return status;
