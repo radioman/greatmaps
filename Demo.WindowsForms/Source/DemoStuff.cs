@@ -5,11 +5,14 @@ using System.IO;
 using System.Net;
 using System.Xml;
 using GMap.NET;
-using System.Data.Common;  
+using System.Data.Common;
+using GMap.NET.MapProviders;
+using System.Text;
+using System.Diagnostics;
 
 #if !MONO
 #if SQLite
-using System.Data.SQLite;    
+using System.Data.SQLite;
 #endif
 #else
    using SQLiteConnection=Mono.Data.SqliteClient.SqliteConnection;
@@ -39,6 +42,17 @@ namespace Demo.WindowsForms
    {
       Bus,
       TrolleyBus,
+   }
+
+   public struct FlightRadarData
+   {
+      public string name;
+      public string hex;
+      public PointLatLng point;
+      public int bearing;
+      public string altitude;
+      public string speed;
+      public int Id;
    }
 
    public class Stuff
@@ -310,6 +324,123 @@ namespace Demo.WindowsForms
             }
          }
          doc = null;
+      }
+
+      public static string sessionId = string.Empty;
+
+      public static void GetFlightRadarData(List<FlightRadarData> ret, PointLatLng location, int zoom, bool resetSession)
+      {
+         ret.Clear();
+
+         if(resetSession || string.IsNullOrEmpty(sessionId))
+         {
+            sessionId = GetFlightRadarContentUsingHttp("http://www.flightradar24.com/", location, zoom, string.Empty);
+         }
+
+         // get track for one object
+         //var r = GetContentUsingHttp("http://www.flightradar24.com/FlightDataService.php?callsign=WZZ1MF&hex=47340F&date=" + tm, p1, 6, id);
+         //Debug.WriteLine(r);
+
+         if(!string.IsNullOrEmpty(sessionId))
+         {
+            var tm = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalMilliseconds;
+            var response = GetFlightRadarContentUsingHttp("http://www.flightradar24.com/CachedFlightsService.php?" + tm, location, zoom, sessionId);
+
+            var items = response.Split(']');
+            int i = 0;
+            foreach(var it in items)
+            {
+               if(it.Length > 11)
+               {
+                  var d = it.Substring(2).Replace(":", ",").Replace("\"", string.Empty).Replace("[", string.Empty);
+
+                  //Debug.WriteLine(++i + " -> " + d);
+
+                  // BAW576":["400803",48.9923,1.8083,"144","36950","462","0512","LFPO","A319","G-EUPC"
+                  var par = d.Split(',');
+                  if(par.Length == 11)
+                  {
+                     var name = par[0];
+                     var hex = par[1];
+                     var lat = par[2];
+                     var lng = par[3];
+                     var bearing = par[4];
+                     var altitude = (int)(int.Parse(par[5]) * 0.3048) + "m";
+                     var speed = (int)(int.Parse(par[6]) * 1.852) + "km/h";
+
+                     FlightRadarData fd = new FlightRadarData();
+                     fd.name = name;
+                     fd.hex = hex;
+                     fd.bearing = int.Parse(bearing);
+                     fd.altitude = altitude;
+                     fd.speed = speed;
+                     fd.point = new PointLatLng(double.Parse(lat, CultureInfo.InvariantCulture), double.Parse(lng, CultureInfo.InvariantCulture));
+                     fd.Id = Convert.ToInt32(hex, 16);
+                     ret.Add(fd);
+
+                     //Debug.WriteLine("name: " + name);
+                     //Debug.WriteLine("hex: " + hex);
+                     //Debug.WriteLine("point: " + fd.point);
+                     //Debug.WriteLine("bearing: " + bearing);
+                     //Debug.WriteLine("altitude: " + altitude);
+                     //Debug.WriteLine("speed: " + speed);
+                  }
+                  else
+                  {
+                     Debugger.Break();
+                  }
+                  //Debug.WriteLine("--------------");
+               }
+            }
+         }
+      }
+
+      static string GetFlightRadarContentUsingHttp(string url, PointLatLng p, int zoom, string sid)
+      {
+         string ret = string.Empty;
+
+         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+
+         request.UserAgent = GMapProvider.UserAgent;
+         request.Timeout = GMapProvider.TimeoutMs;
+         request.ReadWriteTimeout = GMapProvider.TimeoutMs * 6;
+         request.Accept = "*/*";
+         request.Referer = "http://www.flightradar24.com/";
+         request.KeepAlive = true;
+         request.Headers.Add("Cookie", string.Format(System.Globalization.CultureInfo.InvariantCulture, "map_lat={0}; map_lon={1}; map_zoom={2}; " + (!string.IsNullOrEmpty(sid) ? "PHPSESSID=" + sid + ";" : string.Empty) + "__utma=109878426.303091014.1316587318.1316587318.1316587318.1; __utmb=109878426.2.10.1316587318; __utmz=109878426.1316587318.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)", p.Lat, p.Lng, zoom));
+
+         using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+         {
+            if(string.IsNullOrEmpty(sid))
+            {
+               var c = response.Headers["Set-Cookie"];
+               //Debug.WriteLine(c);
+               if(c.Contains("PHPSESSID"))
+               {
+                  c = c.Split('=')[1].Split(';')[0];
+                  ret = c;
+               }
+            }
+
+            using(Stream responseStream = response.GetResponseStream())
+            {
+               using(StreamReader read = new StreamReader(responseStream, Encoding.UTF8))
+               {
+                  var tmp = read.ReadToEnd();
+                  if(!string.IsNullOrEmpty(sid))
+                  {
+                     ret = tmp;
+                  }
+               }
+            }
+
+#if PocketPC
+            request.Abort();
+#endif
+            response.Close();
+         }
+
+         return ret;
       }
    }
 }

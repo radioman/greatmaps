@@ -478,7 +478,7 @@ namespace GMap.NET.MapProviders
                            {
                               l--;
                            }
-                           */ 
+                           */
 
                            points = new List<PointLatLng>();
                            DecodePointsInto(points, route.Substring(x, l));
@@ -1416,6 +1416,13 @@ namespace GMap.NET.MapProviders
                      {
                         direction.Copyrights = nn.InnerText;
                         Debug.WriteLine("copyrights: " + direction.Copyrights);
+                     }
+
+                     nn = doc.SelectSingleNode("/DirectionsResponse/route/overview_polyline/points");
+                     if(nn != null)
+                     {
+                        direction.Route = new List<PointLatLng>();
+                        DecodePointsInto(direction.Route, nn.InnerText);
                      }
 
                      XmlNodeList steps = doc.SelectNodes("/DirectionsResponse/route/leg/step");

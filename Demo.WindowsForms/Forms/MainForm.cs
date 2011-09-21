@@ -244,11 +244,16 @@ namespace Demo.WindowsForms
       #region -- transport demo --
       BackgroundWorker transport = new BackgroundWorker();
 
-      readonly List<VehicleData> trolleybus = new List<VehicleData>();
-      readonly Dictionary<int, GMapMarker> trolleybusMarkers = new Dictionary<int, GMapMarker>();
+      #region -- old vehicle demo --
+      //readonly List<VehicleData> trolleybus = new List<VehicleData>();
+      //readonly Dictionary<int, GMapMarker> trolleybusMarkers = new Dictionary<int, GMapMarker>();
 
-      readonly List<VehicleData> bus = new List<VehicleData>();
-      readonly Dictionary<int, GMapMarker> busMarkers = new Dictionary<int, GMapMarker>();
+      //readonly List<VehicleData> bus = new List<VehicleData>();
+      //readonly Dictionary<int, GMapMarker> busMarkers = new Dictionary<int, GMapMarker>(); 
+      #endregion
+
+      readonly List<FlightRadarData> flights = new List<FlightRadarData>();
+      readonly Dictionary<int, GMapMarker> flightMarkers = new Dictionary<int, GMapMarker>();
 
       bool firstLoadTrasport = true;
       GMapMarker currentTransport;
@@ -259,75 +264,109 @@ namespace Demo.WindowsForms
          // call Refresh to perform single refresh and reset invalidation state
          MainMap.HoldInvalidation = true;
 
-         lock(trolleybus)
+         #region -- old vehicle demo --
+         //lock(trolleybus)
+         //{
+         //   foreach(VehicleData d in trolleybus)
+         //   {
+         //      GMapMarker marker;
+
+         //      if(!trolleybusMarkers.TryGetValue(d.Id, out marker))
+         //      {
+         //         marker = new GMapMarkerGoogleRed(new PointLatLng(d.Lat, d.Lng));
+         //         marker.Tag = d.Id;
+         //         marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+
+         //         trolleybusMarkers[d.Id] = marker;
+         //         objects.Markers.Add(marker);
+         //      }
+         //      else
+         //      {
+         //         marker.Position = new PointLatLng(d.Lat, d.Lng);
+         //         (marker as GMapMarkerGoogleRed).Bearing = (float?)d.Bearing;
+         //      }
+         //      marker.ToolTipText = "Trolley " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
+
+         //      if(currentTransport != null && currentTransport == marker)
+         //      {
+         //         MainMap.Position = marker.Position;
+         //         if(d.Bearing.HasValue)
+         //         {
+         //            MainMap.Bearing = (float)d.Bearing.Value;
+         //         }
+         //      }
+         //   }
+         //}
+
+         //lock(bus)
+         //{
+         //   foreach(VehicleData d in bus)
+         //   {
+         //      GMapMarker marker;
+
+         //      if(!busMarkers.TryGetValue(d.Id, out marker))
+         //      {
+         //         marker = new GMapMarkerGoogleGreen(new PointLatLng(d.Lat, d.Lng));
+         //         marker.Tag = d.Id;
+         //         marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+
+         //         busMarkers[d.Id] = marker;
+         //         objects.Markers.Add(marker);
+         //      }
+         //      else
+         //      {
+         //         marker.Position = new PointLatLng(d.Lat, d.Lng);
+         //         (marker as GMapMarkerGoogleGreen).Bearing = (float?)d.Bearing;
+         //      }
+         //      marker.ToolTipText = "Bus " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
+
+         //      if(currentTransport != null && currentTransport == marker)
+         //      {
+         //         MainMap.Position = marker.Position;
+         //         if(d.Bearing.HasValue)
+         //         {
+         //            MainMap.Bearing = (float)d.Bearing.Value;
+         //         }
+         //      }
+         //   }
+         //} 
+         #endregion
+
+         lock(flights)
          {
-            foreach(VehicleData d in trolleybus)
+            foreach(FlightRadarData d in flights)
             {
                GMapMarker marker;
 
-               if(!trolleybusMarkers.TryGetValue(d.Id, out marker))
+               if(!flightMarkers.TryGetValue(d.Id, out marker))
                {
-                  marker = new GMapMarkerGoogleRed(new PointLatLng(d.Lat, d.Lng));
+                  marker = new GMapMarkerGoogleGreen(d.point);
                   marker.Tag = d.Id;
                   marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+                  (marker as GMapMarkerGoogleGreen).Bearing = (float?)d.bearing;
 
-                  trolleybusMarkers[d.Id] = marker;
+                  flightMarkers[d.Id] = marker;
                   objects.Markers.Add(marker);
                }
                else
                {
-                  marker.Position = new PointLatLng(d.Lat, d.Lng);
-                  (marker as GMapMarkerGoogleRed).Bearing = (float?)d.Bearing;
+                  marker.Position = d.point;
+                  (marker as GMapMarkerGoogleGreen).Bearing = (float?)d.bearing;
                }
-               marker.ToolTipText = "Trolley " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
+               marker.ToolTipText = d.name + ", " + d.altitude + ", " + d.speed;
 
                if(currentTransport != null && currentTransport == marker)
                {
                   MainMap.Position = marker.Position;
-                  if(d.Bearing.HasValue)
-                  {
-                     MainMap.Bearing = (float)d.Bearing.Value;
-                  }
-               }
-            }
-         }
-
-         lock(bus)
-         {
-            foreach(VehicleData d in bus)
-            {
-               GMapMarker marker;
-
-               if(!busMarkers.TryGetValue(d.Id, out marker))
-               {
-                  marker = new GMapMarkerGoogleGreen(new PointLatLng(d.Lat, d.Lng));
-                  marker.Tag = d.Id;
-                  marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
-
-                  busMarkers[d.Id] = marker;
-                  objects.Markers.Add(marker);
-               }
-               else
-               {
-                  marker.Position = new PointLatLng(d.Lat, d.Lng);
-                  (marker as GMapMarkerGoogleGreen).Bearing = (float?)d.Bearing;
-               }
-               marker.ToolTipText = "Bus " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
-
-               if(currentTransport != null && currentTransport == marker)
-               {
-                  MainMap.Position = marker.Position;
-                  if(d.Bearing.HasValue)
-                  {
-                     MainMap.Bearing = (float)d.Bearing.Value;
-                  }
+                  MainMap.Bearing = (float)d.bearing;
                }
             }
          }
 
          if(firstLoadTrasport)
          {
-            MainMap.ZoomAndCenterMarkers("objects");
+            MainMap.Zoom = 5;
+            //MainMap.ZoomAndCenterMarkers("objects");
             firstLoadTrasport = false;
          }
          MainMap.Refresh();
@@ -335,18 +374,32 @@ namespace Demo.WindowsForms
 
       void transport_DoWork(object sender, DoWorkEventArgs e)
       {
+         bool restartSesion = true;
+
          while(!transport.CancellationPending)
          {
             try
             {
-               lock(trolleybus)
-               {
-                  Stuff.GetVilniusTransportData(TransportType.TrolleyBus, string.Empty, trolleybus);
-               }
+               #region -- old vehicle demo --
+               //lock(trolleybus)
+               //{
+               //   Stuff.GetVilniusTransportData(TransportType.TrolleyBus, string.Empty, trolleybus);
+               //}
 
-               lock(bus)
+               //lock(bus)
+               //{
+               //   Stuff.GetVilniusTransportData(TransportType.Bus, string.Empty, bus);
+               //} 
+               #endregion
+
+               lock(flights)
                {
-                  Stuff.GetVilniusTransportData(TransportType.Bus, string.Empty, bus);
+                  Stuff.GetFlightRadarData(flights, lastPosition, lastZoom, restartSesion);
+
+                  if(flights.Count > 0 && restartSesion)
+                  {
+                     restartSesion = false;
+                  }
                }
 
                transport.ReportProgress(100);
@@ -355,10 +408,12 @@ namespace Demo.WindowsForms
             {
                Debug.WriteLine("transport_DoWork: " + ex.ToString());
             }
-            Thread.Sleep(3333);
+            Thread.Sleep(20 * 1000);
          }
-         trolleybusMarkers.Clear();
-         busMarkers.Clear();
+
+         flightMarkers.Clear();
+         //trolleybusMarkers.Clear();
+         //busMarkers.Clear();
       }
 
       #endregion
@@ -1391,7 +1446,16 @@ namespace Demo.WindowsForms
          center.Position = point;
          textBoxLatCurrent.Text = point.Lat.ToString(CultureInfo.InvariantCulture);
          textBoxLngCurrent.Text = point.Lng.ToString(CultureInfo.InvariantCulture);
+
+         lock(flights)
+         {
+            lastPosition = point;
+            lastZoom = (int)MainMap.Zoom;
+         }
       }
+
+      PointLatLng lastPosition;
+      int lastZoom;
 
       // center markers on start
       private void MainForm_Load(object sender, EventArgs e)

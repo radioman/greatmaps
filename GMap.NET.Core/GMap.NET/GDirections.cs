@@ -58,6 +58,11 @@ namespace GMap.NET
       /// </summary>
       public List<GDirectionStep> Steps;
 
+      /// <summary>
+      /// contains all points of the route
+      /// </summary>
+      public List<PointLatLng> Route;
+
       public override string ToString()
       {
          return Summary + " | " + Distance + " | " + Duration;

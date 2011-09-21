@@ -1184,7 +1184,7 @@
           this.radioButtonTransport.Name = "radioButtonTransport";
           this.radioButtonTransport.Size = new System.Drawing.Size(184, 17);
           this.radioButtonTransport.TabIndex = 0;
-          this.radioButtonTransport.Text = "Transport demo. Vilnius, Lithuania";
+          this.radioButtonTransport.Text = "FlightRadar demo";
           this.radioButtonTransport.UseVisualStyleBackColor = true;
           this.radioButtonTransport.CheckedChanged += new System.EventHandler(this.RealTimeChanged);
           // 
