@@ -57,14 +57,14 @@ namespace GMap.NET.MapProviders
    }
 
    /// <summary>
-   /// CloudMadeMap demo provider
+   /// CloudMadeMap demo provider, http://maps.cloudmade.com/
    /// </summary>
    public class CloudMadeMapProvider : CloudMadeMapProviderBase
    {
       public static readonly CloudMadeMapProvider Instance;
 
-      readonly string Key = "9c8d5daf12344694ad416589fcf9e9dc"; // demo key of CloudMade
-      readonly int StyleID = 1;
+      readonly string Key = "5937c2bd907f4f4a92d8980a7c666ac0"; // demo key of CloudMade
+      readonly int StyleID = 45363; // grab your style here http://maps.cloudmade.com/?styleId=45363
 
       CloudMadeMapProvider()
       {
