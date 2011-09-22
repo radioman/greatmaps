@@ -105,7 +105,7 @@ namespace GMap.NET
 
       public override string ToString()
       {
-         return TravelMode + " | " + HtmlInstructions;
+         return TravelMode + " | " + Distance + " | " + Duration + " | " + HtmlInstructions;
       }
    }
 }
