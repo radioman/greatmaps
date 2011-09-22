@@ -1612,7 +1612,7 @@ namespace Demo.WindowsForms
             rp = GMapProviders.GoogleMap; // use google if provider does not implement routing
          }
 
-         MapRoute route = rp.GetRouteBetweenPoints(start, end, false, (int)MainMap.Zoom);
+         MapRoute route = rp.GetRouteBetweenPoints(start, end, false, false, (int)MainMap.Zoom);
          if(route != null)
          {
             // add route

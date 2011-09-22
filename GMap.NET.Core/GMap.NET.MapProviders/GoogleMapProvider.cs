@@ -322,13 +322,13 @@ namespace GMap.NET.MapProviders
 
       #region RoutingProvider Members
 
-      public MapRoute GetRouteBetweenPoints(PointLatLng start, PointLatLng end, bool avoidHighways, int Zoom)
+      public MapRoute GetRouteBetweenPoints(PointLatLng start, PointLatLng end, bool avoidHighways, bool walkingMode, int Zoom)
       {
          string tooltip;
          int numLevels;
          int zoomFactor;
          MapRoute ret = null;
-         List<PointLatLng> points = GetRoutePoints(MakeRouteUrl(start, end, LanguageStr, avoidHighways), Zoom, out tooltip, out numLevels, out zoomFactor);
+         List<PointLatLng> points = GetRoutePoints(MakeRouteUrl(start, end, LanguageStr, avoidHighways, walkingMode), Zoom, out tooltip, out numLevels, out zoomFactor);
          if(points != null)
          {
             ret = new MapRoute(points, tooltip);
@@ -336,41 +336,13 @@ namespace GMap.NET.MapProviders
          return ret;
       }
 
-      public MapRoute GetRouteBetweenPoints(string start, string end, bool avoidHighways, int Zoom)
+      public MapRoute GetRouteBetweenPoints(string start, string end, bool avoidHighways, bool walkingMode, int Zoom)
       {
          string tooltip;
          int numLevels;
          int zoomFactor;
          MapRoute ret = null;
-         List<PointLatLng> points = GetRoutePoints(MakeRouteUrl(start, end, LanguageStr, avoidHighways), Zoom, out tooltip, out numLevels, out zoomFactor);
-         if(points != null)
-         {
-            ret = new MapRoute(points, tooltip);
-         }
-         return ret;
-      }
-
-      public MapRoute GetWalkingRouteBetweenPoints(PointLatLng start, PointLatLng end, int Zoom)
-      {
-         string tooltip;
-         int numLevels;
-         int zoomFactor;
-         MapRoute ret = null;
-         List<PointLatLng> points = GetRoutePoints(MakeWalkingRouteUrl(start, end, LanguageStr), Zoom, out tooltip, out numLevels, out zoomFactor);
-         if(points != null)
-         {
-            ret = new MapRoute(points, tooltip);
-         }
-         return ret;
-      }
-
-      public MapRoute GetWalkingRouteBetweenPoints(string start, string end, int Zoom)
-      {
-         string tooltip;
-         int numLevels;
-         int zoomFactor;
-         MapRoute ret = null;
-         List<PointLatLng> points = GetRoutePoints(MakeWalkingRouteUrl(start, end, LanguageStr), Zoom, out tooltip, out numLevels, out zoomFactor);
+         List<PointLatLng> points = GetRoutePoints(MakeRouteUrl(start, end, LanguageStr, avoidHighways, walkingMode), Zoom, out tooltip, out numLevels, out zoomFactor);
          if(points != null)
          {
             ret = new MapRoute(points, tooltip);
@@ -380,26 +352,16 @@ namespace GMap.NET.MapProviders
 
       #region -- internals --
 
-      string MakeWalkingRouteUrl(PointLatLng start, PointLatLng end, string language)
+      string MakeRouteUrl(PointLatLng start, PointLatLng end, string language, bool avoidHighways, bool walkingMode)
       {
-         return string.Format(RouteUrlFormatPointLatLng, language, WalkingDirectionStr, start.Lat, start.Lng, end.Lat, end.Lng, Server);
+         string opt = walkingMode ? WalkingStr : (avoidHighways ? RouteWithoutHighwaysStr : RouteStr);
+         return string.Format(CultureInfo.InvariantCulture, RouteUrlFormatPointLatLng, language, opt, start.Lat, start.Lng, end.Lat, end.Lng, Server);
       }
 
-      string MakeWalkingRouteUrl(string start, string end, string language)
+      string MakeRouteUrl(string start, string end, string language, bool avoidHighways, bool walkingMode)
       {
-         return string.Format(WalkingRouteUrlFormat, language, WalkingDirectionStr, start.Replace(' ', '+'), end.Replace(' ', '+'), Server);
-      }
-
-      string MakeRouteUrl(PointLatLng start, PointLatLng end, string language, bool avoidHighways)
-      {
-         string highway = avoidHighways ? RouteWithoutHighwaysStr : RouteStr;
-         return string.Format(CultureInfo.InvariantCulture, RouteUrlFormatPointLatLng, language, highway, start.Lat, start.Lng, end.Lat, end.Lng, Server);
-      }
-
-      string MakeRouteUrl(string start, string end, string language, bool avoidHighways)
-      {
-         string highway = avoidHighways ? RouteWithoutHighwaysStr : RouteStr;
-         return string.Format(RouteUrlFormatStr, language, highway, start.Replace(' ', '+'), end.Replace(' ', '+'), Server);
+         string opt = walkingMode ? WalkingStr : (avoidHighways ? RouteWithoutHighwaysStr : RouteStr);
+         return string.Format(RouteUrlFormatStr, language, opt, start.Replace(' ', '+'), end.Replace(' ', '+'), Server);
       }
 
       List<PointLatLng> GetRoutePoints(string url, int zoom, out string tooltipHtml, out int numLevel, out int zoomFactor)
@@ -602,9 +564,7 @@ namespace GMap.NET.MapProviders
       static readonly string RouteUrlFormatPointLatLng = "http://maps.{6}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}";
       static readonly string RouteUrlFormatStr = "http://maps.{4}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}";
 
-      static readonly string WalkingRouteUrlFormat = "http://maps.{4}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}";
-      static readonly string WalkingDirectionStr = "&mra=ls&dirflg=w";
-
+      static readonly string WalkingStr = "&mra=ls&dirflg=w";
       static readonly string RouteWithoutHighwaysStr = "&mra=ls&dirflg=dh";
       static readonly string RouteStr = "&mra=ls&dirflg=d";
 

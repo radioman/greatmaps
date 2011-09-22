@@ -314,30 +314,33 @@ namespace GMap.NET.WindowsPresentation
       {
          this.map = map;
 
-         if(map != null && Route.Count > 1)
+         if(map != null)
          {
-            var localPath = new List<System.Windows.Point>();
-            var offset = Map.FromLatLngToLocal(Route[0]);
-            foreach(var i in Route)
+            if(Route.Count > 1)
             {
-               var p = Map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
-               localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
-            }
+               var localPath = new List<System.Windows.Point>();
+               var offset = Map.FromLatLngToLocal(Route[0]);
+               foreach(var i in Route)
+               {
+                  var p = Map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
+                  localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
+               }
 
-            var shape = map.CreateRoutePath(localPath);
+               var shape = map.CreateRoutePath(localPath);
 
-            if(this.Shape != null && this.Shape is Path)
-            {
-               (this.Shape as Path).Data = shape.Data;
+               if(this.Shape != null && this.Shape is Path)
+               {
+                  (this.Shape as Path).Data = shape.Data;
+               }
+               else
+               {
+                  this.Shape = shape;
+               }
             }
             else
             {
-               this.Shape = shape;
+               this.Shape = null;
             }
-         }
-         else if(map != null && Route.Count == 0)
-         {
-            this.Shape = null;
          }
       }
 
@@ -348,30 +351,33 @@ namespace GMap.NET.WindowsPresentation
       {
          this.map = map;
 
-         if(map != null && Polygon.Count > 1)
+         if(map != null)
          {
-            var localPath = new List<System.Windows.Point>();
-            var offset = Map.FromLatLngToLocal(Polygon[0]);
-            foreach(var i in Polygon)
+            if(Polygon.Count > 1)
             {
-               var p = Map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
-               localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
-            }
+               var localPath = new List<System.Windows.Point>();
+               var offset = Map.FromLatLngToLocal(Polygon[0]);
+               foreach(var i in Polygon)
+               {
+                  var p = Map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
+                  localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
+               }
 
-            var shape = map.CreatePolygonPath(localPath);
+               var shape = map.CreatePolygonPath(localPath);
 
-            if(this.Shape != null && this.Shape is Path)
-            {
-               (this.Shape as Path).Data = shape.Data;
+               if(this.Shape != null && this.Shape is Path)
+               {
+                  (this.Shape as Path).Data = shape.Data;
+               }
+               else
+               {
+                  this.Shape = shape;
+               }
             }
             else
             {
-               this.Shape = shape;
+               this.Shape = null;
             }
-         }
-         else if(map != null && Polygon.Count == 0)
-         {
-            this.Shape = null;
          }
       }
    }

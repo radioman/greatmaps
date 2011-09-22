@@ -62,26 +62,14 @@ namespace GMap.NET.MapProviders
 
       #region GMapRoutingProvider Members
 
-      public MapRoute GetRouteBetweenPoints(PointLatLng start, PointLatLng end, bool avoidHighways, int Zoom)
+      public MapRoute GetRouteBetweenPoints(PointLatLng start, PointLatLng end, bool avoidHighways, bool walkingMode, int Zoom)
       {
-         List<PointLatLng> points = GetRoutePoints(MakeRoutingUrl(start, end, TravelTypeMotorCar));
-         MapRoute route = points != null ? new MapRoute(points, DrivingStr) : null;
+         List<PointLatLng> points = GetRoutePoints(MakeRoutingUrl(start, end, walkingMode ? TravelTypeFoot : TravelTypeMotorCar));
+         MapRoute route = points != null ? new MapRoute(points, walkingMode ? WalkingStr : DrivingStr) : null;
          return route;
       }
 
-      public MapRoute GetRouteBetweenPoints(string start, string end, bool avoidHighways, int Zoom)
-      {
-         throw new NotImplementedException();
-      }
-
-      public MapRoute GetWalkingRouteBetweenPoints(PointLatLng start, PointLatLng end, int Zoom)
-      {
-         List<PointLatLng> points = GetRoutePoints(MakeRoutingUrl(start, end, TravelTypeFoot));
-         MapRoute route = points != null ? new MapRoute(points, WalkingStr) : null;
-         return route;
-      }
-
-      public MapRoute GetWalkingRouteBetweenPoints(string start, string end, int Zoom)
+      public MapRoute GetRouteBetweenPoints(string start, string end, bool avoidHighways, bool walkingMode, int Zoom)
       {
          throw new NotImplementedException();
       }

@@ -24,6 +24,10 @@ namespace ConsoleApplication
             var p2 = new PointLatLng(54.7061334816182, 25.3085095977783);
 
             //var route = GMapProviders.OpenStreetMap.GetRouteBetweenPoints(p1, p2, false, 10);
+            var route = GMapProviders.CloudMadeMap.GetRouteBetweenPoints(p1, p2, false, false, 10);
+
+            GDirections ss;
+            var xx = GMapProviders.CloudMadeMap.GetDirections(out ss, p1, p2, false, false, false, true);
 
             GDirections s;
             var x = GMapProviders.GoogleMap.GetDirections(out s, "Lithuania,Vilnius", "Lithuania,Kaunas", false, false, false, true);
