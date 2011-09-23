@@ -26,8 +26,8 @@ namespace ConsoleApplication
             //var route = GMapProviders.OpenStreetMap.GetRouteBetweenPoints(p1, p2, false, 10);
             //var route = GMapProviders.CloudMadeMap.GetRouteBetweenPoints(p1, p2, false, false, 10);
 
-            //GDirections ss;
-            //var xx = GMapProviders.CloudMadeMap.GetDirections(out ss, p1, p2, false, false, false, true);
+            GDirections ss;
+            var xx = GMapProviders.CloudMadeMap.GetDirections(out ss, p1, p2, false, false, false, true);
 
             GeoCoderStatusCode status;
             var pp1 = GMapProviders.GoogleMap.GetPoint("Lithuania,Vilnius", out status);

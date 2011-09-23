@@ -362,10 +362,10 @@ namespace GMap.NET.MapProviders
                   {
                      direction.Steps = new List<GDirectionStep>();
 
-                     GDirectionStep step = new GDirectionStep();
-
                      foreach(XmlNode w in wpts)
                      {
+                        GDirectionStep step = new GDirectionStep();
+
                         double lat = double.Parse(w.Attributes["lat"].InnerText, CultureInfo.InvariantCulture);
                         double lng = double.Parse(w.Attributes["lon"].InnerText, CultureInfo.InvariantCulture);
 
@@ -388,9 +388,9 @@ namespace GMap.NET.MapProviders
                         {
                            step.Duration = nn.InnerText + "s";
                         }
-                     }
 
-                     direction.Steps.Add(step);
+                        direction.Steps.Add(step);
+                     }
                   }
                }
             }
