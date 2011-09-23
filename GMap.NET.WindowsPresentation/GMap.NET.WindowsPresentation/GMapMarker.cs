@@ -65,7 +65,7 @@ namespace GMap.NET.WindowsPresentation
    public class GMapMarker : INotifyPropertyChanged
    {
       public event PropertyChangedEventHandler PropertyChanged;
-      void OnPropertyChanged(string name)
+      protected void OnPropertyChanged(string name)
       {
          if(PropertyChanged != null)
          {
@@ -73,7 +73,7 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
-      void OnPropertyChanged(PropertyChangedEventArgs name)
+      protected void OnPropertyChanged(PropertyChangedEventArgs name)
       {
          if(PropertyChanged != null)
          {
