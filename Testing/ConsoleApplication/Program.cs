@@ -24,22 +24,29 @@ namespace ConsoleApplication
             var p2 = new PointLatLng(54.7061334816182, 25.3085095977783);
 
             //var route = GMapProviders.OpenStreetMap.GetRouteBetweenPoints(p1, p2, false, 10);
-            var route = GMapProviders.CloudMadeMap.GetRouteBetweenPoints(p1, p2, false, false, 10);
+            //var route = GMapProviders.CloudMadeMap.GetRouteBetweenPoints(p1, p2, false, false, 10);
 
-            GDirections ss;
-            var xx = GMapProviders.CloudMadeMap.GetDirections(out ss, p1, p2, false, false, false, true);
+            //GDirections ss;
+            //var xx = GMapProviders.CloudMadeMap.GetDirections(out ss, p1, p2, false, false, false, true);
 
-            GDirections s;
-            var x = GMapProviders.GoogleMap.GetDirections(out s, "Lithuania,Vilnius", "Lithuania,Kaunas", false, false, false, true);
-            if(x == DirectionsStatusCode.OK)
+            GeoCoderStatusCode status;
+            var pp1 = GMapProviders.GoogleMap.GetPoint("Lithuania,Vilnius", out status);
+            var pp2 = GMapProviders.GoogleMap.GetPoint("Lithuania,Kaunas", out status);
+            if(pp1.HasValue && pp2.HasValue)
             {
-               Debug.WriteLine(s.Summary + ", " + s.Copyrights);
-               Debug.WriteLine(s.StartAddress + " -> " + s.EndAddress);
-               Debug.WriteLine(s.Distance);
-               Debug.WriteLine(s.Duration);
-               foreach(var step in s.Steps)
+               GDirections s;
+               //var x = GMapProviders.GoogleMap.GetDirections(out s, "Lithuania,Vilnius", "Lithuania,Kaunas", false, false, false, true);
+               //if(x == DirectionsStatusCode.OK)
+               var x = GMapProviders.GoogleMap.GetDirections(out s, pp1.Value, pp2.Value, false, false, false, true);
                {
-                  Debug.WriteLine(step);                    
+                  Debug.WriteLine(s.Summary + ", " + s.Copyrights);
+                  Debug.WriteLine(s.StartAddress + " -> " + s.EndAddress);
+                  Debug.WriteLine(s.Distance);
+                  Debug.WriteLine(s.Duration);
+                  foreach(var step in s.Steps)
+                  {
+                     Debug.WriteLine(step);
+                  }
                }
             }
          }

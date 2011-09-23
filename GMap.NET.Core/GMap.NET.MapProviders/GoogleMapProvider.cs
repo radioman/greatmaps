@@ -1543,7 +1543,7 @@ namespace GMap.NET.MapProviders
       }
 
       static readonly string DirectionUrlFormatStr = "http://maps.googleapis.com/maps/api/directions/xml?origin={0}&destination={1}&sensor={2}&language={3}{4}{5}{6}";
-      static readonly string DirectionUrlFormatPoint = "http://maps.googleapis.com/maps/api/directions/xml?origin=@{0},{1}&destination=@{2},{3}&sensor={4}&language={5}{6}{7}{8}";
+      static readonly string DirectionUrlFormatPoint = "http://maps.googleapis.com/maps/api/directions/xml?origin={0},{1}&destination={2},{3}&sensor={4}&language={5}{6}{7}{8}";
 
       #endregion
 
