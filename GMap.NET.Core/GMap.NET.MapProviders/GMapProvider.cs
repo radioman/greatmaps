@@ -476,7 +476,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly MercatorProjection projection = new MercatorProjection();
+      readonly MercatorProjection projection = MercatorProjection.Instance;
       public override PureProjection Projection
       {
          get
