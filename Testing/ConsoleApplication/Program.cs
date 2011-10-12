@@ -23,8 +23,12 @@ namespace ConsoleApplication
             var p1 = new PointLatLng(54.6961334816182, 25.2985095977782);
             var p2 = new PointLatLng(54.7061334816182, 25.3085095977783);
 
-            var route = GMapProviders.OpenStreetMap.GetRouteBetweenPoints(p1, p2, false, false, 10);
+            GMaps.Instance.ImportFromGMDB(@"C:\Users\m.dambrauskas\AppData\Local\GMap.NET\TileDBv5\en\Data - Copy.gmdb");
+
+            //var route = GMapProviders.OpenStreetMap.GetRouteBetweenPoints(p1, p2, false, false, 10);
             //var route = GMapProviders.CloudMadeMap.GetRouteBetweenPoints(p1, p2, false, false, 10);
+
+            Debug.WriteLine(GMapProviders.BingHybridMap.Name + ":" + GMapProviders.BingHybridMap.DbId);
 
             GDirections ss;
             var xx = GMapProviders.CloudMadeMap.GetDirections(out ss, p1, p2, false, false, false, true);

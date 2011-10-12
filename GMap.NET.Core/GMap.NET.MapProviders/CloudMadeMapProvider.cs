@@ -206,12 +206,12 @@ namespace GMap.NET.MapProviders
 
       #region DirectionsProvider Members
 
-      public DirectionsStatusCode GetDirections(out GDirections direction, PointLatLng start, PointLatLng end, bool avoidHighways, bool walkingMode, bool sensor, bool metric)
+      public DirectionsStatusCode GetDirections(out GDirections direction, PointLatLng start, PointLatLng end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
       {
          return GetDirectionsUrl(MakeRoutingUrl(start, end, walkingMode ? TravelTypeFoot : TravelTypeMotorCar, LanguageStr, metric ? "km" : "miles"), out direction);
       }
 
-      public DirectionsStatusCode GetDirections(out GDirections direction, string start, string end, bool avoidHighways, bool walkingMode, bool sensor, bool metric)
+      public DirectionsStatusCode GetDirections(out GDirections direction, string start, string end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
       {
          throw new NotImplementedException();
       }

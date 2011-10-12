@@ -214,7 +214,7 @@ namespace GMap.NET.MapProviders
 
       static GMapProvider()
       {
-         WebProxy = GlobalProxySelection.GetEmptyWebProxy();
+         WebProxy = new EmptyWebProxy();
       }
 
       bool isInitialized = false;
@@ -499,5 +499,31 @@ namespace GMap.NET.MapProviders
       }
 
       #endregion
+   }
+
+   internal sealed class EmptyWebProxy : IWebProxy
+   {
+      private ICredentials m_credentials;
+      public ICredentials Credentials
+      {
+         get
+         {
+            return this.m_credentials;
+}
+         set
+         {
+            this.m_credentials = value;
+         }
+      }
+
+      public Uri GetProxy(Uri uri)
+      {
+         return uri;
+      }
+
+      public bool IsBypassed(Uri uri)
+      {
+         return true;
+      }
    }
 }

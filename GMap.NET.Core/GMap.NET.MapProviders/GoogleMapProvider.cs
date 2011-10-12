@@ -954,32 +954,33 @@ namespace GMap.NET.MapProviders
 
       #region DirectionsProvider Members
 
-      public DirectionsStatusCode GetDirections(out GDirections direction, PointLatLng start, PointLatLng end, bool avoidHighways, bool walkingMode, bool sensor, bool metric)
+      public DirectionsStatusCode GetDirections(out GDirections direction, PointLatLng start, PointLatLng end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
       {
-         return GetDirectionsUrl(MakeDirectionsUrl(start, end, LanguageStr, avoidHighways, walkingMode, sensor, metric), out direction);
+         return GetDirectionsUrl(MakeDirectionsUrl(start, end, LanguageStr, avoidHighways, avoidTolls, walkingMode, sensor, metric), out direction);
       }
 
-      public DirectionsStatusCode GetDirections(out GDirections direction, string start, string end, bool avoidHighways, bool walkingMode, bool sensor, bool metric)
+      public DirectionsStatusCode GetDirections(out GDirections direction, string start, string end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
       {
-         return GetDirectionsUrl(MakeDirectionsUrl(start, end, LanguageStr, avoidHighways, walkingMode, sensor, metric), out direction);
+         return GetDirectionsUrl(MakeDirectionsUrl(start, end, LanguageStr, avoidHighways, avoidTolls, walkingMode, sensor, metric), out direction);
       }
 
       #region -- internals --
 
       // The Google Directions API: http://code.google.com/apis/maps/documentation/directions/
 
-      string MakeDirectionsUrl(PointLatLng start, PointLatLng end, string language, bool avoidHighways, bool walkingMode, bool sensor, bool metric)
+      string MakeDirectionsUrl(PointLatLng start, PointLatLng end, string language, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
       {
-         string av = avoidHighways ? "&avoid=highways" : string.Empty; // 6
+         string av = (avoidHighways ? "&avoid=highways" : string.Empty) + (avoidTolls ? "&avoid=tolls" : string.Empty); // 6
+
          string mt = "&units=" + (metric ? "metric" : "imperial");     // 7
          string wk = "&mode=" + (walkingMode ? "walking" : "driving"); // 8
 
          return string.Format(CultureInfo.InvariantCulture, DirectionUrlFormatPoint, start.Lat, start.Lng, end.Lat, end.Lng, sensor.ToString().ToLower(), language, av, mt, wk);
       }
 
-      string MakeDirectionsUrl(string start, string end, string language, bool avoidHighways, bool walkingMode, bool sensor, bool metric)
+      string MakeDirectionsUrl(string start, string end, string language, bool avoidHighways, bool walkingMode, bool avoidTolls, bool sensor, bool metric)
       {
-         string av = avoidHighways ? "&avoid=highways" : string.Empty; // 4
+         string av = (avoidHighways ? "&avoid=highways" : string.Empty) + (avoidTolls ? "&avoid=tolls" : string.Empty); // 4
          string mt = "&units=" + (metric ? "metric" : "imperial");     // 5
          string wk = "&mode=" + (walkingMode ? "walking" : "driving"); // 6
 
