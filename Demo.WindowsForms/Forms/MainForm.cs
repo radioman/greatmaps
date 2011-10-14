@@ -121,11 +121,17 @@ namespace Demo.WindowsForms
 
             ToolStripManager.Renderer = new BSE.Windows.Forms.Office2007Renderer();
 
-            // transport demo
-            transport.DoWork += new DoWorkEventHandler(transport_DoWork);
-            transport.ProgressChanged += new ProgressChangedEventHandler(transport_ProgressChanged);
-            transport.WorkerSupportsCancellation = true;
-            transport.WorkerReportsProgress = true;
+            // flight demo
+            flightWorker.DoWork += new DoWorkEventHandler(flight_DoWork);
+            flightWorker.ProgressChanged += new ProgressChangedEventHandler(flight_ProgressChanged);
+            flightWorker.WorkerSupportsCancellation = true;
+            flightWorker.WorkerReportsProgress = true;
+
+            // vehicle demo
+            transportWorker.DoWork += new DoWorkEventHandler(transport_DoWork);
+            transportWorker.ProgressChanged += new ProgressChangedEventHandler(transport_ProgressChanged);
+            transportWorker.WorkerSupportsCancellation = true;
+            transportWorker.WorkerReportsProgress = true;
 
             // Connections
             connectionsWorker.DoWork += new DoWorkEventHandler(connectionsWorker_DoWork);
@@ -241,19 +247,103 @@ namespace Demo.WindowsForms
       System.Windows.Forms.Timer timerPerf = new System.Windows.Forms.Timer();
       #endregion
 
+      #region -- flight demo --
+      BackgroundWorker flightWorker = new BackgroundWorker();
+
+      readonly List<FlightRadarData> flights = new List<FlightRadarData>();
+      readonly Dictionary<int, GMapMarker> flightMarkers = new Dictionary<int, GMapMarker>();
+
+      bool firstLoadFlight = true;
+      GMapMarker currentFlight;
+
+      void flight_ProgressChanged(object sender, ProgressChangedEventArgs e)
+      {
+         // stops immediate marker/route/polygon invalidations;
+         // call Refresh to perform single refresh and reset invalidation state
+         MainMap.HoldInvalidation = true;
+
+         lock(flights)
+         {
+            foreach(FlightRadarData d in flights)
+            {
+               GMapMarker marker;
+
+               if(!flightMarkers.TryGetValue(d.Id, out marker))
+               {
+                  marker = new GMapMarkerGoogleGreen(d.point);
+                  marker.Tag = d.Id;
+                  marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+                  (marker as GMapMarkerGoogleGreen).Bearing = (float?)d.bearing;
+
+                  flightMarkers[d.Id] = marker;
+                  objects.Markers.Add(marker);
+               }
+               else
+               {
+                  marker.Position = d.point;
+                  (marker as GMapMarkerGoogleGreen).Bearing = (float?)d.bearing;
+               }
+               marker.ToolTipText = d.name + ", " + d.altitude + ", " + d.speed;
+
+               if(currentFlight != null && currentFlight == marker)
+               {
+                  MainMap.Position = marker.Position;
+                  MainMap.Bearing = (float)d.bearing;
+               }
+            }
+         }
+
+         if(firstLoadFlight)
+         {
+            MainMap.Zoom = 5;
+            MainMap.ZoomAndCenterMarkers("objects");
+            firstLoadFlight = false;
+         }
+         MainMap.Refresh();
+      }
+
+      void flight_DoWork(object sender, DoWorkEventArgs e)
+      {
+         bool restartSesion = true;
+
+         while(!flightWorker.CancellationPending)
+         {
+            try
+            {
+               lock(flights)
+               {
+                  Stuff.GetFlightRadarData(flights, lastPosition, lastZoom, restartSesion);
+
+                  if(flights.Count > 0 && restartSesion)
+                  {
+                     restartSesion = false;
+                  }
+               }
+
+               flightWorker.ReportProgress(100);
+            }
+            catch(Exception ex)
+            {
+               Debug.WriteLine("flight_DoWork: " + ex.ToString());
+            }
+            Thread.Sleep(5 * 1000);
+         }
+
+         flightMarkers.Clear();
+      }
+
+      #endregion
+
       #region -- transport demo --
-      BackgroundWorker transport = new BackgroundWorker();
+      BackgroundWorker transportWorker = new BackgroundWorker();
 
       #region -- old vehicle demo --
-      //readonly List<VehicleData> trolleybus = new List<VehicleData>();
-      //readonly Dictionary<int, GMapMarker> trolleybusMarkers = new Dictionary<int, GMapMarker>();
+      readonly List<VehicleData> trolleybus = new List<VehicleData>();
+      readonly Dictionary<int, GMapMarker> trolleybusMarkers = new Dictionary<int, GMapMarker>();
 
       //readonly List<VehicleData> bus = new List<VehicleData>();
       //readonly Dictionary<int, GMapMarker> busMarkers = new Dictionary<int, GMapMarker>(); 
       #endregion
-
-      readonly List<FlightRadarData> flights = new List<FlightRadarData>();
-      readonly Dictionary<int, GMapMarker> flightMarkers = new Dictionary<int, GMapMarker>();
 
       bool firstLoadTrasport = true;
       GMapMarker currentTransport;
@@ -265,38 +355,38 @@ namespace Demo.WindowsForms
          MainMap.HoldInvalidation = true;
 
          #region -- old vehicle demo --
-         //lock(trolleybus)
-         //{
-         //   foreach(VehicleData d in trolleybus)
-         //   {
-         //      GMapMarker marker;
+         lock(trolleybus)
+         {
+            foreach(VehicleData d in trolleybus)
+            {
+               GMapMarker marker;
 
-         //      if(!trolleybusMarkers.TryGetValue(d.Id, out marker))
-         //      {
-         //         marker = new GMapMarkerGoogleRed(new PointLatLng(d.Lat, d.Lng));
-         //         marker.Tag = d.Id;
-         //         marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+               if(!trolleybusMarkers.TryGetValue(d.Id, out marker))
+               {
+                  marker = new GMapMarkerGoogleRed(new PointLatLng(d.Lat, d.Lng));
+                  marker.Tag = d.Id;
+                  marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
-         //         trolleybusMarkers[d.Id] = marker;
-         //         objects.Markers.Add(marker);
-         //      }
-         //      else
-         //      {
-         //         marker.Position = new PointLatLng(d.Lat, d.Lng);
-         //         (marker as GMapMarkerGoogleRed).Bearing = (float?)d.Bearing;
-         //      }
-         //      marker.ToolTipText = "Trolley " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
+                  trolleybusMarkers[d.Id] = marker;
+                  objects.Markers.Add(marker);
+               }
+               else
+               {
+                  marker.Position = new PointLatLng(d.Lat, d.Lng);
+                  (marker as GMapMarkerGoogleRed).Bearing = (float?)d.Bearing;
+               }
+               marker.ToolTipText = "Trolley " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
 
-         //      if(currentTransport != null && currentTransport == marker)
-         //      {
-         //         MainMap.Position = marker.Position;
-         //         if(d.Bearing.HasValue)
-         //         {
-         //            MainMap.Bearing = (float)d.Bearing.Value;
-         //         }
-         //      }
-         //   }
-         //}
+               if(currentTransport != null && currentTransport == marker)
+               {
+                  MainMap.Position = marker.Position;
+                  if(d.Bearing.HasValue)
+                  {
+                     MainMap.Bearing = (float)d.Bearing.Value;
+                  }
+               }
+            }
+         }
 
          //lock(bus)
          //{
@@ -332,41 +422,10 @@ namespace Demo.WindowsForms
          //} 
          #endregion
 
-         lock(flights)
-         {
-            foreach(FlightRadarData d in flights)
-            {
-               GMapMarker marker;
-
-               if(!flightMarkers.TryGetValue(d.Id, out marker))
-               {
-                  marker = new GMapMarkerGoogleGreen(d.point);
-                  marker.Tag = d.Id;
-                  marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
-                  (marker as GMapMarkerGoogleGreen).Bearing = (float?)d.bearing;
-
-                  flightMarkers[d.Id] = marker;
-                  objects.Markers.Add(marker);
-               }
-               else
-               {
-                  marker.Position = d.point;
-                  (marker as GMapMarkerGoogleGreen).Bearing = (float?)d.bearing;
-               }
-               marker.ToolTipText = d.name + ", " + d.altitude + ", " + d.speed;
-
-               if(currentTransport != null && currentTransport == marker)
-               {
-                  MainMap.Position = marker.Position;
-                  MainMap.Bearing = (float)d.bearing;
-               }
-            }
-         }
-
          if(firstLoadTrasport)
          {
             MainMap.Zoom = 5;
-            //MainMap.ZoomAndCenterMarkers("objects");
+            MainMap.ZoomAndCenterMarkers("objects");
             firstLoadTrasport = false;
          }
          MainMap.Refresh();
@@ -374,17 +433,15 @@ namespace Demo.WindowsForms
 
       void transport_DoWork(object sender, DoWorkEventArgs e)
       {
-         bool restartSesion = true;
-
-         while(!transport.CancellationPending)
+         while(!transportWorker.CancellationPending)
          {
             try
             {
                #region -- old vehicle demo --
-               //lock(trolleybus)
-               //{
-               //   Stuff.GetVilniusTransportData(TransportType.TrolleyBus, string.Empty, trolleybus);
-               //}
+               lock(trolleybus)
+               {
+                  Stuff.GetVilniusTransportData(TransportType.TrolleyBus, string.Empty, trolleybus);
+               }
 
                //lock(bus)
                //{
@@ -392,27 +449,16 @@ namespace Demo.WindowsForms
                //} 
                #endregion
 
-               lock(flights)
-               {
-                  Stuff.GetFlightRadarData(flights, lastPosition, lastZoom, restartSesion);
-
-                  if(flights.Count > 0 && restartSesion)
-                  {
-                     restartSesion = false;
-                  }
-               }
-
-               transport.ReportProgress(100);
+               transportWorker.ReportProgress(100);
             }
             catch(Exception ex)
             {
                Debug.WriteLine("transport_DoWork: " + ex.ToString());
             }
-            Thread.Sleep(20 * 1000);
+            Thread.Sleep(2 * 1000);
          }
 
-         flightMarkers.Clear();
-         //trolleybusMarkers.Clear();
+         trolleybusMarkers.Clear();
          //busMarkers.Clear();
       }
 
@@ -1288,7 +1334,7 @@ namespace Demo.WindowsForms
          trackBar1.Minimum = MainMap.MinZoom;
          trackBar1.Maximum = MainMap.MaxZoom;
 
-         if(radioButtonTransport.Checked)
+         if(radioButtonFlight.Checked)
          {
             MainMap.ZoomAndCenterMarkers("objects");
          }
@@ -1937,19 +1983,36 @@ namespace Demo.WindowsForms
          }
 
          // start realtime transport tracking demo
-         if(radioButtonTransport.Checked)
+         if(radioButtonFlight.Checked)
          {
-            if(!transport.IsBusy)
+            if(!flightWorker.IsBusy)
             {
-               firstLoadTrasport = true;
-               transport.RunWorkerAsync();
+               firstLoadFlight = true;
+               flightWorker.RunWorkerAsync();
             }
          }
          else
          {
-            if(transport.IsBusy)
+            if(flightWorker.IsBusy)
             {
-               transport.CancelAsync();
+               flightWorker.CancelAsync();
+            }
+         }
+
+         // vehicle demo
+         if(radioButtonVehicle.Checked)
+         {
+            if(!transportWorker.IsBusy)
+            {
+               firstLoadTrasport = true;
+               transportWorker.RunWorkerAsync();
+            }
+         }
+         else
+         {
+            if(transportWorker.IsBusy)
+            {
+               transportWorker.CancelAsync();
             }
          }
 

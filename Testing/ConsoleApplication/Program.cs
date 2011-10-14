@@ -31,7 +31,7 @@ namespace ConsoleApplication
             Debug.WriteLine(GMapProviders.BingHybridMap.Name + ":" + GMapProviders.BingHybridMap.DbId);
 
             GDirections ss;
-            var xx = GMapProviders.CloudMadeMap.GetDirections(out ss, p1, p2, false, false, false, true);
+            var xx = GMapProviders.CloudMadeMap.GetDirections(out ss, p1, p2, false, false, false, false, true);
 
             GeoCoderStatusCode status;
             var pp1 = GMapProviders.GoogleMap.GetPoint("Lithuania,Vilnius", out status);
@@ -41,7 +41,7 @@ namespace ConsoleApplication
                GDirections s;
                //var x = GMapProviders.GoogleMap.GetDirections(out s, "Lithuania,Vilnius", "Lithuania,Kaunas", false, false, false, true);
                //if(x == DirectionsStatusCode.OK)
-               var x = GMapProviders.GoogleMap.GetDirections(out s, pp1.Value, pp2.Value, false, false, false, true);
+               var x = GMapProviders.GoogleMap.GetDirections(out s, pp1.Value, pp2.Value, false, false, false, false, true);
                {
                   Debug.WriteLine(s.Summary + ", " + s.Copyrights);
                   Debug.WriteLine(s.StartAddress + " -> " + s.EndAddress);

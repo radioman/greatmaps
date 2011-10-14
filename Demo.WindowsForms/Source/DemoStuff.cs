@@ -181,6 +181,8 @@ namespace Demo.WindowsForms
 #endif
       }
 
+      static readonly Random r = new Random();
+
       /// <summary>
       /// gets realtime data from public transport in city vilnius of lithuania
       /// </summary>
@@ -191,27 +193,28 @@ namespace Demo.WindowsForms
       {
          ret.Clear();
 
-         string url = "http://www.troleibusai.lt/puslapiai/services/vehiclestate.php?type=";
+         // http://www.troleibusai.lt/eismas/get_gps.php?rand=0.5180845031057402
+         string url = string.Format(CultureInfo.InvariantCulture, "http://www.troleibusai.lt/eismas/get_gps.php?rand={0}", r.NextDouble());
 
-         switch(type)
-         {
-            case TransportType.Bus:
-            {
-               url += "bus";
-            }
-            break;
+         //switch(type)
+         //{
+         //   case TransportType.Bus:
+         //   {
+         //      url += "bus";
+         //   }
+         //   break;
 
-            case TransportType.TrolleyBus:
-            {
-               url += "trolley";
-            }
-            break;
-         }
+         //   case TransportType.TrolleyBus:
+         //   {
+         //      url += "trolley";
+         //   }
+         //   break;
+         //}
 
-         if(!string.IsNullOrEmpty(line))
-         {
-            url += "&line=" + line;
-         }
+         //         if(!string.IsNullOrEmpty(line))
+         //         {
+         //            url += "&line=" + line;
+         //         }
 
 #if !PocketPC
          url += "&app=GMap.NET.Desktop";
@@ -219,111 +222,106 @@ namespace Demo.WindowsForms
          url += "&app=GMap.NET.WindowsMobile";
 #endif
 
-         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+         var xml = EmptyProvider.Instance.GetContentUsingHttp(url);
+
+         // 54.691748;25.251428;1263281;1&54.68399;25.205808;1262653;1&
+
+         var items = xml.Split('&');
+         foreach(var it in items)
          {
-#if !PocketPC
-            request.Proxy = WebRequest.DefaultWebProxy;
-#else
-            request.Proxy = GlobalProxySelection.GetEmptyWebProxy();
-#endif
-         }
-
-         request.Timeout = 30 * 1000;
-         request.ReadWriteTimeout = request.Timeout;
-         request.Accept = "*/*";
-         request.KeepAlive = false;
-
-         string xml = string.Empty;
-
-         using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-         {
-            using(Stream responseStream = response.GetResponseStream())
-            {
-               using(StreamReader read = new StreamReader(responseStream))
-               {
-                  xml = read.ReadToEnd();
-               }
-            }
-         }
-
-         XmlDocument doc = new XmlDocument();
-         {
-            doc.LoadXml(xml);
-
-            XmlNodeList devices = doc.GetElementsByTagName("Device");
-            foreach(XmlNode dev in devices)
+            var sit = it.Split(';');
+            if(sit.Length == 4)
             {
                VehicleData d = new VehicleData();
-               d.Id = int.Parse(dev.Attributes["ID"].InnerText);
-
-               foreach(XmlElement elem in dev.ChildNodes)
                {
-                  // Debug.WriteLine(d.Id + "->" + elem.Name + ": " + elem.InnerText);
-
-                  switch(elem.Name)
-                  {
-                     case "Lat":
-                     {
-                        d.Lat = double.Parse(elem.InnerText, CultureInfo.InvariantCulture);
-                     }
-                     break;
-
-                     case "Lng":
-                     {
-                        d.Lng = double.Parse(elem.InnerText, CultureInfo.InvariantCulture);
-                     }
-                     break;
-
-                     case "Bearing":
-                     {
-                        if(!string.IsNullOrEmpty(elem.InnerText))
-                        {
-                           d.Bearing = double.Parse(elem.InnerText, CultureInfo.InvariantCulture);
-                        }
-                     }
-                     break;
-
-                     case "LineNum":
-                     {
-                        d.Line = elem.InnerText;
-                     }
-                     break;
-
-                     case "AreaName":
-                     {
-                        d.AreaName = elem.InnerText;
-                     }
-                     break;
-
-                     case "StreetName":
-                     {
-                        d.StreetName = elem.InnerText;
-                     }
-                     break;
-
-                     case "TrackType":
-                     {
-                        d.TrackType = elem.InnerText;
-                     }
-                     break;
-
-                     case "LastStop":
-                     {
-                        d.LastStop = elem.InnerText;
-                     }
-                     break;
-
-                     case "Time":
-                     {
-                        d.Time = elem.InnerText;
-                     }
-                     break;
-                  }
+                  d.Id = int.Parse(sit[2]);
+                  d.Lat = double.Parse(sit[0], CultureInfo.InvariantCulture);
+                  d.Lng = double.Parse(sit[1], CultureInfo.InvariantCulture);
+                  d.Line = sit[3];
                }
                ret.Add(d);
             }
          }
-         doc = null;
+
+         #region -- old --
+         //XmlDocument doc = new XmlDocument();
+         //{
+         //   doc.LoadXml(xml);
+
+         //   XmlNodeList devices = doc.GetElementsByTagName("Device");
+         //   foreach(XmlNode dev in devices)
+         //   {
+         //      VehicleData d = new VehicleData();
+         //      d.Id = int.Parse(dev.Attributes["ID"].InnerText);
+
+         //      foreach(XmlElement elem in dev.ChildNodes)
+         //      {
+         //         // Debug.WriteLine(d.Id + "->" + elem.Name + ": " + elem.InnerText);
+
+         //         switch(elem.Name)
+         //         {
+         //            case "Lat":
+         //            {
+         //               d.Lat = double.Parse(elem.InnerText, CultureInfo.InvariantCulture);
+         //            }
+         //            break;
+
+         //            case "Lng":
+         //            {
+         //               d.Lng = double.Parse(elem.InnerText, CultureInfo.InvariantCulture);
+         //            }
+         //            break;
+
+         //            case "Bearing":
+         //            {
+         //               if(!string.IsNullOrEmpty(elem.InnerText))
+         //               {
+         //                  d.Bearing = double.Parse(elem.InnerText, CultureInfo.InvariantCulture);
+         //               }
+         //            }
+         //            break;
+
+         //            case "LineNum":
+         //            {
+         //               d.Line = elem.InnerText;
+         //            }
+         //            break;
+
+         //            case "AreaName":
+         //            {
+         //               d.AreaName = elem.InnerText;
+         //            }
+         //            break;
+
+         //            case "StreetName":
+         //            {
+         //               d.StreetName = elem.InnerText;
+         //            }
+         //            break;
+
+         //            case "TrackType":
+         //            {
+         //               d.TrackType = elem.InnerText;
+         //            }
+         //            break;
+
+         //            case "LastStop":
+         //            {
+         //               d.LastStop = elem.InnerText;
+         //            }
+         //            break;
+
+         //            case "Time":
+         //            {
+         //               d.Time = elem.InnerText;
+         //            }
+         //            break;
+         //         }
+         //      }
+         //      ret.Add(d);
+         //   }
+         //} 
+         #endregion
       }
 
       public static string sessionId = string.Empty;
@@ -338,13 +336,13 @@ namespace Demo.WindowsForms
          }
 
          // get track for one object
+         //var tm = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalMilliseconds;
          //var r = GetContentUsingHttp("http://www.flightradar24.com/FlightDataService.php?callsign=WZZ1MF&hex=47340F&date=" + tm, p1, 6, id);
          //Debug.WriteLine(r);
 
          if(!string.IsNullOrEmpty(sessionId))
          {
-            var tm = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalMilliseconds;
-            var response = GetFlightRadarContentUsingHttp("http://www.flightradar24.com/CachedFlightsService.php?" + tm, location, zoom, sessionId);
+            var response = GetFlightRadarContentUsingHttp("http://www.flightradar24.com/PlaneFeed.json", location, zoom, sessionId);
 
             var items = response.Split(']');
             int i = 0;
@@ -358,7 +356,7 @@ namespace Demo.WindowsForms
 
                   // BAW576":["400803",48.9923,1.8083,"144","36950","462","0512","LFPO","A319","G-EUPC"
                   var par = d.Split(',');
-                  if(par.Length == 11)
+                  if(par.Length == 12)
                   {
                      var name = par[0];
                      var hex = par[1];
