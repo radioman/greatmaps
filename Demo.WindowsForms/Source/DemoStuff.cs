@@ -193,23 +193,27 @@ namespace Demo.WindowsForms
       {
          ret.Clear();
 
+         //http://stops.lt/vilnius/gps.txt?1318577178193
+         //http://www.troleibusai.lt/eismas/get_gps.php?rand=0.9004805039690602
+         //http://www.marsrutai.lt/vilnius/Vehicle_Map.aspx?trackID=34006&t=1318577231295
+
          // http://www.troleibusai.lt/eismas/get_gps.php?rand=0.5180845031057402
-         string url = string.Format(CultureInfo.InvariantCulture, "http://www.troleibusai.lt/eismas/get_gps.php?rand={0}", r.NextDouble());
+         string url = string.Format(CultureInfo.InvariantCulture, "http://www.troleibusai.lt/eismas/get_gps.php?rand={0}&more=1", r.NextDouble());
 
-         //switch(type)
-         //{
-         //   case TransportType.Bus:
-         //   {
-         //      url += "bus";
-         //   }
-         //   break;
+         switch(type)
+         {
+            case TransportType.Bus:
+            {
+               url += "&bus=1";
+            }
+            break;
 
-         //   case TransportType.TrolleyBus:
-         //   {
-         //      url += "trolley";
-         //   }
-         //   break;
-         //}
+            //case TransportType.TrolleyBus:
+            //{
+            //   url += "trolley";
+            //}
+            //break;
+         }
 
          //         if(!string.IsNullOrEmpty(line))
          //         {
@@ -224,13 +228,14 @@ namespace Demo.WindowsForms
 
          var xml = EmptyProvider.Instance.GetContentUsingHttp(url);
 
-         // 54.691748;25.251428;1263281;1&54.68399;25.205808;1262653;1&
+         // 54.690688; 25.2116; 1263522; 1; 48.152; 2011-10-14 14:41:29
 
          var items = xml.Split('&');
+
          foreach(var it in items)
          {
             var sit = it.Split(';');
-            if(sit.Length == 4)
+            if(sit.Length == 6)
             {
                VehicleData d = new VehicleData();
                {
@@ -238,6 +243,21 @@ namespace Demo.WindowsForms
                   d.Lat = double.Parse(sit[0], CultureInfo.InvariantCulture);
                   d.Lng = double.Parse(sit[1], CultureInfo.InvariantCulture);
                   d.Line = sit[3];
+                  if(!string.IsNullOrEmpty(sit[4]))
+                  {
+                     d.Bearing = double.Parse(sit[4], CultureInfo.InvariantCulture);
+                  }
+
+                  if(!string.IsNullOrEmpty(sit[5]))
+                  {
+                     d.Time = sit[5];
+
+                     var t = DateTime.Parse(d.Time);
+                     if(DateTime.Now - t > TimeSpan.FromMinutes(5))
+                     {
+                        continue;
+                     }
+                  }
                }
                ret.Add(d);
             }

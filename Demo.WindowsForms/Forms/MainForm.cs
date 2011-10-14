@@ -341,8 +341,8 @@ namespace Demo.WindowsForms
       readonly List<VehicleData> trolleybus = new List<VehicleData>();
       readonly Dictionary<int, GMapMarker> trolleybusMarkers = new Dictionary<int, GMapMarker>();
 
-      //readonly List<VehicleData> bus = new List<VehicleData>();
-      //readonly Dictionary<int, GMapMarker> busMarkers = new Dictionary<int, GMapMarker>(); 
+      readonly List<VehicleData> bus = new List<VehicleData>();
+      readonly Dictionary<int, GMapMarker> busMarkers = new Dictionary<int, GMapMarker>(); 
       #endregion
 
       bool firstLoadTrasport = true;
@@ -354,7 +354,7 @@ namespace Demo.WindowsForms
          // call Refresh to perform single refresh and reset invalidation state
          MainMap.HoldInvalidation = true;
 
-         #region -- old vehicle demo --
+         #region -- vehicle demo --
          lock(trolleybus)
          {
             foreach(VehicleData d in trolleybus)
@@ -388,38 +388,38 @@ namespace Demo.WindowsForms
             }
          }
 
-         //lock(bus)
-         //{
-         //   foreach(VehicleData d in bus)
-         //   {
-         //      GMapMarker marker;
+         lock(bus)
+         {
+            foreach(VehicleData d in bus)
+            {
+               GMapMarker marker;
 
-         //      if(!busMarkers.TryGetValue(d.Id, out marker))
-         //      {
-         //         marker = new GMapMarkerGoogleGreen(new PointLatLng(d.Lat, d.Lng));
-         //         marker.Tag = d.Id;
-         //         marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+               if(!busMarkers.TryGetValue(d.Id, out marker))
+               {
+                  marker = new GMapMarkerGoogleGreen(new PointLatLng(d.Lat, d.Lng));
+                  marker.Tag = d.Id;
+                  marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
-         //         busMarkers[d.Id] = marker;
-         //         objects.Markers.Add(marker);
-         //      }
-         //      else
-         //      {
-         //         marker.Position = new PointLatLng(d.Lat, d.Lng);
-         //         (marker as GMapMarkerGoogleGreen).Bearing = (float?)d.Bearing;
-         //      }
-         //      marker.ToolTipText = "Bus " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
+                  busMarkers[d.Id] = marker;
+                  objects.Markers.Add(marker);
+               }
+               else
+               {
+                  marker.Position = new PointLatLng(d.Lat, d.Lng);
+                  (marker as GMapMarkerGoogleGreen).Bearing = (float?)d.Bearing;
+               }
+               marker.ToolTipText = "Bus " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
 
-         //      if(currentTransport != null && currentTransport == marker)
-         //      {
-         //         MainMap.Position = marker.Position;
-         //         if(d.Bearing.HasValue)
-         //         {
-         //            MainMap.Bearing = (float)d.Bearing.Value;
-         //         }
-         //      }
-         //   }
-         //} 
+               if(currentTransport != null && currentTransport == marker)
+               {
+                  MainMap.Position = marker.Position;
+                  if(d.Bearing.HasValue)
+                  {
+                     MainMap.Bearing = (float)d.Bearing.Value;
+                  }
+               }
+            }
+         } 
          #endregion
 
          if(firstLoadTrasport)
@@ -443,10 +443,10 @@ namespace Demo.WindowsForms
                   Stuff.GetVilniusTransportData(TransportType.TrolleyBus, string.Empty, trolleybus);
                }
 
-               //lock(bus)
-               //{
-               //   Stuff.GetVilniusTransportData(TransportType.Bus, string.Empty, bus);
-               //} 
+               lock(bus)
+               {
+                  Stuff.GetVilniusTransportData(TransportType.Bus, string.Empty, bus);
+               } 
                #endregion
 
                transportWorker.ReportProgress(100);
@@ -459,7 +459,7 @@ namespace Demo.WindowsForms
          }
 
          trolleybusMarkers.Clear();
-         //busMarkers.Clear();
+         busMarkers.Clear();
       }
 
       #endregion
