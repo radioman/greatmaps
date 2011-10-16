@@ -48,10 +48,12 @@
          this.textBoxTrolley.Name = "textBoxTrolley";
          this.textBoxTrolley.Size = new System.Drawing.Size(310, 59);
          this.textBoxTrolley.TabIndex = 0;
-         this.textBoxTrolley.Text = "19";
+         this.textBoxTrolley.Text = "13,17";
          // 
          // checkBoxTrolley
          // 
+         this.checkBoxTrolley.Checked = true;
+         this.checkBoxTrolley.CheckState = System.Windows.Forms.CheckState.Checked;
          this.checkBoxTrolley.Dock = System.Windows.Forms.DockStyle.Top;
          this.checkBoxTrolley.Font = new System.Drawing.Font("Tahoma", 18F, System.Drawing.FontStyle.Regular);
          this.checkBoxTrolley.Location = new System.Drawing.Point(0, 0);
@@ -63,8 +65,6 @@
          // 
          // checkBoxBus
          // 
-         this.checkBoxBus.Checked = true;
-         this.checkBoxBus.CheckState = System.Windows.Forms.CheckState.Checked;
          this.checkBoxBus.Dock = System.Windows.Forms.DockStyle.Top;
          this.checkBoxBus.Font = new System.Drawing.Font("Tahoma", 18F, System.Drawing.FontStyle.Regular);
          this.checkBoxBus.Location = new System.Drawing.Point(0, 107);

@@ -175,7 +175,7 @@
           this.menuItem8.MenuItems.Add(this.menuItem19);
           this.menuItem8.MenuItems.Add(this.menuItem25);
           this.menuItem8.MenuItems.Add(this.menuItem26);
-          this.menuItem8.Text = "MapType";
+          this.menuItem8.Text = "Map";
           // 
           // menuItem12
           // 

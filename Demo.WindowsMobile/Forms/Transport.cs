@@ -5,6 +5,7 @@ using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using Demo.WindowsForms;
+using System.Linq;
 
 namespace Demo.WindowsMobile
 {
@@ -74,14 +75,17 @@ namespace Demo.WindowsMobile
 
                   foreach(var t in Bus)
                   {
-                     var r = new GMapMarkerTransparent(new PointLatLng(t.Lat, t.Lng));
-                     {
-                        r.ToolTipMode = MarkerTooltipMode.Always;
-                        r.ToolTipText = "Bus " + t.Line + ", " + t.LastStop + ", " + t.Time;
-                        r.Data = t;
-                     }
-                     Main.objects.Markers.Add(r);
-                     BusMarkers.Add(r);
+                      if (textBoxBus.Text.Split(',').Contains(t.Line))
+                      {
+                          var r = new GMapMarkerTransparent(new PointLatLng(t.Lat, t.Lng));
+                          {
+                              r.ToolTipMode = MarkerTooltipMode.Always;
+                              r.ToolTipText = "B " + t.Line + ", " + t.Time;
+                              r.Data = t;
+                          }
+                          Main.objects.Markers.Add(r);
+                          BusMarkers.Add(r);
+                      }
                   }
                }
 
@@ -96,14 +100,17 @@ namespace Demo.WindowsMobile
 
                   foreach(var t in Trolley)
                   {
-                     var r = new GMapMarkerTransparent(new PointLatLng(t.Lat, t.Lng));
-                     {
-                        r.ToolTipMode = MarkerTooltipMode.Always;
-                        r.ToolTipText = "Trolley " + t.Line + ", " + t.LastStop + ", " + t.Time;
-                        r.Data = t;
-                     }
-                     Main.objects.Markers.Add(r);
-                     TrolleyMarkers.Add(r);
+                      if (textBoxTrolley.Text.Split(',').Contains(t.Line))
+                      {
+                          var r = new GMapMarkerTransparent(new PointLatLng(t.Lat, t.Lng));
+                          {
+                              r.ToolTipMode = MarkerTooltipMode.Always;
+                              r.ToolTipText = "T " + t.Line + ", " + t.Time;
+                              r.Data = t;
+                          }
+                          Main.objects.Markers.Add(r);
+                          TrolleyMarkers.Add(r);
+                      }
                   }
                }
             }

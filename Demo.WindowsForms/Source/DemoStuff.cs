@@ -257,6 +257,8 @@ namespace Demo.WindowsForms
                      {
                         continue;
                      }
+
+                     d.Time = t.ToLongTimeString();
                   }
                }
                ret.Add(d);
