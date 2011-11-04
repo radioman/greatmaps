@@ -322,7 +322,7 @@ namespace GMap.NET.MapProviders
 
       #region RoutingProvider Members
 
-      public MapRoute GetRouteBetweenPoints(PointLatLng start, PointLatLng end, bool avoidHighways, bool walkingMode, int Zoom)
+      public MapRoute GetRoute(PointLatLng start, PointLatLng end, bool avoidHighways, bool walkingMode, int Zoom)
       {
          string tooltip;
          int numLevels;
@@ -336,7 +336,7 @@ namespace GMap.NET.MapProviders
          return ret;
       }
 
-      public MapRoute GetRouteBetweenPoints(string start, string end, bool avoidHighways, bool walkingMode, int Zoom)
+      public MapRoute GetRoute(string start, string end, bool avoidHighways, bool walkingMode, int Zoom)
       {
          string tooltip;
          int numLevels;

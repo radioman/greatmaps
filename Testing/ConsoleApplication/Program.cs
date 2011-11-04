@@ -25,8 +25,8 @@ namespace ConsoleApplication
 
             //GMaps.Instance.ImportFromGMDB(@"C:\Users\m.dambrauskas\AppData\Local\GMap.NET\TileDBv5\en\Data - Copy.gmdb");
 
-            //var route = GMapProviders.OpenStreetMap.GetRouteBetweenPoints(p1, p2, false, false, 10);
-            //var route = GMapProviders.CloudMadeMap.GetRouteBetweenPoints(p1, p2, false, false, 10);
+            //var route = GMapProviders.OpenStreetMap.GetRoute(p1, p2, false, false, 10);
+            //var route = GMapProviders.CloudMadeMap.GetRoute(p1, p2, false, false, 10);
 
             //Debug.WriteLine(GMapProviders.BingHybridMap.Name + ":" + GMapProviders.BingHybridMap.DbId);
 

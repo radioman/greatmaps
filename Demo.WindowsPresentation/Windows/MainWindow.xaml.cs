@@ -818,7 +818,7 @@ namespace Demo.WindowsPresentation
             rp = GMapProviders.GoogleMap; // use google if provider does not implement routing
          }
 
-         MapRoute route = rp.GetRouteBetweenPoints(start, end, false, false, (int)MainMap.Zoom);
+         MapRoute route = rp.GetRoute(start, end, false, false, (int)MainMap.Zoom);
          if(route != null)
          {
             GMapMarker m1 = new GMapMarker(start);

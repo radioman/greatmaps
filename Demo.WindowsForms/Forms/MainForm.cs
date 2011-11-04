@@ -13,10 +13,10 @@ using System.Windows.Forms;
 using System.Xml;
 using Demo.WindowsForms.CustomMarkers;
 using GMap.NET;
+using GMap.NET.MapProviders;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms.ToolTips;
-using GMap.NET.MapProviders;
 
 namespace Demo.WindowsForms
 {
@@ -342,7 +342,7 @@ namespace Demo.WindowsForms
       readonly Dictionary<int, GMapMarker> trolleybusMarkers = new Dictionary<int, GMapMarker>();
 
       readonly List<VehicleData> bus = new List<VehicleData>();
-      readonly Dictionary<int, GMapMarker> busMarkers = new Dictionary<int, GMapMarker>(); 
+      readonly Dictionary<int, GMapMarker> busMarkers = new Dictionary<int, GMapMarker>();
       #endregion
 
       bool firstLoadTrasport = true;
@@ -419,7 +419,7 @@ namespace Demo.WindowsForms
                   }
                }
             }
-         } 
+         }
          #endregion
 
          if(firstLoadTrasport)
@@ -446,7 +446,7 @@ namespace Demo.WindowsForms
                lock(bus)
                {
                   Stuff.GetVilniusTransportData(TransportType.Bus, string.Empty, bus);
-               } 
+               }
                #endregion
 
                transportWorker.ReportProgress(100);
@@ -1658,7 +1658,7 @@ namespace Demo.WindowsForms
             rp = GMapProviders.GoogleMap; // use google if provider does not implement routing
          }
 
-         MapRoute route = rp.GetRouteBetweenPoints(start, end, false, false, (int)MainMap.Zoom);
+         MapRoute route = rp.GetRoute(start, end, false, false, (int)MainMap.Zoom);
          if(route != null)
          {
             // add route
