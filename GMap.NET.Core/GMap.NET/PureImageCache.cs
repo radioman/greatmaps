@@ -32,7 +32,8 @@ namespace GMap.NET
       /// delete old tiles beyond a supplied date
       /// </summary>
       /// <param name="date">Tiles older than this will be deleted.</param>
+      /// <param name="type">provider dbid or null to use all providers</param>
       /// <returns>The number of deleted tiles.</returns>
-      int DeleteOlderThan(DateTime date);
+      int DeleteOlderThan(DateTime date, int ? type);
    }
 }

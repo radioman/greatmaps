@@ -64,9 +64,9 @@ namespace GMap.NET
 #endif
 
       /// <summary>
-      /// pure image cache provider, by default: ultra fast SQLite!
+      /// primary cache provider, by default: ultra fast SQLite!
       /// </summary>
-      public PureImageCache ImageCacheLocal
+      public PureImageCache PrimaryCache
       {
          get
          {
@@ -79,10 +79,10 @@ namespace GMap.NET
       }
 
       /// <summary>
-      /// pure image cache second provider, by default: none
-      /// looks here after server
+      /// secondary cache provider, by default: none,
+      /// use it if you have server in your local network
       /// </summary>
-      public PureImageCache ImageCacheSecond
+      public PureImageCache SecondaryCache
       {
          get
          {
@@ -95,6 +95,11 @@ namespace GMap.NET
       }
 
       /// <summary>
+      /// MemoryCache provider
+      /// </summary>
+      public readonly MemoryCache MemoryCache = new MemoryCache();
+
+      /// <summary>
       /// load tiles in random sequence
       /// </summary>
       public bool ShuffleTilesOnLoad = true;
@@ -103,66 +108,6 @@ namespace GMap.NET
       /// tile queue to cache
       /// </summary>
       readonly Queue<CacheQueueItem> tileCacheQueue = new Queue<CacheQueueItem>();
-
-      /// <summary>
-      /// tiles in memmory
-      /// </summary>
-      internal readonly KiberTileCache TilesInMemory = new KiberTileCache();
-
-      /// <summary>
-      /// lock for TilesInMemory
-      /// </summary>
-      internal readonly FastReaderWriterLock kiberCacheLock = new FastReaderWriterLock();
-
-      /// <summary>
-      /// the amount of tiles in MB to keep in memmory, default: 22MB, if each ~100Kb it's ~222 tiles
-      /// </summary>
-      public int MemoryCacheCapacity
-      {
-         get
-         {
-            kiberCacheLock.AcquireReaderLock();
-            try
-            {
-               return TilesInMemory.MemoryCacheCapacity;
-            }
-            finally
-            {
-               kiberCacheLock.ReleaseReaderLock();
-            }
-         }
-         set
-         {
-            kiberCacheLock.AcquireWriterLock();
-            try
-            {
-               TilesInMemory.MemoryCacheCapacity = value;
-            }
-            finally
-            {
-               kiberCacheLock.ReleaseWriterLock();
-            }
-         }
-      }
-
-      /// <summary>
-      /// current memmory cache size in MB
-      /// </summary>
-      public double MemoryCacheSize
-      {
-         get
-         {
-            kiberCacheLock.AcquireReaderLock();
-            try
-            {
-               return TilesInMemory.MemoryCacheSize;
-            }
-            finally
-            {
-               kiberCacheLock.ReleaseReaderLock();
-            }
-         }
-      }
 
       bool? isRunningOnMono;
 
@@ -229,53 +174,6 @@ namespace GMap.NET
 
       #region -- Stuff --
 
-      byte[] GetTileFromMemoryCache(RawTile tile)
-      {
-         kiberCacheLock.AcquireReaderLock();
-         try
-         {
-            byte[] ret = null;
-            if(TilesInMemory.TryGetValue(tile, out ret))
-            {
-               return ret;
-            }
-         }
-         finally
-         {
-            kiberCacheLock.ReleaseReaderLock();
-         }
-         return null;
-      }
-
-      void AddTileToMemoryCache(RawTile tile, byte[] data)
-      {
-         if(data != null)
-         {
-            kiberCacheLock.AcquireWriterLock();
-            try
-            {
-               if(!TilesInMemory.ContainsKey(tile))
-               {
-                  TilesInMemory.Add(tile, data);
-               }
-            }
-            finally
-            {
-               kiberCacheLock.ReleaseWriterLock();
-            }
-         }
-#if DEBUG
-         else
-         {
-            Debug.WriteLine("adding empty data to MemoryCache ;} ");
-            if(Debugger.IsAttached)
-            {
-               Debugger.Break();
-            }
-         }
-#endif
-      }
-
 #if !PocketPC
 
       /// <summary>
@@ -288,9 +186,9 @@ namespace GMap.NET
       public bool ExportToGMDB(string file)
       {
 #if SQLite
-         if(Cache.Instance.ImageCache is SQLitePureImageCache)
+         if(PrimaryCache is SQLitePureImageCache)
          {
-            StringBuilder db = new StringBuilder((Cache.Instance.ImageCache as SQLitePureImageCache).GtileCache);
+            StringBuilder db = new StringBuilder((PrimaryCache as SQLitePureImageCache).GtileCache);
             db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMapProvider.LanguageStr, Path.DirectorySeparatorChar);
 
             return SQLitePureImageCache.ExportMapDataToDB(db.ToString(), file);
@@ -308,9 +206,9 @@ namespace GMap.NET
       public bool ImportFromGMDB(string file)
       {
 #if SQLite
-         if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
+         if(PrimaryCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
-            StringBuilder db = new StringBuilder((Cache.Instance.ImageCache as SQLitePureImageCache).GtileCache);
+            StringBuilder db = new StringBuilder((PrimaryCache as SQLitePureImageCache).GtileCache);
             db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMapProvider.LanguageStr, Path.DirectorySeparatorChar);
 
             return SQLitePureImageCache.ExportMapDataToDB(file, db.ToString());
@@ -328,11 +226,11 @@ namespace GMap.NET
       /// <returns></returns>
       public bool OptimizeMapDb(string file)
       {
-         if(Cache.Instance.ImageCache is GMap.NET.CacheProviders.SQLitePureImageCache)
+         if(PrimaryCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
             if(string.IsNullOrEmpty(file))
             {
-               StringBuilder db = new StringBuilder((Cache.Instance.ImageCache as SQLitePureImageCache).GtileCache);
+               StringBuilder db = new StringBuilder((PrimaryCache as SQLitePureImageCache).GtileCache);
                db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMapProvider.LanguageStr, Path.DirectorySeparatorChar);
 
                return SQLitePureImageCache.VacuumDb(db.ToString());
@@ -440,7 +338,7 @@ namespace GMap.NET
                   {
                      Debug.WriteLine("CacheEngine: storing tile " + task.Value + "...");
 
-                     if((task.Value.CacheType & CacheUsage.First) == CacheUsage.First && ImageCacheLocal != null)
+                     if((task.Value.CacheType & CacheUsage.First) == CacheUsage.First && PrimaryCache != null)
                      {
                         if(CacheOnIdleRead)
                         {
@@ -449,10 +347,10 @@ namespace GMap.NET
                               Thread.Sleep(1000);
                            }
                         }
-                        ImageCacheLocal.PutImageToCache(task.Value.Img, task.Value.Tile.Type, task.Value.Tile.Pos, task.Value.Tile.Zoom);
+                        PrimaryCache.PutImageToCache(task.Value.Img, task.Value.Tile.Type, task.Value.Tile.Pos, task.Value.Tile.Zoom);
                      }
 
-                     if((task.Value.CacheType & CacheUsage.Second) == CacheUsage.Second && ImageCacheSecond != null)
+                     if((task.Value.CacheType & CacheUsage.Second) == CacheUsage.Second && SecondaryCache != null)
                      {
                         if(CacheOnIdleRead)
                         {
@@ -461,7 +359,7 @@ namespace GMap.NET
                               Thread.Sleep(1000);
                            }
                         }
-                        ImageCacheSecond.PutImageToCache(task.Value.Img, task.Value.Tile.Type, task.Value.Tile.Pos, task.Value.Tile.Zoom);
+                        SecondaryCache.PutImageToCache(task.Value.Img, task.Value.Tile.Type, task.Value.Tile.Pos, task.Value.Tile.Zoom);
                      }
 
                      task.Value.Clear();
@@ -665,7 +563,7 @@ namespace GMap.NET
             // let't check memmory first
             if(UseMemoryCache)
             {
-               var m = GetTileFromMemoryCache(rtile);
+               var m = MemoryCache.GetTileFromMemoryCache(rtile);
                if(m != null)
                {
                   if(GMapProvider.TileImageProxy != null)
@@ -690,7 +588,7 @@ namespace GMap.NET
             {
                if(Mode != AccessMode.ServerOnly)
                {
-                  if(ImageCacheLocal != null)
+                  if(PrimaryCache != null)
                   {
                      // hold writer for 5s
                      if(CacheOnIdleRead)
@@ -698,18 +596,18 @@ namespace GMap.NET
                         Interlocked.Exchange(ref readingCache, 5);
                      }
 
-                     ret = ImageCacheLocal.GetImageFromCache(provider.DbId, pos, zoom);
+                     ret = PrimaryCache.GetImageFromCache(provider.DbId, pos, zoom);
                      if(ret != null)
                      {
                         if(UseMemoryCache)
                         {
-                           AddTileToMemoryCache(rtile, ret.Data.GetBuffer());
+                           MemoryCache.AddTileToMemoryCache(rtile, ret.Data.GetBuffer());
                         }
                         return ret;
                      }
                   }
 
-                  if(ImageCacheSecond != null)
+                  if(SecondaryCache != null)
                   {
                      // hold writer for 5s
                      if(CacheOnIdleRead)
@@ -717,12 +615,12 @@ namespace GMap.NET
                         Interlocked.Exchange(ref readingCache, 5);
                      }
 
-                     ret = ImageCacheSecond.GetImageFromCache(provider.DbId, pos, zoom);
+                     ret = SecondaryCache.GetImageFromCache(provider.DbId, pos, zoom);
                      if(ret != null)
                      {
                         if(UseMemoryCache)
                         {
-                           AddTileToMemoryCache(rtile, ret.Data.GetBuffer());
+                           MemoryCache.AddTileToMemoryCache(rtile, ret.Data.GetBuffer());
                         }
                         EnqueueCacheTask(new CacheQueueItem(rtile, ret.Data.GetBuffer(), CacheUsage.First));
                         return ret;
@@ -739,7 +637,7 @@ namespace GMap.NET
                      {
                         if(UseMemoryCache)
                         {
-                           AddTileToMemoryCache(rtile, ret.Data.GetBuffer());
+                           MemoryCache.AddTileToMemoryCache(rtile, ret.Data.GetBuffer());
                         }
 
                         if(Mode != AccessMode.ServerOnly)

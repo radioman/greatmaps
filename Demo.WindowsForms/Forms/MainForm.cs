@@ -1475,7 +1475,7 @@ namespace Demo.WindowsForms
          {
             panelMenu.Text = "Menu, last load in " + MainMap.ElapsedMilliseconds + "ms";
 
-            textBoxMemory.Text = string.Format(CultureInfo.InvariantCulture, "{0:0.00}MB of {1:0.00}MB", MainMap.Manager.MemoryCacheSize, MainMap.Manager.MemoryCacheCapacity);
+            textBoxMemory.Text = string.Format(CultureInfo.InvariantCulture, "{0:0.00}MB of {1:0.00}MB", MainMap.Manager.MemoryCache.Size, MainMap.Manager.MemoryCache.Capacity);
          };
          try
          {

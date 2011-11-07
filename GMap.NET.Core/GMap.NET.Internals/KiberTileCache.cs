@@ -30,7 +30,7 @@ namespace GMap.NET.Internals
       {
          get
          {
-            return memoryCacheSize/1048576.0;
+            return memoryCacheSize / 1048576.0;
          }
       }
 
@@ -46,6 +46,12 @@ namespace GMap.NET.Internals
       private new void Remove(RawTile key)
       {
 
+      }
+
+      public new void Clear()
+      {
+         Queue.Clear();
+         base.Clear();
       }
 
       internal void RemoveMemoryOverload()

@@ -799,7 +799,7 @@ namespace GMap.NET.CacheProviders
          return ret;
       }
 
-      int PureImageCache.DeleteOlderThan(DateTime date)
+      int PureImageCache.DeleteOlderThan(DateTime date, int? type)
       {
          int affectedRows = 0;
 
@@ -813,6 +813,10 @@ namespace GMap.NET.CacheProviders
                   using(DbCommand com = cn.CreateCommand())
                   {
                      com.CommandText = string.Format("DELETE FROM Tiles WHERE CacheTime is not NULL and CacheTime < datetime('{0}')", date.ToString("s"));
+                     if(type.HasValue)
+                     {
+                        com.CommandText += " and Type = " + type;
+                     }
                      affectedRows = com.ExecuteNonQuery();
                   }
                }
@@ -821,9 +825,9 @@ namespace GMap.NET.CacheProviders
          catch(Exception ex)
          {
 #if MONO
-            Console.WriteLine("DeleteOlderThan: " + ex.ToString());
+            Console.WriteLine("DeleteOlderThan: " + ex);
 #endif
-            Debug.WriteLine("DeleteOlderThan: " + ex.ToString());
+            Debug.WriteLine("DeleteOlderThan: " + ex);
          }
 
          return affectedRows;

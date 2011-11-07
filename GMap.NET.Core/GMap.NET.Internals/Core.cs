@@ -1026,15 +1026,7 @@ namespace GMap.NET.Internals
 
                      #region -- clear stuff--
                      {
-                        GMaps.Instance.kiberCacheLock.AcquireWriterLock();
-                        try
-                        {
-                           GMaps.Instance.TilesInMemory.RemoveMemoryOverload();
-                        }
-                        finally
-                        {
-                           GMaps.Instance.kiberCacheLock.ReleaseWriterLock();
-                        }
+                        GMaps.Instance.MemoryCache.RemoveOverload();
 
                         tileDrawingListLock.AcquireReaderLock();
                         try
@@ -1055,7 +1047,7 @@ namespace GMap.NET.Internals
                      GC.Collect();
 #endif
 
-                     Debug.WriteLine(ctid + " - OnTileLoadComplete: " + lastTileLoadTimeMs + "ms, MemoryCacheSize: " + GMaps.Instance.MemoryCacheSize + "MB");
+                     Debug.WriteLine(ctid + " - OnTileLoadComplete: " + lastTileLoadTimeMs + "ms, MemoryCacheSize: " + GMaps.Instance.MemoryCache.Size + "MB");
 
                      if(OnTileLoadComplete != null)
                      {

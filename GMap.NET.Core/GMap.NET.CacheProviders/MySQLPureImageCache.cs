@@ -249,7 +249,7 @@ namespace GMap.NET.CacheProviders
          return ret;
       }
 
-      int PureImageCache.DeleteOlderThan(DateTime date)
+      int PureImageCache.DeleteOlderThan(DateTime date, int ? type)
       {
          throw new NotImplementedException();
       }
