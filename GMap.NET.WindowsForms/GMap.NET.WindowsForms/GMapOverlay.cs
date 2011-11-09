@@ -3,7 +3,6 @@ namespace GMap.NET.WindowsForms
 {
    using System;
    using System.Drawing;
-   using System.Drawing.Drawing2D;
    using System.Runtime.Serialization;
    using System.Windows.Forms;
    using GMap.NET.ObjectModel;
@@ -73,15 +72,19 @@ namespace GMap.NET.WindowsForms
 
       internal GMapControl Control;
 
-      public GMapOverlay(GMapControl control, string id)
+      public GMapOverlay()
       {
-         if(control == null)
-         {
-            throw new Exception("GMapControl in GMapOverlay can't be null");
-         }
+         CreateEvents();
+      }
 
-         Control = control;
+      public GMapOverlay(string id)
+      {
          Id = id;
+         CreateEvents();
+      }
+
+      void CreateEvents()
+      {
          Markers.CollectionChanged += new NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
          Routes.CollectionChanged += new NotifyCollectionChangedEventHandler(Routes_CollectionChanged);
          Polygons.CollectionChanged += new NotifyCollectionChangedEventHandler(Polygons_CollectionChanged);
@@ -96,14 +99,20 @@ namespace GMap.NET.WindowsForms
                if(obj != null)
                {
                   obj.Overlay = this;
-                  Control.UpdatePolygonLocalPosition(obj);
+                  if(Control != null)
+                  {
+                     Control.UpdatePolygonLocalPosition(obj);
+                  }
                }
             }
          }
 
-         if(!Control.HoldInvalidation)
+         if(Control != null)
          {
-            Control.Core.Refresh.Set();
+            if(!Control.HoldInvalidation)
+            {
+               Control.Core.Refresh.Set();
+            }
          }
       }
 
@@ -116,14 +125,20 @@ namespace GMap.NET.WindowsForms
                if(obj != null)
                {
                   obj.Overlay = this;
-                  Control.UpdateRouteLocalPosition(obj);
+                  if(Control != null)
+                  {
+                     Control.UpdateRouteLocalPosition(obj);
+                  }
                }
             }
          }
 
-         if(!Control.HoldInvalidation)
+         if(Control != null)
          {
-            Control.Core.Refresh.Set();
+            if(!Control.HoldInvalidation)
+            {
+               Control.Core.Refresh.Set();
+            }
          }
       }
 
@@ -136,25 +151,31 @@ namespace GMap.NET.WindowsForms
                if(obj != null)
                {
                   obj.Overlay = this;
-                  Control.UpdateMarkerLocalPosition(obj);
+                  if(Control != null)
+                  {
+                     Control.UpdateMarkerLocalPosition(obj);
+                  }
                }
             }
          }
 
-         if(e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Reset)
+         if(Control != null)
          {
-#if !PocketPC
-            if(Control.IsMouseOverMarker)
+            if(e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Reset)
             {
-               Control.IsMouseOverMarker = false;
-               Control.Cursor = Cursors.Default;
-            }
+#if !PocketPC
+               if(Control.IsMouseOverMarker)
+               {
+                  Control.IsMouseOverMarker = false;
+                  Control.Cursor = Cursors.Default;
+               }
 #endif
-         }
+            }
 
-         if(!Control.HoldInvalidation)
-         {
-            Control.Core.Refresh.Set();
+            if(!Control.HoldInvalidation)
+            {
+               Control.Core.Refresh.Set();
+            }
          }
       }
 
@@ -163,57 +184,36 @@ namespace GMap.NET.WindowsForms
       /// </summary>
       internal void ForceUpdate()
       {
-         foreach(GMapMarker obj in Markers)
+         if(Control != null)
          {
-            if(obj.IsVisible)
+            foreach(GMapMarker obj in Markers)
             {
-               Control.UpdateMarkerLocalPosition(obj);
+               if(obj.IsVisible)
+               {
+                  Control.UpdateMarkerLocalPosition(obj);
+               }
             }
-         }
 
-         foreach(GMapPolygon obj in Polygons)
-         {
-            if(obj.IsVisible)
+            foreach(GMapPolygon obj in Polygons)
             {
-               Control.UpdatePolygonLocalPosition(obj);
+               if(obj.IsVisible)
+               {
+                  Control.UpdatePolygonLocalPosition(obj);
+               }
             }
-         }
 
-         foreach(GMapRoute obj in Routes)
-         {
-            if(obj.IsVisible)
+            foreach(GMapRoute obj in Routes)
             {
-               Control.UpdateRouteLocalPosition(obj);
+               if(obj.IsVisible)
+               {
+                  Control.UpdateRouteLocalPosition(obj);
+               }
             }
          }
       }
 
       /// <summary>
-      /// draw routes, override to draw custom
-      /// </summary>
-      /// <param name="g"></param>
-      protected virtual void DrawRoutes(Graphics g)
-      {
-         foreach(GMapRoute r in Routes)
-         {
-             r.OnRender(g);
-         }
-      }
-
-      /// <summary>
-      /// draw polygons, override to draw custom
-      /// </summary>
-      /// <param name="g"></param>
-      protected virtual void DrawPolygons(Graphics g)
-      {
-          foreach (GMapPolygon r in Polygons)
-          {
-              r.OnRender(g);
-          }
-      }
-
-      /// <summary>
-      /// renders objects and routes
+      /// renders objects/routes/polygons
       /// </summary>
       /// <param name="g"></param>
       public virtual void Render(Graphics g)
@@ -222,12 +222,18 @@ namespace GMap.NET.WindowsForms
          {
             if(Control.RoutesEnabled)
             {
-               DrawRoutes(g);
+               foreach(GMapRoute r in Routes)
+               {
+                  r.OnRender(g);
+               }
             }
 
             if(Control.PolygonsEnabled)
             {
-               DrawPolygons(g);
+               foreach(GMapPolygon r in Polygons)
+               {
+                  r.OnRender(g);
+               }
             }
 
             if(Control.MarkersEnabled)

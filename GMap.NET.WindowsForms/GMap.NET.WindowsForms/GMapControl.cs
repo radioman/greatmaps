@@ -412,6 +412,27 @@ namespace GMap.NET.WindowsForms
                // no imports to move pointer
                MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionWithoutCenter;
             }
+
+            Overlays.CollectionChanged += new NotifyCollectionChangedEventHandler(Overlays_CollectionChanged);
+         }
+      }
+
+      void Overlays_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+      {
+         if(e.NewItems != null)
+         {
+            foreach(GMapOverlay obj in e.NewItems)
+            {
+               if(obj != null)
+               {
+                  obj.Control = this;
+               }
+            }
+
+            if(Core.IsStarted && !HoldInvalidation)
+            {
+               Invalidate();
+            }
          }
       }
 

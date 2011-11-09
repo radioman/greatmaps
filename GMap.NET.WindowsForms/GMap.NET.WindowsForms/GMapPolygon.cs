@@ -68,35 +68,35 @@ namespace GMap.NET.WindowsForms
       public virtual void OnRender(Graphics g)
       {
 #if !PocketPC
-          if (IsVisible)
-          {
-              using (GraphicsPath rp = new GraphicsPath())
-              {
-                  for (int i = 0; i < LocalPoints.Count; i++)
+         if(IsVisible)
+         {
+            using(GraphicsPath rp = new GraphicsPath())
+            {
+               for(int i = 0; i < LocalPoints.Count; i++)
+               {
+                  GPoint p2 = LocalPoints[i];
+
+                  if(i == 0)
                   {
-                      GPoint p2 = LocalPoints[i];
-
-                      if (i == 0)
-                      {
-                          rp.AddLine(p2.X, p2.Y, p2.X, p2.Y);
-                      }
-                      else
-                      {
-                          System.Drawing.PointF p = rp.GetLastPoint();
-                          rp.AddLine(p.X, p.Y, p2.X, p2.Y);
-                      }
+                     rp.AddLine(p2.X, p2.Y, p2.X, p2.Y);
                   }
-
-                  if (rp.PointCount > 0)
+                  else
                   {
-                      rp.CloseFigure();
-
-                      g.FillPath(Fill, rp);
-                      
-                      g.DrawPath(Stroke, rp);
+                     System.Drawing.PointF p = rp.GetLastPoint();
+                     rp.AddLine(p.X, p.Y, p2.X, p2.Y);
                   }
-              }
-          }
+               }
+
+               if(rp.PointCount > 0)
+               {
+                  rp.CloseFigure();
+
+                  g.FillPath(Fill, rp);
+
+                  g.DrawPath(Stroke, rp);
+               }
+            }
+         }
 #else
          foreach(GMapPolygon r in Polygons)
          {
@@ -120,7 +120,7 @@ namespace GMap.NET.WindowsForms
 
       }
 
-       //public double Area
+      //public double Area
       //{
       //   get
       //   {

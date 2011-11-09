@@ -22,18 +22,18 @@ namespace Demo.WindowsForms
 {
    public partial class MainForm : Form
    {
+      // layers
+      readonly GMapOverlay top = new GMapOverlay();
+      internal readonly GMapOverlay objects = new GMapOverlay("objects");
+      internal readonly GMapOverlay routes = new GMapOverlay("routes");
+      internal readonly GMapOverlay polygons = new GMapOverlay("polygons");
+
       // marker
       GMapMarker currentMarker;
       GMapMarker center;
 
       // polygons
       GMapPolygon polygon;
-
-      // layers
-      GMapOverlay top;
-      internal GMapOverlay objects;
-      internal GMapOverlay routes;
-      internal GMapOverlay polygons;
 
       // etc
       readonly Random rnd = new Random();
@@ -53,7 +53,7 @@ namespace Demo.WindowsForms
             // add your custom map db provider
             //GMap.NET.CacheProviders.MySQLPureImageCache ch = new GMap.NET.CacheProviders.MySQLPureImageCache();
             //ch.ConnectionString = @"server=sql2008;User Id=trolis;Persist Security Info=True;database=gmapnetcache;password=trolis;";
-            //MainMap.Manager.ImageCacheSecond = ch;
+            //MainMap.Manager.SecondaryCache = ch;
 
             // set your proxy here if need
             //GMapProvider.WebProxy = new WebProxy("10.2.0.100", 8080);
@@ -121,49 +121,50 @@ namespace Demo.WindowsForms
 
             ToolStripManager.Renderer = new BSE.Windows.Forms.Office2007Renderer();
 
+            #region -- demo workers --
             // flight demo
-            flightWorker.DoWork += new DoWorkEventHandler(flight_DoWork);
-            flightWorker.ProgressChanged += new ProgressChangedEventHandler(flight_ProgressChanged);
-            flightWorker.WorkerSupportsCancellation = true;
-            flightWorker.WorkerReportsProgress = true;
+            {
+               flightWorker.DoWork += new DoWorkEventHandler(flight_DoWork);
+               flightWorker.ProgressChanged += new ProgressChangedEventHandler(flight_ProgressChanged);
+               flightWorker.WorkerSupportsCancellation = true;
+               flightWorker.WorkerReportsProgress = true;
+            }
 
             // vehicle demo
-            transportWorker.DoWork += new DoWorkEventHandler(transport_DoWork);
-            transportWorker.ProgressChanged += new ProgressChangedEventHandler(transport_ProgressChanged);
-            transportWorker.WorkerSupportsCancellation = true;
-            transportWorker.WorkerReportsProgress = true;
+            {
+               transportWorker.DoWork += new DoWorkEventHandler(transport_DoWork);
+               transportWorker.ProgressChanged += new ProgressChangedEventHandler(transport_ProgressChanged);
+               transportWorker.WorkerSupportsCancellation = true;
+               transportWorker.WorkerReportsProgress = true;
+            }
 
             // Connections
-            connectionsWorker.DoWork += new DoWorkEventHandler(connectionsWorker_DoWork);
-            connectionsWorker.ProgressChanged += new ProgressChangedEventHandler(connectionsWorker_ProgressChanged);
-            connectionsWorker.WorkerSupportsCancellation = true;
-            connectionsWorker.WorkerReportsProgress = true;
+            {
+               connectionsWorker.DoWork += new DoWorkEventHandler(connectionsWorker_DoWork);
+               connectionsWorker.ProgressChanged += new ProgressChangedEventHandler(connectionsWorker_ProgressChanged);
+               connectionsWorker.WorkerSupportsCancellation = true;
+               connectionsWorker.WorkerReportsProgress = true;
 
-            ipInfoSearchWorker.DoWork += new DoWorkEventHandler(ipInfoSearchWorker_DoWork);
-            ipInfoSearchWorker.WorkerSupportsCancellation = true;
+               ipInfoSearchWorker.DoWork += new DoWorkEventHandler(ipInfoSearchWorker_DoWork);
+               ipInfoSearchWorker.WorkerSupportsCancellation = true;
 
-            iptracerWorker.DoWork += new DoWorkEventHandler(iptracerWorker_DoWork);
-            iptracerWorker.WorkerSupportsCancellation = true;
+               iptracerWorker.DoWork += new DoWorkEventHandler(iptracerWorker_DoWork);
+               iptracerWorker.WorkerSupportsCancellation = true;
 
-            GridConnections.AutoGenerateColumns = false;
+               GridConnections.AutoGenerateColumns = false;
 
-            IpCache.CacheLocation = MainMap.CacheLocation;
+               IpCache.CacheLocation = MainMap.CacheLocation;
+            }
 
             // perf
             timerPerf.Tick += new EventHandler(timer_Tick);
+            #endregion
 
             // add custom layers  
             {
-               routes = new GMapOverlay(MainMap, "routes");
                MainMap.Overlays.Add(routes);
-
-               polygons = new GMapOverlay(MainMap, "polygons");
                MainMap.Overlays.Add(polygons);
-
-               objects = new GMapOverlay(MainMap, "objects");
                MainMap.Overlays.Add(objects);
-
-               top = new GMapOverlay(MainMap, "top");
                MainMap.Overlays.Add(top);
 
                routes.Routes.CollectionChanged += new GMap.NET.ObjectModel.NotifyCollectionChangedEventHandler(Routes_CollectionChanged);
