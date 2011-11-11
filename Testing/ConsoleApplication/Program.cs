@@ -11,6 +11,7 @@ using GMap.NET;
 using GMap.NET.Internals;
 using GMap.NET.MapProviders;
 using GMap.NET.Projections;
+using System.Threading;
 
 namespace ConsoleApplication
 {
@@ -19,6 +20,42 @@ namespace ConsoleApplication
       static void Main(string[] args)
       {
          //if(false)
+         {
+            int i = 0;
+
+            //while(true)
+            {
+               Console.WriteLine(i + " start");
+               Debug.WriteLine(i + " start");
+
+               //using(Core c = new Core())
+               Core c = new Core();
+               {
+                  var f = c.OnMapOpen();
+
+                  Console.WriteLine("wait");
+                  Console.ReadLine();
+
+                  //c.OnMapClose();
+               }
+               c = null;
+
+               Debug.WriteLine("end");
+               Console.WriteLine("end");
+
+               Console.ReadLine();
+
+               GC.Collect();
+
+               //if(i++ > 10)
+               //{
+               //   GC.Collect();
+               //   i = 0;
+               //}
+            }
+         }
+
+         if(false)
          {
             var p1 = new PointLatLng(54.6961334816182, 25.2985095977782);
             var p2 = new PointLatLng(54.7061334816182, 25.3085095977783);

@@ -9,10 +9,10 @@ namespace GMap.NET.Internals
    /// <summary>
    /// matrix for tiles
    /// </summary>
-   internal class TileMatrix
+   internal class TileMatrix : IDisposable
    {
-      readonly List<Dictionary<GPoint, Tile>> Levels = new List<Dictionary<GPoint, Tile>>(33);
-      readonly FastReaderWriterLock Lock = new FastReaderWriterLock();
+      List<Dictionary<GPoint, Tile>> Levels = new List<Dictionary<GPoint, Tile>>(33);
+      FastReaderWriterLock Lock = new FastReaderWriterLock();
 
       public TileMatrix()
       {
@@ -31,7 +31,7 @@ namespace GMap.NET.Internals
             {
                foreach(var t in matrix)
                {
-                  t.Value.Clear();
+                  t.Value.Dispose();
                }
                matrix.Clear();
             }
@@ -53,7 +53,7 @@ namespace GMap.NET.Internals
 
                foreach(var t in l)
                {
-                  t.Value.Clear();
+                  t.Value.Dispose();
                }
 
                l.Clear();
@@ -65,7 +65,7 @@ namespace GMap.NET.Internals
          }
       }
 
-      readonly List<KeyValuePair<GPoint, Tile>> tmp = new List<KeyValuePair<GPoint, Tile>>(44);
+      List<KeyValuePair<GPoint, Tile>> tmp = new List<KeyValuePair<GPoint, Tile>>(44);
 
       public void ClearLevelAndPointsNotIn(int zoom, List<GPoint> list)
       {
@@ -89,7 +89,7 @@ namespace GMap.NET.Internals
                foreach(var r in tmp)
                {
                   l.Remove(r.Key);
-                  r.Value.Clear();
+                  r.Value.Dispose();
                }
 
                tmp.Clear();
@@ -106,15 +106,15 @@ namespace GMap.NET.Internals
          Lock.AcquireWriterLock();
          try
          {
-            if(zoom-1 < Levels.Count)
+            if(zoom - 1 < Levels.Count)
             {
-               for(int i = zoom-1; i >= 0; i--)
+               for(int i = zoom - 1; i >= 0; i--)
                {
                   var l = Levels[i];
 
                   foreach(var t in l)
                   {
-                     t.Value.Clear();
+                     t.Value.Dispose();
                   }
 
                   l.Clear();
@@ -132,15 +132,15 @@ namespace GMap.NET.Internals
          Lock.AcquireWriterLock();
          try
          {
-            if(zoom+1 < Levels.Count)
+            if(zoom + 1 < Levels.Count)
             {
-               for(int i = zoom+1; i < Levels.Count; i++)
+               for(int i = zoom + 1; i < Levels.Count; i++)
                {
                   var l = Levels[i];
 
                   foreach(var t in l)
                   {
-                     t.Value.Clear();
+                     t.Value.Dispose();
                   }
 
                   l.Clear();
@@ -207,5 +207,40 @@ namespace GMap.NET.Internals
             Lock.ReleaseWriterLock();
          }
       }
+
+      #region IDisposable Members
+
+      ~TileMatrix()
+      {
+         Dispose(false);
+      }
+
+      void Dispose(bool disposing)
+      {
+         if(Lock != null)
+         {
+            if(disposing)
+            {
+               ClearAllLevels();
+            }
+
+            Levels.Clear();
+            Levels = null;
+
+            tmp.Clear();
+            tmp = null;
+
+            Lock.Dispose();
+            Lock = null;
+         }
+      }
+
+      public void Dispose()
+      {
+         this.Dispose(true);
+         GC.SuppressFinalize(this);
+      }
+
+      #endregion
    }
 }

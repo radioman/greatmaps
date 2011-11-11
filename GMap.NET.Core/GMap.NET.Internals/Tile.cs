@@ -22,16 +22,20 @@ namespace GMap.NET.Internals
          this.Overlays = new List<PureImage>();
       }
 
-      public void Clear()
+      void Clear()
       {
-         lock(Overlays)
+         if(Overlays != null)
          {
-            foreach(PureImage i in Overlays)
+            lock(Overlays)
             {
-               i.Dispose();
-            }
+               foreach(PureImage i in Overlays)
+               {
+                  i.Dispose();
+               }
 
-            Overlays.Clear();
+               Overlays.Clear();
+            }
+            Overlays = null;
          }
       }
 
@@ -63,7 +67,7 @@ namespace GMap.NET.Internals
 
       public void Dispose()
       {
-         Overlays = null;
+         Clear();
       }
 
       #endregion

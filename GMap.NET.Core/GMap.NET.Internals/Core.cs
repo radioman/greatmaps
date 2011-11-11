@@ -19,7 +19,7 @@ namespace GMap.NET.Internals
    /// <summary>
    /// internal map control core
    /// </summary>
-   internal class Core
+   internal class Core : IDisposable
    {
       public PointLatLng currentPosition;
       public GPoint currentPositionPixel;
@@ -48,10 +48,10 @@ namespace GMap.NET.Internals
       public float bearing = 0;
       public bool IsRotated = false;
 
-      public readonly TileMatrix Matrix = new TileMatrix();
+      public TileMatrix Matrix = new TileMatrix();
 
-      public readonly List<GPoint> tileDrawingList = new List<GPoint>();
-      public readonly FastReaderWriterLock tileDrawingListLock = new FastReaderWriterLock();
+      public List<GPoint> tileDrawingList = new List<GPoint>();
+      public FastReaderWriterLock tileDrawingListLock = new FastReaderWriterLock();
 
       public readonly Stack<LoadTask> tileLoadQueue = new Stack<LoadTask>();
 
@@ -494,123 +494,7 @@ namespace GMap.NET.Internals
 
       public void OnMapClose()
       {
-         if(invalidator != null)
-         {
-            invalidator.CancelAsync();
-            Refresh.Set();
-         }
-
-         int x = Interlocked.Decrement(ref instances);
-         Debug.WriteLine("OnMapClose: " + x);
-
-         CancelAsyncTasks();
-         IsStarted = false;
-
-         Matrix.ClearAllLevels();
-
-         lock(FailedLoads)
-         {
-            FailedLoads.Clear();
-            RaiseEmptyTileError = false;
-         }
-
-         // cancel waiting loaders
-         Monitor.Enter(tileLoadQueue);
-         try
-         {
-            Monitor.PulseAll(tileLoadQueue);
-         }
-         finally
-         {
-            Monitor.Exit(tileLoadQueue);
-         }
-
-         if(x == 0)
-         {
-            GMaps.Instance.noMapInstances = true;
-            GMaps.Instance.WaitForCache.Set();
-
-#if !DEBUG
-#if !PocketPC
-         // send end ping to codeplex Analytics service
-         try
-         {
-            if(!AnalyticsStopDone && !GMaps.Instance.DisableCodeplexAnalyticsPing)
-            {
-               AnalyticsStopDone = true;
-
-               using(Analytics.MessagingServiceV2 s = new Analytics.MessagingServiceV2())
-               {
-                  s.Timeout = 5 * 1000;
-
-                  if(GMapProvider.WebProxy != null)
-                  {
-                     s.Proxy = GMapProvider.WebProxy;
-                     s.PreAuthenticate = true;
-                  }
-
-                  Analytics.MessageCache info = new Analytics.MessageCache();
-                  {
-                     FillAnalyticsInfo(info);
-
-                     info.Messages = new Analytics.Message[2];
-
-                     Analytics.SessionLifeCycle slc = new Analytics.SessionLifeCycle();
-                     {
-                        slc.Id = Guid.NewGuid();
-                        slc.SessionId = SessionIdGuid;
-                        slc.TimeStampUtc = DateTime.UtcNow;
-
-                        slc.Event = new GMap.NET.Analytics.EventInformation();
-                        {
-                           slc.Event.Code = "Session.Stop";
-                           slc.Event.PrivacySetting = GMap.NET.Analytics.PrivacySettings.SupportOptout;
-                        }
-                     }
-                     info.Messages[0] = slc;
-
-                     Analytics.ApplicationLifeCycle alc = new Analytics.ApplicationLifeCycle();
-                     {
-                        alc.Id = Guid.NewGuid();
-                        alc.SessionId = SessionIdGuid;
-                        alc.TimeStampUtc = DateTime.UtcNow;
-
-                        alc.Event = new GMap.NET.Analytics.EventInformation();
-                        {
-                           alc.Event.Code = "Application.Stop";
-                           alc.Event.PrivacySetting = GMap.NET.Analytics.PrivacySettings.SupportOptout;
-                        }
-
-                        alc.Binary = new Analytics.BinaryInformation();
-                        {
-                           System.Reflection.AssemblyName app = System.Reflection.Assembly.GetEntryAssembly().GetName();
-                           alc.Binary.Name = app.Name;
-                           alc.Binary.Version = app.Version.ToString();
-                        }
-
-                        alc.Host = new GMap.NET.Analytics.HostInfo();
-                        {
-                           alc.Host.RuntimeVersion = Environment.Version.ToString();
-                        }
-
-                        alc.Host.OS = new GMap.NET.Analytics.OSInformation();
-                        {
-                           alc.Host.OS.OsName = Environment.OSVersion.VersionString;
-                        }
-                     }
-                     info.Messages[1] = alc;
-                  }
-                  s.Publish(info);
-               }
-            }
-         }
-         catch(Exception ex)
-         {
-            Debug.WriteLine("Analytics Stop: " + ex.ToString());
-         }
-#endif
-#endif
-         }
+         Dispose();
       }
 
       internal readonly object invalidationLock = new object();
@@ -983,7 +867,7 @@ namespace GMap.NET.Internals
       }
 
       bool RaiseEmptyTileError = false;
-      internal readonly Dictionary<LoadTask, Exception> FailedLoads = new Dictionary<LoadTask, Exception>();
+      internal Dictionary<LoadTask, Exception> FailedLoads = new Dictionary<LoadTask, Exception>();
 
       internal static readonly int WaitForTileLoadThreadTimeout = 5 * 1000 * 60; // 5 min.
 
@@ -1154,7 +1038,6 @@ namespace GMap.NET.Internals
                      }
                      else
                      {
-                        t.Clear();
                         t.Dispose();
                      }
                   }
@@ -1166,7 +1049,10 @@ namespace GMap.NET.Internals
                }
                finally
                {
-                  Refresh.Set();
+                  if(Refresh != null)
+                  {
+                     Refresh.Set();
+                  }
                }
             }
          }
@@ -1188,7 +1074,7 @@ namespace GMap.NET.Internals
 #endif
       }
 
-      public readonly AutoResetEvent Refresh = new AutoResetEvent(false);
+      public AutoResetEvent Refresh = new AutoResetEvent(false);
 
       /// <summary>
       /// updates map bounds
@@ -1316,5 +1202,172 @@ namespace GMap.NET.Internals
          pxRes1000km = (int)(1000000.0 / rez); // 1000km
          pxRes5000km = (int)(5000000.0 / rez); // 5000km
       }
+
+      #region IDisposable Members
+
+      ~Core()
+      {
+         Dispose(false);
+      }
+
+      void Dispose(bool disposing)
+      {
+         if(IsStarted)
+         {
+            if(invalidator != null)
+            {
+               invalidator.CancelAsync();
+               invalidator.DoWork -= new DoWorkEventHandler(invalidatorWatch);
+               invalidator.Dispose();
+               invalidator = null;
+            }
+
+            if(Refresh != null)
+            {
+               Refresh.Set();
+               Refresh.Close();
+               Refresh = null;
+            }
+
+            int x = Interlocked.Decrement(ref instances);
+            Debug.WriteLine("OnMapClose: " + x);
+
+            CancelAsyncTasks();
+            IsStarted = false;
+
+            if(Matrix != null)
+            {
+               Matrix.Dispose();
+               Matrix = null;
+            }
+
+            if(FailedLoads != null)
+            {
+               lock(FailedLoads)
+               {
+                  FailedLoads.Clear();
+                  RaiseEmptyTileError = false;
+               }
+               FailedLoads = null;
+            }
+
+            // cancel waiting loaders
+            Monitor.Enter(tileLoadQueue);
+            try
+            {
+               Monitor.PulseAll(tileLoadQueue);
+
+               tileDrawingList.Clear();
+               GThreadPool.Clear();
+            }
+            finally
+            {
+               Monitor.Exit(tileLoadQueue);
+            }
+
+            if(tileDrawingListLock != null)
+            {
+               tileDrawingListLock.Dispose();
+               tileDrawingListLock = null;
+               tileDrawingList = null;
+            }
+
+            if(x == 0)
+            {
+               GMaps.Instance.noMapInstances = true;
+               GMaps.Instance.WaitForCache.Set();
+               GMaps.Instance.MemoryCache.Clear();
+
+#if !DEBUG
+#if !PocketPC
+         // send end ping to codeplex Analytics service
+         try
+         {
+            if(!AnalyticsStopDone && !GMaps.Instance.DisableCodeplexAnalyticsPing)
+            {
+               AnalyticsStopDone = true;
+
+               using(Analytics.MessagingServiceV2 s = new Analytics.MessagingServiceV2())
+               {
+                  s.Timeout = 5 * 1000;
+
+                  if(GMapProvider.WebProxy != null)
+                  {
+                     s.Proxy = GMapProvider.WebProxy;
+                     s.PreAuthenticate = true;
+                  }
+
+                  Analytics.MessageCache info = new Analytics.MessageCache();
+                  {
+                     FillAnalyticsInfo(info);
+
+                     info.Messages = new Analytics.Message[2];
+
+                     Analytics.SessionLifeCycle slc = new Analytics.SessionLifeCycle();
+                     {
+                        slc.Id = Guid.NewGuid();
+                        slc.SessionId = SessionIdGuid;
+                        slc.TimeStampUtc = DateTime.UtcNow;
+
+                        slc.Event = new GMap.NET.Analytics.EventInformation();
+                        {
+                           slc.Event.Code = "Session.Stop";
+                           slc.Event.PrivacySetting = GMap.NET.Analytics.PrivacySettings.SupportOptout;
+                        }
+                     }
+                     info.Messages[0] = slc;
+
+                     Analytics.ApplicationLifeCycle alc = new Analytics.ApplicationLifeCycle();
+                     {
+                        alc.Id = Guid.NewGuid();
+                        alc.SessionId = SessionIdGuid;
+                        alc.TimeStampUtc = DateTime.UtcNow;
+
+                        alc.Event = new GMap.NET.Analytics.EventInformation();
+                        {
+                           alc.Event.Code = "Application.Stop";
+                           alc.Event.PrivacySetting = GMap.NET.Analytics.PrivacySettings.SupportOptout;
+                        }
+
+                        alc.Binary = new Analytics.BinaryInformation();
+                        {
+                           System.Reflection.AssemblyName app = System.Reflection.Assembly.GetEntryAssembly().GetName();
+                           alc.Binary.Name = app.Name;
+                           alc.Binary.Version = app.Version.ToString();
+                        }
+
+                        alc.Host = new GMap.NET.Analytics.HostInfo();
+                        {
+                           alc.Host.RuntimeVersion = Environment.Version.ToString();
+                        }
+
+                        alc.Host.OS = new GMap.NET.Analytics.OSInformation();
+                        {
+                           alc.Host.OS.OsName = Environment.OSVersion.VersionString;
+                        }
+                     }
+                     info.Messages[1] = alc;
+                  }
+                  s.Publish(info);
+               }
+            }
+         }
+         catch(Exception ex)
+         {
+            Debug.WriteLine("Analytics Stop: " + ex.ToString());
+         }
+#endif
+#endif
+            }
+         }
+      }
+
+      public void Dispose()
+      {
+         Dispose(true);
+         GC.SuppressFinalize(this);
+      }
+
+      #endregion
    }
 }

@@ -16,7 +16,7 @@ namespace GMap.NET.Internals
    /// http://msdn.microsoft.com/en-us/library/aa904937(VS.85).aspx
    /// http://msdn.microsoft.com/en-us/magazine/cc163405.aspx#S2
    /// </summary>
-   public sealed class FastReaderWriterLock
+   public sealed class FastReaderWriterLock : IDisposable
    {
 #if !MONO
       private static class NativeMethods
@@ -34,7 +34,7 @@ namespace GMap.NET.Internals
          internal static extern void ReleaseSRWLockShared(ref IntPtr srw);
       }
 
-      IntPtr LockSRW;
+      IntPtr LockSRW = IntPtr.Zero;
 
       public FastReaderWriterLock()
       {
@@ -45,13 +45,18 @@ namespace GMap.NET.Internals
          else
          {
 #if UseFastResourceLock
-            pLock = new ProcessHacker.Common.Threading.FastResourceLock();
+            pLock = new FastResourceLock();
 #endif
          }
       }
 
 #if UseFastResourceLock
       ~FastReaderWriterLock()
+      {
+         Dispose(false);
+      }
+
+      void Dispose(bool disposing)
       {
          if(pLock != null)
          {
@@ -60,7 +65,7 @@ namespace GMap.NET.Internals
          }
       }
 
-      ProcessHacker.Common.Threading.FastResourceLock pLock;
+      FastResourceLock pLock;
 #endif
 #endif
 
@@ -172,5 +177,17 @@ namespace GMap.NET.Internals
 #endif
          }
       }
+
+      #region IDisposable Members
+
+      public void Dispose()
+      {
+#if UseFastResourceLock
+         this.Dispose(true);
+         GC.SuppressFinalize(this);
+#endif
+      }
+
+      #endregion
    }
 }

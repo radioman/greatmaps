@@ -3,12 +3,13 @@ namespace GMap.NET.CacheProviders
 {
    using System.Diagnostics;
    using GMap.NET.Internals;
+   using System;
 
-   public class MemoryCache
+   public class MemoryCache : IDisposable
    {
       readonly KiberTileCache TilesInMemory = new KiberTileCache();
 
-      readonly FastReaderWriterLock kiberCacheLock = new FastReaderWriterLock();
+      FastReaderWriterLock kiberCacheLock = new FastReaderWriterLock();
 
       /// <summary>
       /// the amount of tiles in MB to keep in memmory, default: 22MB, if each ~100Kb it's ~222 tiles
@@ -134,5 +135,34 @@ namespace GMap.NET.CacheProviders
             kiberCacheLock.ReleaseWriterLock();
          }
       }
+
+      #region IDisposable Members
+
+      ~MemoryCache()
+      {
+         Dispose(false);
+      }
+
+      void Dispose(bool disposing)
+      {
+         if(kiberCacheLock != null)
+         {
+            if(disposing)
+            {
+               Clear();
+            }
+
+            kiberCacheLock.Dispose();
+            kiberCacheLock = null;
+         }
+      }
+
+      public void Dispose()
+      {
+         this.Dispose(true);
+         GC.SuppressFinalize(this);
+      }
+
+      #endregion
    }
 }

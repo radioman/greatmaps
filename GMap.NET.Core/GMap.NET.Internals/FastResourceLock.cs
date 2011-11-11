@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading;
 
-namespace ProcessHacker.Common.Threading
+namespace GMap.NET.Internals
 {
 #if !MONO && !PocketPC
    /// <summary>
