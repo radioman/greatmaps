@@ -12,6 +12,8 @@ using GMap.NET.Internals;
 using GMap.NET.MapProviders;
 using GMap.NET.Projections;
 using System.Threading;
+using GMap.NET.WindowsForms;
+using GMap.NET;
 
 namespace ConsoleApplication
 {
@@ -20,6 +22,44 @@ namespace ConsoleApplication
       static void Main(string[] args)
       {
          //if(false)
+         {
+            GMapProvider.TileImageProxy = new WindowsFormsImageProxy();
+
+            //GMaps.Instance.PrimaryCache.DeleteOlderThan(DateTime.Now, GMapProviders.GoogleMap.DbId);
+
+            using(Core c = new Core())
+            {
+               //c.compensationOffset = new GPoint(200, 200);
+
+               c.minZoom = 1;
+               c.maxZoom = 17;
+               c.Zoom = 1;
+               //c.Provider = GMapProviders.OpenStreetMap;
+               //c.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
+               c.OnMapSizeChanged(400, 400);
+
+               c.OnMapOpen();
+
+               Debug.WriteLine("renderOffset: " + c.renderOffset);
+
+               var l = c.FromLatLngToLocal(new PointLatLng(0, 0));
+               Debug.WriteLine("local: " + l);
+
+               var g = c.FromLocalToLatLng(l);
+               Debug.WriteLine("geo: " + g);
+
+               //c.ReloadMap();
+
+               Console.ReadLine();
+
+               //c.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);     
+               //Console.ReadLine();
+
+               c.OnMapClose();
+            }
+         }
+
+         if(false)
          {
             int i = 0;
 
@@ -135,7 +175,7 @@ namespace ConsoleApplication
          // stop caching immediately
          GMaps.Instance.CancelTileCaching();
 
-         Console.ReadLine();
+         //Console.ReadLine();
       }
    }
 }

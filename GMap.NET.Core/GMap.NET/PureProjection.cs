@@ -3,6 +3,7 @@ namespace GMap.NET
 {
    using System;
    using System.Collections.Generic;
+   using System.Diagnostics;
 
    /// <summary>
    /// defines projection
@@ -81,6 +82,14 @@ namespace GMap.NET
          {
             ret = FromLatLngToPixel(p.Lat, p.Lng, zoom);
             FromLatLngToPixelCache[zoom].Add(p, ret);
+
+            // for reverse cache
+            if(!FromPixelToLatLngCache[zoom].ContainsKey(ret))
+            {
+               FromPixelToLatLngCache[zoom].Add(ret, p);
+            }
+
+            Debug.WriteLine("FromLatLngToPixelCache[" + zoom + "] added " + p + " with " + ret);
          }
          return ret;
       }
@@ -98,6 +107,14 @@ namespace GMap.NET
          {
             ret = FromPixelToLatLng(p.X, p.Y, zoom);
             FromPixelToLatLngCache[zoom].Add(p, ret);
+
+            // for reverse cache
+            if(!FromLatLngToPixelCache[zoom].ContainsKey(ret))
+            {
+               FromLatLngToPixelCache[zoom].Add(ret, p);
+            }
+
+            Debug.WriteLine("FromPixelToLatLngCache[" + zoom + "] added " + p + " with " + ret);
          }
          return ret;
       }
@@ -389,6 +406,14 @@ namespace GMap.NET
          double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
          double dDistance = (Axis / 1000.0) * c;
          return dDistance;
+      }
+
+      public double GetDistanceInPixels(GPoint point1, GPoint point2)
+      {
+         double a = (double)(point2.X - point1.X);
+         double b = (double)(point2.Y - point1.Y);
+
+         return Math.Sqrt(a * a + b * b);
       }
 
       /// <summary>

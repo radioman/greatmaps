@@ -47,6 +47,8 @@ namespace GMap.NET.WindowsForms
          }
          set
          {
+            if(position != value)
+            {
             position = value;
 
             if(IsVisible)
@@ -58,6 +60,7 @@ namespace GMap.NET.WindowsForms
                }
             }
          }
+      }
       }
 
       public object Tag;

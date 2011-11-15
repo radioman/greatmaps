@@ -67,7 +67,7 @@ namespace GMap.NET.Internals
 
       List<KeyValuePair<GPoint, Tile>> tmp = new List<KeyValuePair<GPoint, Tile>>(44);
 
-      public void ClearLevelAndPointsNotIn(int zoom, List<GPoint> list)
+      public void ClearLevelAndPointsNotIn(int zoom, List<DrawTile> list)
       {
          Lock.AcquireWriterLock();
          try
@@ -80,7 +80,7 @@ namespace GMap.NET.Internals
 
                foreach(var t in l)
                {
-                  if(!list.Contains(t.Key))
+                  if(!list.Exists(p => p.PosXY == t.Key))
                   {
                      tmp.Add(t);
                   }

@@ -676,15 +676,15 @@ namespace GMap.NET.WindowsPresentation
          {
             foreach(var tilePoint in Core.tileDrawingList)
             {
-               Core.tileRect.X = tilePoint.X * Core.tileRect.Width;
-               Core.tileRect.Y = tilePoint.Y * Core.tileRect.Height;
+               Core.tileRect.Location = tilePoint.PosXY;
                Core.tileRect.Offset(Core.renderOffset);
+               Core.tileRect.OffsetNegative(Core.compensationOffset);
 
                if(region.IntersectsWith(Core.tileRect) || IsRotated)
                {
                   bool found = false;
 
-                  Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tilePoint);
+                  Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tilePoint.PosXY);
                   if(t != Tile.Empty)
                   {
                      lock(t.Overlays)
@@ -746,7 +746,7 @@ namespace GMap.NET.WindowsPresentation
                   {
                      lock(Core.FailedLoads)
                      {
-                        var lt = new LoadTask(tilePoint, Core.Zoom);
+                        var lt = new LoadTask(tilePoint.PosXY, Core.Zoom);
 
                         if(Core.FailedLoads.ContainsKey(lt))
                         {
@@ -767,7 +767,7 @@ namespace GMap.NET.WindowsPresentation
                   {
                      g.DrawRectangle(null, EmptyTileBorders, new Rect(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
 
-                     if(tilePoint == Core.centerTileXYLocation)
+                     if(tilePoint.PosXY == Core.centerTileXYLocation)
                      {
                         FormattedText TileText = new FormattedText("CENTER:" + tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
                         g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - TileText.Height / 2));

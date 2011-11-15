@@ -28,6 +28,7 @@ namespace GMap.NET.Internals
       public GPoint centerTileXYLocation;
       public GPoint centerTileXYLocationLast;
       public GPoint dragPoint;
+      public GPoint compensationOffset;
 
       public GPoint mouseDown;
       public GPoint mouseCurrent;
@@ -50,7 +51,7 @@ namespace GMap.NET.Internals
 
       public TileMatrix Matrix = new TileMatrix();
 
-      public List<GPoint> tileDrawingList = new List<GPoint>();
+      public List<DrawTile> tileDrawingList = new List<DrawTile>();
       public FastReaderWriterLock tileDrawingListLock = new FastReaderWriterLock();
 
       public readonly Stack<LoadTask> tileLoadQueue = new Stack<LoadTask>();
@@ -636,7 +637,21 @@ namespace GMap.NET.Internals
       /// <returns></returns>
       public PointLatLng FromLocalToLatLng(int x, int y)
       {
-         return Provider.Projection.FromPixelToLatLng(new GPoint(x - renderOffset.X, y - renderOffset.Y), Zoom);
+         GPoint p = new GPoint(x, y);
+         p.OffsetNegative(renderOffset);
+         p.Offset(compensationOffset);
+
+         return Provider.Projection.FromPixelToLatLng(p, Zoom);
+      }
+
+      /// <summary>
+      /// gets lat/lng from local control coordinates
+      /// </summary>
+      /// <param name="p"></param>
+      /// <returns></returns>
+      public PointLatLng FromLocalToLatLng(GPoint p)
+      {
+         return FromLocalToLatLng(p.X, p.Y);
       }
 
       /// <summary>
@@ -648,6 +663,7 @@ namespace GMap.NET.Internals
       {
          GPoint pLocal = Provider.Projection.FromLatLngToPixel(latlng, Zoom);
          pLocal.Offset(renderOffset);
+         pLocal.OffsetNegative(compensationOffset);
          return pLocal;
       }
 
@@ -742,13 +758,16 @@ namespace GMap.NET.Internals
       /// </summary>
       public void GoToCurrentPosition()
       {
+         compensationOffset = CurrentPositionGPixel; // TODO: fix
+
          // reset stuff
          renderOffset = GPoint.Empty;
          centerTileXYLocationLast = GPoint.Empty;
          dragPoint = GPoint.Empty;
 
-         // goto location
-         this.Drag(new GPoint(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2)));
+         var d = new GPoint(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2));
+         d.Offset(compensationOffset);
+         this.Drag(d);
       }
 
       public bool MouseWheelZooming = false;
@@ -758,6 +777,8 @@ namespace GMap.NET.Internals
       /// </summary>
       internal void GoToCurrentPositionOnZoom()
       {
+         compensationOffset = CurrentPositionGPixel; // TODO: fix
+
          // reset stuff
          renderOffset = GPoint.Empty;
          centerTileXYLocationLast = GPoint.Empty;
@@ -769,6 +790,7 @@ namespace GMap.NET.Internals
             if(MouseWheelZoomType != MouseWheelZoomType.MousePositionWithoutCenter)
             {
                GPoint pt = new GPoint(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2));
+               pt.Offset(compensationOffset);
                renderOffset.X = pt.X - dragPoint.X;
                renderOffset.Y = pt.Y - dragPoint.Y;
             }
@@ -777,6 +799,7 @@ namespace GMap.NET.Internals
                renderOffset.X = -CurrentPositionGPixel.X - dragPoint.X;
                renderOffset.Y = -CurrentPositionGPixel.Y - dragPoint.Y;
                renderOffset.Offset(mouseLastZoom);
+               renderOffset.Offset(compensationOffset);
             }
          }
          else // use current map center
@@ -784,6 +807,7 @@ namespace GMap.NET.Internals
             mouseLastZoom = GPoint.Empty;
 
             GPoint pt = new GPoint(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2));
+            pt.Offset(compensationOffset);
             renderOffset.X = pt.X - dragPoint.X;
             renderOffset.Y = pt.Y - dragPoint.Y;
          }
@@ -1119,9 +1143,13 @@ namespace GMap.NET.Internals
 
                      if(p.X >= minOfTiles.Width && p.Y >= minOfTiles.Height && p.X <= maxOfTiles.Width && p.Y <= maxOfTiles.Height)
                      {
-                        if(!tileDrawingList.Contains(p))
+                        DrawTile dt = new DrawTile(p, new GPoint(p.X * tileRect.Width, p.Y * tileRect.Height));
+
+                        if(!tileDrawingList.Contains(dt))
                         {
-                           tileDrawingList.Add(p);
+                           tileDrawingList.Add(dt);
+
+                           Debug.WriteLine("draw: " + dt);
                         }
                      }
                   }
@@ -1129,13 +1157,13 @@ namespace GMap.NET.Internals
 
                if(GMaps.Instance.ShuffleTilesOnLoad)
                {
-                  Stuff.Shuffle<GPoint>(tileDrawingList);
+                  Stuff.Shuffle<DrawTile>(tileDrawingList);
                }
                #endregion
 
-               foreach(GPoint p in tileDrawingList)
+               foreach(DrawTile p in tileDrawingList)
                {
-                  LoadTask task = new LoadTask(p, Zoom);
+                  LoadTask task = new LoadTask(p.PosXY, Zoom);
                   {
                      if(!tileLoadQueue.Contains(task))
                      {
@@ -1276,7 +1304,10 @@ namespace GMap.NET.Internals
             {
                GMaps.Instance.noMapInstances = true;
                GMaps.Instance.WaitForCache.Set();
+               if(disposing)
+               {
                GMaps.Instance.MemoryCache.Clear();
+               }
 
 #if !DEBUG
 #if !PocketPC

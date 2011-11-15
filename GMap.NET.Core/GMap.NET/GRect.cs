@@ -53,6 +53,30 @@ namespace GMap.NET
          }
       }
 
+      public GPoint RightBottom
+      {
+         get
+         {
+            return new GPoint(Right, Bottom);
+         }
+      }
+
+      public GPoint RightTop
+      {
+         get
+         {
+            return new GPoint(Right, Top);
+         }
+      }
+
+      public GPoint LeftBottom
+      {
+         get
+         {
+            return new GPoint(Left, Bottom);
+         }
+      }
+
       public GSize Size
       {
          get
@@ -278,6 +302,11 @@ namespace GMap.NET
       public void Offset(GPoint pos)
       {
          Offset(pos.X, pos.Y);
+      }
+
+      public void OffsetNegative(GPoint pos)
+      {
+         Offset(-pos.X, -pos.Y);
       }
 
       public void Offset(int x, int y)

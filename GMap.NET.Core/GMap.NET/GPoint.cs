@@ -121,6 +121,10 @@ namespace GMap.NET
       {
          Offset(p.X, p.Y);
       }
+      public void OffsetNegative(GPoint p)
+      {
+         Offset(-p.X, -p.Y);
+      }
 
       public override string ToString()
       {

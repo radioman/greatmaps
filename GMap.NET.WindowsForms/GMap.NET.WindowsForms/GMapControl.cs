@@ -470,7 +470,7 @@ namespace GMap.NET.WindowsForms
       /// render map in GDI+
       /// </summary>
       /// <param name="g"></param>
-      void DrawMapGDIplus(Graphics g)
+      void DrawMap(Graphics g)
       {
          if(MapProvider == EmptyProvider.Instance || MapProvider == null)
          {
@@ -497,18 +497,20 @@ namespace GMap.NET.WindowsForms
                //-----
 #endif
                {
-                  Core.tileRect.X = tilePoint.X * Core.tileRect.Width;
-                  Core.tileRect.Y = tilePoint.Y * Core.tileRect.Height;
+                  Core.tileRect.Location = tilePoint.PosPixel;
+//#if PocketPC
                   Core.tileRect.Offset(Core.renderOffset);
+//#endif
+                  Core.tileRect.OffsetNegative(Core.compensationOffset);
 
                   if(Core.currentRegion.IntersectsWith(Core.tileRect) || IsRotated)
                   {
                      bool found = false;
 #if !ContinuesMap
 
-                     Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tilePoint);
+                     Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tilePoint.PosXY);
 #else
-                     Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tileToDraw);
+                     Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tileToDraw.PosXY);
 #endif
                      if(t != Tile.Empty)
                      {
@@ -540,13 +542,13 @@ namespace GMap.NET.WindowsForms
                         while(ParentTile == null && (Core.Zoom - ZoomOffset) >= 1 && ZoomOffset <= LevelsKeepInMemmory)
                         {
                            Ix = (int)Math.Pow(2, ++ZoomOffset);
-                           ParentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - ZoomOffset, new GPoint((int)(tilePoint.X / Ix), (int)(tilePoint.Y / Ix)));
+                           ParentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - ZoomOffset, new GPoint((int)(tilePoint.PosXY.X / Ix), (int)(tilePoint.PosXY.Y / Ix)));
                         }
 
                         if(ParentTile != Tile.Empty)
                         {
-                           int Xoff = Math.Abs(tilePoint.X - (ParentTile.Pos.X * Ix));
-                           int Yoff = Math.Abs(tilePoint.Y - (ParentTile.Pos.Y * Ix));
+                           int Xoff = Math.Abs(tilePoint.PosXY.X - (ParentTile.Pos.X * Ix));
+                           int Yoff = Math.Abs(tilePoint.PosXY.Y - (ParentTile.Pos.Y * Ix));
 
                            // render tile 
                            lock(ParentTile.Overlays)
@@ -574,7 +576,7 @@ namespace GMap.NET.WindowsForms
                      {
                         lock(Core.FailedLoads)
                         {
-                           var lt = new LoadTask(tilePoint, Core.Zoom);
+                           var lt = new LoadTask(tilePoint.PosXY, Core.Zoom);
                            if(Core.FailedLoads.ContainsKey(lt))
                            {
                               var ex = Core.FailedLoads[lt];
@@ -603,7 +605,7 @@ namespace GMap.NET.WindowsForms
                         g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
                         {
 #if !PocketPC
-                           g.DrawString((tilePoint == Core.centerTileXYLocation ? "CENTER: " : "TILE: ") + tilePoint, MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                           g.DrawString((tilePoint.PosXY == Core.centerTileXYLocation ? "CENTER: " : "TILE: ") + tilePoint, MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #else
                            g.DrawString((tilePoint == Core.centerTileXYLocation? "" :"TILE: ") + tilePoint, MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #endif
@@ -645,6 +647,7 @@ namespace GMap.NET.WindowsForms
          {
             GPoint p = MapProvider.Projection.FromLatLngToPixel(pg, Core.Zoom);
             p.Offset(Core.renderOffset);
+            p.OffsetNegative(Core.compensationOffset);
 
             if(IsRotated)
             {
@@ -674,6 +677,7 @@ namespace GMap.NET.WindowsForms
          {
             GPoint p = MapProvider.Projection.FromLatLngToPixel(pg, Core.Zoom);
             p.Offset(Core.renderOffset);
+            p.OffsetNegative(Core.compensationOffset);
 
             if(IsRotated)
             {
@@ -1159,14 +1163,14 @@ namespace GMap.NET.WindowsForms
                {
                   gxOff.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
                   {
-                     DrawMapGDIplus(gxOff);
+                     DrawMap(gxOff);
                   }
                   gxOff.ResetTransform();
                }
                else
 #endif
                {
-                  DrawMapGDIplus(gxOff);
+                  DrawMap(gxOff);
                }
 
                OnPaintOverlays(gxOff);
@@ -1183,7 +1187,7 @@ namespace GMap.NET.WindowsForms
             {
                e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
                {
-                  DrawMapGDIplus(e.Graphics);
+                  DrawMap(e.Graphics);
                }
                e.Graphics.ResetTransform();
             }
@@ -1200,7 +1204,7 @@ namespace GMap.NET.WindowsForms
                   e.Graphics.RotateTransform(-Bearing);
                   e.Graphics.TranslateTransform((float)(-Core.Width / 2.0), (float)(-Core.Height / 2.0));
 
-                  DrawMapGDIplus(e.Graphics);
+                  DrawMap(e.Graphics);
 
                   e.Graphics.ResetTransform();
 
@@ -1209,7 +1213,12 @@ namespace GMap.NET.WindowsForms
                }
                else
                {
-                  DrawMapGDIplus(e.Graphics);
+#if !PocketPC
+                  var p = Core.renderOffset;
+                  //p.OffsetNegative(Core.compensationOffset);
+                  //e.Graphics.TranslateTransform(p.X, p.Y);
+#endif
+                  DrawMap(e.Graphics);
                   OnPaintOverlays(e.Graphics);
                }
             }
