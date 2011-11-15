@@ -811,7 +811,7 @@ namespace Demo.WindowsMobile
                             str += "Latitude: " + lastData.Latitude.Value + "\n";
                             str += "Longitude: " + lastData.Longitude.Value + "\n\n";
 
-                            if (deltaClock > 5)
+                            if (Math.Abs(deltaClock) > 5) // 5s
                             {
                                 UpdateTime(lastData.Time.Value);
                             }
@@ -898,7 +898,7 @@ namespace Demo.WindowsMobile
                             // center map
                             if (menuItemGPSenabled.Checked)
                             {
-                                if (menuItemSnapToGps.Checked)
+                                if (menuItemSnapToGps.Checked && !MainMap.IsDragging)
                                 {
                                     MainMap.Position = new PointLatLng(lastData.Latitude.Value, lastData.Longitude.Value);
                                 }
@@ -1090,7 +1090,8 @@ namespace Demo.WindowsMobile
             s.Second = (short)gpsTime.Second;
             s.Milliseconds = (short)gpsTime.Millisecond;
 
-            SetSystemTime(ref s);
+            bool t = SetSystemTime(ref s);
+            Debug.WriteLine("SetSystemTime: " + t);
         }
 
         private void menuItemSnapToGps_Click(object sender, EventArgs e)
