@@ -189,7 +189,7 @@ namespace GMap.NET.CacheProviders
       }
 
       /// <summary>
-      /// pre-allocate 256MB free space 'ahead' if needed,
+      /// pre-allocate 32MB free space 'ahead' if needed,
       /// decreases fragmentation
       /// </summary>
       void CheckPreAllocation()
@@ -235,8 +235,8 @@ namespace GMap.NET.CacheProviders
             var freeMB = (pageSize * freePages) / (1024.0 * 1024.0);
 
 #if !PocketPC
-            int addSizeMB = 256;
-            int waitUntilMB = 8;
+            int addSizeMB = 32;
+            int waitUntilMB = 4;
 #else
             int addSizeMB = 4; // reduce due to test in emulator
             int waitUntilMB = 2;

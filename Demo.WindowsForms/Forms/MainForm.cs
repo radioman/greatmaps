@@ -70,14 +70,14 @@ namespace Demo.WindowsForms
                MessageBox.Show("No internet connection avaible, going to CacheOnly mode.", "GMap.NET - Demo.WindowsForms", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            MainMap.Manager.Mode = AccessMode.ServerOnly;
+            //MainMap.Manager.Mode = AccessMode.ServerOnly;
 
             // config map 
             MainMap.MapProvider = GMapProviders.GoogleMap;
-            MainMap.Position = new PointLatLng(10.267765, -67.58678);//54.6961334816182, 25.2985095977783
+            //MainMap.Position = new PointLatLng(10.267765, -67.58678);//54.6961334816182, 25.2985095977783
             MainMap.MinZoom = 1;
             MainMap.MaxZoom = 17;
-            MainMap.Zoom = 17;
+            MainMap.Zoom = 1;
 
             // map events
             MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);
@@ -91,6 +91,8 @@ namespace Demo.WindowsForms
             MainMap.MouseUp += new MouseEventHandler(MainMap_MouseUp);
             MainMap.OnMarkerEnter += new MarkerEnter(MainMap_OnMarkerEnter);
             MainMap.OnMarkerLeave += new MarkerLeave(MainMap_OnMarkerLeave);
+            MainMap.Manager.OnTileCacheComplete += new TileCacheComplete(OnTileCacheComplete);
+            MainMap.Manager.OnTileCacheStart += new TileCacheComplete(OnTileCacheStart); 
 
             // get map types
 #if !MONO   // mono doesn't handle it, so we 'lost' provider list ;]
@@ -276,7 +278,7 @@ namespace Demo.WindowsForms
                   marker = new GMapMarkerGoogleGreen(d.point);
                   marker.Tag = d.Id;
                   marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
-                  (marker as GMapMarkerGoogleGreen).Bearing = (float?)d.bearing;
+                  //(marker as GMapMarkerGoogleGreen).Bearing = (float?)d.bearing;
 
                   flightMarkers[d.Id] = marker;
                   objects.Markers.Add(marker);
@@ -284,14 +286,14 @@ namespace Demo.WindowsForms
                else
                {
                   marker.Position = d.point;
-                  (marker as GMapMarkerGoogleGreen).Bearing = (float?)d.bearing;
+                  //(marker as GMapMarkerGoogleGreen).Bearing = (float?)d.bearing;
                }
                marker.ToolTipText = d.name + ", " + d.altitude + ", " + d.speed;
 
                if(currentFlight != null && currentFlight == marker)
                {
                   MainMap.Position = marker.Position;
-                  MainMap.Bearing = (float)d.bearing;
+                  //MainMap.Bearing = (float)d.bearing;
                }
             }
          }
@@ -1302,6 +1304,17 @@ namespace Demo.WindowsForms
       #endregion
 
       #region -- map events --
+
+      void OnTileCacheComplete()
+      {
+         Debug.WriteLine("OnTileCacheComplete");
+      }
+
+      void OnTileCacheStart()
+      {
+         Debug.WriteLine("OnTileCacheStart");
+      }
+
       void MainMap_OnMarkerLeave(GMapMarker item)
       {
          if(item is GMapMarkerRect)
@@ -1364,7 +1377,7 @@ namespace Demo.WindowsForms
                var px = MainMap.MapProvider.Projection.FromLatLngToPixel(currentMarker.Position.Lat, currentMarker.Position.Lng, (int)MainMap.Zoom);
                var tile = MainMap.MapProvider.Projection.FromPixelToTileXY(px);
 
-               Debug.WriteLine("MouseDown: " + currentMarker.LocalPosition + " | geo: " + currentMarker.Position + " | px: " + px + " | tile: " + tile);
+               Debug.WriteLine("MouseDown: geo: " + currentMarker.Position + " | px: " + px + " | tile: " + tile);
             }
          }
       }
@@ -1511,7 +1524,7 @@ namespace Demo.WindowsForms
       {
          if(objects.Markers.Count > 0)
          {
-            MainMap.ZoomAndCenterMarkers(null);
+            //MainMap.ZoomAndCenterMarkers(null);
             trackBar1.Value = (int)MainMap.Zoom;
          }
       }
@@ -1644,10 +1657,18 @@ namespace Demo.WindowsForms
             try
             {
                System.IO.Directory.Delete(MainMap.CacheLocation, true);
+               MessageBox.Show("Done. Cache is clear.");
             }
             catch(Exception ex)
             {
-               MessageBox.Show(ex.Message);
+               if(ex.Message != "Access to the path 'System.Data.SQLite.DLL' is denied.")
+               {
+                  MessageBox.Show(ex.Message);
+               }
+               else
+               {
+                  MessageBox.Show("Done. Cache is clear.");
+               }
             }
          }
       }

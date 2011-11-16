@@ -662,7 +662,7 @@ namespace GMap.NET.Internals
       public GPoint FromLatLngToLocal(PointLatLng latlng)
       {
          GPoint pLocal = Provider.Projection.FromLatLngToPixel(latlng, Zoom);
-         pLocal.Offset(renderOffset);
+         //pLocal.Offset(renderOffset); // control uses render transform
          pLocal.OffsetNegative(compensationOffset);
          return pLocal;
       }
@@ -1100,6 +1100,8 @@ namespace GMap.NET.Internals
 
       public AutoResetEvent Refresh = new AutoResetEvent(false);
 
+      public bool updatingBounds = false;
+
       /// <summary>
       /// updates map bounds
       /// </summary>
@@ -1110,22 +1112,21 @@ namespace GMap.NET.Internals
             return;
          }
 
-         Monitor.Enter(tileLoadQueue);
+         updatingBounds = true;
+
+         tileDrawingListLock.AcquireWriterLock();
          try
          {
-            tileDrawingListLock.AcquireWriterLock();
-            try
-            {
-               #region -- find tiles around --
-               tileDrawingList.Clear();
+            #region -- find tiles around --
+            tileDrawingList.Clear();
 
-               for(int i = -sizeOfMapArea.Width; i <= sizeOfMapArea.Width; i++)
+            for(int i = -sizeOfMapArea.Width; i <= sizeOfMapArea.Width; i++)
+            {
+               for(int j = -sizeOfMapArea.Height; j <= sizeOfMapArea.Height; j++)
                {
-                  for(int j = -sizeOfMapArea.Height; j <= sizeOfMapArea.Height; j++)
-                  {
-                     GPoint p = centerTileXYLocation;
-                     p.X += i;
-                     p.Y += j;
+                  GPoint p = centerTileXYLocation;
+                  p.X += i;
+                  p.Y += j;
 
 #if ContinuesMap
                // ----------------------------
@@ -1141,26 +1142,37 @@ namespace GMap.NET.Internals
                // ----------------------------
 #endif
 
-                     if(p.X >= minOfTiles.Width && p.Y >= minOfTiles.Height && p.X <= maxOfTiles.Width && p.Y <= maxOfTiles.Height)
+                  if(p.X >= minOfTiles.Width && p.Y >= minOfTiles.Height && p.X <= maxOfTiles.Width && p.Y <= maxOfTiles.Height)
+                  {
+                     DrawTile dt = new DrawTile(p, new GPoint(p.X * tileRect.Width, p.Y * tileRect.Height));
+
+                     if(!tileDrawingList.Contains(dt))
                      {
-                        DrawTile dt = new DrawTile(p, new GPoint(p.X * tileRect.Width, p.Y * tileRect.Height));
+                        tileDrawingList.Add(dt);
 
-                        if(!tileDrawingList.Contains(dt))
-                        {
-                           tileDrawingList.Add(dt);
-
-                           Debug.WriteLine("draw: " + dt);
-                        }
+                        Debug.WriteLine("draw: " + dt);
                      }
                   }
                }
+            }
 
-               if(GMaps.Instance.ShuffleTilesOnLoad)
-               {
-                  Stuff.Shuffle<DrawTile>(tileDrawingList);
-               }
-               #endregion
+            if(GMaps.Instance.ShuffleTilesOnLoad)
+            {
+               Stuff.Shuffle<DrawTile>(tileDrawingList);
+            }
+            #endregion
+         }
+         finally
+         {
+            tileDrawingListLock.ReleaseWriterLock();
+         }
 
+         Monitor.Enter(tileLoadQueue);
+         try
+         {
+            tileDrawingListLock.AcquireReaderLock();
+            try
+            {
                foreach(DrawTile p in tileDrawingList)
                {
                   LoadTask task = new LoadTask(p.PosXY, Zoom);
@@ -1174,7 +1186,7 @@ namespace GMap.NET.Internals
             }
             finally
             {
-               tileDrawingListLock.ReleaseWriterLock();
+               tileDrawingListLock.ReleaseReaderLock();
             }
 
             #region -- starts loader threads if needed --
@@ -1210,6 +1222,8 @@ namespace GMap.NET.Internals
          {
             Monitor.Exit(tileLoadQueue);
          }
+
+         updatingBounds = false;
 
          if(OnTileLoadStart != null)
          {
@@ -1306,7 +1320,7 @@ namespace GMap.NET.Internals
                GMaps.Instance.WaitForCache.Set();
                if(disposing)
                {
-               GMaps.Instance.MemoryCache.Clear();
+                  GMaps.Instance.MemoryCache.Clear();
                }
 
 #if !DEBUG

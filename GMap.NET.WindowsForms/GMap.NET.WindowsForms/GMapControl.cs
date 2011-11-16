@@ -465,20 +465,21 @@ namespace GMap.NET.WindowsForms
             Refresh();
          }
       }
-
+      
       /// <summary>
       /// render map in GDI+
       /// </summary>
       /// <param name="g"></param>
       void DrawMap(Graphics g)
       {
-         if(MapProvider == EmptyProvider.Instance || MapProvider == null)
+         if(Core.updatingBounds || MapProvider == EmptyProvider.Instance || MapProvider == null)
          {
+            Debug.WriteLine("Core.updatingBounds");
             return;
          }
 
-         Core.Matrix.EnterReadLock();
          Core.tileDrawingListLock.AcquireReaderLock();
+         Core.Matrix.EnterReadLock();
          try
          {
             foreach(var tilePoint in Core.tileDrawingList)
@@ -498,12 +499,12 @@ namespace GMap.NET.WindowsForms
 #endif
                {
                   Core.tileRect.Location = tilePoint.PosPixel;
-//#if PocketPC
-                  Core.tileRect.Offset(Core.renderOffset);
-//#endif
+                  //#if PocketPC
+                  //Core.tileRect.Offset(Core.renderOffset);
+                  //#endif
                   Core.tileRect.OffsetNegative(Core.compensationOffset);
 
-                  if(Core.currentRegion.IntersectsWith(Core.tileRect) || IsRotated)
+                  //if(Core.currentRegion.IntersectsWith(Core.tileRect) || IsRotated)
                   {
                      bool found = false;
 #if !ContinuesMap
@@ -617,8 +618,8 @@ namespace GMap.NET.WindowsForms
          }
          finally
          {
-            Core.tileDrawingListLock.ReleaseReaderLock();
             Core.Matrix.LeaveReadLock();
+            Core.tileDrawingListLock.ReleaseReaderLock();
          }
       }
 
@@ -628,7 +629,12 @@ namespace GMap.NET.WindowsForms
       /// <param name="marker"></param>
       public void UpdateMarkerLocalPosition(GMapMarker marker)
       {
-         GPoint p = FromLatLngToLocal(marker.Position);
+         //GPoint p = FromLatLngToLocal(marker.Position);
+
+         GPoint p = MapProvider.Projection.FromLatLngToPixel(marker.Position, Core.Zoom);
+         //p.Offset(Core.renderOffset);
+         p.OffsetNegative(Core.compensationOffset);
+
          {
             var f = new System.Drawing.Point(p.X + marker.Offset.X, p.Y + marker.Offset.Y);
             marker.LocalPosition = f;
@@ -646,7 +652,7 @@ namespace GMap.NET.WindowsForms
          foreach(GMap.NET.PointLatLng pg in route.Points)
          {
             GPoint p = MapProvider.Projection.FromLatLngToPixel(pg, Core.Zoom);
-            p.Offset(Core.renderOffset);
+            //p.Offset(Core.renderOffset);
             p.OffsetNegative(Core.compensationOffset);
 
             if(IsRotated)
@@ -676,7 +682,7 @@ namespace GMap.NET.WindowsForms
          foreach(GMap.NET.PointLatLng pg in polygon.Points)
          {
             GPoint p = MapProvider.Projection.FromLatLngToPixel(pg, Core.Zoom);
-            p.Offset(Core.renderOffset);
+            //p.Offset(Core.renderOffset);
             p.OffsetNegative(Core.compensationOffset);
 
             if(IsRotated)
@@ -1216,9 +1222,12 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
                   var p = Core.renderOffset;
                   //p.OffsetNegative(Core.compensationOffset);
-                  //e.Graphics.TranslateTransform(p.X, p.Y);
+                  e.Graphics.TranslateTransform(p.X, p.Y);
 #endif
                   DrawMap(e.Graphics);
+
+                  //e.Graphics.ResetTransform();
+
                   OnPaintOverlays(e.Graphics);
                }
             }
@@ -1348,6 +1357,7 @@ namespace GMap.NET.WindowsForms
             g.FillRectangle(SelectedAreaFill, x1, y1, x2 - x1, y2 - y1);
          }
 #endif
+         g.ResetTransform();
 
          #region -- copyright --
 
@@ -1709,7 +1719,8 @@ namespace GMap.NET.WindowsForms
             {
                Core.mouseCurrent = ApplyRotationInversion(e.X, e.Y);
                Core.Drag(Core.mouseCurrent);
-               ForceUpdateOverlays();
+               //ForceUpdateOverlays();
+               Refresh();
             }
          }
          else

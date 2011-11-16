@@ -69,29 +69,46 @@ namespace GMap.NET
       /// <returns></returns>
       public abstract PointLatLng FromPixelToLatLng(int x, int y, int zoom);
 
+      public GPoint FromLatLngToPixel(PointLatLng p, int zoom)
+      {
+         return FromLatLngToPixel(p, zoom, false);
+      }
+
       /// <summary>
       /// get pixel coordinates from lat/lng
       /// </summary>
       /// <param name="p"></param>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public GPoint FromLatLngToPixel(PointLatLng p, int zoom)
+      public GPoint FromLatLngToPixel(PointLatLng p, int zoom, bool useCache)
       {
-         GPoint ret = GPoint.Empty;
-         if(!FromLatLngToPixelCache[zoom].TryGetValue(p, out ret))
+         if(useCache)
          {
-            ret = FromLatLngToPixel(p.Lat, p.Lng, zoom);
-            FromLatLngToPixelCache[zoom].Add(p, ret);
-
-            // for reverse cache
-            if(!FromPixelToLatLngCache[zoom].ContainsKey(ret))
+            GPoint ret = GPoint.Empty;
+            if(!FromLatLngToPixelCache[zoom].TryGetValue(p, out ret))
             {
-               FromPixelToLatLngCache[zoom].Add(ret, p);
-            }
+               ret = FromLatLngToPixel(p.Lat, p.Lng, zoom);
+               FromLatLngToPixelCache[zoom].Add(p, ret);
 
-            Debug.WriteLine("FromLatLngToPixelCache[" + zoom + "] added " + p + " with " + ret);
+               // for reverse cache
+               if(!FromPixelToLatLngCache[zoom].ContainsKey(ret))
+               {
+                  FromPixelToLatLngCache[zoom].Add(ret, p);
+               }
+
+               Debug.WriteLine("FromLatLngToPixelCache[" + zoom + "] added " + p + " with " + ret);
+            }
+            return ret;
          }
-         return ret;
+         else
+         {
+            return FromLatLngToPixel(p.Lat, p.Lng, zoom);
+         }
+      }
+
+      public PointLatLng FromPixelToLatLng(GPoint p, int zoom)
+      {
+         return FromPixelToLatLng(p, zoom, false);
       }
 
       /// <summary>
@@ -100,23 +117,30 @@ namespace GMap.NET
       /// <param name="p"></param>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public PointLatLng FromPixelToLatLng(GPoint p, int zoom)
+      public PointLatLng FromPixelToLatLng(GPoint p, int zoom, bool useCache)
       {
-         PointLatLng ret = PointLatLng.Zero;
-         if(!FromPixelToLatLngCache[zoom].TryGetValue(p, out ret))
+         if(useCache)
          {
-            ret = FromPixelToLatLng(p.X, p.Y, zoom);
-            FromPixelToLatLngCache[zoom].Add(p, ret);
-
-            // for reverse cache
-            if(!FromLatLngToPixelCache[zoom].ContainsKey(ret))
+            PointLatLng ret = PointLatLng.Zero;
+            if(!FromPixelToLatLngCache[zoom].TryGetValue(p, out ret))
             {
-               FromLatLngToPixelCache[zoom].Add(ret, p);
-            }
+               ret = FromPixelToLatLng(p.X, p.Y, zoom);
+               FromPixelToLatLngCache[zoom].Add(p, ret);
 
-            Debug.WriteLine("FromPixelToLatLngCache[" + zoom + "] added " + p + " with " + ret);
+               // for reverse cache
+               if(!FromLatLngToPixelCache[zoom].ContainsKey(ret))
+               {
+                  FromLatLngToPixelCache[zoom].Add(ret, p);
+               }
+
+               Debug.WriteLine("FromPixelToLatLngCache[" + zoom + "] added " + p + " with " + ret);
+            }
+            return ret;
          }
-         return ret;
+         else
+         {
+            return FromPixelToLatLng(p.X, p.Y, zoom);
+         }
       }
 
       /// <summary>

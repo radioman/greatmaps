@@ -424,6 +424,8 @@ namespace GMap.NET.WindowsPresentation
 
       public GMapControl()
       {
+         throw new Exception("..due core reconstruction, unusable at this moment");
+
          if(!DesignModeInConstruct)
          {
             #region -- templates --

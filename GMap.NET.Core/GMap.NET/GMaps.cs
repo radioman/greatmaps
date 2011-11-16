@@ -287,6 +287,9 @@ namespace GMap.NET
       volatile bool abortCacheLoop = false;
       internal volatile bool noMapInstances = false;
 
+      public TileCacheComplete OnTileCacheComplete;
+      public TileCacheComplete OnTileCacheStart;
+
       /// <summary>
       /// immediately stops background tile caching, call it if you want fast exit the process
       /// </summary>
@@ -317,6 +320,7 @@ namespace GMap.NET
       void CacheEngineLoop()
       {
          Debug.WriteLine("CacheEngine: start");
+         int left = 0;
          while(!abortCacheLoop)
          {
             try
@@ -325,7 +329,8 @@ namespace GMap.NET
 
                lock(tileCacheQueue)
                {
-                  if(tileCacheQueue.Count > 0)
+                  left = tileCacheQueue.Count;
+                  if(left > 0)
                   {
                      task = tileCacheQueue.Dequeue();
                   }
@@ -336,7 +341,7 @@ namespace GMap.NET
                   // check if stream wasn't disposed somehow
                   if(task.Value.Img != null)
                   {
-                     Debug.WriteLine("CacheEngine: storing tile " + task.Value + "...");
+                     Debug.WriteLine("CacheEngine[" + left + "]: storing tile " + task.Value + "...");
 
                      if((task.Value.CacheType & CacheUsage.First) == CacheUsage.First && PrimaryCache != null)
                      {
@@ -377,9 +382,21 @@ namespace GMap.NET
                }
                else
                {
+                  if(OnTileCacheComplete != null)
+                  {
+                     OnTileCacheComplete();
+                  }
+
                   if(abortCacheLoop || noMapInstances || !WaitForCache.WaitOne(33333, false) || noMapInstances)
                   {
                      break;
+                  }
+                  else
+                  {
+                     if(OnTileCacheStart != null)
+                     {
+                        OnTileCacheStart();
+                     }
                   }
                }
             }

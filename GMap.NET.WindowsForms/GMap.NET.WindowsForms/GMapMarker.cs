@@ -49,18 +49,18 @@ namespace GMap.NET.WindowsForms
          {
             if(position != value)
             {
-            position = value;
+               position = value;
 
-            if(IsVisible)
-            {
-               if(Overlay != null && Overlay.Control != null)
+               if(IsVisible)
                {
-                  GPoint p = Overlay.Control.FromLatLngToLocal(Position);
-                  LocalPosition = new Point(p.X + Offset.X, p.Y + Offset.Y);
+                  if(Overlay != null && Overlay.Control != null)
+                  {
+                     GPoint p = Overlay.Control.FromLatLngToLocal(Position);
+                     LocalPosition = new Point(p.X + Offset.X, p.Y + Offset.Y);
+                  }
                }
             }
          }
-      }
       }
 
       public object Tag;

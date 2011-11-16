@@ -7,6 +7,9 @@ namespace GMap.NET
 
    public delegate void TileLoadComplete(long ElapsedMilliseconds);
    public delegate void TileLoadStart();
+
+   public delegate void TileCacheComplete();
+   public delegate void OnTileCacheStart();
   
    public delegate void MapDrag();
    public delegate void MapZoomChanged();

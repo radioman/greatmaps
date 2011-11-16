@@ -17,7 +17,7 @@ namespace GMap.NET.Internals
 
       public override string ToString()
       {
-         return "PosXY: " + PosXY + ", PosPixel: " + PosPixel;
+         return PosXY + ", px: " + PosPixel;
       }
    }
 }

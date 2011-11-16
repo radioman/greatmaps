@@ -241,7 +241,7 @@ namespace GMap.NET.WindowsForms
                // markers
                foreach(GMapMarker m in Markers)
                {
-                  if(m.IsVisible && (m.DisableRegionCheck || Control.Core.currentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y)))
+                  //if(m.IsVisible && (m.DisableRegionCheck || Control.Core.currentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y)))
                   {
                      m.OnRender(g);
                   }
@@ -250,7 +250,7 @@ namespace GMap.NET.WindowsForms
                // tooltips above
                foreach(GMapMarker m in Markers)
                {
-                  if(m.ToolTip != null && m.IsVisible && Control.Core.currentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
+                  //if(m.ToolTip != null && m.IsVisible && Control.Core.currentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
                   {
                      if(!string.IsNullOrEmpty(m.ToolTipText) && (m.ToolTipMode == MarkerTooltipMode.Always || (m.ToolTipMode == MarkerTooltipMode.OnMouseOver && m.IsMouseOver)))
                      {
