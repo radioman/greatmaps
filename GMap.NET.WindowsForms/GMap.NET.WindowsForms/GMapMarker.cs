@@ -140,6 +140,19 @@ namespace GMap.NET.WindowsForms
          }
       }
 
+      public Rectangle LocalAreaTmp
+      {
+         get
+         {
+            Rectangle r = area;
+            if(Overlay != null && Overlay.Control != null)
+            {
+               r.Offset(Overlay.Control.Core.renderOffset.X, overlay.Control.Core.renderOffset.Y);
+            }
+            return r;
+         }
+      }
+
       public GMapToolTip ToolTip;
 
       public MarkerTooltipMode ToolTipMode = MarkerTooltipMode.OnMouseOver;

@@ -70,14 +70,12 @@ namespace Demo.WindowsForms
                MessageBox.Show("No internet connection avaible, going to CacheOnly mode.", "GMap.NET - Demo.WindowsForms", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            //MainMap.Manager.Mode = AccessMode.ServerOnly;
-
             // config map 
-            MainMap.MapProvider = GMapProviders.GoogleMap;
-            //MainMap.Position = new PointLatLng(10.267765, -67.58678);//54.6961334816182, 25.2985095977783
+            MainMap.MapProvider = GMapProviders.OpenStreetMap;
+            MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
             MainMap.MinZoom = 1;
             MainMap.MaxZoom = 17;
-            MainMap.Zoom = 1;
+            MainMap.Zoom = 9;
 
             // map events
             MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);
@@ -92,7 +90,7 @@ namespace Demo.WindowsForms
             MainMap.OnMarkerEnter += new MarkerEnter(MainMap_OnMarkerEnter);
             MainMap.OnMarkerLeave += new MarkerLeave(MainMap_OnMarkerLeave);
             MainMap.Manager.OnTileCacheComplete += new TileCacheComplete(OnTileCacheComplete);
-            MainMap.Manager.OnTileCacheStart += new TileCacheComplete(OnTileCacheStart); 
+            MainMap.Manager.OnTileCacheStart += new TileCacheComplete(OnTileCacheStart);
 
             // get map types
 #if !MONO   // mono doesn't handle it, so we 'lost' provider list ;]
@@ -1524,7 +1522,7 @@ namespace Demo.WindowsForms
       {
          if(objects.Markers.Count > 0)
          {
-            //MainMap.ZoomAndCenterMarkers(null);
+            MainMap.ZoomAndCenterMarkers(null);
             trackBar1.Value = (int)MainMap.Zoom;
          }
       }

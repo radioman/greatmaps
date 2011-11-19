@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Demo.WindowsForms;
 using Demo.WindowsPresentation.CustomMarkers;
 using GMap.NET;
-using GMap.NET.WindowsPresentation;
-using System.IO;
 using GMap.NET.MapProviders;
-using Demo.WindowsForms;
-using System.Windows.Media.Animation;
+using GMap.NET.WindowsPresentation;
 
 namespace Demo.WindowsPresentation
 {
@@ -39,7 +39,7 @@ namespace Demo.WindowsPresentation
          // add your custom map db provider
          //MySQLPureImageCache ch = new MySQLPureImageCache();
          //ch.ConnectionString = @"server=sql2008;User Id=trolis;Persist Security Info=True;database=gmapnetcache;password=trolis;";
-         //MainMap.Manager.ImageCacheSecond = ch;
+         //MainMap.Manager.SecondaryCache = ch;
 
          // set your proxy here if need
          //GMapProvider.WebProxy = new WebProxy("10.2.0.100", 8080);

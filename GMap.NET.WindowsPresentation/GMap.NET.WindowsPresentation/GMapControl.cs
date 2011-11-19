@@ -424,8 +424,6 @@ namespace GMap.NET.WindowsPresentation
 
       public GMapControl()
       {
-         throw new Exception("..due core reconstruction, unusable at this moment");
-
          if(!DesignModeInConstruct)
          {
             #region -- templates --
@@ -678,11 +676,17 @@ namespace GMap.NET.WindowsPresentation
          {
             foreach(var tilePoint in Core.tileDrawingList)
             {
-               Core.tileRect.Location = tilePoint.PosXY;
-               Core.tileRect.Offset(Core.renderOffset);
+               //Core.tileRect.Location = tilePoint.PosXY;
+               //Core.tileRect.Offset(Core.renderOffset);
+               //Core.tileRect.OffsetNegative(Core.compensationOffset);
+
+               Core.tileRect.Location = tilePoint.PosPixel;
+               //#if PocketPC
+               //Core.tileRect.Offset(Core.renderOffset);
+               //#endif
                Core.tileRect.OffsetNegative(Core.compensationOffset);
 
-               if(region.IntersectsWith(Core.tileRect) || IsRotated)
+               //if(region.IntersectsWith(Core.tileRect) || IsRotated)
                {
                   bool found = false;
 
@@ -772,11 +776,13 @@ namespace GMap.NET.WindowsPresentation
                      if(tilePoint.PosXY == Core.centerTileXYLocation)
                      {
                         FormattedText TileText = new FormattedText("CENTER:" + tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
+                        TileText.MaxTextWidth = Core.tileRect.Width;
                         g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - TileText.Height / 2));
                      }
                      else
                      {
                         FormattedText TileText = new FormattedText("TILE: " + tilePoint.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tileTypeface, 16, Brushes.Red);
+                        TileText.MaxTextWidth = Core.tileRect.Width;
                         g.DrawText(TileText, new System.Windows.Point(Core.tileRect.X + Core.tileRect.Width / 2 - EmptyTileText.Width / 2, Core.tileRect.Y + Core.tileRect.Height / 2 - TileText.Height / 2));
                      }
                   }
@@ -1096,38 +1102,38 @@ namespace GMap.NET.WindowsPresentation
          }
          set
          {
-            if(Core.bearing != value)
-            {
-               bool resize = Core.bearing == 0;
-               Core.bearing = value;
+            //if(Core.bearing != value)
+            //{
+            //   bool resize = Core.bearing == 0;
+            //   Core.bearing = value;
 
-               UpdateRotationMatrix();
+            //   UpdateRotationMatrix();
 
-               if(value != 0 && value % 360 != 0)
-               {
-                  Core.IsRotated = true;
+            //   if(value != 0 && value % 360 != 0)
+            //   {
+            //      Core.IsRotated = true;
 
-                  if(Core.tileRectBearing.Size == Core.tileRect.Size)
-                  {
-                     Core.tileRectBearing = Core.tileRect;
-                     Core.tileRectBearing.Inflate(1, 1);
-                  }
-               }
-               else
-               {
-                  Core.IsRotated = false;
-                  Core.tileRectBearing = Core.tileRect;
-               }
+            //      if(Core.tileRectBearing.Size == Core.tileRect.Size)
+            //      {
+            //         Core.tileRectBearing = Core.tileRect;
+            //         Core.tileRectBearing.Inflate(1, 1);
+            //      }
+            //   }
+            //   else
+            //   {
+            //      Core.IsRotated = false;
+            //      Core.tileRectBearing = Core.tileRect;
+            //   }
 
-               if(resize)
-               {
-                  Core.OnMapSizeChanged((int)ActualWidth, (int)ActualHeight);
-               }
+            //   if(resize)
+            //   {
+            //      Core.OnMapSizeChanged((int)ActualWidth, (int)ActualHeight);
+            //   }
 
-               Core_OnMapZoomChanged();
+            //   Core_OnMapZoomChanged();
 
-               InvalidateVisual();
-            }
+            //   InvalidateVisual();
+            //}
          }
       }
 
@@ -1193,14 +1199,20 @@ namespace GMap.NET.WindowsPresentation
             if(MapRenderTransform != null)
             {
                drawingContext.PushTransform(MapRenderTransform);
+               drawingContext.PushTransform(MapTranslateTransform);
                {
                   DrawMapWPF(drawingContext);
                }
                drawingContext.Pop();
+               drawingContext.Pop();
             }
             else
             {
-               DrawMapWPF(drawingContext);
+               drawingContext.PushTransform(MapTranslateTransform);
+               {
+                  DrawMapWPF(drawingContext);
+               }
+               drawingContext.Pop();
             }
          }
 
