@@ -1150,7 +1150,7 @@ namespace GMap.NET.Internals
                      {
                         tileDrawingList.Add(dt);
 
-                        Debug.WriteLine("draw: " + dt);
+                        //Debug.WriteLine("draw: " + dt);
                      }
                   }
                }

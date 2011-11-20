@@ -488,6 +488,8 @@ namespace GMap.NET.WindowsPresentation
             Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
             Loaded += new RoutedEventHandler(GMapControl_Loaded);
             Unloaded += new RoutedEventHandler(GMapControl_Unloaded);
+            Dispatcher.ShutdownStarted += new EventHandler(Dispatcher_ShutdownStarted);
+
             SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
 
             // by default its internal property, feel free to use your own
@@ -495,6 +497,8 @@ namespace GMap.NET.WindowsPresentation
             {
                ItemsSource = Markers;
             }
+
+            this.
 
             Core.Zoom = (int)((double)ZoomProperty.DefaultMetadata.DefaultValue);
          }
@@ -578,6 +582,11 @@ namespace GMap.NET.WindowsPresentation
       }
 
       void GMapControl_Unloaded(object sender, RoutedEventArgs e)
+      {
+         Core.OnMapClose();
+      }
+
+      void Dispatcher_ShutdownStarted(object sender, EventArgs e)
       {
          Core.OnMapClose();
       }
@@ -670,8 +679,8 @@ namespace GMap.NET.WindowsPresentation
             return;
          }
 
-         Core.Matrix.EnterReadLock();
          Core.tileDrawingListLock.AcquireReaderLock();
+         Core.Matrix.EnterReadLock();          
          try
          {
             foreach(var tilePoint in Core.tileDrawingList)
@@ -791,8 +800,8 @@ namespace GMap.NET.WindowsPresentation
          }
          finally
          {
-            Core.tileDrawingListLock.ReleaseReaderLock();
             Core.Matrix.LeaveReadLock();
+            Core.tileDrawingListLock.ReleaseReaderLock();             
          }
       }
 
