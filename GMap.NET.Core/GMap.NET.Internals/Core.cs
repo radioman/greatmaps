@@ -662,7 +662,7 @@ namespace GMap.NET.Internals
       public GPoint FromLatLngToLocal(PointLatLng latlng)
       {
          GPoint pLocal = Provider.Projection.FromLatLngToPixel(latlng, Zoom);
-         //pLocal.Offset(renderOffset); // control uses render transform
+         pLocal.Offset(renderOffset); // control uses render transform
          pLocal.OffsetNegative(compensationOffset);
          return pLocal;
       }
@@ -765,8 +765,11 @@ namespace GMap.NET.Internals
          centerTileXYLocationLast = GPoint.Empty;
          dragPoint = GPoint.Empty;
 
-         var d = new GPoint(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2));
-         d.Offset(compensationOffset);
+         //var dd = new GPoint(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2));
+         //dd.Offset(compensationOffset);
+
+         var d = new GPoint(Width / 2, Height / 2);
+
          this.Drag(d);
       }
 
@@ -933,6 +936,7 @@ namespace GMap.NET.Internals
                      }
 
                      #region -- clear stuff--
+                     if(IsStarted)
                      {
                         GMaps.Instance.MemoryCache.RemoveOverload();
 
@@ -981,7 +985,7 @@ namespace GMap.NET.Internals
                Monitor.Exit(tileLoadQueue);
             }
 
-            if(task.HasValue)
+            if(task.HasValue && IsStarted)
             {
                try
                {
@@ -1056,7 +1060,7 @@ namespace GMap.NET.Internals
                         while(++retry < RetryLoadTile);
                      }
 
-                     if(t.Overlays.Count > 0)
+                     if(t.Overlays.Count > 0 && IsStarted)
                      {
                         Matrix.SetTile(t);
                      }

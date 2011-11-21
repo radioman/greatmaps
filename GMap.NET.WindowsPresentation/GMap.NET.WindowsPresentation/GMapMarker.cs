@@ -286,7 +286,7 @@ namespace GMap.NET.WindowsPresentation
          if(Map != null)
          {
             GPoint p = Map.FromLatLngToLocal(Position);
-            //p.Offset(-(int)Map.MapTranslateTransform.X, -(int)Map.MapTranslateTransform.Y);
+            p.Offset(-(int)Map.MapTranslateTransform.X, -(int)Map.MapTranslateTransform.Y);
 
             LocalPositionX = p.X + (int)(Offset.X);
             LocalPositionY = p.Y + (int)(Offset.Y);

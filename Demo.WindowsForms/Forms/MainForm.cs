@@ -1614,10 +1614,17 @@ namespace Demo.WindowsForms
       // go to
       private void button8_Click(object sender, EventArgs e)
       {
-         double lat = double.Parse(textBoxLat.Text, CultureInfo.InvariantCulture);
-         double lng = double.Parse(textBoxLng.Text, CultureInfo.InvariantCulture);
+         try
+         {
+            double lat = double.Parse(textBoxLat.Text, CultureInfo.InvariantCulture);
+            double lng = double.Parse(textBoxLng.Text, CultureInfo.InvariantCulture);
 
-         MainMap.Position = new PointLatLng(lat, lng);
+            MainMap.Position = new PointLatLng(lat, lng);
+         }
+         catch(Exception ex)
+         {
+            MessageBox.Show("incorrect coordinate format: " + ex.Message);
+         }
       }
 
       // goto by geocoder

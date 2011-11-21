@@ -55,8 +55,7 @@ namespace GMap.NET.WindowsForms
                {
                   if(Overlay != null && Overlay.Control != null)
                   {
-                     GPoint p = Overlay.Control.FromLatLngToLocal(Position);
-                     LocalPosition = new Point(p.X + Offset.X, p.Y + Offset.Y);
+                     Overlay.Control.UpdateMarkerLocalPosition(this);
                   }
                }
             }
@@ -140,7 +139,7 @@ namespace GMap.NET.WindowsForms
          }
       }
 
-      public Rectangle LocalAreaTmp
+      internal Rectangle LocalAreaInControlSpace
       {
          get
          {

@@ -631,6 +631,8 @@ namespace GMap.NET.WindowsForms
       {
          GPoint p = FromLatLngToLocal(marker.Position);
          {
+            p.OffsetNegative(Core.renderOffset);
+
             var f = new System.Drawing.Point(p.X + marker.Offset.X, p.Y + marker.Offset.Y);
             marker.LocalPosition = f;
          }
@@ -647,6 +649,8 @@ namespace GMap.NET.WindowsForms
          foreach(GMap.NET.PointLatLng pg in route.Points)
          {
             GPoint p = FromLatLngToLocal(pg);
+
+            p.OffsetNegative(Core.renderOffset);
 
             //            if(IsRotated)
             //            {
@@ -675,6 +679,8 @@ namespace GMap.NET.WindowsForms
          foreach(GMap.NET.PointLatLng pg in polygon.Points)
          {
             GPoint p = FromLatLngToLocal(pg);
+
+            p.OffsetNegative(Core.renderOffset);
 
             //            if(IsRotated)
             //            {
@@ -1338,7 +1344,16 @@ namespace GMap.NET.WindowsForms
             }
          }
 
+         // center in virtual spcace...
+#if DEBUG
+         g.DrawLine(ScalePen, new Point(-20, 0), new Point(20, 0));
+         g.DrawLine(ScalePen, new Point(0, -20), new Point(0, 20));
+#endif
+
 #if !PocketPC
+
+         g.ResetTransform();
+
          if(!SelectedArea.IsEmpty)
          {
             GPoint p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
@@ -1353,7 +1368,6 @@ namespace GMap.NET.WindowsForms
             g.FillRectangle(SelectedAreaFill, x1, y1, x2 - x1, y2 - y1);
          }
 #endif
-         g.ResetTransform();
 
          #region -- copyright --
 
@@ -1609,7 +1623,7 @@ namespace GMap.NET.WindowsForms
                   {
                      if(m.IsVisible && m.IsHitTestVisible)
                      {
-                        if(m.LocalAreaTmp.Contains(e.X, e.Y))
+                        if(m.LocalAreaInControlSpace.Contains(e.X, e.Y))
                         {
                            if(OnMarkerClick != null)
                            {
@@ -1749,7 +1763,7 @@ namespace GMap.NET.WindowsForms
                      {
                         if(m.IsVisible && m.IsHitTestVisible)
                         {
-                           if(m.LocalAreaTmp.Contains(e.X, e.Y))
+                           if(m.LocalAreaInControlSpace.Contains(e.X, e.Y))
                            {
                               if(!m.IsMouseOver)
                               {

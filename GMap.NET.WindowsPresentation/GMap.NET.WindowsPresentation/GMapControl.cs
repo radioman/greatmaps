@@ -167,18 +167,27 @@ namespace GMap.NET.WindowsPresentation
             {
                double scaleValue = remainder + 1;
                {
-                  map.MapRenderTransform = new ScaleTransform(scaleValue, scaleValue, map.ActualWidth / 2, map.ActualHeight / 2);
+                  if(map.MapScaleTransform == null)
+                  {
+                     map.MapScaleTransform = new ScaleTransform();
+                  }
+                  map.MapScaleTransform.ScaleX = scaleValue;
+                  map.MapScaleTransform.ScaleY = scaleValue;
+
+                  map.MapScaleTransform.CenterX = map.ActualWidth / 2;
+                  map.MapScaleTransform.CenterY = map.ActualHeight / 2;
                }
 
                map.Core.Zoom = Convert.ToInt32(value - remainder);
 
-               map.Core_OnMapZoomChanged();
+               map.ForceUpdateOverlays();
 
                map.InvalidateVisual(true);
             }
             else
             {
-               map.MapRenderTransform = null;
+               map.MapScaleTransform = null;
+
                map.Core.Zoom = Convert.ToInt32(value);
                map.InvalidateVisual(true);
             }
@@ -371,14 +380,11 @@ namespace GMap.NET.WindowsPresentation
       public readonly ObservableCollection<GMapMarker> Markers = new ObservableCollection<GMapMarker>();
 
       /// <summary>
-      /// current map transformation
-      /// </summary>
-      internal Transform MapRenderTransform;
-
-      /// <summary>
       /// current markers overlay offset
       /// </summary>
       internal readonly TranslateTransform MapTranslateTransform = new TranslateTransform();
+      internal ScaleTransform MapScaleTransform = new ScaleTransform();
+      internal RotateTransform MapRotateTransform = new RotateTransform();
 
       protected bool DesignModeInConstruct
       {
@@ -485,7 +491,7 @@ namespace GMap.NET.WindowsPresentation
             Core.SystemType = "WindowsPresentation";
 
             Core.RenderMode = GMap.NET.RenderMode.WPF;
-            Core.OnMapZoomChanged += new MapZoomChanged(Core_OnMapZoomChanged);
+            Core.OnMapZoomChanged += new MapZoomChanged(ForceUpdateOverlays);
             Loaded += new RoutedEventHandler(GMapControl_Loaded);
             Unloaded += new RoutedEventHandler(GMapControl_Unloaded);
             Dispatcher.ShutdownStarted += new EventHandler(Dispatcher_ShutdownStarted);
@@ -560,7 +566,7 @@ namespace GMap.NET.WindowsPresentation
       void GMapControl_Loaded(object sender, RoutedEventArgs e)
       {
          Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
-         Core_OnMapZoomChanged();
+         ForceUpdateOverlays();
 
          if(Application.Current != null)
          {
@@ -613,7 +619,7 @@ namespace GMap.NET.WindowsPresentation
             if(IsRotated)
             {
                UpdateRotationMatrix();
-               Core_OnMapZoomChanged();
+               ForceUpdateOverlays();
             }
             else
             {
@@ -622,7 +628,7 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
-      void Core_OnMapZoomChanged()
+      void ForceUpdateOverlays()
       {
          UpdateMarkersOffset();
 
@@ -652,9 +658,9 @@ namespace GMap.NET.WindowsPresentation
       {
          if(MapCanvas != null)
          {
-            if(MapRenderTransform != null)
+            if(MapScaleTransform != null)
             {
-               var tp = MapRenderTransform.Transform(new System.Windows.Point(Core.renderOffset.X, Core.renderOffset.Y));
+               var tp = MapScaleTransform.Transform(new System.Windows.Point(Core.renderOffset.X, Core.renderOffset.Y));
                MapTranslateTransform.X = tp.X;
                MapTranslateTransform.Y = tp.Y;
             }
@@ -680,7 +686,7 @@ namespace GMap.NET.WindowsPresentation
          }
 
          Core.tileDrawingListLock.AcquireReaderLock();
-         Core.Matrix.EnterReadLock();          
+         Core.Matrix.EnterReadLock();
          try
          {
             foreach(var tilePoint in Core.tileDrawingList)
@@ -801,7 +807,7 @@ namespace GMap.NET.WindowsPresentation
          finally
          {
             Core.Matrix.LeaveReadLock();
-            Core.tileDrawingListLock.ReleaseReaderLock();             
+            Core.tileDrawingListLock.ReleaseReaderLock();
          }
       }
 
@@ -1188,9 +1194,9 @@ namespace GMap.NET.WindowsPresentation
          {
             drawingContext.PushTransform(rotationMatrix);
 
-            if(MapRenderTransform != null)
+            if(MapScaleTransform != null)
             {
-               drawingContext.PushTransform(MapRenderTransform);
+               drawingContext.PushTransform(MapScaleTransform);
                {
                   DrawMapWPF(drawingContext);
                }
@@ -1205,12 +1211,17 @@ namespace GMap.NET.WindowsPresentation
          }
          else
          {
-            if(MapRenderTransform != null)
+            if(MapScaleTransform != null)
             {
-               drawingContext.PushTransform(MapRenderTransform);
+               drawingContext.PushTransform(MapScaleTransform);
                drawingContext.PushTransform(MapTranslateTransform);
                {
                   DrawMapWPF(drawingContext);
+
+#if DEBUG
+                  drawingContext.DrawLine(VirtualCenterCrossPen, new Point(-20, 0), new Point(20, 0));
+                  drawingContext.DrawLine(VirtualCenterCrossPen, new Point(0, -20), new Point(0, 20));
+#endif
                }
                drawingContext.Pop();
                drawingContext.Pop();
@@ -1220,6 +1231,10 @@ namespace GMap.NET.WindowsPresentation
                drawingContext.PushTransform(MapTranslateTransform);
                {
                   DrawMapWPF(drawingContext);
+#if DEBUG
+                  drawingContext.DrawLine(VirtualCenterCrossPen, new Point(-20, 0), new Point(20, 0));
+                  drawingContext.DrawLine(VirtualCenterCrossPen, new Point(0, -20), new Point(0, 20));
+#endif
                }
                drawingContext.Pop();
             }
@@ -1266,6 +1281,10 @@ namespace GMap.NET.WindowsPresentation
 
       public Pen CenterCrossPen = new Pen(Brushes.Red, 1);
       public bool ShowCenter = true;
+
+#if DEBUG
+      readonly Pen VirtualCenterCrossPen = new Pen(Brushes.Blue, 1);
+#endif
 
       /// <summary>
       /// reverses MouseWheel zooming direction
@@ -1351,9 +1370,9 @@ namespace GMap.NET.WindowsPresentation
          {
             Point p = e.GetPosition(this);
 
-            if(MapRenderTransform != null)
+            if(MapScaleTransform != null)
             {
-               p = MapRenderTransform.Inverse.Transform(p);
+               p = MapScaleTransform.Inverse.Transform(p);
             }
 
             p = ApplyRotationInversion(p.X, p.Y);
@@ -1434,9 +1453,9 @@ namespace GMap.NET.WindowsPresentation
          {
             Point p = e.GetPosition(this);
 
-            if(MapRenderTransform != null)
+            if(MapScaleTransform != null)
             {
-               p = MapRenderTransform.Inverse.Transform(p);
+               p = MapScaleTransform.Inverse.Transform(p);
             }
 
             p = ApplyRotationInversion(p.X, p.Y);
@@ -1469,9 +1488,9 @@ namespace GMap.NET.WindowsPresentation
             {
                Point p = e.GetPosition(this);
 
-               if(MapRenderTransform != null)
+               if(MapScaleTransform != null)
                {
-                  p = MapRenderTransform.Inverse.Transform(p);
+                  p = MapScaleTransform.Inverse.Transform(p);
                }
 
                p = ApplyRotationInversion(p.X, p.Y);
@@ -1484,7 +1503,7 @@ namespace GMap.NET.WindowsPresentation
 
                if(IsRotated)
                {
-                  Core_OnMapZoomChanged();
+                  ForceUpdateOverlays();
                }
                else
                {
@@ -1522,9 +1541,9 @@ namespace GMap.NET.WindowsPresentation
          {
             Point p = e.GetPosition(this);
 
-            if(MapRenderTransform != null)
+            if(MapScaleTransform != null)
             {
-               p = MapRenderTransform.Inverse.Transform(p);
+               p = MapScaleTransform.Inverse.Transform(p);
             }
 
             p = ApplyRotationInversion(p.X, p.Y);
@@ -1584,9 +1603,9 @@ namespace GMap.NET.WindowsPresentation
             {
                Point p = e.GetPosition(this);
 
-               if(MapRenderTransform != null)
+               if(MapScaleTransform != null)
                {
-                  p = MapRenderTransform.Inverse.Transform(p);
+                  p = MapScaleTransform.Inverse.Transform(p);
                }
 
                p = ApplyRotationInversion(p.X, p.Y);
@@ -1619,9 +1638,9 @@ namespace GMap.NET.WindowsPresentation
                {
                   Point p = e.GetPosition(this);
 
-                  if(MapRenderTransform != null)
+                  if(MapScaleTransform != null)
                   {
-                     p = MapRenderTransform.Inverse.Transform(p);
+                     p = MapScaleTransform.Inverse.Transform(p);
                   }
 
                   p = ApplyRotationInversion(p.X, p.Y);
@@ -1634,7 +1653,7 @@ namespace GMap.NET.WindowsPresentation
 
                   if(IsRotated)
                   {
-                     Core_OnMapZoomChanged();
+                     ForceUpdateOverlays();
                   }
                   else
                   {
@@ -1684,9 +1703,9 @@ namespace GMap.NET.WindowsPresentation
 
       public PointLatLng FromLocalToLatLng(int x, int y)
       {
-         if(MapRenderTransform != null)
+         if(MapScaleTransform != null)
          {
-            var tp = MapRenderTransform.Inverse.Transform(new System.Windows.Point(x, y));
+            var tp = MapScaleTransform.Inverse.Transform(new System.Windows.Point(x, y));
             x = (int)tp.X;
             y = (int)tp.Y;
          }
@@ -1706,9 +1725,9 @@ namespace GMap.NET.WindowsPresentation
       {
          GPoint ret = Core.FromLatLngToLocal(point);
 
-         if(MapRenderTransform != null)
+         if(MapScaleTransform != null)
          {
-            var tp = MapRenderTransform.Transform(new System.Windows.Point(ret.X, ret.Y));
+            var tp = MapScaleTransform.Transform(new System.Windows.Point(ret.X, ret.Y));
             ret.X = (int)tp.X;
             ret.Y = (int)tp.Y;
          }
@@ -1812,7 +1831,8 @@ namespace GMap.NET.WindowsPresentation
          set
          {
             Core.CurrentPosition = value;
-            UpdateMarkersOffset();
+            //UpdateMarkersOffset();
+            ForceUpdateOverlays();
          }
       }
 
