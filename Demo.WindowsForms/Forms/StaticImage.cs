@@ -67,13 +67,13 @@ namespace Demo.WindowsForms
       {
          progressBar1.Value = e.ProgressPercentage;
 
-         GPoint p = (GPoint) e.UserState;
+         GPoint p = (GPoint)e.UserState;
          this.Text = "Static Map maker: Downloading[" + p + "]: " + tileArea.IndexOf(p) + " of " + tileArea.Count;
       }
 
       void bg_DoWork(object sender, DoWorkEventArgs e)
       {
-         MapInfo info = (MapInfo) e.Argument;
+         MapInfo info = (MapInfo)e.Argument;
          if(!info.Area.IsEmpty)
          {
             //var types = GMaps.Instance.GetAllLayersOfType(info.Type);
@@ -89,7 +89,7 @@ namespace Demo.WindowsForms
 
             int padding = info.MakeWorldFile ? 0 : 22;
             {
-               using(Bitmap bmpDestination = new Bitmap(pxDelta.X + padding*2, pxDelta.Y + padding*2))
+               using(Bitmap bmpDestination = new Bitmap(pxDelta.X + padding * 2, pxDelta.Y + padding * 2))
                {
                   using(Graphics gfx = Graphics.FromImage(bmpDestination))
                   {
@@ -109,7 +109,7 @@ namespace Demo.WindowsForms
                               return;
                            }
 
-                           int pc = (int) (((double) ++i / tileArea.Count)*100);
+                           int pc = (int)(((double)++i / tileArea.Count) * 100);
                            bg.ReportProgress(pc, p);
 
                            foreach(var tp in info.Type.Overlays)
@@ -131,8 +131,8 @@ namespace Demo.WindowsForms
                               {
                                  using(tile)
                                  {
-                                    int x = p.X*info.Type.Projection.TileSize.Width - topLeftPx.X + padding;
-                                    int y = p.Y*info.Type.Projection.TileSize.Width - topLeftPx.Y + padding;
+                                    int x = p.X * info.Type.Projection.TileSize.Width - topLeftPx.X + padding;
+                                    int y = p.Y * info.Type.Projection.TileSize.Width - topLeftPx.Y + padding;
                                     {
                                        gfx.DrawImage(tile.Img, x, y, info.Type.Projection.TileSize.Width, info.Type.Projection.TileSize.Height);
                                     }
@@ -274,27 +274,27 @@ namespace Demo.WindowsForms
                               string topleft = info.Area.LocationTopLeft.ToString();
                               SizeF s = gfx.MeasureString(topleft, f);
 
-                              gfx.DrawString(topleft, f, p.Brush, rect.X + s.Height/2, rect.Y + s.Height/2);
+                              gfx.DrawString(topleft, f, p.Brush, rect.X + s.Height / 2, rect.Y + s.Height / 2);
 
                               string rightBottom = new PointLatLng(info.Area.Bottom, info.Area.Right).ToString();
                               SizeF s2 = gfx.MeasureString(rightBottom, f);
 
-                              gfx.DrawString(rightBottom, f, p.Brush, rect.Right - s2.Width - s2.Height/2, rect.Bottom - s2.Height - s2.Height/2);
+                              gfx.DrawString(rightBottom, f, p.Brush, rect.Right - s2.Width - s2.Height / 2, rect.Bottom - s2.Height - s2.Height / 2);
                            }
 
                            // draw scale
                            using(Pen p = new Pen(Brushes.Blue, 1))
                            {
                               double rez = info.Type.Projection.GetGroundResolution(info.Zoom, info.Area.Bottom);
-                              int px100 = (int) (100.0 / rez); // 100 meters
-                              int px1000 = (int) (1000.0 / rez); // 1km   
+                              int px100 = (int)(100.0 / rez); // 100 meters
+                              int px1000 = (int)(1000.0 / rez); // 1km   
 
                               gfx.DrawRectangle(p, rect.X + 10, rect.Bottom - 20, px1000, 10);
                               gfx.DrawRectangle(p, rect.X + 10, rect.Bottom - 20, px100, 10);
 
                               string leftBottom = "scale: 100m | 1Km";
                               SizeF s = gfx.MeasureString(leftBottom, f);
-                              gfx.DrawString(leftBottom, f, p.Brush, rect.X+10, rect.Bottom - s.Height - 20);
+                              gfx.DrawString(leftBottom, f, p.Brush, rect.X + 10, rect.Bottom - s.Height - 20);
                            }
                         }
                      }
@@ -362,7 +362,7 @@ namespace Demo.WindowsForms
             lock(tileArea)
             {
                tileArea.Clear();
-               tileArea.AddRange(Main.MainMap.MapProvider.Projection.GetAreaTileList(area.Value, (int) numericUpDown1.Value, 1));
+               tileArea.AddRange(Main.MainMap.MapProvider.Projection.GetAreaTileList(area.Value, (int)numericUpDown1.Value, 1));
                tileArea.TrimExcess();
             }
 
@@ -370,7 +370,7 @@ namespace Demo.WindowsForms
             progressBar1.Value = 0;
             button1.Enabled = false;
 
-            bg.RunWorkerAsync(new MapInfo(area.Value, (int) numericUpDown1.Value, Main.MainMap.MapProvider, checkBoxWorldFile.Checked));
+            bg.RunWorkerAsync(new MapInfo(area.Value, (int)numericUpDown1.Value, Main.MainMap.MapProvider, checkBoxWorldFile.Checked));
          }
       }
 

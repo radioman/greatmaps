@@ -630,22 +630,25 @@ namespace GMap.NET.WindowsPresentation
 
       void ForceUpdateOverlays()
       {
-         UpdateMarkersOffset();
-
-         foreach(GMapMarker i in ItemsSource)
+         using(Dispatcher.DisableProcessing())
          {
-            if(i != null)
+            UpdateMarkersOffset();
+
+            foreach(GMapMarker i in ItemsSource)
             {
-               i.ForceUpdateLocalPosition(this);
-
-               if(i.Route.Count > 0)
+               if(i != null)
                {
-                  i.RegenerateRouteShape(this);
-               }
+                  i.ForceUpdateLocalPosition(this);
 
-               if(i.Polygon.Count > 0)
-               {
-                  i.RegeneratePolygonShape(this);
+                  if(i.Route.Count > 0)
+                  {
+                     i.RegenerateRouteShape(this);
+                  }
+
+                  if(i.Polygon.Count > 0)
+                  {
+                     i.RegeneratePolygonShape(this);
+                  }
                }
             }
          }
@@ -1831,8 +1834,11 @@ namespace GMap.NET.WindowsPresentation
          set
          {
             Core.CurrentPosition = value;
-            //UpdateMarkersOffset();
-            ForceUpdateOverlays();
+
+            if(Core.IsStarted)
+            {
+               ForceUpdateOverlays();
+            }
          }
       }
 

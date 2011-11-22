@@ -662,7 +662,7 @@ namespace GMap.NET.Internals
       public GPoint FromLatLngToLocal(PointLatLng latlng)
       {
          GPoint pLocal = Provider.Projection.FromLatLngToPixel(latlng, Zoom);
-         pLocal.Offset(renderOffset); // control uses render transform
+         pLocal.Offset(renderOffset); 
          pLocal.OffsetNegative(compensationOffset);
          return pLocal;
       }
