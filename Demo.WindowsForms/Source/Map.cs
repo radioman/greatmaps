@@ -61,9 +61,6 @@ namespace Demo.WindowsForms
          //var rts = g.MeasureString(rb, DebugFontSmall);
          //g.DrawString(rt, DebugFontSmall, Brushes.Blue, Width - rts.Width - DebugFontSmall.Height, DebugFontSmall.Height);
 #endif
-
-         g.DrawLine(Pens.Red, Width / 2 - 10, Height / 2, Width / 2 + 10, Height / 2);
-         g.DrawLine(Pens.Red, Width / 2, Height / 2 - 10, Width / 2, Height / 2 + 10);
       }
    }
 }
