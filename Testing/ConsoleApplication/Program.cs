@@ -21,6 +21,7 @@ namespace ConsoleApplication
    {
       static void Main(string[] args)
       {
+#if DEBUG
          //if(false)
          {
             GMapProvider.TileImageProxy = new WindowsFormsImageProxy();
@@ -33,14 +34,15 @@ namespace ConsoleApplication
 
                c.minZoom = 1;
                c.maxZoom = 17;
-               c.Zoom = 1;
+               c.Zoom = 2;
                //c.Provider = GMapProviders.OpenStreetMap;
-               //c.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
+               c.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
                c.OnMapSizeChanged(400, 400);
 
                c.OnMapOpen();
 
                Debug.WriteLine("renderOffset: " + c.renderOffset);
+               Debug.WriteLine("compensationOffset: " + c.compensationOffset);
 
                var l = c.FromLatLngToLocal(new PointLatLng(0, 0));
                Debug.WriteLine("local: " + l);
@@ -58,6 +60,7 @@ namespace ConsoleApplication
                c.OnMapClose();
             }
          }
+#endif
 
          if(false)
          {

@@ -30,7 +30,6 @@ namespace Demo.WindowsForms
 
       // marker
       GMapMarker currentMarker;
-      GMapMarker center;
 
       // polygons
       GMapPolygon polygon;
@@ -177,10 +176,6 @@ namespace Demo.WindowsForms
             currentMarker = new GMapMarkerGoogleRed(MainMap.Position);
             currentMarker.IsHitTestVisible = false;
             top.Markers.Add(currentMarker);
-
-            // map center
-            center = new GMapMarkerCross(MainMap.Position);
-            top.Markers.Add(center);
 
             //MainMap.VirtualSizeEnabled = true;
             //if(false)
@@ -1427,7 +1422,6 @@ namespace Demo.WindowsForms
       {
          trackBar1.Value = (int)(MainMap.Zoom);
          textBoxZoomCurrent.Text = MainMap.Zoom.ToString();
-         center.Position = MainMap.Position;
       }
 
       // click on some marker
@@ -1503,7 +1497,6 @@ namespace Demo.WindowsForms
       // current point changed
       void MainMap_OnPositionChanged(PointLatLng point)
       {
-         center.Position = point;
          textBoxLatCurrent.Text = point.Lat.ToString(CultureInfo.InvariantCulture);
          textBoxLngCurrent.Text = point.Lng.ToString(CultureInfo.InvariantCulture);
 
@@ -1525,12 +1518,7 @@ namespace Demo.WindowsForms
             MainMap.ZoomAndCenterMarkers(null);
             trackBar1.Value = (int)MainMap.Zoom;
          }
-      }
-
-      // ensure focus on map, trackbar can have it too
-      private void MainMap_MouseEnter(object sender, EventArgs e)
-      {
-         MainMap.Focus();
+         Activate();
       }
       #endregion
 
