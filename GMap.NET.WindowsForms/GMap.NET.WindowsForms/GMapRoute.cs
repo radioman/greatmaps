@@ -95,9 +95,9 @@ namespace GMap.NET.WindowsForms
             }
          }
 #else
-            if(r.IsVisible)
+            if(IsVisible)
             {
-               Point[] pnts = new Point[r.LocalPoints.Count];
+               Point[] pnts = new Point[LocalPoints.Count];
                for(int i = 0; i < LocalPoints.Count; i++)
                {
                   Point p2 = new Point(LocalPoints[i].X, LocalPoints[i].Y);

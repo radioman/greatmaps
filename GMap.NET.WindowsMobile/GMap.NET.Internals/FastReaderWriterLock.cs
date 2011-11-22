@@ -1,30 +1,34 @@
 ﻿
-namespace System.Threading
+namespace GMap.NET.Internals
 {
-   using System;
-
 #if PocketPC
    internal class FastReaderWriterLock
    {
       object rlock = new object();
+
       internal void AcquireReaderLock()
       {
-         Monitor.Enter(rlock);
+          System.Threading.Monitor.Enter(rlock);
       }
 
       internal void ReleaseReaderLock()
       {
-         Monitor.Exit(rlock);
+          System.Threading.Monitor.Exit(rlock);
       }
 
       internal void AcquireWriterLock()
       {
-         Monitor.Enter(rlock);
+          System.Threading.Monitor.Enter(rlock);
       }
 
       internal void ReleaseWriterLock()
       {
-         Monitor.Exit(rlock);
+          System.Threading.Monitor.Exit(rlock);
+      }
+ 
+      internal void Dispose()
+      {
+          rlock = null;
       }
    }
 #endif

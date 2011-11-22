@@ -20,7 +20,7 @@ namespace GMap.NET.WindowsForms
       private bool visible = true;
 
       /// <summary>
-      /// is marker visible
+      /// is polygon visible
       /// </summary>
       public bool IsVisible
       {
@@ -98,21 +98,20 @@ namespace GMap.NET.WindowsForms
             }
          }
 #else
-         foreach(GMapPolygon r in Polygons)
          {
-            if(r.IsVisible)
+            if(IsVisible)
             {
-               Point[] pnts = new Point[r.LocalPoints.Count];
-               for(int i = 0; i < r.LocalPoints.Count; i++)
+               Point[] pnts = new Point[LocalPoints.Count];
+               for(int i = 0; i < LocalPoints.Count; i++)
                {
-                  Point p2 = new Point(r.LocalPoints[i].X, r.LocalPoints[i].Y);
+                  Point p2 = new Point(LocalPoints[i].X, LocalPoints[i].Y);
                   pnts[pnts.Length - 1 - i] = p2;
                }
 
                if(pnts.Length > 0)
                {
-                  g.FillPolygon(r.Fill, pnts);
-                  g.DrawPolygon(r.Stroke, pnts);
+                  g.FillPolygon(Fill, pnts);
+                  g.DrawPolygon(Stroke, pnts);
                }
             }
          }

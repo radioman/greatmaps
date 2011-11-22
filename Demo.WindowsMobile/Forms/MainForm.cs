@@ -26,7 +26,7 @@ namespace Demo.WindowsMobile
         PointLatLng start = new PointLatLng(54.6961334816182, 25.2985095977783);
 
         // marker
-        GMapMarkerCross center;
+        GMapMarkerCross gpsPos;
 
         // layers
         GMapOverlay top;
@@ -89,24 +89,24 @@ namespace Demo.WindowsMobile
             MainMap.Position = start;
 
             MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
-            MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);
             MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
 
             // add custom layers  
             {
-                routes = new GMapOverlay(MainMap, "routes");
+                routes = new GMapOverlay("routes");
                 MainMap.Overlays.Add(routes);
 
-                objects = new GMapOverlay(MainMap, "objects");
+                objects = new GMapOverlay("objects");
                 MainMap.Overlays.Add(objects);
 
-                top = new GMapOverlay(MainMap, "top");
+                top = new GMapOverlay("top");
                 MainMap.Overlays.Add(top);
             }
 
-            // map center
-            center = new GMapMarkerCross(MainMap.Position);
-            top.Markers.Add(center);
+            // gps pos
+            gpsPos = new GMapMarkerCross(MainMap.Position);
+            gpsPos.IsVisible = false;
+            top.Markers.Add(gpsPos);
 
 #if DEBUG
             // transparent marker test
@@ -198,11 +198,6 @@ namespace Demo.WindowsMobile
         void MainMap_OnMapZoomChanged()
         {
             this.Text = "GMap.NET: " + (int)MainMap.Zoom;
-        }
-
-        void MainMap_OnPositionChanged(PointLatLng point)
-        {
-            center.Position = point;
         }
 
         void MainMap_OnMapTypeChanged(GMapProvider type)
@@ -357,11 +352,12 @@ namespace Demo.WindowsMobile
 
                 TryCommitData();
 
-                center.Pen.Color = Color.Blue;
+                gpsPos.Pen.Color = Color.Blue;
             }
             else // start tracking
             {
-                center.Pen.Color = Color.Red;
+                gpsPos.Pen.Color = Color.Red;
+                gpsPos.IsVisible = true;
 
                 if (!gps.Opened)
                 {
@@ -630,12 +626,14 @@ namespace Demo.WindowsMobile
                 if (!gps.Opened)
                 {
                     gps.Open();
-                    center.Pen.Color = Color.Red;
+                    gpsPos.Pen.Color = Color.Red;
+                    gpsPos.IsVisible = true;
                 }
             }
             else
             {
-                center.Pen.Color = Color.Blue;
+                gpsPos.Pen.Color = Color.Blue;
+                gpsPos.IsVisible = false;
             }
 
             timerKeeperOfLife.Interval = ShortestTimeoutInterval() * 1000;
@@ -904,7 +902,7 @@ namespace Demo.WindowsMobile
                                 }
                                 else
                                 {
-                                    center.Position = new PointLatLng(lastData.Latitude.Value, lastData.Longitude.Value);
+                                    gpsPos.Position = new PointLatLng(lastData.Latitude.Value, lastData.Longitude.Value);
                                 }
                             }
                         }

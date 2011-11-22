@@ -367,7 +367,7 @@ namespace Demo.WindowsForms
             var response = GetFlightRadarContentUsingHttp("http://www.flightradar24.com/PlaneFeed.json", location, zoom, sessionId);
 
             var items = response.Split(']');
-            int i = 0;
+            //int i = 0;
             foreach(var it in items)
             {
                if(it.Length > 11)

@@ -76,6 +76,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.CacheProviders\MemoryCache.cs">
+      <Link>GMap.NET.CacheProviders\MemoryCache.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.CacheProviders\MSSQLCEPureImageCache.cs">
       <Link>GMap.NET.CacheProviders\MSSQLCEPureImageCache.cs</Link>
     </Compile>
@@ -93,6 +96,9 @@
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\Core.cs">
       <Link>GMap.NET.Internals\Core.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\DrawTile.cs">
+      <Link>GMap.NET.Internals\DrawTile.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\KiberTileCache.cs">
       <Link>GMap.NET.Internals\KiberTileCache.cs</Link>
@@ -442,6 +448,7 @@
     <Compile Include="GMap.NET.GPS\GpsDeviceState.cs" />
     <Compile Include="GMap.NET.GPS\GpsPosition.cs" />
     <Compile Include="GMap.NET.GPS\Utils.cs" />
+    <Compile Include="GMap.NET.Internals\FastReaderWriterLock.cs" />
     <Compile Include="GMap.NET.Internals\Native.cs" />
     <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerTransparent.cs" />
     <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerTransparentGoogleGreen.cs" />
@@ -452,7 +459,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="System.ComponentModel\Attributes.cs" />
-    <Compile Include="GMap.NET.Internals\FastReaderWriterLock.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>

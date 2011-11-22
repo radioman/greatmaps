@@ -216,7 +216,7 @@ namespace GMap.NET.WindowsForms
       /// renders objects/routes/polygons
       /// </summary>
       /// <param name="g"></param>
-      public virtual void Render(Graphics g)
+      public virtual void OnRender(Graphics g)
       {
          if(Control != null)
          {
@@ -224,7 +224,10 @@ namespace GMap.NET.WindowsForms
             {
                foreach(GMapRoute r in Routes)
                {
-                  r.OnRender(g);
+                   if (r.IsVisible)
+                   {
+                       r.OnRender(g);
+                   }
                }
             }
 
@@ -232,7 +235,10 @@ namespace GMap.NET.WindowsForms
             {
                foreach(GMapPolygon r in Polygons)
                {
-                  r.OnRender(g);
+                   if (r.IsVisible)
+                   {
+                       r.OnRender(g);
+                   }
                }
             }
 
@@ -242,16 +248,18 @@ namespace GMap.NET.WindowsForms
                foreach(GMapMarker m in Markers)
                {
                   //if(m.IsVisible && (m.DisableRegionCheck || Control.Core.currentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y)))
-                  {
+                   if (m.IsVisible || m.DisableRegionCheck)                  
+                   {
                      m.OnRender(g);
-                  }
+                   }
                }
 
                // tooltips above
                foreach(GMapMarker m in Markers)
                {
                   //if(m.ToolTip != null && m.IsVisible && Control.Core.currentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
-                  {
+                   if(m.ToolTip != null && m.IsVisible)                 
+                   {
                      if(!string.IsNullOrEmpty(m.ToolTipText) && (m.ToolTipMode == MarkerTooltipMode.Always || (m.ToolTipMode == MarkerTooltipMode.OnMouseOver && m.IsMouseOver)))
                      {
                         m.ToolTip.Draw(g);

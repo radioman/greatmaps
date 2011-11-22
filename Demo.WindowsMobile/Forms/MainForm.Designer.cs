@@ -382,7 +382,6 @@
           // MainMap
           // 
           this.MainMap.BackColor = System.Drawing.Color.White;
-          this.MainMap.Bearing = 0F;
           this.MainMap.CanDragMap = true;
           this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
           this.MainMap.LevelsKeepInMemmory = 1;

@@ -1266,8 +1266,8 @@ namespace GMap.NET.WindowsPresentation
 
          if(ShowCenter)
          {
-            drawingContext.DrawLine(CenterCrossPen, new System.Windows.Point((ActualWidth / 2) - 10, ActualHeight / 2), new System.Windows.Point((ActualWidth / 2) + 10, ActualHeight / 2));
-            drawingContext.DrawLine(CenterCrossPen, new System.Windows.Point(ActualWidth / 2, (ActualHeight / 2) - 10), new System.Windows.Point(ActualWidth / 2, (ActualHeight / 2) + 10));
+            drawingContext.DrawLine(CenterCrossPen, new System.Windows.Point((ActualWidth / 2) - 5, ActualHeight / 2), new System.Windows.Point((ActualWidth / 2) + 5, ActualHeight / 2));
+            drawingContext.DrawLine(CenterCrossPen, new System.Windows.Point(ActualWidth / 2, (ActualHeight / 2) - 5), new System.Windows.Point(ActualWidth / 2, (ActualHeight / 2) + 5));
          }
 
          #region -- copyright --
