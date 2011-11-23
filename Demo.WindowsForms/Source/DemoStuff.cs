@@ -261,7 +261,11 @@ namespace Demo.WindowsForms
                      d.Time = t.ToLongTimeString();
                   }
                }
-               ret.Add(d);
+
+               //if(d.Id == 1262760)
+               {
+                  ret.Add(d);
+               }   
             }
          }
 

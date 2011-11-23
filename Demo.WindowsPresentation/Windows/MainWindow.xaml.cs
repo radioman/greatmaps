@@ -277,80 +277,83 @@ namespace Demo.WindowsPresentation
 
       void transport_ProgressChanged(object sender, ProgressChangedEventArgs e)
       {
-         lock(trolleybus)
+         using(Dispatcher.DisableProcessing())
          {
-            foreach(VehicleData d in trolleybus)
+            lock(trolleybus)
             {
-               GMapMarker marker;
-
-               if(!trolleybusMarkers.TryGetValue(d.Id, out marker))
+               foreach(VehicleData d in trolleybus)
                {
-                  marker = new GMapMarker(new PointLatLng(d.Lat, d.Lng));
-                  marker.Tag = d.Id;
-                  marker.Shape = new CircleVisual(marker, Brushes.Red);
+                  GMapMarker marker;
 
-                  trolleybusMarkers[d.Id] = marker;
-                  MainMap.Markers.Add(marker);
-               }
-               else
-               {
-                  marker.Position = new PointLatLng(d.Lat, d.Lng);
-                  var shape = (marker.Shape as CircleVisual);
+                  if(!trolleybusMarkers.TryGetValue(d.Id, out marker))
                   {
-                     shape.Text = d.Line;
-                     shape.Angle = d.Bearing;
-                     shape.Tooltip.SetValues("TrolleyBus", d);
+                     marker = new GMapMarker(new PointLatLng(d.Lat, d.Lng));
+                     marker.Tag = d.Id;
+                     marker.Shape = new CircleVisual(marker, Brushes.Red);
 
-                     if(shape.IsChanged)
+                     trolleybusMarkers[d.Id] = marker;
+                     MainMap.Markers.Add(marker);
+                  }
+                  else
+                  {
+                     marker.Position = new PointLatLng(d.Lat, d.Lng);
+                     var shape = (marker.Shape as CircleVisual);
                      {
-                        shape.UpdateVisual(false);
+                        shape.Text = d.Line;
+                        shape.Angle = d.Bearing;
+                        shape.Tooltip.SetValues("TrolleyBus", d);
+
+                        if(shape.IsChanged)
+                        {
+                           shape.UpdateVisual(false);
+                        }
                      }
                   }
                }
             }
-         }
 
-         lock(bus)
-         {
-            foreach(VehicleData d in bus)
+            lock(bus)
             {
-               GMapMarker marker;
-
-               if(!busMarkers.TryGetValue(d.Id, out marker))
+               foreach(VehicleData d in bus)
                {
-                  marker = new GMapMarker(new PointLatLng(d.Lat, d.Lng));
-                  marker.Tag = d.Id;
+                  GMapMarker marker;
 
-                  var v = new CircleVisual(marker, Brushes.Blue);
+                  if(!busMarkers.TryGetValue(d.Id, out marker))
                   {
-                     v.Stroke = new Pen(Brushes.Gray, 2.0);
-                  }
-                  marker.Shape = v;
+                     marker = new GMapMarker(new PointLatLng(d.Lat, d.Lng));
+                     marker.Tag = d.Id;
 
-                  busMarkers[d.Id] = marker;
-                  MainMap.Markers.Add(marker);
-               }
-               else
-               {
-                  marker.Position = new PointLatLng(d.Lat, d.Lng);
-                  var shape = (marker.Shape as CircleVisual);
-                  {
-                     shape.Text = d.Line;
-                     shape.Angle = d.Bearing;
-                     shape.Tooltip.SetValues("Bus", d);
-
-                     if(shape.IsChanged)
+                     var v = new CircleVisual(marker, Brushes.Blue);
                      {
-                        shape.UpdateVisual(false);
+                        v.Stroke = new Pen(Brushes.Gray, 2.0);
+                     }
+                     marker.Shape = v;
+
+                     busMarkers[d.Id] = marker;
+                     MainMap.Markers.Add(marker);
+                  }
+                  else
+                  {
+                     marker.Position = new PointLatLng(d.Lat, d.Lng);
+                     var shape = (marker.Shape as CircleVisual);
+                     {
+                        shape.Text = d.Line;
+                        shape.Angle = d.Bearing;
+                        shape.Tooltip.SetValues("Bus", d);
+
+                        if(shape.IsChanged)
+                        {
+                           shape.UpdateVisual(false);
+                        }
                      }
                   }
                }
             }
-         }
 
-         if(firstLoadTrasport)
-         {
-            firstLoadTrasport = false;
+            if(firstLoadTrasport)
+            {
+               firstLoadTrasport = false;
+            }
          }
       }
 
