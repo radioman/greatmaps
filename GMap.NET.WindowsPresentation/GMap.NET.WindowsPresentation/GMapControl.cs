@@ -587,14 +587,27 @@ namespace GMap.NET.WindowsPresentation
          GMaps.Instance.CancelTileCaching();
       }
 
+      /// <summary>
+      /// set to true to prevent control dispose when switching between elementhosts
+      /// </summary>
+      public bool SuspendDispose = false;
+
       void GMapControl_Unloaded(object sender, RoutedEventArgs e)
       {
-         Core.OnMapClose();
+         if(!SuspendDispose)
+         {
+            Core.OnMapClose();
+         }
+         SuspendDispose = false;
       }
 
       void Dispatcher_ShutdownStarted(object sender, EventArgs e)
       {
-         Core.OnMapClose();
+         if(!SuspendDispose)
+         {
+            Core.OnMapClose();
+         }
+         SuspendDispose = false;
       }
 
       /// <summary>
