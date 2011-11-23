@@ -111,7 +111,7 @@ namespace Demo.StreetView
 
       void loader_DoWork(object sender, DoWorkEventArgs e)
       {
-         string panoId = "rIcDg5NpZyolFR3i98C_3Q";
+         string panoId = "4fe6hEN9GJC6thoQBcgv0Q";
          int zoom = 4;
 
          //0, 1
