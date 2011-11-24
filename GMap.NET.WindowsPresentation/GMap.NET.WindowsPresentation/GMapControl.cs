@@ -21,6 +21,7 @@ namespace GMap.NET.WindowsPresentation
    using System.Diagnostics;
    using GMap.NET.MapProviders;
    using System.Windows.Media.Animation;
+   using GMap.NET.Projections;
 
    /// <summary>
    /// GMap.NET control for Windows Presentation
@@ -205,6 +206,11 @@ namespace GMap.NET.WindowsPresentation
       bool showTileGridLines = false;
 
       FormattedText Copyright;
+
+      /// <summary>
+      /// enables filling empty tiles using lower level images
+      /// </summary>
+      public bool FillEmptyTiles = true;
 
       /// <summary>
       /// max zoom
@@ -706,14 +712,7 @@ namespace GMap.NET.WindowsPresentation
          {
             foreach(var tilePoint in Core.tileDrawingList)
             {
-               //Core.tileRect.Location = tilePoint.PosXY;
-               //Core.tileRect.Offset(Core.renderOffset);
-               //Core.tileRect.OffsetNegative(Core.compensationOffset);
-
                Core.tileRect.Location = tilePoint.PosPixel;
-               //#if PocketPC
-               //Core.tileRect.Offset(Core.renderOffset);
-               //#endif
                Core.tileRect.OffsetNegative(Core.compensationOffset);
 
                //if(region.IntersectsWith(Core.tileRect) || IsRotated)
@@ -737,45 +736,52 @@ namespace GMap.NET.WindowsPresentation
                         }
                      }
                   }
-                  //else // testing smooth zooming
-                  //{
-                  //   int ZoomOffset = 0;
-                  //   Tile ParentTile = null;
-                  //   int Ix = 0;
+                  else if(FillEmptyTiles && MapProvider.Projection is MercatorProjection)
+                  {
+                     #region -- fill empty tiles --
+                     int zoomOffset = 0;
+                     Tile parentTile = Tile.Empty;
+                     int Ix = 0;
 
-                  //   while(ParentTile == null && (Core.Zoom - ZoomOffset) >= 1 && ZoomOffset <= LevelsKeepInMemmory)
-                  //   {
-                  //      Ix = (int) Math.Pow(2, ++ZoomOffset);
-                  //      ParentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - ZoomOffset, new GMap.NET.Point((int) (tilePoint.X / Ix), (int) (tilePoint.Y / Ix)));
-                  //   }
+                     while(parentTile == Tile.Empty && (Core.Zoom - zoomOffset) >= 1 && zoomOffset <= LevelsKeepInMemmory)
+                     {
+                        Ix = (int)Math.Pow(2, ++zoomOffset);
+                        parentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - zoomOffset, new GMap.NET.GPoint((int)(tilePoint.PosXY.X / Ix), (int)(tilePoint.PosXY.Y / Ix)));
+                     }
 
-                  //   if(ParentTile != null)
-                  //   {
-                  //      int Xoff = Math.Abs(tilePoint.X - (ParentTile.Pos.X * Ix));
-                  //      int Yoff = Math.Abs(tilePoint.Y - (ParentTile.Pos.Y * Ix));
+                     if(parentTile != Tile.Empty)
+                     {
+                        int Xoff = Math.Abs(tilePoint.PosXY.X - (parentTile.Pos.X * Ix));
+                        int Yoff = Math.Abs(tilePoint.PosXY.Y - (parentTile.Pos.Y * Ix));
 
-                  //      // render tile 
-                  //      lock(ParentTile.Overlays)
-                  //      {
-                  //         foreach(WindowsPresentationImage img in ParentTile.Overlays)
-                  //         {
-                  //            if(img != null && img.Img != null)
-                  //            {
-                  //               if(!found)
-                  //                  found = true;
+                        var geometry = new RectangleGeometry(new Rect(Core.tileRect.X + 0.6, Core.tileRect.Y + 0.6, Core.tileRect.Width + 0.6, Core.tileRect.Height + 0.6));
+                        var parentImgRect = new Rect(Core.tileRect.X - Core.tileRect.Width * Xoff + 0.6, Core.tileRect.Y - Core.tileRect.Height * Yoff + 0.6, Core.tileRect.Width * Ix + 0.6, Core.tileRect.Height * Ix + 0.6);
 
-                  //               //System.Drawing.RectangleF srcRect = new System.Drawing.RectangleF((float) (Xoff * (img.Img.Width / Ix)), (float) (Yoff * (img.Img.Height / Ix)), (img.Img.Width / Ix), (img.Img.Height / Ix));
-                  //               //System.Drawing.Rectangle dst = new System.Drawing.Rectangle(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+                        // render tile 
+                        lock(parentTile.Overlays)
+                        {
+                           foreach(WindowsPresentationImage img in parentTile.Overlays)
+                           {
+                              if(img != null && img.Img != null)
+                              {
+                                 if(!found)
+                                    found = true;
 
-                  //               //g.DrawImage(img.Img, new Rect(
+                                 g.PushClip(geometry);
 
-                  //               //g.DrawImage(img.Img, dst, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, GraphicsUnit.Pixel, TileFlipXYAttributes);
-                  //               //g.FillRectangle(SelectedAreaFill, dst);
-                  //            }
-                  //         }
-                  //      }
-                  //   }
-                  //}
+                                 g.DrawImage(img.Img, parentImgRect);
+
+                                 g.DrawRectangle(SelectedAreaFill, null, geometry.Bounds);
+
+                                 g.Pop();
+                              }
+                           }
+                        }
+
+                        geometry = null;
+                     }
+                     #endregion
+                  }
 
                   // add text if tile is missing
                   if(!found)

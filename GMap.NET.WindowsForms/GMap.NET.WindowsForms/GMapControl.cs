@@ -19,6 +19,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
    using System.Runtime.Serialization.Formatters.Binary;
    using System.Collections.Generic;
+   using GMap.NET.Projections;
 #else
     using OpenNETCF.ComponentModel;
 #endif
@@ -491,19 +492,6 @@ namespace GMap.NET.WindowsForms
          {
             foreach(var tilePoint in Core.tileDrawingList)
             {
-#if ContinuesMap
-               //-----
-               GMap.NET.Point tileToDraw = Core.tilePoint;  
-               if(tileToDraw.X < Core.minOfTiles.Width)
-               {
-                  tileToDraw.X += (Core.maxOfTiles.Width + 1);
-               }
-               if(tileToDraw.X > Core.maxOfTiles.Width)
-               {
-                  tileToDraw.X -= (Core.maxOfTiles.Width + 1);
-               }
-               //-----
-#endif
                {
                   Core.tileRect.Location = tilePoint.PosPixel;
                   if(ForceDoubleBuffer)
@@ -522,12 +510,8 @@ namespace GMap.NET.WindowsForms
                   //if(Core.currentRegion.IntersectsWith(Core.tileRect) || IsRotated)
                   {
                      bool found = false;
-#if !ContinuesMap
-
                      Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tilePoint.PosXY);
-#else
-                     Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tileToDraw.PosXY);
-#endif
+
                      if(t != Tile.Empty)
                      {
                         // render tile
@@ -549,8 +533,9 @@ namespace GMap.NET.WindowsForms
                         }
                      }
 #if !PocketPC
-                     else if(FillEmptyTiles)
+                     else if(FillEmptyTiles && MapProvider.Projection is MercatorProjection)
                      {
+                        #region -- fill empty lines --
                         int ZoomOffset = 0;
                         Tile ParentTile = Tile.Empty;
                         int Ix = 0;
@@ -585,6 +570,7 @@ namespace GMap.NET.WindowsForms
                               }
                            }
                         }
+                        #endregion
                      }
 #endif
                      // add text if tile is missing
