@@ -536,25 +536,25 @@ namespace GMap.NET.WindowsForms
                      else if(FillEmptyTiles && MapProvider.Projection is MercatorProjection)
                      {
                         #region -- fill empty lines --
-                        int ZoomOffset = 0;
-                        Tile ParentTile = Tile.Empty;
+                        int zoomOffset = 1;
+                        Tile parentTile = Tile.Empty;
                         int Ix = 0;
 
-                        while(ParentTile == null && (Core.Zoom - ZoomOffset) >= 1 && ZoomOffset <= LevelsKeepInMemmory)
+                        while(parentTile == Tile.Empty && zoomOffset < Core.Zoom && zoomOffset <= LevelsKeepInMemmory)
                         {
-                           Ix = (int)Math.Pow(2, ++ZoomOffset);
-                           ParentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - ZoomOffset, new GPoint((int)(tilePoint.PosXY.X / Ix), (int)(tilePoint.PosXY.Y / Ix)));
+                           Ix = (int)Math.Pow(2, zoomOffset);
+                           parentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - zoomOffset++, new GPoint((int)(tilePoint.PosXY.X / Ix), (int)(tilePoint.PosXY.Y / Ix)));
                         }
 
-                        if(ParentTile != Tile.Empty)
+                        if(parentTile != Tile.Empty)
                         {
-                           int Xoff = Math.Abs(tilePoint.PosXY.X - (ParentTile.Pos.X * Ix));
-                           int Yoff = Math.Abs(tilePoint.PosXY.Y - (ParentTile.Pos.Y * Ix));
+                           int Xoff = Math.Abs(tilePoint.PosXY.X - (parentTile.Pos.X * Ix));
+                           int Yoff = Math.Abs(tilePoint.PosXY.Y - (parentTile.Pos.Y * Ix));
 
                            // render tile 
-                           lock(ParentTile.Overlays)
+                           lock(parentTile.Overlays)
                            {
-                              foreach(WindowsFormsImage img in ParentTile.Overlays)
+                              foreach(WindowsFormsImage img in parentTile.Overlays)
                               {
                                  if(img != null && img.Img != null)
                                  {

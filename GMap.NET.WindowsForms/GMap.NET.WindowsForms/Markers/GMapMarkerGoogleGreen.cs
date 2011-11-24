@@ -31,16 +31,14 @@ namespace GMap.NET.WindowsForms.Markers
          {
             g.DrawImageUnscaled(Resources.shadow50, LocalPosition.X, LocalPosition.Y);
          }
-         //g.TranslateTransform(ToolTipPosition.X, ToolTipPosition.Y);
-         
-         if(Bearing.HasValue)
+         else
          {
-            g.RotateTransform(Bearing.Value - Overlay.Control.Bearing);
-            g.FillPolygon(Brushes.Lime, Arrow);
-         }
-
-         //g.ResetTransform();
-
+            //g.TranslateTransform(ToolTipPosition.X, ToolTipPosition.Y); 
+            //g.RotateTransform(Bearing.Value - Overlay.Control.Bearing);
+            //g.FillPolygon(Brushes.Lime, Arrow);
+            //g.ResetTransform();
+         }  
+                  
          if(!Bearing.HasValue)
          {
             g.DrawImageUnscaled(Resources.bigMarkerGreen, LocalPosition.X, LocalPosition.Y);

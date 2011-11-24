@@ -699,7 +699,7 @@ namespace GMap.NET.WindowsPresentation
       /// render map in WPF
       /// </summary>
       /// <param name="g"></param>
-      void DrawMapWPF(DrawingContext g)
+      void DrawMap(DrawingContext g)
       {
          if(MapProvider == EmptyProvider.Instance || MapProvider == null)
          {
@@ -739,14 +739,14 @@ namespace GMap.NET.WindowsPresentation
                   else if(FillEmptyTiles && MapProvider.Projection is MercatorProjection)
                   {
                      #region -- fill empty tiles --
-                     int zoomOffset = 0;
+                     int zoomOffset = 1;
                      Tile parentTile = Tile.Empty;
                      int Ix = 0;
 
-                     while(parentTile == Tile.Empty && (Core.Zoom - zoomOffset) >= 1 && zoomOffset <= LevelsKeepInMemmory)
+                     while(parentTile == Tile.Empty && zoomOffset < Core.Zoom && zoomOffset <= LevelsKeepInMemmory)
                      {
-                        Ix = (int)Math.Pow(2, ++zoomOffset);
-                        parentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - zoomOffset, new GMap.NET.GPoint((int)(tilePoint.PosXY.X / Ix), (int)(tilePoint.PosXY.Y / Ix)));
+                        Ix = (int)Math.Pow(2, zoomOffset);
+                        parentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - zoomOffset++, new GMap.NET.GPoint((int)(tilePoint.PosXY.X / Ix), (int)(tilePoint.PosXY.Y / Ix)));
                      }
 
                      if(parentTile != Tile.Empty)
@@ -767,12 +767,9 @@ namespace GMap.NET.WindowsPresentation
                                  if(!found)
                                     found = true;
 
-                                 g.PushClip(geometry);
-
+                                 g.PushClip(geometry); 
                                  g.DrawImage(img.Img, parentImgRect);
-
                                  g.DrawRectangle(SelectedAreaFill, null, geometry.Bounds);
-
                                  g.Pop();
                               }
                            }
@@ -1219,13 +1216,13 @@ namespace GMap.NET.WindowsPresentation
             {
                drawingContext.PushTransform(MapScaleTransform);
                {
-                  DrawMapWPF(drawingContext);
+                  DrawMap(drawingContext);
                }
                drawingContext.Pop();
             }
             else
             {
-               DrawMapWPF(drawingContext);
+               DrawMap(drawingContext);
             }
 
             drawingContext.Pop();
@@ -1237,7 +1234,7 @@ namespace GMap.NET.WindowsPresentation
                drawingContext.PushTransform(MapScaleTransform);
                drawingContext.PushTransform(MapTranslateTransform);
                {
-                  DrawMapWPF(drawingContext);
+                  DrawMap(drawingContext);
 
 #if DEBUG
                   drawingContext.DrawLine(VirtualCenterCrossPen, new Point(-20, 0), new Point(20, 0));
@@ -1251,7 +1248,7 @@ namespace GMap.NET.WindowsPresentation
             {
                drawingContext.PushTransform(MapTranslateTransform);
                {
-                  DrawMapWPF(drawingContext);
+                  DrawMap(drawingContext);
 #if DEBUG
                   drawingContext.DrawLine(VirtualCenterCrossPen, new Point(-20, 0), new Point(20, 0));
                   drawingContext.DrawLine(VirtualCenterCrossPen, new Point(0, -20), new Point(0, 20));
