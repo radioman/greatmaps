@@ -74,7 +74,7 @@ namespace Demo.WindowsForms
             MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
             MainMap.MinZoom = 1;
             MainMap.MaxZoom = 17;
-            MainMap.Zoom = 9;               
+            MainMap.Zoom = 9;
 
             // map events
             MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);
@@ -226,7 +226,7 @@ namespace Demo.WindowsForms
       int tt = 0;
       void timer_Tick(object sender, EventArgs e)
       {
-         var pos = new PointLatLng(NextDouble(rnd, MainMap.CurrentViewArea.Top, MainMap.CurrentViewArea.Bottom), NextDouble(rnd, MainMap.CurrentViewArea.Left, MainMap.CurrentViewArea.Right));
+         var pos = new PointLatLng(NextDouble(rnd, MainMap.ViewArea.Top, MainMap.ViewArea.Bottom), NextDouble(rnd, MainMap.ViewArea.Left, MainMap.ViewArea.Right));
          GMapMarker m = new GMapMarkerGoogleGreen(pos);
          {
             m.ToolTipText = (tt++).ToString();

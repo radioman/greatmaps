@@ -21,8 +21,8 @@ namespace GMap.NET.Internals
    /// </summary>
    internal class Core : IDisposable
    {
-      public PointLatLng currentPosition;
-      public GPoint currentPositionPixel;
+      public PointLatLng position;
+      public GPoint positionPixel;
 
       public GPoint renderOffset;
       public GPoint centerTileXYLocation;
@@ -106,7 +106,7 @@ namespace GMap.NET.Internals
                minOfTiles = Provider.Projection.GetTileMatrixMinXY(value);
                maxOfTiles = Provider.Projection.GetTileMatrixMaxXY(value);
 
-               CurrentPositionGPixel = Provider.Projection.FromLatLngToPixel(CurrentPosition, value);
+               positionPixel = Provider.Projection.FromLatLngToPixel(Position, value);
 
                if(IsStarted)
                {
@@ -144,34 +144,30 @@ namespace GMap.NET.Internals
       /// <summary>
       /// current marker position in pixel coordinates
       /// </summary>
-      public GPoint CurrentPositionGPixel
+      public GPoint PositionPixel
       {
          get
          {
-            return currentPositionPixel;
-         }
-         internal set
-         {
-            currentPositionPixel = value;
+            return positionPixel;
          }
       }
 
       /// <summary>
       /// current marker position
       /// </summary>
-      public PointLatLng CurrentPosition
+      public PointLatLng Position
       {
          get
          {
 
-            return currentPosition;
+            return position;
          }
          set
          {
             if(!IsDragging)
             {
-               currentPosition = value;
-               CurrentPositionGPixel = Provider.Projection.FromLatLngToPixel(value, Zoom);
+               position = value;
+               positionPixel = Provider.Projection.FromLatLngToPixel(value, Zoom);
 
                if(IsStarted)
                {
@@ -180,14 +176,14 @@ namespace GMap.NET.Internals
             }
             else
             {
-               currentPosition = value;
-               CurrentPositionGPixel = Provider.Projection.FromLatLngToPixel(value, Zoom);
+               position = value;
+               positionPixel = Provider.Projection.FromLatLngToPixel(value, Zoom);
             }
 
             if(IsStarted)
             {
                if(OnCurrentPositionChanged != null)
-                  OnCurrentPositionChanged(currentPosition);
+                  OnCurrentPositionChanged(position);
             }
          }
       }
@@ -222,7 +218,7 @@ namespace GMap.NET.Internals
 
                   minOfTiles = Provider.Projection.GetTileMatrixMinXY(Zoom);
                   maxOfTiles = Provider.Projection.GetTileMatrixMaxXY(Zoom);
-                  CurrentPositionGPixel = Provider.Projection.FromLatLngToPixel(CurrentPosition, Zoom);
+                  positionPixel = Provider.Projection.FromLatLngToPixel(Position, Zoom);
                }
 
                if(IsStarted)
@@ -243,7 +239,7 @@ namespace GMap.NET.Internals
 
                   zoomToArea = true;
 
-                  if(provider.Area.HasValue && !provider.Area.Value.Contains(CurrentPosition))
+                  if(provider.Area.HasValue && !provider.Area.Value.Contains(Position))
                   {
                      SetZoomToFitRect(provider.Area.Value);
                      zoomToArea = false;
@@ -271,7 +267,7 @@ namespace GMap.NET.Internals
          if(mmaxZoom > 0)
          {
             PointLatLng center = new PointLatLng(rect.Lat - (rect.HeightLat / 2), rect.Lng + (rect.WidthLng / 2));
-            CurrentPosition = center;
+            Position = center;
 
             if(mmaxZoom > maxZoom)
             {
@@ -605,7 +601,7 @@ namespace GMap.NET.Internals
             UpdateBounds();
 
             if(OnCurrentPositionChanged != null)
-               OnCurrentPositionChanged(currentPosition);
+               OnCurrentPositionChanged(position);
          }
       }
 
@@ -613,17 +609,16 @@ namespace GMap.NET.Internals
       /// gets current map view top/left coordinate, width in Lng, height in Lat
       /// </summary>
       /// <returns></returns>
-      public RectLatLng CurrentViewArea
+      public RectLatLng ViewArea
       {
          get
          {
             if(Provider.Projection != null)
             {
-               PointLatLng p = Provider.Projection.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y, Zoom);
-               double rlng = Provider.Projection.FromPixelToLatLng(-renderOffset.X + Width, -renderOffset.Y, Zoom).Lng;
-               double blat = Provider.Projection.FromPixelToLatLng(-renderOffset.X, -renderOffset.Y + Height, Zoom).Lat;
+               var p = FromLocalToLatLng(0, 0);
+               var p2 = FromLocalToLatLng(Width, Height);
 
-               return RectLatLng.FromLTRB(p.Lng, p.Lat, rlng, blat);
+               return RectLatLng.FromLTRB(p.Lng, p.Lat, p2.Lng, p2.Lat);
             }
             return RectLatLng.Empty;
          }
@@ -662,7 +657,7 @@ namespace GMap.NET.Internals
       public GPoint FromLatLngToLocal(PointLatLng latlng)
       {
          GPoint pLocal = Provider.Projection.FromLatLngToPixel(latlng, Zoom);
-         pLocal.Offset(renderOffset); 
+         pLocal.Offset(renderOffset);
          pLocal.OffsetNegative(compensationOffset);
          return pLocal;
       }
@@ -758,7 +753,7 @@ namespace GMap.NET.Internals
       /// </summary>
       public void GoToCurrentPosition()
       {
-         compensationOffset = CurrentPositionGPixel; // TODO: fix
+         compensationOffset = positionPixel; // TODO: fix
 
          // reset stuff
          renderOffset = GPoint.Empty;
@@ -780,7 +775,7 @@ namespace GMap.NET.Internals
       /// </summary>
       internal void GoToCurrentPositionOnZoom()
       {
-         compensationOffset = CurrentPositionGPixel; // TODO: fix
+         compensationOffset = positionPixel; // TODO: fix
 
          // reset stuff
          renderOffset = GPoint.Empty;
@@ -792,15 +787,15 @@ namespace GMap.NET.Internals
          {
             if(MouseWheelZoomType != MouseWheelZoomType.MousePositionWithoutCenter)
             {
-               GPoint pt = new GPoint(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2));
+               GPoint pt = new GPoint(-(positionPixel.X - Width / 2), -(positionPixel.Y - Height / 2));
                pt.Offset(compensationOffset);
                renderOffset.X = pt.X - dragPoint.X;
                renderOffset.Y = pt.Y - dragPoint.Y;
             }
             else // without centering
             {
-               renderOffset.X = -CurrentPositionGPixel.X - dragPoint.X;
-               renderOffset.Y = -CurrentPositionGPixel.Y - dragPoint.Y;
+               renderOffset.X = -positionPixel.X - dragPoint.X;
+               renderOffset.Y = -positionPixel.Y - dragPoint.Y;
                renderOffset.Offset(mouseLastZoom);
                renderOffset.Offset(compensationOffset);
             }
@@ -809,7 +804,7 @@ namespace GMap.NET.Internals
          {
             mouseLastZoom = GPoint.Empty;
 
-            GPoint pt = new GPoint(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2));
+            GPoint pt = new GPoint(-(positionPixel.X - Width / 2), -(positionPixel.Y - Height / 2));
             pt.Offset(compensationOffset);
             renderOffset.X = pt.X - dragPoint.X;
             renderOffset.Y = pt.Y - dragPoint.Y;
@@ -835,8 +830,8 @@ namespace GMap.NET.Internals
          }
 
          {
-            LastLocationInBounds = CurrentPosition;
-            CurrentPosition = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
+            LastLocationInBounds = Position;
+            Position = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
          }
 
          if(OnMapDrag != null)
@@ -864,8 +859,8 @@ namespace GMap.NET.Internals
 
          if(IsDragging)
          {
-            LastLocationInBounds = CurrentPosition;
-            CurrentPosition = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
+            LastLocationInBounds = Position;
+            Position = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
 
             if(OnMapDrag != null)
             {
@@ -1240,7 +1235,7 @@ namespace GMap.NET.Internals
       /// </summary>
       void UpdateGroundResolution()
       {
-         double rez = Provider.Projection.GetGroundResolution(Zoom, CurrentPosition.Lat);
+         double rez = Provider.Projection.GetGroundResolution(Zoom, Position.Lat);
          pxRes100m = (int)(100.0 / rez); // 100 meters
          pxRes1000m = (int)(1000.0 / rez); // 1km  
          pxRes10km = (int)(10000.0 / rez); // 10km

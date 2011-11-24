@@ -1897,15 +1897,15 @@ namespace GMap.NET.WindowsForms
             {
                if(MouseWheelZoomType == MouseWheelZoomType.MousePositionAndCenter)
                {
-                  Core.currentPosition = FromLocalToLatLng(e.X, e.Y);
+                  Core.position = FromLocalToLatLng(e.X, e.Y);
                }
                else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
                {
-                  Core.currentPosition = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
+                  Core.position = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
                }
                else if(MouseWheelZoomType == MouseWheelZoomType.MousePositionWithoutCenter)
                {
-                  Core.currentPosition = FromLocalToLatLng(e.X, e.Y);
+                  Core.position = FromLocalToLatLng(e.X, e.Y);
                }
 
                Core.mouseLastZoom.X = e.X;
@@ -2232,11 +2232,11 @@ namespace GMap.NET.WindowsForms
       {
          get
          {
-            return Core.CurrentPosition;
+            return Core.Position;
          }
          set
          {
-            Core.CurrentPosition = value;
+            Core.Position = value;
 
             if(Core.IsStarted)
             {
@@ -2249,11 +2249,11 @@ namespace GMap.NET.WindowsForms
       /// current marker position in pixel coordinates
       /// </summary>
       [Browsable(false)]
-      public GPoint CurrentPositionGPixel
+      public GPoint PositionPixel
       {
          get
          {
-            return Core.CurrentPositionGPixel;
+            return Core.PositionPixel;
          }
       }
 
@@ -2317,11 +2317,11 @@ namespace GMap.NET.WindowsForms
       /// gets current map view top/left coordinate, width in Lng, height in Lat
       /// </summary>
       [Browsable(false)]
-      public RectLatLng CurrentViewArea
+      public RectLatLng ViewArea
       {
          get
          {
-            return Core.CurrentViewArea;
+            return Core.ViewArea;
          }
       }
 
@@ -2344,7 +2344,7 @@ namespace GMap.NET.WindowsForms
                }
                else
                {
-                  viewarea = CurrentViewArea;
+                  viewarea = ViewArea;
                }
 
                Core.Provider = value;
@@ -2354,7 +2354,7 @@ namespace GMap.NET.WindowsForms
                   if(Core.zoomToArea)
                   {
                      // restore zoomrect as close as possible
-                     if(viewarea != RectLatLng.Empty && viewarea != CurrentViewArea)
+                     if(viewarea != RectLatLng.Empty && viewarea != ViewArea)
                      {
                         int bestZoom = Core.GetMaxZoomToFitRect(viewarea);
                         if(bestZoom > 0 && Zoom != bestZoom)

@@ -86,7 +86,7 @@ namespace GMap.NET.WindowsPresentation
             }
             else
             {
-               viewarea = map.CurrentViewArea;
+               viewarea = map.ViewArea;
             }
 
             map.Core.Provider = e.NewValue as GMapProvider;
@@ -100,7 +100,7 @@ namespace GMap.NET.WindowsPresentation
             if(map.Core.IsStarted && map.Core.zoomToArea)
             {
                // restore zoomrect as close as possible
-               if(viewarea != RectLatLng.Empty && viewarea != map.CurrentViewArea)
+               if(viewarea != RectLatLng.Empty && viewarea != map.ViewArea)
                {
                   int bestZoom = map.Core.GetMaxZoomToFitRect(viewarea);
                   if(bestZoom > 0 && map.Zoom != bestZoom)
@@ -203,7 +203,6 @@ namespace GMap.NET.WindowsPresentation
       PointLatLng selectionEnd;
       Typeface tileTypeface = new Typeface("Arial");
       bool showTileGridLines = false;
-      //MethodInvoker invalidator;
 
       FormattedText Copyright;
 
@@ -1325,15 +1324,15 @@ namespace GMap.NET.WindowsPresentation
             {
                if(MouseWheelZoomType == MouseWheelZoomType.MousePositionAndCenter)
                {
-                  Core.currentPosition = FromLocalToLatLng((int)p.X, (int)p.Y);
+                  Core.position = FromLocalToLatLng((int)p.X, (int)p.Y);
                }
                else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
                {
-                  Core.currentPosition = FromLocalToLatLng((int)ActualWidth / 2, (int)ActualHeight / 2);
+                  Core.position = FromLocalToLatLng((int)ActualWidth / 2, (int)ActualHeight / 2);
                }
                else if(MouseWheelZoomType == MouseWheelZoomType.MousePositionWithoutCenter)
                {
-                  Core.currentPosition = FromLocalToLatLng((int)p.X, (int)p.Y);
+                  Core.position = FromLocalToLatLng((int)p.X, (int)p.Y);
                }
 
                Core.mouseLastZoom.X = (int)p.X;
@@ -1842,11 +1841,11 @@ namespace GMap.NET.WindowsPresentation
       {
          get
          {
-            return Core.CurrentPosition;
+            return Core.Position;
          }
          set
          {
-            Core.CurrentPosition = value;
+            Core.Position = value;
 
             if(Core.IsStarted)
             {
@@ -1856,11 +1855,11 @@ namespace GMap.NET.WindowsPresentation
       }
 
       [Browsable(false)]
-      public GPoint CurrentPositionGPixel
+      public GPoint PositionPixel
       {
          get
          {
-            return Core.CurrentPositionGPixel;
+            return Core.PositionPixel;
          }
       }
 
@@ -1890,11 +1889,11 @@ namespace GMap.NET.WindowsPresentation
       }
 
       [Browsable(false)]
-      public RectLatLng CurrentViewArea
+      public RectLatLng ViewArea
       {
          get
          {
-            return Core.CurrentViewArea;
+            return Core.ViewArea;
          }
       }
 

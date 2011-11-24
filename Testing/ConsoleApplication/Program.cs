@@ -36,7 +36,7 @@ namespace ConsoleApplication
                c.maxZoom = 17;
                c.Zoom = 2;
                //c.Provider = GMapProviders.OpenStreetMap;
-               c.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);
+               c.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
                c.OnMapSizeChanged(400, 400);
 
                c.OnMapOpen();
@@ -60,7 +60,6 @@ namespace ConsoleApplication
                c.OnMapClose();
             }
          }
-#endif
 
          if(false)
          {
@@ -97,6 +96,7 @@ namespace ConsoleApplication
                //}
             }
          }
+#endif
 
          if(false)
          {

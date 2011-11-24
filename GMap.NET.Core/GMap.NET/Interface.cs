@@ -11,7 +11,7 @@ namespace GMap.NET
          set;
       }
 
-      GPoint CurrentPositionGPixel
+      GPoint PositionPixel
       {
          get;
       }
@@ -27,7 +27,7 @@ namespace GMap.NET
          get;
       }
 
-      RectLatLng CurrentViewArea
+      RectLatLng ViewArea
       {
          get;
       }

@@ -219,7 +219,7 @@ namespace Demo.WindowsPresentation
       int tt = 0;
       void timer_Tick(object sender, EventArgs e)
       {
-         var pos = new PointLatLng(NextDouble(r, MainMap.CurrentViewArea.Top, MainMap.CurrentViewArea.Bottom), NextDouble(r, MainMap.CurrentViewArea.Left, MainMap.CurrentViewArea.Right));
+         var pos = new PointLatLng(NextDouble(r, MainMap.ViewArea.Top, MainMap.ViewArea.Bottom), NextDouble(r, MainMap.ViewArea.Left, MainMap.ViewArea.Right));
          GMapMarker m = new GMapMarker(pos);
          {
             var s = new Test((tt++).ToString());
