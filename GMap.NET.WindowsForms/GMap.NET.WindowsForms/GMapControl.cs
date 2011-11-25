@@ -1810,10 +1810,11 @@ namespace GMap.NET.WindowsForms
                      {
                         if(m.IsVisible && m.IsHitTestVisible)
                         {
+                           #region -- check --
 #if !PocketPC
                            if((MobileMode && m.LocalArea.Contains(e.X, e.Y)) || (!MobileMode && m.LocalAreaInControlSpace.Contains(e.X, e.Y)))
 #else
-                                    if (m.LocalArea.Contains(e.X, e.Y))
+                           if (m.LocalArea.Contains(e.X, e.Y))
 #endif
                            {
                               if(!m.IsMouseOver)
@@ -1846,8 +1847,27 @@ namespace GMap.NET.WindowsForms
                                  OnMarkerLeave(m);
                               }
                            }
+                           #endregion
                         }
                      }
+
+#if DEBUG
+                     foreach(GMapPolygon m in o.Polygons)
+                     {
+                        if(m.IsVisible)
+                        {
+                           if(m.IsInside(FromLocalToLatLng(e.X, e.Y)))
+                           {
+                              m.Stroke.Color = Color.Red;
+                           }
+                           else
+                           {
+                              m.Stroke.Color = Color.MidnightBlue;
+                           }
+                           Invalidate();
+                        }
+                     }
+#endif
                   }
                }
             }

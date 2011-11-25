@@ -158,6 +158,58 @@ namespace GMap.NET.WindowsForms
          Stroke.Width = 5;
       }
 
+#if DEBUG
+      /// <summary>
+      /// checks if point is inside the polygon,
+      /// check.: http://greatmaps.codeplex.com/discussions/279437#post700449
+      /// </summary>
+      /// <param name="p"></param>
+      /// <returns></returns>
+      public bool IsInside(PointLatLng p)
+      {
+         if(Points.Count == 0)
+         {
+            return false;
+         }
+
+         int x = 0;
+         int valor = 0;
+
+         while(x + 1 < Points.Count)
+         {
+            if(IsOnRigth(Points[x], Points[x + 1], p))
+            {
+               valor++;
+            }
+            x++;
+         }
+
+         //si es impar entonces esta dentro de punto. 
+         if((valor % 2) != 0)
+         {
+            return true;
+         }
+         return false;
+      }
+
+      static bool IsOnRigth(PointLatLng PolyPointA, PointLatLng PolyPointB, PointLatLng point)
+      {
+         //Si el punto esta entre la Lat de los dos puntos
+         if((PolyPointA.Lat >= point.Lat && PolyPointB.Lat <= point.Lat) || (PolyPointB.Lat >= point.Lat && PolyPointA.Lat <= point.Lat))
+         {
+            double M = (PolyPointA.Lat - PolyPointB.Lat) / (PolyPointA.Lng - PolyPointB.Lng);
+            double LngInFunction = ((point.Lat - PolyPointA.Lat) / M) + PolyPointA.Lng;
+
+            //si esta a la derecha, sumo uno, sino no hago nada. 
+            if(LngInFunction <= point.Lng)
+            {
+               return true;
+            }
+         }
+         return false;
+      }
+#endif
+
 #if !PocketPC
       #region ISerializable Members
 
