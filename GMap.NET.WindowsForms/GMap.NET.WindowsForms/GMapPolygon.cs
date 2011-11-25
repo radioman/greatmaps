@@ -167,7 +167,7 @@ namespace GMap.NET.WindowsForms
       /// <returns></returns>
       public bool IsInside(PointLatLng p)
       {
-         if(Points.Count == 0)
+         if(Points.Count < 3)
          {
             return false;
          }
@@ -182,6 +182,14 @@ namespace GMap.NET.WindowsForms
                valor++;
             }
             x++;
+         }
+
+         if(From != To)
+         {
+            if(IsOnRigth(To.Value, From.Value, p))
+            {
+               valor++;
+            }
          }
 
          //si es impar entonces esta dentro de punto. 

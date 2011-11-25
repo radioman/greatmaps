@@ -1854,7 +1854,7 @@ namespace GMap.NET.WindowsForms
 #if DEBUG
                      foreach(GMapPolygon m in o.Polygons)
                      {
-                        if(m.IsVisible)
+                        if(m.IsVisible && m.Points.Count > 2)
                         {
                            if(m.IsInside(FromLocalToLatLng(e.X, e.Y)))
                            {
