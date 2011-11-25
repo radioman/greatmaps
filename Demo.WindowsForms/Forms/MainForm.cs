@@ -88,6 +88,8 @@ namespace Demo.WindowsForms
             MainMap.MouseUp += new MouseEventHandler(MainMap_MouseUp);
             MainMap.OnMarkerEnter += new MarkerEnter(MainMap_OnMarkerEnter);
             MainMap.OnMarkerLeave += new MarkerLeave(MainMap_OnMarkerLeave);
+            MainMap.OnPolygonEnter += new PolygonEnter(MainMap_OnPolygonEnter);
+            MainMap.OnPolygonLeave += new PolygonLeave(MainMap_OnPolygonLeave);
             MainMap.Manager.OnTileCacheComplete += new TileCacheComplete(OnTileCacheComplete);
             MainMap.Manager.OnTileCacheStart += new TileCacheComplete(OnTileCacheStart);
 
@@ -1177,6 +1179,7 @@ namespace Demo.WindowsForms
          if(polygon == null)
          {
             polygon = new GMapPolygon(polygonPoints, "polygon test");
+            polygon.IsHitTestVisible = true;
             polygons.Polygons.Add(polygon);
          }
          else
@@ -1316,7 +1319,6 @@ namespace Demo.WindowsForms
 
             GMapMarkerRect rc = item as GMapMarkerRect;
             rc.Pen.Color = Color.Blue;
-            MainMap.Invalidate(false);
 
             Debug.WriteLine("OnMarkerLeave: " + item.Position);
          }
@@ -1328,12 +1330,23 @@ namespace Demo.WindowsForms
          {
             GMapMarkerRect rc = item as GMapMarkerRect;
             rc.Pen.Color = Color.Red;
-            MainMap.Invalidate(false);
 
             CurentRectMarker = rc;
 
             Debug.WriteLine("OnMarkerEnter: " + item.Position);
          }
+      }
+
+      void MainMap_OnPolygonLeave(GMapPolygon item)
+      {
+         item.Stroke.Color = Color.MidnightBlue;
+         Debug.WriteLine("OnPolygonLeave: " + item.Name);
+      }
+
+      void MainMap_OnPolygonEnter(GMapPolygon item)
+      {
+         item.Stroke.Color = Color.Red;
+         Debug.WriteLine("OnPolygonEnter: " + item.Name);
       }
 
       void MainMap_OnMapTypeChanged(GMapProvider type)

@@ -34,6 +34,11 @@ namespace GMap.NET.WindowsForms
       /// occurs when clicked on marker
       /// </summary>
       public event MarkerClick OnMarkerClick;
+
+      /// <summary>
+      /// occurs when clicked on polygon
+      /// </summary>
+      public event PolygonClick OnPolygonClick;
 #endif
 
       /// <summary>
@@ -45,6 +50,16 @@ namespace GMap.NET.WindowsForms
       /// occurs on mouse leaves marker area
       /// </summary>
       public event MarkerLeave OnMarkerLeave;
+
+      /// <summary>
+      /// occurs on mouse enters Polygon area
+      /// </summary>
+      public event PolygonEnter OnPolygonEnter;
+
+      /// <summary>
+      /// occurs on mouse leaves Polygon area
+      /// </summary>
+      public event PolygonLeave OnPolygonLeave;
 
       /// <summary>
       /// list of overlays, should be thread safe
@@ -1661,14 +1676,31 @@ namespace GMap.NET.WindowsForms
                   {
                      if(m.IsVisible && m.IsHitTestVisible)
                      {
-                        if(m.LocalAreaInControlSpace.Contains(e.X, e.Y))
+                        if((MobileMode && m.LocalArea.Contains(e.X, e.Y)) || (!MobileMode && m.LocalAreaInControlSpace.Contains(e.X, e.Y)))
                         {
                            if(OnMarkerClick != null)
                            {
                               OnMarkerClick(m, e);
-                              break;
                            }
+                           break;
                         }
+                     }
+                  }
+
+                  foreach(GMapPolygon m in o.Polygons)
+                  {
+                     if(m.IsVisible && m.IsHitTestVisible)
+                     {
+                        #region -- check --
+                        if(m.IsInside(FromLocalToLatLng(e.X, e.Y)))
+                        {
+                           if(OnPolygonClick != null)
+                           {
+                              OnPolygonClick(m, e);
+                           }
+                           break;
+                        }
+                        #endregion
                      }
                   }
                }
@@ -1799,7 +1831,6 @@ namespace GMap.NET.WindowsForms
                }
             }
             else if(Core.mouseDown.IsEmpty)
-#endif
             {
                for(int i = Overlays.Count - 1; i >= 0; i--)
                {
@@ -1823,14 +1854,14 @@ namespace GMap.NET.WindowsForms
                                  cursorBefore = this.Cursor;
                                  this.Cursor = Cursors.Hand;
 #endif
-                                 Invalidate();
-
                                  m.IsMouseOver = true;
 
                                  if(OnMarkerEnter != null)
                                  {
                                     OnMarkerEnter(m);
                                  }
+
+                                 Invalidate();
                               }
                            }
                            else if(m.IsMouseOver)
@@ -1840,37 +1871,66 @@ namespace GMap.NET.WindowsForms
                               cursorBefore = null;
 #endif
                               m.IsMouseOver = false;
-                              Invalidate();
 
                               if(OnMarkerLeave != null)
                               {
                                  OnMarkerLeave(m);
                               }
+
+                              Invalidate();
                            }
                            #endregion
                         }
                      }
 
-#if DEBUG
                      foreach(GMapPolygon m in o.Polygons)
                      {
-                        if(m.IsVisible && m.Points.Count > 2)
+                        if(m.IsVisible && m.IsHitTestVisible)
                         {
+                           #region -- check --
                            if(m.IsInside(FromLocalToLatLng(e.X, e.Y)))
                            {
-                              m.Stroke.Color = Color.Red;
+                              if(!m.IsMouseOver)
+                              {
+#if !PocketPC
+                                 cursorBefore = this.Cursor;
+                                 this.Cursor = Cursors.Hand;
+#endif
+                                 m.IsMouseOver = true;
+
+                                 if(OnPolygonEnter != null)
+                                 {
+                                    OnPolygonEnter(m);
+                                 }
+
+                                 Invalidate();
+                              }
                            }
                            else
                            {
-                              m.Stroke.Color = Color.MidnightBlue;
+                              if(m.IsMouseOver)
+                              {
+#if !PocketPC
+                                 this.Cursor = this.cursorBefore;
+                                 cursorBefore = null;
+#endif
+                                 m.IsMouseOver = false;
+
+                                 if(OnPolygonLeave != null)
+                                 {
+                                    OnPolygonLeave(m);
+                                 }
+
+                                 Invalidate();
+                              }
                            }
-                           Invalidate();
+                           #endregion
                         }
                      }
-#endif
                   }
                }
             }
+#endif
          }
          base.OnMouseMove(e);
       }

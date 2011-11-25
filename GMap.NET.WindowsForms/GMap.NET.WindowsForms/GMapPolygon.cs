@@ -6,6 +6,7 @@ namespace GMap.NET.WindowsForms
    using System.Drawing.Drawing2D;
    using System.Runtime.Serialization;
    using GMap.NET;
+   using System.Windows.Forms;
 
    /// <summary>
    /// GMap.NET polygon
@@ -49,6 +50,28 @@ namespace GMap.NET.WindowsForms
                   }
                }
             }
+         }
+      }
+
+      /// <summary>
+      /// can receive input
+      /// </summary>
+      public bool IsHitTestVisible = false;
+
+      private bool isMouseOver = false;
+
+      /// <summary>
+      /// is mouse over
+      /// </summary>
+      public bool IsMouseOver
+      {
+         get
+         {
+            return isMouseOver;
+         }
+         internal set
+         {
+            isMouseOver = value;
          }
       }
 
@@ -158,10 +181,9 @@ namespace GMap.NET.WindowsForms
          Stroke.Width = 5;
       }
 
-#if DEBUG
       /// <summary>
       /// checks if point is inside the polygon,
-      /// check.: http://greatmaps.codeplex.com/discussions/279437#post700449
+      /// info.: http://greatmaps.codeplex.com/discussions/279437#post700449
       /// </summary>
       /// <param name="p"></param>
       /// <returns></returns>
@@ -216,7 +238,6 @@ namespace GMap.NET.WindowsForms
          }
          return false;
       }
-#endif
 
 #if !PocketPC
       #region ISerializable Members
@@ -273,4 +294,8 @@ namespace GMap.NET.WindowsForms
       #endregion
 #endif
    }
+
+   public delegate void PolygonClick(GMapPolygon item, MouseEventArgs e);
+   public delegate void PolygonEnter(GMapPolygon item);
+   public delegate void PolygonLeave(GMapPolygon item);
 }
