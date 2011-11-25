@@ -1236,11 +1236,12 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
             if(MapRenderTransform.HasValue)
             {
+               e.Graphics.TranslateTransform(Core.renderOffset.X, Core.renderOffset.Y);
                e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
                {
                   DrawMap(e.Graphics);
+                  OnPaintOverlays(e.Graphics);
                }
-               e.Graphics.ResetTransform();
             }
             else
 #endif
@@ -2232,10 +2233,10 @@ namespace GMap.NET.WindowsForms
                   zoomReal = value;
                }
 
-               float remainder = (float)System.Decimal.Remainder((Decimal)value, (Decimal)1);
+               double remainder = value % 1;
                if(remainder != 0)
                {
-                  float scaleValue = remainder + 1;
+                  float scaleValue = (float)(remainder + 1);
                   {
 #if !PocketPC
                      MapRenderTransform = scaleValue;
