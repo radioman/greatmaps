@@ -80,7 +80,7 @@ namespace Demo.WindowsMobile
                           var r = new GMapMarkerTransparent(new PointLatLng(t.Lat, t.Lng));
                           {
                               r.ToolTipMode = MarkerTooltipMode.Always;
-                              r.ToolTipText = "B " + t.Line + ", " + t.Time;
+                              r.ToolTipText = "B " + t.Id + "\n" + t.Line + " @ " + t.Time;
                               r.Data = t;
                           }
                           Main.objects.Markers.Add(r);
@@ -105,7 +105,7 @@ namespace Demo.WindowsMobile
                           var r = new GMapMarkerTransparent(new PointLatLng(t.Lat, t.Lng));
                           {
                               r.ToolTipMode = MarkerTooltipMode.Always;
-                              r.ToolTipText = "T " + t.Line + ", " + t.Time;
+                              r.ToolTipText = "T " + t.Id + "\n" + t.Line + " @ " + t.Time;
                               r.Data = t;
                           }
                           Main.objects.Markers.Add(r);

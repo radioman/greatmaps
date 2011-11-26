@@ -26,7 +26,7 @@ namespace Demo.WindowsMobile
         PointLatLng start = new PointLatLng(54.6961334816182, 25.2985095977783);
 
         // marker
-        GMapMarkerCross gpsPos;
+        GMarkerCross gpsPos;
 
         // layers
         GMapOverlay top;
@@ -104,7 +104,7 @@ namespace Demo.WindowsMobile
             }
 
             // gps pos
-            gpsPos = new GMapMarkerCross(MainMap.Position);
+            gpsPos = new GMarkerCross(MainMap.Position);
             gpsPos.IsVisible = false;
             top.Markers.Add(gpsPos);
 
@@ -163,7 +163,7 @@ namespace Demo.WindowsMobile
         int tt = 0;
         void timer_Tick(object sender, EventArgs e)
         {
-            var pos = new PointLatLng(NextDouble(r, MainMap.CurrentViewArea.Top, MainMap.CurrentViewArea.Bottom), NextDouble(r, MainMap.CurrentViewArea.Left, MainMap.CurrentViewArea.Right));
+            var pos = new PointLatLng(NextDouble(r, MainMap.ViewArea.Top, MainMap.ViewArea.Bottom), NextDouble(r, MainMap.ViewArea.Left, MainMap.ViewArea.Right));
             GMapMarker m = new GMapMarkerGoogleGreen(pos);
             {
                 m.ToolTipText = (tt++).ToString();

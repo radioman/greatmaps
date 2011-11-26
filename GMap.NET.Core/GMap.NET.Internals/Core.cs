@@ -1297,13 +1297,43 @@ namespace GMap.NET.Internals
             try
             {
                Monitor.PulseAll(tileLoadQueue);
-
-               tileDrawingList.Clear();
-               GThreadPool.Clear();
+               tileDrawingList.Clear();           
             }
             finally
             {
                Monitor.Exit(tileLoadQueue);
+            }
+
+            lock (GThreadPool)
+            {
+#if PocketPC
+                Debug.WriteLine("waiting until loaders are stopped...");
+                while(GThreadPool.Count > 0)
+                {
+                    var t = GThreadPool[0];
+
+                    if (t.State != ThreadState.Stopped)
+                    {
+                        var tr = t.Join(1111);
+
+                        Debug.WriteLine(t.Name + ", " + t.State);
+
+                        if (!tr)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            GThreadPool.Remove(t);
+                        }
+                    }
+                    else
+                    {
+                        GThreadPool.Remove(t);
+                    }
+                }
+                Thread.Sleep(1111);
+#endif
             }
 
             if(tileDrawingListLock != null)
@@ -1318,7 +1348,6 @@ namespace GMap.NET.Internals
 #if DEBUG
                GMaps.Instance.CancelTileCaching();
 #endif
-
                GMaps.Instance.noMapInstances = true;
                GMaps.Instance.WaitForCache.Set();
                if(disposing)

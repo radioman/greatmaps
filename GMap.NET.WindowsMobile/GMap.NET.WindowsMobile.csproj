@@ -425,14 +425,8 @@
     <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\GMapToolTip.cs">
       <Link>GMap.NET.WindowsForms\GMapToolTip.cs</Link>
     </Compile>
-    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\Markers\GMapMarkerCross.cs">
-      <Link>GMap.NET.WindowsForms\Markers\GMapMarkerCross.cs</Link>
-    </Compile>
-    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\Markers\GMapMarkerGoogleGreen.cs">
-      <Link>GMap.NET.WindowsForms\Markers\GMapMarkerGoogleGreen.cs</Link>
-    </Compile>
-    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\Markers\GMapMarkerGoogleRed.cs">
-      <Link>GMap.NET.WindowsForms\Markers\GMapMarkerGoogleRed.cs</Link>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\Markers\GMarkerCross.cs">
+      <Link>GMap.NET.WindowsForms\Markers\GMarkerCross.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\ToolTips\GMapBaloonToolTip.cs">
       <Link>GMap.NET.WindowsForms\ToolTips\GMapBaloonToolTip.cs</Link>
@@ -450,6 +444,8 @@
     <Compile Include="GMap.NET.GPS\Utils.cs" />
     <Compile Include="GMap.NET.Internals\FastReaderWriterLock.cs" />
     <Compile Include="GMap.NET.Internals\Native.cs" />
+    <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerGoogleGreen.cs" />
+    <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerGoogleRed.cs" />
     <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerTransparent.cs" />
     <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerTransparentGoogleGreen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
