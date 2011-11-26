@@ -83,22 +83,26 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
          this.Stroke.LineJoin = LineJoin.Round;
          this.Stroke.StartCap = LineCap.RoundAnchor;
+         this.Format.LineAlignment = StringAlignment.Center;
 #endif
 
-         this.Format.Alignment = StringAlignment.Center;
-         this.Format.LineAlignment = StringAlignment.Center;
+         this.Format.Alignment = StringAlignment.Center;         
       }
 
       public virtual void Draw(Graphics g)
       {
          System.Drawing.Size st = g.MeasureString(Marker.ToolTipText, Font).ToSize();
-         System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y - st.Height, st.Width + TextPadding.Width, st.Height + TextPadding.Height);
+         System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y - st.Height, st.Width + TextPadding.Width, st.Height + TextPadding.Height);        
          rect.Offset(Offset.X, Offset.Y);
 
          g.DrawLine(Stroke, Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y, rect.X, rect.Y + rect.Height / 2);
 
          g.FillRectangle(Fill, rect);
          g.DrawRectangle(Stroke, rect);
+
+#if PocketPC
+         rect.Offset(0, (rect.Height - st.Height) / 2);
+#endif
 
          g.DrawString(Marker.ToolTipText, Font, Foreground, rect, Format);
       }

@@ -6,6 +6,7 @@ using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using Demo.WindowsForms;
 using System.Linq;
+using System.IO;
 
 namespace Demo.WindowsMobile
 {
@@ -80,7 +81,7 @@ namespace Demo.WindowsMobile
                           var r = new GMapMarkerTransparent(new PointLatLng(t.Lat, t.Lng));
                           {
                               r.ToolTipMode = MarkerTooltipMode.Always;
-                              r.ToolTipText = "B " + t.Id + "\n" + t.Line + " @ " + t.Time;
+                              r.ToolTipText = "B " + t.Id + Environment.NewLine + t.Line + " @ " + t.Time;
                               r.Data = t;
                           }
                           Main.objects.Markers.Add(r);
@@ -105,7 +106,7 @@ namespace Demo.WindowsMobile
                           var r = new GMapMarkerTransparent(new PointLatLng(t.Lat, t.Lng));
                           {
                               r.ToolTipMode = MarkerTooltipMode.Always;
-                              r.ToolTipText = "T " + t.Id + "\n" + t.Line + " @ " + t.Time;
+                              r.ToolTipText = "T " + t.Id + Environment.NewLine + t.Line + " @ " + t.Time;
                               r.Data = t;
                           }
                           Main.objects.Markers.Add(r);
