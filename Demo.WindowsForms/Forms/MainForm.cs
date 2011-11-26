@@ -29,7 +29,7 @@ namespace Demo.WindowsForms
       internal readonly GMapOverlay polygons = new GMapOverlay("polygons");
 
       // marker
-      GMapMarker currentMarker;
+      GMarkerGoogle currentMarker;
 
       // polygons
       GMapPolygon polygon;
@@ -175,7 +175,7 @@ namespace Demo.WindowsForms
             }
 
             // set current marker
-            currentMarker = new GMapMarkerGoogleRed(MainMap.Position);
+            currentMarker = new GMarkerGoogle(MainMap.Position, GMarkerGoogleType.arrow);
             currentMarker.IsHitTestVisible = false;
             top.Markers.Add(currentMarker);
 
@@ -190,7 +190,7 @@ namespace Demo.WindowsForms
                   {
                      currentMarker.Position = pos.Value;
 
-                     GMapMarker myCity = new GMapMarkerGoogleGreen(pos.Value);
+                     GMapMarker myCity = new GMarkerGoogle(pos.Value, GMarkerGoogleType.green_small);
                      myCity.ToolTipMode = MarkerTooltipMode.Always;
                      myCity.ToolTipText = "Welcome to Lithuania! ;}";
                      objects.Markers.Add(myCity);
@@ -229,7 +229,7 @@ namespace Demo.WindowsForms
       void timer_Tick(object sender, EventArgs e)
       {
          var pos = new PointLatLng(NextDouble(rnd, MainMap.ViewArea.Top, MainMap.ViewArea.Bottom), NextDouble(rnd, MainMap.ViewArea.Left, MainMap.ViewArea.Right));
-         GMapMarker m = new GMapMarkerGoogleGreen(pos);
+         GMapMarker m = new GMarkerGoogle(pos, GMarkerGoogleType.green_pushpin);
          {
             m.ToolTipText = (tt++).ToString();
             m.ToolTipMode = MarkerTooltipMode.Always;
@@ -270,7 +270,7 @@ namespace Demo.WindowsForms
 
                if(!flightMarkers.TryGetValue(d.Id, out marker))
                {
-                  marker = new GMapMarkerGoogleGreen(d.point);
+                  marker = new GMarkerGoogle(d.point, GMarkerGoogleType.blue_small);
                   marker.Tag = d.Id;
                   marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
                   //(marker as GMapMarkerGoogleGreen).Bearing = (float?)d.bearing;
@@ -296,7 +296,7 @@ namespace Demo.WindowsForms
          if(firstLoadFlight)
          {
             MainMap.Zoom = 5;
-            MainMap.ZoomAndCenterMarkers("objects");
+            MainMap.SetZoomToFitRect(new RectLatLng(54.4955675218741, -0.966796875, 28.916015625, 13.3830987326932));
             firstLoadFlight = false;
          }
          MainMap.Refresh();
@@ -363,7 +363,7 @@ namespace Demo.WindowsForms
 
                if(!trolleybusMarkers.TryGetValue(d.Id, out marker))
                {
-                  marker = new GMapMarkerGoogleRed(new PointLatLng(d.Lat, d.Lng));
+                  marker = new GMarkerGoogle(new PointLatLng(d.Lat, d.Lng), GMarkerGoogleType.red_small);
                   marker.Tag = d.Id;
                   marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
@@ -373,7 +373,7 @@ namespace Demo.WindowsForms
                else
                {
                   marker.Position = new PointLatLng(d.Lat, d.Lng);
-                  (marker as GMapMarkerGoogleRed).Bearing = (float?)d.Bearing;
+                  (marker as GMarkerGoogle).Bearing = (float?)d.Bearing;
                }
                marker.ToolTipText = "Trolley " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
 
@@ -396,7 +396,7 @@ namespace Demo.WindowsForms
 
                if(!busMarkers.TryGetValue(d.Id, out marker))
                {
-                  marker = new GMapMarkerGoogleGreen(new PointLatLng(d.Lat, d.Lng));
+                  marker = new GMarkerGoogle(new PointLatLng(d.Lat, d.Lng), GMarkerGoogleType.green_small);
                   marker.Tag = d.Id;
                   marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
@@ -406,7 +406,7 @@ namespace Demo.WindowsForms
                else
                {
                   marker.Position = new PointLatLng(d.Lat, d.Lng);
-                  (marker as GMapMarkerGoogleGreen).Bearing = (float?)d.Bearing;
+                  (marker as GMarkerGoogle).Bearing = (float?)d.Bearing;
                }
                marker.ToolTipText = "Bus " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
 
@@ -837,7 +837,7 @@ namespace Demo.WindowsForms
                   {
                      if(!string.IsNullOrEmpty(tcp.Value.Ip))
                      {
-                        marker = new GMapMarkerGoogleGreen(new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude));
+                        marker = new GMarkerGoogle(new PointLatLng(tcp.Value.Latitude, tcp.Value.Longitude), GMarkerGoogleType.green_small);
                         marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
                         marker.Tag = tcp.Value.CountryName;
 
@@ -1261,7 +1261,7 @@ namespace Demo.WindowsForms
          PointLatLng? pos = GMapProviders.GoogleMap.GetPoint("Lithuania, " + place, out status);
          if(pos != null && status == GeoCoderStatusCode.G_GEO_SUCCESS)
          {
-            GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(pos.Value);
+            GMarkerGoogle m = new GMarkerGoogle(pos.Value, GMarkerGoogleType.green);
             m.ToolTip = new GMapRoundedToolTip(m);
 
             GMapMarkerRect mBorders = new GMapMarkerRect(pos.Value);
@@ -1270,27 +1270,6 @@ namespace Demo.WindowsForms
                mBorders.ToolTipText = place;
                mBorders.ToolTipMode = MarkerTooltipMode.Always;
             }
-
-            objects.Markers.Add(m);
-            objects.Markers.Add(mBorders);
-         }
-      }
-
-      void AddTmpPoint(string place, PointLatLng pos)
-      {
-         {
-            GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(pos);
-            //m.ToolTip = new GMapRoundedToolTip(m);
-            m.ToolTipText = place;
-            m.ToolTipMode = MarkerTooltipMode.Always;
-
-            GMapMarkerRect mBorders = new GMapMarkerRect(pos);
-            {
-               mBorders.InnerMarker = m;
-               mBorders.ToolTipText = place;
-               mBorders.ToolTipMode = MarkerTooltipMode.Always;
-            }
-            mBorders.IsVisible = false;
 
             objects.Markers.Add(m);
             objects.Markers.Add(mBorders);
@@ -1433,7 +1412,7 @@ namespace Demo.WindowsForms
       // MapZoomChanged
       void MainMap_OnMapZoomChanged()
       {
-         trackBar1.Value = (int)(MainMap.Zoom);
+         trackBar1.Value = (int)MainMap.Zoom;
          textBoxZoomCurrent.Text = MainMap.Zoom.ToString();
       }
 
@@ -1609,7 +1588,7 @@ namespace Demo.WindowsForms
       // zoom
       private void trackBar1_ValueChanged(object sender, EventArgs e)
       {
-         MainMap.Zoom = (trackBar1.Value);
+         MainMap.Zoom = trackBar1.Value;           
       }
 
       // go to
@@ -1696,11 +1675,11 @@ namespace Demo.WindowsForms
             routes.Routes.Add(r);
 
             // add route start/end marks
-            GMapMarker m1 = new GMapMarkerGoogleRed(start);
+            GMapMarker m1 = new GMarkerGoogle(start, GMarkerGoogleType.green_big_go);
             m1.ToolTipText = "Start: " + route.Name;
             m1.ToolTipMode = MarkerTooltipMode.Always;
 
-            GMapMarker m2 = new GMapMarkerGoogleGreen(end);
+            GMapMarker m2 = new GMarkerGoogle(end, GMarkerGoogleType.red_big_stop);
             m2.ToolTipText = "End: " + end.ToString();
             m2.ToolTipMode = MarkerTooltipMode.Always;
 
@@ -1714,7 +1693,7 @@ namespace Demo.WindowsForms
       // add marker on current position
       private void button4_Click(object sender, EventArgs e)
       {
-         GMapMarkerGoogleGreen m = new GMapMarkerGoogleGreen(currentMarker.Position);
+         GMarkerGoogle m = new GMarkerGoogle(currentMarker.Position, GMarkerGoogleType.green_pushpin);
          GMapMarkerRect mBorders = new GMapMarkerRect(currentMarker.Position);
          {
             mBorders.InnerMarker = m;
@@ -1976,11 +1955,11 @@ namespace Demo.WindowsForms
          {
             if(e.KeyChar == '+')
             {
-               MainMap.Zoom += 1;
+               MainMap.Zoom = ((int)MainMap.Zoom) + 1;
             }
             else if(e.KeyChar == '-')
             {
-               MainMap.Zoom -= 1;
+               MainMap.Zoom = ((int)(MainMap.Zoom + 0.99)) - 1;
             }
             else if(e.KeyChar == 'a')
             {

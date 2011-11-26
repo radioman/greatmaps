@@ -9,13 +9,15 @@ namespace GMap.NET.WindowsForms.Markers
    using GMap.NET.WindowsMobile.Properties;
 #endif
 
-   public class GMapMarkerGoogleGreen : GMapMarker
+   public class GMapMarkerGoogleRed : GMapMarker
    {
       public float? Bearing;
 
-      static readonly System.Drawing.Size SizeSt = new System.Drawing.Size(Resources.bigMarkerGreen.Width, Resources.bigMarkerGreen.Height);
+      static readonly Bitmap shadow = Resources.shadow50;
+      static readonly Bitmap marker = Resources.marker;
+      static readonly System.Drawing.Size SizeSt = new System.Drawing.Size(marker.Width, marker.Height);
 
-      public GMapMarkerGoogleGreen(PointLatLng p)
+      public GMapMarkerGoogleRed(PointLatLng p)
          : base(p)
       {
          Size = SizeSt;
@@ -29,23 +31,23 @@ namespace GMap.NET.WindowsForms.Markers
 #if !PocketPC
          if(!Bearing.HasValue)
          {
-            g.DrawImageUnscaled(Resources.shadow50, LocalPosition.X, LocalPosition.Y);
+            g.DrawImageUnscaled(shadow, LocalPosition.X, LocalPosition.Y);
          }
          else
          {
-            //g.TranslateTransform(ToolTipPosition.X, ToolTipPosition.Y); 
+            //g.TranslateTransform(ToolTipPosition.X, ToolTipPosition.Y);
             //g.RotateTransform(Bearing.Value - Overlay.Control.Bearing);
-            //g.FillPolygon(Brushes.Lime, Arrow);
+            //g.FillPolygon(Brushes.Red, Arrow);
             //g.ResetTransform();
-         }  
-                  
+         }
+
          if(!Bearing.HasValue)
          {
-            g.DrawImageUnscaled(Resources.bigMarkerGreen, LocalPosition.X, LocalPosition.Y);
+            g.DrawImageUnscaled(marker, LocalPosition.X, LocalPosition.Y);
          }
 #else
-            DrawImageUnscaled(g, Resources.shadow50, LocalPosition.X, LocalPosition.Y);
-            DrawImageUnscaled(g, Resources.marker, LocalPosition.X, LocalPosition.Y);
+            DrawImageUnscaled(g, shadow, LocalPosition.X, LocalPosition.Y);
+            DrawImageUnscaled(g, marker, LocalPosition.X, LocalPosition.Y);
 #endif
       }
    }

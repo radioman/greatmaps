@@ -3,11 +3,11 @@ namespace GMap.NET.WindowsForms.Markers
 {
    using System.Drawing;
 
-   public class GMapMarkerCross : GMapMarker
+   public class GMarkerCross : GMapMarker
    {
       public Pen Pen;
 
-      public GMapMarkerCross(PointLatLng p)
+      public GMarkerCross(PointLatLng p)
          : base(p)
       {
 #if !PocketPC

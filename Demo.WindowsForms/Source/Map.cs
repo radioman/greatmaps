@@ -17,9 +17,6 @@ namespace Demo.WindowsForms
       private int counter;
       readonly Font DebugFont = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Regular);
       readonly Font DebugFontSmall = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Bold);
-
-#endif
-
       DateTime start;
       DateTime end;
       int delta;
@@ -42,9 +39,6 @@ namespace Demo.WindowsForms
       {
          base.OnPaintOverlays(g);
 
-         //g.ResetTransform();
-
-#if DEBUG
          g.DrawString(Zoom + "z, " + MapProvider + ", refresh: " + counter++ + ", load: " + ElapsedMilliseconds + "ms, render: " + delta + "ms", DebugFont, Brushes.Blue, DebugFont.Height, DebugFont.Height + 20);
 
          //g.DrawString(ViewAreaPixel.Location.ToString(), DebugFontSmall, Brushes.Blue, DebugFontSmall.Height, DebugFontSmall.Height);
@@ -60,7 +54,7 @@ namespace Demo.WindowsForms
          //string rt = ViewAreaPixel.RightTop.ToString();
          //var rts = g.MeasureString(rb, DebugFontSmall);
          //g.DrawString(rt, DebugFontSmall, Brushes.Blue, Width - rts.Width - DebugFontSmall.Height, DebugFontSmall.Height);
-#endif
       }
+#endif
    }
 }

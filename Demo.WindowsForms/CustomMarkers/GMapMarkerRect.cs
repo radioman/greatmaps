@@ -10,7 +10,7 @@ namespace Demo.WindowsForms.CustomMarkers
    {
       public Pen Pen;
 
-      public GMapMarkerGoogleGreen InnerMarker;
+      public GMarkerGoogle InnerMarker;
 
       public GMapMarkerRect(PointLatLng p)
          : base(p)

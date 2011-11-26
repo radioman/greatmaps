@@ -269,8 +269,7 @@ namespace GMap.NET.WindowsForms
       public RectLatLng? BoundsOfMap = null;
 
       /// <summary>
-      /// enables integrated DoubleBuffer for best performance
-      /// if using a lot objets on map or running on windows mobile
+      /// enables integrated DoubleBuffer for running on windows mobile
       /// </summary>
 #if !PocketPC
       public bool ForceDoubleBuffer = false;
@@ -1205,11 +1204,12 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
                if(MapRenderTransform.HasValue)
                {
+                  gxOff.TranslateTransform(Core.renderOffset.X, Core.renderOffset.Y);
                   gxOff.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
                   {
                      DrawMap(gxOff);
+                     OnPaintOverlays(gxOff);
                   }
-                  gxOff.ResetTransform();
                }
                else
 #endif
@@ -1236,10 +1236,20 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
             if(MapRenderTransform.HasValue)
             {
-               e.Graphics.TranslateTransform(Core.renderOffset.X, Core.renderOffset.Y);
+               if(!MobileMode)
+               {
+                  e.Graphics.TranslateTransform(Core.renderOffset.X, Core.renderOffset.Y);
+               }
                e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
                {
                   DrawMap(e.Graphics);
+
+                  e.Graphics.ResetTransform();
+                  if(!MobileMode)
+                  {
+                     e.Graphics.TranslateTransform(Core.renderOffset.X, Core.renderOffset.Y);
+                  }
+
                   OnPaintOverlays(e.Graphics);
                }
             }
@@ -1269,7 +1279,10 @@ namespace GMap.NET.WindowsForms
 #endif
                {
 #if !PocketPC
-                  e.Graphics.TranslateTransform(Core.renderOffset.X, Core.renderOffset.Y);
+                  if(!MobileMode)
+                  {
+                     e.Graphics.TranslateTransform(Core.renderOffset.X, Core.renderOffset.Y);
+                  }
 #endif
                   DrawMap(e.Graphics);
                   OnPaintOverlays(e.Graphics);
@@ -2101,9 +2114,8 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
          if(MapRenderTransform.HasValue)
          {
-            //var tp = MapRenderTransform.Transform(new System.Windows.Point(ret.X, ret.Y));
             ret.X = (int)(ret.X / MapRenderTransform.Value);
-            ret.Y = (int)(ret.X / MapRenderTransform.Value);
+            ret.Y = (int)(ret.Y / MapRenderTransform.Value);
          }
 
          if(IsRotated)
