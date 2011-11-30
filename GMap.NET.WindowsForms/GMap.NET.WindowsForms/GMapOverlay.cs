@@ -163,13 +163,13 @@ namespace GMap.NET.WindowsForms
          {
             if(e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Reset)
             {
-#if !PocketPC
                if(Control.IsMouseOverMarker)
                {
                   Control.IsMouseOverMarker = false;
+#if !PocketPC
                   Control.Cursor = Cursors.Default;
-               }
 #endif
+               }
             }
 
             if(!Control.HoldInvalidation)
@@ -224,10 +224,10 @@ namespace GMap.NET.WindowsForms
             {
                foreach(GMapRoute r in Routes)
                {
-                   if (r.IsVisible)
-                   {
-                       r.OnRender(g);
-                   }
+                  if(r.IsVisible)
+                  {
+                     r.OnRender(g);
+                  }
                }
             }
 
@@ -235,10 +235,10 @@ namespace GMap.NET.WindowsForms
             {
                foreach(GMapPolygon r in Polygons)
                {
-                   if (r.IsVisible)
-                   {
-                       r.OnRender(g);
-                   }
+                  if(r.IsVisible)
+                  {
+                     r.OnRender(g);
+                  }
                }
             }
 
@@ -248,18 +248,18 @@ namespace GMap.NET.WindowsForms
                foreach(GMapMarker m in Markers)
                {
                   //if(m.IsVisible && (m.DisableRegionCheck || Control.Core.currentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y)))
-                   if (m.IsVisible || m.DisableRegionCheck)                  
-                   {
+                  if(m.IsVisible || m.DisableRegionCheck)
+                  {
                      m.OnRender(g);
-                   }
+                  }
                }
 
                // tooltips above
                foreach(GMapMarker m in Markers)
                {
                   //if(m.ToolTip != null && m.IsVisible && Control.Core.currentRegion.Contains(m.LocalPosition.X, m.LocalPosition.Y))
-                   if(m.ToolTip != null && m.IsVisible)                 
-                   {
+                  if(m.ToolTip != null && m.IsVisible)
+                  {
                      if(!string.IsNullOrEmpty(m.ToolTipText) && (m.ToolTipMode == MarkerTooltipMode.Always || (m.ToolTipMode == MarkerTooltipMode.OnMouseOver && m.IsMouseOver)))
                      {
                         m.ToolTip.Draw(g);

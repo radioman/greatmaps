@@ -135,6 +135,7 @@
     </Compile>
     <Compile Include="Source\DemoStuff.cs" />
     <Compile Include="Source\Map.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Source\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

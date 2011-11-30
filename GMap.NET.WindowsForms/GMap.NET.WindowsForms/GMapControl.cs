@@ -1769,18 +1769,24 @@ namespace GMap.NET.WindowsForms
       Cursor cursorBefore = Cursors.Default;
 #endif
 
+      /// <summary>
+      /// Gets the width and height of a rectangle centered on the point the mouse
+      /// button was pressed, within which a drag operation will not begin.
+      /// </summary>
+#if !PocketPC
+      public Size DragSize = SystemInformation.DragSize;
+#else
+      public Size DragSize = new Size(4, 4);
+#endif
+
       protected override void OnMouseMove(MouseEventArgs e)
       {
          if(!Core.IsDragging && !Core.mouseDown.IsEmpty)
          {
-            Size DragSize = new Size();
 #if PocketPC
-                GPoint p = new GPoint(e.X, e.Y);
-                DragSize.Height = 4;
-                DragSize.Width = 4;
+            GPoint p = new GPoint(e.X, e.Y);
 #else
             GPoint p = ApplyRotationInversion(e.X, e.Y);
-            DragSize = SystemInformation.DragSize;
 #endif
             if(Math.Abs(p.X - Core.mouseDown.X) * 2 >= DragSize.Width || Math.Abs(p.Y - Core.mouseDown.Y) * 2 >= DragSize.Height)
             {
@@ -1810,7 +1816,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
                Core.mouseCurrent = ApplyRotationInversion(e.X, e.Y);
 #else
-                    Core.mouseCurrent = new GPoint(e.X, e.Y);
+               Core.mouseCurrent = new GPoint(e.X, e.Y);
 #endif
                Core.Drag(Core.mouseCurrent);
 
@@ -1820,7 +1826,7 @@ namespace GMap.NET.WindowsForms
                   ForceUpdateOverlays();
                }
 #else
-                    ForceUpdateOverlays();
+               ForceUpdateOverlays();
 #endif
 
                base.Invalidate();
