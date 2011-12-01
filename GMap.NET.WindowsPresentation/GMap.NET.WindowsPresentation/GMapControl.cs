@@ -170,7 +170,7 @@ namespace GMap.NET.WindowsPresentation
                {
                   if(map.MapScaleTransform == null)
                   {
-                     map.MapScaleTransform = new ScaleTransform();
+                     map.MapScaleTransform = map.lastScaleTransform;
                   }
                   map.MapScaleTransform.ScaleX = scaleValue;
                   map.MapScaleTransform.ScaleY = scaleValue;
@@ -190,10 +190,14 @@ namespace GMap.NET.WindowsPresentation
                map.MapScaleTransform = null;
 
                map.Core.Zoom = Convert.ToInt32(value);
+
+               map.ForceUpdateOverlays();
                map.InvalidateVisual(true);
             }
          }
       }
+
+      readonly ScaleTransform lastScaleTransform = new ScaleTransform();
 
       #endregion
 
@@ -388,6 +392,8 @@ namespace GMap.NET.WindowsPresentation
       /// current markers overlay offset
       /// </summary>
       internal readonly TranslateTransform MapTranslateTransform = new TranslateTransform();
+      internal readonly TranslateTransform MapOverlayTranslateTransform = new TranslateTransform();
+
       internal ScaleTransform MapScaleTransform = new ScaleTransform();
       internal RotateTransform MapRotateTransform = new RotateTransform();
 
@@ -682,13 +688,20 @@ namespace GMap.NET.WindowsPresentation
             if(MapScaleTransform != null)
             {
                var tp = MapScaleTransform.Transform(new System.Windows.Point(Core.renderOffset.X, Core.renderOffset.Y));
-               MapTranslateTransform.X = tp.X;
-               MapTranslateTransform.Y = tp.Y;
+               MapOverlayTranslateTransform.X = tp.X;
+               MapOverlayTranslateTransform.Y = tp.Y;
+
+               // map is scaled already
+               MapTranslateTransform.X = Core.renderOffset.X;
+               MapTranslateTransform.Y = Core.renderOffset.Y;
             }
             else
             {
                MapTranslateTransform.X = Core.renderOffset.X;
                MapTranslateTransform.Y = Core.renderOffset.Y;
+
+               MapOverlayTranslateTransform.X = MapTranslateTransform.X;
+               MapOverlayTranslateTransform.Y = MapTranslateTransform.Y;
             }
          }
       }
@@ -767,7 +780,7 @@ namespace GMap.NET.WindowsPresentation
                                  if(!found)
                                     found = true;
 
-                                 g.PushClip(geometry); 
+                                 g.PushClip(geometry);
                                  g.DrawImage(img.Img, parentImgRect);
                                  g.DrawRectangle(SelectedAreaFill, null, geometry.Bounds);
                                  g.Pop();
@@ -1090,8 +1103,8 @@ namespace GMap.NET.WindowsPresentation
          {
             Core.DragOffset(new GPoint(x, y));
 
-            InvalidateVisual(true);
             UpdateMarkersOffset();
+            InvalidateVisual(true);
          }
       }
 
