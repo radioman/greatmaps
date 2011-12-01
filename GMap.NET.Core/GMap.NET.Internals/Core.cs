@@ -831,7 +831,10 @@ namespace GMap.NET.Internals
 
          {
             LastLocationInBounds = Position;
+
+            IsDragging = true;
             Position = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
+            IsDragging = false;
          }
 
          if(OnMapDrag != null)
@@ -1297,14 +1300,14 @@ namespace GMap.NET.Internals
             try
             {
                Monitor.PulseAll(tileLoadQueue);
-               tileDrawingList.Clear();           
+               tileDrawingList.Clear();
             }
             finally
             {
                Monitor.Exit(tileLoadQueue);
             }
 
-            lock (GThreadPool)
+            lock(GThreadPool)
             {
 #if PocketPC
                 Debug.WriteLine("waiting until loaders are stopped...");
