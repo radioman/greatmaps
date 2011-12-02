@@ -101,6 +101,7 @@
       <HintPath>..\References\Windows\System.Data.SQLite.DLL</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -109,6 +110,76 @@
     <Compile Include="..\GMap.NET.Core\Properties\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="BSE.Windows.Forms\ProgressBar\ProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BSE.Windows.Forms\ProgressBar\ProgressBar.Designer.cs">
+      <DependentUpon>ProgressBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BSE.Windows.Forms\ProgressBar\ToolStripProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BSE.Windows.Forms\Renderer\BseColorTable.cs" />
+    <Compile Include="BSE.Windows.Forms\Renderer\BseRenderer.cs" />
+    <Compile Include="BSE.Windows.Forms\Renderer\ColorTableBlack.cs" />
+    <Compile Include="BSE.Windows.Forms\Renderer\ColorTableBlue.cs" />
+    <Compile Include="BSE.Windows.Forms\Renderer\Office2007BlackColorTable.cs" />
+    <Compile Include="BSE.Windows.Forms\Renderer\Office2007BlueColorTable.cs" />
+    <Compile Include="BSE.Windows.Forms\Renderer\Office2007Renderer.cs" />
+    <Compile Include="BSE.Windows.Forms\Renderer\Office2007SilverColorTable.cs" />
+    <Compile Include="BSE.Windows.Forms\Renderer\OfficeColorTable.cs" />
+    <Compile Include="BSE.Windows.Forms\Renderer\ProfessionalColorTable.cs" />
+    <Compile Include="BSE.Windows.Forms\Splitter\Splitter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BSE.Windows.Forms\Splitter\Splitter.Designer.cs">
+      <DependentUpon>Splitter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BSE.Windows.Forms\XPander\BasePanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BSE.Windows.Forms\XPander\CaptionStyle.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\ColorScheme.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\ColorSchemeChangeEventArgs.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\Constants.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\CustomColors.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\CustomPanelColors.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\CustomXPanderPanelColors.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\HoverState.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\HoverStateChangeEventArgs.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\IPanel.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\Panel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BSE.Windows.Forms\XPander\Panel.Designer.cs">
+      <DependentUpon>Panel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BSE.Windows.Forms\XPander\PanelColors.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\PanelColorsBlack.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\PanelColorsBlue.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\PanelColorsBse.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\PanelColorsOffice.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\PanelColorsOffice2007Black.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\PanelColorsOffice2007Blue.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\PanelColorsOffice2007Silver.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\PanelSettingsManager.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\PanelStyle.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\PanelStyleChangeEventArgs.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\UseAntiAlias.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\UseClearTypeGridFit.cs" />
+    <Compile Include="BSE.Windows.Forms\XPander\XPanderPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BSE.Windows.Forms\XPander\XPanderPanel.Designer.cs">
+      <DependentUpon>XPanderPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BSE.Windows.Forms\XPander\XPanderPanelList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BSE.Windows.Forms\XPander\XPanderPanelList.Designer.cs">
+      <DependentUpon>XPanderPanelList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BSE.Windows.Forms\XPander\XPanderStateChangeEventArgs.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -142,6 +213,18 @@
     <Compile Include="Source\SQLiteIpCache.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="BSE.Windows.Forms\XPander\Panel.resx">
+      <DependentUpon>Panel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BSE.Windows.Forms\XPander\XPanderPanel.resx">
+      <DependentUpon>XPanderPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BSE.Windows.Forms\XPander\XPanderPanelList.resx">
+      <DependentUpon>XPanderPanelList.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -154,12 +237,21 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
+      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="BSE.Windows.Forms\Resources\ChevronDown.png" />
+    <Content Include="BSE.Windows.Forms\Resources\ChevronLeft.png" />
+    <Content Include="BSE.Windows.Forms\Resources\ChevronRight.png" />
+    <Content Include="BSE.Windows.Forms\Resources\ChevronUp.png" />
+    <Content Include="BSE.Windows.Forms\Resources\closePanel.png" />
+    <Content Include="BSE.Windows.Forms\Resources\Collapse.jpg" />
+    <Content Include="BSE.Windows.Forms\Resources\Collapse_h.jpg" />
+    <Content Include="BSE.Windows.Forms\Resources\Expand.jpg" />
+    <Content Include="BSE.Windows.Forms\Resources\Expand_h.jpg" />
     <Content Include="Resources\ImageReady.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -170,10 +262,6 @@
     <ProjectReference Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms.csproj">
       <Project>{E06DEF77-F933-42FB-AFD7-DB2D0D8D6A98}</Project>
       <Name>GMap.NET.WindowsForms</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Libs\BSE.Windows.Forms\BSE.Windows.Forms.csproj">
-      <Project>{9CA367B8-0B98-49D1-84FB-735E612E3BA9}</Project>
-      <Name>BSE.Windows.Forms</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

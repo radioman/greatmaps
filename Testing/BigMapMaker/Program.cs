@@ -17,13 +17,13 @@ namespace BigMapMaker
          GMaps.Instance.UseMemoryCache = false;
          GMaps.Instance.Mode = AccessMode.ServerAndCache;
 
-         GMapProvider.TileImageProxy = new WindowsFormsImageProxy();
-         //GMapProvider.TileImageProxy = new GMap.NET.WindowsPresentation.WindowsPresentationImageProxy();
-  
+         GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
+
          GMapProvider provider = GMapProviders.BingMap;
          provider.OnInitialized();
 
          int zoom = 12;
+
          RectLatLng area = RectLatLng.FromLTRB(25.013809204101563, 54.832138557519563, 25.506134033203125, 54.615623046071839);
          if(!area.IsEmpty)
          {

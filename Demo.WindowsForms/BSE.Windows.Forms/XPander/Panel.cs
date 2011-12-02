@@ -7,7 +7,7 @@ using System.Drawing.Drawing2D;
 using System.Data;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
-using BSE.Windows.Forms.Properties;
+using Demo.WindowsForms.Properties;
 using System.Diagnostics;
 
 namespace BSE.Windows.Forms

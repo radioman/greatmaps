@@ -439,6 +439,10 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
+      static DataTemplate DataTemplateInstance;
+      static ItemsPanelTemplate ItemsPanelTemplateInstance;
+      static Style StyleInstance;
+
       public GMapControl()
       {
          if(!DesignModeInConstruct)
@@ -466,30 +470,41 @@ namespace GMap.NET.WindowsPresentation
             //</ItemsControl> 
             #endregion
 
-            DataTemplate dt = new DataTemplate(typeof(GMapMarker));
+            if(DataTemplateInstance == null)
             {
-               FrameworkElementFactory fef = new FrameworkElementFactory(typeof(ContentPresenter));
-               fef.SetBinding(ContentPresenter.ContentProperty, new Binding("Shape"));
-               dt.VisualTree = fef;
+               DataTemplateInstance = new DataTemplate(typeof(GMapMarker));
+               {
+                  FrameworkElementFactory fef = new FrameworkElementFactory(typeof(ContentPresenter));
+                  fef.SetBinding(ContentPresenter.ContentProperty, new Binding("Shape"));
+                  DataTemplateInstance.VisualTree = fef;
+               }
             }
-            ItemTemplate = dt;
+            ItemTemplate = DataTemplateInstance;
 
-            FrameworkElementFactory factoryPanel = new FrameworkElementFactory(typeof(Canvas));
+            if(ItemsPanelTemplateInstance == null)
             {
-               factoryPanel.SetValue(Canvas.IsItemsHostProperty, true);
+               var factoryPanel = new FrameworkElementFactory(typeof(Canvas));
+               {
+                  factoryPanel.SetValue(Canvas.IsItemsHostProperty, true);
 
-               ItemsPanelTemplate template = new ItemsPanelTemplate();
-               template.VisualTree = factoryPanel;
-               ItemsPanel = template;
+                  ItemsPanelTemplateInstance = new ItemsPanelTemplate();
+                  {
+                     ItemsPanelTemplateInstance.VisualTree = factoryPanel;
+                  }
+               }
             }
+            ItemsPanel = ItemsPanelTemplateInstance;
 
-            Style st = new Style();
+            if(StyleInstance == null)
             {
-               st.Setters.Add(new Setter(Canvas.LeftProperty, new Binding("LocalPositionX")));
-               st.Setters.Add(new Setter(Canvas.TopProperty, new Binding("LocalPositionY")));
-               st.Setters.Add(new Setter(Canvas.ZIndexProperty, new Binding("ZIndex")));
+               StyleInstance = new Style();
+               {
+                  StyleInstance.Setters.Add(new Setter(Canvas.LeftProperty, new Binding("LocalPositionX")));
+                  StyleInstance.Setters.Add(new Setter(Canvas.TopProperty, new Binding("LocalPositionY")));
+                  StyleInstance.Setters.Add(new Setter(Canvas.ZIndexProperty, new Binding("ZIndex")));
+               }
             }
-            ItemContainerStyle = st;
+            ItemContainerStyle = StyleInstance;
             #endregion
 
             Manager.SQLitePing();
@@ -497,7 +512,7 @@ namespace GMap.NET.WindowsPresentation
             ClipToBounds = true;
             SnapsToDevicePixels = true;
 
-            GMapProvider.TileImageProxy = new WindowsPresentationImageProxy();
+            GMapProvider.TileImageProxy = WindowsPresentationImageProxy.Instance;
 
             Core.SystemType = "WindowsPresentation";
 
@@ -514,8 +529,6 @@ namespace GMap.NET.WindowsPresentation
             {
                ItemsSource = Markers;
             }
-
-            this.
 
             Core.Zoom = (int)((double)ZoomProperty.DefaultMetadata.DefaultValue);
          }

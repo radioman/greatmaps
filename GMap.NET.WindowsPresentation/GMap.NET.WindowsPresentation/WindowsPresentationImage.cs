@@ -160,6 +160,13 @@ namespace GMap.NET.WindowsPresentation
    /// </summary>
    public class WindowsPresentationImageProxy : PureImageProxy
    {
+      WindowsPresentationImageProxy()
+      {
+
+      }
+
+      public static readonly WindowsPresentationImageProxy Instance = new WindowsPresentationImageProxy();
+
       public override PureImage FromStream(System.IO.Stream stream)
       {
          WindowsPresentationImage ret = null;

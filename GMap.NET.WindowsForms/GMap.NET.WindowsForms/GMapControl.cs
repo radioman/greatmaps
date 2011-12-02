@@ -386,8 +386,6 @@ namespace GMap.NET.WindowsForms
       Bitmap backBuffer;
       Graphics gxOff;
 
-      static readonly WindowsFormsImageProxy wimg = new WindowsFormsImageProxy();
-
 #if !DESIGN
       /// <summary>
       /// construct
@@ -413,7 +411,7 @@ namespace GMap.NET.WindowsForms
             GrayScaleMode = GrayScaleMode;
             NegativeMode = NegativeMode;
 #endif
-            GMapProvider.TileImageProxy = wimg;
+            GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
 
             Core.SystemType = "WindowsForms";
 

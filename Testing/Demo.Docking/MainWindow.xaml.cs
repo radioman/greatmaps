@@ -60,7 +60,7 @@ namespace Sample3
                      }
                      else
                      {
-                        map.SetZoomToFitRect(amap.CurrentViewArea);
+                        map.SetZoomToFitRect(amap.ViewArea);
                      }
                   }
                }
@@ -120,7 +120,7 @@ namespace Sample3
                         }
                         else
                         {
-                           amap.SetZoomToFitRect(before.CurrentViewArea);
+                           amap.SetZoomToFitRect(before.ViewArea);
                         }
                         //}));
                      }
@@ -146,7 +146,7 @@ namespace Sample3
             }
             else
             {
-               map.SetZoomToFitRect(lastMap.CurrentViewArea);
+               map.SetZoomToFitRect(lastMap.ViewArea);
             }
          }
          else

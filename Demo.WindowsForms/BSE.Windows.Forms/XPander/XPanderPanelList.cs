@@ -7,9 +7,8 @@ using System.Drawing;
 using System.Drawing.Design;
 using System.Drawing.Drawing2D;
 using System.Data;
-using System.Windows.Forms;
-
-using BSE.Windows.Forms.Properties;
+using System.Windows.Forms;    
+using Demo.WindowsForms.Properties;
 
 namespace BSE.Windows.Forms
 {
@@ -393,7 +392,7 @@ namespace BSE.Windows.Forms
          {
             throw new ArgumentNullException("panel",
                string.Format(System.Globalization.CultureInfo.InvariantCulture,
-               BSE.Windows.Forms.Properties.Resources.IDS_ArgumentException,
+               Demo.WindowsForms.Properties.Resources.IDS_ArgumentException,
                "panel"));
          }
 

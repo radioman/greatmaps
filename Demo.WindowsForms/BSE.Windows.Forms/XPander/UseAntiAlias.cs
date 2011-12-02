@@ -29,7 +29,7 @@ namespace BSE.Windows.Forms
          {
             throw new ArgumentNullException("graphics",
                string.Format(System.Globalization.CultureInfo.InvariantCulture,
-               BSE.Windows.Forms.Properties.Resources.IDS_ArgumentException,
+               Demo.WindowsForms.Properties.Resources.IDS_ArgumentException,
                "graphics"));
          }
 

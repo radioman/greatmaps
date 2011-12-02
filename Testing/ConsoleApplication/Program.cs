@@ -13,7 +13,6 @@ using GMap.NET.MapProviders;
 using GMap.NET.Projections;
 using System.Threading;
 using GMap.NET.WindowsForms;
-using GMap.NET;
 
 namespace ConsoleApplication
 {
@@ -24,7 +23,7 @@ namespace ConsoleApplication
 #if DEBUG
          //if(false)
          {
-            GMapProvider.TileImageProxy = new WindowsFormsImageProxy();
+            GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
 
             //GMaps.Instance.PrimaryCache.DeleteOlderThan(DateTime.Now, GMapProviders.GoogleMap.DbId);
 

@@ -77,7 +77,7 @@ namespace BSE.Windows.Forms
             {
                 throw new ArgumentNullException("panelColors",
                     string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                    BSE.Windows.Forms.Properties.Resources.IDS_ArgumentException,
+                    Demo.WindowsForms.Properties.Resources.IDS_ArgumentException,
                     "panelColors"));
             }
 
@@ -96,7 +96,7 @@ namespace BSE.Windows.Forms
             {
                 throw new ArgumentNullException("panelColors",
                     string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                    BSE.Windows.Forms.Properties.Resources.IDS_ArgumentException,
+                    Demo.WindowsForms.Properties.Resources.IDS_ArgumentException,
                     "panelColors"));
             }
 

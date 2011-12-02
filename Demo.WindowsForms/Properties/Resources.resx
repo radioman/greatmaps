@@ -117,6 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ChevronDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\BSE.Windows.Forms\Resources\ChevronDown.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ChevronLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\BSE.Windows.Forms\Resources\ChevronLeft.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ChevronRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\BSE.Windows.Forms\Resources\ChevronRight.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ChevronUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\BSE.Windows.Forms\Resources\ChevronUp.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="closePanel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\BSE.Windows.Forms\Resources\closePanel.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Collapse" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\BSE.Windows.Forms\Resources\Collapse.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Collapse_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\BSE.Windows.Forms\Resources\Collapse_h.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Expand" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\BSE.Windows.Forms\Resources\Expand.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Expand_h" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\BSE.Windows.Forms\Resources\Expand_h.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IpCacheCreateDb" xml:space="preserve">
     <value>CREATE TABLE [Cache] (
     [Ip] varchar(15) PRIMARY KEY NOT NULL,
@@ -127,5 +155,20 @@
     [Longitude] float NOT NULL,
     [Time] datetime NOT NULL
 );</value>
+  </data>
+  <data name="IDS_ArgumentException" xml:space="preserve">
+    <value>Parameter {0} can't be null</value>
+  </data>
+  <data name="IDS_InvalidBoundArgument" xml:space="preserve">
+    <value>Value of '{0}' is not valid for '{1}'. 'Value' should be between '{2}' and '{3}'.
+Parameter name: {1}</value>
+  </data>
+  <data name="IDS_InvalidLowBoundArgument" xml:space="preserve">
+    <value>Value of '{0}' is not valid for '{1}'. 'Maximum' must be greater than or equal to 0.
+Parameter name: {1}</value>
+  </data>
+  <data name="IDS_InvalidOperationExceptionInteger" xml:space="preserve">
+    <value>Value of '{0}' is not valid for '{1}'. '{1}' must be greater than or equal to {2}.
+Parameter name: {1}</value>
   </data>
 </root>

@@ -36,6 +36,13 @@ namespace GMap.NET.WindowsForms
    /// </summary>
    public class WindowsFormsImageProxy : PureImageProxy
    {
+      WindowsFormsImageProxy()
+      {
+
+      }
+
+      public static readonly WindowsFormsImageProxy Instance = new WindowsFormsImageProxy();
+
 #if !PocketPC
       internal ColorMatrix ColorMatrix;
 #endif

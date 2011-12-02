@@ -6,7 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Globalization;
-using BSE.Windows.Forms.Properties;
+using Demo.WindowsForms.Properties;
 using System.Drawing.Drawing2D;
 
 namespace BSE.Windows.Forms
