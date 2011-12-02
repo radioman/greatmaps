@@ -507,7 +507,7 @@ namespace GMap.NET.Internals
          TimeSpan delta;
          DateTime now = DateTime.Now;
 
-         while(!skiped && Refresh.WaitOne() || (Refresh.WaitOne(spanMs, false) || true))
+         while(Refresh != null && (!skiped && Refresh.WaitOne() || (Refresh.WaitOne(spanMs, false) || true)))
          {
             if(w.CancellationPending)
                break;
