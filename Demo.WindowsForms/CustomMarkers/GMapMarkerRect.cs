@@ -5,8 +5,11 @@ namespace Demo.WindowsForms.CustomMarkers
    using GMap.NET.WindowsForms;
    using GMap.NET.WindowsForms.Markers;
    using GMap.NET;
+   using System;
+   using System.Runtime.Serialization;
 
-   public class GMapMarkerRect : GMapMarker
+   [Serializable]
+   public class GMapMarkerRect : GMapMarker, ISerializable
    {
       public Pen Pen;
 
@@ -27,5 +30,19 @@ namespace Demo.WindowsForms.CustomMarkers
       {
          g.DrawRectangle(Pen, new System.Drawing.Rectangle(LocalPosition.X, LocalPosition.Y, Size.Width, Size.Height));
       }
+
+      #region ISerializable Members
+
+      void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+      {
+         base.GetObjectData(info, context);
+      }
+
+      protected GMapMarkerRect(SerializationInfo info, StreamingContext context)
+         : base(info, context)
+      {
+      }
+
+      #endregion
    }
 }

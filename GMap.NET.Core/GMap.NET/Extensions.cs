@@ -3,6 +3,7 @@ namespace GMap.NET
 {
    using System;
    using System.Runtime.Serialization;
+   using System.Diagnostics;
 
    public static class Extensions
    {
@@ -15,8 +16,16 @@ namespace GMap.NET
       /// <returns>The value if found, otherwise null.</returns>
       public static T GetValue<T>(SerializationInfo info, string key) where T : class
       {
-         // Return the value from the SerializationInfo, casting it to type T.
-         return info.GetValue(key, typeof(T)) as T;
+         try
+         {
+            // Return the value from the SerializationInfo, casting it to type T.
+            return info.GetValue(key, typeof(T)) as T;
+         }
+         catch(Exception ex)
+         {
+            Debug.WriteLine("Extensions.GetValue: " + ex.Message);
+            return null;
+         }
       }
 
       /// <summary>
@@ -52,8 +61,9 @@ namespace GMap.NET
          {
             return (T) info.GetValue(key, typeof(T));
          }
-         catch(Exception)
+         catch(Exception ex)
          {
+            Debug.WriteLine("Extensions.GetStruct: " + ex.Message);
             return defaultValue;
          }
       }

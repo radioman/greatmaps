@@ -2,9 +2,12 @@
 namespace GMap.NET.WindowsForms.Markers
 {
    using System.Drawing;
+   using System.Runtime.Serialization;
+   using System;
 
-   public class GMarkerCross : GMapMarker
+   public class GMarkerCross : GMapMarker, ISerializable
    {
+      [NonSerialized]
       public Pen Pen;
 
       public GMarkerCross(PointLatLng p)
@@ -32,5 +35,19 @@ namespace GMap.NET.WindowsForms.Markers
          g.DrawLine(Pen, p1.X, p1.Y, p2.X, p2.Y);
          g.DrawLine(Pen, p3.X, p3.Y, p4.X, p4.Y);
       }
+
+      #region ISerializable Members
+
+      void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+      {
+         base.GetObjectData(info, context);
+      }
+
+      protected GMarkerCross(SerializationInfo info, StreamingContext context)
+         : base(info, context)
+      {
+      }
+
+      #endregion
    }
 }

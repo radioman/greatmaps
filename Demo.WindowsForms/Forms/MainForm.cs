@@ -204,7 +204,38 @@ namespace Demo.WindowsForms
                AddLocationLithuania("Panevėžys");
 
                RegeneratePolygon();
+
+               try
+               {
+                  GMapOverlay overlay = DeepClone<GMapOverlay>(objects);
+                  Debug.WriteLine("ISerializable status: OK");
+               }
+               catch(Exception ex)
+               {
+                  Debug.WriteLine("ISerializable failure: " + ex.Message);
+
+#if DEBUG
+                  if(Debugger.IsAttached)
+                  {
+                     Debugger.Break();
+                  }
+#endif
+               }
             }
+         }
+      }
+
+      public T DeepClone<T>(T obj)
+      {
+         using(var ms = new System.IO.MemoryStream())
+         {
+            var formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+
+            formatter.Serialize(ms, obj);
+
+            ms.Position = 0;
+
+            return (T)formatter.Deserialize(ms);
          }
       }
 
@@ -1588,7 +1619,7 @@ namespace Demo.WindowsForms
       // zoom
       private void trackBar1_ValueChanged(object sender, EventArgs e)
       {
-         MainMap.Zoom = trackBar1.Value;           
+         MainMap.Zoom = trackBar1.Value;
       }
 
       // go to

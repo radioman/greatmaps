@@ -34,11 +34,13 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// string format
       /// </summary>
+      [NonSerialized]
       public readonly StringFormat Format = new StringFormat();
 
       /// <summary>
       /// font
       /// </summary>
+      [NonSerialized]
 #if !PocketPC
       public Font Font = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold, GraphicsUnit.Pixel);
 #else
@@ -48,6 +50,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// specifies how the outline is painted
       /// </summary>
+      [NonSerialized]
 #if !PocketPC
       public Pen Stroke = new Pen(Color.FromArgb(140, Color.MidnightBlue));
 #else
@@ -57,6 +60,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// background color
       /// </summary>
+      [NonSerialized]
 #if !PocketPC
       public Brush Fill = new SolidBrush(Color.FromArgb(222, Color.AliceBlue));
 #else
@@ -66,6 +70,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// text foreground
       /// </summary>
+      [NonSerialized]
       public Brush Foreground = new SolidBrush(Color.Navy);
 
       /// <summary>
@@ -86,13 +91,13 @@ namespace GMap.NET.WindowsForms
          this.Format.LineAlignment = StringAlignment.Center;
 #endif
 
-         this.Format.Alignment = StringAlignment.Center;         
+         this.Format.Alignment = StringAlignment.Center;
       }
 
       public virtual void Draw(Graphics g)
       {
          System.Drawing.Size st = g.MeasureString(Marker.ToolTipText, Font).ToSize();
-         System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y - st.Height, st.Width + TextPadding.Width, st.Height + TextPadding.Height);        
+         System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y - st.Height, st.Width + TextPadding.Width, st.Height + TextPadding.Height);
          rect.Offset(Offset.X, Offset.Y);
 
          g.DrawLine(Stroke, Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y, rect.X, rect.Y + rect.Height / 2);
@@ -117,12 +122,12 @@ namespace GMap.NET.WindowsForms
       /// <param name="context">The context.</param>
       protected GMapToolTip(SerializationInfo info, StreamingContext context)
       {
-         this.Foreground = Extensions.GetValue(info, "Foreground", new SolidBrush(Color.Navy));
-         this.Fill = Extensions.GetValue(info, "Fill", new SolidBrush(Color.FromArgb(222, Color.AliceBlue)));
-         this.Font = Extensions.GetValue(info, "Font", new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold, GraphicsUnit.Pixel));
-         this.Format = Extensions.GetValue(info, "Format", new StringFormat());
+         //this.Foreground = Extensions.GetValue(info, "Foreground", new SolidBrush(Color.Navy));
+         //this.Fill = Extensions.GetValue(info, "Fill", new SolidBrush(Color.FromArgb(222, Color.AliceBlue)));
+         //this.Font = Extensions.GetValue(info, "Font", new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold, GraphicsUnit.Pixel));
+         //this.Format = Extensions.GetValue(info, "Format", new StringFormat());
          this.Offset = Extensions.GetStruct<Point>(info, "Offset", Point.Empty);
-         this.Stroke = Extensions.GetValue(info, "Stroke", new Pen(Color.FromArgb(140, Color.MidnightBlue)));
+         //this.Stroke = Extensions.GetValue(info, "Stroke", new Pen(Color.FromArgb(140, Color.MidnightBlue)));
          this.TextPadding = Extensions.GetStruct<Size>(info, "TextPadding", new Size(10, 10));
       }
 
@@ -136,12 +141,12 @@ namespace GMap.NET.WindowsForms
       /// </exception>
       public void GetObjectData(SerializationInfo info, StreamingContext context)
       {
-         info.AddValue("Fill", this.Fill);
-         info.AddValue("Foreground", this.Foreground);
-         info.AddValue("Font", this.Font);
-         info.AddValue("Format", this.Format);
+         //info.AddValue("Fill", this.Fill);
+         //info.AddValue("Foreground", this.Foreground);
+         //info.AddValue("Font", this.Font);
+         //info.AddValue("Format", this.Format);
          info.AddValue("Offset", this.Offset);
-         info.AddValue("Stroke", this.Stroke);
+         //info.AddValue("Stroke", this.Stroke);
          info.AddValue("TextPadding", this.TextPadding);
       }
 

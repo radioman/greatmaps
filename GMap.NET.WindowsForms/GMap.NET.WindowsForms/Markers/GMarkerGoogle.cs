@@ -6,12 +6,15 @@ namespace GMap.NET.WindowsForms.Markers
 
 #if !PocketPC
    using System.Windows.Forms.Properties;
+   using System;
+   using System.Runtime.Serialization;
 #else
    using GMap.NET.WindowsMobile.Properties;
 #endif
 
    public enum GMarkerGoogleType
    {
+      none = 0,
       arrow,
       blue,
       blue_small,
@@ -51,19 +54,32 @@ namespace GMap.NET.WindowsForms.Markers
       white_small,
    }
 
-   public class GMarkerGoogle : GMapMarker
+   [Serializable]
+   public class GMarkerGoogle : GMapMarker, ISerializable
    {
       public float? Bearing;
-      readonly Bitmap Bitmap;
-      readonly Bitmap BitmapShadow;
+      Bitmap Bitmap;
+      Bitmap BitmapShadow;
 
       static Bitmap arrowshadow;
       static Bitmap msmarker_shadow;
       static Bitmap shadow_small;
       static Bitmap pushpin_shadow;
 
+      GMarkerGoogleType type;
+
       public GMarkerGoogle(PointLatLng p, GMarkerGoogleType type)
          : base(p)
+      {
+         this.type = type;
+
+         if(type != GMarkerGoogleType.none)
+         {
+            LoadBitmap();
+         }
+      }
+
+      void LoadBitmap()
       {
          Bitmap = GetIcon(type.ToString());
          Size = new System.Drawing.Size(Bitmap.Width, Bitmap.Height);
@@ -163,6 +179,11 @@ namespace GMap.NET.WindowsForms.Markers
          }
       }
 
+      /// <summary>
+      /// marker using manual bitmap, NonSerialized
+      /// </summary>
+      /// <param name="p"></param>
+      /// <param name="Bitmap"></param>
       public GMarkerGoogle(PointLatLng p, Bitmap Bitmap)
          : base(p)
       {
@@ -215,5 +236,28 @@ namespace GMap.NET.WindowsForms.Markers
          DrawImageUnscaled(g, Bitmap, LocalPosition.X, LocalPosition.Y);
 #endif
       }
+
+      #region ISerializable Members
+
+      void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+      {
+         info.AddValue("type", this.type);
+         info.AddValue("Bearing", this.Bearing);
+
+         base.GetObjectData(info, context);
+      }
+
+      protected GMarkerGoogle(SerializationInfo info, StreamingContext context)
+         : base(info, context)
+      {
+         this.type = Extensions.GetStruct<GMarkerGoogleType>(info, "type", GMarkerGoogleType.none);
+         if(type != GMarkerGoogleType.none)
+         {
+            LoadBitmap();
+         }
+         //this.Bearing = Extensions.GetStruct<float>(info, "Bearing", 0);
+      }
+
+      #endregion
    }
 }
