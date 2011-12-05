@@ -13,7 +13,7 @@ namespace GMap.NET.WindowsForms
    /// </summary>
    [Serializable]
 #if !PocketPC
-   public class GMapRoute : MapRoute, ISerializable
+   public class GMapRoute : MapRoute, ISerializable, IDeserializationCallback
 #else
    public class GMapRoute : MapRoute
 #endif
@@ -116,6 +116,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// specifies how the outline is painted
       /// </summary>
+      [NonSerialized]
 #if !PocketPC
       public Pen Stroke = new Pen(Color.FromArgb(144, Color.MidnightBlue));
 #else
@@ -138,6 +139,9 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
       #region ISerializable Members
 
+      // Temp store for de-serialization.
+      private GPoint[] deserializedLocalPoints;
+
       /// <summary>
       /// Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo"/> with the data needed to serialize the target object.
       /// </summary>
@@ -149,7 +153,9 @@ namespace GMap.NET.WindowsForms
       public override void GetObjectData(SerializationInfo info, StreamingContext context)
       {
          base.GetObjectData(info, context);
-         info.AddValue("Stroke", this.Stroke);
+         //info.AddValue("Stroke", this.Stroke);
+         info.AddValue("Visible", this.IsVisible);
+         info.AddValue("LocalPoints", this.LocalPoints.ToArray());
       }
 
       /// <summary>
@@ -160,10 +166,29 @@ namespace GMap.NET.WindowsForms
       protected GMapRoute(SerializationInfo info, StreamingContext context)
          : base(info, context)
       {
-         this.Stroke = Extensions.GetValue<Pen>(info, "Stroke", new Pen(Color.FromArgb(144, Color.MidnightBlue)));
+         //this.Stroke = Extensions.GetValue<Pen>(info, "Stroke", new Pen(Color.FromArgb(144, Color.MidnightBlue)));
+         this.IsVisible = Extensions.GetStruct<bool>(info, "Visible", true);
+         this.deserializedLocalPoints = Extensions.GetValue<GPoint[]>(info, "LocalPoints");
       }
 
       #endregion
 #endif
+
+      #region IDeserializationCallback Members
+
+      /// <summary>
+      /// Runs when the entire object graph has been de-serialized.
+      /// </summary>
+      /// <param name="sender">The object that initiated the callback. The functionality for this parameter is not currently implemented.</param>
+      public override void OnDeserialization(object sender)
+      {
+         base.OnDeserialization(sender);
+
+         // Accounts for the de-serialization being breadth first rather than depth first.
+         LocalPoints.AddRange(deserializedLocalPoints);
+         LocalPoints.Capacity = Points.Count;
+      }
+
+      #endregion
    }
 }

@@ -55,7 +55,7 @@ namespace GMap.NET.WindowsForms.Markers
    }
 
    [Serializable]
-   public class GMarkerGoogle : GMapMarker, ISerializable
+   public class GMarkerGoogle : GMapMarker, ISerializable, IDeserializationCallback
    {
       public float? Bearing;
       Bitmap Bitmap;
@@ -251,11 +251,19 @@ namespace GMap.NET.WindowsForms.Markers
          : base(info, context)
       {
          this.type = Extensions.GetStruct<GMarkerGoogleType>(info, "type", GMarkerGoogleType.none);
+         this.Bearing = Extensions.GetStruct<float>(info, "Bearing", null);
+      }
+
+      #endregion
+
+      #region IDeserializationCallback Members
+
+      public void OnDeserialization(object sender)
+      {
          if(type != GMarkerGoogleType.none)
          {
             LoadBitmap();
          }
-         this.Bearing = Extensions.GetStruct<float>(info, "Bearing", null);
       }
 
       #endregion

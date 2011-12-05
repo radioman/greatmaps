@@ -7,6 +7,7 @@ namespace GMap.NET.WindowsForms
    using System.Runtime.Serialization;
    using GMap.NET;
    using System.Windows.Forms;
+   using System;
 
    /// <summary>
    /// GMap.NET polygon
@@ -153,6 +154,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// specifies how the outline is painted
       /// </summary>
+      [NonSerialized]
 #if !PocketPC
       public Pen Stroke = new Pen(Color.FromArgb(155, Color.MidnightBlue));
 #else
@@ -162,6 +164,7 @@ namespace GMap.NET.WindowsForms
       /// <summary>
       /// background color
       /// </summary>
+      [NonSerialized]
 #if !PocketPC
       public Brush Fill = new SolidBrush(Color.FromArgb(155, Color.AliceBlue));
 #else
@@ -253,9 +256,10 @@ namespace GMap.NET.WindowsForms
       public override void GetObjectData(SerializationInfo info, StreamingContext context)
       {
          base.GetObjectData(info, context);
-         info.AddValue("Stroke", this.Stroke);
-         info.AddValue("Fill", this.Fill);
+         //info.AddValue("Stroke", this.Stroke);
+         //info.AddValue("Fill", this.Fill);
          info.AddValue("LocalPoints", this.LocalPoints.ToArray());
+         info.AddValue("Visible", this.IsVisible);
       }
 
       // Temp store for de-serialization.
@@ -269,9 +273,10 @@ namespace GMap.NET.WindowsForms
       protected GMapPolygon(SerializationInfo info, StreamingContext context)
          : base(info, context)
       {
-         this.Stroke = Extensions.GetValue<Pen>(info, "Stroke", new Pen(Color.FromArgb(155, Color.MidnightBlue)));
-         this.Fill = Extensions.GetValue<Brush>(info, "Fill", new SolidBrush(Color.FromArgb(155, Color.AliceBlue)));
+         //this.Stroke = Extensions.GetValue<Pen>(info, "Stroke", new Pen(Color.FromArgb(155, Color.MidnightBlue)));
+         //this.Fill = Extensions.GetValue<Brush>(info, "Fill", new SolidBrush(Color.FromArgb(155, Color.AliceBlue)));
          this.deserializedLocalPoints = Extensions.GetValue<GPoint[]>(info, "LocalPoints");
+         this.IsVisible = Extensions.GetStruct<bool>(info, "Visible", true);
       }
 
       #endregion

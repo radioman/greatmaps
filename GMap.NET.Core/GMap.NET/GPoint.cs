@@ -2,10 +2,12 @@
 namespace GMap.NET
 {
    using System.Globalization;
+   using System;
 
    /// <summary>
    /// the point ;}
    /// </summary>
+   [Serializable]
    public struct GPoint
    {
       public static readonly GPoint Empty = new GPoint();
