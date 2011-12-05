@@ -209,7 +209,7 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         char letter = ServerLetters[GMapProvider.GetServerNum(pos, 3)];
+         char letter = ServerLetters[GetServerNum(pos, 3)];
          return string.Format(UrlFormat, letter, zoom, pos.X, pos.Y);
       }
 

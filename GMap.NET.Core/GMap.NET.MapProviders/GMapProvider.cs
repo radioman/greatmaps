@@ -214,7 +214,7 @@ namespace GMap.NET.MapProviders
 
       static GMapProvider()
       {
-         WebProxy = new EmptyWebProxy();
+         WebProxy = EmptyWebProxy.Instance;
       }
 
       bool isInitialized = false;
@@ -266,6 +266,10 @@ namespace GMap.NET.MapProviders
       /// proxy for net access
       /// </summary>
       public static IWebProxy WebProxy;
+
+#if !PocketPC
+      public static NetworkCredential Credential;
+#endif
 
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
@@ -328,10 +332,15 @@ namespace GMap.NET.MapProviders
          if(WebProxy != null)
          {
             request.Proxy = WebProxy;
-#if !PocketPC
-            request.PreAuthenticate = true;
-#endif
          }
+
+#if !PocketPC
+         if(Credential != null)
+         {
+            request.PreAuthenticate = true;
+            request.Credentials = Credential;
+         }
+#endif
 
          request.UserAgent = UserAgent;
          request.Timeout = TimeoutMs;
@@ -344,18 +353,21 @@ namespace GMap.NET.MapProviders
 
          using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
          {
-            MemoryStream responseStream = Stuff.CopyStream(response.GetResponseStream(), false);
+            //if(response.StatusCode == HttpStatusCode.OK)
             {
-               Debug.WriteLine("Response: " + url);
-               ret = TileImageProxy.FromStream(responseStream);
-               if(ret != null)
+               MemoryStream responseStream = Stuff.CopyStream(response.GetResponseStream(), false);
                {
-                  ret.Data = responseStream;
-               }
-               else
-               {
-                  responseStream.Dispose();
-                  responseStream = null;
+                  Debug.WriteLine("Response: " + url);
+                  ret = TileImageProxy.FromStream(responseStream);
+                  if(ret != null)
+                  {
+                     ret.Data = responseStream;
+                  }
+                  else
+                  {
+                     responseStream.Dispose();
+                     responseStream = null;
+                  }
                }
             }
 #if PocketPC
@@ -374,10 +386,15 @@ namespace GMap.NET.MapProviders
          if(WebProxy != null)
          {
             request.Proxy = WebProxy;
-#if !PocketPC
-            request.PreAuthenticate = true;
-#endif
          }
+
+#if !PocketPC
+         if(Credential != null)
+         {
+            request.PreAuthenticate = true;
+            request.Credentials = Credential;
+         }
+#endif
 
          request.UserAgent = UserAgent;
          request.Timeout = TimeoutMs;
@@ -390,11 +407,14 @@ namespace GMap.NET.MapProviders
 
          using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
          {
-            using(Stream responseStream = response.GetResponseStream())
+            //if(response.StatusCode == HttpStatusCode.OK)
             {
-               using(StreamReader read = new StreamReader(responseStream, Encoding.UTF8))
+               using(Stream responseStream = response.GetResponseStream())
                {
-                  ret = read.ReadToEnd();
+                  using(StreamReader read = new StreamReader(responseStream, Encoding.UTF8))
+                  {
+                     ret = read.ReadToEnd();
+                  }
                }
             }
 #if PocketPC
@@ -501,15 +521,17 @@ namespace GMap.NET.MapProviders
       #endregion
    }
 
-   internal sealed class EmptyWebProxy : IWebProxy
+   public sealed class EmptyWebProxy : IWebProxy
    {
+      public static readonly EmptyWebProxy Instance = new EmptyWebProxy();
+
       private ICredentials m_credentials;
       public ICredentials Credentials
       {
          get
          {
             return this.m_credentials;
-}
+         }
          set
          {
             this.m_credentials = value;
