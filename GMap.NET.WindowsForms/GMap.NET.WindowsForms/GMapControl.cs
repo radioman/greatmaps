@@ -1848,7 +1848,9 @@ namespace GMap.NET.WindowsForms
                   SelectedArea = new RectLatLng(y1, x1, x2 - x1, y1 - y2);
                }
             }
-            else if(Core.mouseDown.IsEmpty)
+            else
+#endif
+            if (Core.mouseDown.IsEmpty)
             {
                for(int i = Overlays.Count - 1; i >= 0; i--)
                {
@@ -1948,7 +1950,6 @@ namespace GMap.NET.WindowsForms
                   }
                }
             }
-#endif
          }
          base.OnMouseMove(e);
       }
