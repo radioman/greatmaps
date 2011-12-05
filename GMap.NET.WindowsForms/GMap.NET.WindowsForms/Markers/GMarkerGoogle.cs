@@ -255,7 +255,7 @@ namespace GMap.NET.WindowsForms.Markers
          {
             LoadBitmap();
          }
-         //this.Bearing = Extensions.GetStruct<float>(info, "Bearing", 0);
+         this.Bearing = Extensions.GetStruct<float>(info, "Bearing", null);
       }
 
       #endregion

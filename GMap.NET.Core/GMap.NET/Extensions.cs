@@ -59,7 +59,28 @@ namespace GMap.NET
       {
          try
          {
-            return (T) info.GetValue(key, typeof(T));
+            return (T)info.GetValue(key, typeof(T));
+         }
+         catch(Exception ex)
+         {
+            Debug.WriteLine("Extensions.GetStruct: " + ex.Message);
+            return defaultValue;
+         }
+      }
+
+      /// <summary>
+      /// Retrieves a value from the SerializationInfo of the given type for structs.
+      /// </summary>
+      /// <typeparam name="T">The Type that we are attempting to de-serialize.</typeparam>
+      /// <param name="info">The SerializationInfo.</param>
+      /// <param name="key">The key of the value we wish to retrieve.</param>
+      /// <param name="defaultValue">The default value if the de-serialized value was null.</param>
+      /// <returns>The value if found, otherwise the default value.</returns>
+      public static Nullable<T> GetStruct<T>(SerializationInfo info, string key, Nullable<T> defaultValue) where T : struct
+      {
+         try
+         {
+            return (Nullable<T>)info.GetValue(key, typeof(Nullable<T>));
          }
          catch(Exception ex)
          {
