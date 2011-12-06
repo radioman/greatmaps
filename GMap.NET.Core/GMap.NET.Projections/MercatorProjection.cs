@@ -16,7 +16,7 @@ namespace GMap.NET.Projections
       static readonly double MinLongitude = -180;
       static readonly double MaxLongitude = 180;
 
-      GSize tileSize = new GSize(256, 256);
+      readonly GSize tileSize = new GSize(256, 256);
       public override GSize TileSize
       {
          get
@@ -53,16 +53,16 @@ namespace GMap.NET.Projections
          double y = 0.5 - Math.Log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI);
 
          GSize s = GetTileMatrixSizePixel(zoom);
-         int mapSizeX = s.Width;
-         int mapSizeY = s.Height;
+         long mapSizeX = s.Width;
+         long mapSizeY = s.Height;
 
-         ret.X = (int) Clip(x * mapSizeX + 0.5, 0, mapSizeX - 1);
-         ret.Y = (int) Clip(y * mapSizeY + 0.5, 0, mapSizeY - 1);
+         ret.X = (long)Clip(x * mapSizeX + 0.5, 0, mapSizeX - 1);
+         ret.Y = (long)Clip(y * mapSizeY + 0.5, 0, mapSizeY - 1);
 
          return ret;
       }
 
-      public override PointLatLng FromPixelToLatLng(int x, int y, int zoom)
+      public override PointLatLng FromPixelToLatLng(long x, long y, int zoom)
       {
          PointLatLng ret = PointLatLng.Zero;
 
@@ -86,7 +86,7 @@ namespace GMap.NET.Projections
 
       public override GSize GetTileMatrixMaxXY(int zoom)
       {
-         int xy = (1 << zoom);
+         long xy = (1 << zoom);
          return new GSize(xy - 1, xy - 1);
       }
    }

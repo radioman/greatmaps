@@ -428,7 +428,7 @@ namespace GMap.NET.MapProviders
 
       public static int GetServerNum(GPoint pos, int max)
       {
-         return (pos.X + 2 * pos.Y) % max;
+         return (int)(pos.X + 2 * pos.Y) % max;
       }
 
       public override int GetHashCode()

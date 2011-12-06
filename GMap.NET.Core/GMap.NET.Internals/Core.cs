@@ -630,7 +630,7 @@ namespace GMap.NET.Internals
       /// <param name="x"></param>
       /// <param name="y"></param>
       /// <returns></returns>
-      public PointLatLng FromLocalToLatLng(int x, int y)
+      public PointLatLng FromLocalToLatLng(long x, long y)
       {
          GPoint p = new GPoint(x, y);
          p.OffsetNegative(renderOffset);
@@ -1122,9 +1122,9 @@ namespace GMap.NET.Internals
             #region -- find tiles around --
             tileDrawingList.Clear();
 
-            for(int i = -sizeOfMapArea.Width; i <= sizeOfMapArea.Width; i++)
+            for(long i = -sizeOfMapArea.Width; i <= sizeOfMapArea.Width; i++)
             {
-               for(int j = -sizeOfMapArea.Height; j <= sizeOfMapArea.Height; j++)
+               for(long j = -sizeOfMapArea.Height; j <= sizeOfMapArea.Height; j++)
                {
                   GPoint p = centerTileXYLocation;
                   p.X += i;

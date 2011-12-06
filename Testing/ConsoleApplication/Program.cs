@@ -32,18 +32,19 @@ namespace ConsoleApplication
                //c.compensationOffset = new GPoint(200, 200);
 
                c.minZoom = 1;
-               c.maxZoom = 17;
-               c.Zoom = 2;
+               c.maxZoom = 25;
+               c.Zoom = 23;
                //c.Provider = GMapProviders.OpenStreetMap;
                c.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
                c.OnMapSizeChanged(400, 400);
 
                c.OnMapOpen();
 
+               Debug.WriteLine("Position: " + c.Position);
                Debug.WriteLine("renderOffset: " + c.renderOffset);
                Debug.WriteLine("compensationOffset: " + c.compensationOffset);
 
-               var l = c.FromLatLngToLocal(new PointLatLng(0, 0));
+               var l = c.FromLatLngToLocal(c.Position);
                Debug.WriteLine("local: " + l);
 
                var g = c.FromLocalToLatLng(l);
@@ -52,9 +53,6 @@ namespace ConsoleApplication
                //c.ReloadMap();
 
                Console.ReadLine();
-
-               //c.CurrentPosition = new PointLatLng(54.6961334816182, 25.2985095977783);     
-               //Console.ReadLine();
 
                c.OnMapClose();
             }

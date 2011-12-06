@@ -146,7 +146,7 @@ namespace GMap.NET.WindowsForms
             Rectangle r = area;
             if(Overlay != null && Overlay.Control != null)
             {
-               r.Offset(Overlay.Control.Core.renderOffset.X, overlay.Control.Core.renderOffset.Y);
+               r.Offset((int)Overlay.Control.Core.renderOffset.X, (int)overlay.Control.Core.renderOffset.Y);
             }
             return r;
          }

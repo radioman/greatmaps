@@ -89,7 +89,7 @@ namespace Demo.WindowsForms
 
             int padding = info.MakeWorldFile ? 0 : 22;
             {
-               using(Bitmap bmpDestination = new Bitmap(pxDelta.X + padding * 2, pxDelta.Y + padding * 2))
+               using(Bitmap bmpDestination = new Bitmap((int)(pxDelta.X + padding * 2), (int)(pxDelta.Y + padding * 2)))
                {
                   using(Graphics gfx = Graphics.FromImage(bmpDestination))
                   {
@@ -131,8 +131,8 @@ namespace Demo.WindowsForms
                               {
                                  using(tile)
                                  {
-                                    int x = p.X * info.Type.Projection.TileSize.Width - topLeftPx.X + padding;
-                                    int y = p.Y * info.Type.Projection.TileSize.Width - topLeftPx.Y + padding;
+                                    long x = p.X * info.Type.Projection.TileSize.Width - topLeftPx.X + padding;
+                                    long y = p.Y * info.Type.Projection.TileSize.Width - topLeftPx.Y + padding;
                                     {
                                        gfx.DrawImage(tile.Img, x, y, info.Type.Projection.TileSize.Width, info.Type.Projection.TileSize.Height);
                                     }
@@ -235,7 +235,7 @@ namespace Demo.WindowsForms
                               px.Offset(-topLeftPx.X, -topLeftPx.Y);
                               px.Offset(r.Offset.X, r.Offset.Y);
 
-                              r.LocalPosition = new System.Drawing.Point(px.X, px.Y);
+                              r.LocalPosition = new System.Drawing.Point((int)px.X, (int)px.Y);
 
                               r.OnRender(gfx);
                            }
@@ -259,7 +259,7 @@ namespace Demo.WindowsForms
                         System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
                         {
                            rect.Location = new System.Drawing.Point(padding, padding);
-                           rect.Size = new System.Drawing.Size(pxDelta.X, pxDelta.Y);
+                           rect.Size = new System.Drawing.Size((int)pxDelta.X, (int)pxDelta.Y);
                         }
 
                         using(Font f = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold))

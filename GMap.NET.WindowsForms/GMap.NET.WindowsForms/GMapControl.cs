@@ -560,8 +560,8 @@ namespace GMap.NET.WindowsForms
 
                         if(parentTile != Tile.Empty)
                         {
-                           int Xoff = Math.Abs(tilePoint.PosXY.X - (parentTile.Pos.X * Ix));
-                           int Yoff = Math.Abs(tilePoint.PosXY.Y - (parentTile.Pos.Y * Ix));
+                           long Xoff = Math.Abs(tilePoint.PosXY.X - (parentTile.Pos.X * Ix));
+                           long Yoff = Math.Abs(tilePoint.PosXY.Y - (parentTile.Pos.Y * Ix));
 
                            // render tile 
                            lock(parentTile.Overlays)
@@ -574,7 +574,7 @@ namespace GMap.NET.WindowsForms
                                        found = true;
 
                                     System.Drawing.RectangleF srcRect = new System.Drawing.RectangleF((float)(Xoff * (img.Img.Width / Ix)), (float)(Yoff * (img.Img.Height / Ix)), (img.Img.Width / Ix), (img.Img.Height / Ix));
-                                    System.Drawing.Rectangle dst = new System.Drawing.Rectangle(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+                                    System.Drawing.Rectangle dst = new System.Drawing.Rectangle((int)Core.tileRect.X, (int)Core.tileRect.Y, (int)Core.tileRect.Width, (int)Core.tileRect.Height);
 
                                     g.DrawImage(img.Img, dst, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, GraphicsUnit.Pixel, TileFlipXYAttributes);
                                     g.FillRectangle(SelectedAreaFill, dst);
@@ -651,7 +651,7 @@ namespace GMap.NET.WindowsForms
             }
 #endif
 
-            var f = new System.Drawing.Point(p.X + marker.Offset.X, p.Y + marker.Offset.Y);
+            var f = new System.Drawing.Point((int)(p.X + marker.Offset.X), (int)(p.Y + marker.Offset.Y));
             marker.LocalPosition = f;
          }
       }
@@ -1413,10 +1413,10 @@ namespace GMap.NET.WindowsForms
             GPoint p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
             GPoint p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
 
-            int x1 = p1.X;
-            int y1 = p1.Y;
-            int x2 = p2.X;
-            int y2 = p2.Y;
+            long x1 = p1.X;
+            long y1 = p1.Y;
+            long x2 = p2.X;
+            long y2 = p2.Y;
 
             g.DrawRectangle(SelectionPen, x1, y1, x2 - x1, y2 - y1);
             g.FillRectangle(SelectedAreaFill, x1, y1, x2 - x1, y2 - y1);
@@ -1850,85 +1850,41 @@ namespace GMap.NET.WindowsForms
             }
             else
 #endif
-            if (Core.mouseDown.IsEmpty)
-            {
-               for(int i = Overlays.Count - 1; i >= 0; i--)
+               if(Core.mouseDown.IsEmpty)
                {
-                  GMapOverlay o = Overlays[i];
-                  if(o != null && o.IsVisibile)
+                  for(int i = Overlays.Count - 1; i >= 0; i--)
                   {
-                     foreach(GMapMarker m in o.Markers)
+                     GMapOverlay o = Overlays[i];
+                     if(o != null && o.IsVisibile)
                      {
-                        if(m.IsVisible && m.IsHitTestVisible)
+                        foreach(GMapMarker m in o.Markers)
                         {
-                           #region -- check --
+                           if(m.IsVisible && m.IsHitTestVisible)
+                           {
+                              #region -- check --
 #if !PocketPC
-                           if((MobileMode && m.LocalArea.Contains(e.X, e.Y)) || (!MobileMode && m.LocalAreaInControlSpace.Contains(e.X, e.Y)))
+                              if((MobileMode && m.LocalArea.Contains(e.X, e.Y)) || (!MobileMode && m.LocalAreaInControlSpace.Contains(e.X, e.Y)))
 #else
                            if (m.LocalArea.Contains(e.X, e.Y))
 #endif
-                           {
-                              if(!m.IsMouseOver)
                               {
-#if !PocketPC
-                                 cursorBefore = this.Cursor;
-                                 this.Cursor = Cursors.Hand;
-#endif
-                                 m.IsMouseOver = true;
-
-                                 if(OnMarkerEnter != null)
+                                 if(!m.IsMouseOver)
                                  {
-                                    OnMarkerEnter(m);
-                                 }
-
-                                 Invalidate();
-                              }
-                           }
-                           else if(m.IsMouseOver)
-                           {
 #if !PocketPC
-                              this.Cursor = this.cursorBefore;
-                              cursorBefore = null;
+                                    cursorBefore = this.Cursor;
+                                    this.Cursor = Cursors.Hand;
 #endif
-                              m.IsMouseOver = false;
+                                    m.IsMouseOver = true;
 
-                              if(OnMarkerLeave != null)
-                              {
-                                 OnMarkerLeave(m);
-                              }
+                                    if(OnMarkerEnter != null)
+                                    {
+                                       OnMarkerEnter(m);
+                                    }
 
-                              Invalidate();
-                           }
-                           #endregion
-                        }
-                     }
-
-                     foreach(GMapPolygon m in o.Polygons)
-                     {
-                        if(m.IsVisible && m.IsHitTestVisible)
-                        {
-                           #region -- check --
-                           if(m.IsInside(FromLocalToLatLng(e.X, e.Y)))
-                           {
-                              if(!m.IsMouseOver)
-                              {
-#if !PocketPC
-                                 cursorBefore = this.Cursor;
-                                 this.Cursor = Cursors.Hand;
-#endif
-                                 m.IsMouseOver = true;
-
-                                 if(OnPolygonEnter != null)
-                                 {
-                                    OnPolygonEnter(m);
+                                    Invalidate();
                                  }
-
-                                 Invalidate();
                               }
-                           }
-                           else
-                           {
-                              if(m.IsMouseOver)
+                              else if(m.IsMouseOver)
                               {
 #if !PocketPC
                                  this.Cursor = this.cursorBefore;
@@ -1936,20 +1892,64 @@ namespace GMap.NET.WindowsForms
 #endif
                                  m.IsMouseOver = false;
 
-                                 if(OnPolygonLeave != null)
+                                 if(OnMarkerLeave != null)
                                  {
-                                    OnPolygonLeave(m);
+                                    OnMarkerLeave(m);
                                  }
 
                                  Invalidate();
                               }
+                              #endregion
                            }
-                           #endregion
+                        }
+
+                        foreach(GMapPolygon m in o.Polygons)
+                        {
+                           if(m.IsVisible && m.IsHitTestVisible)
+                           {
+                              #region -- check --
+                              if(m.IsInside(FromLocalToLatLng(e.X, e.Y)))
+                              {
+                                 if(!m.IsMouseOver)
+                                 {
+#if !PocketPC
+                                    cursorBefore = this.Cursor;
+                                    this.Cursor = Cursors.Hand;
+#endif
+                                    m.IsMouseOver = true;
+
+                                    if(OnPolygonEnter != null)
+                                    {
+                                       OnPolygonEnter(m);
+                                    }
+
+                                    Invalidate();
+                                 }
+                              }
+                              else
+                              {
+                                 if(m.IsMouseOver)
+                                 {
+#if !PocketPC
+                                    this.Cursor = this.cursorBefore;
+                                    cursorBefore = null;
+#endif
+                                    m.IsMouseOver = false;
+
+                                    if(OnPolygonLeave != null)
+                                    {
+                                       OnPolygonLeave(m);
+                                    }
+
+                                    Invalidate();
+                                 }
+                              }
+                              #endregion
+                           }
                         }
                      }
                   }
                }
-            }
          }
          base.OnMouseMove(e);
       }
@@ -2125,7 +2125,7 @@ namespace GMap.NET.WindowsForms
 
          if(IsRotated)
          {
-            System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(ret.X, ret.Y) };
+            System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point((int)ret.X, (int)ret.Y) };
             rotationMatrix.TransformPoints(tt);
             var f = tt[0];
 

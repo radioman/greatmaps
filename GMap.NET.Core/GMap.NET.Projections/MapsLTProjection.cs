@@ -69,13 +69,13 @@ namespace GMap.NET.Projections
 
          double res = GetTileMatrixResolution(zoom);
 
-         ret.X = (int) Math.Floor((lks[0] + orignX) / res);
-         ret.Y = (int) Math.Floor((orignY - lks[1]) / res);
+         ret.X = (long)Math.Floor((lks[0] + orignX) / res);
+         ret.Y = (long)Math.Floor((orignY - lks[1]) / res);
 
          return ret;
       }
 
-      public override PointLatLng FromPixelToLatLng(int x, int y, int zoom)
+      public override PointLatLng FromPixelToLatLng(long x, long y, int zoom)
       {
          PointLatLng ret = PointLatLng.Zero;
 

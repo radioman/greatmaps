@@ -54,13 +54,13 @@ namespace GMap.NET.Projections
 
          double scale = 360.0 / mapSizeX;
 
-         ret.Y = (int) ((90.0 - lat) / scale);
-         ret.X = (int) ((lng + 180.0) / scale);
+         ret.Y = (long)((90.0 - lat) / scale);
+         ret.X = (long)((lng + 180.0) / scale);
 
          return ret;
       }
 
-      public override PointLatLng FromPixelToLatLng(int x, int y, int zoom)
+      public override PointLatLng FromPixelToLatLng(long x, long y, int zoom)
       {
          PointLatLng ret = PointLatLng.Zero;
 
@@ -78,7 +78,7 @@ namespace GMap.NET.Projections
 
       public override GSize GetTileMatrixMaxXY(int zoom)
       {
-         int y = (int) Math.Pow(2, zoom);
+         long y = (long)Math.Pow(2, zoom);
          return new GSize((2*y) - 1, y - 1);
       }
 

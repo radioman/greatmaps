@@ -44,7 +44,7 @@ namespace BigMapMaker
 
                int padding = 22;
                {
-                  using(Bitmap bmpDestination = new Bitmap(pxDelta.X + padding*2, pxDelta.Y + padding*2))
+                  using(Bitmap bmpDestination = new Bitmap((int)(pxDelta.X + padding*2), (int)(pxDelta.Y + padding*2)))
                   {
                      using(Graphics gfx = Graphics.FromImage(bmpDestination))
                      {
@@ -63,8 +63,8 @@ namespace BigMapMaker
                               {
                                  using(tile)
                                  {
-                                    int x = p.X * provider.Projection.TileSize.Width - topLeftPx.X + padding;
-                                    int y = p.Y * provider.Projection.TileSize.Width - topLeftPx.Y + padding;
+                                    long x = p.X * provider.Projection.TileSize.Width - topLeftPx.X + padding;
+                                    long y = p.Y * provider.Projection.TileSize.Width - topLeftPx.Y + padding;
                                     {
                                        gfx.DrawImage(tile.Img, x, y, provider.Projection.TileSize.Width, provider.Projection.TileSize.Height);
                                     }
@@ -79,7 +79,7 @@ namespace BigMapMaker
                         System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
                         {
                            rect.Location = new System.Drawing.Point(padding, padding);
-                           rect.Size = new System.Drawing.Size(pxDelta.X, pxDelta.Y);
+                           rect.Size = new System.Drawing.Size((int)pxDelta.X, (int)pxDelta.Y);
                         }
                         using(Font f = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold))
                         using(Graphics gfx = Graphics.FromImage(bmpDestination))

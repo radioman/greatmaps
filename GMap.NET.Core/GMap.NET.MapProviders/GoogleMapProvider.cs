@@ -206,7 +206,7 @@ namespace GMap.NET.MapProviders
       {
          sec1 = string.Empty; // after &x=...
          sec2 = string.Empty; // after &zoom=...
-         int seclen = ((pos.X * 3) + pos.Y) % 8;
+         int seclen = (int)((pos.X * 3) + pos.Y) % 8;
          sec2 = SecureWord.Substring(0, seclen);
          if(pos.Y >= 10000 && pos.Y < 100000)
          {

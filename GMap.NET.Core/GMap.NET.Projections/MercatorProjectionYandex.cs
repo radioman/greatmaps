@@ -54,17 +54,17 @@ namespace GMap.NET.Projections
          double z = Math.Tan(MathPiDiv4 + rLat / 2) / Math.Pow((Math.Tan(MathPiDiv4 + Math.Asin(k * Math.Sin(rLat)) / 2)), k);
          double z1 = Math.Pow(2, 23 - zoom);
 
-         double DX =  ((20037508.342789 + a * rLon) * 53.5865938 /  z1);
+         double DX = ((20037508.342789 + a * rLon) * 53.5865938 / z1);
          double DY = ((20037508.342789 - a * Math.Log(z)) * 53.5865938 / z1);
 
          GPoint ret = GPoint.Empty;
-         ret.X = (int) DX;
-         ret.Y = (int) DY;
+         ret.X = (long)DX;
+         ret.Y = (long)DY;
 
          return ret;
       }
 
-      public override PointLatLng FromPixelToLatLng(int x, int y, int zoom)
+      public override PointLatLng FromPixelToLatLng(long x, long y, int zoom)
       {
          GSize s = GetTileMatrixSizePixel(zoom);
 
@@ -78,9 +78,9 @@ namespace GMap.NET.Projections
          double c4 = 0.00000000005328478445;
          double z1 = (23 - zoom);
          double mercX = (x * Math.Pow(2, z1)) / 53.5865938 - 20037508.342789;
-         double mercY = 20037508.342789 - (y *Math.Pow(2, z1)) / 53.5865938;
+         double mercY = 20037508.342789 - (y * Math.Pow(2, z1)) / 53.5865938;
 
-         double g = Math.PI /2 - 2 *Math.Atan(1 / Math.Exp(mercY /a));
+         double g = Math.PI / 2 - 2 * Math.Atan(1 / Math.Exp(mercY / a));
          double z = g + c1 * Math.Sin(2 * g) + c2 * Math.Sin(4 * g) + c3 * Math.Sin(6 * g) + c4 * Math.Sin(8 * g);
 
          PointLatLng ret = PointLatLng.Zero;
@@ -97,7 +97,7 @@ namespace GMap.NET.Projections
 
       public override GSize GetTileMatrixMaxXY(int zoom)
       {
-         int xy = (1 << zoom);
+         long xy = (1 << zoom);
          return new GSize(xy - 1, xy - 1);
       }
    }

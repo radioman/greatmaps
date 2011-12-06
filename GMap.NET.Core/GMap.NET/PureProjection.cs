@@ -17,13 +17,8 @@ namespace GMap.NET
       {
          for(int i = 0; i < FromLatLngToPixelCache.Capacity; i++)
          {
-#if PocketPC
-            FromLatLngToPixelCache.Add(new Dictionary<PointLatLng, GPoint>(55));
-            FromPixelToLatLngCache.Add(new Dictionary<GPoint, PointLatLng>(55));
-#else
-            FromLatLngToPixelCache.Add(new Dictionary<PointLatLng, GPoint>(555));
-            FromPixelToLatLngCache.Add(new Dictionary<GPoint, PointLatLng>(555));
-#endif
+            FromLatLngToPixelCache.Add(new Dictionary<PointLatLng, GPoint>());
+            FromPixelToLatLngCache.Add(new Dictionary<GPoint, PointLatLng>());
          }
       }
 
@@ -67,7 +62,7 @@ namespace GMap.NET
       /// <param name="y"></param>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public abstract PointLatLng FromPixelToLatLng(int x, int y, int zoom);
+      public abstract PointLatLng FromPixelToLatLng(long x, long y, int zoom);
 
       public GPoint FromLatLngToPixel(PointLatLng p, int zoom)
       {
@@ -150,7 +145,7 @@ namespace GMap.NET
       /// <returns></returns>
       public virtual GPoint FromPixelToTileXY(GPoint p)
       {
-         return new GPoint((int)(p.X / TileSize.Width), (int)(p.Y / TileSize.Height));
+         return new GPoint((long)(p.X / TileSize.Width), (long)(p.Y / TileSize.Height));
       }
 
       /// <summary>
@@ -195,7 +190,7 @@ namespace GMap.NET
       /// </summary>
       /// <param name="zoom"></param>
       /// <returns></returns>
-      public int GetTileMatrixItemCount(int zoom)
+      public long GetTileMatrixItemCount(int zoom)
       {
          GSize s = GetTileMatrixSizeXY(zoom);
          return (s.Width * s.Height);
@@ -222,9 +217,9 @@ namespace GMap.NET
          GPoint topLeft = FromPixelToTileXY(FromLatLngToPixel(rect.LocationTopLeft, zoom));
          GPoint rightBottom = FromPixelToTileXY(FromLatLngToPixel(rect.LocationRightBottom, zoom));
 
-         for(int x = (topLeft.X - padding); x <= (rightBottom.X + padding); x++)
+         for(long x = (topLeft.X - padding); x <= (rightBottom.X + padding); x++)
          {
-            for(int y = (topLeft.Y - padding); y <= (rightBottom.Y + padding); y++)
+            for(long y = (topLeft.Y - padding); y <= (rightBottom.Y + padding); y++)
             {
                GPoint p = new GPoint(x, y);
                if(!ret.Contains(p) && p.X >= 0 && p.Y >= 0)

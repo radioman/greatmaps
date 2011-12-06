@@ -777,8 +777,8 @@ namespace GMap.NET.WindowsPresentation
 
                      if(parentTile != Tile.Empty)
                      {
-                        int Xoff = Math.Abs(tilePoint.PosXY.X - (parentTile.Pos.X * Ix));
-                        int Yoff = Math.Abs(tilePoint.PosXY.Y - (parentTile.Pos.Y * Ix));
+                        long Xoff = Math.Abs(tilePoint.PosXY.X - (parentTile.Pos.X * Ix));
+                        long Yoff = Math.Abs(tilePoint.PosXY.Y - (parentTile.Pos.Y * Ix));
 
                         var geometry = new RectangleGeometry(new Rect(Core.tileRect.X + 0.6, Core.tileRect.Y + 0.6, Core.tileRect.Width + 0.6, Core.tileRect.Height + 0.6));
                         var parentImgRect = new Rect(Core.tileRect.X - Core.tileRect.Width * Xoff + 0.6, Core.tileRect.Y - Core.tileRect.Height * Yoff + 0.6, Core.tileRect.Width * Ix + 0.6, Core.tileRect.Height * Ix + 0.6);
@@ -1290,10 +1290,10 @@ namespace GMap.NET.WindowsPresentation
             GPoint p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
             GPoint p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
 
-            int x1 = p1.X;
-            int y1 = p1.Y;
-            int x2 = p2.X;
-            int y2 = p2.Y;
+            long x1 = p1.X;
+            long y1 = p1.Y;
+            long x2 = p2.X;
+            long y2 = p2.Y;
 
             if(SelectionUseCircle)
             {

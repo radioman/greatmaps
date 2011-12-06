@@ -35,7 +35,7 @@ namespace GMap.NET.MapProviders
       /// <param name="levelOfDetail">Level of detail, from 1 (lowest detail)
       /// to 23 (highest detail).</param>
       /// <returns>A string containing the QuadKey.</returns>
-      internal string TileXYToQuadKey(int tileX, int tileY, int levelOfDetail)
+      internal string TileXYToQuadKey(long tileX, long tileY, int levelOfDetail)
       {
          StringBuilder quadKey = new StringBuilder();
          for(int i = levelOfDetail; i > 0; i--)

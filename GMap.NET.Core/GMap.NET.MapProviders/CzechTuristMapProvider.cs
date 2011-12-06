@@ -52,8 +52,8 @@ namespace GMap.NET.MapProviders
       {
          // http://m1.mapserver.mapy.cz/turist/3_8000000_8000000
 
-         int xx = pos.X << (28 - zoom);
-         int yy = ((((int)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
+         long xx = pos.X << (28 - zoom);
+         long yy = ((((long)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
 
          return string.Format(UrlFormat, GetServerNum(pos, 3) + 1, zoom, xx, yy);
       }

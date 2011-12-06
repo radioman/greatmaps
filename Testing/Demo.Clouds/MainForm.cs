@@ -51,7 +51,7 @@ namespace CloudsDemo
             var br = mapControl.FromLatLngToLocal(gbr);
 
             clouds.Position = gtl;
-            clouds.Size = new System.Drawing.Size(br.X - tl.X, br.Y - tl.Y);
+            clouds.Size = new System.Drawing.Size((int)(br.X - tl.X), (int)(br.Y - tl.Y));
          }
       }
 
