@@ -167,71 +167,83 @@ namespace GMap.NET.WindowsPresentation
 
       public static readonly WindowsPresentationImageProxy Instance = new WindowsPresentationImageProxy();
 
+      //static readonly byte[] pngHeader = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+      //static readonly byte[] jpgHeader = { 0xFF, 0xD8, 0xFF };
+      //static readonly byte[] gifHeader = { 0x47, 0x49, 0x46 };
+      //static readonly byte[] bmpHeader = { 0x42, 0x4D };
+
       public override PureImage FromStream(System.IO.Stream stream)
       {
          WindowsPresentationImage ret = null;
          if(stream != null)
          {
-            // try png decoder
-            try
+            var type = stream.ReadByte();
+            stream.Position = 0;
+
+            ImageSource m = null;
+
+            switch(type)
             {
-               PngBitmapDecoder bitmapDecoder = new PngBitmapDecoder(stream, BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.OnLoad);
-               ImageSource m = bitmapDecoder.Frames[0];
-
-               if(m != null)
+               // PNG: 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A
+               case 0x89:
                {
-                  ret = new WindowsPresentationImage();
-                  ret.Img = m;
-                  if(ret.Img.CanFreeze)
-                  {
-                     ret.Img.Freeze();
-                  }
-               }
-
-               m = null;
-               bitmapDecoder = null;
-            }
-            catch
-            {
-               // try jpeg decoder
-               try
-               {
-                  stream.Seek(0, System.IO.SeekOrigin.Begin);
-
-                  JpegBitmapDecoder bitmapDecoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.OnLoad);
-                  ImageSource m = bitmapDecoder.Frames[0];
-
-                  if(m != null)
-                  {
-                     ret = new WindowsPresentationImage();
-                     ret.Img = m;
-                     if(ret.Img.CanFreeze)
-                     {
-                        ret.Img.Freeze();
-                     }
-                  }
-
-                  m = null;
+                  var bitmapDecoder = new PngBitmapDecoder(stream, BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.OnLoad);
+                  m = bitmapDecoder.Frames[0];
                   bitmapDecoder = null;
                }
-               catch
-               {
-                  ret = null;
-               }
-            }
-            finally
-            {
-               try
-               {
-                  stream.Seek(0, System.IO.SeekOrigin.Begin);
+               break;
 
-                  if(ret == null)
-                  {
-                     stream.Dispose();
-                  }
-               }
-               catch
+               // JPG: 0xFF, 0xD8, 0xFF
+               case 0xFF:
                {
+                  var bitmapDecoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.OnLoad);
+                  m = bitmapDecoder.Frames[0];
+                  bitmapDecoder = null;
+               }
+               break;
+
+               // GIF: 0x47, 0x49, 0x46
+               case 0x47:
+               {
+                  var bitmapDecoder = new GifBitmapDecoder(stream, BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.OnLoad);
+                  m = bitmapDecoder.Frames[0];
+                  bitmapDecoder = null;
+               }
+               break;
+
+               // BMP: 0x42, 0x4D
+               case 0x42:
+               {
+                  var bitmapDecoder = new BmpBitmapDecoder(stream, BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.OnLoad);
+                  m = bitmapDecoder.Frames[0];
+                  bitmapDecoder = null;
+               }
+               break;
+
+               // TIFF: 0x49, 0x49 || 0x4D, 0x4D
+               case 0x49:
+               case 0x4D:
+               {
+                  var bitmapDecoder = new TiffBitmapDecoder(stream, BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.OnLoad);
+                  m = bitmapDecoder.Frames[0];
+                  bitmapDecoder = null;
+               }
+               break;
+
+               default:
+               {
+                  Debug.WriteLine("WindowsPresentationImageProxy: unknown image format: " + type);
+               }
+               break;
+            }
+
+            if(m != null)
+            {
+               ret = new WindowsPresentationImage();
+               ret.Img = m;
+               if(ret.Img.CanFreeze)
+               {
+                  ret.Img.Freeze();
                }
             }
          }
@@ -248,6 +260,7 @@ namespace GMap.NET.WindowsPresentation
                PngBitmapEncoder e = new PngBitmapEncoder();
                e.Frames.Add(BitmapFrame.Create(ret.Img as BitmapSource));
                e.Save(stream);
+               e = null;
             }
             catch
             {

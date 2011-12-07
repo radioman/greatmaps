@@ -362,13 +362,14 @@ namespace GMap.NET.MapProviders
                   if(ret != null)
                   {
                      ret.Data = responseStream;
+                     ret.Data.Position = 0;
                   }
                   else
                   {
                      responseStream.Dispose();
-                     responseStream = null;
                   }
                }
+               responseStream = null;
             }
 #if PocketPC
             request.Abort();

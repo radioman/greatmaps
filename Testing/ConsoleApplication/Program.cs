@@ -33,7 +33,7 @@ namespace ConsoleApplication
 
                c.minZoom = 1;
                c.maxZoom = 25;
-               c.Zoom = 23;
+               c.Zoom = 32;
                //c.Provider = GMapProviders.OpenStreetMap;
                c.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
                c.OnMapSizeChanged(400, 400);

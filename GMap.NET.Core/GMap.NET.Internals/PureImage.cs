@@ -24,8 +24,9 @@ namespace GMap.NET
          else
          {
             m.Dispose();
-            m = null;
          }
+         m = null;
+
          return pi;
       }
    }

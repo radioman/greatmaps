@@ -75,29 +75,7 @@ namespace GMap.NET.WindowsForms
             ret = null;
             Debug.WriteLine("FromStream: " + ex.ToString());
          }
-         finally
-         {
-            try
-            {
-               stream.Seek(0, System.IO.SeekOrigin.Begin);
 
-               if(ret == null)
-               {
-#if !PocketPC
-                  stream.Dispose();
-#else
-                  IDisposable s = stream as IDisposable;
-                  if(s != null)
-                  {
-                     s.Dispose();
-                  }
-#endif
-               }
-            }
-            catch
-            {
-            }
-         }
          return ret;
       }
 
