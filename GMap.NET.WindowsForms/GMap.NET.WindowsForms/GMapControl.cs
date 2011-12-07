@@ -883,9 +883,9 @@ namespace GMap.NET.WindowsForms
             {
                if(o.IsVisibile && o.Routes.Count > 0)
                {
-                  foreach(MapRoute route in o.Routes)
+                  foreach(GMapRoute route in o.Routes)
                   {
-                     if(route.From.HasValue && route.To.HasValue)
+                     if (route.From.HasValue && route.To.HasValue && route.IsVisible)
                      {
                         foreach(PointLatLng p in route.Points)
                         {
