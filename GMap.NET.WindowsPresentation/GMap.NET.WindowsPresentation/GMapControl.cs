@@ -214,7 +214,18 @@ namespace GMap.NET.WindowsPresentation
       /// <summary>
       /// enables filling empty tiles using lower level images
       /// </summary>
-      public bool FillEmptyTiles = true;
+      [Browsable(false)]
+      public bool FillEmptyTiles
+      {
+         get
+         {
+            return Core.fillEmptyTiles;
+         }
+         set
+         {
+            Core.fillEmptyTiles = value;
+         }
+      }
 
       /// <summary>
       /// max zoom
@@ -757,7 +768,22 @@ namespace GMap.NET.WindowsPresentation
                               if(!found)
                                  found = true;
 
-                              g.DrawImage(img.Img, new Rect(Core.tileRect.X + 0.6, Core.tileRect.Y + 0.6, Core.tileRect.Width + 0.6, Core.tileRect.Height + 0.6));
+                              var imgRect = new Rect(Core.tileRect.X + 0.6, Core.tileRect.Y + 0.6, Core.tileRect.Width + 0.6, Core.tileRect.Height + 0.6);
+                              if(!img.IsParent)
+                              {
+                                 g.DrawImage(img.Img, imgRect);
+                              }
+                              else
+                              {
+                                 // TODO: move calculations to loader thread
+                                 var geometry = new RectangleGeometry(imgRect);
+                                 var parentImgRect = new Rect(Core.tileRect.X - Core.tileRect.Width * img.Xoff + 0.6, Core.tileRect.Y - Core.tileRect.Height * img.Yoff + 0.6, Core.tileRect.Width * img.Ix + 0.6, Core.tileRect.Height * img.Ix + 0.6);
+
+                                 g.PushClip(geometry);
+                                 g.DrawImage(img.Img, parentImgRect);
+                                 g.Pop();
+                                 geometry = null;
+                              }
                            }
                         }
                      }
@@ -767,11 +793,11 @@ namespace GMap.NET.WindowsPresentation
                      #region -- fill empty tiles --
                      int zoomOffset = 1;
                      Tile parentTile = Tile.Empty;
-                     int Ix = 0;
+                     long Ix = 0;
 
                      while(parentTile == Tile.Empty && zoomOffset < Core.Zoom && zoomOffset <= LevelsKeepInMemmory)
                      {
-                        Ix = (int)Math.Pow(2, zoomOffset);
+                        Ix = (long)Math.Pow(2, zoomOffset);
                         parentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - zoomOffset++, new GMap.NET.GPoint((int)(tilePoint.PosXY.X / Ix), (int)(tilePoint.PosXY.Y / Ix)));
                      }
 
@@ -788,7 +814,7 @@ namespace GMap.NET.WindowsPresentation
                         {
                            foreach(WindowsPresentationImage img in parentTile.Overlays)
                            {
-                              if(img != null && img.Img != null)
+                              if(img != null && img.Img != null && !img.IsParent)
                               {
                                  if(!found)
                                     found = true;

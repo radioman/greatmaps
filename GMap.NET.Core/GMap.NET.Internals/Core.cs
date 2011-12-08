@@ -49,6 +49,8 @@ namespace GMap.NET.Internals
       public float bearing = 0;
       public bool IsRotated = false;
 
+      public bool fillEmptyTiles = true;
+
       public TileMatrix Matrix = new TileMatrix();
 
       public List<DrawTile> tileDrawingList = new List<DrawTile>();
@@ -897,6 +899,7 @@ namespace GMap.NET.Internals
       internal static readonly int WaitForTileLoadThreadTimeout = 5 * 1000 * 60; // 5 min.
 
       byte loadWaitCount = 0;
+      volatile int okZoom = 0;
 
       // tile consumer thread
       void ProcessLoadTask()
@@ -1001,8 +1004,8 @@ namespace GMap.NET.Internals
                         int retry = 0;
                         do
                         {
-                           PureImage img;
-                           Exception ex;
+                           PureImage img = null;
+                           Exception ex = null;
 
                            // tile number inversion(BottomLeft -> TopLeft) for pergo maps
                            if(tl is TurkeyMapProvider)
@@ -1012,6 +1015,46 @@ namespace GMap.NET.Internals
                            else // ok
                            {
                               img = GMaps.Instance.GetImageFrom(tl, task.Value.Pos, task.Value.Zoom, out ex);
+                           }
+
+                           if(img != null && ex == null)
+                           {
+                              okZoom = Math.Max(okZoom, task.Value.Zoom);
+                           }
+
+                           // check for parent tiles if not found
+                           if(img == null && okZoom > 0 && fillEmptyTiles && Provider.Projection is MercatorProjection)
+                           {
+                              int zoomOffset = task.Value.Zoom > okZoom ? task.Value.Zoom - okZoom : 1;
+                              long Ix = 0;
+                              GPoint parentTile = GPoint.Empty;
+
+                              while(img == null && zoomOffset < task.Value.Zoom)
+                              {
+                                 Ix = (long)Math.Pow(2, zoomOffset);
+                                 parentTile = new GMap.NET.GPoint((task.Value.Pos.X / Ix), (task.Value.Pos.Y / Ix));
+                                 img = GMaps.Instance.GetImageFrom(tl, parentTile, task.Value.Zoom - zoomOffset++, out ex);
+                              }
+
+                              if(img != null)
+                              {
+                                 // offsets in quadrant
+                                 long Xoff = Math.Abs(task.Value.Pos.X - (parentTile.X * Ix));
+                                 long Yoff = Math.Abs(task.Value.Pos.Y - (parentTile.Y * Ix));
+
+                                 img.IsParent = true;
+                                 img.Ix = Ix;
+                                 img.Xoff = Xoff;
+                                 img.Yoff = Yoff;
+
+                                 // wpf
+                                 //var geometry = new RectangleGeometry(new Rect(Core.tileRect.X + 0.6, Core.tileRect.Y + 0.6, Core.tileRect.Width + 0.6, Core.tileRect.Height + 0.6));
+                                 //var parentImgRect = new Rect(Core.tileRect.X - Core.tileRect.Width * Xoff + 0.6, Core.tileRect.Y - Core.tileRect.Height * Yoff + 0.6, Core.tileRect.Width * Ix + 0.6, Core.tileRect.Height * Ix + 0.6);
+
+                                 // gdi+
+                                 //System.Drawing.Rectangle dst = new System.Drawing.Rectangle((int)Core.tileRect.X, (int)Core.tileRect.Y, (int)Core.tileRect.Width, (int)Core.tileRect.Height);
+                                 //System.Drawing.RectangleF srcRect = new System.Drawing.RectangleF((float)(Xoff * (img.Img.Width / Ix)), (float)(Yoff * (img.Img.Height / Ix)), (img.Img.Width / Ix), (img.Img.Height / Ix));
+                              }
                            }
 
                            if(img != null)

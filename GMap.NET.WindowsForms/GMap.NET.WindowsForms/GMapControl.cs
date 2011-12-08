@@ -535,10 +535,24 @@ namespace GMap.NET.WindowsForms
                               {
                                  if(!found)
                                     found = true;
+
+                                 if(!img.IsParent)
+                                 {
 #if !PocketPC
-                                 g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRectBearing.Width, Core.tileRectBearing.Height);
+                                    g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRectBearing.Width, Core.tileRectBearing.Height);
 #else
-                                            g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y);
+                                    g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y);
+#endif
+                                 }
+#if !PocketPC
+                                 else
+                                 {
+                                    // TODO: move calculations to loader thread
+                                    System.Drawing.RectangleF srcRect = new System.Drawing.RectangleF((float)(img.Xoff * (img.Img.Width / img.Ix)), (float)(img.Yoff * (img.Img.Height / img.Ix)), (img.Img.Width / img.Ix), (img.Img.Height / img.Ix));
+                                    System.Drawing.Rectangle dst = new System.Drawing.Rectangle((int)Core.tileRect.X, (int)Core.tileRect.Y, (int)Core.tileRect.Width, (int)Core.tileRect.Height);
+
+                                    g.DrawImage(img.Img, dst, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, GraphicsUnit.Pixel, TileFlipXYAttributes);
+                                 }
 #endif
                               }
                            }
@@ -550,11 +564,11 @@ namespace GMap.NET.WindowsForms
                         #region -- fill empty lines --
                         int zoomOffset = 1;
                         Tile parentTile = Tile.Empty;
-                        int Ix = 0;
+                        long Ix = 0;
 
                         while(parentTile == Tile.Empty && zoomOffset < Core.Zoom && zoomOffset <= LevelsKeepInMemmory)
                         {
-                           Ix = (int)Math.Pow(2, zoomOffset);
+                           Ix = (long)Math.Pow(2, zoomOffset);
                            parentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - zoomOffset++, new GPoint((int)(tilePoint.PosXY.X / Ix), (int)(tilePoint.PosXY.Y / Ix)));
                         }
 
@@ -568,7 +582,7 @@ namespace GMap.NET.WindowsForms
                            {
                               foreach(WindowsFormsImage img in parentTile.Overlays)
                               {
-                                 if(img != null && img.Img != null)
+                                 if(img != null && img.Img != null && !img.IsParent)
                                  {
                                     if(!found)
                                        found = true;
