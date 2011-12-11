@@ -15,11 +15,12 @@ namespace GMap.NET.MapProviders
    {
       public BingMapProviderBase()
       {
+         MaxZoom = null;
          RefererUrl = "http://www.bing.com/maps/";
          Copyright = string.Format("©{0} Microsoft Corporation, ©{0} NAVTEQ, ©{0} Image courtesy of NASA", DateTime.Today.Year);
       }
 
-      public string Version = "838";
+      public string Version = "845";
 
       /// <summary>
       /// Bing Maps Customer Identification, more info here
@@ -138,7 +139,6 @@ namespace GMap.NET.MapProviders
                         if(ver != old)
                         {
                            GMapProviders.BingMap.Version = ver;
-                           GMapProviders.BingMapOld.Version = ver;
                            GMapProviders.BingSatelliteMap.Version = ver;
                            GMapProviders.BingHybridMap.Version = ver;
 

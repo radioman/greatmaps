@@ -12,6 +12,7 @@ namespace GMap.NET.MapProviders
 
       BingSatelliteMapProvider()
       {
+         MaxZoom = 19; 
       }
 
       static BingSatelliteMapProvider()

@@ -234,10 +234,10 @@ namespace GMap.NET.Internals
                      minZoom = provider.MinZoom;
                   }
 
-                  if(provider.MaxZoom.HasValue)
-                  {
-                     maxZoom = provider.MaxZoom.Value;
-                  }
+                  //if(provider.MaxZoom.HasValue && maxZoom > provider.MaxZoom)
+                  //{
+                  //   maxZoom = provider.MaxZoom.Value;
+                  //}
 
                   zoomToArea = true;
 
@@ -1011,16 +1011,19 @@ namespace GMap.NET.Internals
                            PureImage img = null;
                            Exception ex = null;
 
-                           if(skipOverZoom == 0 || task.Value.Zoom < skipOverZoom)
+                           if(!provider.MaxZoom.HasValue || task.Value.Zoom < provider.MaxZoom)
                            {
-                              // tile number inversion(BottomLeft -> TopLeft) for pergo maps
-                              if(tl is TurkeyMapProvider)
+                              if(skipOverZoom == 0 || task.Value.Zoom < skipOverZoom)
                               {
-                                 img = GMaps.Instance.GetImageFrom(tl, new GPoint(task.Value.Pos.X, maxOfTiles.Height - task.Value.Pos.Y), task.Value.Zoom, out ex);
-                              }
-                              else // ok
-                              {
-                                 img = GMaps.Instance.GetImageFrom(tl, task.Value.Pos, task.Value.Zoom, out ex);
+                                 // tile number inversion(BottomLeft -> TopLeft) for pergo maps
+                                 if(tl is TurkeyMapProvider)
+                                 {
+                                    img = GMaps.Instance.GetImageFrom(tl, new GPoint(task.Value.Pos.X, maxOfTiles.Height - task.Value.Pos.Y), task.Value.Zoom, out ex);
+                                 }
+                                 else // ok
+                                 {
+                                    img = GMaps.Instance.GetImageFrom(tl, task.Value.Pos, task.Value.Zoom, out ex);
+                                 }
                               }
                            }
 

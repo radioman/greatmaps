@@ -1610,7 +1610,7 @@ namespace Demo.WindowsForms
          }
          else
          {
-            MainMap.MapProvider = GMapProviders.EmptyProvider;
+            MainMap.MapProvider = GMapProviders.OpenStreetMap;
             comboBoxMapType.SelectedItem = MainMap.MapProvider;
          }
       }

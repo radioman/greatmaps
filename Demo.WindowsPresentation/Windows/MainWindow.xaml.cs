@@ -951,36 +951,39 @@ namespace Demo.WindowsPresentation
 
       public override ValidationResult Validate(object value, CultureInfo cultureInfo)
       {
-         if(!UserAcceptedLicenseOnce)
+         if(!(value is OpenStreetMapProviderBase))
          {
-            if(File.Exists("License.txt"))
+            if(!UserAcceptedLicenseOnce)
             {
-               string ctn = File.ReadAllText("License.txt");
-               int li = ctn.IndexOf("License");
-               string txt = ctn.Substring(li);
-
-               var d = new Demo.WindowsPresentation.Windows.Message();
-               d.richTextBox1.Text = txt;
-
-               if(true == d.ShowDialog())
+               if(File.Exists(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "License.txt"))
                {
-                  UserAcceptedLicenseOnce = true;
-                  if(Window != null)
+                  string ctn = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "License.txt");
+                  int li = ctn.IndexOf("License");
+                  string txt = ctn.Substring(li);
+
+                  var d = new Demo.WindowsPresentation.Windows.Message();
+                  d.richTextBox1.Text = txt;
+
+                  if(true == d.ShowDialog())
                   {
-                     Window.Title += " - license accepted by " + Environment.UserName + " at " + DateTime.Now;
+                     UserAcceptedLicenseOnce = true;
+                     if(Window != null)
+                     {
+                        Window.Title += " - license accepted by " + Environment.UserName + " at " + DateTime.Now;
+                     }
                   }
                }
+               else
+               {
+                  // user deleted License.txt ;}
+                  UserAcceptedLicenseOnce = true;
+               }
             }
-            else
-            {
-               // user deleted License.txt ;}
-               UserAcceptedLicenseOnce = true;
-            }
-         }
 
-         if(!UserAcceptedLicenseOnce)
-         {
-            return new ValidationResult(false, "user do not accepted license ;/");
+            if(!UserAcceptedLicenseOnce)
+            {
+               return new ValidationResult(false, "user do not accepted license ;/");
+            }
          }
 
          return new ValidationResult(true, null);

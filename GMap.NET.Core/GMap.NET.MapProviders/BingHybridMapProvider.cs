@@ -12,6 +12,7 @@ namespace GMap.NET.MapProviders
 
       BingHybridMapProvider()
       {
+         MaxZoom = 19;  
       }
 
       static BingHybridMapProvider()

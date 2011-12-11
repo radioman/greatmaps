@@ -109,7 +109,6 @@
     <Compile Include="GMap.NET.CacheProviders\MemoryCache.cs" />
     <Compile Include="GMap.NET.Internals\DrawTile.cs" />
     <Compile Include="GMap.NET.Internals\FastResourceLock.cs" />
-    <Compile Include="GMap.NET.MapProviders\BingMapOldProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingSatelliteMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingHybridMapProvider.cs" />

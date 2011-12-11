@@ -20,6 +20,11 @@ namespace GMap.NET.MapProviders
 
       public string Version = "0.3";
 
+      public CloudMadeMapProviderBase()
+      {
+         MaxZoom = null;
+      }
+
       #region GMapProvider Members
       public override Guid Id
       {

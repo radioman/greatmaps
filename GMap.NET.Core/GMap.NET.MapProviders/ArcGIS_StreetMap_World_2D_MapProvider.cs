@@ -60,6 +60,7 @@ namespace GMap.NET.MapProviders
    {
       public ArcGISMapMercatorProviderBase()
       {
+         MaxZoom = null;
          Copyright = string.Format("©{0} ESRI - Map data ©{0} ArcGIS", DateTime.Today.Year);
       }
 

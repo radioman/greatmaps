@@ -341,7 +341,7 @@ namespace GMap.NET
                   // check if stream wasn't disposed somehow
                   if(task.Value.Img != null)
                   {
-                     Debug.WriteLine("CacheEngine[" + left + "]: storing tile " + task.Value + "...");
+                     Debug.WriteLine("CacheEngine[" + left + "]: storing tile " + task.Value + ", " + task.Value.Img.Length / 1024 +  "kB...");
 
                      if((task.Value.CacheType & CacheUsage.First) == CacheUsage.First && PrimaryCache != null)
                      {

@@ -18,6 +18,7 @@ namespace GMap.NET.MapProviders
    {
       public GoogleMapProviderBase()
       {
+         MaxZoom = null;
          RefererUrl = string.Format("http://maps.{0}/", Server);
          Copyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
       }
@@ -1567,7 +1568,7 @@ namespace GMap.NET.MapProviders
          Instance = new GoogleMapProvider();
       }
 
-      public string Version = "m@164000000";
+      public string Version = "m@167000000";
 
       #region GMapProvider Members
 

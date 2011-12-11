@@ -34,7 +34,6 @@ namespace GMap.NET.MapProviders
       public static readonly OpenSeaMapHybridProvider OpenSeaMapHybrid = OpenSeaMapHybridProvider.Instance;
 
       public static readonly BingMapProvider BingMap = BingMapProvider.Instance;
-      public static readonly BingMapOldProvider BingMapOld = BingMapOldProvider.Instance;
       public static readonly BingSatelliteMapProvider BingSatelliteMap = BingSatelliteMapProvider.Instance;
       public static readonly BingHybridMapProvider BingHybridMap = BingHybridMapProvider.Instance;
 
@@ -357,8 +356,13 @@ namespace GMap.NET.MapProviders
             {
                MemoryStream responseStream = Stuff.CopyStream(response.GetResponseStream(), false);
                {
-                  Debug.WriteLine("Response: " + url);
-                  ret = TileImageProxy.FromStream(responseStream);
+                  Debug.WriteLine("Response[" + responseStream.Length + " bytes]" + url);
+
+                  if(responseStream.Length > 0)
+                  {
+                     ret = TileImageProxy.FromStream(responseStream);
+                  }
+
                   if(ret != null)
                   {
                      ret.Data = responseStream;
@@ -471,6 +475,7 @@ namespace GMap.NET.MapProviders
 
       EmptyProvider()
       {
+         MaxZoom = null;
       }
 
       static EmptyProvider()
