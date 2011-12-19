@@ -666,13 +666,10 @@ namespace GMap.NET.WindowsPresentation
 
             if(IsRotated)
             {
-               UpdateRotationMatrix();
-               ForceUpdateOverlays();
+               UpdateRotationMatrix();                
             }
-            else
-            {
-               UpdateMarkersOffset();
-            }
+
+            ForceUpdateOverlays();
          }
       }
 
