@@ -20,12 +20,57 @@ namespace ConsoleApplication
    {
       static void Main(string[] args)
       {
-#if DEBUG
+         /*
+            0/1 = 2
+            1/2 = 1,5
+            2/3 = 2
+            3/4 = 2
+            4/5 = 2,5
+            5/6 = 2
+            6/7 = 2
+            7/8 = 2
+            8/9 = 2,5
+            9/10 = 2
+            10/11 = 2,5
+            11/12 = 2 
+         */
+
          //if(false)
          {
             GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
 
+            var p = LKS94Projection.Instance;
+            //var p = PlateCarreeProjection.Instance;
+
+            var pos = new PointLatLng(54.6961334816182, 25.2985095977783);
+                
+            {
+               var zoom = 4;
+               var px = p.FromPixelToTileXY(p.FromLatLngToPixel(pos, zoom));
+               Exception ex = null;
+               var img = GMaps.Instance.GetImageFrom(GMapProviders.LithuaniaMap, px, zoom, out ex);
+               File.WriteAllBytes(zoom + "z-" + px + ".png", img.Data.ToArray());
+            }
+
+            for(int i = 0; i < 12; i++)
+            {
+               double scale = p.GetGroundResolution(i, pos.Lat);
+               double scale2 = p.GetGroundResolution(i + 1, pos.Lat);
+
+               var s = scale / scale2;
+
+               Debug.WriteLine(i + "/" + (i + 1) + " = " + s);
+            }
+         }
+
+#if DEBUG
+         if(false)
+         {
+            GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
+
             //GMaps.Instance.PrimaryCache.DeleteOlderThan(DateTime.Now, GMapProviders.GoogleMap.DbId);
+
+            GMaps.Instance.Mode = AccessMode.CacheOnly;
 
             using(Core c = new Core())
             {
@@ -33,8 +78,8 @@ namespace ConsoleApplication
 
                c.minZoom = 1;
                c.maxZoom = 25;
-               c.Zoom = 32;
-               //c.Provider = GMapProviders.OpenStreetMap;
+               c.Zoom = 16;
+               c.Provider = GMapProviders.OpenStreetMap;
                c.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
                c.OnMapSizeChanged(400, 400);
 

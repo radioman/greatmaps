@@ -1,73 +1,73 @@
 ﻿
 namespace GMap.NET.WindowsForms
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Drawing.Drawing2D;
-    using System.Runtime.Serialization;
-    using GMap.NET;
+   using System;
+   using System.Collections.Generic;
+   using System.Drawing;
+   using System.Drawing.Drawing2D;
+   using System.Runtime.Serialization;
+   using GMap.NET;
 
-    /// <summary>
-    /// GMap.NET route
-    /// </summary>
-    [Serializable]
+   /// <summary>
+   /// GMap.NET route
+   /// </summary>
+   [Serializable]
 #if !PocketPC
    public class GMapRoute : MapRoute, ISerializable, IDeserializationCallback
 #else
     public class GMapRoute : MapRoute
 #endif
-    {
-        GMapOverlay overlay;
-        public GMapOverlay Overlay
-        {
-            get
+   {
+      GMapOverlay overlay;
+      public GMapOverlay Overlay
+      {
+         get
+         {
+            return overlay;
+         }
+         internal set
+         {
+            overlay = value;
+         }
+      }
+
+      private bool visible = true;
+
+      /// <summary>
+      /// is marker visible
+      /// </summary>
+      public bool IsVisible
+      {
+         get
+         {
+            return visible;
+         }
+         set
+         {
+            if(value != visible)
             {
-                return overlay;
+               visible = value;
+
+               if(Overlay != null && Overlay.Control != null)
+               {
+                  if(visible)
+                  {
+                     Overlay.Control.UpdateRouteLocalPosition(this);
+                  }
+
+                  {
+                     if(!Overlay.Control.HoldInvalidation)
+                     {
+                        Overlay.Control.Core.Refresh.Set();
+                     }
+                  }
+               }
             }
-            internal set
-            {
-                overlay = value;
-            }
-        }
+         }
+      }
 
-        private bool visible = true;
-
-        /// <summary>
-        /// is marker visible
-        /// </summary>
-        public bool IsVisible
-        {
-            get
-            {
-                return visible;
-            }
-            set
-            {
-                if (value != visible)
-                {
-                    visible = value;
-
-                    if (Overlay != null && Overlay.Control != null)
-                    {
-                        if (visible)
-                        {
-                            Overlay.Control.UpdateRouteLocalPosition(this);
-                        }
-
-                        {
-                            if (!Overlay.Control.HoldInvalidation)
-                            {
-                                Overlay.Control.Core.Refresh.Set();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        public virtual void OnRender(Graphics g)
-        {
+      public virtual void OnRender(Graphics g)
+      {
 #if !PocketPC
          if(IsVisible)
          {
@@ -110,34 +110,43 @@ namespace GMap.NET.WindowsForms
                 }
             }
 #endif
-        }
+      }
 
 
-        /// <summary>
-        /// specifies how the outline is painted
-        /// </summary>
-        [NonSerialized]
+      /// <summary>
+      /// specifies how the outline is painted
+      /// </summary>
+      [NonSerialized]
 #if !PocketPC
       public Pen Stroke = new Pen(Color.FromArgb(144, Color.MidnightBlue));
 #else
         public Pen Stroke = new Pen(Color.MidnightBlue);
 #endif
 
-        public readonly List<GPoint> LocalPoints = new List<GPoint>();
+      public readonly List<GPoint> LocalPoints = new List<GPoint>();
 
-        public GMapRoute(List<PointLatLng> points, string name)
-            : base(points, name)
-        {
-            LocalPoints.Capacity = Points.Count;
+      public GMapRoute(string name)
+         : base(name)
+      {
+#if !PocketPC
+         Stroke.LineJoin = LineJoin.Round;
+#endif
+         Stroke.Width = 5;
+      }
+
+      public GMapRoute(IEnumerable<PointLatLng> points, string name)
+         : base(points, name)
+      {
+         LocalPoints.Capacity = Points.Count;
 
 #if !PocketPC
          Stroke.LineJoin = LineJoin.Round;
 #endif
-            Stroke.Width = 5;
-        }
+         Stroke.Width = 5;
+      }
 
 #if !PocketPC
-        #region ISerializable Members
+      #region ISerializable Members
 
       // Temp store for de-serialization.
       private GPoint[] deserializedLocalPoints;
@@ -171,25 +180,25 @@ namespace GMap.NET.WindowsForms
          this.deserializedLocalPoints = Extensions.GetValue<GPoint[]>(info, "LocalPoints");
       }
 
-        #endregion
+      #endregion
 
 
-        #region IDeserializationCallback Members
+      #region IDeserializationCallback Members
 
-          /// <summary>
-          /// Runs when the entire object graph has been de-serialized.
-          /// </summary>
-          /// <param name="sender">The object that initiated the callback. The functionality for this parameter is not currently implemented.</param>
-          public override void OnDeserialization(object sender)
-          {
-             base.OnDeserialization(sender);
+      /// <summary>
+      /// Runs when the entire object graph has been de-serialized.
+      /// </summary>
+      /// <param name="sender">The object that initiated the callback. The functionality for this parameter is not currently implemented.</param>
+      public override void OnDeserialization(object sender)
+      {
+         base.OnDeserialization(sender);
 
-             // Accounts for the de-serialization being breadth first rather than depth first.
-             LocalPoints.AddRange(deserializedLocalPoints);
-             LocalPoints.Capacity = Points.Count;
-          }
+         // Accounts for the de-serialization being breadth first rather than depth first.
+         LocalPoints.AddRange(deserializedLocalPoints);
+         LocalPoints.Capacity = Points.Count;
+      }
 
-       #endregion
+      #endregion
 #endif
-    }
+   }
 }

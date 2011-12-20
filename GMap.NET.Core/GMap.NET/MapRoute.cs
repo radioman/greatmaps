@@ -19,7 +19,7 @@ namespace GMap.NET
       /// <summary>
       /// points of route
       /// </summary>
-      public readonly List<PointLatLng> Points;
+      public readonly List<PointLatLng> Points = new List<PointLatLng>();
 
       /// <summary>
       /// route info
@@ -63,11 +63,14 @@ namespace GMap.NET
          }
       }
 
-      public MapRoute(List<PointLatLng> points, string name)
+      public MapRoute(string name)
       {
-         Points = new List<PointLatLng>(points);
-         Points.TrimExcess();
+         Name = name;
+      }
 
+      public MapRoute(IEnumerable<PointLatLng> points, string name)
+      {
+         Points.AddRange(points);
          Name = name;
       }
 

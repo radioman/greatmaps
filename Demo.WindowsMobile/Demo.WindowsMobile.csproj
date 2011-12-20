@@ -126,7 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\ImageReady.ico" />
-    <Content Include="SQLite.Interop.074.dll">
+    <Content Include="SQLite.Interop.077.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
