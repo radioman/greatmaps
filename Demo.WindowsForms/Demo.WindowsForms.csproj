@@ -180,6 +180,7 @@
       <DependentUpon>XPanderPanelList.cs</DependentUpon>
     </Compile>
     <Compile Include="BSE.Windows.Forms\XPander\XPanderStateChangeEventArgs.cs" />
+    <Compile Include="CustomMarkers\GMapMarkerCircle.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

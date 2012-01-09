@@ -1517,8 +1517,8 @@ namespace GMap.NET.WindowsForms
       {
          base.OnSizeChanged(e);
 
-         if(MapProvider == EmptyProvider.Instance)
-            return;
+         //if(MapProvider == EmptyProvider.Instance)
+         //   return;
 
          if(!IsDesignerHosted && !DesignModeInConstruct)
          {

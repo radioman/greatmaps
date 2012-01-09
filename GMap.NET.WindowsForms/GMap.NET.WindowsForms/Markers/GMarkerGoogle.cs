@@ -54,8 +54,12 @@ namespace GMap.NET.WindowsForms.Markers
       white_small,
    }
 
+#if !PocketPC
    [Serializable]
    public class GMarkerGoogle : GMapMarker, ISerializable, IDeserializationCallback
+#else
+   public class GMarkerGoogle : GMapMarker
+#endif
    {
       public float? Bearing;
       Bitmap Bitmap;
@@ -237,6 +241,8 @@ namespace GMap.NET.WindowsForms.Markers
 #endif
       }
 
+#if !PocketPC
+
       #region ISerializable Members
 
       void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
@@ -267,5 +273,7 @@ namespace GMap.NET.WindowsForms.Markers
       }
 
       #endregion
+
+#endif
    }
 }

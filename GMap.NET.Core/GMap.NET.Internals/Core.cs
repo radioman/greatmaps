@@ -190,7 +190,7 @@ namespace GMap.NET.Internals
          }
       }
 
-      public GMapProvider provider = EmptyProvider.Instance;
+      public GMapProvider provider;
       public GMapProvider Provider
       {
          get
@@ -199,7 +199,7 @@ namespace GMap.NET.Internals
          }
          set
          {
-            if(!provider.Equals(value) || value.Equals(EmptyProvider.Instance))
+            if(provider == null || !provider.Equals(value))
             {
                provider = value;
 
@@ -211,7 +211,7 @@ namespace GMap.NET.Internals
 
                if(Provider.Projection != null)
                {
-                  tileRect = new GRect(new GPoint(0, 0), Provider.Projection.TileSize);
+                  tileRect = new GRect(GPoint.Empty, Provider.Projection.TileSize);
                   tileRectBearing = tileRect;
                   if(IsRotated)
                   {

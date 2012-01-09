@@ -70,7 +70,7 @@ namespace Demo.WindowsForms
             }
 
             // config map 
-            MainMap.MapProvider = GMapProviders.OpenStreetMap;
+            //MainMap.MapProvider = GMapProviders.OpenStreetMap;
             MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
             MainMap.MinZoom = 1;
             MainMap.MaxZoom = 24;
@@ -83,15 +83,17 @@ namespace Demo.WindowsForms
             MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
             MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
             MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
-            MainMap.MouseMove += new MouseEventHandler(MainMap_MouseMove);
-            MainMap.MouseDown += new MouseEventHandler(MainMap_MouseDown);
-            MainMap.MouseUp += new MouseEventHandler(MainMap_MouseUp);
             MainMap.OnMarkerEnter += new MarkerEnter(MainMap_OnMarkerEnter);
             MainMap.OnMarkerLeave += new MarkerLeave(MainMap_OnMarkerLeave);
             MainMap.OnPolygonEnter += new PolygonEnter(MainMap_OnPolygonEnter);
             MainMap.OnPolygonLeave += new PolygonLeave(MainMap_OnPolygonLeave);
             MainMap.Manager.OnTileCacheComplete += new TileCacheComplete(OnTileCacheComplete);
             MainMap.Manager.OnTileCacheStart += new TileCacheComplete(OnTileCacheStart);
+
+            MainMap.MouseMove += new MouseEventHandler(MainMap_MouseMove);
+            MainMap.MouseDown += new MouseEventHandler(MainMap_MouseDown);
+            MainMap.MouseUp += new MouseEventHandler(MainMap_MouseUp);
+            MainMap.MouseDoubleClick += new MouseEventHandler(MainMap_MouseDoubleClick);
 
             // get map types
 #if !MONO   // mono doesn't handle it, so we 'lost' provider list ;]
@@ -213,7 +215,7 @@ namespace Demo.WindowsForms
                   GMapOverlay overlay2 = DeepClone<GMapOverlay>(polygons);
                   Debug.WriteLine("ISerializable status for polygons: OK");
 
-                  GMapOverlay overlay3 = DeepClone<GMapOverlay>(routes);  
+                  GMapOverlay overlay3 = DeepClone<GMapOverlay>(routes);
                   Debug.WriteLine("ISerializable status for routes: OK");
                }
                catch(Exception ex)
@@ -1384,6 +1386,13 @@ namespace Demo.WindowsForms
          {
             isMouseDown = false;
          }
+      }
+
+      // add demo circle
+      void MainMap_MouseDoubleClick(object sender, MouseEventArgs e)
+      {
+         var cc = new GMapMarkerCircle(MainMap.FromLocalToLatLng(e.X, e.Y));
+         objects.Markers.Add(cc);
       }
 
       void MainMap_MouseDown(object sender, MouseEventArgs e)
