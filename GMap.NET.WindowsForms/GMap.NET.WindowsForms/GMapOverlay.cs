@@ -33,17 +33,21 @@ namespace GMap.NET.WindowsForms
             if(value != isVisibile)
             {
                isVisibile = value;
-               if(isVisibile)
+
+               if(Control != null)
                {
-                  Control.HoldInvalidation = true;
-                  ForceUpdate();
-                  Control.Refresh();
-               }
-               else
-               {
-                  if(!Control.HoldInvalidation)
+                  if(isVisibile)
                   {
-                     Control.Core.Refresh.Set();
+                     Control.HoldInvalidation = true;
+                     ForceUpdate();
+                     Control.Refresh();
+                  }
+                  else
+                  {
+                     if(!Control.HoldInvalidation)
+                     {
+                        Control.Core.Refresh.Set();
+                     }
                   }
                }
             }
