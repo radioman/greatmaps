@@ -35,7 +35,7 @@ namespace ConsoleApplication
             11/12 = 2 
          */
 
-         //if(false)
+         if(false)
          {
             GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
 
@@ -139,6 +139,22 @@ namespace ConsoleApplication
             }
          }
 #endif
+
+         if(false)
+         {
+            List<Placemark> plc = null;
+            var st = GMapProviders.GoogleMap.GetPlacemarks(new PointLatLng(54.6961334816182, 25.2985095977782), out plc);
+            if(st == GeoCoderStatusCode.G_GEO_SUCCESS && plc != null)
+            {
+               foreach(var pl in plc)
+               {
+                  if(!string.IsNullOrEmpty(pl.PostalCodeNumber))
+                  {
+                     Debug.WriteLine("Accuracy: " + pl.Accuracy + ", " + pl.Address + ", PostalCodeNumber: " + pl.PostalCodeNumber);
+                  }
+               }
+            }
+         }
 
          if(false)
          {

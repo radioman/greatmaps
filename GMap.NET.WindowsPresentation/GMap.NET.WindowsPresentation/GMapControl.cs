@@ -26,7 +26,7 @@ namespace GMap.NET.WindowsPresentation
    /// <summary>
    /// GMap.NET control for Windows Presentation
    /// </summary>
-   public partial class GMapControl : ItemsControl, Interface
+   public partial class GMapControl : ItemsControl, Interface, IDisposable
    {
       #region DependencyProperties and related stuff
 
@@ -555,7 +555,10 @@ namespace GMap.NET.WindowsPresentation
       /// </summary>
       public new void InvalidateVisual()
       {
-         Core.Refresh.Set();
+         if(Core.Refresh != null)
+         {
+            Core.Refresh.Set();
+         }
       }
 
       /// <summary>
@@ -631,7 +634,7 @@ namespace GMap.NET.WindowsPresentation
       {
          if(!SuspendDispose)
          {
-            Core.OnMapClose();
+            Dispose();
          }
          SuspendDispose = false;
       }
@@ -640,7 +643,7 @@ namespace GMap.NET.WindowsPresentation
       {
          if(!SuspendDispose)
          {
-            Core.OnMapClose();
+            Dispose();
          }
          SuspendDispose = false;
       }
@@ -666,7 +669,7 @@ namespace GMap.NET.WindowsPresentation
 
             if(IsRotated)
             {
-               UpdateRotationMatrix();                
+               UpdateRotationMatrix();
             }
 
             ForceUpdateOverlays();
@@ -2063,6 +2066,15 @@ namespace GMap.NET.WindowsPresentation
             Core.OnEmptyTileError -= value;
          }
       }
+      #endregion
+
+      #region IDisposable Members
+
+      public void Dispose()
+      {
+         Core.OnMapClose();
+      }
+
       #endregion
    }
 }

@@ -305,7 +305,10 @@ namespace GMap.NET.WindowsForms
       /// </summary>
       public new void Invalidate()
       {
-         Core.Refresh.Set();
+         if(Core.Refresh != null)
+         {
+            Core.Refresh.Set();
+         }
       }
 #endif
 
@@ -1389,7 +1392,7 @@ namespace GMap.NET.WindowsForms
             //   }
             //}
          }
-      }
+      } 
 #endif
 
       /// <summary>

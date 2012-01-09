@@ -54,7 +54,7 @@ namespace Demo.WindowsForms
          //string rt = ViewAreaPixel.RightTop.ToString();
          //var rts = g.MeasureString(rb, DebugFontSmall);
          //g.DrawString(rt, DebugFontSmall, Brushes.Blue, Width - rts.Width - DebugFontSmall.Height, DebugFontSmall.Height);
-      }
+      }     
 #endif
    }
 }

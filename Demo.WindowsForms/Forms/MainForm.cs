@@ -1392,7 +1392,7 @@ namespace Demo.WindowsForms
       void MainMap_MouseDoubleClick(object sender, MouseEventArgs e)
       {
          var cc = new GMapMarkerCircle(MainMap.FromLocalToLatLng(e.X, e.Y));
-         objects.Markers.Add(cc);
+         objects.Markers.Add(cc);          
       }
 
       void MainMap_MouseDown(object sender, MouseEventArgs e)
