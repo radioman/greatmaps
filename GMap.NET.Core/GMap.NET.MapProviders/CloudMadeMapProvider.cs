@@ -78,6 +78,15 @@ namespace GMap.NET.MapProviders
          return route;
       }
 
+      /// <summary>
+      /// NotImplemented
+      /// </summary>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="avoidHighways"></param>
+      /// <param name="walkingMode"></param>
+      /// <param name="Zoom"></param>
+      /// <returns></returns>
       public MapRoute GetRoute(string start, string end, bool avoidHighways, bool walkingMode, int Zoom)
       {
          throw new NotImplementedException();
@@ -216,7 +225,53 @@ namespace GMap.NET.MapProviders
          return GetDirectionsUrl(MakeRoutingUrl(start, end, walkingMode ? TravelTypeFoot : TravelTypeMotorCar, LanguageStr, metric ? "km" : "miles"), out direction);
       }
 
+      /// <summary>
+      /// NotImplemented
+      /// </summary>
+      /// <param name="direction"></param>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="avoidHighways"></param>
+      /// <param name="avoidTolls"></param>
+      /// <param name="walkingMode"></param>
+      /// <param name="sensor"></param>
+      /// <param name="metric"></param>
+      /// <returns></returns>
       public DirectionsStatusCode GetDirections(out GDirections direction, string start, string end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+      {
+         throw new NotImplementedException();
+      }
+
+      /// <summary>
+      /// NotImplemented
+      /// </summary>
+      /// <param name="status"></param>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="avoidHighways"></param>
+      /// <param name="avoidTolls"></param>
+      /// <param name="walkingMode"></param>
+      /// <param name="sensor"></param>
+      /// <param name="metric"></param>
+      /// <returns></returns>
+      public IEnumerable<GDirections> GetDirections(out DirectionsStatusCode status, string start, string end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+      {
+         throw new NotImplementedException();
+      }
+
+      /// <summary>
+      /// NotImplemented
+      /// </summary>
+      /// <param name="status"></param>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="avoidHighways"></param>
+      /// <param name="avoidTolls"></param>
+      /// <param name="walkingMode"></param>
+      /// <param name="sensor"></param>
+      /// <param name="metric"></param>
+      /// <returns></returns>
+      public IEnumerable<GDirections> GetDirections(out DirectionsStatusCode status, PointLatLng start, PointLatLng end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
       {
          throw new NotImplementedException();
       }

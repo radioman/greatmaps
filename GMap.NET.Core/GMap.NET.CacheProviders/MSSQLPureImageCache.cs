@@ -240,6 +240,12 @@ namespace GMap.NET.CacheProviders
          return ret;
       }
 
+      /// <summary>
+      /// NotImplemented
+      /// </summary>
+      /// <param name="date"></param>
+      /// <param name="type"></param>
+      /// <returns></returns>
       int PureImageCache.DeleteOlderThan(DateTime date, int ? type)
       {
          throw new NotImplementedException();

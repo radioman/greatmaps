@@ -70,6 +70,15 @@ namespace GMap.NET.MapProviders
          return route;
       }
 
+      /// <summary>
+      /// NotImplemented
+      /// </summary>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="avoidHighways"></param>
+      /// <param name="walkingMode"></param>
+      /// <param name="Zoom"></param>
+      /// <returns></returns>
       public MapRoute GetRoute(string start, string end, bool avoidHighways, bool walkingMode, int Zoom)
       {
          throw new NotImplementedException();

@@ -965,6 +965,44 @@ namespace GMap.NET.MapProviders
          return GetDirectionsUrl(MakeDirectionsUrl(start, end, LanguageStr, avoidHighways, avoidTolls, walkingMode, sensor, metric), out direction);
       }
 
+      /// <summary>
+      /// NotImplemented
+      /// </summary>
+      /// <param name="status"></param>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="avoidHighways"></param>
+      /// <param name="avoidTolls"></param>
+      /// <param name="walkingMode"></param>
+      /// <param name="sensor"></param>
+      /// <param name="metric"></param>
+      /// <returns></returns>
+      public IEnumerable<GDirections> GetDirections(out DirectionsStatusCode status, string start, string end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+      {
+         // TODO: add alternative directions
+
+         throw new NotImplementedException();
+      }
+
+      /// <summary>
+      /// NotImplemented
+      /// </summary>
+      /// <param name="status"></param>
+      /// <param name="start"></param>
+      /// <param name="end"></param>
+      /// <param name="avoidHighways"></param>
+      /// <param name="avoidTolls"></param>
+      /// <param name="walkingMode"></param>
+      /// <param name="sensor"></param>
+      /// <param name="metric"></param>
+      /// <returns></returns>
+      public IEnumerable<GDirections> GetDirections(out DirectionsStatusCode status, PointLatLng start, PointLatLng end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+      {
+         // TODO: add alternative directions
+         
+         throw new NotImplementedException();
+      }
+
       #region -- internals --
 
       // The Google Directions API: http://code.google.com/apis/maps/documentation/directions/
@@ -1568,7 +1606,7 @@ namespace GMap.NET.MapProviders
          Instance = new GoogleMapProvider();
       }
 
-      public string Version = "m@167000000";
+      public string Version = "m@169000000";
 
       #region GMapProvider Members
 
