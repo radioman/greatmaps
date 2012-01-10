@@ -9,6 +9,8 @@ namespace GMap.NET.WindowsPresentation
    using GMap.NET.Internals;
    using GMap.NET;
    using GMap.NET.MapProviders;
+   using System.Threading;
+   using System.Windows.Threading;
 
    /// <summary>
    /// form helping to prefetch tiles on local db
@@ -29,20 +31,61 @@ namespace GMap.NET.WindowsPresentation
       {
          InitializeComponent();
 
+         GMaps.Instance.OnTileCacheComplete += new TileCacheComplete(OnTileCacheComplete);
+         GMaps.Instance.OnTileCacheStart += new TileCacheStart(OnTileCacheStart);
+         GMaps.Instance.OnTileCacheProgress += new TileCacheProgress(OnTileCacheProgress);
+
          worker.WorkerReportsProgress = true;
          worker.WorkerSupportsCancellation = true;
          worker.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
          worker.DoWork += new DoWorkEventHandler(worker_DoWork);
          worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+      }
 
-         Owner = Application.Current.MainWindow;
+      readonly AutoResetEvent done = new AutoResetEvent(true);
+
+      void OnTileCacheComplete()
+      {
+         if(IsVisible)
+         {
+            done.Set();
+
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
+            {
+               label2.Text = "all tiles saved";
+            }));
+         }
+      }
+
+      void OnTileCacheStart()
+      {
+         if(IsVisible)
+         {
+            done.Reset();
+
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
+            {
+               label2.Text = "saving tiles...";   
+            }));
+         }
+      }
+
+      void OnTileCacheProgress(int left)
+      {
+         if(IsVisible)
+         {
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
+            {
+               label2.Text = left + " tile to save...";        
+            }));
+         }
       }
 
       public void Start(RectLatLng area, int zoom, GMapProvider provider, int sleep)
       {
          if(!worker.IsBusy)
          {
-            this.label1.Content = "...";
+            this.label1.Text = "...";
             this.progressBar1.Value = 0;
 
             this.area = area;
@@ -59,12 +102,26 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
+      volatile bool stopped = false;
+
       public void Stop()
       {
+         GMaps.Instance.OnTileCacheComplete -= new TileCacheComplete(OnTileCacheComplete);
+         GMaps.Instance.OnTileCacheStart -= new TileCacheStart(OnTileCacheStart);
+         GMaps.Instance.OnTileCacheProgress -= new TileCacheProgress(OnTileCacheProgress);
+
+         done.Set();
+
          if(worker.IsBusy)
          {
             worker.CancelAsync();
          }
+
+         GMaps.Instance.CancelTileCaching();
+
+         stopped = true;
+
+         done.Close();
       }
 
       void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -168,11 +225,16 @@ namespace GMap.NET.WindowsPresentation
          }
 
          e.Result = countOk;
+
+         if(!stopped)
+         {
+            done.WaitOne();
+         }
       }
 
       void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
       {
-         this.label1.Content = "Fetching tile at zoom (" + zoom + "): " + ((int)e.UserState).ToString() + " of " + all + ", complete: " + e.ProgressPercentage.ToString() + "%";
+         this.label1.Text = "Fetching tile at zoom (" + zoom + "): " + ((int)e.UserState).ToString() + " of " + all + ", complete: " + e.ProgressPercentage.ToString() + "%";
          this.progressBar1.Value = e.ProgressPercentage;
       }
 
