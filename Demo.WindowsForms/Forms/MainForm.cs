@@ -88,7 +88,8 @@ namespace Demo.WindowsForms
             MainMap.OnPolygonEnter += new PolygonEnter(MainMap_OnPolygonEnter);
             MainMap.OnPolygonLeave += new PolygonLeave(MainMap_OnPolygonLeave);
             MainMap.Manager.OnTileCacheComplete += new TileCacheComplete(OnTileCacheComplete);
-            MainMap.Manager.OnTileCacheStart += new TileCacheComplete(OnTileCacheStart);
+            MainMap.Manager.OnTileCacheStart += new TileCacheStart(OnTileCacheStart);
+            MainMap.Manager.OnTileCacheProgress += new TileCacheProgress(OnTileCacheProgress);
 
             MainMap.MouseMove += new MouseEventHandler(MainMap_MouseMove);
             MainMap.MouseDown += new MouseEventHandler(MainMap_MouseDown);
@@ -117,8 +118,9 @@ namespace Demo.WindowsForms
             MobileLogTo.Value = DateTime.Now;
 
             // get zoom  
-            trackBar1.Minimum = MainMap.MinZoom;
-            trackBar1.Maximum = MainMap.MaxZoom;
+            trackBar1.Minimum = MainMap.MinZoom * 100;
+            trackBar1.Maximum = MainMap.MaxZoom * 100;
+            trackBar1.TickFrequency = 100;
 
 #if DEBUG
             checkBoxDebug.Checked = true;
@@ -1322,11 +1324,41 @@ namespace Demo.WindowsForms
       void OnTileCacheComplete()
       {
          Debug.WriteLine("OnTileCacheComplete");
+
+         if(!IsDisposed)
+         {
+            MethodInvoker m = delegate
+            {
+               textBoxCacheStatus.Text = "all tiles saved!";
+            };
+            Invoke(m);
+         }
       }
 
       void OnTileCacheStart()
       {
          Debug.WriteLine("OnTileCacheStart");
+
+         if(!IsDisposed)
+         {
+            MethodInvoker m = delegate
+            {
+               textBoxCacheStatus.Text = "saving tiles...";
+            };
+            Invoke(m);
+         }
+      }
+
+      void OnTileCacheProgress(int left)
+      {
+         if(!IsDisposed)
+         {
+            MethodInvoker m = delegate
+            {
+               textBoxCacheStatus.Text = left + " tile to save...";
+            };
+            Invoke(m);
+         }
       }
 
       void MainMap_OnMarkerLeave(GMapMarker item)
@@ -1371,8 +1403,8 @@ namespace Demo.WindowsForms
       {
          comboBoxMapType.SelectedItem = type;
 
-         trackBar1.Minimum = MainMap.MinZoom;
-         trackBar1.Maximum = MainMap.MaxZoom;
+         trackBar1.Minimum = MainMap.MinZoom * 100;
+         trackBar1.Maximum = MainMap.MaxZoom * 100;
 
          if(radioButtonFlight.Checked)
          {
@@ -1392,7 +1424,7 @@ namespace Demo.WindowsForms
       void MainMap_MouseDoubleClick(object sender, MouseEventArgs e)
       {
          var cc = new GMapMarkerCircle(MainMap.FromLocalToLatLng(e.X, e.Y));
-         objects.Markers.Add(cc);          
+         objects.Markers.Add(cc);
       }
 
       void MainMap_MouseDown(object sender, MouseEventArgs e)
@@ -1458,7 +1490,7 @@ namespace Demo.WindowsForms
       // MapZoomChanged
       void MainMap_OnMapZoomChanged()
       {
-         trackBar1.Value = (int)MainMap.Zoom;
+         trackBar1.Value = (int)(MainMap.Zoom * 100.0);
          textBoxZoomCurrent.Text = MainMap.Zoom.ToString();
       }
 
@@ -1554,7 +1586,7 @@ namespace Demo.WindowsForms
          if(objects.Markers.Count > 0)
          {
             MainMap.ZoomAndCenterMarkers(null);
-            trackBar1.Value = (int)MainMap.Zoom;
+            trackBar1.Value = (int)MainMap.Zoom * 100;
          }
          Activate();
       }
@@ -1634,7 +1666,7 @@ namespace Demo.WindowsForms
       // zoom
       private void trackBar1_ValueChanged(object sender, EventArgs e)
       {
-         MainMap.Zoom = trackBar1.Value;
+         MainMap.Zoom = trackBar1.Value / 100.0;
       }
 
       // go to
@@ -1848,10 +1880,12 @@ namespace Demo.WindowsForms
 
                if(res == DialogResult.Yes)
                {
-                  TilePrefetcher obj = new TilePrefetcher();
-                  obj.Owner = this;
-                  obj.ShowCompleteMessage = true;
-                  obj.Start(area, i, MainMap.MapProvider, 100);
+                  using(TilePrefetcher obj = new TilePrefetcher())
+                  {
+                     obj.Owner = this;
+                     obj.ShowCompleteMessage = true;
+                     obj.Start(area, i, MainMap.MapProvider, 100);
+                  }
                }
                else if(res == DialogResult.No)
                {
@@ -2016,6 +2050,16 @@ namespace Demo.WindowsForms
                MainMap.Bearing++;
             }
          }
+      }
+
+      private void buttonZoomUp_Click(object sender, EventArgs e)
+      {
+         MainMap.Zoom = ((int)MainMap.Zoom) + 1;
+      }
+
+      private void buttonZoomDown_Click(object sender, EventArgs e)
+      {
+         MainMap.Zoom = ((int)(MainMap.Zoom + 0.99)) - 1;
       }
 
       // engage some live demo

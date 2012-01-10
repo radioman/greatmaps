@@ -288,7 +288,8 @@ namespace GMap.NET
       internal volatile bool noMapInstances = false;
 
       public TileCacheComplete OnTileCacheComplete;
-      public TileCacheComplete OnTileCacheStart;
+      public TileCacheStart OnTileCacheStart;
+      public TileCacheProgress OnTileCacheProgress;
 
       /// <summary>
       /// immediately stops background tile caching, call it if you want fast exit the process
@@ -321,6 +322,14 @@ namespace GMap.NET
       {
          Debug.WriteLine("CacheEngine: start");
          int left = 0;
+
+         if(OnTileCacheStart != null)
+         {
+            OnTileCacheStart();
+         }
+
+         bool startEvent = false;
+
          while(!abortCacheLoop)
          {
             try
@@ -338,10 +347,26 @@ namespace GMap.NET
 
                if(task.HasValue)
                {
+                  if(startEvent)
+                  {
+                     startEvent = false;
+
+                     if(OnTileCacheStart != null)
+                     {
+                        OnTileCacheStart();
+                     }
+                  }
+
+                  if(OnTileCacheProgress != null)
+                  {
+                     OnTileCacheProgress(left);
+                  }
+
+                  #region -- save --
                   // check if stream wasn't disposed somehow
                   if(task.Value.Img != null)
                   {
-                     Debug.WriteLine("CacheEngine[" + left + "]: storing tile " + task.Value + ", " + task.Value.Img.Length / 1024 +  "kB...");
+                     Debug.WriteLine("CacheEngine[" + left + "]: storing tile " + task.Value + ", " + task.Value.Img.Length / 1024 + "kB...");
 
                      if((task.Value.CacheType & CacheUsage.First) == CacheUsage.First && PrimaryCache != null)
                      {
@@ -379,24 +404,23 @@ namespace GMap.NET
                      Debug.WriteLine("CacheEngineLoop: skip, tile disposed to early -> " + task.Value);
                   }
                   task = null;
+                  #endregion
                }
                else
                {
-                  if(OnTileCacheComplete != null)
+                  if(!startEvent)
                   {
-                     OnTileCacheComplete();
+                     startEvent = true;
+
+                     if(OnTileCacheComplete != null)
+                     {
+                        OnTileCacheComplete();
+                     }
                   }
 
                   if(abortCacheLoop || noMapInstances || !WaitForCache.WaitOne(33333, false) || noMapInstances)
                   {
                      break;
-                  }
-                  else
-                  {
-                     if(OnTileCacheStart != null)
-                     {
-                        OnTileCacheStart();
-                     }
                   }
                }
             }
@@ -412,6 +436,14 @@ namespace GMap.NET
             }
          }
          Debug.WriteLine("CacheEngine: stop");
+
+         if(!startEvent)
+         {
+            if(OnTileCacheComplete != null)
+            {
+               OnTileCacheComplete();
+            }
+         }
       }
 
       class StringWriterExt : StringWriter

@@ -1392,7 +1392,7 @@ namespace GMap.NET.WindowsForms
             //   }
             //}
          }
-      } 
+      }
 #endif
 
       /// <summary>
@@ -2098,11 +2098,8 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
          if(MapRenderTransform.HasValue)
          {
-            // var tp = MapRenderTransform.Inverse.Transform(new System.Windows.Point(x, y));
-            //x = (int) tp.X;
-            //y = (int) tp.Y;
-            x = (int)(x * MapRenderTransform.Value);
-            y = (int)(y * MapRenderTransform.Value);
+            x = (int)(Core.renderOffset.X + ((x - Core.renderOffset.X) / MapRenderTransform.Value));
+            y = (int)(Core.renderOffset.Y + ((y - Core.renderOffset.Y) / MapRenderTransform.Value));
          }
 
          if(IsRotated)
@@ -2136,8 +2133,8 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
          if(MapRenderTransform.HasValue)
          {
-            ret.X = (int)(ret.X / MapRenderTransform.Value);
-            ret.Y = (int)(ret.Y / MapRenderTransform.Value);
+            ret.X = (int)(Core.renderOffset.X + ((Core.renderOffset.X - ret.X) * -MapRenderTransform.Value));
+            ret.Y = (int)(Core.renderOffset.Y + ((Core.renderOffset.Y - ret.Y) * -MapRenderTransform.Value));
          }
 
          if(IsRotated)
