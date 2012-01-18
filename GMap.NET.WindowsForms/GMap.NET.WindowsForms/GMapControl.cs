@@ -1973,10 +1973,19 @@ namespace GMap.NET.WindowsForms
 
 #if !PocketPC
 
+      /// <summary>
+      /// prevents focusing map if mouse enters it's area
+      /// </summary>
+      public bool DisableFocusOnMouseEnter = false;
+
       protected override void OnMouseEnter(EventArgs e)
       {
          base.OnMouseEnter(e);
-         Focus();
+
+         if(!DisableFocusOnMouseEnter)
+         {
+            Focus();
+         }
       }
 
       /// <summary>

@@ -53,7 +53,7 @@ namespace Demo.WindowsPresentation
          catch
          {
             MainMap.Manager.Mode = AccessMode.CacheOnly;
-            MessageBox.Show("No internet connection avaible, going to CacheOnly mode.", "GMap.NET - Demo.WindowsPresentation", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("No internet connection available, going to CacheOnly mode.", "GMap.NET - Demo.WindowsPresentation", MessageBoxButton.OK, MessageBoxImage.Warning);
          }
 
          // config map
