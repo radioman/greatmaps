@@ -94,7 +94,7 @@ namespace GMap.NET.WindowsForms
          this.Format.Alignment = StringAlignment.Center;
       }
 
-      public virtual void Draw(Graphics g)
+      public virtual void OnRender(Graphics g)
       {
          System.Drawing.Size st = g.MeasureString(Marker.ToolTipText, Font).ToSize();
          System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Marker.ToolTipPosition.X, Marker.ToolTipPosition.Y - st.Height, st.Width + TextPadding.Width, st.Height + TextPadding.Height);

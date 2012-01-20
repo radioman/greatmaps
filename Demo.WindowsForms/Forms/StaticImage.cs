@@ -248,7 +248,7 @@ namespace Demo.WindowsForms
                            {
                               if(!string.IsNullOrEmpty(m.ToolTipText))
                               {
-                                 m.ToolTip.Draw(gfx);
+                                 m.ToolTip.OnRender(gfx);
                               }
                            }
                         }

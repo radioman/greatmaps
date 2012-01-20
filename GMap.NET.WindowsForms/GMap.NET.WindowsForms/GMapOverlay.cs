@@ -277,7 +277,7 @@ namespace GMap.NET.WindowsForms
                   {
                      if(!string.IsNullOrEmpty(m.ToolTipText) && (m.ToolTipMode == MarkerTooltipMode.Always || (m.ToolTipMode == MarkerTooltipMode.OnMouseOver && m.IsMouseOver)))
                      {
-                        m.ToolTip.Draw(g);
+                        m.ToolTip.OnRender(g);
                      }
                   }
                }

@@ -41,7 +41,7 @@ namespace GMap.NET.WindowsForms.ToolTips
          }
       }
 
-      public override void Draw(Graphics g)
+      public override void OnRender(Graphics g)
       {
          System.Drawing.Size st = g.MeasureString(Marker.ToolTipText, Font).ToSize();
 
