@@ -20,6 +20,30 @@ namespace ConsoleApplication
    {
       static void Main(string[] args)
       {
+         if(false)
+         {
+            var p = PlateCarreeProjectionDarbAe.Instance;
+
+            var l = new PointLatLng(29.4052130085331, 41.522866508209);
+
+            Debug.WriteLine("121 * 256: " + 121 * 256 + "px : Y");
+            Debug.WriteLine("144 * 256: " + 144 * 256 + "px : X");
+
+            Debug.WriteLine("l: " + l);
+
+            var px = p.FromLatLngToPixel(l, 0);
+
+            Debug.WriteLine("FromLatLngToPixel: " + px);
+
+            var ll = p.FromPixelToLatLng(px, 0);
+            Debug.WriteLine("FromPixelToLatLng: " + ll);
+
+
+            var tl = p.FromPixelToTileXY(px);
+
+            Debug.WriteLine("FromPixelToTileXY: " + tl);
+         }
+
          /*
             0/1 = 2
             1/2 = 1,5
@@ -43,7 +67,7 @@ namespace ConsoleApplication
             //var p = PlateCarreeProjection.Instance;
 
             var pos = new PointLatLng(54.6961334816182, 25.2985095977783);
-                
+
             {
                var zoom = 4;
                var px = p.FromPixelToTileXY(p.FromLatLngToPixel(pos, zoom));

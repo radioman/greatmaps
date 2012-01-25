@@ -109,6 +109,7 @@
     <Compile Include="GMap.NET.CacheProviders\MemoryCache.cs" />
     <Compile Include="GMap.NET.Internals\DrawTile.cs" />
     <Compile Include="GMap.NET.Internals\FastResourceLock.cs" />
+    <Compile Include="GMap.NET.MapProviders\ArcGIS_DarbAE_Q2_2011_NAVTQ_Eng_V5_MapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingSatelliteMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\BingHybridMapProvider.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="GMap.NET.MapProviders\OpenStreetOsmProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OpenStreetMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\GMapProvider.cs" />
+    <Compile Include="GMap.NET.Projections\PlateCarreeProjectionDarbAe.cs" />
     <Compile Include="GMap.NET\GDirections.cs" />
     <Compile Include="GMap.NET\DirectionsProvider.cs" />
     <Compile Include="GMap.NET\GeocodingProvider.cs" />
