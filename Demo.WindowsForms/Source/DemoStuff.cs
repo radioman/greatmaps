@@ -194,31 +194,15 @@ namespace Demo.WindowsForms
          ret.Clear();
 
          //http://stops.lt/vilnius/gps.txt?1318577178193
-         //http://www.troleibusai.lt/eismas/get_gps.php?rand=0.9004805039690602
          //http://www.marsrutai.lt/vilnius/Vehicle_Map.aspx?trackID=34006&t=1318577231295
 
-         // http://www.troleibusai.lt/eismas/get_gps.php?rand=0.5180845031057402
-         string url = string.Format(CultureInfo.InvariantCulture, "http://www.troleibusai.lt/eismas/get_gps.php?rand={0}&more=1", r.NextDouble());
+         // http://www.troleibusai.lt/eismas/get_gps.php?more=1&bus=1&rand=0.5862788332835791
+         string url = string.Format(CultureInfo.InvariantCulture, "http://www.troleibusai.lt/eismas/get_gps.php?more=1&bus={0}&rand={1}", type == TransportType.Bus ? 1 : 0, r.NextDouble());
 
-         switch(type)
+         if(!string.IsNullOrEmpty(line))
          {
-            case TransportType.Bus:
-            {
-               url += "&bus=1";
-            }
-            break;
-
-            //case TransportType.TrolleyBus:
-            //{
-            //   url += "trolley";
-            //}
-            //break;
+            url += "&nr=" + line;
          }
-
-         //         if(!string.IsNullOrEmpty(line))
-         //         {
-         //            url += "&line=" + line;
-         //         }
 
 #if !PocketPC
          url += "&app=GMap.NET.Desktop";
@@ -235,7 +219,7 @@ namespace Demo.WindowsForms
          foreach(var it in items)
          {
             var sit = it.Split(';');
-            if(sit.Length == 6)
+            if(sit.Length == 8)
             {
                VehicleData d = new VehicleData();
                {
@@ -260,13 +244,15 @@ namespace Demo.WindowsForms
 
                      d.Time = t.ToLongTimeString();
                   }
+
+                  d.TrackType = sit[6];
                }
 
                //if(d.Id == 1262760)
                //if(d.Line == "13")
                {
                   ret.Add(d);
-               }   
+               }
             }
          }
 
