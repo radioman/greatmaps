@@ -33,6 +33,8 @@ namespace GMap.NET.MapProviders
       public static readonly OpenStreetMapSurferTerrainProvider OpenStreetMapSurferTerrain = OpenStreetMapSurferTerrainProvider.Instance;
       public static readonly OpenSeaMapHybridProvider OpenSeaMapHybrid = OpenSeaMapHybridProvider.Instance;
 
+      public static readonly WikiMapiaMapProvider WikiMapiaMap = WikiMapiaMapProvider.Instance;
+
       public static readonly BingMapProvider BingMap = BingMapProvider.Instance;
       public static readonly BingSatelliteMapProvider BingSatelliteMap = BingSatelliteMapProvider.Instance;
       public static readonly BingHybridMapProvider BingHybridMap = BingHybridMapProvider.Instance;
@@ -358,7 +360,7 @@ namespace GMap.NET.MapProviders
             {
                MemoryStream responseStream = Stuff.CopyStream(response.GetResponseStream(), false);
                {
-                  Debug.WriteLine("Response[" + responseStream.Length + " bytes]" + url);
+                  Debug.WriteLine("Response[" + responseStream.Length + " bytes]: " + url);
 
                   if(responseStream.Length > 0)
                   {

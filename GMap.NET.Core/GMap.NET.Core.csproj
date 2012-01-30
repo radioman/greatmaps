@@ -123,6 +123,7 @@
     <Compile Include="GMap.NET.MapProviders\ArcGIS_World_Terrain_Base_MapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\ArcGIS_World_Topo_MapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\CloudMadeMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\WikiMapiaMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\CzechHistoryMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\CzechHybridMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\CzechSatelliteMapProvider.cs" />
