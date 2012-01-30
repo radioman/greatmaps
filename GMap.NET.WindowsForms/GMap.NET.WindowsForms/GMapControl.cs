@@ -1190,6 +1190,32 @@ namespace GMap.NET.WindowsForms
          if(!SuspendDispose)
          {
             Core.OnMapClose();
+
+            Overlays.CollectionChanged -= new NotifyCollectionChangedEventHandler(Overlays_CollectionChanged);
+            Overlays.Clear();
+
+            ScaleFont.Dispose();
+            ScalePen.Dispose();
+            CenterFormat.Dispose();
+            CenterPen.Dispose();
+            BottomFormat.Dispose();
+            CopyrightFont.Dispose();
+            EmptyTileBorders.Dispose();
+            EmptytileBrush.Dispose();
+            SelectedAreaFill.Dispose();
+            SelectionPen.Dispose();
+
+            if(backBuffer != null)
+            {
+               backBuffer.Dispose();
+               backBuffer = null;
+            }
+
+            if(gxOff != null)
+            {
+               gxOff.Dispose();
+               gxOff = null;
+            }
          }
          SuspendDispose = false;
 
