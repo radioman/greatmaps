@@ -625,16 +625,15 @@ namespace GMap.NET.MapProviders
 
             string geo = GMaps.Instance.UseGeocoderCache ? Cache.Instance.GetContent(urlEnd, CacheType.GeocoderCache) : string.Empty;
 
+            bool cache = false;
+
             if(string.IsNullOrEmpty(geo))
             {
                geo = GetContentUsingHttp(url);
 
                if(!string.IsNullOrEmpty(geo))
                {
-                  if(GMaps.Instance.UseGeocoderCache && geo.StartsWith("200"))
-                  {
-                     Cache.Instance.SaveContent(urlEnd, CacheType.GeocoderCache, geo);
-                  }
+                  cache = true;
                }
             }
 
@@ -650,6 +649,11 @@ namespace GMap.NET.MapProviders
                      status = (GeoCoderStatusCode)int.Parse(values[0]);
                      if(status == GeoCoderStatusCode.G_GEO_SUCCESS)
                      {
+                        if(cache && GMaps.Instance.UseGeocoderCache)
+                        {
+                           Cache.Instance.SaveContent(urlEnd, CacheType.GeocoderCache, geo);
+                        }
+
                         double lat = double.Parse(values[2], CultureInfo.InvariantCulture);
                         double lng = double.Parse(values[3], CultureInfo.InvariantCulture);
 
@@ -707,6 +711,11 @@ namespace GMap.NET.MapProviders
                      status = (GeoCoderStatusCode)int.Parse(nn.InnerText);
                      if(status == GeoCoderStatusCode.G_GEO_SUCCESS)
                      {
+                        if(cache && GMaps.Instance.UseGeocoderCache)
+                        {
+                           Cache.Instance.SaveContent(urlEnd, CacheType.GeocoderCache, geo);
+                        }
+
                         pointList = new List<PointLatLng>();
 
                         XmlNodeList l = doc.SelectNodes("/sm:kml/sm:Response/sm:Placemark", nsMgr);
@@ -753,16 +762,15 @@ namespace GMap.NET.MapProviders
 
             string reverse = GMaps.Instance.UsePlacemarkCache ? Cache.Instance.GetContent(urlEnd, CacheType.PlacemarkCache) : string.Empty;
 
+            bool cache = false;
+
             if(string.IsNullOrEmpty(reverse))
             {
                reverse = GetContentUsingHttp(url);
 
                if(!string.IsNullOrEmpty(reverse))
                {
-                  if(GMaps.Instance.UsePlacemarkCache)
-                  {
-                     Cache.Instance.SaveContent(urlEnd, CacheType.PlacemarkCache, reverse);
-                  }
+                  cache = true;
                }
             }
 
@@ -770,6 +778,11 @@ namespace GMap.NET.MapProviders
             {
                if(reverse.StartsWith("200"))
                {
+                  if(cache && GMaps.Instance.UsePlacemarkCache)
+                  {
+                     Cache.Instance.SaveContent(urlEnd, CacheType.PlacemarkCache, reverse);
+                  }
+
                   string acc = reverse.Substring(0, reverse.IndexOf('\"'));
                   var ret = new Placemark(reverse.Substring(reverse.IndexOf('\"')));
                   ret.Accuracy = int.Parse(acc.Split(',').GetValue(1) as string);
@@ -852,6 +865,11 @@ namespace GMap.NET.MapProviders
                      status = (GeoCoderStatusCode)int.Parse(codeNode.InnerText);
                      if(status == GeoCoderStatusCode.G_GEO_SUCCESS)
                      {
+                        if(cache && GMaps.Instance.UsePlacemarkCache)
+                        {
+                           Cache.Instance.SaveContent(urlEnd, CacheType.PlacemarkCache, reverse);
+                        }
+
                         placemarkList = new List<Placemark>();
 
                         #region -- placemarks --
@@ -999,7 +1017,7 @@ namespace GMap.NET.MapProviders
       public IEnumerable<GDirections> GetDirections(out DirectionsStatusCode status, PointLatLng start, PointLatLng end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
       {
          // TODO: add alternative directions
-         
+
          throw new NotImplementedException();
       }
 
@@ -1037,15 +1055,14 @@ namespace GMap.NET.MapProviders
 
             string kml = GMaps.Instance.UseDirectionsCache ? Cache.Instance.GetContent(urlEnd, CacheType.DirectionsCache) : string.Empty;
 
+            bool cache = false;
+
             if(string.IsNullOrEmpty(kml))
             {
                kml = GetContentUsingHttp(url);
                if(!string.IsNullOrEmpty(kml))
                {
-                  if(GMaps.Instance.UseDirectionsCache)
-                  {
-                     Cache.Instance.SaveContent(urlEnd, CacheType.DirectionsCache, kml);
-                  }
+                  cache = true;
                }
             }
 
@@ -1334,6 +1351,11 @@ namespace GMap.NET.MapProviders
                   ret = (DirectionsStatusCode)Enum.Parse(typeof(DirectionsStatusCode), nn.InnerText, false);
                   if(ret == DirectionsStatusCode.OK)
                   {
+                     if(cache && GMaps.Instance.UseDirectionsCache)
+                     {
+                        Cache.Instance.SaveContent(urlEnd, CacheType.DirectionsCache, kml);
+                     }
+
                      direction = new GDirections();
 
                      nn = doc.SelectSingleNode("/DirectionsResponse/route/summary");
