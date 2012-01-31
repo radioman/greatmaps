@@ -197,7 +197,7 @@ namespace Demo.WindowsForms
          //http://www.marsrutai.lt/vilnius/Vehicle_Map.aspx?trackID=34006&t=1318577231295
 
          // http://www.troleibusai.lt/eismas/get_gps.php?more=1&bus=1&rand=0.5862788332835791
-         string url = string.Format(CultureInfo.InvariantCulture, "http://www.troleibusai.lt/eismas/get_gps.php?more=1&bus={0}&rand={1}", type == TransportType.Bus ? 1 : 0, r.NextDouble());
+         string url = string.Format(CultureInfo.InvariantCulture, "http://www.troleibusai.lt/eismas/get_gps.php?more=1&bus={0}&rand={1}", type == TransportType.Bus ? 2 : 1, r.NextDouble());
 
          if(!string.IsNullOrEmpty(line))
          {
