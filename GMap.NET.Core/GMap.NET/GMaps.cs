@@ -466,21 +466,29 @@ namespace GMap.NET
       public string SerializeGPX(gpxType targetInstance)
       {
          string retVal = string.Empty;
-         StringWriterExt writer = new StringWriterExt(CultureInfo.InvariantCulture);
-         XmlSerializer serializer = new XmlSerializer(targetInstance.GetType());
-         serializer.Serialize(writer, targetInstance);
-         retVal = writer.ToString();
+         using(StringWriterExt writer = new StringWriterExt(CultureInfo.InvariantCulture))
+         {
+            XmlSerializer serializer = new XmlSerializer(targetInstance.GetType());
+            serializer.Serialize(writer, targetInstance);
+            retVal = writer.ToString();
+         }
          return retVal;
       }
 
       public gpxType DeserializeGPX(string objectXml)
       {
-         object retVal = null;
-         XmlSerializer serializer = new XmlSerializer(typeof(gpxType));
-         StringReader stringReader = new StringReader(objectXml);
-         XmlTextReader xmlReader = new XmlTextReader(stringReader);
-         retVal = serializer.Deserialize(xmlReader);
-         return retVal as gpxType;
+         gpxType retVal = null;
+
+         using(StringReader stringReader = new StringReader(objectXml))
+         {
+            XmlTextReader xmlReader = new XmlTextReader(stringReader);
+
+            XmlSerializer serializer = new XmlSerializer(typeof(gpxType));
+            retVal = serializer.Deserialize(xmlReader) as gpxType;
+
+            xmlReader.Close();
+         }
+         return retVal;
       }
 
       /// <summary>
