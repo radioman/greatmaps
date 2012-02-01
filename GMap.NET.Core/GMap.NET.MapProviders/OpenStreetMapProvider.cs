@@ -9,7 +9,7 @@ namespace GMap.NET.MapProviders
    using GMap.NET.Internals;
    using GMap.NET.Projections;
 
-   public abstract class OpenStreetMapProviderBase : GMapProvider, RoutingProvider
+   public abstract class OpenStreetMapProviderBase : GMapProvider, RoutingProvider, GeocodingProvider
    {
       public OpenStreetMapProviderBase()
       {
@@ -154,6 +154,274 @@ namespace GMap.NET.MapProviders
 
       static readonly string WalkingStr = "Walking";
       static readonly string DrivingStr = "Driving";
+      #endregion
+
+      #endregion
+
+      #region GeocodingProvider Members
+
+      public GeoCoderStatusCode GetPoints(string keywords, out List<PointLatLng> pointList)
+      {
+         // http://nominatim.openstreetmap.org/search?q=lithuania,vilnius&format=xml
+
+         #region -- response --
+         //<searchresults timestamp="Wed, 01 Feb 12 09:46:00 -0500" attribution="Data Copyright OpenStreetMap Contributors, Some Rights Reserved. CC-BY-SA 2.0." querystring="lithuania,vilnius" polygon="false" exclude_place_ids="29446018,53849547,8831058,29614806" more_url="http://open.mapquestapi.com/nominatim/v1/search?format=xml&exclude_place_ids=29446018,53849547,8831058,29614806&accept-language=en&q=lithuania%2Cvilnius">
+         //<place place_id="29446018" osm_type="way" osm_id="24598347" place_rank="30" boundingbox="54.6868133544922,54.6879043579102,25.2885360717773,25.2898139953613" lat="54.6873633486028" lon="25.289199818878" display_name="National Museum of Lithuania, 1, Arsenalo g., Senamiesčio seniūnija, YAHOO-HIRES-20080313, Vilnius County, Šalčininkų rajonas, Vilniaus apskritis, 01513, Lithuania" class="tourism" type="museum" icon="http://open.mapquestapi.com/nominatim/v1/images/mapicons/tourist_museum.p.20.png"/>
+         //<place place_id="53849547" osm_type="way" osm_id="55469274" place_rank="30" boundingbox="54.6896553039551,54.690486907959,25.2675743103027,25.2692089080811" lat="54.6900227236882" lon="25.2683589759401" display_name="Ministry of Foreign Affairs of the Republic of Lithuania, 2, J. Tumo Vaižganto g., Naujamiesčio seniūnija, Vilnius, Vilnius County, Vilniaus m. savivaldybė, Vilniaus apskritis, LT-01104, Lithuania" class="amenity" type="public_building"/>
+         //<place place_id="8831058" osm_type="node" osm_id="836234960" place_rank="30" boundingbox="54.6670935059,54.6870973206,25.2638857269,25.2838876343" lat="54.677095" lon="25.2738876" display_name="Railway Museum of Lithuania, 15, Mindaugo g., Senamiesčio seniūnija, Vilnius, Vilnius County, Vilniaus m. savivaldybė, Vilniaus apskritis, 03215, Lithuania" class="tourism" type="museum" icon="http://open.mapquestapi.com/nominatim/v1/images/mapicons/tourist_museum.p.20.png"/>
+         //<place place_id="29614806" osm_type="way" osm_id="24845629" place_rank="30" boundingbox="54.6904983520508,54.6920852661133,25.2606296539307,25.2628803253174" lat="54.6913385159005" lon="25.2617684209873" display_name="Seimas (Parliament) of the Republic of Lithuania, 53, Gedimino pr., Naujamiesčio seniūnija, Vilnius, Vilnius County, Vilniaus m. savivaldybė, Vilniaus apskritis, LT-01111, Lithuania" class="amenity" type="public_building"/>
+         //</searchresults> 
+         #endregion
+
+         return GetLatLngFromGeocoderUrl(MakeGeocoderUrl(keywords), out pointList);
+      }
+
+      public PointLatLng? GetPoint(string keywords, out GeoCoderStatusCode status)
+      {
+         List<PointLatLng> pointList;
+         status = GetPoints(keywords, out pointList);
+         return pointList != null && pointList.Count > 0 ? pointList[0] : (PointLatLng?)null;
+      }
+
+      public GeoCoderStatusCode GetPlacemarks(PointLatLng location, out List<Placemark> placemarkList)
+      {
+         throw new NotImplementedException();
+      }
+
+      public Placemark GetPlacemark(PointLatLng location, out GeoCoderStatusCode status)
+      {
+         //http://nominatim.openstreetmap.org/reverse?format=xml&lat=52.5487429714954&lon=-1.81602098644987&zoom=18&addressdetails=1
+
+         #region -- response --
+         /*
+         <reversegeocode timestamp="Wed, 01 Feb 12 09:51:11 -0500" attribution="Data Copyright OpenStreetMap Contributors, Some Rights Reserved. CC-BY-SA 2.0." querystring="format=xml&lat=52.5487429714954&lon=-1.81602098644987&zoom=18&addressdetails=1">
+         <result place_id="2061235282" osm_type="way" osm_id="90394420" lat="52.5487800131654" lon="-1.81626922291265">
+         137, Pilkington Avenue, Castle Vale, City of Birmingham, West Midlands, England, B72 1LH, United Kingdom
+         </result>
+         <addressparts>
+         <house_number>
+         137
+         </house_number>
+         <road>
+         Pilkington Avenue
+         </road>
+         <suburb>
+         Castle Vale
+         </suburb>
+         <city>
+         City of Birmingham
+         </city>
+         <county>
+         West Midlands
+         </county>
+         <state_district>
+         West Midlands
+         </state_district>
+         <state>
+         England
+         </state>
+         <postcode>
+         B72 1LH
+         </postcode>
+         <country>
+         United Kingdom
+         </country>
+         <country_code>
+         gb
+         </country_code>
+         </addressparts>
+         </reversegeocode>
+         */
+
+         #endregion
+
+         return GetPlacemarkFromReverseGeocoderUrl(MakeReverseGeocoderUrl(location), out status);
+      }
+
+      #region -- internals --
+
+      string MakeGeocoderUrl(string keywords)
+      {
+         return string.Format(GeocoderUrlFormat, keywords.Replace(' ', '+'));
+      }
+
+      string MakeReverseGeocoderUrl(PointLatLng pt)
+      {
+         return string.Format(CultureInfo.InvariantCulture, ReverseGeocoderUrlFormat, pt.Lat, pt.Lng);
+      }
+
+      GeoCoderStatusCode GetLatLngFromGeocoderUrl(string url, out List<PointLatLng> pointList)
+      {
+         var status = GeoCoderStatusCode.Unknow;
+         pointList = null;
+
+         try
+         {
+            string geo = GMaps.Instance.UseGeocoderCache ? Cache.Instance.GetContent(url, CacheType.GeocoderCache) : string.Empty;
+
+            bool cache = false;
+
+            if(string.IsNullOrEmpty(geo))
+            {
+               geo = GetContentUsingHttp(url);
+
+               if(!string.IsNullOrEmpty(geo))
+               {
+                  cache = true;
+               }
+            }
+
+            if(!string.IsNullOrEmpty(geo))
+            {
+               if(geo.StartsWith("<?xml") && geo.Contains("<place"))
+               {
+                  if(cache && GMaps.Instance.UseGeocoderCache)
+                  {
+                     Cache.Instance.SaveContent(url, CacheType.GeocoderCache, geo);
+                  }
+
+                  XmlDocument doc = new XmlDocument();
+                  doc.LoadXml(geo);
+                  {
+                     XmlNodeList l = doc.SelectNodes("/searchresults/place");
+                     if(l != null)
+                     {
+                        pointList = new List<PointLatLng>();
+
+                        foreach(XmlNode n in l)
+                        {
+                           var nn = n.Attributes["lat"];
+                           if(nn != null)
+                           {
+                              double lat = double.Parse(nn.Value, CultureInfo.InvariantCulture);
+
+                              nn = n.Attributes["lon"];
+                              if(nn != null)
+                              {
+                                 double lng = double.Parse(nn.Value, CultureInfo.InvariantCulture);
+                                 pointList.Add(new PointLatLng(lat, lng));
+                              }
+                           }
+                        }
+
+                        status = GeoCoderStatusCode.G_GEO_SUCCESS;
+                     }
+                  }
+               }
+            }
+         }
+         catch(Exception ex)
+         {
+            status = GeoCoderStatusCode.ExceptionInCode;
+            Debug.WriteLine("GetLatLngFromGeocoderUrl: " + ex);
+         }
+
+         return status;
+      }
+
+      Placemark GetPlacemarkFromReverseGeocoderUrl(string url, out GeoCoderStatusCode status)
+      {
+         status = GeoCoderStatusCode.Unknow;
+         Placemark ret = null;
+
+         try
+         {
+            string geo = GMaps.Instance.UsePlacemarkCache ? Cache.Instance.GetContent(url, CacheType.PlacemarkCache) : string.Empty;
+
+            bool cache = false;
+
+            if(string.IsNullOrEmpty(geo))
+            {
+               geo = GetContentUsingHttp(url);
+
+               if(!string.IsNullOrEmpty(geo))
+               {
+                  cache = true;
+               }
+            }
+
+            if(!string.IsNullOrEmpty(geo))
+            {
+               if(geo.StartsWith("<?xml") && geo.Contains("<result"))
+               {
+                  if(cache && GMaps.Instance.UsePlacemarkCache)
+                  {
+                     Cache.Instance.SaveContent(url, CacheType.PlacemarkCache, geo);
+                  }
+
+                  XmlDocument doc = new XmlDocument();
+                  doc.LoadXml(geo);
+                  {
+                     XmlNode r = doc.SelectSingleNode("/reversegeocode/result");
+                     if(r != null)
+                     {
+                        ret = new Placemark(r.InnerText);
+
+                        XmlNode ad = doc.SelectSingleNode("/reversegeocode/addressparts");
+                        if(ad != null)
+                        {
+                           var vl = ad.SelectSingleNode("country");
+                           if(vl != null)
+                           {
+                              ret.CountryName = vl.InnerText;
+                           }
+
+                           vl = ad.SelectSingleNode("country_code");
+                           if(vl != null)
+                           {
+                              ret.CountryNameCode = vl.InnerText;
+                           }
+
+                           vl = ad.SelectSingleNode("postcode");
+                           if(vl != null)
+                           {
+                              ret.PostalCodeNumber = vl.InnerText;
+                           }
+
+                           vl = ad.SelectSingleNode("state");
+                           if(vl != null)
+                           {
+                              ret.AdministrativeAreaName = vl.InnerText;
+                           }
+
+                           vl = ad.SelectSingleNode("region");
+                           if(vl != null)
+                           {
+                              ret.SubAdministrativeAreaName = vl.InnerText;
+                           }
+
+                           vl = ad.SelectSingleNode("suburb");
+                           if(vl != null)
+                           {
+                              ret.LocalityName = vl.InnerText;
+                           }
+
+                           vl = ad.SelectSingleNode("road");
+                           if(vl != null)
+                           {
+                              ret.ThoroughfareName = vl.InnerText;
+                           }
+                        }
+
+                        status = GeoCoderStatusCode.G_GEO_SUCCESS;
+                     }
+                  }
+               }
+            }
+         }
+         catch(Exception ex)
+         {
+            ret = null;
+            status = GeoCoderStatusCode.ExceptionInCode;
+            Debug.WriteLine("GetPlacemarkFromReverseGeocoderUrl: " + ex);
+         }
+
+         return ret;
+      }
+
+      static readonly string ReverseGeocoderUrlFormat = "http://nominatim.openstreetmap.org/reverse?format=xml&lat={0}&lon={1}&zoom=18&addressdetails=1";
+      static readonly string GeocoderUrlFormat = "http://nominatim.openstreetmap.org/search?q={0}&format=xml";
+
       #endregion
 
       #endregion

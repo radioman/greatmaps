@@ -2109,7 +2109,12 @@ namespace GMap.NET.WindowsForms
       {
          GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
 
-         GeocodingProvider gp = GMapProviders.GoogleMap as GeocodingProvider;
+         GeocodingProvider gp = MapProvider as GeocodingProvider;
+         if(gp == null)
+         {
+            gp = GMapProviders.OpenStreetMap as GeocodingProvider;
+         }
+
          if(gp != null)
          {
             var pt = gp.GetPoint(keys, out status);

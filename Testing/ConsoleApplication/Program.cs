@@ -22,6 +22,14 @@ namespace ConsoleApplication
       {
          if(false)
          {
+            GeoCoderStatusCode status;
+            var pp1 = GMapProviders.OpenStreetMap.GetPoint("Lithuania,Vilnius", out status);
+
+            var pl = GMapProviders.OpenStreetMap.GetPlacemark(pp1.Value, out status);
+         }
+
+         if(false)
+         {
             var p = PlateCarreeProjectionDarbAe.Instance;
 
             var l = new PointLatLng(29.4052130085331, 41.522866508209);
