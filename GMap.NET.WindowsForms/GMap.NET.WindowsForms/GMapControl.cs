@@ -1180,47 +1180,49 @@ namespace GMap.NET.WindowsForms
       }
 #endif
 
+      protected override void Dispose(bool disposing)
+      {
+         if(disposing)
+         {
+            if(!SuspendDispose)
+            {
+               Core.OnMapClose();
+
+               Overlays.CollectionChanged -= new NotifyCollectionChangedEventHandler(Overlays_CollectionChanged);
+               Overlays.Clear();
+
+               ScaleFont.Dispose();
+               ScalePen.Dispose();
+               CenterFormat.Dispose();
+               CenterPen.Dispose();
+               BottomFormat.Dispose();
+               CopyrightFont.Dispose();
+               EmptyTileBorders.Dispose();
+               EmptytileBrush.Dispose();
+               SelectedAreaFill.Dispose();
+               SelectionPen.Dispose();
+
+               if(backBuffer != null)
+               {
+                  backBuffer.Dispose();
+                  backBuffer = null;
+               }
+
+               if(gxOff != null)
+               {
+                  gxOff.Dispose();
+                  gxOff = null;
+               }
+            }
+            SuspendDispose = false;
+         }
+         base.Dispose(disposing);
+      }
+
       /// <summary>
       /// set to true to prevent control dispose when switching between elementhosts
       /// </summary>
       public bool SuspendDispose = false;
-
-      protected override void OnHandleDestroyed(EventArgs e)
-      {
-         if(!SuspendDispose)
-         {
-            Core.OnMapClose();
-
-            Overlays.CollectionChanged -= new NotifyCollectionChangedEventHandler(Overlays_CollectionChanged);
-            Overlays.Clear();
-
-            ScaleFont.Dispose();
-            ScalePen.Dispose();
-            CenterFormat.Dispose();
-            CenterPen.Dispose();
-            BottomFormat.Dispose();
-            CopyrightFont.Dispose();
-            EmptyTileBorders.Dispose();
-            EmptytileBrush.Dispose();
-            SelectedAreaFill.Dispose();
-            SelectionPen.Dispose();
-
-            if(backBuffer != null)
-            {
-               backBuffer.Dispose();
-               backBuffer = null;
-            }
-
-            if(gxOff != null)
-            {
-               gxOff.Dispose();
-               gxOff = null;
-            }
-         }
-         SuspendDispose = false;
-
-         base.OnHandleDestroyed(e);
-      }
 
       PointLatLng selectionStart;
       PointLatLng selectionEnd;
