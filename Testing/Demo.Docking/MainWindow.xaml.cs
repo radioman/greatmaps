@@ -20,7 +20,7 @@ namespace Sample3
 
          MapBing.MapProvider = GMapProviders.BingMap;
          MapBingHybrid.MapProvider = GMapProviders.BingHybridMap;
-         MapBingOld.MapProvider = GMapProviders.BingMapOld;
+         MapBingOld.MapProvider = GMapProviders.BingMap;
 
          MapGoogleHybrid.MapProvider = GMapProviders.GoogleHybridMap;
          MapGoogleTerrain.MapProvider = GMapProviders.GoogleTerrainMap;

@@ -60,7 +60,7 @@ namespace GMap.NET.WindowsPresentation
       /// <summary>
       /// type of map
       /// </summary>
-      [Category("GMap.NET")]
+      [Browsable(false)]
       public GMapProvider MapProvider
       {
          get
@@ -530,7 +530,6 @@ namespace GMap.NET.WindowsPresentation
             Core.RenderMode = GMap.NET.RenderMode.WPF;
             Core.OnMapZoomChanged += new MapZoomChanged(ForceUpdateOverlays);
             Loaded += new RoutedEventHandler(GMapControl_Loaded);
-            Unloaded += new RoutedEventHandler(GMapControl_Unloaded);
             Dispatcher.ShutdownStarted += new EventHandler(Dispatcher_ShutdownStarted);
 
             SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
@@ -603,20 +602,23 @@ namespace GMap.NET.WindowsPresentation
       /// <param name="e"></param>
       void GMapControl_Loaded(object sender, RoutedEventArgs e)
       {
-         Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
-         ForceUpdateOverlays();
-
-         if(Application.Current != null)
+         if(!Core.IsStarted)
          {
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.ApplicationIdle,
-               new Action(delegate()
-               {
-                  if(Application.Current != null)
+            Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
+            ForceUpdateOverlays();
+
+            if(Application.Current != null)
+            {
+               Application.Current.Dispatcher.Invoke(DispatcherPriority.ApplicationIdle,
+                  new Action(delegate()
                   {
-                     Application.Current.SessionEnding += new SessionEndingCancelEventHandler(Current_SessionEnding);
+                     if(Application.Current != null)
+                     {
+                        Application.Current.SessionEnding += new SessionEndingCancelEventHandler(Current_SessionEnding);
+                     }
                   }
-               }
-               ));
+                  ));
+            }
          }
       }
 
@@ -625,27 +627,9 @@ namespace GMap.NET.WindowsPresentation
          GMaps.Instance.CancelTileCaching();
       }
 
-      /// <summary>
-      /// set to true to prevent control dispose when switching between elementhosts
-      /// </summary>
-      public bool SuspendDispose = false;
-
-      void GMapControl_Unloaded(object sender, RoutedEventArgs e)
-      {
-         if(!SuspendDispose)
-         {
-            Dispose();
-         }
-         SuspendDispose = false;
-      }
-
       void Dispatcher_ShutdownStarted(object sender, EventArgs e)
       {
-         if(!SuspendDispose)
-         {
-            Dispose();
-         }
-         SuspendDispose = false;
+         Dispose();
       }
 
       /// <summary>

@@ -128,7 +128,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
       public Pen EmptyTileBorders = new Pen(Brushes.White, 1);
 #else
-        public Pen EmptyTileBorders = new Pen(Color.White, 1);
+      public Pen EmptyTileBorders = new Pen(Color.White, 1);
 #endif
 
       public bool ShowCenter = true;
@@ -140,8 +140,8 @@ namespace GMap.NET.WindowsForms
       public Pen ScalePen = new Pen(Brushes.Blue, 1);
       public Pen CenterPen = new Pen(Brushes.Red, 1);
 #else
-        public Pen ScalePen = new Pen(Color.Blue, 1);
-        public Pen CenterPen = new Pen(Color.Red, 1);
+      public Pen ScalePen = new Pen(Color.Blue, 1);
+      public Pen CenterPen = new Pen(Color.Red, 1);
 #endif
 
 #if !PocketPC
@@ -150,25 +150,72 @@ namespace GMap.NET.WindowsForms
       /// </summary>
       public Pen SelectionPen = new Pen(Brushes.Blue, 2);
 
+      Brush SelectedAreaFill = new SolidBrush(Color.FromArgb(33, Color.RoyalBlue));
+      Color selectedAreaFillColor = Color.FromArgb(33, Color.RoyalBlue);
+
       /// <summary>
       /// background of selected area
       /// </summary>
-      public Brush SelectedAreaFill = new SolidBrush(Color.FromArgb(33, Color.RoyalBlue));
+      [Category("GMap.NET")]
+      [Description("background color od the selected area")]
+      public Color SelectedAreaFillColor
+      {
+         get
+         {
+            return selectedAreaFillColor;
+         }
+         set
+         {
+            if(selectedAreaFillColor != value)
+            {
+               selectedAreaFillColor = value;
+
+               if(SelectedAreaFill != null)
+               {
+                  SelectedAreaFill.Dispose();
+                  SelectedAreaFill = null;
+               }
+               SelectedAreaFill = new SolidBrush(selectedAreaFillColor);
+            }
+         }
+      }
 #endif
+
+
+      Brush EmptytileBrush = new SolidBrush(Color.Navy);
+      Color emptyTileColor = Color.Navy;
 
       /// <summary>
-      /// pen for empty tile background
+      /// color of empty tile background
       /// </summary>
-#if !PocketPC
-      public Brush EmptytileBrush = Brushes.Navy;
-#else
-        public Brush EmptytileBrush = new SolidBrush(Color.Navy);
-#endif
+      [Category("GMap.NET")]
+      [Description("background color of the empty tile")]
+      public Color EmptyTileColor
+      {
+         get
+         {
+            return emptyTileColor;
+         }
+         set
+         {
+            if(emptyTileColor != value)
+            {
+               emptyTileColor = value;
+
+               if(EmptytileBrush != null)
+               {
+                  EmptytileBrush.Dispose();
+                  EmptytileBrush = null;
+               }
+               EmptytileBrush = new SolidBrush(emptyTileColor);
+            }
+         }
+      }
 
 #if PocketPC
-        public Brush TileGridLinesTextBrush = new SolidBrush(Color.Red);
-        public Brush TileGridMissingTextBrush = new SolidBrush(Color.White);
-        public Brush CopyrightBrush = new SolidBrush(Color.Navy);
+      readonly TileGridLinesTextBrush = new SolidBrush(Color.Red);
+      readonly Brush TileGridMissingTextBrush = new SolidBrush(Color.White);
+      readonly Brush CopyrightBrush = new SolidBrush(Color.Navy);
 #endif
 
       /// <summary>
@@ -619,11 +666,11 @@ namespace GMap.NET.WindowsForms
                               g.DrawString(EmptyTileText, MissingDataFont, Brushes.Blue, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 
 #else
-                                        g.FillRectangle(EmptytileBrush, new System.Drawing.Rectangle(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                              g.FillRectangle(EmptytileBrush, new System.Drawing.Rectangle(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
 
-                                        g.DrawString("Exception: " + ex.Message, MissingDataFont, TileGridMissingTextBrush, new RectangleF(Core.tileRect.X + 11, Core.tileRect.Y + 11, Core.tileRect.Width - 11, Core.tileRect.Height - 11));
+                              g.DrawString("Exception: " + ex.Message, MissingDataFont, TileGridMissingTextBrush, new RectangleF(Core.tileRect.X + 11, Core.tileRect.Y + 11, Core.tileRect.Width - 11, Core.tileRect.Height - 11));
 
-                                        g.DrawString(EmptyTileText, MissingDataFont, TileGridMissingTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y + Core.tileRect.Width / 2 + (ShowTileGridLines ? 11 : -22), Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
+                              g.DrawString(EmptyTileText, MissingDataFont, TileGridMissingTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y + Core.tileRect.Width / 2 + (ShowTileGridLines ? 11 : -22), Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
 #endif
 
                               g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
@@ -638,7 +685,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
                            g.DrawString((tilePoint.PosXY == Core.centerTileXYLocation ? "CENTER: " : "TILE: ") + tilePoint, MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #else
-                                    g.DrawString((tilePoint.PosXY == Core.centerTileXYLocation ? "" : "TILE: ") + tilePoint, MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
+                           g.DrawString((tilePoint.PosXY == Core.centerTileXYLocation ? "" : "TILE: ") + tilePoint, MissingDataFont, TileGridLinesTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 #endif
                         }
                      }
@@ -1184,45 +1231,36 @@ namespace GMap.NET.WindowsForms
       {
          if(disposing)
          {
-            if(!SuspendDispose)
+            Core.OnMapClose();
+
+            Overlays.CollectionChanged -= new NotifyCollectionChangedEventHandler(Overlays_CollectionChanged);
+            Overlays.Clear();
+
+            ScaleFont.Dispose();
+            ScalePen.Dispose();
+            CenterFormat.Dispose();
+            CenterPen.Dispose();
+            BottomFormat.Dispose();
+            CopyrightFont.Dispose();
+            EmptyTileBorders.Dispose();
+            EmptytileBrush.Dispose();
+            SelectedAreaFill.Dispose();
+            SelectionPen.Dispose();
+
+            if(backBuffer != null)
             {
-               Core.OnMapClose();
-
-               Overlays.CollectionChanged -= new NotifyCollectionChangedEventHandler(Overlays_CollectionChanged);
-               Overlays.Clear();
-
-               ScaleFont.Dispose();
-               ScalePen.Dispose();
-               CenterFormat.Dispose();
-               CenterPen.Dispose();
-               BottomFormat.Dispose();
-               CopyrightFont.Dispose();
-               EmptyTileBorders.Dispose();
-               EmptytileBrush.Dispose();
-               SelectedAreaFill.Dispose();
-               SelectionPen.Dispose();
-
-               if(backBuffer != null)
-               {
-                  backBuffer.Dispose();
-                  backBuffer = null;
-               }
-
-               if(gxOff != null)
-               {
-                  gxOff.Dispose();
-                  gxOff = null;
-               }
+               backBuffer.Dispose();
+               backBuffer = null;
             }
-            SuspendDispose = false;
+
+            if(gxOff != null)
+            {
+               gxOff.Dispose();
+               gxOff = null;
+            }
          }
          base.Dispose(disposing);
       }
-
-      /// <summary>
-      /// set to true to prevent control dispose when switching between elementhosts
-      /// </summary>
-      public bool SuspendDispose = false;
 
       PointLatLng selectionStart;
       PointLatLng selectionEnd;
@@ -1480,7 +1518,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
             g.DrawString(Core.provider.Copyright, CopyrightFont, Brushes.Navy, 3, Height - CopyrightFont.Height - 5);
 #else
-                g.DrawString(Core.provider.Copyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
+            g.DrawString(Core.provider.Copyright, CopyrightFont, CopyrightBrush, 3, Height - CopyrightFont.Size - 15);
 #endif
          }
 
@@ -2465,6 +2503,8 @@ namespace GMap.NET.WindowsForms
          }
       }
 
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      [Browsable(false)]
       public GMapProvider MapProvider
       {
          get
