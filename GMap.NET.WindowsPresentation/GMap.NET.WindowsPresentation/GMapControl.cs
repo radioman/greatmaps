@@ -528,10 +528,10 @@ namespace GMap.NET.WindowsPresentation
             Core.SystemType = "WindowsPresentation";
 
             Core.RenderMode = GMap.NET.RenderMode.WPF;
+
             Core.OnMapZoomChanged += new MapZoomChanged(ForceUpdateOverlays);
             Loaded += new RoutedEventHandler(GMapControl_Loaded);
             Dispatcher.ShutdownStarted += new EventHandler(Dispatcher_ShutdownStarted);
-
             SizeChanged += new SizeChangedEventHandler(GMapControl_SizeChanged);
 
             // by default its internal property, feel free to use your own
@@ -609,18 +609,19 @@ namespace GMap.NET.WindowsPresentation
 
             if(Application.Current != null)
             {
-               Application.Current.Dispatcher.Invoke(DispatcherPriority.ApplicationIdle,
+               loadedApp = Application.Current;
+
+               loadedApp.Dispatcher.Invoke(DispatcherPriority.ApplicationIdle,
                   new Action(delegate()
                   {
-                     if(Application.Current != null)
-                     {
-                        Application.Current.SessionEnding += new SessionEndingCancelEventHandler(Current_SessionEnding);
-                     }
+                     loadedApp.SessionEnding += new SessionEndingCancelEventHandler(Current_SessionEnding);
                   }
                   ));
             }
          }
       }
+
+      Application loadedApp;
 
       void Current_SessionEnding(object sender, SessionEndingCancelEventArgs e)
       {
@@ -2061,6 +2062,17 @@ namespace GMap.NET.WindowsPresentation
 
       public void Dispose()
       {
+         if(Core.IsStarted)
+         {
+            Core.OnMapZoomChanged -= new MapZoomChanged(ForceUpdateOverlays);
+            Loaded -= new RoutedEventHandler(GMapControl_Loaded);
+            Dispatcher.ShutdownStarted += new EventHandler(Dispatcher_ShutdownStarted);
+            SizeChanged -= new SizeChangedEventHandler(GMapControl_SizeChanged);
+            if(loadedApp != null)
+            {
+               loadedApp.SessionEnding -= new SessionEndingCancelEventHandler(Current_SessionEnding);
+            }
+         }
          Core.OnMapClose();
       }
 
