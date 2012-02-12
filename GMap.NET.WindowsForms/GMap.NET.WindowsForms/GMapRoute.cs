@@ -100,7 +100,7 @@ namespace GMap.NET.WindowsForms
                 Point[] pnts = new Point[LocalPoints.Count];
                 for (int i = 0; i < LocalPoints.Count; i++)
                 {
-                    Point p2 = new Point(LocalPoints[i].X, LocalPoints[i].Y);
+                    Point p2 = new Point((int)LocalPoints[i].X, (int)LocalPoints[i].Y);
                     pnts[pnts.Length - 1 - i] = p2;
                 }
 

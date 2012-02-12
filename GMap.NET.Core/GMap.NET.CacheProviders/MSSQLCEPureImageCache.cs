@@ -8,6 +8,7 @@ namespace GMap.NET.CacheProviders
    using System.IO;
    using SqlCommand = System.Data.SqlServerCe.SqlCeCommand;
    using SqlConnection = System.Data.SqlServerCe.SqlCeConnection;
+    using GMap.NET.MapProviders;
 
    /// <summary>
    /// image cache for ms sql server
@@ -29,7 +30,7 @@ namespace GMap.NET.CacheProviders
          set
          {
             cache = value;
-            gtileCache = cache + "TileDBv3" + Path.DirectorySeparatorChar + GMaps.Instance.LanguageStr + Path.DirectorySeparatorChar;
+            gtileCache = cache + "TileDBv3" + Path.DirectorySeparatorChar + GMapProvider.LanguageStr + Path.DirectorySeparatorChar;
          }
       }
 
@@ -173,7 +174,7 @@ namespace GMap.NET.CacheProviders
       #endregion
 
       #region PureImageCache Members
-      public bool PutImageToCache(MemoryStream tile, MapType type, GPoint pos, int zoom)
+      public bool PutImageToCache(byte[] tile, int type, GPoint pos, int zoom)
       {
          bool ret = true;
          {
@@ -186,8 +187,8 @@ namespace GMap.NET.CacheProviders
                      cmdInsert.Parameters["@x"].Value = pos.X;
                      cmdInsert.Parameters["@y"].Value = pos.Y;
                      cmdInsert.Parameters["@zoom"].Value = zoom;
-                     cmdInsert.Parameters["@type"].Value = (int)type;
-                     cmdInsert.Parameters["@tile"].Value = tile.GetBuffer();
+                     cmdInsert.Parameters["@type"].Value = type;
+                     cmdInsert.Parameters["@tile"].Value = tile;
                      cmdInsert.ExecuteNonQuery();
                   }
                }
@@ -202,7 +203,7 @@ namespace GMap.NET.CacheProviders
          return ret;
       }
 
-      public PureImage GetImageFromCache(MapType type, GPoint pos, int zoom)
+      public PureImage GetImageFromCache(int type, GPoint pos, int zoom)
       {
          PureImage ret = null;
          {
@@ -216,7 +217,7 @@ namespace GMap.NET.CacheProviders
                      cmdFetch.Parameters["@x"].Value = pos.X;
                      cmdFetch.Parameters["@y"].Value = pos.Y;
                      cmdFetch.Parameters["@zoom"].Value = zoom;
-                     cmdFetch.Parameters["@type"].Value = (int)type;
+                     cmdFetch.Parameters["@type"].Value = type;
                      odata = cmdFetch.ExecuteScalar();
                   }
 

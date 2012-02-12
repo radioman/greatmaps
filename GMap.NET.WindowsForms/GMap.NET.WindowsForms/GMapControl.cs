@@ -213,7 +213,7 @@ namespace GMap.NET.WindowsForms
       }
 
 #if PocketPC
-      readonly TileGridLinesTextBrush = new SolidBrush(Color.Red);
+      readonly Brush TileGridLinesTextBrush = new SolidBrush(Color.Red);
       readonly Brush TileGridMissingTextBrush = new SolidBrush(Color.White);
       readonly Brush CopyrightBrush = new SolidBrush(Color.Navy);
 #endif
@@ -591,7 +591,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
                                     g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRectBearing.Width, Core.tileRectBearing.Height);
 #else
-                                    g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y);
+                                    g.DrawImage(img.Img, (int)Core.tileRect.X, (int)Core.tileRect.Y);
 #endif
                                  }
 #if !PocketPC
@@ -666,21 +666,21 @@ namespace GMap.NET.WindowsForms
                               g.DrawString(EmptyTileText, MissingDataFont, Brushes.Blue, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
 
 #else
-                              g.FillRectangle(EmptytileBrush, new System.Drawing.Rectangle(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height));
+                              g.FillRectangle(EmptytileBrush, new System.Drawing.Rectangle((int)Core.tileRect.X, (int)Core.tileRect.Y, (int)Core.tileRect.Width, (int)Core.tileRect.Height));
 
                               g.DrawString("Exception: " + ex.Message, MissingDataFont, TileGridMissingTextBrush, new RectangleF(Core.tileRect.X + 11, Core.tileRect.Y + 11, Core.tileRect.Width - 11, Core.tileRect.Height - 11));
 
                               g.DrawString(EmptyTileText, MissingDataFont, TileGridMissingTextBrush, new RectangleF(Core.tileRect.X, Core.tileRect.Y + Core.tileRect.Width / 2 + (ShowTileGridLines ? 11 : -22), Core.tileRect.Width, Core.tileRect.Height), BottomFormat);
 #endif
 
-                              g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+                              g.DrawRectangle(EmptyTileBorders, (int)Core.tileRect.X, (int)Core.tileRect.Y, (int)Core.tileRect.Width, (int)Core.tileRect.Height);
                            }
                         }
                      }
 
                      if(ShowTileGridLines)
                      {
-                        g.DrawRectangle(EmptyTileBorders, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+                         g.DrawRectangle(EmptyTileBorders, (int)Core.tileRect.X, (int)Core.tileRect.Y, (int)Core.tileRect.Width, (int)Core.tileRect.Height);
                         {
 #if !PocketPC
                            g.DrawString((tilePoint.PosXY == Core.centerTileXYLocation ? "CENTER: " : "TILE: ") + tilePoint, MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
@@ -1244,8 +1244,11 @@ namespace GMap.NET.WindowsForms
             CopyrightFont.Dispose();
             EmptyTileBorders.Dispose();
             EmptytileBrush.Dispose();
+
+#if !PocketPC
             SelectedAreaFill.Dispose();
             SelectionPen.Dispose();
+#endif
 
             if(backBuffer != null)
             {

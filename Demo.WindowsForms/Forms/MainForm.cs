@@ -76,6 +76,9 @@ namespace Demo.WindowsForms
             MainMap.MaxZoom = 24;
             MainMap.Zoom = 9;
 
+            //MainMap.ShowCenter = false;
+
+
             // map events
             MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);
             MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);

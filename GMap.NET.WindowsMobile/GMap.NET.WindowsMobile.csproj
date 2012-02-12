@@ -121,6 +121,9 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET.Internals\TileMatrix.cs">
       <Link>GMap.NET.Internals\TileMatrix.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\ArcGIS_DarbAE_Q2_2011_NAVTQ_Eng_V5_MapProvider.cs">
+      <Link>GMap.NET.MapProviders\ArcGIS_DarbAE_Q2_2011_NAVTQ_Eng_V5_MapProvider.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\ArcGIS_Imagery_World_2D_MapProvider.cs">
       <Link>GMap.NET.MapProviders\ArcGIS_Imagery_World_2D_MapProvider.cs</Link>
     </Compile>
@@ -150,9 +153,6 @@
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\BingHybridMapProvider.cs">
       <Link>GMap.NET.MapProviders\BingHybridMapProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\BingMapOldProvider.cs">
-      <Link>GMap.NET.MapProviders\BingMapOldProvider.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\BingMapProvider.cs">
       <Link>GMap.NET.MapProviders\BingMapProvider.cs</Link>
@@ -283,6 +283,9 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\TurkeyMapProvider.cs">
       <Link>GMap.NET.MapProviders\TurkeyMapProvider.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\WikimapiaMapProvider.cs">
+      <Link>GMap.NET.MapProviders\WikimapiaMapProvider.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\YahooHybridMapProvider.cs">
       <Link>GMap.NET.MapProviders\YahooHybridMapProvider.cs</Link>
     </Compile>
@@ -318,6 +321,9 @@
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\PlateCarreeProjection.cs">
       <Link>GMap.NET.Projections\PlateCarreeProjection.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\PlateCarreeProjectionDarbAe.cs">
+      <Link>GMap.NET.Projections\PlateCarreeProjectionDarbAe.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.Projections\PlateCarreeProjectionPergo.cs">
       <Link>GMap.NET.Projections\PlateCarreeProjectionPergo.cs</Link>
