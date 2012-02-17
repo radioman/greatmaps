@@ -93,6 +93,16 @@ namespace GMap.NET
 
             return distance;
          }
+      }    
+
+      /// <summary>
+      /// clears points and sets tag and name to null
+      /// </summary>
+      public void Clear()
+      {
+         Points.Clear();
+         Tag = null;
+         Name = null;
       }
 
 #if !PocketPC

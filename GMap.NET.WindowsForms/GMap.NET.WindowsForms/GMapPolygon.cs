@@ -14,9 +14,9 @@ namespace GMap.NET.WindowsForms
    /// </summary>
    [System.Serializable]
 #if !PocketPC
-   public class GMapPolygon : MapRoute, ISerializable, IDeserializationCallback
+   public class GMapPolygon : MapRoute, ISerializable, IDeserializationCallback, IDisposable
 #else
-   public class GMapPolygon : MapRoute
+   public class GMapPolygon : MapRoute, IDisposable
 #endif
    {
       private bool visible = true;
@@ -298,6 +298,26 @@ namespace GMap.NET.WindowsForms
 
       #endregion
 #endif
+
+      #region IDisposable Members
+
+      bool disposed = false;
+
+      public virtual void Dispose()
+      {
+         if(!disposed)
+         {
+            disposed = true;
+
+            Fill.Dispose();
+            Stroke.Dispose();
+            LocalPoints.Clear();
+
+            base.Clear();
+         }
+      }
+
+      #endregion
    }
 
    public delegate void PolygonClick(GMapPolygon item, MouseEventArgs e);

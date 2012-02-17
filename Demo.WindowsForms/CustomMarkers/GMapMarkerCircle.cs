@@ -62,6 +62,23 @@ namespace Demo.WindowsForms.CustomMarkers
          g.DrawEllipse(Stroke, new System.Drawing.Rectangle(LocalPosition.X - R / 2, LocalPosition.Y - R / 2, R, R));
       }
 
+      public override void Dispose()
+      {
+         if(Stroke != null)
+         {
+            Stroke.Dispose();
+            Stroke = null;
+         }
+
+         if(Fill != null)
+         {
+            Fill.Dispose();
+            Fill = null;
+         }
+
+         base.Dispose();
+      }
+
 #if !PocketPC
 
       #region ISerializable Members

@@ -14,9 +14,9 @@ namespace GMap.NET.WindowsForms
    /// </summary>
    [Serializable]
 #if !PocketPC
-   public class GMapRoute : MapRoute, ISerializable, IDeserializationCallback
+   public class GMapRoute : MapRoute, ISerializable, IDeserializationCallback, IDisposable
 #else
-    public class GMapRoute : MapRoute
+    public class GMapRoute : MapRoute, IDisposable
 #endif
    {
       GMapOverlay overlay;
@@ -248,6 +248,30 @@ namespace GMap.NET.WindowsForms
 
       #endregion
 #endif
+
+      #region IDisposable Members
+
+      bool disposed = false;
+
+      public virtual void Dispose()
+      {
+         if(!disposed)
+         {
+            disposed = true;
+
+            Stroke.Dispose();
+            LocalPoints.Clear();
+
+            if(graphicsPath != null)
+            {
+               graphicsPath.Dispose();
+               graphicsPath = null;
+            }
+            base.Clear();
+         }
+      }
+
+      #endregion
    }
 
    public delegate void RouteClick(GMapRoute item, MouseEventArgs e);

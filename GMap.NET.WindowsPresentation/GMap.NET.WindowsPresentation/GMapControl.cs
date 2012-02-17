@@ -166,7 +166,9 @@ namespace GMap.NET.WindowsPresentation
             double remainder = value % 1;
             if(remainder != 0 && map.ActualWidth > 0)
             {
-               double scaleValue = remainder + 1;
+               double scaleValue = remainder + 1; 
+               //double scaleValue = Math.Pow(2d, remainder);
+
                {
                   if(map.MapScaleTransform == null)
                   {

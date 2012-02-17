@@ -42,6 +42,16 @@ namespace GMap.NET.WindowsForms.Markers
          g.DrawLine(Pen, p3.X, p3.Y, p4.X, p4.Y);
       }
 
+      public override void Dispose()
+      {
+         if(Pen != null)
+         {
+            Pen.Dispose();
+            Pen = null;
+         }
+         base.Dispose();
+      }
+
 #if !PocketPC
 
       #region ISerializable Members

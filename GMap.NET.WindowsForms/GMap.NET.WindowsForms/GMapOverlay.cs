@@ -12,9 +12,9 @@ namespace GMap.NET.WindowsForms
    /// </summary>
    [Serializable]
 #if !PocketPC
-   public class GMapOverlay : ISerializable, IDeserializationCallback
+   public class GMapOverlay : ISerializable, IDeserializationCallback, IDisposable
 #else
-   public class GMapOverlay
+   public class GMapOverlay, IDisposable
 #endif
    {
       bool isVisibile = true;
@@ -103,6 +103,20 @@ namespace GMap.NET.WindowsForms
          Markers.CollectionChanged += new NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
          Routes.CollectionChanged += new NotifyCollectionChangedEventHandler(Routes_CollectionChanged);
          Polygons.CollectionChanged += new NotifyCollectionChangedEventHandler(Polygons_CollectionChanged);
+      }
+
+      void ClearEvents()
+      {
+         Markers.CollectionChanged -= new NotifyCollectionChangedEventHandler(Markers_CollectionChanged);
+         Routes.CollectionChanged -= new NotifyCollectionChangedEventHandler(Routes_CollectionChanged);
+         Polygons.CollectionChanged -= new NotifyCollectionChangedEventHandler(Polygons_CollectionChanged);
+      }
+
+      public void Clear()
+      {
+         Markers.Clear();
+         Routes.Clear();
+         Polygons.Clear();
       }
 
       void Polygons_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -367,5 +381,38 @@ namespace GMap.NET.WindowsForms
 
       #endregion
 #endif
+
+      #region IDisposable Members
+
+      bool disposed = false;
+
+      public void Dispose()
+      {
+         if(!disposed)
+         {
+            disposed = true;
+
+            ClearEvents();
+
+            foreach(var m in Markers)
+            {
+               m.Dispose();
+            }
+
+            foreach(var r in Routes)
+            {
+               r.Dispose();
+            }
+
+            foreach(var p in Polygons)
+            {
+               p.Dispose();
+            }
+
+            Clear();
+         }
+      }
+
+      #endregion
    }
 }

@@ -34,6 +34,23 @@ namespace Demo.WindowsForms.CustomMarkers
          g.DrawRectangle(Pen, new System.Drawing.Rectangle(LocalPosition.X, LocalPosition.Y, Size.Width, Size.Height));
       }
 
+      public override void Dispose()
+      {
+         if(Pen != null)
+         {
+            Pen.Dispose();
+            Pen = null;
+         }
+
+         if(InnerMarker != null)
+         {
+            InnerMarker.Dispose();
+            InnerMarker = null;
+         }
+
+         base.Dispose();
+      }
+
       #region ISerializable Members
 
       void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)

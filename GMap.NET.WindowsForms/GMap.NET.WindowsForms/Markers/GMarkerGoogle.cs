@@ -241,6 +241,20 @@ namespace GMap.NET.WindowsForms.Markers
 #endif
       }
 
+      public override void Dispose()
+      {
+         if(Bitmap != null)
+         {
+            if(!iconCache.ContainsValue(Bitmap))
+            {
+               Bitmap.Dispose();
+               Bitmap = null;
+            }
+         }
+
+         base.Dispose();
+      }
+
 #if !PocketPC
 
       #region ISerializable Members

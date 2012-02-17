@@ -1252,6 +1252,11 @@ namespace GMap.NET.WindowsForms
             Core.OnMapClose();
 
             Overlays.CollectionChanged -= new NotifyCollectionChangedEventHandler(Overlays_CollectionChanged);
+
+            foreach(var o in Overlays)
+            {
+               o.Dispose();
+            }
             Overlays.Clear();
 
             ScaleFont.Dispose();
@@ -1266,8 +1271,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
             SelectedAreaFill.Dispose();
             SelectionPen.Dispose();
-#endif
-
+#endif      
             if(backBuffer != null)
             {
                backBuffer.Dispose();

@@ -12,9 +12,9 @@ namespace GMap.NET.WindowsForms
    /// </summary>
    [Serializable]
 #if !PocketPC
-   public abstract class GMapMarker : ISerializable
+   public abstract class GMapMarker : ISerializable, IDisposable
 #else
-   public class GMapMarker
+   public class GMapMarker, IDisposable
 #endif
    {
 #if PocketPC
@@ -305,6 +305,29 @@ namespace GMap.NET.WindowsForms
 
       #endregion
 #endif
+
+      #region IDisposable Members
+
+      bool disposed = false;
+
+      public virtual void Dispose()
+      {
+         if(!disposed)
+         {
+            disposed = true;
+
+            Tag = null;
+
+            if(ToolTip != null)
+            {
+               toolTipText = null;
+               ToolTip.Dispose();
+               ToolTip = null;   
+            }
+         }
+      }
+
+      #endregion
    }
 
    public delegate void MarkerClick(GMapMarker item, MouseEventArgs e);
