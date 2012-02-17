@@ -39,6 +39,11 @@ namespace GMap.NET.WindowsForms
       /// occurs when clicked on polygon
       /// </summary>
       public event PolygonClick OnPolygonClick;
+
+      /// <summary>
+      /// occurs when clicked on route
+      /// </summary>
+      public event RouteClick OnRouteClick;
 #endif
 
       /// <summary>
@@ -60,6 +65,16 @@ namespace GMap.NET.WindowsForms
       /// occurs on mouse leaves Polygon area
       /// </summary>
       public event PolygonLeave OnPolygonLeave;
+
+      /// <summary>
+      /// occurs on mouse enters route area
+      /// </summary>
+      public event RouteEnter OnRouteEnter;
+
+      /// <summary>
+      /// occurs on mouse leaves route area
+      /// </summary>
+      public event RouteLeave OnRouteLeave;
 
       /// <summary>
       /// list of overlays, should be thread safe
@@ -680,7 +695,7 @@ namespace GMap.NET.WindowsForms
 
                      if(ShowTileGridLines)
                      {
-                         g.DrawRectangle(EmptyTileBorders, (int)Core.tileRect.X, (int)Core.tileRect.Y, (int)Core.tileRect.Width, (int)Core.tileRect.Height);
+                        g.DrawRectangle(EmptyTileBorders, (int)Core.tileRect.X, (int)Core.tileRect.Y, (int)Core.tileRect.Width, (int)Core.tileRect.Height);
                         {
 #if !PocketPC
                            g.DrawString((tilePoint.PosXY == Core.centerTileXYLocation ? "CENTER: " : "TILE: ") + tilePoint, MissingDataFont, Brushes.Red, new RectangleF(Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height), CenterFormat);
@@ -753,6 +768,9 @@ namespace GMap.NET.WindowsForms
 
             route.LocalPoints.Add(p);
          }
+#if !PocketPC
+         route.UpdateGraphicsPath();
+#endif
       }
 
       /// <summary>
@@ -1785,6 +1803,31 @@ namespace GMap.NET.WindowsForms
                      }
                   }
 
+                  foreach(GMapRoute m in o.Routes)
+                  {
+                     if(m.IsVisible && m.IsHitTestVisible)
+                     {
+                        #region -- check --
+
+                        GPoint rp = new GPoint(e.X, e.Y);
+#if !PocketPC
+                        if(!MobileMode)
+                        {
+                           rp.OffsetNegative(Core.renderOffset);
+                        }
+#endif
+                        if(m.IsInside((int)rp.X, (int)rp.Y))
+                        {
+                           if(OnRouteClick != null)
+                           {
+                              OnRouteClick(m, e);
+                           }
+                           break;
+                        }
+                        #endregion
+                     }
+                  }
+
                   foreach(GMapPolygon m in o.Polygons)
                   {
                      if(m.IsVisible && m.IsHitTestVisible)
@@ -1951,7 +1994,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
                               if((MobileMode && m.LocalArea.Contains(e.X, e.Y)) || (!MobileMode && m.LocalAreaInControlSpace.Contains(e.X, e.Y)))
 #else
-                           if (m.LocalArea.Contains(e.X, e.Y))
+                              if (m.LocalArea.Contains(e.X, e.Y))
 #endif
                               {
                                  if(!m.IsMouseOver)
@@ -1984,6 +2027,59 @@ namespace GMap.NET.WindowsForms
                                  }
 
                                  Invalidate();
+                              }
+                              #endregion
+                           }
+                        }
+
+                        foreach(GMapRoute m in o.Routes)
+                        {
+                           if(m.IsVisible && m.IsHitTestVisible)
+                           {
+                              #region -- check --
+
+                              GPoint rp = new GPoint(e.X, e.Y);
+#if !PocketPC
+                              if(!MobileMode)
+                              {
+                                 rp.OffsetNegative(Core.renderOffset);
+                              }
+#endif
+                              if(m.IsInside((int)rp.X, (int)rp.Y))
+                              {
+                                 if(!m.IsMouseOver)
+                                 {
+#if !PocketPC
+                                    cursorBefore = this.Cursor;
+                                    this.Cursor = Cursors.Hand;
+#endif
+                                    m.IsMouseOver = true;
+
+                                    if(OnRouteEnter != null)
+                                    {
+                                       OnRouteEnter(m);
+                                    }
+
+                                    Invalidate();
+                                 }
+                              }
+                              else
+                              {
+                                 if(m.IsMouseOver)
+                                 {
+#if !PocketPC
+                                    this.Cursor = this.cursorBefore;
+                                    cursorBefore = null;
+#endif
+                                    m.IsMouseOver = false;
+
+                                    if(OnRouteLeave != null)
+                                    {
+                                       OnRouteLeave(m);
+                                    }
+
+                                    Invalidate();
+                                 }
                               }
                               #endregion
                            }

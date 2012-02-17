@@ -76,23 +76,30 @@ namespace Demo.WindowsForms
             MainMap.MaxZoom = 24;
             MainMap.Zoom = 9;
 
-            //MainMap.ShowCenter = false;
-
-
             // map events
-            MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);
-            MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
-            MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
-            MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
-            MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
-            MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
-            MainMap.OnMarkerEnter += new MarkerEnter(MainMap_OnMarkerEnter);
-            MainMap.OnMarkerLeave += new MarkerLeave(MainMap_OnMarkerLeave);
-            MainMap.OnPolygonEnter += new PolygonEnter(MainMap_OnPolygonEnter);
-            MainMap.OnPolygonLeave += new PolygonLeave(MainMap_OnPolygonLeave);
-            MainMap.Manager.OnTileCacheComplete += new TileCacheComplete(OnTileCacheComplete);
-            MainMap.Manager.OnTileCacheStart += new TileCacheStart(OnTileCacheStart);
-            MainMap.Manager.OnTileCacheProgress += new TileCacheProgress(OnTileCacheProgress);
+            {
+               MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);
+
+               MainMap.OnTileLoadStart += new TileLoadStart(MainMap_OnTileLoadStart);
+               MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);
+
+               MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
+               MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
+
+               MainMap.OnMarkerClick += new MarkerClick(MainMap_OnMarkerClick);
+               MainMap.OnMarkerEnter += new MarkerEnter(MainMap_OnMarkerEnter);
+               MainMap.OnMarkerLeave += new MarkerLeave(MainMap_OnMarkerLeave);
+
+               MainMap.OnPolygonEnter += new PolygonEnter(MainMap_OnPolygonEnter);
+               MainMap.OnPolygonLeave += new PolygonLeave(MainMap_OnPolygonLeave);
+
+               MainMap.OnRouteEnter += new RouteEnter(MainMap_OnRouteEnter);
+               MainMap.OnRouteLeave += new RouteLeave(MainMap_OnRouteLeave);
+
+               MainMap.Manager.OnTileCacheComplete += new TileCacheComplete(OnTileCacheComplete);
+               MainMap.Manager.OnTileCacheStart += new TileCacheStart(OnTileCacheStart);
+               MainMap.Manager.OnTileCacheProgress += new TileCacheProgress(OnTileCacheProgress);
+            }
 
             MainMap.MouseMove += new MouseEventHandler(MainMap_MouseMove);
             MainMap.MouseDown += new MouseEventHandler(MainMap_MouseDown);
@@ -236,6 +243,18 @@ namespace Demo.WindowsForms
                }
             }
          }
+      }
+
+      void MainMap_OnRouteLeave(GMapRoute item)
+      {
+         item.Stroke.Color = Color.MidnightBlue;
+         Debug.WriteLine("OnRouteLeave: " + item.Name);
+      }
+
+      void MainMap_OnRouteEnter(GMapRoute item)
+      {
+         item.Stroke.Color = Color.Red;
+         Debug.WriteLine("OnRouteEnter: " + item.Name);
       }
 
       public T DeepClone<T>(T obj)
@@ -1753,6 +1772,7 @@ namespace Demo.WindowsForms
          {
             // add route
             GMapRoute r = new GMapRoute(route.Points, route.Name);
+            r.IsHitTestVisible = true;
             routes.Routes.Add(r);
 
             // add route start/end marks

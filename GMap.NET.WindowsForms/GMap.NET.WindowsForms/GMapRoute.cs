@@ -6,6 +6,7 @@ namespace GMap.NET.WindowsForms
    using System.Drawing;
    using System.Drawing.Drawing2D;
    using System.Runtime.Serialization;
+   using System.Windows.Forms;
    using GMap.NET;
 
    /// <summary>
@@ -66,32 +67,82 @@ namespace GMap.NET.WindowsForms
          }
       }
 
+      /// <summary>
+      /// can receive input
+      /// </summary>
+      public bool IsHitTestVisible = false;
+
+      private bool isMouseOver = false;
+
+      /// <summary>
+      /// is mouse over
+      /// </summary>
+      public bool IsMouseOver
+      {
+         get
+         {
+            return isMouseOver;
+         }
+         internal set
+         {
+            isMouseOver = value;
+         }
+      }
+
+      /// <summary>
+      /// Indicates whether the specified point is contained within this System.Drawing.Drawing2D.GraphicsPath
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="y"></param>
+      /// <returns></returns>
+      internal bool IsInside(int x, int y)
+      {
+         if(graphicsPath != null)
+         {
+            return graphicsPath.IsOutlineVisible(x, y, Stroke);
+         }
+
+         return false;
+      }
+
+      GraphicsPath graphicsPath;
+      internal void UpdateGraphicsPath()
+      {
+         if(graphicsPath == null)
+         {
+            graphicsPath = new GraphicsPath();
+         }
+         else
+         {
+            graphicsPath.Reset();
+         }
+
+         {
+            for(int i = 0; i < LocalPoints.Count; i++)
+            {
+               GPoint p2 = LocalPoints[i];
+
+               if(i == 0)
+               {
+                  graphicsPath.AddLine(p2.X, p2.Y, p2.X, p2.Y);
+               }
+               else
+               {
+                  System.Drawing.PointF p = graphicsPath.GetLastPoint();
+                  graphicsPath.AddLine(p.X, p.Y, p2.X, p2.Y);
+               }
+            }
+         }
+      }
+
       public virtual void OnRender(Graphics g)
       {
 #if !PocketPC
          if(IsVisible)
          {
-            using(GraphicsPath rp = new GraphicsPath())
+            if(graphicsPath != null)
             {
-               for(int i = 0; i < LocalPoints.Count; i++)
-               {
-                  GPoint p2 = LocalPoints[i];
-
-                  if(i == 0)
-                  {
-                     rp.AddLine(p2.X, p2.Y, p2.X, p2.Y);
-                  }
-                  else
-                  {
-                     System.Drawing.PointF p = rp.GetLastPoint();
-                     rp.AddLine(p.X, p.Y, p2.X, p2.Y);
-                  }
-               }
-
-               if(rp.PointCount > 0)
-               {
-                  g.DrawPath(Stroke, rp);
-               }
+               g.DrawPath(Stroke, graphicsPath);
             }
          }
 #else
@@ -112,7 +163,6 @@ namespace GMap.NET.WindowsForms
 #endif
       }
 
-
       /// <summary>
       /// specifies how the outline is painted
       /// </summary>
@@ -120,7 +170,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
       public Pen Stroke = new Pen(Color.FromArgb(144, Color.MidnightBlue));
 #else
-        public Pen Stroke = new Pen(Color.MidnightBlue);
+      public Pen Stroke = new Pen(Color.MidnightBlue);
 #endif
 
       public readonly List<GPoint> LocalPoints = new List<GPoint>();
@@ -137,8 +187,6 @@ namespace GMap.NET.WindowsForms
       public GMapRoute(IEnumerable<PointLatLng> points, string name)
          : base(points, name)
       {
-         LocalPoints.Capacity = Points.Count;
-
 #if !PocketPC
          Stroke.LineJoin = LineJoin.Round;
 #endif
@@ -201,4 +249,8 @@ namespace GMap.NET.WindowsForms
       #endregion
 #endif
    }
+
+   public delegate void RouteClick(GMapRoute item, MouseEventArgs e);
+   public delegate void RouteEnter(GMapRoute item);
+   public delegate void RouteLeave(GMapRoute item);
 }
