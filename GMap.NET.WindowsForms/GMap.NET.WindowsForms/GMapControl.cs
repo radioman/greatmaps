@@ -2450,7 +2450,8 @@ namespace GMap.NET.WindowsForms
                double remainder = value % 1;
                if(remainder != 0)
                {
-                  float scaleValue = (float)(remainder + 1);
+                  //float scaleValue = (float)(remainder + 1);
+                  float scaleValue = (float)Math.Pow(2d, remainder);
                   {
 #if !PocketPC
                      MapRenderTransform = scaleValue;
