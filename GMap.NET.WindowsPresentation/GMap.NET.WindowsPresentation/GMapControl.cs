@@ -167,7 +167,7 @@ namespace GMap.NET.WindowsPresentation
             if(remainder != 0 && map.ActualWidth > 0)
             {
                //double scaleValue = remainder + 1; 
-               double scaleValue = Math.Pow(2d, remainder);  
+               double scaleValue = Math.Pow(2d, remainder);
                {
                   if(map.MapScaleTransform == null)
                   {
@@ -1080,7 +1080,7 @@ namespace GMap.NET.WindowsPresentation
          {
             foreach(var m in Overlays)
             {
-               if(m.Shape != null && m.Shape.IsVisible)
+               if(m.Shape != null && m.Shape.Visibility == System.Windows.Visibility.Visible)
                {
                   // left
                   if(m.Position.Lng < left)

@@ -369,7 +369,7 @@ namespace Demo.WindowsForms
 
                   // BAW576":["400803",48.9923,1.8083,"144","36950","462","0512","LFPO","A319","G-EUPC"
                   var par = d.Split(',');
-                  if(par.Length == 12)
+                  if(par.Length >= 12)
                   {
                      var name = par[0];
                      var hex = par[1];
@@ -398,7 +398,12 @@ namespace Demo.WindowsForms
                   }
                   else
                   {
-                     Debugger.Break();
+#if DEBUG
+                     if(Debugger.IsAttached)
+                     {
+                        Debugger.Break();
+                     }
+#endif
                   }
                   //Debug.WriteLine("--------------");
                }
