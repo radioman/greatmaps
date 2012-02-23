@@ -60,7 +60,7 @@ namespace GMap.NET
       /// set to True if you don't want provide on/off pings to codeplex.com
       /// </summary>
 #if !PocketPC
-      public bool DisableCodeplexAnalyticsPing = false;
+      public bool DisableCodeplexAnalyticsPing = true;
 #endif
 
       /// <summary>
@@ -314,6 +314,11 @@ namespace GMap.NET
       public volatile bool CacheOnIdleRead = true;
 
       /// <summary>
+      /// disables delay between saving tiles into database/cache
+      /// </summary>
+      public volatile bool BoostCacheEngine = false;
+
+      /// <summary>
       /// live for cache ;}
       /// </summary>
       /// <param name="sender"></param>
@@ -393,11 +398,15 @@ namespace GMap.NET
                      }
 
                      task.Value.Clear();
+
+                     if(!BoostCacheEngine)
+                     {
 #if PocketPC
-                     Thread.Sleep(3333);
+                        Thread.Sleep(3333);
 #else
-                     Thread.Sleep(333);
+                        Thread.Sleep(333);
 #endif
+                     }
                   }
                   else
                   {

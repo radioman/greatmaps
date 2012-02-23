@@ -65,7 +65,7 @@ namespace GMap.NET.WindowsPresentation
 
             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
             {
-               label2.Text = "saving tiles...";   
+               label2.Text = "saving tiles...";
             }));
          }
       }
@@ -76,7 +76,7 @@ namespace GMap.NET.WindowsPresentation
          {
             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
             {
-               label2.Text = left + " tile to save...";        
+               label2.Text = left + " tile to save...";
             }));
          }
       }
@@ -95,6 +95,7 @@ namespace GMap.NET.WindowsPresentation
 
             GMaps.Instance.UseMemoryCache = false;
             GMaps.Instance.CacheOnIdleRead = false;
+            GMaps.Instance.BoostCacheEngine = true;
 
             worker.RunWorkerAsync();
 
@@ -142,6 +143,7 @@ namespace GMap.NET.WindowsPresentation
 
          GMaps.Instance.UseMemoryCache = true;
          GMaps.Instance.CacheOnIdleRead = true;
+         GMaps.Instance.BoostCacheEngine = false;
 
          this.Close();
       }

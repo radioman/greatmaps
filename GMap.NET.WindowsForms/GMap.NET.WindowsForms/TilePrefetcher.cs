@@ -95,6 +95,7 @@ namespace GMap.NET
 
             GMaps.Instance.UseMemoryCache = false;
             GMaps.Instance.CacheOnIdleRead = false;
+            GMaps.Instance.BoostCacheEngine = true;
 
             worker.RunWorkerAsync();
 
@@ -138,6 +139,7 @@ namespace GMap.NET
 
          GMaps.Instance.UseMemoryCache = true;
          GMaps.Instance.CacheOnIdleRead = true;
+         GMaps.Instance.BoostCacheEngine = false;
 
          this.Close();
       }

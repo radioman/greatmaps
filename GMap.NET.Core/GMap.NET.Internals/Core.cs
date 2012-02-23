@@ -166,24 +166,16 @@ namespace GMap.NET.Internals
          }
          set
          {
-            if(!IsDragging)
-            {
-               position = value;
-               positionPixel = Provider.Projection.FromLatLngToPixel(value, Zoom);
-
-               if(IsStarted)
-               {
-                  GoToCurrentPosition();
-               }
-            }
-            else
-            {
-               position = value;
-               positionPixel = Provider.Projection.FromLatLngToPixel(value, Zoom);
-            }
+            position = value;
+            positionPixel = Provider.Projection.FromLatLngToPixel(value, Zoom);
 
             if(IsStarted)
             {
+               if(!IsDragging)
+               {
+                  GoToCurrentPosition();
+               }
+
                if(OnCurrentPositionChanged != null)
                   OnCurrentPositionChanged(position);
             }
