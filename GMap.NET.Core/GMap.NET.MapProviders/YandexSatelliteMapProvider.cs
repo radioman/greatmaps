@@ -19,7 +19,7 @@ namespace GMap.NET.MapProviders
          Instance = new YandexSatelliteMapProvider();
       }
 
-      public new string Version = "1.23.0";
+      public new string Version = "1.33.0";
 
       #region GMapProvider Members
 
@@ -52,8 +52,9 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         //http://sat04.maps.yandex.ru/tiles?l=sat&v=1.18.0&x=149511&y=83513&z=18&g=Gagari
-         //http://sat01.maps.yandex.net/tiles?l=sat&v=1.23.0&x=584&y=324&z=10&g=Gaga
+         // http://sat04.maps.yandex.ru/tiles?l=sat&v=1.18.0&x=149511&y=83513&z=18&g=Gagari
+         // http://sat01.maps.yandex.net/tiles?l=sat&v=1.23.0&x=584&y=324&z=10&g=Gaga
+         // http://sat03.maps.yandex.net/tiles?l=sat&v=1.33.0&x=583&y=328&z=10&lang=ru-RU
 
          return string.Format(UrlFormat, UrlServer, GetServerNum(pos, 4) + 1, Version, pos.X, pos.Y, zoom);
       }

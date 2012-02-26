@@ -64,6 +64,7 @@ namespace GMap.NET.MapProviders
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
          // http://vec01.maps.yandex.ru/tiles?l=map&v=2.10.2&x=1494&y=650&z=11
+         // http://vec03.maps.yandex.net/tiles?l=skl&v=2.26.0&x=4663&y=2610&z=13&lang=ru-RU
 
          return string.Format(UrlFormat, UrlServer, GetServerNum(pos, 4) + 1, Version, pos.X, pos.Y, zoom);
       }
