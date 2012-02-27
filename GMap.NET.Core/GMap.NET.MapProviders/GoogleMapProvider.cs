@@ -117,11 +117,13 @@ namespace GMap.NET.MapProviders
 
                         GMapProviders.GoogleMap.Version = ver;
                         GMapProviders.GoogleChinaMap.Version = ver;
+#if DEBUG
                         Debug.WriteLine("GMapProviders.GoogleMap.Version: " + ver + ", " + (ver == old ? "OK" : "old: " + old + ", consider updating source"));
                         if(Debugger.IsAttached && ver != old)
                         {
                            Thread.Sleep(5555);
                         }
+#endif
                      }
                   }
 
@@ -138,12 +140,13 @@ namespace GMap.NET.MapProviders
 
                         GMapProviders.GoogleHybridMap.Version = ver;
                         GMapProviders.GoogleChinaHybridMap.Version = ver;
-
+#if DEBUG
                         Debug.WriteLine("GMapProviders.GoogleHybridMap.Version: " + ver + ", " + (ver == old ? "OK" : "old: " + old + ", consider updating source"));
                         if(Debugger.IsAttached && ver != old)
                         {
                            Thread.Sleep(5555);
                         }
+#endif
                      }
                   }
 
@@ -161,12 +164,13 @@ namespace GMap.NET.MapProviders
                         GMapProviders.GoogleSatelliteMap.Version = ver;
                         GMapProviders.GoogleKoreaSatelliteMap.Version = ver;
                         GMapProviders.GoogleChinaSatelliteMap.Version = "s@" + ver;
-
+#if DEBUG
                         Debug.WriteLine("GMapProviders.GoogleSatelliteMap.Version: " + ver + ", " + (ver == old ? "OK" : "old: " + old + ", consider updating source"));
                         if(Debugger.IsAttached && ver != old)
                         {
                            Thread.Sleep(5555);
                         }
+#endif
                      }
                   }
 
@@ -183,12 +187,13 @@ namespace GMap.NET.MapProviders
 
                         GMapProviders.GoogleTerrainMap.Version = ver;
                         GMapProviders.GoogleChinaTerrainMap.Version = ver;
-
+#if DEBUG
                         Debug.WriteLine("GMapProviders.GoogleTerrainMap.Version: " + ver + ", " + (ver == old ? "OK" : "old: " + old + ", consider updating source"));
                         if(Debugger.IsAttached && ver != old)
                         {
                            Thread.Sleep(5555);
                         }
+#endif
                      }
                   }
                   #endregion
@@ -1628,7 +1633,7 @@ namespace GMap.NET.MapProviders
          Instance = new GoogleMapProvider();
       }
 
-      public string Version = "m@169000000";
+      public string Version = "m@170000000";
 
       #region GMapProvider Members
 

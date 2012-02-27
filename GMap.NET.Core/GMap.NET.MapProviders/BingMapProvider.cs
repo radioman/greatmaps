@@ -141,12 +141,13 @@ namespace GMap.NET.MapProviders
                            GMapProviders.BingMap.Version = ver;
                            GMapProviders.BingSatelliteMap.Version = ver;
                            GMapProviders.BingHybridMap.Version = ver;
-
+#if DEBUG
                            Debug.WriteLine("GMapProviders.BingMap.Version: " + ver + ", old: " + old + ", consider updating source");
                            if(Debugger.IsAttached)
                            {
                               Thread.Sleep(5555);
                            }
+#endif
                         }
                         else
                         {
