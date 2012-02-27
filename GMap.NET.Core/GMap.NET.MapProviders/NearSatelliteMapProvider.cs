@@ -51,10 +51,12 @@ namespace GMap.NET.MapProviders
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
          // http://web2.nearmap.com/maps/hl=en&x=14&y=8&z=5&nml=Vert&s=kdj00
+         // http://web2.nearmap.com/maps/hl=en&x=6&y=4&z=4&nml=Vert
+         // http://web2.nearmap.com/maps/hl=en&x=3&y=1&z=3&nml=Vert&s=2edd
 
-         return string.Format(UrlFormat, GetServerNum(pos, 3), pos.X, pos.Y, zoom);
+         return string.Format(UrlFormat, GetServerNum(pos, 4), pos.X, pos.Y, zoom, GetSafeString(pos));
       }
 
-      static readonly string UrlFormat = "http://web{0}.nearmap.com/maps/hl=en&x={1}&y={2}&z={3}&nml=Vert";
+      static readonly string UrlFormat = "http://web{0}.nearmap.com/maps/hl=en&x={1}&y={2}&z={3}&nml=Vert{4}";
    }
 }

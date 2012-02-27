@@ -326,6 +326,13 @@ namespace GMap.NET.MapProviders
       public static PureImageProxy TileImageProxy;
 
       static readonly string requestAccept = "*/*";
+      static readonly string responseContentType = "image";
+
+      protected virtual bool CheckTileImageHttpResponse(HttpWebResponse response)
+      {
+         //Debug.WriteLine(response.StatusCode + "/" + response.StatusDescription + "/" + response.ContentType + " -> " + response.ResponseUri);
+         return response.ContentType.Contains(responseContentType);
+      }
 
       public PureImage GetTileImageUsingHttp(string url)
       {
@@ -349,14 +356,11 @@ namespace GMap.NET.MapProviders
          request.Timeout = TimeoutMs;
          request.ReadWriteTimeout = TimeoutMs * 6;
          request.Accept = requestAccept;
-         if(!string.IsNullOrEmpty(RefererUrl))
-         {
-            request.Referer = RefererUrl;
-         }
+         request.Referer = RefererUrl;
 
          using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
          {
-            //if(response.StatusCode == HttpStatusCode.OK)
+            if(CheckTileImageHttpResponse(response))
             {
                MemoryStream responseStream = Stuff.CopyStream(response.GetResponseStream(), false);
                {
@@ -378,6 +382,10 @@ namespace GMap.NET.MapProviders
                   }
                }
                responseStream = null;
+            }
+            else
+            {
+               Debug.WriteLine("CheckTileImageHttpResponse[false]: " + url);
             }
 #if PocketPC
             request.Abort();
@@ -409,10 +417,7 @@ namespace GMap.NET.MapProviders
          request.Timeout = TimeoutMs;
          request.ReadWriteTimeout = TimeoutMs * 6;
          request.Accept = requestAccept;
-         if(!string.IsNullOrEmpty(RefererUrl))
-         {
-            request.Referer = RefererUrl;
-         }
+         request.Referer = RefererUrl;
 
          using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
          {

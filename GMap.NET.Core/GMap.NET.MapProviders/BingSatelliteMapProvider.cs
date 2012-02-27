@@ -11,8 +11,7 @@ namespace GMap.NET.MapProviders
       public static readonly BingSatelliteMapProvider Instance;
 
       BingSatelliteMapProvider()
-      {
-         MaxZoom = 19; 
+      {  
       }
 
       static BingSatelliteMapProvider()
@@ -55,6 +54,8 @@ namespace GMap.NET.MapProviders
          return string.Format(UrlFormat, GetServerNum(pos, 4), key, Version, language, (!string.IsNullOrEmpty(ClientKey) ? "&key=" + ClientKey : string.Empty));
       }
 
-      static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}{4}";
+      // http://ecn.t1.tiles.virtualearth.net/tiles/a12030003131321231.jpeg?g=875&mkt=en-us&n=z
+
+      static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}&n=z{4}";
    }
 }

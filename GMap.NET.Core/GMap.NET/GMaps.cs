@@ -296,7 +296,7 @@ namespace GMap.NET
       /// </summary>
       public void CancelTileCaching()
       {
-         Debug.WriteLine("CacheEngine: CancelTileCaching...");
+         Debug.WriteLine("CancelTileCaching...");
 
          abortCacheLoop = true;
          lock(tileCacheQueue)

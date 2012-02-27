@@ -20,7 +20,7 @@ namespace GMap.NET.MapProviders
          Copyright = string.Format("©{0} Microsoft Corporation, ©{0} NAVTEQ, ©{0} Image courtesy of NASA", DateTime.Today.Year);
       }
 
-      public string Version = "849";
+      public string Version = "875";
 
       /// <summary>
       /// Bing Maps Customer Identification, more info here
@@ -165,6 +165,20 @@ namespace GMap.NET.MapProviders
             }
          }
       }
+
+      protected override bool CheckTileImageHttpResponse(System.Net.HttpWebResponse response)
+      {
+         var pass = base.CheckTileImageHttpResponse(response);
+         if(pass)
+         {
+            var tileInfo = response.Headers.Get("X-VE-Tile-Info");
+            if(tileInfo != null)
+            {
+               return !tileInfo.Equals("no-tile");
+            }
+         }
+         return pass;
+      }
    }
 
    /// <summary>
@@ -218,6 +232,8 @@ namespace GMap.NET.MapProviders
          return string.Format(UrlFormat, GetServerNum(pos, 4), key, Version, language, (!string.IsNullOrEmpty(ClientKey) ? "&key=" + ClientKey : string.Empty));
       }
 
-      static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}.png?g={2}&mkt={3}&lbl=l1&stl=h&shading=hill&n=z{4}";
+      // http://ecn.t0.tiles.virtualearth.net/tiles/r120030?g=875&mkt=en-us&lbl=l1&stl=h&shading=hill&n=z
+
+      static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}?g={2}&mkt={3}&lbl=l1&stl=h&shading=hill&n=z{4}";
    }
 }

@@ -1271,7 +1271,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
             SelectedAreaFill.Dispose();
             SelectionPen.Dispose();
-#endif      
+#endif
             if(backBuffer != null)
             {
                backBuffer.Dispose();
@@ -1344,7 +1344,9 @@ namespace GMap.NET.WindowsForms
             {
                if(!MobileMode)
                {
-                  e.Graphics.TranslateTransform(Core.renderOffset.X, Core.renderOffset.Y);
+                  var pc = Core.renderOffset;
+                  pc.OffsetNegative(new GPoint(Width / 2, Height / 2));
+                  e.Graphics.TranslateTransform(Core.renderOffset.X + -pc.X, Core.renderOffset.Y + -pc.Y);
                }
                e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
                {
@@ -1353,7 +1355,10 @@ namespace GMap.NET.WindowsForms
                   e.Graphics.ResetTransform();
                   if(!MobileMode)
                   {
-                     e.Graphics.TranslateTransform(Core.renderOffset.X, Core.renderOffset.Y);
+                     //e.Graphics.TranslateTransform(Core.renderOffset.X, Core.renderOffset.Y);
+                     var pc = Core.renderOffset;
+                     pc.OffsetNegative(new GPoint(Width / 2, Height / 2));
+                     e.Graphics.TranslateTransform(Core.renderOffset.X + -pc.X, Core.renderOffset.Y + -pc.Y);
                   }
 
                   OnPaintOverlays(e.Graphics);
@@ -2528,7 +2533,7 @@ namespace GMap.NET.WindowsForms
       }
 
       /// <summary>
-      /// current marker position in pixel coordinates
+      /// current position in pixel coordinates
       /// </summary>
       [Browsable(false)]
       public GPoint PositionPixel
