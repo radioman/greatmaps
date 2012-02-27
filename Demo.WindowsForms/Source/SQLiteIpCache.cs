@@ -48,13 +48,11 @@ namespace Demo.WindowsForms
          set
          {
             cache = value;
-            ipCache = cache + "IpGeoCacheDB" + Path.DirectorySeparatorChar;
-
-            string dir = ipCache + Path.DirectorySeparatorChar;
+            ipCache = Path.Combine(cache, "IpGeoCacheDB") + Path.DirectorySeparatorChar;
 
             // make empty db
             {
-               db = dir + "Data.ipdb";
+               db = ipCache + "Data.ipdb";
 
                if(!File.Exists(db))
                {
@@ -213,9 +211,9 @@ namespace Demo.WindowsForms
                               val.CountryName = rd["CountryName"] as string;
                               val.RegionName = rd["RegionName"] as string;
                               val.City = rd["City"] as string;
-                              val.Latitude = (double) rd["Latitude"];
-                              val.Longitude = (double) rd["Longitude"];
-                              val.CacheTime = (DateTime) rd["Time"];
+                              val.Latitude = (double)rd["Latitude"];
+                              val.Longitude = (double)rd["Longitude"];
+                              val.CacheTime = (DateTime)rd["Time"];
                            }
                            ret = val;
                         }

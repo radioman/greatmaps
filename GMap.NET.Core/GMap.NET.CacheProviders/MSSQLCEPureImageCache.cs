@@ -29,8 +29,8 @@ namespace GMap.NET.CacheProviders
          }
          set
          {
-            cache = value;
-            gtileCache = cache + "TileDBv3" + Path.DirectorySeparatorChar + GMapProvider.LanguageStr + Path.DirectorySeparatorChar;
+            cache = value; 
+            gtileCache = Path.Combine(cache, "TileDBv3") + Path.DirectorySeparatorChar + GMapProvider.LanguageStr + Path.DirectorySeparatorChar;
          }
       }
 
@@ -52,7 +52,7 @@ namespace GMap.NET.CacheProviders
       {
          if(!Initialized)
          {
-            #region prepare mssql & cache table
+   #region prepare mssql & cache table
             try
             {
                // precrete dir
@@ -132,12 +132,12 @@ namespace GMap.NET.CacheProviders
                Initialized = false;
                Debug.WriteLine(ex.Message);
             }
-            #endregion
+   #endregion
          }
          return Initialized;
       }
 
-      #region IDisposable Members
+   #region IDisposable Members
       public void Dispose()
       {
          lock(cmdInsert)
@@ -171,9 +171,9 @@ namespace GMap.NET.CacheProviders
          }
          Initialized = false;
       }
-      #endregion
+   #endregion
 
-      #region PureImageCache Members
+   #region PureImageCache Members
       public bool PutImageToCache(byte[] tile, int type, GPoint pos, int zoom)
       {
          bool ret = true;
@@ -249,7 +249,7 @@ namespace GMap.NET.CacheProviders
       {
          throw new NotImplementedException();
       }
-      #endregion
+   #endregion
    }
 #endif
 }

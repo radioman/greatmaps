@@ -122,7 +122,7 @@ namespace GMap.NET.Internals
          {
             Stuff.RemoveInvalidPathSymbols(ref urlEnd);
 
-            string dir = cache + type + Path.DirectorySeparatorChar;
+            string dir = Path.Combine(cache, type.ToString()) + Path.DirectorySeparatorChar;
 
             // precrete dir
             if(!Directory.Exists(dir))
@@ -178,7 +178,7 @@ namespace GMap.NET.Internals
          {
             Stuff.RemoveInvalidPathSymbols(ref urlEnd);
 
-            string dir = cache + type + Path.DirectorySeparatorChar;
+            string dir = Path.Combine(cache, type.ToString()) + Path.DirectorySeparatorChar;
             string file = dir + urlEnd;
 
             switch(type)

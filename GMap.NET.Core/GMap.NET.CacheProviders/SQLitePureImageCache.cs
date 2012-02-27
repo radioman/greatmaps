@@ -137,7 +137,8 @@ namespace GMap.NET.CacheProviders
          set
          {
             cache = value;
-            gtileCache = cache + "TileDBv5" + Path.DirectorySeparatorChar;
+
+            gtileCache = Path.Combine(cache, "TileDBv5") + Path.DirectorySeparatorChar;
 
             dir = gtileCache + GMapProvider.LanguageStr + Path.DirectorySeparatorChar;
 
