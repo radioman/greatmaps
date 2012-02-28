@@ -169,6 +169,14 @@ namespace GMap.NET.Projections
 
       #endregion
 
+      public override RectLatLng Bounds
+      {
+         get
+         {
+            return RectLatLng.FromLTRB(MinLongitude, MaxLatitude, MaxLongitude, MinLatitude);
+         }
+      }
+
       public override GSize TileSize
       {
          get

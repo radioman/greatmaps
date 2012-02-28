@@ -48,6 +48,14 @@ namespace GMap.NET.Projections
       static readonly double orignX = -400;
       static readonly double orignY = 400;
 
+      public override RectLatLng Bounds
+      {
+         get
+         {
+            return RectLatLng.FromLTRB(MinLongitude, MaxLatitude, MaxLongitude, MinLatitude);
+         }
+      }
+
       GSize tileSize = new GSize(256, 256);
       public override GSize TileSize
       {

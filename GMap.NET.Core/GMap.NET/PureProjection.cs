@@ -245,6 +245,17 @@ namespace GMap.NET
          return (Math.Cos(latitude * (Math.PI / 180)) * 2 * Math.PI * Axis) / GetTileMatrixSizePixel(zoom).Width;
       }
 
+      /// <summary>
+      /// gets boundaries
+      /// </summary>
+      public virtual RectLatLng Bounds
+      {
+         get
+         {
+            return RectLatLng.FromLTRB(-180, 90, 180, -90);
+         }
+      }
+
       #region -- math functions --
 
       /// <summary>

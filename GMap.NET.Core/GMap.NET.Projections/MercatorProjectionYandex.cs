@@ -11,9 +11,18 @@ namespace GMap.NET.Projections
       static readonly double MaxLatitude = 85.05112878;
       static readonly double MinLongitude = -177;
       static readonly double MaxLongitude = 177;
+
       static readonly double RAD_DEG = 180 / Math.PI;
       static readonly double DEG_RAD = Math.PI / 180;
       static readonly double MathPiDiv4 = Math.PI / 4;
+
+      public override RectLatLng Bounds
+      {
+         get
+         {
+            return RectLatLng.FromLTRB(MinLongitude, MaxLatitude, MaxLongitude, MinLatitude);
+         }
+      }
 
       GSize tileSize = new GSize(256, 256);
       public override GSize TileSize

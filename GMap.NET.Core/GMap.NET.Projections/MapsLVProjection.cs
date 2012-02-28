@@ -15,6 +15,7 @@ namespace GMap.NET.Projections
       static readonly double MaxLatitude = 58.58;
       static readonly double MinLongitude = 20.22;
       static readonly double MaxLongitude = 28.28;
+
       static readonly double orignX = 5120900;
       static readonly double orignY = 3998100;
 
@@ -29,6 +30,14 @@ namespace GMap.NET.Projections
       static readonly double metersPerUnit = 1.0;
       static readonly double COS_67P5 = 0.38268343236508977; // cosine of 67.5 degrees
       static readonly double AD_C = 1.0026000;               // Toms region 1 constant
+
+      public override RectLatLng Bounds
+      {
+         get
+         {
+            return RectLatLng.FromLTRB(MinLongitude, MaxLatitude, MaxLongitude, MinLatitude);
+         }
+      }
 
       GSize tileSize = new GSize(256, 256);
       public override GSize TileSize
