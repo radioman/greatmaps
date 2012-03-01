@@ -65,11 +65,29 @@ namespace GMap.NET.Internals
       public static bool IsRunningOnVistaOrLater()
       {
          OperatingSystem os = Environment.OSVersion;
-         Version vs = os.Version;
 
          if(os.Platform == PlatformID.Win32NT)
          {
+            Version vs = os.Version;
+
             if(vs.Major >= 6 && vs.Minor >= 0)
+            {
+               return true;
+            }
+         }
+
+         return false;
+      }
+
+      public static bool IsRunningOnWin7orLater()
+      {
+         OperatingSystem os = Environment.OSVersion;
+
+         if(os.Platform == PlatformID.Win32NT)
+         {
+            Version vs = os.Version;
+
+            if(vs.Major >= 6 && vs.Minor > 0)
             {
                return true;
             }

@@ -47,7 +47,7 @@ namespace GMap.NET.WindowsForms
       internal ColorMatrix ColorMatrix;
 #endif
 
-      static readonly bool VistaOrLater = Stuff.IsRunningOnVistaOrLater();
+      static readonly bool Win7OrLater = Stuff.IsRunningOnWin7orLater();
 
       public override PureImage FromStream(Stream stream)
       {
@@ -55,7 +55,7 @@ namespace GMap.NET.WindowsForms
          try
          {
 #if !PocketPC
-            Image m = Image.FromStream(stream, true, VistaOrLater ? false : true);
+            Image m = Image.FromStream(stream, true, Win7OrLater ? false : true);
 #else
             Image m = new Bitmap(stream);
 #endif
