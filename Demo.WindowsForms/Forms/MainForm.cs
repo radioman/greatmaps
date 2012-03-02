@@ -1741,19 +1741,12 @@ namespace Demo.WindowsForms
          {
             try
             {
-               System.IO.Directory.Delete(MainMap.CacheLocation, true);
+               MainMap.Manager.PrimaryCache.DeleteOlderThan(DateTime.Now, null);
                MessageBox.Show("Done. Cache is clear.");
             }
             catch(Exception ex)
             {
-               if(ex.Message != "Access to the path 'System.Data.SQLite.DLL' is denied.")
-               {
-                  MessageBox.Show(ex.Message);
-               }
-               else
-               {
-                  MessageBox.Show("Done. Cache is clear.");
-               }
+               MessageBox.Show(ex.Message);
             }
          }
       }

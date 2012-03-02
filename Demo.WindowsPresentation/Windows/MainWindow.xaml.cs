@@ -680,7 +680,8 @@ namespace Demo.WindowsPresentation
          {
             try
             {
-               System.IO.Directory.Delete(MainMap.CacheLocation, true);
+               MainMap.Manager.PrimaryCache.DeleteOlderThan(DateTime.Now, null);
+               MessageBox.Show("Done. Cache is clear.");  
             }
             catch(Exception ex)
             {
