@@ -114,15 +114,14 @@ namespace Demo.WindowsForms
 #endif
             // acccess mode
             comboBoxMode.DataSource = Enum.GetValues(typeof(AccessMode));
-            comboBoxMode.SelectedItem = GMaps.Instance.Mode;
+            comboBoxMode.SelectedItem = MainMap.Manager.Mode;
 
             // get position
             textBoxLat.Text = MainMap.Position.Lat.ToString(CultureInfo.InvariantCulture);
             textBoxLng.Text = MainMap.Position.Lng.ToString(CultureInfo.InvariantCulture);
 
             // get cache modes
-            checkBoxUseRouteCache.Checked = GMaps.Instance.UseRouteCache;
-            checkBoxUseGeoCache.Checked = GMaps.Instance.UseGeocoderCache;
+            checkBoxUseRouteCache.Checked = MainMap.Manager.UseRouteCache;
 
             MobileLogFrom.Value = DateTime.Today;
             MobileLogTo.Value = DateTime.Now;
@@ -1346,11 +1345,27 @@ namespace Demo.WindowsForms
       void OnTileCacheComplete()
       {
          Debug.WriteLine("OnTileCacheComplete");
+         long size = 0;
+         int db = 0;
+         try
+         {
+            DirectoryInfo di = new DirectoryInfo(MainMap.CacheLocation);
+            var dbs = di.GetFiles("*.gmdb", SearchOption.AllDirectories);
+            foreach(var d in dbs)
+            {
+               size += d.Length;
+               db++;
+            }
+         }
+         catch
+         {
+         }
 
          if(!IsDisposed)
          {
             MethodInvoker m = delegate
             {
+               textBoxCacheSize.Text = string.Format(CultureInfo.InvariantCulture, "{0} db in {1:00} MB", db, size / (1024.0 * 1024.0));
                textBoxCacheStatus.Text = "all tiles saved!";
             };
             Invoke(m);
@@ -1575,7 +1590,7 @@ namespace Demo.WindowsForms
          {
             panelMenu.Text = "Menu, last load in " + MainMap.ElapsedMilliseconds + "ms";
 
-            textBoxMemory.Text = string.Format(CultureInfo.InvariantCulture, "{0:0.00}MB of {1:0.00}MB", MainMap.Manager.MemoryCache.Size, MainMap.Manager.MemoryCache.Capacity);
+            textBoxMemory.Text = string.Format(CultureInfo.InvariantCulture, "{0:0.00} MB of {1:0.00} MB", MainMap.Manager.MemoryCache.Size, MainMap.Manager.MemoryCache.Capacity);
          };
          try
          {
@@ -1608,8 +1623,8 @@ namespace Demo.WindowsForms
          if(objects.Markers.Count > 0)
          {
             MainMap.ZoomAndCenterMarkers(null);
-            trackBar1.Value = (int)MainMap.Zoom * 100;
          }
+         trackBar1.Value = (int)MainMap.Zoom * 100; 
          Activate();
       }
       #endregion
@@ -1681,7 +1696,7 @@ namespace Demo.WindowsForms
       // change mdoe
       private void comboBoxMode_DropDownClosed(object sender, EventArgs e)
       {
-         GMaps.Instance.Mode = (AccessMode)comboBoxMode.SelectedValue;
+         MainMap.Manager.Mode = (AccessMode)comboBoxMode.SelectedValue;
          MainMap.ReloadMap();
       }
 
@@ -1729,9 +1744,10 @@ namespace Demo.WindowsForms
       // cache config
       private void checkBoxUseCache_CheckedChanged(object sender, EventArgs e)
       {
-         GMaps.Instance.UseRouteCache = checkBoxUseRouteCache.Checked;
-         GMaps.Instance.UseGeocoderCache = checkBoxUseGeoCache.Checked;
-         GMaps.Instance.UsePlacemarkCache = GMaps.Instance.UseGeocoderCache;
+         MainMap.Manager.UseRouteCache = checkBoxUseRouteCache.Checked;
+         MainMap.Manager.UseGeocoderCache = checkBoxUseRouteCache.Checked;
+         MainMap.Manager.UsePlacemarkCache = checkBoxUseRouteCache.Checked;
+         MainMap.Manager.UseDirectionsCache = checkBoxUseRouteCache.Checked;         
       }
 
       // clear cache
@@ -2231,7 +2247,7 @@ namespace Demo.WindowsForms
                {
                   string gpx = File.ReadAllText(dlg.FileName);
 
-                  gpxType r = GMaps.Instance.DeserializeGPX(gpx);
+                  gpxType r = MainMap.Manager.DeserializeGPX(gpx);
                   if(r != null)
                   {
                      if(r.trk.Length > 0)

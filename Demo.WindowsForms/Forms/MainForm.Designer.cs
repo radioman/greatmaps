@@ -28,12 +28,11 @@
       /// </summary>
       private void InitializeComponent()
       {
-         System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+         System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
          this.trackBar1 = new System.Windows.Forms.TrackBar();
          this.button11 = new System.Windows.Forms.Button();
          this.button10 = new System.Windows.Forms.Button();
          this.button9 = new System.Windows.Forms.Button();
-         this.checkBoxUseGeoCache = new System.Windows.Forms.CheckBox();
          this.checkBoxUseRouteCache = new System.Windows.Forms.CheckBox();
          this.panelMenu = new BSE.Windows.Forms.Panel();
          this.splitter1 = new BSE.Windows.Forms.Splitter();
@@ -114,6 +113,8 @@
          this.panel2 = new System.Windows.Forms.Panel();
          this.MainMap = new Demo.WindowsForms.Map();
          this.panel4 = new System.Windows.Forms.Panel();
+         this.label14 = new System.Windows.Forms.Label();
+         this.textBoxCacheSize = new System.Windows.Forms.TextBox();
          ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
          this.panelMenu.SuspendLayout();
          this.xPanderPanelList1.SuspendLayout();
@@ -162,7 +163,7 @@
          this.button11.Name = "button11";
          this.button11.Size = new System.Drawing.Size(254, 25);
          this.button11.TabIndex = 38;
-         this.button11.Text = "Prefetch";
+         this.button11.Text = "Prefetch selected area";
          this.button11.UseVisualStyleBackColor = true;
          this.button11.Click += new System.EventHandler(this.button11_Click);
          // 
@@ -190,31 +191,17 @@
          this.button9.UseVisualStyleBackColor = true;
          this.button9.Click += new System.EventHandler(this.button9_Click);
          // 
-         // checkBoxUseGeoCache
-         // 
-         this.checkBoxUseGeoCache.AutoSize = true;
-         this.checkBoxUseGeoCache.Checked = true;
-         this.checkBoxUseGeoCache.CheckState = System.Windows.Forms.CheckState.Checked;
-         this.checkBoxUseGeoCache.Location = new System.Drawing.Point(24, 365);
-         this.checkBoxUseGeoCache.Margin = new System.Windows.Forms.Padding(4);
-         this.checkBoxUseGeoCache.Name = "checkBoxUseGeoCache";
-         this.checkBoxUseGeoCache.Size = new System.Drawing.Size(96, 21);
-         this.checkBoxUseGeoCache.TabIndex = 3;
-         this.checkBoxUseGeoCache.Text = "geocoding";
-         this.checkBoxUseGeoCache.UseVisualStyleBackColor = true;
-         this.checkBoxUseGeoCache.CheckedChanged += new System.EventHandler(this.checkBoxUseCache_CheckedChanged);
-         // 
          // checkBoxUseRouteCache
          // 
          this.checkBoxUseRouteCache.AutoSize = true;
          this.checkBoxUseRouteCache.Checked = true;
          this.checkBoxUseRouteCache.CheckState = System.Windows.Forms.CheckState.Checked;
-         this.checkBoxUseRouteCache.Location = new System.Drawing.Point(24, 336);
+         this.checkBoxUseRouteCache.Location = new System.Drawing.Point(24, 412);
          this.checkBoxUseRouteCache.Margin = new System.Windows.Forms.Padding(4);
          this.checkBoxUseRouteCache.Name = "checkBoxUseRouteCache";
-         this.checkBoxUseRouteCache.Size = new System.Drawing.Size(74, 21);
+         this.checkBoxUseRouteCache.Size = new System.Drawing.Size(201, 21);
          this.checkBoxUseRouteCache.TabIndex = 2;
-         this.checkBoxUseRouteCache.Text = "routing";
+         this.checkBoxUseRouteCache.Text = "cache routing/geocodig/etc";
          this.checkBoxUseRouteCache.UseVisualStyleBackColor = true;
          this.checkBoxUseRouteCache.CheckedChanged += new System.EventHandler(this.checkBoxUseCache_CheckedChanged);
          // 
@@ -887,35 +874,38 @@
          this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
          this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
          this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-         this.tableLayoutPanel1.Controls.Add(this.textBoxCacheStatus, 1, 11);
+         this.tableLayoutPanel1.Controls.Add(this.textBoxCacheSize, 1, 11);
+         this.tableLayoutPanel1.Controls.Add(this.textBoxCacheStatus, 1, 14);
          this.tableLayoutPanel1.Controls.Add(this.button10, 1, 1);
-         this.tableLayoutPanel1.Controls.Add(this.checkBoxUseGeoCache, 1, 14);
          this.tableLayoutPanel1.Controls.Add(this.textBoxMemory, 1, 8);
-         this.tableLayoutPanel1.Controls.Add(this.checkBoxUseRouteCache, 1, 13);
+         this.tableLayoutPanel1.Controls.Add(this.checkBoxUseRouteCache, 1, 16);
          this.tableLayoutPanel1.Controls.Add(this.button9, 1, 2);
          this.tableLayoutPanel1.Controls.Add(this.button11, 1, 3);
          this.tableLayoutPanel1.Controls.Add(this.label10, 1, 7);
          this.tableLayoutPanel1.Controls.Add(this.button2, 1, 5);
-         this.tableLayoutPanel1.Controls.Add(this.label13, 1, 10);
+         this.tableLayoutPanel1.Controls.Add(this.label13, 1, 13);
+         this.tableLayoutPanel1.Controls.Add(this.label14, 1, 10);
          this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
          this.tableLayoutPanel1.Location = new System.Drawing.Point(1, 25);
          this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-         this.tableLayoutPanel1.RowCount = 16;
-         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
-         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+         this.tableLayoutPanel1.RowCount = 18;
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
          this.tableLayoutPanel1.Size = new System.Drawing.Size(302, 0);
@@ -925,7 +915,7 @@
          // 
          this.textBoxCacheStatus.Dock = System.Windows.Forms.DockStyle.Top;
          this.textBoxCacheStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-         this.textBoxCacheStatus.Location = new System.Drawing.Point(24, 274);
+         this.textBoxCacheStatus.Location = new System.Drawing.Point(24, 350);
          this.textBoxCacheStatus.Margin = new System.Windows.Forms.Padding(4);
          this.textBoxCacheStatus.Name = "textBoxCacheStatus";
          this.textBoxCacheStatus.ReadOnly = true;
@@ -951,9 +941,9 @@
          this.label10.Location = new System.Drawing.Point(24, 171);
          this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
          this.label10.Name = "label10";
-         this.label10.Size = new System.Drawing.Size(104, 17);
+         this.label10.Size = new System.Drawing.Size(147, 17);
          this.label10.TabIndex = 40;
-         this.label10.Text = "memory cache:";
+         this.label10.Text = "memory cache usage:";
          // 
          // button2
          // 
@@ -963,19 +953,19 @@
          this.button2.Name = "button2";
          this.button2.Size = new System.Drawing.Size(254, 25);
          this.button2.TabIndex = 43;
-         this.button2.Text = "Clear All";
+         this.button2.Text = "Clear tiles in local cache";
          this.button2.UseVisualStyleBackColor = true;
          this.button2.Click += new System.EventHandler(this.button2_Click);
          // 
          // label13
          // 
          this.label13.AutoSize = true;
-         this.label13.Location = new System.Drawing.Point(24, 250);
+         this.label13.Location = new System.Drawing.Point(24, 329);
          this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
          this.label13.Name = "label13";
-         this.label13.Size = new System.Drawing.Size(92, 17);
+         this.label13.Size = new System.Drawing.Size(125, 17);
          this.label13.TabIndex = 44;
-         this.label13.Text = "cache status:";
+         this.label13.Text = "local cache status:";
          // 
          // xPanderPanelInfo
          // 
@@ -1270,14 +1260,14 @@
          this.GridConnections.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.CountryName,
             this.ConnectionsCount});
-         dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-         dataGridViewCellStyle2.BackColor = System.Drawing.Color.AliceBlue;
-         dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-         dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-         dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.LightSkyBlue;
-         dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-         dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-         this.GridConnections.DefaultCellStyle = dataGridViewCellStyle2;
+         dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+         dataGridViewCellStyle1.BackColor = System.Drawing.Color.AliceBlue;
+         dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+         dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+         dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.LightSkyBlue;
+         dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+         dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+         this.GridConnections.DefaultCellStyle = dataGridViewCellStyle1;
          this.GridConnections.Dock = System.Windows.Forms.DockStyle.Fill;
          this.GridConnections.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
          this.GridConnections.Location = new System.Drawing.Point(23, 167);
@@ -1387,6 +1377,7 @@
          this.MainMap.Bearing = 0F;
          this.MainMap.CanDragMap = true;
          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.MainMap.EmptyTileColor = System.Drawing.Color.Navy;
          this.MainMap.GrayScaleMode = false;
          this.MainMap.LevelsKeepInMemmory = 5;
          this.MainMap.Location = new System.Drawing.Point(0, 0);
@@ -1400,6 +1391,7 @@
          this.MainMap.PolygonsEnabled = true;
          this.MainMap.RetryLoadTile = 0;
          this.MainMap.RoutesEnabled = true;
+         this.MainMap.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
          this.MainMap.ShowTileGridLines = false;
          this.MainMap.Size = new System.Drawing.Size(881, 818);
          this.MainMap.TabIndex = 0;
@@ -1416,6 +1408,28 @@
          this.panel4.Name = "panel4";
          this.panel4.Size = new System.Drawing.Size(1188, 818);
          this.panel4.TabIndex = 44;
+         // 
+         // label14
+         // 
+         this.label14.AutoSize = true;
+         this.label14.Location = new System.Drawing.Point(24, 250);
+         this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+         this.label14.Name = "label14";
+         this.label14.Size = new System.Drawing.Size(112, 17);
+         this.label14.TabIndex = 47;
+         this.label14.Text = "local cache size:";
+         // 
+         // textBoxCacheSize
+         // 
+         this.textBoxCacheSize.Dock = System.Windows.Forms.DockStyle.Top;
+         this.textBoxCacheSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+         this.textBoxCacheSize.Location = new System.Drawing.Point(24, 271);
+         this.textBoxCacheSize.Margin = new System.Windows.Forms.Padding(4);
+         this.textBoxCacheSize.Name = "textBoxCacheSize";
+         this.textBoxCacheSize.ReadOnly = true;
+         this.textBoxCacheSize.Size = new System.Drawing.Size(254, 34);
+         this.textBoxCacheSize.TabIndex = 49;
+         this.textBoxCacheSize.Text = "...";
          // 
          // MainForm
          // 
@@ -1469,7 +1483,6 @@
       #endregion
 
       private System.Windows.Forms.TrackBar trackBar1;
-      private System.Windows.Forms.CheckBox checkBoxUseGeoCache;
       private System.Windows.Forms.CheckBox checkBoxUseRouteCache;
       private System.Windows.Forms.Button button9;
       private System.Windows.Forms.Button button10;
@@ -1553,6 +1566,8 @@
       private System.Windows.Forms.Button buttonZoomDown;
       private System.Windows.Forms.TextBox textBoxCacheStatus;
       private System.Windows.Forms.Label label13;
+      private System.Windows.Forms.Label label14;
+      private System.Windows.Forms.TextBox textBoxCacheSize;
    }
 }
 

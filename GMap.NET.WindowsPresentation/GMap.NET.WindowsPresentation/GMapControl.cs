@@ -885,7 +885,7 @@ namespace GMap.NET.WindowsPresentation
          margin.Right - margin.Left, margin.Bottom - margin.Top);
 
          // Get the size of canvas
-         System.Windows.Size size = new System.Windows.Size(obj.ActualWidth, obj.ActualHeight);
+         Size size = new Size(obj.ActualWidth, obj.ActualHeight);
 
          // force control to Update
          obj.Measure(size);
@@ -913,7 +913,7 @@ namespace GMap.NET.WindowsPresentation
       /// </summary>
       /// <param name="pl"></param>
       /// <returns></returns>
-      public virtual Path CreateRoutePath(List<System.Windows.Point> localPath)
+      public virtual Path CreateRoutePath(List<Point> localPath)
       {
          // Create a StreamGeometry to use to specify myPath.
          StreamGeometry geometry = new StreamGeometry();
@@ -962,7 +962,7 @@ namespace GMap.NET.WindowsPresentation
       /// </summary>
       /// <param name="pl"></param>
       /// <returns></returns>
-      public virtual Path CreatePolygonPath(List<System.Windows.Point> localPath)
+      public virtual Path CreatePolygonPath(List<Point> localPath)
       {
          // Create a StreamGeometry to use to specify myPath.
          StreamGeometry geometry = new StreamGeometry();
@@ -1452,6 +1452,8 @@ namespace GMap.NET.WindowsPresentation
          base.OnMouseDown(e);
       }
 
+      int onMouseUpTimestamp = 0;
+
       protected override void OnMouseUp(MouseButtonEventArgs e)
       {
          if(isSelected)
@@ -1463,11 +1465,11 @@ namespace GMap.NET.WindowsPresentation
          {
             if(isDragging)
             {
-               Mouse.Capture(null);
-
+               onMouseUpTimestamp = e.Timestamp;
                isDragging = false;
                Debug.WriteLine("IsDragging = " + isDragging);
                Cursor = cursorBefore;
+               Mouse.Capture(null);
             }
             Core.EndDrag();
 
@@ -1505,6 +1507,15 @@ namespace GMap.NET.WindowsPresentation
 
       protected override void OnMouseMove(MouseEventArgs e)
       {
+         // wpf generates to many events if mouse is over some visual
+         // and OnMouseUp is fired, wtf, anyway...
+         // http://greatmaps.codeplex.com/workitem/16013
+         if(e.Timestamp - onMouseUpTimestamp < 55) 
+         {
+            Debug.WriteLine("OnMouseMove skipped: " + (e.Timestamp - onMouseUpTimestamp) + "ms");
+            return;
+         }
+
          if(!Core.IsDragging && !Core.mouseDown.IsEmpty)
          {
             Point p = e.GetPosition(this);
@@ -1527,13 +1538,11 @@ namespace GMap.NET.WindowsPresentation
          {
             if(!isDragging)
             {
-               Mouse.Capture(this);
-
                isDragging = true;
                Debug.WriteLine("IsDragging = " + isDragging);
-
                cursorBefore = Cursor;
                Cursor = Cursors.SizeAll;
+               Mouse.Capture(this);
             }
 
             if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
@@ -1626,11 +1635,11 @@ namespace GMap.NET.WindowsPresentation
             {
                if(isDragging)
                {
-                  Mouse.Capture(null);
-
+                  onMouseUpTimestamp = e.Timestamp;
                   isDragging = false;
                   Debug.WriteLine("IsDragging = " + isDragging);
                   Cursor = cursorBefore;
+                  Mouse.Capture(null);
                }
                Core.EndDrag();
 
@@ -1655,6 +1664,15 @@ namespace GMap.NET.WindowsPresentation
       {
          if(TouchEnabled)
          {
+            // wpf generates to many events if mouse is over some visual
+            // and OnMouseUp is fired, wtf, anyway...
+            // http://greatmaps.codeplex.com/workitem/16013
+            if(e.Timestamp - onMouseUpTimestamp < 55)
+            {
+               Debug.WriteLine("OnMouseMove skipped: " + (e.Timestamp - onMouseUpTimestamp) + "ms");
+               return;
+            }
+
             if(!Core.IsDragging && !Core.mouseDown.IsEmpty)
             {
                Point p = e.GetPosition(this);
@@ -1677,13 +1695,11 @@ namespace GMap.NET.WindowsPresentation
             {
                if(!isDragging)
                {
-                  Mouse.Capture(this);
-
                   isDragging = true;
                   Debug.WriteLine("IsDragging = " + isDragging);
-
                   cursorBefore = Cursor;
                   Cursor = Cursors.SizeAll;
+                  Mouse.Capture(this);
                }
 
                if(BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))

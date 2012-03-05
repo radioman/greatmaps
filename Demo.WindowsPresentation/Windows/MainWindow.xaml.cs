@@ -129,6 +129,7 @@ namespace Demo.WindowsPresentation
                MainMap.Markers.Add(it);
 
                #region -- add some markers and zone around them --
+               //if(false)
                {
                   List<PointAndInfo> objects = new List<PointAndInfo>();
                   {
@@ -418,6 +419,7 @@ namespace Demo.WindowsPresentation
             }
 
             // add zone circle
+            //if(false)
             {
                GMapMarker it = new GMapMarker(center);
                it.ZIndex = -1;
@@ -705,14 +707,14 @@ namespace Demo.WindowsPresentation
       // use route cache
       private void checkBoxCacheRoute_Checked(object sender, RoutedEventArgs e)
       {
-         GMaps.Instance.UseRouteCache = checkBoxCacheRoute.IsChecked.Value;
+         MainMap.Manager.UseRouteCache = checkBoxCacheRoute.IsChecked.Value;
       }
 
       // use geocoding cahce
       private void checkBoxGeoCache_Checked(object sender, RoutedEventArgs e)
       {
-         GMaps.Instance.UseGeocoderCache = checkBoxGeoCache.IsChecked.Value;
-         GMaps.Instance.UsePlacemarkCache = GMaps.Instance.UseGeocoderCache;
+         MainMap.Manager.UseGeocoderCache = checkBoxGeoCache.IsChecked.Value;
+         MainMap.Manager.UsePlacemarkCache = MainMap.Manager.UseGeocoderCache;
       }
 
       // save currnt view
