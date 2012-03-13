@@ -13,7 +13,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
    public class GMapToolTip : ISerializable, IDisposable
 #else
-   public class GMapToolTip, IDisposable
+   public class GMapToolTip: IDisposable
 #endif
    {
       GMapMarker marker;

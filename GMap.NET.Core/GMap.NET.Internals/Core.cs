@@ -363,11 +363,7 @@ namespace GMap.NET.Internals
 
       // windows forms or wpf
       internal string SystemType;
-      internal static readonly Guid SessionIdGuid = Guid.NewGuid();
-      internal static readonly Guid CompanyIdGuid = new Guid("3E35F098-CE43-4F82-9E9D-05C8B1046A45");
-      internal static readonly Guid ApplicationIdGuid = new Guid("FF328040-77B0-4546-ACF3-7C6EC0827BBB");
-      internal static volatile bool AnalyticsStartDone = false;
-      internal static volatile bool AnalyticsStopDone = false;
+
       internal static int instances = 0;
 
       BackgroundWorker invalidator;
@@ -394,91 +390,10 @@ namespace GMap.NET.Internals
             invalidator.DoWork += new DoWorkEventHandler(invalidatorWatch);
             invalidator.RunWorkerAsync();
 
-            if(x == 1)
-            {
-#if !DEBUG
-#if !PocketPC
-               // in case there a few controls in one app
-               if(!AnalyticsStartDone && !GMaps.Instance.DisableCodeplexAnalyticsPing)
-               {
-                  AnalyticsStartDone = true;
-
-                  // send start ping to codeplex Analytics service
-                  ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object o)
-                  {
-                     try
-                     {
-                        using(Analytics.MessagingServiceV2 s = new Analytics.MessagingServiceV2())
-                        {
-                           if(GMapProvider.WebProxy != null)
-                           {
-                              s.Proxy = GMapProvider.WebProxy;
-                              s.PreAuthenticate = true;
-                           }
-
-                           Analytics.MessageCache info = new Analytics.MessageCache();
-                           {
-                              FillAnalyticsInfo(info);
-
-                              info.Messages = new Analytics.Message[2];
-
-                              Analytics.ApplicationLifeCycle alc = new Analytics.ApplicationLifeCycle();
-                              {
-                                 alc.Id = Guid.NewGuid();
-                                 alc.SessionId = SessionIdGuid;
-                                 alc.TimeStampUtc = DateTime.UtcNow;
-
-                                 alc.Event = new GMap.NET.Analytics.EventInformation();
-                                 {
-                                    alc.Event.Code = "Application.Start";
-                                    alc.Event.PrivacySetting = GMap.NET.Analytics.PrivacySettings.SupportOptout;
-                                 }
-
-                                 alc.Binary = new Analytics.BinaryInformation();
-                                 {
-                                    System.Reflection.AssemblyName app = System.Reflection.Assembly.GetEntryAssembly().GetName();
-                                    alc.Binary.Name = app.Name;
-                                    alc.Binary.Version = app.Version.ToString();
-                                 }
-
-                                 alc.Host = new GMap.NET.Analytics.HostInfo();
-                                 {
-                                    alc.Host.RuntimeVersion = Environment.Version.ToString();
-                                 }
-
-                                 alc.Host.OS = new GMap.NET.Analytics.OSInformation();
-                                 {
-                                    alc.Host.OS.OsName = Environment.OSVersion.VersionString;
-                                 }
-                              }
-                              info.Messages[0] = alc;
-
-                              Analytics.SessionLifeCycle slc = new Analytics.SessionLifeCycle();
-                              {
-                                 slc.Id = Guid.NewGuid();
-                                 slc.SessionId = SessionIdGuid;
-                                 slc.TimeStampUtc = DateTime.UtcNow;
-
-                                 slc.Event = new GMap.NET.Analytics.EventInformation();
-                                 {
-                                    slc.Event.Code = "Session.Start";
-                                    slc.Event.PrivacySetting = GMap.NET.Analytics.PrivacySettings.SupportOptout;
-                                 }
-                              }
-                              info.Messages[1] = slc;
-                           }
-                           s.Publish(info);
-                        }
-                     }
-                     catch(Exception ex)
-                     {
-                        Debug.WriteLine("Analytics Start: " + ex.ToString());
-                     }
-                  }));
-               }
-#endif
-#endif
-            }
+            //if(x == 1)
+            //{
+            // first control shown
+            //}
          }
          return invalidator;
       }
@@ -529,31 +444,6 @@ namespace GMap.NET.Internals
             }
          }
       }
-
-#if !PocketPC
-      void FillAnalyticsInfo(Analytics.MessageCache info)
-      {
-         info.SchemaVersion = GMap.NET.Analytics.SchemaVersionValue.Item020000;
-
-         info.Id = Guid.NewGuid();
-         info.ApplicationGroupId = SessionIdGuid;
-
-         info.Business = new GMap.NET.Analytics.BusinessInformation();
-         info.Business.CompanyId = CompanyIdGuid;
-         info.Business.CompanyName = "email@radioman.lt";
-
-         info.TimeSentUtc = DateTime.UtcNow;
-
-         info.ApiLanguage = ".NET CLR";
-         info.ApiVersion = "2.1.4.0";
-
-         info.Application = new Analytics.ApplicationInformation();
-         info.Application.Id = ApplicationIdGuid;
-         info.Application.Name = "GMap.NET";
-         info.Application.ApplicationType = SystemType;
-         info.Application.Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-      }
-#endif
 
       public void UpdateCenterTileXYLocation()
       {
@@ -1418,87 +1308,6 @@ namespace GMap.NET.Internals
                {
                   GMaps.Instance.MemoryCache.Clear();
                }
-
-#if !DEBUG
-#if !PocketPC
-               // send end ping to codeplex Analytics service
-               try
-               {
-                  if(!AnalyticsStopDone && !GMaps.Instance.DisableCodeplexAnalyticsPing)
-                  {
-                     AnalyticsStopDone = true;
-
-                     using(Analytics.MessagingServiceV2 s = new Analytics.MessagingServiceV2())
-                     {
-                        s.Timeout = 5 * 1000;
-
-                        if(GMapProvider.WebProxy != null)
-                        {
-                           s.Proxy = GMapProvider.WebProxy;
-                           s.PreAuthenticate = true;
-                        }
-
-                        Analytics.MessageCache info = new Analytics.MessageCache();
-                        {
-                           FillAnalyticsInfo(info);
-
-                           info.Messages = new Analytics.Message[2];
-
-                           Analytics.SessionLifeCycle slc = new Analytics.SessionLifeCycle();
-                           {
-                              slc.Id = Guid.NewGuid();
-                              slc.SessionId = SessionIdGuid;
-                              slc.TimeStampUtc = DateTime.UtcNow;
-
-                              slc.Event = new GMap.NET.Analytics.EventInformation();
-                              {
-                                 slc.Event.Code = "Session.Stop";
-                                 slc.Event.PrivacySetting = GMap.NET.Analytics.PrivacySettings.SupportOptout;
-                              }
-                           }
-                           info.Messages[0] = slc;
-
-                           Analytics.ApplicationLifeCycle alc = new Analytics.ApplicationLifeCycle();
-                           {
-                              alc.Id = Guid.NewGuid();
-                              alc.SessionId = SessionIdGuid;
-                              alc.TimeStampUtc = DateTime.UtcNow;
-
-                              alc.Event = new GMap.NET.Analytics.EventInformation();
-                              {
-                                 alc.Event.Code = "Application.Stop";
-                                 alc.Event.PrivacySetting = GMap.NET.Analytics.PrivacySettings.SupportOptout;
-                              }
-
-                              alc.Binary = new Analytics.BinaryInformation();
-                              {
-                                 System.Reflection.AssemblyName app = System.Reflection.Assembly.GetEntryAssembly().GetName();
-                                 alc.Binary.Name = app.Name;
-                                 alc.Binary.Version = app.Version.ToString();
-                              }
-
-                              alc.Host = new GMap.NET.Analytics.HostInfo();
-                              {
-                                 alc.Host.RuntimeVersion = Environment.Version.ToString();
-                              }
-
-                              alc.Host.OS = new GMap.NET.Analytics.OSInformation();
-                              {
-                                 alc.Host.OS.OsName = Environment.OSVersion.VersionString;
-                              }
-                           }
-                           info.Messages[1] = alc;
-                        }
-                        s.Publish(info);
-                     }
-                  }
-               }
-               catch(Exception ex)
-               {
-                  Debug.WriteLine("Analytics Stop: " + ex.ToString());
-               }
-#endif
-#endif
             }
          }
       }

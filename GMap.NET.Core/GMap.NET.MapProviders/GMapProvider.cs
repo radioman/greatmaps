@@ -270,9 +270,10 @@ namespace GMap.NET.MapProviders
       /// </summary>
       public static IWebProxy WebProxy;
 
-#if !PocketPC
-      public static NetworkCredential Credential;
-#endif
+      /// <summary>
+      /// NetworkCredential for tile http access
+      /// </summary>
+      public static ICredentials Credential;
 
       /// <summary>
       /// Gets or sets the value of the User-agent HTTP header.
@@ -344,13 +345,11 @@ namespace GMap.NET.MapProviders
             request.Proxy = WebProxy;
          }
 
-#if !PocketPC
          if(Credential != null)
          {
             request.PreAuthenticate = true;
             request.Credentials = Credential;
          }
-#endif
 
          request.UserAgent = UserAgent;
          request.Timeout = TimeoutMs;
@@ -405,13 +404,11 @@ namespace GMap.NET.MapProviders
             request.Proxy = WebProxy;
          }
 
-#if !PocketPC
          if(Credential != null)
          {
             request.PreAuthenticate = true;
             request.Credentials = Credential;
          }
-#endif
 
          request.UserAgent = UserAgent;
          request.Timeout = TimeoutMs;

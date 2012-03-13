@@ -57,13 +57,6 @@ namespace GMap.NET
       public bool UseMemoryCache = true;
 
       /// <summary>
-      /// set to True if you don't want provide on/off pings to codeplex.com
-      /// </summary>
-#if !PocketPC
-      public bool DisableCodeplexAnalyticsPing = true;
-#endif
-
-      /// <summary>
       /// primary cache provider, by default: ultra fast SQLite!
       /// </summary>
       public PureImageCache PrimaryCache

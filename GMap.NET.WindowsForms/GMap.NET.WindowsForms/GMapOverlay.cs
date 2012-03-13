@@ -14,7 +14,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
    public class GMapOverlay : ISerializable, IDeserializationCallback, IDisposable
 #else
-   public class GMapOverlay, IDisposable
+   public class GMapOverlay: IDisposable
 #endif
    {
       bool isVisibile = true;

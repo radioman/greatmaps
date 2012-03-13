@@ -14,7 +14,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
    public abstract class GMapMarker : ISerializable, IDisposable
 #else
-   public class GMapMarker, IDisposable
+   public class GMapMarker: IDisposable
 #endif
    {
 #if PocketPC

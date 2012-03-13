@@ -1,109 +1,110 @@
 ﻿
 namespace GMap.NET.WindowsForms
 {
-   using System;
-   using System.Collections.Generic;
-   using System.Drawing;
-   using System.Drawing.Drawing2D;
-   using System.Runtime.Serialization;
-   using System.Windows.Forms;
-   using GMap.NET;
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Drawing.Drawing2D;
+    using System.Runtime.Serialization;
+    using System.Windows.Forms;
+    using GMap.NET;
 
-   /// <summary>
-   /// GMap.NET route
-   /// </summary>
-   [Serializable]
+    /// <summary>
+    /// GMap.NET route
+    /// </summary>
+    [Serializable]
 #if !PocketPC
    public class GMapRoute : MapRoute, ISerializable, IDeserializationCallback, IDisposable
 #else
     public class GMapRoute : MapRoute, IDisposable
 #endif
-   {
-      GMapOverlay overlay;
-      public GMapOverlay Overlay
-      {
-         get
-         {
-            return overlay;
-         }
-         internal set
-         {
-            overlay = value;
-         }
-      }
-
-      private bool visible = true;
-
-      /// <summary>
-      /// is marker visible
-      /// </summary>
-      public bool IsVisible
-      {
-         get
-         {
-            return visible;
-         }
-         set
-         {
-            if(value != visible)
+    {
+        GMapOverlay overlay;
+        public GMapOverlay Overlay
+        {
+            get
             {
-               visible = value;
-
-               if(Overlay != null && Overlay.Control != null)
-               {
-                  if(visible)
-                  {
-                     Overlay.Control.UpdateRouteLocalPosition(this);
-                  }
-
-                  {
-                     if(!Overlay.Control.HoldInvalidation)
-                     {
-                        Overlay.Control.Core.Refresh.Set();
-                     }
-                  }
-               }
+                return overlay;
             }
-         }
-      }
+            internal set
+            {
+                overlay = value;
+            }
+        }
 
-      /// <summary>
-      /// can receive input
-      /// </summary>
-      public bool IsHitTestVisible = false;
+        private bool visible = true;
 
-      private bool isMouseOver = false;
+        /// <summary>
+        /// is marker visible
+        /// </summary>
+        public bool IsVisible
+        {
+            get
+            {
+                return visible;
+            }
+            set
+            {
+                if (value != visible)
+                {
+                    visible = value;
 
-      /// <summary>
-      /// is mouse over
-      /// </summary>
-      public bool IsMouseOver
-      {
-         get
-         {
-            return isMouseOver;
-         }
-         internal set
-         {
-            isMouseOver = value;
-         }
-      }
+                    if (Overlay != null && Overlay.Control != null)
+                    {
+                        if (visible)
+                        {
+                            Overlay.Control.UpdateRouteLocalPosition(this);
+                        }
 
-      /// <summary>
-      /// Indicates whether the specified point is contained within this System.Drawing.Drawing2D.GraphicsPath
-      /// </summary>
-      /// <param name="x"></param>
-      /// <param name="y"></param>
-      /// <returns></returns>
-      internal bool IsInside(int x, int y)
-      {
-         if(graphicsPath != null)
-         {
-            return graphicsPath.IsOutlineVisible(x, y, Stroke);
-         }
+                        {
+                            if (!Overlay.Control.HoldInvalidation)
+                            {
+                                Overlay.Control.Core.Refresh.Set();
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-         return false;
-      }
+        /// <summary>
+        /// can receive input
+        /// </summary>
+        public bool IsHitTestVisible = false;
+
+        private bool isMouseOver = false;
+
+        /// <summary>
+        /// is mouse over
+        /// </summary>
+        public bool IsMouseOver
+        {
+            get
+            {
+                return isMouseOver;
+            }
+            internal set
+            {
+                isMouseOver = value;
+            }
+        }
+
+#if !PocketPC
+        /// <summary>
+        /// Indicates whether the specified point is contained within this System.Drawing.Drawing2D.GraphicsPath
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        internal bool IsInside(int x, int y)
+        {
+            if (graphicsPath != null)
+            {
+                return graphicsPath.IsOutlineVisible(x, y, Stroke);
+            }
+
+            return false;
+        }
 
       GraphicsPath graphicsPath;
       internal void UpdateGraphicsPath()
@@ -134,9 +135,10 @@ namespace GMap.NET.WindowsForms
             }
          }
       }
+#endif
 
-      public virtual void OnRender(Graphics g)
-      {
+        public virtual void OnRender(Graphics g)
+        {
 #if !PocketPC
          if(IsVisible)
          {
@@ -161,40 +163,40 @@ namespace GMap.NET.WindowsForms
                 }
             }
 #endif
-      }
+        }
 
-      /// <summary>
-      /// specifies how the outline is painted
-      /// </summary>
-      [NonSerialized]
+        /// <summary>
+        /// specifies how the outline is painted
+        /// </summary>
+        [NonSerialized]
 #if !PocketPC
       public Pen Stroke = new Pen(Color.FromArgb(144, Color.MidnightBlue));
 #else
-      public Pen Stroke = new Pen(Color.MidnightBlue);
+        public Pen Stroke = new Pen(Color.MidnightBlue);
 #endif
 
-      public readonly List<GPoint> LocalPoints = new List<GPoint>();
+        public readonly List<GPoint> LocalPoints = new List<GPoint>();
 
-      public GMapRoute(string name)
-         : base(name)
-      {
+        public GMapRoute(string name)
+            : base(name)
+        {
 #if !PocketPC
          Stroke.LineJoin = LineJoin.Round;
 #endif
-         Stroke.Width = 5;
-      }
+            Stroke.Width = 5;
+        }
 
-      public GMapRoute(IEnumerable<PointLatLng> points, string name)
-         : base(points, name)
-      {
+        public GMapRoute(IEnumerable<PointLatLng> points, string name)
+            : base(points, name)
+        {
 #if !PocketPC
          Stroke.LineJoin = LineJoin.Round;
 #endif
-         Stroke.Width = 5;
-      }
+            Stroke.Width = 5;
+        }
 
 #if !PocketPC
-      #region ISerializable Members
+        #region ISerializable Members
 
       // Temp store for de-serialization.
       private GPoint[] deserializedLocalPoints;
@@ -228,10 +230,10 @@ namespace GMap.NET.WindowsForms
          this.deserializedLocalPoints = Extensions.GetValue<GPoint[]>(info, "LocalPoints");
       }
 
-      #endregion
+        #endregion
 
 
-      #region IDeserializationCallback Members
+        #region IDeserializationCallback Members
 
       /// <summary>
       /// Runs when the entire object graph has been de-serialized.
@@ -246,35 +248,37 @@ namespace GMap.NET.WindowsForms
          LocalPoints.Capacity = Points.Count;
       }
 
-      #endregion
+        #endregion
 #endif
 
-      #region IDisposable Members
+        #region IDisposable Members
 
-      bool disposed = false;
+        bool disposed = false;
 
-      public virtual void Dispose()
-      {
-         if(!disposed)
-         {
-            disposed = true;
-
-            Stroke.Dispose();
-            LocalPoints.Clear();
-
-            if(graphicsPath != null)
+        public virtual void Dispose()
+        {
+            if (!disposed)
             {
-               graphicsPath.Dispose();
-               graphicsPath = null;
+                disposed = true;
+
+                Stroke.Dispose();
+                LocalPoints.Clear();
+
+#if !PocketPC
+                if (graphicsPath != null)
+                {
+                    graphicsPath.Dispose();
+                    graphicsPath = null;
+                }
+#endif
+                base.Clear();
             }
-            base.Clear();
-         }
-      }
+        }
 
-      #endregion
-   }
+        #endregion
+    }
 
-   public delegate void RouteClick(GMapRoute item, MouseEventArgs e);
-   public delegate void RouteEnter(GMapRoute item);
-   public delegate void RouteLeave(GMapRoute item);
+    public delegate void RouteClick(GMapRoute item, MouseEventArgs e);
+    public delegate void RouteEnter(GMapRoute item);
+    public delegate void RouteLeave(GMapRoute item);
 }
