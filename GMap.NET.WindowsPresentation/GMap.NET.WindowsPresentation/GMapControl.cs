@@ -2077,20 +2077,20 @@ namespace GMap.NET.WindowsPresentation
 
       #region IDisposable Members
 
-      public void Dispose()
+      public virtual void Dispose()
       {
          if(Core.IsStarted)
          {
             Core.OnMapZoomChanged -= new MapZoomChanged(ForceUpdateOverlays);
             Loaded -= new RoutedEventHandler(GMapControl_Loaded);
-            Dispatcher.ShutdownStarted += new EventHandler(Dispatcher_ShutdownStarted);
+            Dispatcher.ShutdownStarted -= new EventHandler(Dispatcher_ShutdownStarted);
             SizeChanged -= new SizeChangedEventHandler(GMapControl_SizeChanged);
             if(loadedApp != null)
             {
                loadedApp.SessionEnding -= new SessionEndingCancelEventHandler(Current_SessionEnding);
             }
-         }
-         Core.OnMapClose();
+            Core.OnMapClose();
+         }           
       }
 
       #endregion
