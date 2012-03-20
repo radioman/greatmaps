@@ -1822,7 +1822,7 @@ namespace GMap.NET.WindowsPresentation
 
       public bool ShowExportDialog()
       {
-         Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+         var dlg = new Microsoft.Win32.SaveFileDialog();
          {
             dlg.CheckPathExists = true;
             dlg.CheckFileExists = false;
@@ -1857,7 +1857,7 @@ namespace GMap.NET.WindowsPresentation
 
       public bool ShowImportDialog()
       {
-         Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+         var dlg = new Microsoft.Win32.OpenFileDialog();
          {
             dlg.CheckPathExists = true;
             dlg.CheckFileExists = false;

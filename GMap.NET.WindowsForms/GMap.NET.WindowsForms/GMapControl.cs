@@ -2402,7 +2402,7 @@ namespace GMap.NET.WindowsForms
             dlg.DefaultExt = "gmdb";
             dlg.ValidateNames = true;
             dlg.Title = "GMap.NET: Import to db, only new data will be added";
-            dlg.FileName = "DataExp";
+            dlg.FileName = "DataImport";
             dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             dlg.Filter = "GMap.NET DB files (*.gmdb)|*.gmdb";
             dlg.FilterIndex = 1;
@@ -2414,6 +2414,7 @@ namespace GMap.NET.WindowsForms
                if(ok)
                {
                   MessageBox.Show("Complete!", "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                  ReloadMap();
                }
                else
                {
