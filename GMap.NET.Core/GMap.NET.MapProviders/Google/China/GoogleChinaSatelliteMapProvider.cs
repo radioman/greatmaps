@@ -4,27 +4,27 @@ namespace GMap.NET.MapProviders
    using System;
 
    /// <summary>
-   /// GoogleChinaTerrainMap provider
+   /// GoogleChinaSatelliteMap provider
    /// </summary>
-   public class GoogleChinaTerrainMapProvider : GoogleMapProviderBase
+   public class GoogleChinaSatelliteMapProvider : GoogleMapProviderBase
    {
-      public static readonly GoogleChinaTerrainMapProvider Instance;
+      public static readonly GoogleChinaSatelliteMapProvider Instance;
 
-      GoogleChinaTerrainMapProvider()
+      GoogleChinaSatelliteMapProvider()
       {
          RefererUrl = string.Format("http://ditu.{0}/", ServerChina);
       }
 
-      static GoogleChinaTerrainMapProvider()
+      static GoogleChinaSatelliteMapProvider()
       {
-         Instance = new GoogleChinaTerrainMapProvider();
+         Instance = new GoogleChinaSatelliteMapProvider();
       }
 
-      public string Version = "t@128,r@170";
+      public string Version = "s@104";
 
       #region GMapProvider Members
 
-      readonly Guid id = new Guid("831EC3CC-B044-4097-B4B7-FC9D9F6D2CFC");
+      readonly Guid id = new Guid("543009AC-3379-4893-B580-DBE6372B1753");
       public override Guid Id
       {
          get
@@ -33,7 +33,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly string name = "GoogleChinaMap";
+      readonly string name = "GoogleChinaSatelliteMap";
       public override string Name
       {
          get
@@ -57,12 +57,11 @@ namespace GMap.NET.MapProviders
          string sec2 = string.Empty; // after &zoom=...
          GetSecureWords(pos, out sec1, out sec2);
 
-         return string.Format(UrlFormat, UrlFormatServer, GetServerNum(pos, 4), UrlFormatRequest, Version, ChinaLanguage, pos.X, sec1, pos.Y, zoom, sec2, ServerChina);
+         return string.Format(UrlFormat, UrlFormatServer, GetServerNum(pos, 4), UrlFormatRequest, Version, pos.X, sec1, pos.Y, zoom, sec2, ServerChina);
       }
 
-      static readonly string ChinaLanguage = "zh-CN";
       static readonly string UrlFormatServer = "mt";
       static readonly string UrlFormatRequest = "vt";
-      static readonly string UrlFormat = "http://{0}{1}.{10}/{2}/lyrs={3}&hl={4}&gl=cn&x={5}{6}&y={7}&z={8}&s={9}";
+      static readonly string UrlFormat = "http://{0}{1}.{9}/{2}/lyrs={3}&gl=cn&x={4}{5}&y={6}&z={7}&s={8}";
    }
 }
