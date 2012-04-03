@@ -81,11 +81,13 @@
          this.buttonZoomDown = new System.Windows.Forms.Button();
          this.xPanderPanelCache = new BSE.Windows.Forms.XPanderPanel();
          this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+         this.textBoxCacheSize = new System.Windows.Forms.TextBox();
          this.textBoxCacheStatus = new System.Windows.Forms.TextBox();
          this.textBoxMemory = new System.Windows.Forms.TextBox();
          this.label10 = new System.Windows.Forms.Label();
          this.button2 = new System.Windows.Forms.Button();
          this.label13 = new System.Windows.Forms.Label();
+         this.label14 = new System.Windows.Forms.Label();
          this.xPanderPanelInfo = new BSE.Windows.Forms.XPanderPanel();
          this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
          this.textBoxZoomCurrent = new System.Windows.Forms.TextBox();
@@ -113,8 +115,6 @@
          this.panel2 = new System.Windows.Forms.Panel();
          this.MainMap = new Demo.WindowsForms.Map();
          this.panel4 = new System.Windows.Forms.Panel();
-         this.label14 = new System.Windows.Forms.Label();
-         this.textBoxCacheSize = new System.Windows.Forms.TextBox();
          ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
          this.panelMenu.SuspendLayout();
          this.xPanderPanelList1.SuspendLayout();
@@ -911,6 +911,18 @@
          this.tableLayoutPanel1.Size = new System.Drawing.Size(302, 0);
          this.tableLayoutPanel1.TabIndex = 41;
          // 
+         // textBoxCacheSize
+         // 
+         this.textBoxCacheSize.Dock = System.Windows.Forms.DockStyle.Top;
+         this.textBoxCacheSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+         this.textBoxCacheSize.Location = new System.Drawing.Point(24, 271);
+         this.textBoxCacheSize.Margin = new System.Windows.Forms.Padding(4);
+         this.textBoxCacheSize.Name = "textBoxCacheSize";
+         this.textBoxCacheSize.ReadOnly = true;
+         this.textBoxCacheSize.Size = new System.Drawing.Size(254, 34);
+         this.textBoxCacheSize.TabIndex = 49;
+         this.textBoxCacheSize.Text = "...";
+         // 
          // textBoxCacheStatus
          // 
          this.textBoxCacheStatus.Dock = System.Windows.Forms.DockStyle.Top;
@@ -966,6 +978,16 @@
          this.label13.Size = new System.Drawing.Size(125, 17);
          this.label13.TabIndex = 44;
          this.label13.Text = "local cache status:";
+         // 
+         // label14
+         // 
+         this.label14.AutoSize = true;
+         this.label14.Location = new System.Drawing.Point(24, 250);
+         this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+         this.label14.Name = "label14";
+         this.label14.Size = new System.Drawing.Size(112, 17);
+         this.label14.TabIndex = 47;
+         this.label14.Text = "local cache size:";
          // 
          // xPanderPanelInfo
          // 
@@ -1408,28 +1430,6 @@
          this.panel4.Name = "panel4";
          this.panel4.Size = new System.Drawing.Size(1188, 818);
          this.panel4.TabIndex = 44;
-         // 
-         // label14
-         // 
-         this.label14.AutoSize = true;
-         this.label14.Location = new System.Drawing.Point(24, 250);
-         this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-         this.label14.Name = "label14";
-         this.label14.Size = new System.Drawing.Size(112, 17);
-         this.label14.TabIndex = 47;
-         this.label14.Text = "local cache size:";
-         // 
-         // textBoxCacheSize
-         // 
-         this.textBoxCacheSize.Dock = System.Windows.Forms.DockStyle.Top;
-         this.textBoxCacheSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-         this.textBoxCacheSize.Location = new System.Drawing.Point(24, 271);
-         this.textBoxCacheSize.Margin = new System.Windows.Forms.Padding(4);
-         this.textBoxCacheSize.Name = "textBoxCacheSize";
-         this.textBoxCacheSize.ReadOnly = true;
-         this.textBoxCacheSize.Size = new System.Drawing.Size(254, 34);
-         this.textBoxCacheSize.TabIndex = 49;
-         this.textBoxCacheSize.Text = "...";
          // 
          // MainForm
          // 
