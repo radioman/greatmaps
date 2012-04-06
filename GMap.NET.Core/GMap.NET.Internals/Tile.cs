@@ -1,8 +1,10 @@
 ﻿
 namespace GMap.NET.Internals
 {
-   using System.Collections.Generic;
    using System;
+   using System.Collections.Generic;
+   using System.Diagnostics;
+   using System.Threading;
 
    /// <summary>
    /// represent tile
@@ -13,29 +15,45 @@ namespace GMap.NET.Internals
 
       GPoint pos;
       int zoom;
-      public List<PureImage> Overlays;
+      PureImage[] overlays;
+      long OverlaysCount;
+
+      public readonly bool NotEmpty;
 
       public Tile(int zoom, GPoint pos)
       {
+         this.NotEmpty = true;
          this.zoom = zoom;
          this.pos = pos;
-         this.Overlays = new List<PureImage>();
+         this.overlays = null;
+         this.OverlaysCount = 0;
       }
 
-      void Clear()
+      public IEnumerable<PureImage> Overlays
       {
-         if(Overlays != null)
+         get
          {
-            lock(Overlays)
+            for(long i = 0, size = Interlocked.Read(ref OverlaysCount); i < size; i++)
             {
-               foreach(PureImage i in Overlays)
-               {
-                  i.Dispose();
-               }
-
-               Overlays.Clear();
+               yield return overlays[i];
             }
-            Overlays = null;
+         }
+      }
+
+      internal void AddOverlay(PureImage i)
+      {
+         if(overlays == null)
+         {
+            overlays = new PureImage[4];
+         }
+         overlays[Interlocked.Increment(ref OverlaysCount) - 1] = i;
+      }
+
+      internal bool HasAnyOverlays
+      {
+         get
+         {
+            return Interlocked.Read(ref OverlaysCount) > 0;
          }
       }
 
@@ -67,7 +85,17 @@ namespace GMap.NET.Internals
 
       public void Dispose()
       {
-         Clear();
+         if(overlays != null)
+         {
+            for(long i = Interlocked.Read(ref OverlaysCount) - 1; i >= 0; i--)
+            {
+               Interlocked.Decrement(ref OverlaysCount);
+
+               overlays[i].Dispose();
+               overlays[i] = null;
+            }
+            overlays = null;
+         }
       }
 
       #endregion

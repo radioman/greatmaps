@@ -743,33 +743,30 @@ namespace GMap.NET.WindowsPresentation
                   bool found = false;
 
                   Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tilePoint.PosXY);
-                  if(t != Tile.Empty)
+                  if(t.NotEmpty)
                   {
-                     lock(t.Overlays)
+                     foreach(WindowsPresentationImage img in t.Overlays)
                      {
-                        foreach(WindowsPresentationImage img in t.Overlays)
+                        if(img != null && img.Img != null)
                         {
-                           if(img != null && img.Img != null)
+                           if(!found)
+                              found = true;
+
+                           var imgRect = new Rect(Core.tileRect.X + 0.6, Core.tileRect.Y + 0.6, Core.tileRect.Width + 0.6, Core.tileRect.Height + 0.6);
+                           if(!img.IsParent)
                            {
-                              if(!found)
-                                 found = true;
+                              g.DrawImage(img.Img, imgRect);
+                           }
+                           else
+                           {
+                              // TODO: move calculations to loader thread
+                              var geometry = new RectangleGeometry(imgRect);
+                              var parentImgRect = new Rect(Core.tileRect.X - Core.tileRect.Width * img.Xoff + 0.6, Core.tileRect.Y - Core.tileRect.Height * img.Yoff + 0.6, Core.tileRect.Width * img.Ix + 0.6, Core.tileRect.Height * img.Ix + 0.6);
 
-                              var imgRect = new Rect(Core.tileRect.X + 0.6, Core.tileRect.Y + 0.6, Core.tileRect.Width + 0.6, Core.tileRect.Height + 0.6);
-                              if(!img.IsParent)
-                              {
-                                 g.DrawImage(img.Img, imgRect);
-                              }
-                              else
-                              {
-                                 // TODO: move calculations to loader thread
-                                 var geometry = new RectangleGeometry(imgRect);
-                                 var parentImgRect = new Rect(Core.tileRect.X - Core.tileRect.Width * img.Xoff + 0.6, Core.tileRect.Y - Core.tileRect.Height * img.Yoff + 0.6, Core.tileRect.Width * img.Ix + 0.6, Core.tileRect.Height * img.Ix + 0.6);
-
-                                 g.PushClip(geometry);
-                                 g.DrawImage(img.Img, parentImgRect);
-                                 g.Pop();
-                                 geometry = null;
-                              }
+                              g.PushClip(geometry);
+                              g.DrawImage(img.Img, parentImgRect);
+                              g.Pop();
+                              geometry = null;
                            }
                         }
                      }
@@ -781,13 +778,13 @@ namespace GMap.NET.WindowsPresentation
                      Tile parentTile = Tile.Empty;
                      long Ix = 0;
 
-                     while(parentTile == Tile.Empty && zoomOffset < Core.Zoom && zoomOffset <= LevelsKeepInMemmory)
+                     while(!parentTile.NotEmpty && zoomOffset < Core.Zoom && zoomOffset <= LevelsKeepInMemmory)
                      {
                         Ix = (long)Math.Pow(2, zoomOffset);
                         parentTile = Core.Matrix.GetTileWithNoLock(Core.Zoom - zoomOffset++, new GMap.NET.GPoint((int)(tilePoint.PosXY.X / Ix), (int)(tilePoint.PosXY.Y / Ix)));
                      }
 
-                     if(parentTile != Tile.Empty)
+                     if(parentTile.NotEmpty)
                      {
                         long Xoff = Math.Abs(tilePoint.PosXY.X - (parentTile.Pos.X * Ix));
                         long Yoff = Math.Abs(tilePoint.PosXY.Y - (parentTile.Pos.Y * Ix));
@@ -796,7 +793,6 @@ namespace GMap.NET.WindowsPresentation
                         var parentImgRect = new Rect(Core.tileRect.X - Core.tileRect.Width * Xoff + 0.6, Core.tileRect.Y - Core.tileRect.Height * Yoff + 0.6, Core.tileRect.Width * Ix + 0.6, Core.tileRect.Height * Ix + 0.6);
 
                         // render tile 
-                        lock(parentTile.Overlays)
                         {
                            foreach(WindowsPresentationImage img in parentTile.Overlays)
                            {
@@ -1445,7 +1441,7 @@ namespace GMap.NET.WindowsPresentation
                Point p = e.GetPosition(this);
                isSelected = true;
                SelectedArea = RectLatLng.Empty;
-               selectionEnd = PointLatLng.Zero;
+               selectionEnd = PointLatLng.Empty;
                selectionStart = FromLocalToLatLng((int)p.X, (int)p.Y);
             }
          }
@@ -1483,7 +1479,7 @@ namespace GMap.NET.WindowsPresentation
          }
          else
          {
-            if(!selectionEnd.IsZero && !selectionStart.IsZero)
+            if(!selectionEnd.IsEmpty && !selectionStart.IsEmpty)
             {
                if(!SelectedArea.IsEmpty && Keyboard.Modifiers == ModifierKeys.Shift)
                {
@@ -1510,7 +1506,7 @@ namespace GMap.NET.WindowsPresentation
          // wpf generates to many events if mouse is over some visual
          // and OnMouseUp is fired, wtf, anyway...
          // http://greatmaps.codeplex.com/workitem/16013
-         if(e.Timestamp - onMouseUpTimestamp < 55) 
+         if(e.Timestamp - onMouseUpTimestamp < 55)
          {
             Debug.WriteLine("OnMouseMove skipped: " + (e.Timestamp - onMouseUpTimestamp) + "ms");
             return;
@@ -1579,7 +1575,7 @@ namespace GMap.NET.WindowsPresentation
          }
          else
          {
-            if(isSelected && !selectionStart.IsZero && (Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Alt))
+            if(isSelected && !selectionStart.IsEmpty && (Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Alt))
             {
                System.Windows.Point p = e.GetPosition(this);
                selectionEnd = FromLocalToLatLng((int)p.X, (int)p.Y);
@@ -2090,7 +2086,7 @@ namespace GMap.NET.WindowsPresentation
                loadedApp.SessionEnding -= new SessionEndingCancelEventHandler(Current_SessionEnding);
             }
             Core.OnMapClose();
-         }           
+         }
       }
 
       #endregion

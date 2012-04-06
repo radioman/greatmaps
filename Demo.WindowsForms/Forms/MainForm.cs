@@ -72,9 +72,9 @@ namespace Demo.WindowsForms
             // config map 
             MainMap.MapProvider = GMapProviders.OpenStreetMap;
             MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
-            MainMap.MinZoom = 1;
+            MainMap.MinZoom = 0;
             MainMap.MaxZoom = 24;
-            MainMap.Zoom = 9;
+            MainMap.Zoom = 9;   
 
             // map events
             {
@@ -242,6 +242,16 @@ namespace Demo.WindowsForms
                }
             }
          }
+      }
+
+      public void AddMarker(double lat, double lng)
+      {
+         GMapMarker m = new GMarkerGoogle(new PointLatLng(lat, lng), GMarkerGoogleType.blue_small);
+         GMapMarkerRect mBorders = new GMapMarkerRect(m.Position);
+         mBorders.ToolTip = new GMapToolTip(mBorders);
+         objects.Markers.Add(m);
+         objects.Markers.Add(mBorders);
+         MainMap.Position = m.Position;
       }
 
       void MainMap_OnRouteLeave(GMapRoute item)
@@ -1874,6 +1884,9 @@ namespace Demo.WindowsForms
       private void buttonSetStart_Click(object sender, EventArgs e)
       {
          start = currentMarker.Position;
+
+         AddMarker(MainMap.Position.Lat, MainMap.Position.Lng);
+
       }
 
       // set route end

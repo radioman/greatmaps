@@ -877,9 +877,9 @@ namespace GMap.NET.Internals
                try
                {
                   #region -- execute --
-                  var m = Matrix.GetTileWithReadLock(task.Value.Zoom, task.Value.Pos);
 
-                  if(m == Tile.Empty || m.Overlays.Count == 0)
+                  var m = Matrix.GetTileWithReadLock(task.Value.Zoom, task.Value.Pos);
+                  if(!m.NotEmpty)
                   {
                      Debug.WriteLine(ctid + " - try load: " + task);
 
@@ -968,10 +968,8 @@ namespace GMap.NET.Internals
                            if(img != null)
                            {
                               Debug.WriteLine(ctid + " - tile loaded: " + img.Data.Length / 1024 + "KB, " + task);
-
-                              lock(t.Overlays)
                               {
-                                 t.Overlays.Add(img);
+                                 t.AddOverlay(img);
                               }
                               break;
                            }
@@ -1009,7 +1007,7 @@ namespace GMap.NET.Internals
                         while(++retry < RetryLoadTile);
                      }
 
-                     if(t.Overlays.Count > 0 && IsStarted)
+                     if(t.HasAnyOverlays && IsStarted)
                      {
                         Matrix.SetTile(t);
                      }
@@ -1018,6 +1016,7 @@ namespace GMap.NET.Internals
                         t.Dispose();
                      }
                   }
+
                   #endregion
                }
                catch(Exception ex)

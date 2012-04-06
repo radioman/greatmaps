@@ -291,7 +291,7 @@ namespace GMap.NET.WindowsForms
       /// <param name="context">The context.</param>
       protected GMapMarker(SerializationInfo info, StreamingContext context)
       {
-         this.Position = Extensions.GetStruct<PointLatLng>(info, "Position", PointLatLng.Zero);
+         this.Position = Extensions.GetStruct<PointLatLng>(info, "Position", PointLatLng.Empty);
          this.Tag = Extensions.GetValue<object>(info, "Tag", null);
          this.Offset = Extensions.GetStruct<Point>(info, "Offset", Point.Empty);
          this.area = Extensions.GetStruct<Rectangle>(info, "Area", Rectangle.Empty);

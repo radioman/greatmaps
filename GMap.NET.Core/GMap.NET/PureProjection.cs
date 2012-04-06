@@ -116,7 +116,7 @@ namespace GMap.NET
       {
          if(useCache)
          {
-            PointLatLng ret = PointLatLng.Zero;
+            PointLatLng ret = PointLatLng.Empty;
             if(!FromPixelToLatLngCache[zoom].TryGetValue(p, out ret))
             {
                ret = FromPixelToLatLng(p.X, p.Y, zoom);

@@ -106,7 +106,7 @@ namespace GMap.NET.Projections
 
       public override PointLatLng FromPixelToLatLng(long x, long y, int zoom)
       {
-         PointLatLng ret = PointLatLng.Zero;
+         PointLatLng ret = PointLatLng.Empty;
 
          double res = GetTileMatrixResolution(zoom);
 
