@@ -1575,7 +1575,7 @@ namespace GMap.NET.WindowsPresentation
          }
          else
          {
-            if(isSelected && !selectionStart.IsEmpty && (Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Alt))
+            if(isSelected && !selectionStart.IsEmpty && (Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Alt || DisableAltForSelection))
             {
                System.Windows.Point p = e.GetPosition(this);
                selectionEnd = FromLocalToLatLng((int)p.X, (int)p.Y);
@@ -1595,6 +1595,11 @@ namespace GMap.NET.WindowsPresentation
 
          base.OnMouseMove(e);
       }
+
+      /// <summary>
+      /// if true, selects area just by holding mouse and moving
+      /// </summary>
+      public bool DisableAltForSelection = false;
 
       protected override void OnStylusDown(StylusDownEventArgs e)
       {

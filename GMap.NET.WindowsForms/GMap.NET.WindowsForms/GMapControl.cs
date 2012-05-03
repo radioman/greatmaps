@@ -244,6 +244,11 @@ namespace GMap.NET.WindowsForms
       public bool FillEmptyTiles = true;
 
       /// <summary>
+      /// if true, selects area just by holding mouse and moving
+      /// </summary>
+      public bool DisableAltForSelection = false;
+
+      /// <summary>
       /// retry count to get tile 
       /// </summary>
       [Browsable(false)]
@@ -1969,7 +1974,7 @@ namespace GMap.NET.WindowsForms
          else
          {
 #if !PocketPC
-            if(isSelected && !selectionStart.IsEmpty && (Form.ModifierKeys == Keys.Alt || Form.ModifierKeys == Keys.Shift))
+            if(isSelected && !selectionStart.IsEmpty && (Form.ModifierKeys == Keys.Alt || Form.ModifierKeys == Keys.Shift || DisableAltForSelection))
             {
                selectionEnd = FromLocalToLatLng(e.X, e.Y);
                {

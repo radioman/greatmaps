@@ -58,7 +58,7 @@
     </Window.Resources>
     <Grid>
         <GroupBox Name="mapgroup"  Header="gmap" Margin="12,7,241,12" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-            <src:Map x:Name="MainMap" Zoom="13" MaxZoom="17" MinZoom="1" />
+            <src:Map x:Name="MainMap" Zoom="13" MaxZoom="24" MinZoom="1" />
         </GroupBox>
         <GroupBox HorizontalAlignment="Right" Margin="0,7,186,12" VerticalAlignment="Stretch" Header="Zoom">
             <Grid>

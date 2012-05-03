@@ -74,8 +74,8 @@ namespace Demo.WindowsForms
             MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
             MainMap.MinZoom = 0;
             MainMap.MaxZoom = 24;
-            MainMap.Zoom = 9;   
-
+            MainMap.Zoom = 9;
+  
             // map events
             {
                MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);
