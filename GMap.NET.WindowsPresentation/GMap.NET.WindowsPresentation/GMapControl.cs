@@ -1479,6 +1479,11 @@ namespace GMap.NET.WindowsPresentation
          }
          else
          {
+            if(e.ChangedButton == DragButton)
+            {
+               Core.mouseDown = GPoint.Empty;
+            }
+
             if(!selectionEnd.IsEmpty && !selectionStart.IsEmpty)
             {
                if(!SelectedArea.IsEmpty && Keyboard.Modifiers == ModifierKeys.Shift)
@@ -1488,10 +1493,6 @@ namespace GMap.NET.WindowsPresentation
             }
             else
             {
-               if(e.ChangedButton == DragButton)
-               {
-                  Core.mouseDown = GPoint.Empty;
-               }
                InvalidateVisual();
             }
          }

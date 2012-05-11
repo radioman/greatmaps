@@ -75,7 +75,7 @@ namespace Demo.WindowsForms
             MainMap.MinZoom = 0;
             MainMap.MaxZoom = 24;
             MainMap.Zoom = 9;
-  
+
             // map events
             {
                MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);

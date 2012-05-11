@@ -1716,13 +1716,13 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
             if(e.Button == DragButton && CanDragMap)
 #else
-                if (CanDragMap)
+            if (CanDragMap)
 #endif
             {
 #if !PocketPC
                Core.mouseDown = ApplyRotationInversion(e.X, e.Y);
 #else
-                    Core.mouseDown = new GPoint(e.X, e.Y);
+               Core.mouseDown = new GPoint(e.X, e.Y);
 #endif
                this.Invalidate();
             }
@@ -1771,6 +1771,11 @@ namespace GMap.NET.WindowsForms
          else
          {
 #if !PocketPC
+            if(e.Button == DragButton)
+            {
+               Core.mouseDown = GPoint.Empty;
+            }
+
             if(!selectionEnd.IsEmpty && !selectionStart.IsEmpty)
             {
                if(!SelectedArea.IsEmpty && Form.ModifierKeys == Keys.Shift)
@@ -1780,10 +1785,6 @@ namespace GMap.NET.WindowsForms
             }
             else
             {
-               if(e.Button == DragButton)
-               {
-                  Core.mouseDown = GPoint.Empty;
-               }
                Invalidate();
             }
 #endif
