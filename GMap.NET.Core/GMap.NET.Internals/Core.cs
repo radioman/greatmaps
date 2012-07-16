@@ -555,18 +555,25 @@ namespace GMap.NET.Internals
       {
          int zoom = minZoom;
 
-         for(int i = (int)zoom; i <= maxZoom; i++)
+         if(rect.HeightLat == 0 || rect.WidthLng == 0)
          {
-            GPoint p1 = Provider.Projection.FromLatLngToPixel(rect.LocationTopLeft, i);
-            GPoint p2 = Provider.Projection.FromLatLngToPixel(rect.LocationRightBottom, i);
+            zoom = maxZoom / 2;
+         }
+         else
+         {
+            for(int i = (int)zoom; i <= maxZoom; i++)
+            {
+               GPoint p1 = Provider.Projection.FromLatLngToPixel(rect.LocationTopLeft, i);
+               GPoint p2 = Provider.Projection.FromLatLngToPixel(rect.LocationRightBottom, i);
 
-            if(((p2.X - p1.X) <= Width + 10) && (p2.Y - p1.Y) <= Height + 10)
-            {
-               zoom = i;
-            }
-            else
-            {
-               break;
+               if(((p2.X - p1.X) <= Width + 10) && (p2.Y - p1.Y) <= Height + 10)
+               {
+                  zoom = i;
+               }
+               else
+               {
+                  break;
+               }
             }
          }
 
