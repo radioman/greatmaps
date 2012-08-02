@@ -88,6 +88,7 @@
          this.button2 = new System.Windows.Forms.Button();
          this.label13 = new System.Windows.Forms.Label();
          this.label14 = new System.Windows.Forms.Label();
+         this.button17 = new System.Windows.Forms.Button();
          this.xPanderPanelInfo = new BSE.Windows.Forms.XPanderPanel();
          this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
          this.textBoxZoomCurrent = new System.Windows.Forms.TextBox();
@@ -157,7 +158,7 @@
          // 
          // button11
          // 
-         this.button11.Dock = System.Windows.Forms.DockStyle.Top;
+         this.button11.Dock = System.Windows.Forms.DockStyle.Fill;
          this.button11.Location = new System.Drawing.Point(24, 89);
          this.button11.Margin = new System.Windows.Forms.Padding(4);
          this.button11.Name = "button11";
@@ -169,7 +170,7 @@
          // 
          // button10
          // 
-         this.button10.Dock = System.Windows.Forms.DockStyle.Top;
+         this.button10.Dock = System.Windows.Forms.DockStyle.Fill;
          this.button10.Location = new System.Drawing.Point(24, 24);
          this.button10.Margin = new System.Windows.Forms.Padding(4);
          this.button10.Name = "button10";
@@ -181,7 +182,7 @@
          // 
          // button9
          // 
-         this.button9.Dock = System.Windows.Forms.DockStyle.Top;
+         this.button9.Dock = System.Windows.Forms.DockStyle.Fill;
          this.button9.Location = new System.Drawing.Point(24, 57);
          this.button9.Margin = new System.Windows.Forms.Padding(4);
          this.button9.Name = "button9";
@@ -196,7 +197,7 @@
          this.checkBoxUseRouteCache.AutoSize = true;
          this.checkBoxUseRouteCache.Checked = true;
          this.checkBoxUseRouteCache.CheckState = System.Windows.Forms.CheckState.Checked;
-         this.checkBoxUseRouteCache.Location = new System.Drawing.Point(24, 412);
+         this.checkBoxUseRouteCache.Location = new System.Drawing.Point(24, 441);
          this.checkBoxUseRouteCache.Margin = new System.Windows.Forms.Padding(4);
          this.checkBoxUseRouteCache.Name = "checkBoxUseRouteCache";
          this.checkBoxUseRouteCache.Size = new System.Drawing.Size(201, 21);
@@ -874,23 +875,25 @@
          this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
          this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
          this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-         this.tableLayoutPanel1.Controls.Add(this.textBoxCacheSize, 1, 11);
-         this.tableLayoutPanel1.Controls.Add(this.textBoxCacheStatus, 1, 14);
+         this.tableLayoutPanel1.Controls.Add(this.textBoxCacheSize, 1, 12);
+         this.tableLayoutPanel1.Controls.Add(this.textBoxCacheStatus, 1, 15);
          this.tableLayoutPanel1.Controls.Add(this.button10, 1, 1);
-         this.tableLayoutPanel1.Controls.Add(this.textBoxMemory, 1, 8);
-         this.tableLayoutPanel1.Controls.Add(this.checkBoxUseRouteCache, 1, 16);
+         this.tableLayoutPanel1.Controls.Add(this.textBoxMemory, 1, 9);
+         this.tableLayoutPanel1.Controls.Add(this.checkBoxUseRouteCache, 1, 17);
          this.tableLayoutPanel1.Controls.Add(this.button9, 1, 2);
          this.tableLayoutPanel1.Controls.Add(this.button11, 1, 3);
-         this.tableLayoutPanel1.Controls.Add(this.label10, 1, 7);
+         this.tableLayoutPanel1.Controls.Add(this.label10, 1, 8);
          this.tableLayoutPanel1.Controls.Add(this.button2, 1, 5);
-         this.tableLayoutPanel1.Controls.Add(this.label13, 1, 13);
-         this.tableLayoutPanel1.Controls.Add(this.label14, 1, 10);
+         this.tableLayoutPanel1.Controls.Add(this.label13, 1, 14);
+         this.tableLayoutPanel1.Controls.Add(this.label14, 1, 11);
+         this.tableLayoutPanel1.Controls.Add(this.button17, 1, 6);
          this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
          this.tableLayoutPanel1.Location = new System.Drawing.Point(1, 25);
          this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-         this.tableLayoutPanel1.RowCount = 18;
+         this.tableLayoutPanel1.RowCount = 19;
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+         this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
          this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -915,7 +918,7 @@
          // 
          this.textBoxCacheSize.Dock = System.Windows.Forms.DockStyle.Top;
          this.textBoxCacheSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-         this.textBoxCacheSize.Location = new System.Drawing.Point(24, 271);
+         this.textBoxCacheSize.Location = new System.Drawing.Point(24, 300);
          this.textBoxCacheSize.Margin = new System.Windows.Forms.Padding(4);
          this.textBoxCacheSize.Name = "textBoxCacheSize";
          this.textBoxCacheSize.ReadOnly = true;
@@ -927,7 +930,7 @@
          // 
          this.textBoxCacheStatus.Dock = System.Windows.Forms.DockStyle.Top;
          this.textBoxCacheStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-         this.textBoxCacheStatus.Location = new System.Drawing.Point(24, 350);
+         this.textBoxCacheStatus.Location = new System.Drawing.Point(24, 379);
          this.textBoxCacheStatus.Margin = new System.Windows.Forms.Padding(4);
          this.textBoxCacheStatus.Name = "textBoxCacheStatus";
          this.textBoxCacheStatus.ReadOnly = true;
@@ -939,7 +942,7 @@
          // 
          this.textBoxMemory.Dock = System.Windows.Forms.DockStyle.Top;
          this.textBoxMemory.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-         this.textBoxMemory.Location = new System.Drawing.Point(24, 192);
+         this.textBoxMemory.Location = new System.Drawing.Point(24, 221);
          this.textBoxMemory.Margin = new System.Windows.Forms.Padding(4);
          this.textBoxMemory.Name = "textBoxMemory";
          this.textBoxMemory.ReadOnly = true;
@@ -950,7 +953,7 @@
          // label10
          // 
          this.label10.AutoSize = true;
-         this.label10.Location = new System.Drawing.Point(24, 171);
+         this.label10.Location = new System.Drawing.Point(24, 200);
          this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
          this.label10.Name = "label10";
          this.label10.Size = new System.Drawing.Size(147, 17);
@@ -959,7 +962,7 @@
          // 
          // button2
          // 
-         this.button2.Dock = System.Windows.Forms.DockStyle.Top;
+         this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
          this.button2.Location = new System.Drawing.Point(24, 122);
          this.button2.Margin = new System.Windows.Forms.Padding(4);
          this.button2.Name = "button2";
@@ -972,7 +975,7 @@
          // label13
          // 
          this.label13.AutoSize = true;
-         this.label13.Location = new System.Drawing.Point(24, 329);
+         this.label13.Location = new System.Drawing.Point(24, 358);
          this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
          this.label13.Name = "label13";
          this.label13.Size = new System.Drawing.Size(125, 17);
@@ -982,12 +985,23 @@
          // label14
          // 
          this.label14.AutoSize = true;
-         this.label14.Location = new System.Drawing.Point(24, 250);
+         this.label14.Location = new System.Drawing.Point(24, 279);
          this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
          this.label14.Name = "label14";
          this.label14.Size = new System.Drawing.Size(112, 17);
          this.label14.TabIndex = 47;
          this.label14.Text = "local cache size:";
+         // 
+         // button17
+         // 
+         this.button17.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.button17.Location = new System.Drawing.Point(23, 154);
+         this.button17.Name = "button17";
+         this.button17.Size = new System.Drawing.Size(256, 23);
+         this.button17.TabIndex = 50;
+         this.button17.Text = "Open cache location";
+         this.button17.UseVisualStyleBackColor = true;
+         this.button17.Click += new System.EventHandler(this.button17_Click);
          // 
          // xPanderPanelInfo
          // 
@@ -1568,6 +1582,7 @@
       private System.Windows.Forms.Label label13;
       private System.Windows.Forms.Label label14;
       private System.Windows.Forms.TextBox textBoxCacheSize;
+      private System.Windows.Forms.Button button17;
    }
 }
 

@@ -254,18 +254,6 @@ namespace Demo.WindowsForms
          MainMap.Position = m.Position;
       }
 
-      void MainMap_OnRouteLeave(GMapRoute item)
-      {
-         item.Stroke.Color = Color.MidnightBlue;
-         Debug.WriteLine("OnRouteLeave: " + item.Name);
-      }
-
-      void MainMap_OnRouteEnter(GMapRoute item)
-      {
-         item.Stroke.Color = Color.Red;
-         Debug.WriteLine("OnRouteEnter: " + item.Name);
-      }
-
       public T DeepClone<T>(T obj)
       {
          using(var ms = new System.IO.MemoryStream())
@@ -1434,16 +1422,34 @@ namespace Demo.WindowsForms
          }
       }
 
+      GMapPolygon currentPolygon = null;
       void MainMap_OnPolygonLeave(GMapPolygon item)
       {
+         currentPolygon = null;
          item.Stroke.Color = Color.MidnightBlue;
          Debug.WriteLine("OnPolygonLeave: " + item.Name);
       }
 
       void MainMap_OnPolygonEnter(GMapPolygon item)
       {
+         currentPolygon = item;
          item.Stroke.Color = Color.Red;
          Debug.WriteLine("OnPolygonEnter: " + item.Name);
+      }
+
+      GMapRoute currentRoute = null;
+      void MainMap_OnRouteLeave(GMapRoute item)
+      {
+         currentRoute = null;
+         item.Stroke.Color = Color.MidnightBlue;
+         Debug.WriteLine("OnRouteLeave: " + item.Name);
+      }
+
+      void MainMap_OnRouteEnter(GMapRoute item)
+      {
+         currentRoute = item;
+         item.Stroke.Color = Color.Red;
+         Debug.WriteLine("OnRouteEnter: " + item.Name);
       }
 
       void MainMap_OnMapTypeChanged(GMapProvider type)
@@ -1634,7 +1640,7 @@ namespace Demo.WindowsForms
          {
             MainMap.ZoomAndCenterMarkers(null);
          }
-         trackBar1.Value = (int)MainMap.Zoom * 100; 
+         trackBar1.Value = (int)MainMap.Zoom * 100;
          Activate();
       }
       #endregion
@@ -1757,7 +1763,7 @@ namespace Demo.WindowsForms
          MainMap.Manager.UseRouteCache = checkBoxUseRouteCache.Checked;
          MainMap.Manager.UseGeocoderCache = checkBoxUseRouteCache.Checked;
          MainMap.Manager.UsePlacemarkCache = checkBoxUseRouteCache.Checked;
-         MainMap.Manager.UseDirectionsCache = checkBoxUseRouteCache.Checked;         
+         MainMap.Manager.UseDirectionsCache = checkBoxUseRouteCache.Checked;
       }
 
       // clear cache
@@ -1884,9 +1890,6 @@ namespace Demo.WindowsForms
       private void buttonSetStart_Click(object sender, EventArgs e)
       {
          start = currentMarker.Position;
-
-         AddMarker(MainMap.Position.Lat, MainMap.Position.Lng);
-
       }
 
       // set route end
@@ -2048,6 +2051,18 @@ namespace Demo.WindowsForms
          }
          else if(e.KeyCode == Keys.Delete)
          {
+            if(currentPolygon != null)
+            {
+               polygons.Polygons.Remove(currentPolygon);
+               currentPolygon = null;
+            }
+
+            if(currentRoute != null)
+            {
+               routes.Routes.Remove(currentRoute);
+               currentRoute = null;
+            }
+
             if(CurentRectMarker != null)
             {
                objects.Markers.Remove(CurentRectMarker);
@@ -2319,5 +2334,18 @@ namespace Demo.WindowsForms
       }
 
       #endregion
+
+      private void button17_Click(object sender, EventArgs e)
+      {
+         try
+         {
+            string argument = "/select, \"" + MainMap.CacheLocation + "TileDBv5\"";
+            System.Diagnostics.Process.Start("explorer.exe", argument);
+         }
+         catch(Exception ex)
+         {
+            MessageBox.Show("Failed to open: " + ex.Message, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Error);
+         }
+      }
    }
 }

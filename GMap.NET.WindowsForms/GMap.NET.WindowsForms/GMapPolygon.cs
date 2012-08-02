@@ -73,6 +73,7 @@ namespace GMap.NET.WindowsForms
          internal set
          {
             isMouseOver = value;
+            Overlay.Control.IsMouseOverPolygon = value; 
          }
       }
 

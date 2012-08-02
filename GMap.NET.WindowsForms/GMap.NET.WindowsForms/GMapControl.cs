@@ -1805,6 +1805,8 @@ namespace GMap.NET.WindowsForms
                   {
                      if(m.IsVisible && m.IsHitTestVisible)
                      {
+                        #region -- check --
+
                         if((MobileMode && m.LocalArea.Contains(e.X, e.Y)) || (!MobileMode && m.LocalAreaInControlSpace.Contains(e.X, e.Y)))
                         {
                            if(OnMarkerClick != null)
@@ -1812,7 +1814,9 @@ namespace GMap.NET.WindowsForms
                               OnMarkerClick(m, e);
                            }
                            break;
-                        }
+                        } 
+
+                        #endregion
                      }
                   }
 
@@ -1924,7 +1928,7 @@ namespace GMap.NET.WindowsForms
          if(!Core.IsDragging && !Core.mouseDown.IsEmpty)
          {
 #if PocketPC
-                GPoint p = new GPoint(e.X, e.Y);
+            GPoint p = new GPoint(e.X, e.Y);
 #else
             GPoint p = ApplyRotationInversion(e.X, e.Y);
 #endif
@@ -1956,7 +1960,7 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
                Core.mouseCurrent = ApplyRotationInversion(e.X, e.Y);
 #else
-                    Core.mouseCurrent = new GPoint(e.X, e.Y);
+               Core.mouseCurrent = new GPoint(e.X, e.Y);
 #endif
                Core.Drag(Core.mouseCurrent);
 
@@ -1966,7 +1970,7 @@ namespace GMap.NET.WindowsForms
                   ForceUpdateOverlays();
                }
 #else
-                    ForceUpdateOverlays();
+               ForceUpdateOverlays();
 #endif
 
                base.Invalidate();
@@ -2007,14 +2011,13 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
                               if((MobileMode && m.LocalArea.Contains(e.X, e.Y)) || (!MobileMode && m.LocalAreaInControlSpace.Contains(e.X, e.Y)))
 #else
-                                    if (m.LocalArea.Contains(e.X, e.Y))
+                              if (m.LocalArea.Contains(e.X, e.Y))
 #endif
                               {
                                  if(!m.IsMouseOver)
                                  {
 #if !PocketPC
-                                    cursorBefore = this.Cursor;
-                                    this.Cursor = Cursors.Hand;
+                                    SetCursorHandOnEnter();
 #endif
                                     m.IsMouseOver = true;
 
@@ -2029,8 +2032,7 @@ namespace GMap.NET.WindowsForms
                               else if(m.IsMouseOver)
                               {
 #if !PocketPC
-                                 this.Cursor = this.cursorBefore;
-                                 cursorBefore = null;
+                                 RestoreCursorOnLeave();
 #endif
                                  m.IsMouseOver = false;
 
@@ -2064,8 +2066,7 @@ namespace GMap.NET.WindowsForms
                                  if(!m.IsMouseOver)
                                  {
 #if !PocketPC
-                                    cursorBefore = this.Cursor;
-                                    this.Cursor = Cursors.Hand;
+                                    SetCursorHandOnEnter();
 #endif
                                     m.IsMouseOver = true;
 
@@ -2082,8 +2083,7 @@ namespace GMap.NET.WindowsForms
                                  if(m.IsMouseOver)
                                  {
 #if !PocketPC
-                                    this.Cursor = this.cursorBefore;
-                                    cursorBefore = null;
+                                    RestoreCursorOnLeave();
 #endif
                                     m.IsMouseOver = false;
 
@@ -2110,8 +2110,7 @@ namespace GMap.NET.WindowsForms
                                  if(!m.IsMouseOver)
                                  {
 #if !PocketPC
-                                    cursorBefore = this.Cursor;
-                                    this.Cursor = Cursors.Hand;
+                                    SetCursorHandOnEnter();
 #endif
                                     m.IsMouseOver = true;
 
@@ -2128,8 +2127,7 @@ namespace GMap.NET.WindowsForms
                                  if(m.IsMouseOver)
                                  {
 #if !PocketPC
-                                    this.Cursor = this.cursorBefore;
-                                    cursorBefore = null;
+                                    RestoreCursorOnLeave();
 #endif
                                     m.IsMouseOver = false;
 
@@ -2152,6 +2150,21 @@ namespace GMap.NET.WindowsForms
       }
 
 #if !PocketPC
+
+      internal void RestoreCursorOnLeave()
+      {
+         if(cursorBefore != null)
+         {
+            this.Cursor = this.cursorBefore;
+            cursorBefore = null;
+         }
+      }
+
+      internal void SetCursorHandOnEnter()
+      {
+         cursorBefore = this.Cursor;
+         this.Cursor = Cursors.Hand;
+      }
 
       /// <summary>
       /// prevents focusing map if mouse enters it's area
@@ -2604,6 +2617,44 @@ namespace GMap.NET.WindowsForms
          internal set
          {
             isMouseOverMarker = value;
+         }
+      }
+
+      bool isMouseOverRoute;
+
+      /// <summary>
+      /// is mouse over route
+      /// </summary>
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      [Browsable(false)]
+      public bool IsMouseOverRoute
+      {
+         get
+         {
+            return isMouseOverRoute;
+         }
+         internal set
+         {
+            isMouseOverRoute = value;
+         }
+      }
+
+      bool isMouseOverPolygon;
+
+      /// <summary>
+      /// is mouse over polygon
+      /// </summary>
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      [Browsable(false)]
+      public bool IsMouseOverPolygon
+      {
+         get
+         {
+            return isMouseOverPolygon;
+         }
+         internal set
+         {
+            isMouseOverPolygon = value;
          }
       }
 

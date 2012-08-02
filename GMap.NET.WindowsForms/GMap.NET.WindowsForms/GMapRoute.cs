@@ -86,6 +86,7 @@ namespace GMap.NET.WindowsForms
             internal set
             {
                 isMouseOver = value;
+                Overlay.Control.IsMouseOverRoute = value;
             }
         }
 

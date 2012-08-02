@@ -46,7 +46,7 @@ namespace GMap.NET.WindowsForms
                   {
                      if(!Control.HoldInvalidation)
                      {
-                        Control.Core.Refresh.Set();
+                        Control.Invalidate();
                      }
                   }
                }
@@ -138,9 +138,20 @@ namespace GMap.NET.WindowsForms
 
          if(Control != null)
          {
+            if(e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Reset)
+            {
+               if(Control.IsMouseOverPolygon)
+               {
+                  Control.IsMouseOverPolygon = false;
+#if !PocketPC
+                  Control.RestoreCursorOnLeave();
+#endif
+               }
+            }
+
             if(!Control.HoldInvalidation)
             {
-               Control.Core.Refresh.Set();
+               Control.Invalidate();
             }
          }
       }
@@ -164,9 +175,20 @@ namespace GMap.NET.WindowsForms
 
          if(Control != null)
          {
+            if(e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Reset)
+            {
+               if(Control.IsMouseOverRoute)
+               {
+                  Control.IsMouseOverRoute = false;
+#if !PocketPC
+                  Control.RestoreCursorOnLeave();
+#endif
+               }
+            }
+
             if(!Control.HoldInvalidation)
             {
-               Control.Core.Refresh.Set();
+               Control.Invalidate();
             }
          }
       }
@@ -196,14 +218,14 @@ namespace GMap.NET.WindowsForms
                {
                   Control.IsMouseOverMarker = false;
 #if !PocketPC
-                  Control.Cursor = Cursors.Default;
+                  Control.RestoreCursorOnLeave();
 #endif
                }
             }
 
             if(!Control.HoldInvalidation)
             {
-               Control.Core.Refresh.Set();
+               Control.Invalidate();
             }
          }
       }
