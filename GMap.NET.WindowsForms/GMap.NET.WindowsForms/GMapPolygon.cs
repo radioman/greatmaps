@@ -73,7 +73,7 @@ namespace GMap.NET.WindowsForms
          internal set
          {
             isMouseOver = value;
-            Overlay.Control.IsMouseOverPolygon = value; 
+            Overlay.Control.IsMouseOverPolygon = value;
          }
       }
 
@@ -193,54 +193,30 @@ namespace GMap.NET.WindowsForms
       /// <returns></returns>
       public bool IsInside(PointLatLng p)
       {
-         if(Points.Count < 3)
+         int count = Points.Count;
+
+         if(count < 3)
          {
             return false;
          }
 
-         int x = 0;
-         int valor = 0;
+         bool result = false;
 
-         while(x + 1 < Points.Count)
+         for(int i = 0, j = count - 1; i < count; i++)
          {
-            if(IsOnRigth(Points[x], Points[x + 1], p))
+            var p1 = Points[i];
+            var p2 = Points[j];
+
+            if(p1.Lat < p.Lat && p2.Lat >= p.Lat || p2.Lat < p.Lat && p1.Lat >= p.Lat)
             {
-               valor++;
+               if(p1.Lng + (p.Lat - p1.Lat) / (p2.Lat - p1.Lat) * (p2.Lng - p1.Lng) < p.Lng)
+               {
+                  result = !result;
+               }
             }
-            x++;
+            j = i;
          }
-
-         if(From != To)
-         {
-            if(IsOnRigth(To.Value, From.Value, p))
-            {
-               valor++;
-            }
-         }
-
-         //si es impar entonces esta dentro de punto. 
-         if((valor % 2) != 0)
-         {
-            return true;
-         }
-         return false;
-      }
-
-      static bool IsOnRigth(PointLatLng PolyPointA, PointLatLng PolyPointB, PointLatLng point)
-      {
-         //Si el punto esta entre la Lat de los dos puntos
-         if((PolyPointA.Lat >= point.Lat && PolyPointB.Lat <= point.Lat) || (PolyPointB.Lat >= point.Lat && PolyPointA.Lat <= point.Lat))
-         {
-            double M = (PolyPointA.Lat - PolyPointB.Lat) / (PolyPointA.Lng - PolyPointB.Lng);
-            double LngInFunction = ((point.Lat - PolyPointA.Lat) / M) + PolyPointA.Lng;
-
-            //si esta a la derecha, sumo uno, sino no hago nada. 
-            if(LngInFunction <= point.Lng)
-            {
-               return true;
-            }
-         }
-         return false;
+         return result;
       }
 
 #if !PocketPC
