@@ -40,6 +40,18 @@
             An array of ISO8601 datetime formats we support conversion from
             </summary>
         </member>
+        <member name="F:System.Data.SQLite.SQLiteConvert._datetimeFormatUtc">
+            <summary>
+            The internal default format for UTC DateTime values when converting
+            to a string.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteConvert._datetimeFormatLocal">
+            <summary>
+            The internal default format for local DateTime values when converting
+            to a string.
+            </summary>
+        </member>
         <member name="F:System.Data.SQLite.SQLiteConvert._utf8">
             <summary>
             An UTF-8 Encoding instance, so we can convert strings to and from UTF-8
@@ -214,6 +226,24 @@
             <param name="value">The DateTime to convert</param>
             <returns>The JulianDay value the Datetime represents</returns>
         </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.ToUnixEpoch(System.DateTime)">
+            <summary>
+            Converts a DateTime struct to the whole number of seconds since the
+            Unix epoch.
+            </summary>
+            <param name="value">The DateTime to convert</param>
+            <returns>The whole number of seconds since the Unix epoch</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConvert.GetDateTimeKindFormat(System.DateTimeKind)">
+            <summary>
+            Returns the default DateTime format string to use for the specified
+            DateTimeKind.
+            </summary>
+            <param name="kind">The DateTimeKind to use.</param>
+            <returns>
+            The default DateTime format string to use for the specified DateTimeKind.
+            </returns>
+        </member>
         <member name="M:System.Data.SQLite.SQLiteConvert.ToString(System.DateTime)">
             <summary>
             Converts a DateTime to a string value, using the current DateTimeFormat specified for the connection when it was opened.
@@ -341,7 +371,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteBase.Open(System.String,System.Data.SQLite.SQLiteOpenFlagsEnum,System.Int32,System.Boolean)">
+        <member name="M:System.Data.SQLite.SQLiteBase.Open(System.String,System.Data.SQLite.SQLiteConnectionFlags,System.Data.SQLite.SQLiteOpenFlagsEnum,System.Int32,System.Boolean)">
             <summary>
             Opens a database.
             </summary>
@@ -350,7 +380,8 @@
             to bind all attributed user-defined functions and collating sequences to the new connection.
             </remarks>
             <param name="strFilename">The filename of the database to open.  SQLite automatically creates it if it doesn't exist.</param>
-            <param name="flags">The open flags to use when creating the connection</param>
+            <param name="connectionFlags">The flags associated with the parent connection object</param>
+            <param name="openFlags">The open flags to use when creating the connection</param>
             <param name="maxPoolSize">The maximum size of the pool for the given filename</param>
             <param name="usePool">If true, the connection can be pulled from the connection pool</param>
         </member>
@@ -369,7 +400,7 @@
             </summary>
             <param name="nTimeoutMS">The number of milliseconds to wait before returning SQLITE_BUSY</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteBase.SQLiteLastError">
+        <member name="M:System.Data.SQLite.SQLiteBase.GetLastError">
             <summary>
             Returns the text of the last error issued by SQLite
             </summary>
@@ -379,6 +410,12 @@
             <summary>
             When pooling is enabled, force this connection to be disposed rather than returned to the pool
             </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBase.CountPool">
+            <summary>
+            When pooling is enabled, returns the number of pool entries matching the current file name.
+            </summary>
+            <returns>The number of pool entries matching the current file name.</returns>
         </member>
         <member name="M:System.Data.SQLite.SQLiteBase.Prepare(System.Data.SQLite.SQLiteConnection,System.String,System.Data.SQLite.SQLiteStatement,System.UInt32,System.String@)">
             <summary>
@@ -438,6 +475,59 @@
             interface, this should be pre-formatted.  Consider using the 
             String.Format() function.</param>
             <returns></returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBase.InitializeBackup(System.Data.SQLite.SQLiteConnection,System.String,System.String)">
+            <summary>
+            Creates a new SQLite backup object based on the provided destination
+            database connection.  The source database connection is the one
+            associated with this object.  The source and destination database
+            connections cannot be the same.
+            </summary>
+            <param name="destCnn">The destination database connection.</param>
+            <param name="destName">The destination database name.</param>
+            <param name="sourceName">The source database name.</param>
+            <returns>The newly created backup object.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBase.StepBackup(System.Data.SQLite.SQLiteBackup,System.Int32,System.Boolean@)">
+            <summary>
+            Copies up to N pages from the source database to the destination
+            database associated with the specified backup object.
+            </summary>
+            <param name="backup">The backup object to use.</param>
+            <param name="nPage">
+            The number of pages to copy or negative to copy all remaining pages.
+            </param>
+            <param name="retry">
+            Set to true if the operation needs to be retried due to database
+            locking issues.
+            </param>
+            <returns>
+            True if there are more pages to be copied, false otherwise.
+            </returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBase.RemainingBackup(System.Data.SQLite.SQLiteBackup)">
+            <summary>
+            Returns the number of pages remaining to be copied from the source
+            database to the destination database associated with the specified
+            backup object.
+            </summary>
+            <param name="backup">The backup object to check.</param>
+            <returns>The number of pages remaining to be copied.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBase.PageCountBackup(System.Data.SQLite.SQLiteBackup)">
+            <summary>
+            Returns the total number of pages in the source database associated
+            with the specified backup object.
+            </summary>
+            <param name="backup">The backup object to check.</param>
+            <returns>The total number of pages in the source database.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBase.FinishBackup(System.Data.SQLite.SQLiteBackup)">
+            <summary>
+            Destroys the backup object, rolling back any backup that may be in
+            progess.
+            </summary>
+            <param name="backup">The backup object to destroy.</param>
         </member>
         <member name="P:System.Data.SQLite.SQLiteBase.Version">
             <summary>
@@ -502,6 +592,59 @@
             <param name="func">The callback function to invoke.</param>
             <returns>Returns a result code</returns>
         </member>
+        <member name="M:System.Data.SQLite.SQLite3.InitializeBackup(System.Data.SQLite.SQLiteConnection,System.String,System.String)">
+            <summary>
+            Creates a new SQLite backup object based on the provided destination
+            database connection.  The source database connection is the one
+            associated with this object.  The source and destination database
+            connections cannot be the same.
+            </summary>
+            <param name="destCnn">The destination database connection.</param>
+            <param name="destName">The destination database name.</param>
+            <param name="sourceName">The source database name.</param>
+            <returns>The newly created backup object.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLite3.StepBackup(System.Data.SQLite.SQLiteBackup,System.Int32,System.Boolean@)">
+            <summary>
+            Copies up to N pages from the source database to the destination
+            database associated with the specified backup object.
+            </summary>
+            <param name="backup">The backup object to use.</param>
+            <param name="nPage">
+            The number of pages to copy, negative to copy all remaining pages.
+            </param>
+            <param name="retry">
+            Set to true if the operation needs to be retried due to database
+            locking issues; otherwise, set to false.
+            </param>
+            <returns>
+            True if there are more pages to be copied, false otherwise.
+            </returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLite3.RemainingBackup(System.Data.SQLite.SQLiteBackup)">
+            <summary>
+            Returns the number of pages remaining to be copied from the source
+            database to the destination database associated with the specified
+            backup object.
+            </summary>
+            <param name="backup">The backup object to check.</param>
+            <returns>The number of pages remaining to be copied.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLite3.PageCountBackup(System.Data.SQLite.SQLiteBackup)">
+            <summary>
+            Returns the total number of pages in the source database associated
+            with the specified backup object.
+            </summary>
+            <param name="backup">The backup object to check.</param>
+            <returns>The total number of pages in the source database.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLite3.FinishBackup(System.Data.SQLite.SQLiteBackup)">
+            <summary>
+            Destroys the backup object, rolling back any backup that may be in
+            progess.
+            </summary>
+            <param name="backup">The backup object to destroy.</param>
+        </member>
         <member name="M:System.Data.SQLite.SQLite3.IsInitialized">
             <summary>
             Determines if the SQLite core library has been initialized for the
@@ -544,6 +687,65 @@
             <param name="nbytelen">The length (IN BYTES) of the string</param>
             <returns>A .NET string</returns>
         </member>
+        <member name="T:System.Data.SQLite.SQLiteBackup">
+            <summary>
+            Represents a single SQL backup in SQLite.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteBackup._sql">
+            <summary>
+            The underlying SQLite object this backup is bound to.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteBackup._sqlite_backup">
+            <summary>
+            The actual backup handle.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteBackup._destDb">
+            <summary>
+            The destination database for the backup.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteBackup._zDestName">
+            <summary>
+            The destination database name for the backup.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteBackup._sourceDb">
+            <summary>
+            The source database for the backup.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteBackup._zSourceName">
+            <summary>
+            The source database name for the backup.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteBackup._stepResult">
+            <summary>
+            The last result from the StepBackup method of the SQLite3 class.
+            This is used to determine if the call to the FinishBackup method of
+            the SQLite3 class should throw an exception when it receives a non-Ok
+            return code from the core SQLite library.
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBackup.#ctor(System.Data.SQLite.SQLiteBase,System.Data.SQLite.SQLiteBackupHandle,System.IntPtr,System.Byte[],System.IntPtr,System.Byte[])">
+            <summary>
+            Initializes the backup.
+            </summary>
+            <param name="sqlbase">The base SQLite object.</param>
+            <param name="backup">The backup handle.</param>
+            <param name="destDb">The destination database for the backup.</param>
+            <param name="zDestName">The destination database name for the backup.</param>
+            <param name="sourceDb">The source database for the backup.</param>
+            <param name="zSourceName">The source database name for the backup.</param>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteBackup.Dispose">
+            <summary>
+            Disposes and finalizes the backup.
+            </summary>
+        </member>
         <member name="T:System.Data.SQLite.SQLiteConnectionFlags">
             <summary>
             The extra behavioral flags that can be applied to a connection.
@@ -557,6 +759,32 @@
         <member name="F:System.Data.SQLite.SQLiteConnectionFlags.LogPrepare">
             <summary>
             Enable logging of all SQL statements to be prepared.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteConnectionFlags.LogPreBind">
+            <summary>
+            Enable logging of all bound parameter types and raw values.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteConnectionFlags.LogBind">
+            <summary>
+            Enable logging of all bound parameter strongly typed values.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteConnectionFlags.LogCallbackException">
+            <summary>
+            Enable logging of all exceptions caught from user-provided
+            managed code called from native code via delegates.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteConnectionFlags.LogBackup">
+            <summary>
+            Enable logging of backup API errors.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteConnectionFlags.LogAll">
+            <summary>
+            Enable all logging.
             </summary>
         </member>
         <member name="F:System.Data.SQLite.SQLiteConnectionFlags.Default">
@@ -1026,7 +1254,7 @@
             </item>
             <item>
             <description>Password</description>
-            <description>{password}</description>
+            <description>{password} - Using this parameter requires that the CryptoAPI based codec be enabled at compile-time for both the native interop assembly and the core managed assemblies; otherwise, using this parameter may result in an exception being thrown when attempting to open the connection.</description>
             <description>N</description>
             <description></description>
             </item>
@@ -1188,9 +1416,30 @@
             </summary>
             <param name="connection"></param>
         </member>
+        <member name="M:System.Data.SQLite.SQLiteConnection.BackupDatabase(System.Data.SQLite.SQLiteConnection,System.String,System.String,System.Int32,System.Data.SQLite.SQLiteBackupCallback,System.Int32)">
+            <summary>
+            Backs up the database, using the specified database connection as the
+            destination.
+            </summary>
+            <param name="destination">The destination database connection.</param>
+            <param name="destinationName">The destination database name.</param>
+            <param name="sourceName">The source database name.</param>
+            <param name="pages">
+            The number of pages to copy or negative to copy all remaining pages.
+            </param>
+            <param name="callback">
+            The method to invoke between each step of the backup process.  This
+            parameter may be null (i.e. no callbacks will be performed).
+            </param>
+            <param name="retryMilliseconds">
+            The number of milliseconds to sleep after encountering a locking error
+            during the backup process.  A value less than zero means that no sleep
+            should be performed.
+            </param>
+        </member>
         <member name="M:System.Data.SQLite.SQLiteConnection.Clone">
             <summary>
-            Creates a clone of the connection.  All attached databases and user-defined functions are cloned.  If the existing connection is open, the cloned connection 
+            Creates a clone of the connection.  All attached databases and user-defined functions are cloned.  If the existing connection is open, the cloned connection
             will also be opened.
             </summary>
             <returns></returns>
@@ -1214,7 +1463,7 @@
             </summary>
             <param name="isolationLevel">This parameter is ignored.</param>
             <param name="deferredLock">When TRUE, SQLite defers obtaining a write lock until a write operation is requested.
-            When FALSE, a writelock is obtained immediately.  The default is TRUE, but in a multi-threaded multi-writer 
+            When FALSE, a writelock is obtained immediately.  The default is TRUE, but in a multi-threaded multi-writer
             environment, one may instead choose to lock the database immediately to avoid any possible writer deadlock.</param>
             <returns>Returns a SQLiteTransaction object.</returns>
         </member>
@@ -1223,7 +1472,7 @@
             OBSOLETE.  Creates a new SQLiteTransaction if one isn't already active on the connection.
             </summary>
             <param name="deferredLock">When TRUE, SQLite defers obtaining a write lock until a write operation is requested.
-            When FALSE, a writelock is obtained immediately.  The default is false, but in a multi-threaded multi-writer 
+            When FALSE, a writelock is obtained immediately.  The default is false, but in a multi-threaded multi-writer
             environment, one may instead choose to lock the database immediately to avoid any possible writer deadlock.</param>
             <returns>Returns a SQLiteTransaction object.</returns>
         </member>
@@ -1233,7 +1482,7 @@
             </summary>
             <param name="isolationLevel">Supported isolation levels are Serializable, ReadCommitted and Unspecified.</param>
             <remarks>
-            Unspecified will use the default isolation level specified in the connection string.  If no isolation level is specified in the 
+            Unspecified will use the default isolation level specified in the connection string.  If no isolation level is specified in the
             connection string, Serializable is used.
             Serializable transactions are the default.  In this mode, the engine gets an immediate lock on the database, and no other threads
             may begin a transaction.  Other threads may read from the database, but not write.
@@ -1311,6 +1560,12 @@
             <summary>
             Opens the connection using the parameters found in the <see cref="P:System.Data.SQLite.SQLiteConnection.ConnectionString">ConnectionString</see>
             </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConnection.OpenAndReturn">
+            <summary>
+            Opens the connection using the parameters found in the <see cref="P:System.Data.SQLite.SQLiteConnection.ConnectionString">ConnectionString</see> and then returns it.
+            </summary>
+            <returns>The current connection object.</returns>
         </member>
         <member name="M:System.Data.SQLite.SQLiteConnection.Shutdown">
             Passes a shutdown request off to SQLite.
@@ -1529,6 +1784,11 @@
             Obsolete
             </summary>
         </member>
+        <member name="P:System.Data.SQLite.SQLiteConnection.PoolCount">
+            <summary>
+            Returns the number of pool entries for the file name associated with this connection.
+            </summary>
+        </member>
         <member name="P:System.Data.SQLite.SQLiteConnection.ConnectionString">
             <summary>
             The connection string containing the parameters for the connection
@@ -1670,7 +1930,7 @@
         </member>
         <member name="P:System.Data.SQLite.SQLiteConnection.DefaultTimeout">
             <summary>
-            Gets/sets the default command timeout for newly-created commands.  This is especially useful for 
+            Gets/sets the default command timeout for newly-created commands.  This is especially useful for
             commands used internally such as inside a SQLiteTransaction, where setting the timeout is not possible.
             This can also be set in the ConnectionString with "Default Timeout"
             </summary>
@@ -1705,6 +1965,13 @@
         <member name="P:System.Data.SQLite.SQLiteConnection.MemoryHighwater">
             <summary>
             Returns the maximum amount of memory (in bytes) used by the SQLite core library since the high-water mark was last reset.
+            </summary>
+        </member>
+        <member name="P:System.Data.SQLite.SQLiteConnection.DefineConstants">
+            <summary>
+            Returns a string containing the define constants (i.e. compile-time
+            options) used to compile the core managed assembly, delimited with
+            spaces.
             </summary>
         </member>
         <member name="P:System.Data.SQLite.SQLiteConnection.SQLiteVersion">
@@ -1770,7 +2037,7 @@
         </member>
         <member name="T:System.Data.SQLite.SQLiteCommitHandler">
             <summary>
-            Raised when a transaction is about to be committed.  To roll back a transaction, set the 
+            Raised when a transaction is about to be committed.  To roll back a transaction, set the
             rollbackTrans boolean value to true.
             </summary>
             <param name="sender">The connection committing the transaction</param>
@@ -1789,6 +2056,40 @@
             </summary>
             <param name="sender">The connection executing the statement</param>
             <param name="e">Event arguments of the trace</param>
+        </member>
+        <member name="T:System.Data.SQLite.SQLiteBackupCallback">
+            <summary>
+            Raised between each backup step.
+            </summary>
+            <param name="source">
+            The source database connection.
+            </param>
+            <param name="sourceName">
+            The source database name.
+            </param>
+            <param name="destination">
+            The destination database connection.
+            </param>
+            <param name="destinationName">
+            The destination database name.
+            </param>
+            <param name="pages">
+            The number of pages copied with each step.
+            </param>
+            <param name="remainingPages">
+            The number of pages remaining to be copied.
+            </param>
+            <param name="totalPages">
+            The total number of pages in the source database.
+            </param>
+            <param name="retry">
+            Set to true if the operation needs to be retried due to database
+            locking issues; otherwise, set to false.
+            </param>
+            <returns>
+            True to continue with the backup process or false to halt the backup
+            process, rolling back any changes that have been made so far.
+            </returns>
         </member>
         <member name="T:System.Data.SQLite.UpdateEventType">
             <summary>
@@ -1866,6 +2167,28 @@
             <summary>
             The default version number new pools will get
             </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteConnectionPool._poolOpened">
+            <summary>
+            The number of connections successfully opened from any pool.
+            This value is incremented by the Remove method.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteConnectionPool._poolClosed">
+            <summary>
+            The number of connections successfully closed from any pool.
+            This value is incremented by the Add method.
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteConnectionPool.GetCounts(System.String,System.Collections.Generic.Dictionary{System.String,System.Int32}@,System.Int32@,System.Int32@,System.Int32@)">
+            <summary>
+            Counts the number of pool entries matching the specified file name.
+            </summary>
+            <param name="fileName">The file name to match or null to match all files.</param>
+            <param name="counts">The pool entry counts for each matching file.</param>
+            <param name="openCount">The total number of connections successfully opened from any pool.</param>
+            <param name="closeCount">The total number of connections successfully closed from any pool.</param>
+            <param name="totalCount">The total number of pool entries for all matching files.</param>
         </member>
         <member name="M:System.Data.SQLite.SQLiteConnectionPool.Remove(System.String,System.Int32,System.Int32@)">
             <summary>
@@ -2441,6 +2764,18 @@
             <param name="values">The array to fill with values from the columns in the current resultset</param>
             <returns>The number of columns retrieved</returns>
         </member>
+        <member name="M:System.Data.SQLite.SQLiteDataReader.GetValues">
+            <summary>
+            Returns a collection containing all the column names and values for the
+            current row of data in the current resultset, if any.  If there is no
+            current row or no current resultset, an exception may be thrown.
+            </summary>
+            <returns>
+            The collection containing the column name and value information for the
+            current row of data in the current resultset or null if this information
+            cannot be obtained.
+            </returns>
+        </member>
         <member name="M:System.Data.SQLite.SQLiteDataReader.IsDBNull(System.Int32)">
             <summary>
             Returns True if the specified column is null
@@ -2479,7 +2814,7 @@
         </member>
         <member name="P:System.Data.SQLite.SQLiteDataReader.VisibleFieldCount">
             <summary>
-            Returns the number of visible fielsd in the current resultset
+            Returns the number of visible fields in the current resultset
             </summary>
         </member>
         <member name="P:System.Data.SQLite.SQLiteDataReader.HasRows">
@@ -2722,6 +3057,12 @@
             be automatically freed for you (and Dispose() called if the item supports IDisposable) when the statement completes.
             </remarks>
         </member>
+        <member name="F:System.Data.SQLite.SQLiteFunction.COR_E_EXCEPTION">
+            <summary>
+            The error code used for logging exceptions caught in user-provided
+            code.
+            </summary>
+        </member>
         <member name="F:System.Data.SQLite.SQLiteFunction._base">
             <summary>
             The base connection this function is attached to
@@ -2730,6 +3071,12 @@
         <member name="F:System.Data.SQLite.SQLiteFunction._contextDataList">
             <summary>
             Internal array used to keep track of aggregate function context data
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.SQLiteFunction._flags">
+            <summary>
+            The connection flags associated with this object (this should be the
+            same value as the flags associated with the parent connection object).
             </summary>
         </member>
         <member name="F:System.Data.SQLite.SQLiteFunction._InvokeFunc">
@@ -2853,6 +3200,7 @@
         <member name="M:System.Data.SQLite.SQLiteFunction.ScalarCallback(System.IntPtr,System.Int32,System.IntPtr)">
             <summary>
             Internal scalar callback function, which wraps the raw context pointer and calls the virtual Invoke() method.
+            WARNING: Must not throw exceptions.
             </summary>
             <param name="context">A raw context pointer</param>
             <param name="nArgs">Number of arguments passed in</param>
@@ -2861,6 +3209,7 @@
         <member name="M:System.Data.SQLite.SQLiteFunction.CompareCallback(System.IntPtr,System.Int32,System.IntPtr,System.Int32,System.IntPtr)">
             <summary>
             Internal collation sequence function, which wraps up the raw string pointers and executes the Compare() virtual function.
+            WARNING: Must not throw exceptions.
             </summary>
             <param name="ptr">Not used</param>
             <param name="len1">Length of the string pv1</param>
@@ -2868,11 +3217,25 @@
             <param name="len2">Length of the string pv2</param>
             <param name="ptr2">Pointer to the second string to compare</param>
             <returns>Returns -1 if the first string is less than the second.  0 if they are equal, or 1 if the first string is greater
-            than the second.</returns>
+            than the second.  Returns 0 if an exception is caught.</returns>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteFunction.CompareCallback16(System.IntPtr,System.Int32,System.IntPtr,System.Int32,System.IntPtr)">
+            <summary>
+            Internal collation sequence function, which wraps up the raw string pointers and executes the Compare() virtual function.
+            WARNING: Must not throw exceptions.
+            </summary>
+            <param name="ptr">Not used</param>
+            <param name="len1">Length of the string pv1</param>
+            <param name="ptr1">Pointer to the first string to compare</param>
+            <param name="len2">Length of the string pv2</param>
+            <param name="ptr2">Pointer to the second string to compare</param>
+            <returns>Returns -1 if the first string is less than the second.  0 if they are equal, or 1 if the first string is greater
+            than the second.  Returns 0 if an exception is caught.</returns>
         </member>
         <member name="M:System.Data.SQLite.SQLiteFunction.StepCallback(System.IntPtr,System.Int32,System.IntPtr)">
             <summary>
             The internal aggregate Step function callback, which wraps the raw context pointer and calls the virtual Step() method.
+            WARNING: Must not throw exceptions.
             </summary>
             <remarks>
             This function takes care of doing the lookups and getting the important information put together to call the Step() function.
@@ -2886,6 +3249,7 @@
         <member name="M:System.Data.SQLite.SQLiteFunction.FinalCallback(System.IntPtr)">
             <summary>
             An internal aggregate Final function callback, which wraps the context pointer and calls the virtual Final() method.
+            WARNING: Must not throw exceptions.
             </summary>
             <param name="context">A raw context pointer</param>
         </member>
@@ -2902,7 +3266,7 @@
             </summary>
             <param name="typ">The type of the function to register</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteFunction.BindFunctions(System.Data.SQLite.SQLiteBase)">
+        <member name="M:System.Data.SQLite.SQLiteFunction.BindFunctions(System.Data.SQLite.SQLiteBase,System.Data.SQLite.SQLiteConnectionFlags)">
             <summary>
             Called by SQLiteBase derived classes, this function binds all user-defined functions to a connection.
             It is done this way so that all user-defined functions will access the database using the same encoding scheme
@@ -2913,6 +3277,7 @@
             all the wrapped callback functions.  The interop function uses it to map CDecl callbacks to StdCall callbacks.
             </remarks>
             <param name="sqlbase">The base object on which the functions are to bind</param>
+            <param name="flags">The flags associated with the parent connection object</param>
             <returns>Returns an array of functions which the connection object should retain until the connection is closed.</returns>
         </member>
         <member name="P:System.Data.SQLite.SQLiteFunction.SQLiteConvert">
@@ -3750,11 +4115,17 @@
             Command this statement belongs to (if any)
             </summary>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteStatement.#ctor(System.Data.SQLite.SQLiteBase,System.Data.SQLite.SQLiteStatementHandle,System.String,System.Data.SQLite.SQLiteStatement)">
+        <member name="F:System.Data.SQLite.SQLiteStatement._flags">
+            <summary>
+            The flags associated with the parent connection object.
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.SQLiteStatement.#ctor(System.Data.SQLite.SQLiteBase,System.Data.SQLite.SQLiteConnectionFlags,System.Data.SQLite.SQLiteStatementHandle,System.String,System.Data.SQLite.SQLiteStatement)">
             <summary>
             Initializes the statement and attempts to get all information about parameters in the statement
             </summary>
             <param name="sqlbase">The base SQLite object</param>
+            <param name="flags">The flags associated with the parent connection object</param>
             <param name="stmt">The statement</param>
             <param name="strCommand">The command text for this statement</param>
             <param name="previous">The previous command in a multi-statement command</param>
@@ -3896,6 +4267,114 @@
               &lt;/MetaDataCollections&gt;
               &lt;MetaDataC [rest of string was truncated]&quot;;.
              </summary>
+        </member>
+        <member name="M:System.Data.SQLite.UnsafeNativeMethods.LoadLibrary(System.String)">
+            <summary>
+            This is the P/Invoke method that wraps the native Win32 LoadLibrary
+            function.  See the MSDN documentation for full details on what it
+            does.
+            </summary>
+            <param name="fileName">
+            The name of the executable library.
+            </param>
+            <returns>
+            The native module handle upon success -OR- IntPtr.Zero on failure.
+            </returns>
+        </member>
+        <member name="F:System.Data.SQLite.UnsafeNativeMethods.staticSyncRoot">
+            <summary>
+            This lock is used to protect the static _SQLiteModule and
+            processorArchitecturePlatforms fields, below.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.UnsafeNativeMethods.processorArchitecturePlatforms">
+            <summary>
+            Stores the mappings between processor architecture names and platform
+            names.
+            </summary>
+        </member>
+        <member name="F:System.Data.SQLite.UnsafeNativeMethods._SQLiteModule">
+            <summary>
+            The native module handle for the native SQLite library or the value
+            IntPtr.Zero.
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.UnsafeNativeMethods.#cctor">
+            <summary>
+            For now, this method simply calls the Initialize method.
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.UnsafeNativeMethods.Initialize">
+            <summary>
+            Attempts to initialize this class by pre-loading the native SQLite
+            library for the processor architecture of the current process.
+            </summary>
+        </member>
+        <member name="M:System.Data.SQLite.UnsafeNativeMethods.GetBaseDirectory">
+            <summary>
+            Queries and returns the base directory of the current application
+            domain.
+            </summary>
+            <returns>
+            The base directory for the current application domain -OR- null if it
+            cannot be determined.
+            </returns>
+        </member>
+        <member name="M:System.Data.SQLite.UnsafeNativeMethods.FixUpDllFileName(System.String)">
+            <summary>
+            Determines if the dynamic link library file name requires a suffix
+            and adds it if necessary.
+            </summary>
+            <param name="fileName">
+            The original dynamic link library file name to inspect.
+            </param>
+            <returns>
+            The dynamic link library file name, possibly modified to include an
+            extension.
+            </returns>
+        </member>
+        <member name="M:System.Data.SQLite.UnsafeNativeMethods.GetProcessorArchitecture">
+            <summary>
+            Queries and returns the processor architecture of the current
+            process.
+            </summary>
+            <returns>
+            The processor architecture of the current process -OR- null if it
+            cannot be determined.  Always returns an empty string when running on
+            the .NET Compact Framework.
+            </returns>
+        </member>
+        <member name="M:System.Data.SQLite.UnsafeNativeMethods.GetPlatformName(System.String)">
+            <summary>
+            Given the processor architecture, returns the name of the platform.
+            </summary>
+            <param name="processorArchitecture">
+            The processor architecture to be translated to a platform name.
+            </param>
+            <returns>
+            The platform name for the specified processor architecture -OR- null
+            if it cannot be determined.
+            </returns>
+        </member>
+        <member name="M:System.Data.SQLite.UnsafeNativeMethods.PreLoadSQLiteDll(System.String,System.String)">
+            <summary>
+            Attempts to load the native SQLite library based on the specified
+            directory and processor architecture.
+            </summary>
+            <param name="directory">
+            The base directory to use, null for default (the base directory of
+            the current application domain).  This directory should contain the
+            processor architecture specific sub-directories.
+            </param>
+            <param name="processorArchitecture">
+            The requested processor architecture, null for default (the
+            processor architecture of the current process).  This caller should
+            almost always specify null for this parameter.
+            </param>
+            <returns>
+            The native module handle as returned by LoadLibrary -OR- IntPtr.Zero
+            if the loading fails for any reason.
+            </returns>
         </member>
     </members>
 </doc>

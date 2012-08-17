@@ -190,7 +190,7 @@
     </Compile>
     <Compile Include="GMap.NET.Projections\MapyCZProjection.cs" />
     <Compile Include="GMap.NET.Projections\MercatorProjectionYandex.cs" />
-    <None Include="GMap.NET.Projections\PlateCarreeProjectionPergo.cs" />
+    <Compile Include="GMap.NET.Projections\PlateCarreeProjectionPergo.cs" />
     <Compile Include="GMap.NET.Projections\MapsLTProjection.cs" />
     <Compile Include="GMap.NET.Projections\MercatorProjection.cs" />
     <Compile Include="GMap.NET.Projections\PlateCarreeProjection.cs" />

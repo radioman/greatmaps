@@ -1,6 +1,7 @@
 ﻿
 namespace GMap.NET.Projections
 {
+#if OLD_PERGO
    using System;
 
    /// <summary>
@@ -70,7 +71,7 @@ namespace GMap.NET.Projections
 
       public override PointLatLng FromPixelToLatLng(long x, long y, int zoom)
       {
-         PointLatLng ret = PointLatLng.Zero;
+         PointLatLng ret = PointLatLng.Empty;
 
          GSize s = GetTileMatrixSizePixel(zoom);
          double mapSizeX = s.Width;
@@ -95,4 +96,5 @@ namespace GMap.NET.Projections
          return new GSize(0, 0);
       }
    }
+#endif
 }

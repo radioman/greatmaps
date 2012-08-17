@@ -41,7 +41,7 @@ namespace GMap.NET.CacheProviders
          {
             string rootDir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
             string dllDir = rootDir + "DllCache" + Path.DirectorySeparatorChar;
-            string dll = dllDir + "SQLite_v79_NET" + Environment.Version.Major + "_" + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar + "System.Data.SQLite.DLL";
+            string dll = dllDir + "SQLite_v81_NET" + Environment.Version.Major + "_" + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar + "System.Data.SQLite.DLL";
             if(!File.Exists(dll))
             {
                string dir = Path.GetDirectoryName(dll);
@@ -162,8 +162,16 @@ namespace GMap.NET.CacheProviders
                }
 
                CheckPreAllocation();
-#if !MONO
-               ConnectionString = string.Format("Data Source=\"{0}\";Page Size=32768;Pooling=True", db);
+
+               //var connBuilder = new SQLiteConnectionStringBuilder();
+               //connBuilder.DataSource = "c:\filePath.db";
+               //connBuilder.Version = 3;
+               //connBuilder.PageSize = 4096;
+               //connBuilder.JournalMode = SQLiteJournalModeEnum.Wal;
+               //connBuilder.Pooling = true;
+               //var x = connBuilder.ToString();
+#if !MONO                                      
+               ConnectionString = string.Format("Data Source=\"{0}\";Page Size=32768;Pooling=True", db); //;Journal Mode=Wal
 #else
                ConnectionString = string.Format("Version=3,URI=file://{0},FailIfMissing=True,Page Size=32768,Pooling=True", db);
 #endif
