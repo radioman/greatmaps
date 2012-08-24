@@ -4,7 +4,7 @@ namespace GMap.NET.MapProviders
    using System;
 
    /// <summary>
-   /// NearHybridMap provider
+   /// NearHybridMap provider - http://www.nearmap.com/
    /// </summary>
    public class NearHybridMapProvider : NearMapProviderBase
    {

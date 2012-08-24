@@ -4,19 +4,19 @@ namespace GMap.NET.MapProviders
    using System;
 
    /// <summary>
-   /// LithuaniaHybridNewMap, from 2010 data, provider
+   /// LithuaniaHybridNewMap, from 2005 data, provider
    /// </summary>
-   public class LithuaniaHybridNewMapProvider : LithuaniaMapProviderBase
+   public class LithuaniaHybridOldMapProvider : LithuaniaMapProviderBase
    {
-      public static readonly LithuaniaHybridNewMapProvider Instance;
+      public static readonly LithuaniaHybridOldMapProvider Instance;
 
-      LithuaniaHybridNewMapProvider()
+      LithuaniaHybridOldMapProvider()
       {
       }
 
-      static LithuaniaHybridNewMapProvider()
+      static LithuaniaHybridOldMapProvider()
       {
-         Instance = new LithuaniaHybridNewMapProvider();
+         Instance = new LithuaniaHybridOldMapProvider();
       }
 
       #region GMapProvider Members
@@ -30,7 +30,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly string name = "LithuaniaHybridMap 2010";
+      readonly string name = "LithuaniaHybridMapOld";
       public override string Name
       {
          get
@@ -46,7 +46,7 @@ namespace GMap.NET.MapProviders
          {
             if(overlays == null)
             {
-               overlays = new GMapProvider[] { LithuaniaOrtoFotoNewMapProvider.Instance, LithuaniaHybridMapProvider.Instance };
+               overlays = new GMapProvider[] { LithuaniaOrtoFotoOldMapProvider.Instance, LithuaniaHybridMapProvider.Instance };
             }
             return overlays;
          }

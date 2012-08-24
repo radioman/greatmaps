@@ -4,7 +4,7 @@ namespace GMap.NET.MapProviders
    using System;
 
    /// <summary>
-   /// NearSatelliteMap provider
+   /// NearSatelliteMap provider - http://www.nearmap.com/
    /// </summary>
    public class NearSatelliteMapProvider : NearMapProviderBase
    {
@@ -53,6 +53,7 @@ namespace GMap.NET.MapProviders
          // http://web2.nearmap.com/maps/hl=en&x=14&y=8&z=5&nml=Vert&s=kdj00
          // http://web2.nearmap.com/maps/hl=en&x=6&y=4&z=4&nml=Vert
          // http://web2.nearmap.com/maps/hl=en&x=3&y=1&z=3&nml=Vert&s=2edd
+         // http://web0.nearmap.com/maps/hl=en&x=69&y=39&z=7&nml=Vert&s=z80wiTM
 
          return string.Format(UrlFormat, GetServerNum(pos, 4), pos.X, pos.Y, zoom, GetSafeString(pos));
       }

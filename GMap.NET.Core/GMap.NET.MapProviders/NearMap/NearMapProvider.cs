@@ -112,7 +112,7 @@ namespace GMap.NET.MapProviders
    }
 
    /// <summary>
-   /// NearMap provider
+   /// NearMap provider - http://www.nearmap.com/
    /// </summary>
    public class NearMapProvider : NearMapProviderBase
    {

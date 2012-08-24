@@ -4,19 +4,19 @@ namespace GMap.NET.MapProviders
    using System;
 
    /// <summary>
-   /// LithuaniaOrtoFotoNewMap, from 2010 data, provider
+   /// LithuaniaOrtoFotoNewMap, from 2005 data, provider
    /// </summary>
-   public class LithuaniaOrtoFotoNewMapProvider : LithuaniaMapProviderBase
+   public class LithuaniaOrtoFotoOldMapProvider : LithuaniaMapProviderBase
    {
-      public static readonly LithuaniaOrtoFotoNewMapProvider Instance;
+      public static readonly LithuaniaOrtoFotoOldMapProvider Instance;
 
-      LithuaniaOrtoFotoNewMapProvider()
+      LithuaniaOrtoFotoOldMapProvider()
       {
       }
 
-      static LithuaniaOrtoFotoNewMapProvider()
+      static LithuaniaOrtoFotoOldMapProvider()
       {
-         Instance = new LithuaniaOrtoFotoNewMapProvider();
+         Instance = new LithuaniaOrtoFotoOldMapProvider();
       }
 
       #region GMapProvider Members
@@ -30,7 +30,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly string name = "LithuaniaOrtoFotoMap 2010";
+      readonly string name = "LithuaniaOrtoFotoMapOld";
       public override string Name
       {
          get
@@ -53,6 +53,6 @@ namespace GMap.NET.MapProviders
          return string.Format(UrlFormat, zoom, pos.Y, pos.X);
       }
 
-      static readonly string UrlFormat = "http://dc1.maps.lt/cache/mapslt_ortofoto_2010/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg";
+      static readonly string UrlFormat = "http://dc1.maps.lt/cache/mapslt_ortofoto_2005/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.jpg";
    }
 }

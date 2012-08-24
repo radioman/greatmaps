@@ -2,8 +2,8 @@
 namespace GMap.NET.MapProviders
 {
    using System;
-   using GMap.NET.Projections;
 
+#if OpenStreetMapSurfer
    /// <summary>
    /// OpenStreetMapSurferTerrain provider
    /// </summary>
@@ -21,7 +21,7 @@ namespace GMap.NET.MapProviders
          Instance = new OpenStreetMapSurferTerrainProvider();
       }
 
-      #region GMapProvider Members
+   #region GMapProvider Members
 
       readonly Guid id = new Guid("E87954A4-1852-4B64-95FA-24E512E4B021");
       public override Guid Id
@@ -70,4 +70,5 @@ namespace GMap.NET.MapProviders
 
       static readonly string UrlFormat = "http://tiles2.mapsurfer.net/tms_t.ashx?x={0}&y={1}&z={2}";
    }
+#endif
 }

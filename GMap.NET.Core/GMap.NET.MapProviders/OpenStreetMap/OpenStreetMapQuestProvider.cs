@@ -1,33 +1,28 @@
 ﻿
 namespace GMap.NET.MapProviders
 {
-   using System;   
+   using System;
 
-#if OpenStreetMapSurfer
    /// <summary>
-   /// OpenStreetMapSurfer provider
-   /// http://wiki.openstreetmap.org/wiki/MapSurfer.Net
-   /// 
-   /// Since May 2011 the service http://www.mapsurfer.net is unavailable due
-   /// to hosting problems.
+   /// OpenStreetMapQuest provider - http://wiki.openstreetmap.org/wiki/MapQuest
    /// </summary>
-   public class OpenStreetMapSurferProvider : OpenStreetMapProviderBase
+   public class OpenStreetMapQuestProvider : OpenStreetMapProviderBase
    {
-      public static readonly OpenStreetMapSurferProvider Instance;
+      public static readonly OpenStreetMapQuestProvider Instance;
 
-      OpenStreetMapSurferProvider()
+      OpenStreetMapQuestProvider()
       {
-         RefererUrl = "http://www.mapsurfer.net/";
+         Copyright = string.Format("© MapQuest - Map data ©{0} MapQuest, OpenStreetMap", DateTime.Today.Year);
       }
 
-      static OpenStreetMapSurferProvider()
+      static OpenStreetMapQuestProvider()
       {
-         Instance = new OpenStreetMapSurferProvider();
+         Instance = new OpenStreetMapQuestProvider();
       }
 
       #region GMapProvider Members
 
-      readonly Guid id = new Guid("6282888B-2F01-4029-9CD8-0CFFCB043995");
+      readonly Guid id = new Guid("D0A12840-973A-448B-B9C2-89B8A07DFF0F");
       public override Guid Id
       {
          get
@@ -36,7 +31,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly string name = "OpenStreetMapSurfer";
+      readonly string name = "OpenStreetMapQuest";
       public override string Name
       {
          get
@@ -69,10 +64,9 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         return string.Format(UrlFormat, pos.X, pos.Y, zoom);
+         return string.Format(UrlFormat, GetServerNum(pos, 3) + 1, zoom, pos.X, pos.Y);
       }
 
-      static readonly string UrlFormat = "http://tiles1.mapsurfer.net/tms_r.ashx?x={0}&y={1}&z={2}";
-   } 
-#endif
+      static readonly string UrlFormat = "http://otile{0}.mqcdn.com/tiles/1.0.0/osm/{1}/{2}/{3}.png";
+   }
 }

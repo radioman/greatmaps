@@ -428,7 +428,7 @@ namespace GMap.NET.MapProviders
    }
 
    /// <summary>
-   /// OpenStreetMap provider
+   /// OpenStreetMap provider - http://www.openstreetmap.org/
    /// </summary>
    public class OpenStreetMapProvider : OpenStreetMapProviderBase
    {

@@ -2,10 +2,9 @@
 namespace GMap.NET.MapProviders
 {
    using System;
-   using GMap.NET.Projections;
 
    /// <summary>
-   /// OpenCycleMap provider
+   /// OpenCycleMap provider - http://www.opencyclemap.org
    /// </summary>
    public class OpenCycleMapProvider : OpenStreetMapProviderBase
    {

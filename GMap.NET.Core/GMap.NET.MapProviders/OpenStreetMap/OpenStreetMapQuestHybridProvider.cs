@@ -4,25 +4,25 @@ namespace GMap.NET.MapProviders
    using System;
 
    /// <summary>
-   /// OpenSeaMapHybrid provider - http://openseamap.org
+   /// OpenStreetMapQuestHybrid provider - http://wiki.openstreetmap.org/wiki/MapQuest
    /// </summary>
-   public class OpenSeaMapHybridProvider : OpenStreetMapProviderBase
+   public class OpenStreetMapQuestHybridProvider : OpenStreetMapProviderBase
    {
-      public static readonly OpenSeaMapHybridProvider Instance;
+      public static readonly OpenStreetMapQuestHybridProvider Instance;
 
-      OpenSeaMapHybridProvider()
+      OpenStreetMapQuestHybridProvider()
       {
-         RefererUrl = "http://openseamap.org/";
+         Copyright = string.Format("© MapQuest - Map data ©{0} MapQuest, OpenStreetMap", DateTime.Today.Year);
       }
 
-      static OpenSeaMapHybridProvider()
+      static OpenStreetMapQuestHybridProvider()
       {
-         Instance = new OpenSeaMapHybridProvider();
+         Instance = new OpenStreetMapQuestHybridProvider();
       }
 
       #region GMapProvider Members
 
-      readonly Guid id = new Guid("FAACDE73-4B90-4AE6-BB4A-ADE4F3545592");
+      readonly Guid id = new Guid("95E05027-F846-4429-AB7A-9445ABEEFA2A");
       public override Guid Id
       {
          get
@@ -31,7 +31,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly string name = "OpenSeaMapHybrid";
+      readonly string name = "OpenStreetMapQuestHybrid";
       public override string Name
       {
          get
@@ -47,7 +47,7 @@ namespace GMap.NET.MapProviders
          {
             if(overlays == null)
             {
-               overlays = new GMapProvider[] { OpenStreetMapProvider.Instance, this };
+               overlays = new GMapProvider[] { OpenStreetMapQuestSatteliteProvider.Instance, this };
             }
             return overlays;
          }
@@ -64,9 +64,9 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         return string.Format(UrlFormat, zoom, pos.X, pos.Y);
+         return string.Format(UrlFormat, GetServerNum(pos, 3) + 1, zoom, pos.X, pos.Y);
       }
 
-      static readonly string UrlFormat = "http://tiles.openseamap.org/seamark/{0}/{1}/{2}.png";
+      static readonly string UrlFormat = "http://otile{0}.mqcdn.com/tiles/1.0.0/hyb/{1}/{2}/{3}.png";
    }
 }

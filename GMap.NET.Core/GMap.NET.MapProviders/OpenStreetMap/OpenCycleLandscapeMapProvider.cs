@@ -1,33 +1,28 @@
 ﻿
 namespace GMap.NET.MapProviders
 {
-   using System;   
+   using System;
 
-#if OpenStreetMapSurfer
    /// <summary>
-   /// OpenStreetMapSurfer provider
-   /// http://wiki.openstreetmap.org/wiki/MapSurfer.Net
-   /// 
-   /// Since May 2011 the service http://www.mapsurfer.net is unavailable due
-   /// to hosting problems.
+   /// OpenCycleMap Landscape provider - http://www.opencyclemap.org
    /// </summary>
-   public class OpenStreetMapSurferProvider : OpenStreetMapProviderBase
+   public class OpenCycleLandscapeMapProvider : OpenStreetMapProviderBase
    {
-      public static readonly OpenStreetMapSurferProvider Instance;
+      public static readonly OpenCycleLandscapeMapProvider Instance;
 
-      OpenStreetMapSurferProvider()
+      OpenCycleLandscapeMapProvider()
       {
-         RefererUrl = "http://www.mapsurfer.net/";
+         RefererUrl = "http://www.opencyclemap.org/";
       }
 
-      static OpenStreetMapSurferProvider()
+      static OpenCycleLandscapeMapProvider()
       {
-         Instance = new OpenStreetMapSurferProvider();
+         Instance = new OpenCycleLandscapeMapProvider();
       }
 
       #region GMapProvider Members
 
-      readonly Guid id = new Guid("6282888B-2F01-4029-9CD8-0CFFCB043995");
+      readonly Guid id = new Guid("BDBAA939-6597-4D87-8F4F-261C49E35F56");
       public override Guid Id
       {
          get
@@ -36,7 +31,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly string name = "OpenStreetMapSurfer";
+      readonly string name = "OpenCycleLandscapeMap";
       public override string Name
       {
          get
@@ -69,10 +64,11 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         return string.Format(UrlFormat, pos.X, pos.Y, zoom);
+         char letter = ServerLetters[GMapProvider.GetServerNum(pos, 3)];
+         return string.Format(UrlFormat, letter, zoom, pos.X, pos.Y);
       }
+                                        
 
-      static readonly string UrlFormat = "http://tiles1.mapsurfer.net/tms_r.ashx?x={0}&y={1}&z={2}";
-   } 
-#endif
+      static readonly string UrlFormat = "http://{0}.tile3.opencyclemap.org/landscape/{1}/{2}/{3}.png";
+   }
 }

@@ -27,12 +27,25 @@ namespace GMap.NET.MapProviders
       public static readonly EmptyProvider EmptyProvider = EmptyProvider.Instance;
 
       public static readonly OpenStreetMapProvider OpenStreetMap = OpenStreetMapProvider.Instance;
-      public static readonly OpenStreetOsmProvider OpenStreetOsm = OpenStreetOsmProvider.Instance;
+
       public static readonly OpenCycleMapProvider OpenCycleMap = OpenCycleMapProvider.Instance;
-      public static readonly OpenStreetMapSurferProvider OpenStreetMapSurfer = OpenStreetMapSurferProvider.Instance;
-      public static readonly OpenStreetMapSurferTerrainProvider OpenStreetMapSurferTerrain = OpenStreetMapSurferTerrainProvider.Instance;
+      public static readonly OpenCycleLandscapeMapProvider OpenCycleLandscapeMap = OpenCycleLandscapeMapProvider.Instance;
+      public static readonly OpenCycleTransportMapProvider OpenCycleTransportMap = OpenCycleTransportMapProvider.Instance;
+
+      public static readonly OpenStreetMapQuestProvider OpenStreetMapQuest = OpenStreetMapQuestProvider.Instance;
+      public static readonly OpenStreetMapQuestSatteliteProvider OpenStreetMapQuestSattelite = OpenStreetMapQuestSatteliteProvider.Instance;
+      public static readonly OpenStreetMapQuestHybridProvider OpenStreetMapQuestHybrid = OpenStreetMapQuestHybridProvider.Instance;
+
       public static readonly OpenSeaMapHybridProvider OpenSeaMapHybrid = OpenSeaMapHybridProvider.Instance;
 
+#if OpenStreetOsm
+      public static readonly OpenStreetOsmProvider OpenStreetOsm = OpenStreetOsmProvider.Instance;
+#endif
+
+#if OpenStreetMapSurfer
+      public static readonly OpenStreetMapSurferProvider OpenStreetMapSurfer = OpenStreetMapSurferProvider.Instance;
+      public static readonly OpenStreetMapSurferTerrainProvider OpenStreetMapSurferTerrain = OpenStreetMapSurferTerrainProvider.Instance;
+#endif
       public static readonly WikiMapiaMapProvider WikiMapiaMap = WikiMapiaMapProvider.Instance;
 
       public static readonly BingMapProvider BingMap = BingMapProvider.Instance;
@@ -73,9 +86,9 @@ namespace GMap.NET.MapProviders
       public static readonly LithuaniaMapProvider LithuaniaMap = LithuaniaMapProvider.Instance;
       public static readonly Lithuania3dMapProvider Lithuania3dMap = Lithuania3dMapProvider.Instance;
       public static readonly LithuaniaOrtoFotoMapProvider LithuaniaOrtoFotoMap = LithuaniaOrtoFotoMapProvider.Instance;
-      public static readonly LithuaniaOrtoFotoNewMapProvider LithuaniaOrtoFotoNewMap = LithuaniaOrtoFotoNewMapProvider.Instance;
+      public static readonly LithuaniaOrtoFotoOldMapProvider LithuaniaOrtoFotoOldMap = LithuaniaOrtoFotoOldMapProvider.Instance;
       public static readonly LithuaniaHybridMapProvider LithuaniaHybridMap = LithuaniaHybridMapProvider.Instance;
-      public static readonly LithuaniaHybridNewMapProvider LithuaniaHybridNewMap = LithuaniaHybridNewMapProvider.Instance;
+      public static readonly LithuaniaHybridOldMapProvider LithuaniaHybridOldMap = LithuaniaHybridOldMapProvider.Instance;
 
       public static readonly LatviaMapProvider LatviaMap = LatviaMapProvider.Instance;
 

@@ -2,10 +2,16 @@
 namespace GMap.NET.MapProviders
 {
    using System;
-   using GMap.NET.Projections;
 
+#if OpenStreetOsm
    /// <summary>
    /// OpenStreetOsm provider
+   /// http://wiki.openstreetmap.org/wiki/Osmarender
+   /// 
+   /// Osmarender is a rule-based rendering tool for generating SVG images
+   /// of OSM data. Note that Osmarender has not been actively maintained
+   /// since March 2012 and was discontinued as a main Slippy Map layer on
+   /// openstreetmap.org around that time.
    /// </summary>
    public class OpenStreetOsmProvider : OpenStreetMapProviderBase
    {
@@ -20,7 +26,7 @@ namespace GMap.NET.MapProviders
          Instance = new OpenStreetOsmProvider();
       }
 
-      #region GMapProvider Members
+   #region GMapProvider Members
 
       readonly Guid id = new Guid("07EF8CBC-A91D-4B2F-8B2D-70DBE384EF18");
       public override Guid Id
@@ -60,7 +66,7 @@ namespace GMap.NET.MapProviders
          return GetTileImageUsingHttp(url);
       }
 
-      #endregion
+   #endregion
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
@@ -69,5 +75,6 @@ namespace GMap.NET.MapProviders
       }
 
       static readonly string UrlFormat = "http://{0}.tah.openstreetmap.org/Tiles/tile/{1}/{2}/{3}.png";
-   }
+   } 
+#endif
 }
