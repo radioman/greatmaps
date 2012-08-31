@@ -236,8 +236,7 @@ namespace GMap.NET.WindowsForms
          }
          internal set
          {
-            isMouseOver = value;  
-            Overlay.Control.IsMouseOverMarker = value;
+            isMouseOver = value;              
          }
       }
 

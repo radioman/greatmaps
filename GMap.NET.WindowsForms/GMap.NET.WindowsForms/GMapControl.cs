@@ -2020,6 +2020,7 @@ namespace GMap.NET.WindowsForms
                                     SetCursorHandOnEnter();
 #endif
                                     m.IsMouseOver = true;
+                                    IsMouseOverMarker = true;
 
                                     if(OnMarkerEnter != null)
                                     {
@@ -2031,11 +2032,11 @@ namespace GMap.NET.WindowsForms
                               }
                               else if(m.IsMouseOver)
                               {
+                                 m.IsMouseOver = false;  
+                                 IsMouseOverMarker = false;
 #if !PocketPC
                                  RestoreCursorOnLeave();
-#endif
-                                 m.IsMouseOver = false;
-
+#endif                             
                                  if(OnMarkerLeave != null)
                                  {
                                     OnMarkerLeave(m);
@@ -2069,6 +2070,7 @@ namespace GMap.NET.WindowsForms
                                     SetCursorHandOnEnter();
 #endif
                                     m.IsMouseOver = true;
+                                    IsMouseOverRoute = true;
 
                                     if(OnRouteEnter != null)
                                     {
@@ -2082,11 +2084,11 @@ namespace GMap.NET.WindowsForms
                               {
                                  if(m.IsMouseOver)
                                  {
+                                    m.IsMouseOver = false;
+                                    IsMouseOverRoute = false;
 #if !PocketPC
                                     RestoreCursorOnLeave();
-#endif
-                                    m.IsMouseOver = false;
-
+#endif                                                               
                                     if(OnRouteLeave != null)
                                     {
                                        OnRouteLeave(m);
@@ -2113,6 +2115,7 @@ namespace GMap.NET.WindowsForms
                                     SetCursorHandOnEnter();
 #endif
                                     m.IsMouseOver = true;
+                                    IsMouseOverPolygon = true;
 
                                     if(OnPolygonEnter != null)
                                     {
@@ -2126,11 +2129,11 @@ namespace GMap.NET.WindowsForms
                               {
                                  if(m.IsMouseOver)
                                  {
+                                    m.IsMouseOver = false;
+                                    IsMouseOverPolygon = false;
 #if !PocketPC
                                     RestoreCursorOnLeave();
 #endif
-                                    m.IsMouseOver = false;
-
                                     if(OnPolygonLeave != null)
                                     {
                                        OnPolygonLeave(m);
@@ -2153,7 +2156,7 @@ namespace GMap.NET.WindowsForms
 
       internal void RestoreCursorOnLeave()
       {
-         if(cursorBefore != null)
+         if(overObjectCount == 0 && cursorBefore != null)
          {
             this.Cursor = this.cursorBefore;
             cursorBefore = null;
@@ -2162,8 +2165,11 @@ namespace GMap.NET.WindowsForms
 
       internal void SetCursorHandOnEnter()
       {
-         cursorBefore = this.Cursor;
-         this.Cursor = Cursors.Hand;
+         if(overObjectCount == 0 && Cursor != Cursors.Hand)
+         {
+            cursorBefore = this.Cursor;
+            this.Cursor = Cursors.Hand;
+         }
       }
 
       /// <summary>
@@ -2602,6 +2608,7 @@ namespace GMap.NET.WindowsForms
       }
 
       bool isMouseOverMarker;
+      internal int overObjectCount = 0;
 
       /// <summary>
       /// is mouse over marker
@@ -2617,6 +2624,7 @@ namespace GMap.NET.WindowsForms
          internal set
          {
             isMouseOverMarker = value;
+            overObjectCount += value ? 1 : -1;
          }
       }
 
@@ -2636,6 +2644,7 @@ namespace GMap.NET.WindowsForms
          internal set
          {
             isMouseOverRoute = value;
+            overObjectCount += value ? 1 : -1;
          }
       }
 
@@ -2655,6 +2664,7 @@ namespace GMap.NET.WindowsForms
          internal set
          {
             isMouseOverPolygon = value;
+            overObjectCount += value ? 1 : -1;
          }
       }
 

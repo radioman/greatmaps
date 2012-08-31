@@ -225,43 +225,42 @@ namespace ConsoleApplication
             }
          }
 
-         if(false)
+         //if(false)
          {
-            double x = 25;
-            double y = 50;
+            //-34,8859309407532, Lng=-58,359375
+            PointLatLng p1 = new PointLatLng(-34.608, -58.348);
+            PointLatLng p2 = new PointLatLng(-34.608, -58.348);
 
             //Sets up a array to contain the x and y coordinates
-            double[] xy = new double[2];
-            xy[0] = x;
-            xy[1] = y;
+            double[] xy = new double[4] { p1.Lng, p1.Lat, p2.Lng, p2.Lat };
 
             //An array for the z coordinate
             double[] z = new double[1];
             z[0] = 1;
 
-            Debug.WriteLine("first0: " + xy[0] + "; " + xy[1]);
-            Debug.WriteLine("");
-
             ProjectionInfo pStart = KnownCoordinateSystems.Geographic.World.WGS1984;
-            ProjectionInfo pEnd = new ProjectionInfo("+proj=tmerc +lat_0=0 +lon_0=15 +k=0.9996 +x_0=4200000 +y_0=-1300000 +ellps=WGS84 +datum=WGS84 +to_meter=0.03125 +no_defs");
-            Reproject.ReprojectPoints(xy, z, pStart, pEnd, 0, 1);
+
+            //ProjectionInfo pEnd = new ProjectionInfo("+proj=tmerc +lat_0=0 +lon_0=15 +k=0.9996 +x_0=4200000 +y_0=-1300000 +ellps=WGS84 +datum=WGS84 +to_meter=0.03125 +no_defs");
+            ProjectionInfo pEnd = new ProjectionInfo("+proj=tmerc +lat_0=-34.629269 +lon_0=-58.4633 +k=0.9999980000000001 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs");
+            
+            Reproject.ReprojectPoints(xy, z, pStart, pEnd, 0, 2);
 
             Debug.WriteLine(" true1: " + (int)xy[0] + "; " + (int)xy[1]);
 
-            var prj = new MapyCZProjection();
-            {
-               var p2 = prj.WGSToPP(y, x);
+            //var prj = new MapyCZProjection();
+            //{
+            //   var p2 = prj.WGSToPP(y, x);
 
-               Debug.WriteLine("false1: " + p2[0] + "; " + p2[1]);
+            //   Debug.WriteLine("false1: " + p2[0] + "; " + p2[1]);
 
-               var p3 = prj.PPToWGS(p2[0], p2[1]);
+            //   var p3 = prj.PPToWGS(p2[0], p2[1]);
 
-               Reproject.ReprojectPoints(xy, z, pEnd, pStart, 0, 1);
+            //   Reproject.ReprojectPoints(xy, z, pEnd, pStart, 0, 1);
 
-               Debug.WriteLine("");
-               Debug.WriteLine(" true2: " + xy[0] + "; " + xy[1]);
-               Debug.WriteLine("false2: " + p3[1] + "; " + p3[0]);
-            }
+            //   Debug.WriteLine("");
+            //   Debug.WriteLine(" true2: " + xy[0] + "; " + xy[1]);
+            //   Debug.WriteLine("false2: " + p3[1] + "; " + p3[0]);
+            //}
             // 134400000],PARAMETER["false_northing",-41600000
          }
 

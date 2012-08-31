@@ -67,9 +67,9 @@ namespace Demo.WindowsForms
             {
                MainMap.Manager.Mode = AccessMode.CacheOnly;
                MessageBox.Show("No internet connection available, going to CacheOnly mode.", "GMap.NET - Demo.WindowsForms", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }                      
+            }
 
-            // config map 
+            // config map         
             MainMap.MapProvider = GMapProviders.OpenStreetMap;
             MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
             MainMap.MinZoom = 0;
@@ -1258,7 +1258,7 @@ namespace Demo.WindowsForms
          }
       }
 
-      // testing my mobile gps log
+      // load mobile gps log
       void AddGpsMobileLogRoutes(string file)
       {
          try
@@ -1284,8 +1284,23 @@ namespace Demo.WindowsForms
 
                var sessions = new List<List<GpsLog>>(log);
 
+               PointLatLng lastPoint = PointLatLng.Empty;
+
                foreach(var session in sessions)
                {
+                  // connect to last session with direct line
+                  if(!lastPoint.IsEmpty && session.Count > 0)
+                  {
+                     track.Clear();
+                     track.Add(lastPoint);
+                     track.Add(session[0].Position);                       
+
+                     GMapRoute grl = new GMapRoute(track, "");
+                     grl.Stroke.Color = Color.Red;
+                     grl.Stroke.Width = 2.0f;
+                     routes.Routes.Add(grl);
+                  }
+
                   track.Clear();
 
                   foreach(var point in session)
@@ -1293,9 +1308,17 @@ namespace Demo.WindowsForms
                      track.Add(point.Position);
                   }
 
-                  GMapRoute gr = new GMapRoute(track, "");
+                  if(track.Count > 0)
+                  {
+                     lastPoint = track[track.Count - 1];
+                  }
+                  else
+                  {
+                     lastPoint = PointLatLng.Empty;
+                  }
 
-                  routes.Routes.Add(gr);
+                  GMapRoute gr = new GMapRoute(track, "");  
+                  routes.Routes.Add(gr);                  
                }
 
                sessions.Clear();
@@ -2017,7 +2040,7 @@ namespace Demo.WindowsForms
 
                mobileGpsLog = dlg.FileName;
 
-               // test
+               // add routes
                AddGpsMobileLogRoutes(dlg.FileName);
 
                if(routes.Routes.Count > 0)
@@ -2205,6 +2228,16 @@ namespace Demo.WindowsForms
             {
                connectionsWorker.CancelAsync();
             }
+
+            if(ipInfoSearchWorker.IsBusy)
+            {
+               ipInfoSearchWorker.CancelAsync();
+            }
+
+            if(iptracerWorker.IsBusy)
+            {
+               iptracerWorker.CancelAsync();
+            }
          }
       }
 
@@ -2333,8 +2366,7 @@ namespace Demo.WindowsForms
          GridConnections.ClearSelection();
       }
 
-      #endregion
-
+      // open disk cache location
       private void button17_Click(object sender, EventArgs e)
       {
          try
@@ -2347,5 +2379,7 @@ namespace Demo.WindowsForms
             MessageBox.Show("Failed to open: " + ex.Message, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Error);
          }
       }
+
+      #endregion
    }
 }

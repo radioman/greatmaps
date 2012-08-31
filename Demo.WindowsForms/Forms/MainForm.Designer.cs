@@ -968,7 +968,7 @@
          this.button2.Name = "button2";
          this.button2.Size = new System.Drawing.Size(254, 25);
          this.button2.TabIndex = 43;
-         this.button2.Text = "Clear tiles in local cache";
+         this.button2.Text = "Clear tiles in disk cache";
          this.button2.UseVisualStyleBackColor = true;
          this.button2.Click += new System.EventHandler(this.button2_Click);
          // 
@@ -980,7 +980,7 @@
          this.label13.Name = "label13";
          this.label13.Size = new System.Drawing.Size(125, 17);
          this.label13.TabIndex = 44;
-         this.label13.Text = "local cache status:";
+         this.label13.Text = "disk cache status:";
          // 
          // label14
          // 
@@ -990,7 +990,7 @@
          this.label14.Name = "label14";
          this.label14.Size = new System.Drawing.Size(112, 17);
          this.label14.TabIndex = 47;
-         this.label14.Text = "local cache size:";
+         this.label14.Text = "disk cache size:";
          // 
          // button17
          // 
