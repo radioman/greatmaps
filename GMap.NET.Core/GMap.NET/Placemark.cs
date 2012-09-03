@@ -29,7 +29,9 @@ namespace GMap.NET
       public int Accuracy;
 
       // parsed values from address
+      public string HouseNo;
       public string ThoroughfareName;
+      public string DistrictName;
       public string LocalityName;
       public string PostalCodeNumber;
       public string CountryName;

@@ -12,6 +12,10 @@ namespace GMap.NET
 
       PointLatLng? GetPoint(string keywords, out GeoCoderStatusCode status);
 
+      GeoCoderStatusCode GetPoints(Placemark placemark, out List<PointLatLng> pointList);
+
+      PointLatLng? GetPoint(Placemark placemark, out GeoCoderStatusCode status);
+
       // ...
 
       GeoCoderStatusCode GetPlacemarks(PointLatLng location, out List<Placemark> placemarkList);
