@@ -2580,7 +2580,7 @@ namespace GMap.NET.WindowsForms
          get
          {
 #if !DESIGN
-            return Cache.Instance.CacheLocation;
+             return CacheLocator.Location;
 #else
              return string.Empty;
 #endif
@@ -2588,7 +2588,7 @@ namespace GMap.NET.WindowsForms
          set
          {
 #if !DESIGN
-            Cache.Instance.CacheLocation = value;
+            CacheLocator.Location = value;
 #endif
          }
       }

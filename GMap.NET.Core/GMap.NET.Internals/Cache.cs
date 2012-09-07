@@ -7,6 +7,36 @@ namespace GMap.NET.Internals
    using System.Text;
    using GMap.NET.CacheProviders;
 
+   internal class CacheLocator
+   {
+      private static string location = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+      public static string Location
+      {
+         get
+         {
+            return location;
+         }
+         set
+         {
+            if(string.IsNullOrEmpty(value)) // setting to null resets to default
+            {
+               location = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+            }
+            else
+            {
+               location = value;
+            }
+
+            if(Delay)
+            {
+               Cache.Instance.CacheLocation = location;
+            }
+         }
+      }
+
+      public static bool Delay = false;
+   }
+
    /// <summary>
    /// cache system for tiles, geocoding, etc...
    /// </summary>
@@ -47,6 +77,7 @@ namespace GMap.NET.Internals
                (ImageCache as MsSQLCePureImageCache).CacheLocation = value;
             }
 #endif
+            CacheLocator.Delay = true;
          }
       }
 
@@ -66,8 +97,6 @@ namespace GMap.NET.Internals
          ImageCache = new MsSQLCePureImageCache();
 #endif
 
-         if(string.IsNullOrEmpty(CacheLocation))
-         {
 #if PocketPC
             // use sd card if exist for cache
             string sd = Native.GetRemovableStorageDirectory();
@@ -75,42 +104,41 @@ namespace GMap.NET.Internals
             {
                CacheLocation = sd + Path.DirectorySeparatorChar +  "GMap.NET" + Path.DirectorySeparatorChar;
             }
-            else
+            else          
 #endif
-            {
-               string oldCache = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+         {
+            string oldCache = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
 #if PocketPC
-               CacheLocation = oldCache;
+            CacheLocation = oldCache;
 #else
-               string newCache = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+            string newCache = CacheLocator.Location;
 
-               // move database to non-roaming user directory
-               if(Directory.Exists(oldCache))
+            // move database to non-roaming user directory
+            if(Directory.Exists(oldCache))
+            {
+               try
                {
-                  try
+                  if(Directory.Exists(newCache))
                   {
-                     if(Directory.Exists(newCache))
-                     {
-                        Directory.Delete(oldCache, true);
-                     }
-                     else
-                     {
-                        Directory.Move(oldCache, newCache);
-                     }
-                     CacheLocation = newCache;
+                     Directory.Delete(oldCache, true);
                   }
-                  catch(Exception ex)
+                  else
                   {
-                     CacheLocation = oldCache;
-                     Trace.WriteLine("SQLitePureImageCache, moving data: " + ex.ToString());
+                     Directory.Move(oldCache, newCache);
                   }
-               }
-               else
-               {
                   CacheLocation = newCache;
                }
-#endif
+               catch(Exception ex)
+               {
+                  CacheLocation = oldCache;
+                  Trace.WriteLine("SQLitePureImageCache, moving data: " + ex.ToString());
+               }
             }
+            else
+            {
+               CacheLocation = newCache;
+            }
+#endif
          }
       }
 

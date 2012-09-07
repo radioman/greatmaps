@@ -1933,11 +1933,11 @@ namespace GMap.NET.WindowsPresentation
       {
          get
          {
-            return Cache.Instance.CacheLocation;
+            return CacheLocator.Location;
          }
          set
          {
-            Cache.Instance.CacheLocation = value;
+            CacheLocator.Location = value;
          }
       }
 

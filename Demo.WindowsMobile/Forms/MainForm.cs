@@ -242,12 +242,12 @@ namespace Demo.WindowsMobile
 
         private void menuItem22_Click(object sender, EventArgs e)
         {
-            MainMap.MapProvider = GMapProviders.OpenStreetMapSurfer;
+            //MainMap.MapProvider = GMapProviders.OpenStreetMapSurfer;
         }
 
         private void menuItem23_Click(object sender, EventArgs e)
         {
-            MainMap.MapProvider = GMapProviders.OpenStreetOsm;
+            //MainMap.MapProvider = GMapProviders.OpenStreetOsm;
         }
 
         private void menuItem9_Click(object sender, EventArgs e)

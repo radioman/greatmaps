@@ -235,8 +235,8 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\Lithuania\LithuaniaHybridMapProvider.cs">
       <Link>GMap.NET.MapProviders\Lithuania\LithuaniaHybridMapProvider.cs</Link>
     </Compile>
-    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\Lithuania\LithuaniaHybridNewMapProvider.cs">
-      <Link>GMap.NET.MapProviders\Lithuania\LithuaniaHybridNewMapProvider.cs</Link>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\Lithuania\LithuaniaHybridOldMapProvider.cs">
+      <Link>GMap.NET.MapProviders\Lithuania\LithuaniaHybridOldMapProvider.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\Lithuania\LithuaniaMapProvider.cs">
       <Link>GMap.NET.MapProviders\Lithuania\LithuaniaMapProvider.cs</Link>
@@ -244,8 +244,8 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\Lithuania\LithuaniaOrtoFotoMapProvider.cs">
       <Link>GMap.NET.MapProviders\Lithuania\LithuaniaOrtoFotoMapProvider.cs</Link>
     </Compile>
-    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\Lithuania\LithuaniaOrtoFotoNewMapProvider.cs">
-      <Link>GMap.NET.MapProviders\Lithuania\LithuaniaOrtoFotoNewMapProvider.cs</Link>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\Lithuania\LithuaniaOrtoFotoOldMapProvider.cs">
+      <Link>GMap.NET.MapProviders\Lithuania\LithuaniaOrtoFotoOldMapProvider.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\NearMap\NearHybridMapProvider.cs">
       <Link>GMap.NET.MapProviders\NearMap\NearHybridMapProvider.cs</Link>
@@ -256,14 +256,29 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\NearMap\NearSatelliteMapProvider.cs">
       <Link>GMap.NET.MapProviders\NearMap\NearSatelliteMapProvider.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenCycleLandscapeMapProvider.cs">
+      <Link>GMap.NET.MapProviders\OpenStreetMap\OpenCycleLandscapeMapProvider.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenCycleMapProvider.cs">
       <Link>GMap.NET.MapProviders\OpenStreetMap\OpenCycleMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenCycleTransportMapProvider.cs">
+      <Link>GMap.NET.MapProviders\OpenStreetMap\OpenCycleTransportMapProvider.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenSeaMapHybridProvider.cs">
       <Link>GMap.NET.MapProviders\OpenStreetMap\OpenSeaMapHybridProvider.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapProvider.cs">
       <Link>GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestHybridProvider.cs">
+      <Link>GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestHybridProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestProvider.cs">
+      <Link>GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestSatteliteProvider.cs">
+      <Link>GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestSatteliteProvider.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapSurferProvider.cs">
       <Link>GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapSurferProvider.cs</Link>
