@@ -1,4 +1,4 @@
-﻿
+
 namespace GMap.NET.MapProviders
 {
    using System;
@@ -334,6 +334,8 @@ namespace GMap.NET.MapProviders
                                   {
                                       placemark.Accuracy = int.Parse(vl.InnerText);
                                   }
+                                  
+                                  placemarkList.Add(placemark);
                               }
 
                               status = GeoCoderStatusCode.G_GEO_SUCCESS;
