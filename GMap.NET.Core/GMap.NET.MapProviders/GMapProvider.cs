@@ -298,7 +298,7 @@ namespace GMap.NET.MapProviders
       /// timeout for provider connections
       /// </summary>
 #if !PocketPC
-      public static int TimeoutMs = 22 * 1000;
+      public static int TimeoutMs = 5 * 1000;
 #else
       public static int TimeoutMs = 44 * 1000; 
 #endif
@@ -308,6 +308,11 @@ namespace GMap.NET.MapProviders
       public string RefererUrl = string.Empty;
 
       public string Copyright = string.Empty;
+
+      /// <summary>
+      /// true if tile origin at BottomLeft, WMS-C
+      /// </summary>
+      public bool InvertedAxisY = false;
 
       static string languageStr = "en";
       public static string LanguageStr

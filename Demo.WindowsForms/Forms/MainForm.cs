@@ -244,16 +244,6 @@ namespace Demo.WindowsForms
          }
       }
 
-      public void AddMarker(double lat, double lng)
-      {
-         GMapMarker m = new GMarkerGoogle(new PointLatLng(lat, lng), GMarkerGoogleType.blue_small);
-         GMapMarkerRect mBorders = new GMapMarkerRect(m.Position);
-         mBorders.ToolTip = new GMapToolTip(mBorders);
-         objects.Markers.Add(m);
-         objects.Markers.Add(mBorders);
-         MainMap.Position = m.Position;
-      }
-
       public T DeepClone<T>(T obj)
       {
          using(var ms = new System.IO.MemoryStream())
@@ -264,7 +254,7 @@ namespace Demo.WindowsForms
 
             ms.Position = 0;
 
-            return (T)formatter.Deserialize(ms);
+            return (T) formatter.Deserialize(ms);
          }
       }
 
@@ -433,7 +423,7 @@ namespace Demo.WindowsForms
                else
                {
                   marker.Position = new PointLatLng(d.Lat, d.Lng);
-                  (marker as GMarkerGoogle).Bearing = (float?)d.Bearing;
+                  (marker as GMarkerGoogle).Bearing = (float?) d.Bearing;
                }
                marker.ToolTipText = "Trolley " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
 
@@ -442,7 +432,7 @@ namespace Demo.WindowsForms
                   MainMap.Position = marker.Position;
                   if(d.Bearing.HasValue)
                   {
-                     MainMap.Bearing = (float)d.Bearing.Value;
+                     MainMap.Bearing = (float) d.Bearing.Value;
                   }
                }
             }
@@ -466,7 +456,7 @@ namespace Demo.WindowsForms
                else
                {
                   marker.Position = new PointLatLng(d.Lat, d.Lng);
-                  (marker as GMarkerGoogle).Bearing = (float?)d.Bearing;
+                  (marker as GMarkerGoogle).Bearing = (float?) d.Bearing;
                }
                marker.ToolTipText = "Bus " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
 
@@ -475,7 +465,7 @@ namespace Demo.WindowsForms
                   MainMap.Position = marker.Position;
                   if(d.Bearing.HasValue)
                   {
-                     MainMap.Bearing = (float)d.Bearing.Value;
+                     MainMap.Bearing = (float) d.Bearing.Value;
                   }
                }
             }
@@ -1293,7 +1283,7 @@ namespace Demo.WindowsForms
                   {
                      track.Clear();
                      track.Add(lastPoint);
-                     track.Add(session[0].Position);                       
+                     track.Add(session[0].Position);
 
                      GMapRoute grl = new GMapRoute(track, "");
                      grl.Stroke.Color = Color.Red;
@@ -1317,8 +1307,8 @@ namespace Demo.WindowsForms
                      lastPoint = PointLatLng.Empty;
                   }
 
-                  GMapRoute gr = new GMapRoute(track, "");  
-                  routes.Routes.Add(gr);                  
+                  GMapRoute gr = new GMapRoute(track, "");
+                  routes.Routes.Add(gr);
                }
 
                sessions.Clear();
@@ -1513,7 +1503,7 @@ namespace Demo.WindowsForms
             {
                currentMarker.Position = MainMap.FromLocalToLatLng(e.X, e.Y);
 
-               var px = MainMap.MapProvider.Projection.FromLatLngToPixel(currentMarker.Position.Lat, currentMarker.Position.Lng, (int)MainMap.Zoom);
+               var px = MainMap.MapProvider.Projection.FromLatLngToPixel(currentMarker.Position.Lat, currentMarker.Position.Lng, (int) MainMap.Zoom);
                var tile = MainMap.MapProvider.Projection.FromPixelToTileXY(px);
 
                Debug.WriteLine("MouseDown: geo: " + currentMarker.Position + " | px: " + px + " | tile: " + tile);
@@ -1537,7 +1527,7 @@ namespace Demo.WindowsForms
             {
                PointLatLng pnew = MainMap.FromLocalToLatLng(e.X, e.Y);
 
-               int? pIndex = (int?)CurentRectMarker.Tag;
+               int? pIndex = (int?) CurentRectMarker.Tag;
                if(pIndex.HasValue)
                {
                   if(pIndex < polygon.Points.Count)
@@ -1566,7 +1556,7 @@ namespace Demo.WindowsForms
       // MapZoomChanged
       void MainMap_OnMapZoomChanged()
       {
-         trackBar1.Value = (int)(MainMap.Zoom * 100.0);
+         trackBar1.Value = (int) (MainMap.Zoom * 100.0);
          textBoxZoomCurrent.Text = MainMap.Zoom.ToString();
       }
 
@@ -1649,7 +1639,7 @@ namespace Demo.WindowsForms
          lock(flights)
          {
             lastPosition = point;
-            lastZoom = (int)MainMap.Zoom;
+            lastZoom = (int) MainMap.Zoom;
          }
       }
 
@@ -1663,7 +1653,7 @@ namespace Demo.WindowsForms
          {
             MainMap.ZoomAndCenterMarkers(null);
          }
-         trackBar1.Value = (int)MainMap.Zoom * 100;
+         trackBar1.Value = (int) MainMap.Zoom * 100;
          Activate();
       }
       #endregion
@@ -1735,7 +1725,7 @@ namespace Demo.WindowsForms
       // change mdoe
       private void comboBoxMode_DropDownClosed(object sender, EventArgs e)
       {
-         MainMap.Manager.Mode = (AccessMode)comboBoxMode.SelectedValue;
+         MainMap.Manager.Mode = (AccessMode) comboBoxMode.SelectedValue;
          MainMap.ReloadMap();
       }
 
@@ -1764,7 +1754,7 @@ namespace Demo.WindowsForms
       // goto by geocoder
       private void textBoxGeo_KeyPress(object sender, KeyPressEventArgs e)
       {
-         if((Keys)e.KeyChar == Keys.Enter)
+         if((Keys) e.KeyChar == Keys.Enter)
          {
             GeoCoderStatusCode status = MainMap.SetCurrentPositionByKeywords(textBoxGeo.Text);
             if(status != GeoCoderStatusCode.G_GEO_SUCCESS)
@@ -1815,7 +1805,7 @@ namespace Demo.WindowsForms
             rp = GMapProviders.GoogleMap; // use google if provider does not implement routing
          }
 
-         MapRoute route = rp.GetRoute(start, end, false, false, (int)MainMap.Zoom);
+         MapRoute route = rp.GetRoute(start, end, false, false, (int) MainMap.Zoom);
          if(route != null)
          {
             // add route
@@ -1945,7 +1935,7 @@ namespace Demo.WindowsForms
          RectLatLng area = MainMap.SelectedArea;
          if(!area.IsEmpty)
          {
-            for(int i = (int)MainMap.Zoom; i <= MainMap.MaxZoom; i++)
+            for(int i = (int) MainMap.Zoom; i <= MainMap.MaxZoom; i++)
             {
                DialogResult res = MessageBox.Show("Ready ripp at Zoom = " + i + " ?", "GMap.NET", MessageBoxButtons.YesNoCancel);
 
@@ -2118,11 +2108,11 @@ namespace Demo.WindowsForms
          {
             if(e.KeyChar == '+')
             {
-               MainMap.Zoom = ((int)MainMap.Zoom) + 1;
+               MainMap.Zoom = ((int) MainMap.Zoom) + 1;
             }
             else if(e.KeyChar == '-')
             {
-               MainMap.Zoom = ((int)(MainMap.Zoom + 0.99)) - 1;
+               MainMap.Zoom = ((int) (MainMap.Zoom + 0.99)) - 1;
             }
             else if(e.KeyChar == 'a')
             {
@@ -2137,12 +2127,12 @@ namespace Demo.WindowsForms
 
       private void buttonZoomUp_Click(object sender, EventArgs e)
       {
-         MainMap.Zoom = ((int)MainMap.Zoom) + 1;
+         MainMap.Zoom = ((int) MainMap.Zoom) + 1;
       }
 
       private void buttonZoomDown_Click(object sender, EventArgs e)
       {
-         MainMap.Zoom = ((int)(MainMap.Zoom + 0.99)) - 1;
+         MainMap.Zoom = ((int) (MainMap.Zoom + 0.99)) - 1;
       }
 
       // engage some live demo
@@ -2321,7 +2311,7 @@ namespace Demo.WindowsForms
                            {
                               foreach(var p in seg.trkpt)
                               {
-                                 points.Add(new PointLatLng((double)p.lat, (double)p.lon));
+                                 points.Add(new PointLatLng((double) p.lat, (double) p.lon));
                               }
                            }
 

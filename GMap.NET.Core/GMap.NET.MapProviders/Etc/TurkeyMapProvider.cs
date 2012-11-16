@@ -15,6 +15,7 @@ namespace GMap.NET.MapProviders
       {
          Copyright = string.Format("©{0} Pergo - Map data ©{0} Fideltus Advanced Technology", DateTime.Today.Year);
          Area = new RectLatLng(42.5830078125, 25.48828125, 19.05029296875, 6.83349609375);
+         InvertedAxisY = true;
       }
 
       static TurkeyMapProvider()

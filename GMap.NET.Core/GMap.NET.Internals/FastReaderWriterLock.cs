@@ -70,11 +70,11 @@ namespace GMap.NET.Internals
 
       static readonly bool UseNativeSRWLock = Stuff.IsRunningOnVistaOrLater() && IntPtr.Size == 4; // works only in 32-bit mode, any ideas on native 64-bit support? 
 
-#if !UseFastResourceLock
-      Int32 busy = 0;
-      Int32 readCount = 0;
 #endif
 
+#if !UseFastResourceLock
+       Int32 busy = 0;
+       Int32 readCount = 0;
 #endif
 
         public void AcquireReaderLock()

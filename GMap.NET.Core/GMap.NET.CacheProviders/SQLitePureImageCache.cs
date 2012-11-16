@@ -16,11 +16,11 @@ namespace GMap.NET.CacheProviders
 #if !MONO
    using System.Data.SQLite;
 #else
-   using SQLiteConnection=Mono.Data.SqliteClient.SqliteConnection;
-   using SQLiteTransaction=Mono.Data.SqliteClient.SqliteTransaction;
-   using SQLiteCommand=Mono.Data.SqliteClient.SqliteCommand;
-   using SQLiteDataReader=Mono.Data.SqliteClient.SqliteDataReader;
-   using SQLiteParameter=Mono.Data.SqliteClient.SqliteParameter;
+   using SQLiteConnection = Mono.Data.SqliteClient.SqliteConnection;
+   using SQLiteTransaction = Mono.Data.SqliteClient.SqliteTransaction;
+   using SQLiteCommand = Mono.Data.SqliteClient.SqliteCommand;
+   using SQLiteDataReader = Mono.Data.SqliteClient.SqliteDataReader;
+   using SQLiteParameter = Mono.Data.SqliteClient.SqliteParameter;
 #endif
 
    /// <summary>
@@ -148,8 +148,9 @@ namespace GMap.NET.CacheProviders
                Directory.CreateDirectory(dir);
             }
 
+#if !MONO
             SQLiteConnection.ClearAllPools();              
-
+#endif
             // make empty db
             {
                db = dir + "Data.gmdb";
@@ -445,7 +446,7 @@ namespace GMap.NET.CacheProviders
                         }
                         catch(Exception exx)
                         {
-#if MONO                   
+#if MONO
                            Console.WriteLine("AlterDBAddTimeColumn: " + exx.ToString());
 #endif
                            Debug.WriteLine("AlterDBAddTimeColumn: " + exx.ToString());

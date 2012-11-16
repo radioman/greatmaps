@@ -151,8 +151,8 @@ namespace GMap.NET
             Exception ex;
             PureImage img;
 
-            // tile number inversion(BottomLeft -> TopLeft) for pergo maps
-            if(pr is TurkeyMapProvider)
+            // tile number inversion(BottomLeft -> TopLeft)
+            if(pr.InvertedAxisY)
             {
                img = GMaps.Instance.GetImageFrom(pr, new GPoint(p.X, maxOfTiles.Height - p.Y), zoom, out ex);
             }

@@ -524,16 +524,6 @@ namespace GMap.NET.Internals
       }
 
       /// <summary>
-      /// gets lat/lng from local control coordinates
-      /// </summary>
-      /// <param name="p"></param>
-      /// <returns></returns>
-      public PointLatLng FromLocalToLatLng(GPoint p)
-      {
-         return FromLocalToLatLng(p.X, p.Y);
-      }
-
-      /// <summary>
       /// return local coordinates from lat/lng
       /// </summary>
       /// <param name="latlng"></param>
@@ -904,8 +894,8 @@ namespace GMap.NET.Internals
                            {
                               if(skipOverZoom == 0 || task.Value.Zoom < skipOverZoom)
                               {
-                                 // tile number inversion(BottomLeft -> TopLeft) for pergo maps
-                                 if(tl is TurkeyMapProvider)
+                                 // tile number inversion(BottomLeft -> TopLeft)
+                                 if(tl.InvertedAxisY)
                                  {
                                     img = GMaps.Instance.GetImageFrom(tl, new GPoint(task.Value.Pos.X, maxOfTiles.Height - task.Value.Pos.Y), task.Value.Zoom, out ex);
                                  }
