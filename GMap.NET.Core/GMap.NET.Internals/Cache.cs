@@ -9,18 +9,23 @@ namespace GMap.NET.Internals
 
    internal class CacheLocator
    {
-      private static string location = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+      private static string location;
       public static string Location
       {
          get
          {
+            if(string.IsNullOrEmpty(location))
+            {
+               Reset();
+            }
+
             return location;
          }
          set
          {
             if(string.IsNullOrEmpty(value)) // setting to null resets to default
             {
-               location = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+               Reset();
             }
             else
             {
@@ -32,6 +37,15 @@ namespace GMap.NET.Internals
                Cache.Instance.CacheLocation = location;
             }
          }
+      }
+
+      static void Reset()
+      {
+#if !PocketPC
+         location = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+#else
+         location = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+#endif
       }
 
       public static bool Delay = false;
@@ -98,20 +112,21 @@ namespace GMap.NET.Internals
 #endif
 
 #if PocketPC
-            // use sd card if exist for cache
-            string sd = Native.GetRemovableStorageDirectory();
-            if(!string.IsNullOrEmpty(sd))
-            {
-               CacheLocation = sd + Path.DirectorySeparatorChar +  "GMap.NET" + Path.DirectorySeparatorChar;
-            }
-            else          
+         // use sd card if exist for cache
+         string sd = Native.GetRemovableStorageDirectory();
+         if(!string.IsNullOrEmpty(sd))
+         {
+            CacheLocation = sd + Path.DirectorySeparatorChar +  "GMap.NET" + Path.DirectorySeparatorChar;
+         }
+         else
 #endif
          {
-            string oldCache = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
 #if PocketPC
-            CacheLocation = oldCache;
+            CacheLocation = CacheLocator.Location;
 #else
             string newCache = CacheLocator.Location;
+
+            string oldCache = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
 
             // move database to non-roaming user directory
             if(Directory.Exists(oldCache))
