@@ -216,6 +216,11 @@ namespace Demo.WindowsForms
                AddLocationLithuania("Šiauliai");
                AddLocationLithuania("Panevėžys");
 
+               if(objects.Markers.Count > 0)
+               {
+                  MainMap.ZoomAndCenterMarkers(null);
+               }    
+
                RegeneratePolygon();
 
                try
@@ -1649,10 +1654,6 @@ namespace Demo.WindowsForms
       // center markers on start
       private void MainForm_Load(object sender, EventArgs e)
       {
-         if(objects.Markers.Count > 0)
-         {
-            MainMap.ZoomAndCenterMarkers(null);
-         }
          trackBar1.Value = (int) MainMap.Zoom * 100;
          Activate();
       }

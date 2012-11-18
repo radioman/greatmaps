@@ -45,7 +45,7 @@ namespace GMap.NET.Internals
 
       public GRect tileRect;
       public GRect tileRectBearing;
-      public GRect currentRegion;
+      //public GRect currentRegion;
       public float bearing = 0;
       public bool IsRotated = false;
 
@@ -478,14 +478,10 @@ namespace GMap.NET.Internals
 
          Debug.WriteLine("OnMapSizeChanged, w: " + width + ", h: " + height + ", size: " + sizeOfMapArea);
 
-         UpdateCenterTileXYLocation();
-
          if(IsStarted)
          {
             UpdateBounds();
-
-            if(OnCurrentPositionChanged != null)
-               OnCurrentPositionChanged(position);
+            GoToCurrentPosition();
          }
       }
 
@@ -641,7 +637,6 @@ namespace GMap.NET.Internals
 
          // reset stuff
          renderOffset = GPoint.Empty;
-         centerTileXYLocationLast = GPoint.Empty;
          dragPoint = GPoint.Empty;
 
          //var dd = new GPoint(-(CurrentPositionGPixel.X - Width / 2), -(CurrentPositionGPixel.Y - Height / 2));
@@ -663,7 +658,6 @@ namespace GMap.NET.Internals
 
          // reset stuff
          renderOffset = GPoint.Empty;
-         centerTileXYLocationLast = GPoint.Empty;
          dragPoint = GPoint.Empty;
 
          // goto location and centering

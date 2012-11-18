@@ -91,7 +91,11 @@ namespace GMap.NET.Projections
          /*
            getContainingTileCoords:function(ti,_1dd,lod)
            {
-             var to=ti.origin,             res=lod.resolution,             tmw=ti.width*res,             tmh=ti.height*res,             tc=Math.floor((_1dd.x-to.x)/tmw),
+             var to=ti.origin,
+             res=lod.resolution,
+             tmw=ti.width*res,
+             tmh=ti.height*res,
+             tc=Math.floor((_1dd.x-to.x)/tmw),
              tr=Math.floor((to.y-_1dd.y)/tmh);
            }
          */

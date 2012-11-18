@@ -486,7 +486,6 @@ namespace GMap.NET.WindowsForms
             Core.SystemType = "WindowsForms";
 
             RenderMode = RenderMode.GDI_PLUS;
-            Core.currentRegion = new GRect(-50, -50, Size.Width + 100, Size.Height + 100);
 
             CenterFormat.Alignment = StringAlignment.Center;
             CenterFormat.LineAlignment = StringAlignment.Center;
@@ -818,26 +817,37 @@ namespace GMap.NET.WindowsForms
       /// <returns></returns>
       public bool SetZoomToFitRect(RectLatLng rect)
       {
-         int maxZoom = Core.GetMaxZoomToFitRect(rect);
-         if(maxZoom > 0)
+         if(lazyEvents)
          {
-            PointLatLng center = new PointLatLng(rect.Lat - (rect.HeightLat / 2), rect.Lng + (rect.WidthLng / 2));
-            Position = center;
-
-            if(maxZoom > MaxZoom)
-            {
-               maxZoom = MaxZoom;
-            }
-
-            if((int)Zoom != maxZoom)
-            {
-               Zoom = maxZoom;
-            }
-
-            return true;
+            lazySetZoomToFitRect = rect; 
          }
+         else
+         {
+            int maxZoom = Core.GetMaxZoomToFitRect(rect);
+            if(maxZoom > 0)
+            {
+               PointLatLng center = new PointLatLng(rect.Lat - (rect.HeightLat / 2), rect.Lng + (rect.WidthLng / 2));
+               Position = center;
+
+               if(maxZoom > MaxZoom)
+               {
+                  maxZoom = MaxZoom;
+               }
+
+               if((int)Zoom != maxZoom)
+               {
+                  Zoom = maxZoom;
+               }
+
+               return true;
+            }
+         }
+
          return false;
       }
+
+      RectLatLng? lazySetZoomToFitRect = null;
+      bool lazyEvents = true;
 
       /// <summary>
       /// sets to max zoom to fit all markers and centers them in map
@@ -1178,15 +1188,26 @@ namespace GMap.NET.WindowsForms
 
          if(!IsDesignerHosted)
          {
-            MethodInvoker m = delegate
-            {
-               Thread.Sleep(444);
+            //MethodInvoker m = delegate
+            //{
+            //   Thread.Sleep(444);
 
-               OnSizeChanged(null);
-               Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
-               ForceUpdateOverlays();
-            };
-            this.BeginInvoke(m);
+            //OnSizeChanged(null);
+
+            if(lazyEvents)
+            {
+               lazyEvents = false;
+
+               if(lazySetZoomToFitRect.HasValue)
+               {
+                  SetZoomToFitRect(lazySetZoomToFitRect.Value);
+                  lazySetZoomToFitRect = null;
+               }                
+            }
+            Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
+            ForceUpdateOverlays();
+            //};
+            //this.BeginInvoke(m);
          }
       }
 #else
@@ -1200,15 +1221,15 @@ namespace GMap.NET.WindowsForms
             {
                 IsHandleCreated = true;
 
-                MethodInvoker m = delegate
-                {
-                    Thread.Sleep(444);
+                //MethodInvoker m = delegate
+                //{
+                //    Thread.Sleep(444);
 
-                    OnResize(null);
+                //    OnResize(null);
                     Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
                     ForceUpdateOverlays();
-                };
-                this.BeginInvoke(m);
+                //};
+                //this.BeginInvoke(m);
             }
         }
 #endif
@@ -1347,18 +1368,22 @@ namespace GMap.NET.WindowsForms
             {
                if(!MobileMode)
                {
-                  var pc = Core.renderOffset;
-                  pc.OffsetNegative(new GPoint(Width / 2, Height / 2));
-                  e.Graphics.TranslateTransform(Core.renderOffset.X + -pc.X, Core.renderOffset.Y + -pc.Y);
+                  var pc = new GPoint(Width / 2, Height / 2);
+                  var pc2 = pc;
+                  pc.OffsetNegative(Core.renderOffset);
+                  pc2.OffsetNegative(pc);
+
+                  e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value, MatrixOrder.Append);
+
+                  e.Graphics.TranslateTransform(pc2.X, pc2.Y, MatrixOrder.Append);
                }
-               e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
+
                {
                   DrawMap(e.Graphics);
 
                   e.Graphics.ResetTransform();
                   if(!MobileMode)
                   {
-                     //e.Graphics.TranslateTransform(Core.renderOffset.X, Core.renderOffset.Y);
                      var pc = Core.renderOffset;
                      pc.OffsetNegative(new GPoint(Width / 2, Height / 2));
                      e.Graphics.TranslateTransform(Core.renderOffset.X + -pc.X, Core.renderOffset.Y + -pc.Y);
@@ -1515,6 +1540,7 @@ namespace GMap.NET.WindowsForms
 #if DEBUG
          g.DrawLine(ScalePen, -20, 0, 20, 0);
          g.DrawLine(ScalePen, 0, -20, 0, 20);
+         g.DrawString("debug build", CopyrightFont, Brushes.Blue, 2, CopyrightFont.Height);
 #endif
 
 #if !PocketPC
@@ -1618,9 +1644,22 @@ namespace GMap.NET.WindowsForms
       protected override void OnSizeChanged(EventArgs e)
       {
          base.OnSizeChanged(e);
+#else
+      protected override void OnResize(EventArgs e)
+      {
+         base.OnResize(e);
+#endif
+         if(Width == 0 || Height == 0)
+         {
+            Debug.WriteLine("minimized");
+            return;
+         }
 
-         //if(MapProvider == EmptyProvider.Instance)
-         //   return;
+         if(Width == Core.Width && Height == Core.Height)
+         {
+            Debug.WriteLine("maximized");
+            return;
+         }
 
          if(!IsDesignerHosted && !DesignModeInConstruct)
          {
@@ -1641,72 +1680,30 @@ namespace GMap.NET.WindowsForms
                gxOff = Graphics.FromImage(backBuffer);
             }
 
-            if(!VirtualSizeEnabled)
-            {
-               Core.OnMapSizeChanged(Width, Height);
-               Core.currentRegion = new GRect(-50, -50, Core.Width + 50, Core.Height + 50);
-            }
-            else
+#if !PocketPC
+            if(VirtualSizeEnabled)
             {
                Core.OnMapSizeChanged(Core.vWidth, Core.vHeight);
-               Core.currentRegion = new GRect(-50, -50, Core.Width + 50, Core.Height + 50);
             }
+            else
+#endif
+            {
+               Core.OnMapSizeChanged(Width, Height);
+            }
+            //Core.currentRegion = new GRect(-50, -50, Core.Width + 50, Core.Height + 50);
 
             if(Visible && IsHandleCreated && Core.IsStarted)
             {
-               // keep center on same position
-               Core.GoToCurrentPosition();
-
+#if !PocketPC
                if(IsRotated)
                {
                   UpdateRotationMatrix();
                }
-
+#endif
                ForceUpdateOverlays();
             }
          }
       }
-#else
-#if !DESIGN
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-
-            if (MapProvider == EmptyProvider.Instance)
-                return;
-
-            if (ForceDoubleBuffer)
-            {
-                if (backBuffer != null)
-                {
-                    backBuffer.Dispose();
-                    backBuffer = null;
-                }
-                if (gxOff != null)
-                {
-                    gxOff.Dispose();
-                    gxOff = null;
-                }
-
-                backBuffer = new Bitmap(Width, Height);
-                gxOff = Graphics.FromImage(backBuffer);
-            }
-
-            Core.OnMapSizeChanged(Width, Height);
-
-            // 50px outside control
-            Core.currentRegion = new GRect(-50, -50, Size.Width + 100, Size.Height + 100);
-
-            if (Visible && Core.IsStarted && IsHandleCreated)
-            {
-                // keep center on same position
-                Core.GoToCurrentPosition();
-
-                ForceUpdateOverlays();
-            }
-        }
-#endif
-#endif
 
       bool isSelected = false;
       protected override void OnMouseDown(MouseEventArgs e)
@@ -1814,7 +1811,7 @@ namespace GMap.NET.WindowsForms
                               OnMarkerClick(m, e);
                            }
                            break;
-                        } 
+                        }
 
                         #endregion
                      }
@@ -2032,11 +2029,11 @@ namespace GMap.NET.WindowsForms
                               }
                               else if(m.IsMouseOver)
                               {
-                                 m.IsMouseOver = false;  
+                                 m.IsMouseOver = false;
                                  IsMouseOverMarker = false;
 #if !PocketPC
                                  RestoreCursorOnLeave();
-#endif                             
+#endif
                                  if(OnMarkerLeave != null)
                                  {
                                     OnMarkerLeave(m);
@@ -2088,7 +2085,7 @@ namespace GMap.NET.WindowsForms
                                     IsMouseOverRoute = false;
 #if !PocketPC
                                     RestoreCursorOnLeave();
-#endif                                                               
+#endif
                                     if(OnRouteLeave != null)
                                     {
                                        OnRouteLeave(m);
@@ -2311,6 +2308,21 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
          if(MapRenderTransform.HasValue)
          {
+            //var xx = (int)(Core.renderOffset.X + ((x - Core.renderOffset.X) / MapRenderTransform.Value));
+            //var yy = (int)(Core.renderOffset.Y + ((y - Core.renderOffset.Y) / MapRenderTransform.Value));
+
+            //PointF center = new PointF(Core.Width / 2, Core.Height / 2);
+
+            //Matrix m = new Matrix();
+            //m.Translate(-Core.renderOffset.X, -Core.renderOffset.Y);
+            //m.Scale(MapRenderTransform.Value, MapRenderTransform.Value);
+
+            //System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(x, y) };
+            //m.TransformPoints(tt);
+            //var z = tt[0];
+
+            //
+
             x = (int)(Core.renderOffset.X + ((x - Core.renderOffset.X) / MapRenderTransform.Value));
             y = (int)(Core.renderOffset.Y + ((y - Core.renderOffset.Y) / MapRenderTransform.Value));
          }
@@ -2481,7 +2493,6 @@ namespace GMap.NET.WindowsForms
                double remainder = value % 1;
                if(remainder != 0)
                {
-                  //float scaleValue = (float)(remainder + 1);
                   float scaleValue = (float)Math.Pow(2d, remainder);
                   {
 #if !PocketPC
@@ -2580,7 +2591,7 @@ namespace GMap.NET.WindowsForms
          get
          {
 #if !DESIGN
-             return CacheLocator.Location;
+            return CacheLocator.Location;
 #else
              return string.Empty;
 #endif

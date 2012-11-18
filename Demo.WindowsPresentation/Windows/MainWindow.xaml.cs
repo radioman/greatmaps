@@ -67,7 +67,6 @@ namespace Demo.WindowsPresentation
          MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
          MainMap.MouseMove += new System.Windows.Input.MouseEventHandler(MainMap_MouseMove);
          MainMap.MouseLeftButtonDown += new System.Windows.Input.MouseButtonEventHandler(MainMap_MouseLeftButtonDown);
-         MainMap.Loaded += new RoutedEventHandler(MainMap_Loaded);
          MainMap.MouseEnter += new MouseEventHandler(MainMap_MouseEnter);
 
          // get map types
@@ -159,7 +158,12 @@ namespace Demo.WindowsPresentation
                }
                #endregion
             }
-         }
+
+            if(MainMap.Markers.Count > 1)
+            {
+               MainMap.ZoomAndCenterMarkers(null);
+            }
+         } 
 
          // perfromance test
          timer.Interval = TimeSpan.FromMilliseconds(44);
@@ -451,12 +455,6 @@ namespace Demo.WindowsPresentation
          c.Width = 55 + pxCircleRadius * 2;
          c.Height = 55 + pxCircleRadius * 2;
          (c.Tag as GMapMarker).Offset = new System.Windows.Point(-c.Width / 2, -c.Height / 2);
-      }
-
-      // center markers on load
-      void MainMap_Loaded(object sender, RoutedEventArgs e)
-      {
-         MainMap.ZoomAndCenterMarkers(null);
       }
 
       void MainMap_OnMapTypeChanged(GMapProvider type)

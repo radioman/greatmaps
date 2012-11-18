@@ -166,7 +166,6 @@ namespace GMap.NET.WindowsPresentation
             double remainder = value % 1;
             if(remainder != 0 && map.ActualWidth > 0)
             {
-               //double scaleValue = remainder + 1; 
                double scaleValue = Math.Pow(2d, remainder);
                {
                   if(map.MapScaleTransform == null)
@@ -203,7 +202,7 @@ namespace GMap.NET.WindowsPresentation
       #endregion
 
       readonly Core Core = new Core();
-      GRect region;
+      //GRect region;
       delegate void MethodInvoker();
       PointLatLng selectionStart;
       PointLatLng selectionEnd;
@@ -605,6 +604,16 @@ namespace GMap.NET.WindowsPresentation
       {
          if(!Core.IsStarted)
          {
+            if(lazyEvents)
+            {
+               lazyEvents = false;
+
+               if(lazySetZoomToFitRect.HasValue)
+               {
+                  SetZoomToFitRect(lazySetZoomToFitRect.Value);
+                  lazySetZoomToFitRect = null;
+               }
+            }
             Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
             ForceUpdateOverlays();
 
@@ -644,15 +653,12 @@ namespace GMap.NET.WindowsPresentation
          System.Windows.Size constraint = e.NewSize;
 
          // 50px outside control
-         region = new GRect(-50, -50, (int)constraint.Width + 100, (int)constraint.Height + 100);
+         //region = new GRect(-50, -50, (int)constraint.Width + 100, (int)constraint.Height + 100);
 
          Core.OnMapSizeChanged((int)constraint.Width, (int)constraint.Height);
 
-         // keep center on same position
-         if(IsLoaded)
+         if(Core.IsStarted)
          {
-            Core.GoToCurrentPosition();
-
             if(IsRotated)
             {
                UpdateRotationMatrix();
@@ -1011,26 +1017,36 @@ namespace GMap.NET.WindowsPresentation
       /// <returns></returns>
       public bool SetZoomToFitRect(RectLatLng rect)
       {
-         int maxZoom = Core.GetMaxZoomToFitRect(rect);
-         if(maxZoom > 0)
+         if(lazyEvents)
          {
-            PointLatLng center = new PointLatLng(rect.Lat - (rect.HeightLat / 2), rect.Lng + (rect.WidthLng / 2));
-            Position = center;
-
-            if(maxZoom > MaxZoom)
+            lazySetZoomToFitRect = rect;
+         }
+         else
+         {
+            int maxZoom = Core.GetMaxZoomToFitRect(rect);
+            if(maxZoom > 0)
             {
-               maxZoom = MaxZoom;
-            }
+               PointLatLng center = new PointLatLng(rect.Lat - (rect.HeightLat / 2), rect.Lng + (rect.WidthLng / 2));
+               Position = center;
 
-            if(Core.Zoom != maxZoom)
-            {
-               Zoom = maxZoom;
-            }
+               if(maxZoom > MaxZoom)
+               {
+                  maxZoom = MaxZoom;
+               }
 
-            return true;
+               if(Core.Zoom != maxZoom)
+               {
+                  Zoom = maxZoom;
+               }
+
+               return true;
+            }
          }
          return false;
       }
+
+      RectLatLng? lazySetZoomToFitRect = null;
+      bool lazyEvents = true;   
 
       /// <summary>
       /// sets to max zoom to fit all markers and centers them in map
@@ -1379,7 +1395,7 @@ namespace GMap.NET.WindowsPresentation
             // set mouse position to map center
             if(MouseWheelZoomType != MouseWheelZoomType.MousePositionWithoutCenter)
             {
-               System.Windows.Point ps = PointToScreen(new System.Windows.Point(ActualWidth / 2, ActualHeight / 2));
+               System.Windows.Point ps = PointToScreen(new System.Windows.Point(ActualWidth / 2, ActualHeight / 2));              
                Stuff.SetCursorPos((int)ps.X, (int)ps.Y);
             }
 
