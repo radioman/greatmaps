@@ -884,9 +884,9 @@ namespace GMap.NET.Internals
                            PureImage img = null;
                            Exception ex = null;
 
-                           if(!provider.MaxZoom.HasValue || task.Value.Zoom < provider.MaxZoom)
+                           if(!provider.MaxZoom.HasValue || task.Value.Zoom <= provider.MaxZoom)
                            {
-                              if(skipOverZoom == 0 || task.Value.Zoom < skipOverZoom)
+                              if(skipOverZoom == 0 || task.Value.Zoom <= skipOverZoom)
                               {
                                  // tile number inversion(BottomLeft -> TopLeft)
                                  if(tl.InvertedAxisY)
