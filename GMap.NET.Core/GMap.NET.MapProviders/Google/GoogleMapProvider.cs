@@ -90,14 +90,17 @@ namespace GMap.NET.MapProviders
             string url = string.Format("http://maps.{0}", Server);
             try
             {
-               string html = Cache.Instance.GetContent(url, CacheType.UrlCache, TimeSpan.FromHours(8));
+               string html = GMaps.Instance.UseUrlCache ? Cache.Instance.GetContent(url, CacheType.UrlCache, TimeSpan.FromHours(8)) : string.Empty;
 
                if(string.IsNullOrEmpty(html))
                {
                   html = GetContentUsingHttp(url);
                   if(!string.IsNullOrEmpty(html))
                   {
-                     Cache.Instance.SaveContent(url, CacheType.UrlCache, html);
+                     if(GMaps.Instance.UseUrlCache)
+                     {
+                        Cache.Instance.SaveContent(url, CacheType.UrlCache, html);
+                     }
                   }
                }
 

@@ -43,6 +43,17 @@ namespace GMap.NET.Internals
       {
 #if !PocketPC
          location = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+
+         // http://greatmaps.codeplex.com/discussions/403151
+         if(string.IsNullOrEmpty(location)) 
+         {
+            GMaps.Instance.Mode = AccessMode.ServerOnly;
+            GMaps.Instance.UseDirectionsCache = false;
+            GMaps.Instance.UseGeocoderCache = false;
+            GMaps.Instance.UsePlacemarkCache = false;
+            GMaps.Instance.UseRouteCache = false;
+            GMaps.Instance.UseUrlCache = false;
+         }
 #else
          location = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
 #endif

@@ -52,6 +52,11 @@ namespace GMap.NET
       public bool UsePlacemarkCache = true;
 
       /// <summary>
+      /// is map ussing cache for other url
+      /// </summary>
+      public bool UseUrlCache = true;
+
+      /// <summary>
       /// is map using memory cache for tiles
       /// </summary>
       public bool UseMemoryCache = true;
