@@ -194,6 +194,49 @@ namespace GMap.NET.WindowsForms
             }
          }
       }
+
+      public enum HelperLineOptions
+      {
+          ShowOnModifierKey = 0,
+          ShowAlways = 1,
+          DontShow = 2
+      }
+
+      public HelperLineOptions HelperLineOption;
+      public Pen HelperLinePen = new Pen(Color.Black, 1);
+      private Point m_mousepos = new Point(-1, -1);
+      private bool m_modifierkeypressed = false;
+
+      protected override void OnKeyDown(KeyEventArgs e)
+      {
+          if (!m_modifierkeypressed & (HelperLineOption == HelperLineOptions.ShowOnModifierKey))
+          {
+              if ((e.KeyCode == Keys.Menu) | (e.KeyCode == Keys.ShiftKey))
+              {
+                  m_modifierkeypressed = true;
+                  //e.Handled = true;
+                  base.Invalidate();
+              }
+          }
+          base.OnKeyDown(e);
+      }
+
+      protected override void OnKeyUp(KeyEventArgs e)
+      {
+          if (m_modifierkeypressed & (HelperLineOption == HelperLineOptions.ShowOnModifierKey))
+          {
+              if ((e.KeyCode == Keys.Menu) | (e.KeyCode == Keys.ShiftKey))
+              {
+                  if ((Form.ModifierKeys != Keys.Alt) & (Form.ModifierKeys != Keys.Shift))
+                  {
+                      m_modifierkeypressed = false;
+                      //e.Handled = true;
+                      base.Invalidate();
+                  }
+              }
+          }
+          base.OnKeyUp(e);
+      }
 #endif
 
 
@@ -1573,7 +1616,13 @@ namespace GMap.NET.WindowsForms
             g.DrawLine(CenterPen, Width / 2, Height / 2 - 5, Width / 2, Height / 2 + 5);
          }
 
-         #region -- copyright --
+         if (m_modifierkeypressed | (HelperLineOption == HelperLineOptions.ShowAlways))
+         {
+             g.DrawLine(HelperLinePen, m_mousepos.X, 0, m_mousepos.X, this.Height);
+             g.DrawLine(HelperLinePen, 0, m_mousepos.Y, this.Width, m_mousepos.Y);
+         }
+         
+#region -- copyright --
 
          if(!string.IsNullOrEmpty(Core.provider.Copyright))
          {
@@ -2151,6 +2200,13 @@ namespace GMap.NET.WindowsForms
                }
             }
          }
+
+         m_mousepos = e.Location;
+         if (HelperLineOption == HelperLineOptions.ShowAlways)
+         {
+             base.Invalidate();
+         }
+
          base.OnMouseMove(e);
       }
 
