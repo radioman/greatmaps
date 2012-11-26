@@ -395,6 +395,11 @@ namespace GMap.NET.WindowsPresentation
       public RectLatLng? BoundsOfMap = null;
 
       /// <summary>
+      /// occurs when mouse selection is changed
+      /// </summary>        
+      public event SelectionChange OnSelectionChange;
+
+      /// <summary>
       /// list of markers
       /// </summary>
       public readonly ObservableCollection<GMapMarker> Markers = new ObservableCollection<GMapMarker>();
@@ -1046,7 +1051,7 @@ namespace GMap.NET.WindowsPresentation
       }
 
       RectLatLng? lazySetZoomToFitRect = null;
-      bool lazyEvents = true;   
+      bool lazyEvents = true;
 
       /// <summary>
       /// sets to max zoom to fit all markers and centers them in map
@@ -1335,6 +1340,14 @@ namespace GMap.NET.WindowsPresentation
             drawingContext.DrawLine(CenterCrossPen, new System.Windows.Point(ActualWidth / 2, (ActualHeight / 2) - 5), new System.Windows.Point(ActualWidth / 2, (ActualHeight / 2) + 5));
          }
 
+         if(renderHelperLine)
+         {
+            var p = Mouse.GetPosition(this);
+
+            drawingContext.DrawLine(HelperLinePen, new Point(p.X, 0), new Point(p.X, ActualHeight));
+            drawingContext.DrawLine(HelperLinePen, new Point(0, p.Y), new Point(ActualWidth, p.Y));
+         }
+
          #region -- copyright --
 
          if(Copyright != null)
@@ -1353,6 +1366,58 @@ namespace GMap.NET.WindowsPresentation
 #if DEBUG
       readonly Pen VirtualCenterCrossPen = new Pen(Brushes.Blue, 1);
 #endif
+
+      HelperLineOptions helperLineOption = HelperLineOptions.DontShow;
+
+      /// <summary>
+      /// draw lines at the mouse pointer position
+      /// </summary>
+      [Browsable(false)]
+      public HelperLineOptions HelperLineOption
+      {
+         get
+         {
+            return helperLineOption;
+         }
+         set
+         {
+            helperLineOption = value;
+            renderHelperLine = (helperLineOption == HelperLineOptions.ShowAlways);
+            if(Core.IsStarted)
+            {
+               InvalidateVisual();
+            }
+         }
+      }
+
+      public Pen HelperLinePen = new Pen(Brushes.Blue, 1);
+      bool renderHelperLine = false;
+
+      protected override void OnKeyUp(KeyEventArgs e)
+      {
+         if(HelperLineOption == HelperLineOptions.ShowOnModifierKey)
+         {
+            renderHelperLine = !(e.IsUp && (e.Key == Key.LeftShift || e.SystemKey == Key.LeftAlt));
+            if(!renderHelperLine)
+            {
+               InvalidateVisual();
+            }
+         }
+         base.OnKeyUp(e);
+      }
+
+      protected override void OnKeyDown(KeyEventArgs e)
+      {
+         if(HelperLineOption == HelperLineOptions.ShowOnModifierKey)
+         {
+            renderHelperLine = e.IsDown && (e.Key == Key.LeftShift || e.SystemKey == Key.LeftAlt);
+            if(renderHelperLine)
+            {
+               InvalidateVisual();
+            }
+         }
+         base.OnKeyDown(e);
+      }
 
       /// <summary>
       /// reverses MouseWheel zooming direction
@@ -1395,7 +1460,7 @@ namespace GMap.NET.WindowsPresentation
             // set mouse position to map center
             if(MouseWheelZoomType != MouseWheelZoomType.MousePositionWithoutCenter)
             {
-               System.Windows.Point ps = PointToScreen(new System.Windows.Point(ActualWidth / 2, ActualHeight / 2));              
+               System.Windows.Point ps = PointToScreen(new System.Windows.Point(ActualWidth / 2, ActualHeight / 2));
                Stuff.SetCursorPos((int)ps.X, (int)ps.Y);
             }
 
@@ -1502,9 +1567,16 @@ namespace GMap.NET.WindowsPresentation
 
             if(!selectionEnd.IsEmpty && !selectionStart.IsEmpty)
             {
+               bool zoomtofit = false;
+
                if(!SelectedArea.IsEmpty && Keyboard.Modifiers == ModifierKeys.Shift)
                {
-                  SetZoomToFitRect(SelectedArea);
+                  zoomtofit = SetZoomToFitRect(SelectedArea);
+               }
+
+               if(OnSelectionChange != null)
+               {
+                  OnSelectionChange(SelectedArea, zoomtofit);
                }
             }
             else
@@ -1607,6 +1679,11 @@ namespace GMap.NET.WindowsPresentation
 
                   SelectedArea = new RectLatLng(y1, x1, x2 - x1, y1 - y2);
                }
+            }
+
+            if(renderHelperLine)
+            {
+               InvalidateVisual(true);
             }
          }
 
@@ -2113,4 +2190,13 @@ namespace GMap.NET.WindowsPresentation
 
       #endregion
    }
+
+   public enum HelperLineOptions
+   {
+      DontShow = 0,
+      ShowAlways = 1,
+      ShowOnModifierKey = 2
+   }
+
+   public delegate void SelectionChange(RectLatLng Selection, bool ZoomToFit);
 }
