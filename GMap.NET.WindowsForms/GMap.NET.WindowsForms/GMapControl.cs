@@ -82,6 +82,12 @@ namespace GMap.NET.WindowsForms
       public readonly ObservableCollectionThreadSafe<GMapOverlay> Overlays = new ObservableCollectionThreadSafe<GMapOverlay>();
 
       /// <summary>
+      /// occurs when mouse selection is changed
+      /// </summary>
+      public delegate void SelectionChange(RectLatLng Selection, bool ZoomToFit);
+      public event SelectionChange OnSelectionChange;
+
+      /// <summary>
       /// max zoom
       /// </summary>         
       [Category("GMap.NET")]
@@ -1616,7 +1622,7 @@ namespace GMap.NET.WindowsForms
             g.DrawLine(CenterPen, Width / 2, Height / 2 - 5, Width / 2, Height / 2 + 5);
          }
 
-         if (m_modifierkeypressed | (HelperLineOption == HelperLineOptions.ShowAlways))
+         if (((Form.ModifierKeys == Keys.Shift) | (Form.ModifierKeys == Keys.Alt)) | (HelperLineOption == HelperLineOptions.ShowAlways))
          {
              g.DrawLine(HelperLinePen, m_mousepos.X, 0, m_mousepos.X, this.Height);
              g.DrawLine(HelperLinePen, 0, m_mousepos.Y, this.Width, m_mousepos.Y);
@@ -1833,6 +1839,11 @@ namespace GMap.NET.WindowsForms
                {
                   SetZoomToFitRect(SelectedArea);
                }
+
+               if (OnSelectionChange != null)
+               {
+                   OnSelectionChange(SelectedArea, (Form.ModifierKeys == Keys.Shift));
+               }
             }
             else
             {
@@ -1914,6 +1925,12 @@ namespace GMap.NET.WindowsForms
                   }
                }
             }
+         }
+
+         m_mousepos = e.Location;
+         if (HelperLineOption == HelperLineOptions.ShowAlways)
+         {
+             base.Invalidate();
          }
 
          base.OnMouseClick(e);
