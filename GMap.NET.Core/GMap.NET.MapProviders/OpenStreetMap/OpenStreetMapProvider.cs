@@ -81,7 +81,7 @@ namespace GMap.NET.MapProviders
       /// <returns></returns>
       public MapRoute GetRoute(string start, string end, bool avoidHighways, bool walkingMode, int Zoom)
       {
-         throw new NotImplementedException();
+         throw new NotImplementedException("use GetRoute(PointLatLng start, PointLatLng end...");
       }
 
       #region -- internals --
@@ -185,20 +185,20 @@ namespace GMap.NET.MapProviders
 
       public GeoCoderStatusCode GetPoints(Placemark placemark, out List<PointLatLng> pointList)
       {
-          throw new NotImplementedException();
+         throw new NotImplementedException("use GetPoints(string keywords...");
       }
 
       public PointLatLng? GetPoint(Placemark placemark, out GeoCoderStatusCode status)
       {
-          throw new NotImplementedException();
+         throw new NotImplementedException("use GetPoint(string keywords...");
       }
 
       public GeoCoderStatusCode GetPlacemarks(PointLatLng location, out List<Placemark> placemarkList)
       {
-         throw new NotImplementedException();
+         throw new NotImplementedException("use GetPlacemark");
       }
 
-      public Placemark GetPlacemark(PointLatLng location, out GeoCoderStatusCode status)
+      public Placemark ? GetPlacemark(PointLatLng location, out GeoCoderStatusCode status)
       {
          //http://nominatim.openstreetmap.org/reverse?format=xml&lat=52.5487429714954&lon=-1.81602098644987&zoom=18&addressdetails=1
 
@@ -329,10 +329,10 @@ namespace GMap.NET.MapProviders
          return status;
       }
 
-      Placemark GetPlacemarkFromReverseGeocoderUrl(string url, out GeoCoderStatusCode status)
+      Placemark ? GetPlacemarkFromReverseGeocoderUrl(string url, out GeoCoderStatusCode status)
       {
          status = GeoCoderStatusCode.Unknow;
-         Placemark ret = null;
+         Placemark ?ret = null;
 
          try
          {
@@ -365,7 +365,7 @@ namespace GMap.NET.MapProviders
                      XmlNode r = doc.SelectSingleNode("/reversegeocode/result");
                      if(r != null)
                      {
-                        ret = new Placemark(r.InnerText);
+                        var p = new Placemark(r.InnerText);
 
                         XmlNode ad = doc.SelectSingleNode("/reversegeocode/addressparts");
                         if(ad != null)
@@ -373,45 +373,47 @@ namespace GMap.NET.MapProviders
                            var vl = ad.SelectSingleNode("country");
                            if(vl != null)
                            {
-                              ret.CountryName = vl.InnerText;
+                              p.CountryName = vl.InnerText;
                            }
 
                            vl = ad.SelectSingleNode("country_code");
                            if(vl != null)
                            {
-                              ret.CountryNameCode = vl.InnerText;
+                              p.CountryNameCode = vl.InnerText;
                            }
 
                            vl = ad.SelectSingleNode("postcode");
                            if(vl != null)
                            {
-                              ret.PostalCodeNumber = vl.InnerText;
+                              p.PostalCodeNumber = vl.InnerText;
                            }
 
                            vl = ad.SelectSingleNode("state");
                            if(vl != null)
                            {
-                              ret.AdministrativeAreaName = vl.InnerText;
+                              p.AdministrativeAreaName = vl.InnerText;
                            }
 
                            vl = ad.SelectSingleNode("region");
                            if(vl != null)
                            {
-                              ret.SubAdministrativeAreaName = vl.InnerText;
+                              p.SubAdministrativeAreaName = vl.InnerText;
                            }
 
                            vl = ad.SelectSingleNode("suburb");
                            if(vl != null)
                            {
-                              ret.LocalityName = vl.InnerText;
+                              p.LocalityName = vl.InnerText;
                            }
 
                            vl = ad.SelectSingleNode("road");
                            if(vl != null)
                            {
-                              ret.ThoroughfareName = vl.InnerText;
+                              p.ThoroughfareName = vl.InnerText;
                            }
                         }
+
+                        ret = p;
 
                         status = GeoCoderStatusCode.G_GEO_SUCCESS;
                      }

@@ -20,6 +20,6 @@ namespace GMap.NET
 
       GeoCoderStatusCode GetPlacemarks(PointLatLng location, out List<Placemark> placemarkList);
 
-      Placemark GetPlacemark(PointLatLng location, out GeoCoderStatusCode status);
+      Placemark ? GetPlacemark(PointLatLng location, out GeoCoderStatusCode status);
    }
 }

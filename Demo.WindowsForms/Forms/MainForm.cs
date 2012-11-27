@@ -1656,6 +1656,8 @@ namespace Demo.WindowsForms
       {
          trackBar1.Value = (int) MainMap.Zoom * 100;
          Activate();
+         TopMost = true;
+         TopMost = false;
       }
       #endregion
 

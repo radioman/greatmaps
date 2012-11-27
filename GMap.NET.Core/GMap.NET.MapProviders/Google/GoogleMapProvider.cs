@@ -597,12 +597,12 @@ namespace GMap.NET.MapProviders
 
       public GeoCoderStatusCode GetPoints(Placemark placemark, out List<PointLatLng> pointList)
       {
-          throw new NotImplementedException();
+         throw new NotImplementedException("use GetPoints(string keywords...");
       }
 
       public PointLatLng? GetPoint(Placemark placemark, out GeoCoderStatusCode status)
       {
-          throw new NotImplementedException();
+         throw new NotImplementedException("use GetPoint(string keywords...");
       }
 
       public GeoCoderStatusCode GetPlacemarks(PointLatLng location, out List<Placemark> placemarkList)
@@ -610,11 +610,11 @@ namespace GMap.NET.MapProviders
          return GetPlacemarkFromReverseGeocoderUrl(MakeReverseGeocoderUrl(location, LanguageStr), out placemarkList);
       }
 
-      public Placemark GetPlacemark(PointLatLng location, out GeoCoderStatusCode status)
+      public Placemark? GetPlacemark(PointLatLng location, out GeoCoderStatusCode status)
       {
          List<Placemark> pointList;
          status = GetPlacemarks(location, out pointList);
-         return pointList != null && pointList.Count > 0 ? pointList[0] : null;
+         return pointList != null && pointList.Count > 0 ? pointList[0] : (Placemark?)null;
       }
 
       #region -- internals --

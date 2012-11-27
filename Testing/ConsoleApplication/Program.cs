@@ -20,12 +20,12 @@ namespace ConsoleApplication
    {
       static void Main(string[] args)
       {
-         if(false)
+         //if(false)
          {
             GeoCoderStatusCode status;
-            var pp1 = GMapProviders.OpenStreetMap.GetPoint("Lithuania,Vilnius", out status);
+            var pp1 = GMapProviders.YahooMap.GetPoint("Lithuania,Vilnius", out status);
 
-            var pl = GMapProviders.OpenStreetMap.GetPlacemark(pp1.Value, out status);
+            //var pl = GMapProviders.OpenStreetMap.GetPlacemark(pp1.Value, out status);
          }
 
          if(false)
@@ -124,7 +124,7 @@ namespace ConsoleApplication
                var l = c.FromLatLngToLocal(c.Position);
                Debug.WriteLine("local: " + l);
 
-               var g = c.FromLocalToLatLng(l);
+               var g = c.FromLocalToLatLng(l.X, l.Y);
                Debug.WriteLine("geo: " + g);
 
                //c.ReloadMap();
@@ -225,7 +225,7 @@ namespace ConsoleApplication
             }
          }
 
-         //if(false)
+         if(false)
          {
             //-34,8859309407532, Lng=-58,359375
             PointLatLng p1 = new PointLatLng(-34.608, -58.348);

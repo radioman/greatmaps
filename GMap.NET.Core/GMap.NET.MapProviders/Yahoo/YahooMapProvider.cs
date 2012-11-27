@@ -17,8 +17,7 @@ namespace GMap.NET.MapProviders
          Copyright = string.Format("© Yahoo! Inc. - Map data & Imagery ©{0} NAVTEQ", DateTime.Today.Year);
       }
 
-      public string AppId = "";
-      public string CountryCode;
+      public string AppId = string.Empty;
       public int MinExpectedQuality = 39;
 
       #region GMapProvider Members
@@ -114,18 +113,18 @@ namespace GMap.NET.MapProviders
           return GetPlacemarksFromReverseGeocoderUrl(MakeReverseGeocoderUrl(location), out placemarkList);
       }
 
-      public Placemark GetPlacemark(PointLatLng location, out GeoCoderStatusCode status)
+      public Placemark ? GetPlacemark(PointLatLng location, out GeoCoderStatusCode status)
       {
           List<Placemark> placemarkList;
           status = GetPlacemarks(location, out placemarkList);
-          return placemarkList != null && placemarkList.Count > 0 ? placemarkList[0] : null;
+          return placemarkList != null && placemarkList.Count > 0 ? placemarkList[0] : (Placemark?)null;
       }
 
       #region -- internals --
 
       string MakeGeocoderUrl(string keywords)
       {
-          return string.Format(GeocoderUrlFormat, PrepareUrlString(keywords), AppId, !String.IsNullOrEmpty(CountryCode) ? "L&locale=" + CountryCode : "");
+         return string.Format(CultureInfo.InvariantCulture, GeocoderUrlFormat, keywords.Replace(' ', '+'), AppId, !string.IsNullOrEmpty(LanguageStr) ? "&locale=" + LanguageStr : "");
       }
 
       string MakeGeocoderDetailedUrl(Placemark placemark)
@@ -140,17 +139,17 @@ namespace GMap.NET.MapProviders
                                PrepareUrlString(placemark.ThoroughfareName),
                                PrepareUrlString(placemark.HouseNo),
                                AppId,
-                               !String.IsNullOrEmpty(CountryCode) ? "L&locale=" + CountryCode : "");
+                               !string.IsNullOrEmpty(LanguageStr) ? "&locale=" + LanguageStr : string.Empty);
       }
 
       string MakeReverseGeocoderUrl(PointLatLng pt)
       {
-          return string.Format(CultureInfo.InvariantCulture, ReverseGeocoderUrlFormat, pt.Lat, pt.Lng, AppId, !String.IsNullOrEmpty(CountryCode) ? "L&locale=" + CountryCode : "");
+         return string.Format(CultureInfo.InvariantCulture, ReverseGeocoderUrlFormat, pt.Lat, pt.Lng, AppId, !string.IsNullOrEmpty(LanguageStr) ? "&locale=" + LanguageStr : "");
       }
 
       string PrepareUrlString(string str)
       {
-          if (str == null) return "";
+          if (str == null) return string.Empty;
           return str.Replace(' ', '+');
       }
 
@@ -353,9 +352,9 @@ namespace GMap.NET.MapProviders
           return status;
       }
 
-      static readonly string ReverseGeocoderUrlFormat = "http://where.yahooapis.com/geocode?q={0},{1}&appid={2}&flags=G&gflags=QR{3}";
-      static readonly string GeocoderUrlFormat = "http://where.yahooapis.com/geocode?q={0}&appid={1}&flags=CG&gflags=Q{2}";
-      static readonly string GeocoderDetailedUrlFormat = "http://where.yahooapis.com/geocode?country={0}&state={1}&county={2}&city={3}&neighborhood={4}&postal={5}&street={6}&house={7}&appid={8}&flags=CG&gflags=Q{9}";
+      static readonly string ReverseGeocoderUrlFormat = "http://where.yahooapis.com/geocode?q={0},{1}&appid={2}&flags=G&gflags=QRL{3}";
+      static readonly string GeocoderUrlFormat = "http://where.yahooapis.com/geocode?q={0}&appid={1}&flags=CG&gflags=QL{2}";
+      static readonly string GeocoderDetailedUrlFormat = "http://where.yahooapis.com/geocode?country={0}&state={1}&county={2}&city={3}&neighborhood={4}&postal={5}&street={6}&house={7}&appid={8}&flags=CG&gflags=QL{9}";
 
       #endregion
 

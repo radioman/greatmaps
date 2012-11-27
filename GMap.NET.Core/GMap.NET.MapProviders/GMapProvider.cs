@@ -354,7 +354,7 @@ namespace GMap.NET.MapProviders
          return response.ContentType.Contains(responseContentType);
       }
 
-      public PureImage GetTileImageUsingHttp(string url)
+      protected PureImage GetTileImageUsingHttp(string url)
       {
          PureImage ret = null;
 
@@ -413,7 +413,7 @@ namespace GMap.NET.MapProviders
          return ret;
       }
 
-      public string GetContentUsingHttp(string url)
+      protected string GetContentUsingHttp(string url)
       {
          string ret = string.Empty;
 
@@ -456,7 +456,7 @@ namespace GMap.NET.MapProviders
          return ret;
       }
 
-      public static int GetServerNum(GPoint pos, int max)
+      protected static int GetServerNum(GPoint pos, int max)
       {
          return (int)(pos.X + 2 * pos.Y) % max;
       }

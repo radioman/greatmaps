@@ -4,7 +4,7 @@ namespace GMap.NET
    /// <summary>
    /// represents place info
    /// </summary>
-   public class Placemark
+   public struct Placemark
    {
       string address;
 
@@ -39,9 +39,20 @@ namespace GMap.NET
       public string AdministrativeAreaName;
       public string SubAdministrativeAreaName;
 
-      public Placemark(string address)
+      internal Placemark(string address)
       {
          this.address = address;
+
+         Accuracy = 0;
+         HouseNo = string.Empty;
+         ThoroughfareName = string.Empty;
+         DistrictName = string.Empty;
+         LocalityName = string.Empty;
+         PostalCodeNumber = string.Empty;
+         CountryName = string.Empty;
+         CountryNameCode = string.Empty;
+         AdministrativeAreaName = string.Empty;
+         SubAdministrativeAreaName = string.Empty;
       }
    }
 }
