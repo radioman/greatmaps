@@ -779,7 +779,7 @@ namespace Demo.WindowsPresentation
       {
          GMapMarker m = new GMapMarker(currentMarker.Position);
          {
-            Placemark p = null;
+            Placemark? p = null;
             if(checkBoxPlace.IsChecked.Value)
             {
                GeoCoderStatusCode status;
@@ -793,7 +793,7 @@ namespace Demo.WindowsPresentation
             string ToolTipText;
             if(p != null)
             {
-               ToolTipText = p.Address;
+               ToolTipText = p.Value.Address;
             }
             else
             {

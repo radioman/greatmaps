@@ -1578,7 +1578,7 @@ namespace Demo.WindowsForms
                {
                   GMapMarkerRect v = item as GMapMarkerRect;
                   {
-                     v.ToolTipText = pos.Address;
+                     v.ToolTipText = pos.Value.Address;
                   }
                   MainMap.Invalidate(false);
                }
@@ -1846,7 +1846,7 @@ namespace Demo.WindowsForms
             mBorders.ToolTipMode = MarkerTooltipMode.Always;
          }
 
-         Placemark p = null;
+         Placemark? p = null;
          if(checkBoxPlacemarkInfo.Checked)
          {
             GeoCoderStatusCode status;
@@ -1859,7 +1859,7 @@ namespace Demo.WindowsForms
 
          if(p != null)
          {
-            mBorders.ToolTipText = p.Address;
+            mBorders.ToolTipText = p.Value.Address;
          }
          else
          {

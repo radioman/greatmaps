@@ -210,52 +210,78 @@ namespace Demo.WindowsForms
          url += "&app=GMap.NET.WindowsMobile";
 #endif
 
-         var xml = EmptyProvider.Instance.GetContentUsingHttp(url);
-
-         // 54.690688; 25.2116; 1263522; 1; 48.152; 2011-10-14 14:41:29
-
-         var items = xml.Split('&');
-
-         foreach(var it in items)
+         string xml = string.Empty;
          {
-            var sit = it.Split(';');
-            if(sit.Length == 8)
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+
+            request.UserAgent = GMapProvider.UserAgent;
+            request.Timeout = GMapProvider.TimeoutMs;
+            request.ReadWriteTimeout = GMapProvider.TimeoutMs * 6;
+            request.Accept = "*/*";
+            request.KeepAlive = true;
+
+            using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
             {
-               VehicleData d = new VehicleData();
+               using(Stream responseStream = response.GetResponseStream())
                {
-                  d.Id = int.Parse(sit[2]);
-                  d.Lat = double.Parse(sit[0], CultureInfo.InvariantCulture);
-                  d.Lng = double.Parse(sit[1], CultureInfo.InvariantCulture);
-                  d.Line = sit[3];
-                  if(!string.IsNullOrEmpty(sit[4]))
+                  using(StreamReader read = new StreamReader(responseStream, Encoding.UTF8))
                   {
-                     d.Bearing = double.Parse(sit[4], CultureInfo.InvariantCulture);
+                     xml = read.ReadToEnd();
                   }
-
-                  if(!string.IsNullOrEmpty(sit[5]))
-                  {
-                     d.Time = sit[5];
-
-                     var t = DateTime.Parse(d.Time);
-                     if(DateTime.Now - t > TimeSpan.FromMinutes(5))
-                     {
-                        continue;
-                     }
-
-                     d.Time = t.ToLongTimeString();
-                  }
-
-                  d.TrackType = sit[6];
-               }
-
-               //if(d.Id == 1262760)
-               //if(d.Line == "13")
-               {
-                  ret.Add(d);
-               }
+               }   
+#if PocketPC
+               request.Abort();
+#endif
+               response.Close();
             }
          }
 
+         // 54.690688; 25.2116; 1263522; 1; 48.152; 2011-10-14 14:41:29
+
+         if(!string.IsNullOrEmpty(xml))
+         {
+            var items = xml.Split('&');
+
+            foreach(var it in items)
+            {
+               var sit = it.Split(';');
+               if(sit.Length == 8)
+               {
+                  VehicleData d = new VehicleData();
+                  {
+                     d.Id = int.Parse(sit[2]);
+                     d.Lat = double.Parse(sit[0], CultureInfo.InvariantCulture);
+                     d.Lng = double.Parse(sit[1], CultureInfo.InvariantCulture);
+                     d.Line = sit[3];
+                     if(!string.IsNullOrEmpty(sit[4]))
+                     {
+                        d.Bearing = double.Parse(sit[4], CultureInfo.InvariantCulture);
+                     }
+
+                     if(!string.IsNullOrEmpty(sit[5]))
+                     {
+                        d.Time = sit[5];
+
+                        var t = DateTime.Parse(d.Time);
+                        if(DateTime.Now - t > TimeSpan.FromMinutes(5))
+                        {
+                           continue;
+                        }
+
+                        d.Time = t.ToLongTimeString();
+                     }
+
+                     d.TrackType = sit[6];
+                  }
+
+                  //if(d.Id == 1262760)
+                  //if(d.Line == "13")
+                  {
+                     ret.Add(d);
+                  }
+               }
+            }
+         }
          #region -- old --
          //XmlDocument doc = new XmlDocument();
          //{
