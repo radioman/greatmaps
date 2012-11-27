@@ -595,6 +595,16 @@ namespace GMap.NET.MapProviders
          return pointList != null && pointList.Count > 0 ? pointList[0] : (PointLatLng?)null;
       }
 
+      public GeoCoderStatusCode GetPoints(Placemark placemark, out List<PointLatLng> pointList)
+      {
+          throw new NotImplementedException();
+      }
+
+      public PointLatLng? GetPoint(Placemark placemark, out GeoCoderStatusCode status)
+      {
+          throw new NotImplementedException();
+      }
+
       public GeoCoderStatusCode GetPlacemarks(PointLatLng location, out List<Placemark> placemarkList)
       {
          return GetPlacemarkFromReverseGeocoderUrl(MakeReverseGeocoderUrl(location, LanguageStr), out placemarkList);
