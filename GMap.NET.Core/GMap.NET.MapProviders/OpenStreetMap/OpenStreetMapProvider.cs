@@ -1,4 +1,4 @@
-﻿
+
 namespace GMap.NET.MapProviders
 {
    using System;
@@ -19,6 +19,7 @@ namespace GMap.NET.MapProviders
       }
 
       public readonly string ServerLetters = "abc";
+      public int MinExpectedRank = 22;
 
       #region GMapProvider Members
 
@@ -185,12 +186,22 @@ namespace GMap.NET.MapProviders
 
       public GeoCoderStatusCode GetPoints(Placemark placemark, out List<PointLatLng> pointList)
       {
-         throw new NotImplementedException("use GetPoints(string keywords...");
+          // http://nominatim.openstreetmap.org/search?street=&city=vilnius&county=&state=&country=lithuania&postalcode=&format=xml
+
+          #region -- response --
+          //<searchresults timestamp="Thu, 29 Nov 12 08:38:23 +0000" attribution="Data © OpenStreetMap contributors, ODbL 1.0. http://www.openstreetmap.org/copyright" querystring="vilnius, lithuania" polygon="false" exclude_place_ids="98093941" more_url="http://nominatim.openstreetmap.org/search?format=xml&exclude_place_ids=98093941&accept-language=de-de,de;q=0.8,en-us;q=0.5,en;q=0.3&q=vilnius%2C+lithuania">
+          //<place place_id="98093941" osm_type="relation" osm_id="1529146" place_rank="16" boundingbox="54.5693359375,54.8323097229004,25.0250644683838,25.4815216064453" lat="54.6843135" lon="25.2853984" display_name="Vilnius, Vilniaus m. savivaldybė, Distrikt Vilnius, Litauen" class="boundary" type="administrative" icon="http://nominatim.openstreetmap.org/images/mapicons/poi_boundary_administrative.p.20.png"/>
+          //</searchresults> 
+          #endregion
+
+          return GetLatLngFromGeocoderUrl(MakeDetailedGeocoderUrl(placemark), out pointList);
       }
 
       public PointLatLng? GetPoint(Placemark placemark, out GeoCoderStatusCode status)
       {
-         throw new NotImplementedException("use GetPoint(string keywords...");
+          List<PointLatLng> pointList;
+          status = GetPoints(placemark, out pointList);
+          return pointList != null && pointList.Count > 0 ? pointList[0] : (PointLatLng?)null;
       }
 
       public GeoCoderStatusCode GetPlacemarks(PointLatLng location, out List<Placemark> placemarkList)
@@ -255,6 +266,18 @@ namespace GMap.NET.MapProviders
          return string.Format(GeocoderUrlFormat, keywords.Replace(' ', '+'));
       }
 
+      string MakeDetailedGeocoderUrl(Placemark placemark)
+      {
+         var street = String.Join(" ", new[] {placemark.HouseNo, placemark.ThoroughfareName}).Trim();
+         return string.Format(GeocoderDetailedUrlFormat,
+                              street.Replace(' ', '+'),
+                              placemark.LocalityName.Replace(' ', '+'),
+                              placemark.SubAdministrativeAreaName.Replace(' ', '+'),
+                              placemark.AdministrativeAreaName.Replace(' ', '+'),
+                              placemark.CountryName.Replace(' ', '+'),
+                              placemark.PostalCodeNumber.Replace(' ', '+'));
+      }
+
       string MakeReverseGeocoderUrl(PointLatLng pt)
       {
          return string.Format(CultureInfo.InvariantCulture, ReverseGeocoderUrlFormat, pt.Lat, pt.Lng);
@@ -300,7 +323,15 @@ namespace GMap.NET.MapProviders
 
                         foreach(XmlNode n in l)
                         {
-                           var nn = n.Attributes["lat"];
+                           var nn = n.Attributes["place_rank"];
+
+                           int rank;
+                           if (nn != null && Int32.TryParse(nn.Value, out rank))
+                           {
+                              if (rank < MinExpectedRank) continue;
+                           }
+
+                           nn = n.Attributes["lat"];
                            if(nn != null)
                            {
                               double lat = double.Parse(nn.Value, CultureInfo.InvariantCulture);
@@ -433,6 +464,7 @@ namespace GMap.NET.MapProviders
 
       static readonly string ReverseGeocoderUrlFormat = "http://nominatim.openstreetmap.org/reverse?format=xml&lat={0}&lon={1}&zoom=18&addressdetails=1";
       static readonly string GeocoderUrlFormat = "http://nominatim.openstreetmap.org/search?q={0}&format=xml";
+      static readonly string GeocoderDetailedUrlFormat = "http://nominatim.openstreetmap.org/search?street={0}&city={1}&county={2}&state={3}&country={4}&postalcode={5}&format=xml";
 
       #endregion
 
