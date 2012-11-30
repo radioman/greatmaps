@@ -73,7 +73,18 @@ namespace GMap.NET.WindowsForms
          }
          set
          {
-            offset = value;
+            if(offset != value)
+            {
+               offset = value;
+
+               if(IsVisible)
+               {
+                  if(Overlay != null && Overlay.Control != null)
+                  {
+                     Overlay.Control.UpdateMarkerLocalPosition(this);
+                  }
+               }
+            }
          }
       }
 
@@ -236,7 +247,7 @@ namespace GMap.NET.WindowsForms
          }
          internal set
          {
-            isMouseOver = value;              
+            isMouseOver = value;
          }
       }
 
@@ -320,7 +331,7 @@ namespace GMap.NET.WindowsForms
             {
                toolTipText = null;
                ToolTip.Dispose();
-               ToolTip = null;   
+               ToolTip = null;
             }
          }
       }
