@@ -1499,7 +1499,7 @@ namespace GMap.NET.WindowsPresentation
 
       protected override void OnMouseDown(MouseButtonEventArgs e)
       {
-         if(CanDragMap && e.ChangedButton == DragButton && e.ButtonState == MouseButtonState.Pressed)
+         if(CanDragMap && e.ChangedButton == DragButton)
          {
             Point p = e.GetPosition(this);
 
