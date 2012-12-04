@@ -1087,7 +1087,12 @@ namespace GMap.NET.Internals
 
                   if(p.X >= minOfTiles.Width && p.Y >= minOfTiles.Height && p.X <= maxOfTiles.Width && p.Y <= maxOfTiles.Height)
                   {
-                     DrawTile dt = new DrawTile(p, new GPoint(p.X * tileRect.Width, p.Y * tileRect.Height));
+                     DrawTile dt = new DrawTile()
+                     {
+                         PosXY = p,
+                         PosPixel = new GPoint(p.X * tileRect.Width, p.Y * tileRect.Height),
+                         DistanceSqr = (centerTileXYLocation.X - p.X) * (centerTileXYLocation.X - p.X) + (centerTileXYLocation.Y - p.Y) * (centerTileXYLocation.Y - p.Y)
+                     };
 
                      if(!tileDrawingList.Contains(dt))
                      {
@@ -1102,6 +1107,10 @@ namespace GMap.NET.Internals
             if(GMaps.Instance.ShuffleTilesOnLoad)
             {
                Stuff.Shuffle<DrawTile>(tileDrawingList);
+            }
+            else
+            {
+                tileDrawingList.Sort((a, b) => b.DistanceSqr.CompareTo(a.DistanceSqr));
             }
             #endregion
          }

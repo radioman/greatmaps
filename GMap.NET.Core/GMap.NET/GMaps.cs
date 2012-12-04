@@ -100,7 +100,7 @@ namespace GMap.NET
       /// <summary>
       /// load tiles in random sequence
       /// </summary>
-      public bool ShuffleTilesOnLoad = true;
+      public bool ShuffleTilesOnLoad = false;
 
       /// <summary>
       /// tile queue to cache

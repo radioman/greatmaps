@@ -6,14 +6,9 @@ namespace GMap.NET.Internals
    /// </summary>
    internal struct DrawTile
    {
-      public GPoint PosXY;
-      public GPoint PosPixel;
-
-      public DrawTile(GPoint Pos, GPoint PosPixel)
-      {
-         this.PosXY = Pos;
-         this.PosPixel = PosPixel;
-      }
+      public GPoint PosXY { get; set; }
+      public GPoint PosPixel { get; set; }
+      public double DistanceSqr { get; set; }
 
       public override string ToString()
       {
