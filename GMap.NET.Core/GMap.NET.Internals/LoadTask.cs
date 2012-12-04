@@ -1,10 +1,11 @@
 ﻿
+using System;
 namespace GMap.NET.Internals
 {
    /// <summary>
    /// tile load task
    /// </summary>
-   internal struct LoadTask
+   internal struct LoadTask : IEquatable<LoadTask>
    {
       public GPoint Pos;
       public int Zoom;
@@ -19,5 +20,14 @@ namespace GMap.NET.Internals
       {
          return Zoom + " - " + Pos.ToString();
       }
+
+      #region IEquatable<DrawTile> Members
+
+      public bool Equals(LoadTask other)
+      {
+         return (Pos == other.Pos && Zoom == other.Zoom);
+      }
+
+      #endregion
    }
 }

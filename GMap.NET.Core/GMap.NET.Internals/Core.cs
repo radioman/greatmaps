@@ -1089,16 +1089,14 @@ namespace GMap.NET.Internals
                   {
                      DrawTile dt = new DrawTile()
                      {
-                         PosXY = p,
-                         PosPixel = new GPoint(p.X * tileRect.Width, p.Y * tileRect.Height),
-                         DistanceSqr = (centerTileXYLocation.X - p.X) * (centerTileXYLocation.X - p.X) + (centerTileXYLocation.Y - p.Y) * (centerTileXYLocation.Y - p.Y)
+                        PosXY = p,
+                        PosPixel = new GPoint(p.X * tileRect.Width, p.Y * tileRect.Height),
+                        DistanceSqr = (centerTileXYLocation.X - p.X) * (centerTileXYLocation.X - p.X) + (centerTileXYLocation.Y - p.Y) * (centerTileXYLocation.Y - p.Y)
                      };
 
                      if(!tileDrawingList.Contains(dt))
                      {
                         tileDrawingList.Add(dt);
-
-                        //Debug.WriteLine("draw: " + dt);
                      }
                   }
                }
@@ -1110,7 +1108,7 @@ namespace GMap.NET.Internals
             }
             else
             {
-                tileDrawingList.Sort((a, b) => b.DistanceSqr.CompareTo(a.DistanceSqr));
+               tileDrawingList.Sort();
             }
             #endregion
          }
