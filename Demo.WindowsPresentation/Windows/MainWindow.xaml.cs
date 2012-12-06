@@ -46,11 +46,7 @@ namespace Demo.WindowsPresentation
          //GMapProvider.WebProxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeada");
 
          // set cache mode only if no internet avaible
-         try
-         {
-            System.Net.IPHostEntry e = System.Net.Dns.GetHostEntry("www.bing.com");
-         }
-         catch
+         if(!Stuff.PingNetwork("pingtest.net"))
          {
             MainMap.Manager.Mode = AccessMode.CacheOnly;
             MessageBox.Show("No internet connection available, going to CacheOnly mode.", "GMap.NET - Demo.WindowsPresentation", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -163,7 +159,7 @@ namespace Demo.WindowsPresentation
             {
                MainMap.ZoomAndCenterMarkers(null);
             }
-         } 
+         }
 
          // perfromance test
          timer.Interval = TimeSpan.FromMilliseconds(44);
@@ -680,7 +676,7 @@ namespace Demo.WindowsPresentation
             try
             {
                MainMap.Manager.PrimaryCache.DeleteOlderThan(DateTime.Now, null);
-               MessageBox.Show("Done. Cache is clear.");  
+               MessageBox.Show("Done. Cache is clear.");
             }
             catch(Exception ex)
             {

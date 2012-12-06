@@ -9,6 +9,7 @@ using System.Data.Common;
 using GMap.NET.MapProviders;
 using System.Text;
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 
 #if !MONO
 #if SQLite
@@ -57,6 +58,29 @@ namespace Demo.WindowsForms
 
    public class Stuff
    {
+      public static bool PingNetwork(string hostNameOrAddress)
+      {
+         bool pingStatus = false;
+
+         using(Ping p = new Ping())
+         {
+            byte[] buffer = Encoding.ASCII.GetBytes("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+            int timeout = 4444; // 4s
+
+            try
+            {
+               PingReply reply = p.Send(hostNameOrAddress, timeout, buffer);
+               pingStatus = (reply.Status == IPStatus.Success);
+            }
+            catch(Exception)
+            {
+               pingStatus = false;
+            }
+         }
+
+         return pingStatus;
+      }
+
       /// <summary>
       /// gets routes from gpsd log file
       /// </summary>
@@ -228,7 +252,7 @@ namespace Demo.WindowsForms
                   {
                      xml = read.ReadToEnd();
                   }
-               }   
+               }
 #if PocketPC
                request.Abort();
 #endif
