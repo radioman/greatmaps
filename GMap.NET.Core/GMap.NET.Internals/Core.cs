@@ -68,6 +68,9 @@ namespace GMap.NET.Internals
       DateTime LastTileLoadEnd = DateTime.Now;
       internal volatile bool IsStarted = false;
       int zoom;
+      public double scaleX = 1;
+      public double scaleY = 1;
+
       internal int maxZoom = 2;
       internal int minZoom = 2;
       internal int Width;
@@ -1063,9 +1066,9 @@ namespace GMap.NET.Internals
             #region -- find tiles around --
             tileDrawingList.Clear();
 
-            for(long i = -sizeOfMapArea.Width; i <= sizeOfMapArea.Width; i++)
+            for(long i = (int)Math.Floor(-sizeOfMapArea.Width * scaleX), countI = (int)Math.Ceiling(sizeOfMapArea.Width * scaleX); i <= countI; i++)
             {
-               for(long j = -sizeOfMapArea.Height; j <= sizeOfMapArea.Height; j++)
+               for (long j = (int)Math.Floor(-sizeOfMapArea.Height * scaleY), countJ = (int)Math.Ceiling(sizeOfMapArea.Height * scaleY); j <= countJ; j++)
                {
                   GPoint p = centerTileXYLocation;
                   p.X += i;

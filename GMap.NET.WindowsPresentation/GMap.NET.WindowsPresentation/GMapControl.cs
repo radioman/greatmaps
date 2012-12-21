@@ -164,8 +164,25 @@ namespace GMap.NET.WindowsPresentation
             Debug.WriteLine("Zoom: " + e.OldValue + " -> " + value);
 
             double remainder = value % 1;
-            if(remainder != 0 && map.ActualWidth > 0)
+            if(Math.Abs(remainder) > 0.00001 && map.ActualWidth > 0)
             {
+               bool scaleDown;
+               switch (GMaps.Instance.MapFloatScaleMode)
+	           {
+                  case GMaps.ScaleMapMode.ScaleDown:
+                     scaleDown = true;
+                     break;
+                  case GMaps.ScaleMapMode.Dynamic:
+                     scaleDown = remainder > 0.25;
+                     break;
+                  default:
+                     scaleDown = false;
+                     break;
+	           }
+
+               if (scaleDown)
+                  remainder--;
+
                double scaleValue = Math.Pow(2d, remainder);
                {
                   if(map.MapScaleTransform == null)
@@ -175,11 +192,14 @@ namespace GMap.NET.WindowsPresentation
                   map.MapScaleTransform.ScaleX = scaleValue;
                   map.MapScaleTransform.ScaleY = scaleValue;
 
+                  map.Core.scaleX = 1 / scaleValue;
+                  map.Core.scaleY = 1 / scaleValue;
+
                   map.MapScaleTransform.CenterX = map.ActualWidth / 2;
                   map.MapScaleTransform.CenterY = map.ActualHeight / 2;
                }
 
-               map.Core.Zoom = Convert.ToInt32(value - remainder);
+               map.Core.Zoom = Convert.ToInt32(scaleDown ? Math.Ceiling(value) : value - remainder);
 
                map.ForceUpdateOverlays();
 
@@ -188,6 +208,8 @@ namespace GMap.NET.WindowsPresentation
             else
             {
                map.MapScaleTransform = null;
+               map.Core.scaleX = 1;
+               map.Core.scaleY = 1;
 
                map.Core.Zoom = Convert.ToInt32(value);
 
