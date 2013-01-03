@@ -154,6 +154,8 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
+      public ScaleModes ScaleMode = ScaleModes.Integer;
+
       private static void ZoomPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
       {
          GMapControl map = (GMapControl)d;
@@ -164,7 +166,7 @@ namespace GMap.NET.WindowsPresentation
             Debug.WriteLine("Zoom: " + e.OldValue + " -> " + value);
 
             double remainder = value % 1;
-            if(remainder != 0 && map.ActualWidth > 0)
+            if(map.ScaleMode == ScaleModes.Fractional && remainder != 0 && map.ActualWidth > 0)
             {
                double scaleValue = Math.Pow(2d, remainder);
                {
@@ -189,7 +191,7 @@ namespace GMap.NET.WindowsPresentation
             {
                map.MapScaleTransform = null;
 
-               map.Core.Zoom = Convert.ToInt32(value);
+               map.Core.Zoom = (int)Math.Floor(value);
 
                map.ForceUpdateOverlays();
                map.InvalidateVisual(true);
@@ -2196,6 +2198,20 @@ namespace GMap.NET.WindowsPresentation
       DontShow = 0,
       ShowAlways = 1,
       ShowOnModifierKey = 2
+   }
+
+   public enum ScaleModes
+   {
+      /// <summary>
+      /// no scaling
+      /// </summary>
+      Integer,
+
+      /// <summary>
+      /// scales to fractional level, CURRENT VERSION DOESN'T HANDLE OBJECT POSITIONS CORRECLTY, 
+      /// http://greatmaps.codeplex.com/workitem/16046
+      /// </summary>
+      Fractional,
    }
 
    public delegate void SelectionChange(RectLatLng Selection, bool ZoomToFit);

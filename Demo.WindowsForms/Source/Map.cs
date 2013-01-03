@@ -5,6 +5,7 @@ namespace Demo.WindowsForms
    using GMap.NET.WindowsForms;
    using System.Drawing;
    using System;
+   using System.Globalization;
 
    /// <summary>
    /// custom map of GMapControl
@@ -39,7 +40,7 @@ namespace Demo.WindowsForms
       {
          base.OnPaintOverlays(g);
 
-         g.DrawString(Zoom + "z, " + MapProvider + ", refresh: " + counter++ + ", load: " + ElapsedMilliseconds + "ms, render: " + delta + "ms", DebugFont, Brushes.Blue, DebugFont.Height, DebugFont.Height + 20);
+         g.DrawString(string.Format(CultureInfo.InvariantCulture, "{0:0.0}", Zoom) + "z, " + MapProvider + ", refresh: " + counter++ + ", load: " + ElapsedMilliseconds + "ms, render: " + delta + "ms", DebugFont, Brushes.Blue, DebugFont.Height, DebugFont.Height + 20);
 
          //g.DrawString(ViewAreaPixel.Location.ToString(), DebugFontSmall, Brushes.Blue, DebugFontSmall.Height, DebugFontSmall.Height);
 

@@ -9,7 +9,10 @@ using System.Data.Common;
 using GMap.NET.MapProviders;
 using System.Text;
 using System.Diagnostics;
+
+#if !PocketPC
 using System.Net.NetworkInformation;
+#endif
 
 #if !MONO
 #if SQLite
@@ -58,6 +61,7 @@ namespace Demo.WindowsForms
 
    public class Stuff
    {
+#if !PocketPC
       public static bool PingNetwork(string hostNameOrAddress)
       {
          bool pingStatus = false;
@@ -80,6 +84,7 @@ namespace Demo.WindowsForms
 
          return pingStatus;
       }
+#endif
 
       /// <summary>
       /// gets routes from gpsd log file
@@ -236,7 +241,7 @@ namespace Demo.WindowsForms
 
          string xml = string.Empty;
          {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
 
             request.UserAgent = GMapProvider.UserAgent;
             request.Timeout = GMapProvider.TimeoutMs;
@@ -426,8 +431,8 @@ namespace Demo.WindowsForms
                      var lat = par[2];
                      var lng = par[3];
                      var bearing = par[4];
-                     var altitude = (int)(int.Parse(par[5]) * 0.3048) + "m";
-                     var speed = (int)(int.Parse(par[6]) * 1.852) + "km/h";
+                     var altitude = (int) (int.Parse(par[5]) * 0.3048) + "m";
+                     var speed = (int) (int.Parse(par[6]) * 1.852) + "km/h";
 
                      FlightRadarData fd = new FlightRadarData();
                      fd.name = name;
@@ -465,7 +470,7 @@ namespace Demo.WindowsForms
       {
          string ret = string.Empty;
 
-         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+         HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
 
          request.UserAgent = GMapProvider.UserAgent;
          request.Timeout = GMapProvider.TimeoutMs;

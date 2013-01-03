@@ -38,7 +38,7 @@ namespace Demo.WindowsPresentation
          end = DateTime.Now;
          delta = (int)(end - start).TotalMilliseconds;
 
-         FormattedText text = new FormattedText(Zoom + "z, " + MapProvider + ", refresh: " + counter++ + ", load: " + ElapsedMilliseconds + "ms, render: " + delta + "ms", CultureInfo.CurrentUICulture, fd, tf, 20, Brushes.Blue);
+         FormattedText text = new FormattedText(string.Format(CultureInfo.InvariantCulture, "{0:0.0}", Zoom) + "z, " + MapProvider + ", refresh: " + counter++ + ", load: " + ElapsedMilliseconds + "ms, render: " + delta + "ms", CultureInfo.InvariantCulture, fd, tf, 20, Brushes.Blue);
          drawingContext.DrawText(text, new Point(text.Height, text.Height));
          text = null;
       }

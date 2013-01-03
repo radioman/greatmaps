@@ -24,6 +24,7 @@ namespace Demo.WindowsMobile
    public partial class MainForm : Form
    {
       PointLatLng start = new PointLatLng(54.6961334816182, 25.2985095977783);
+      PointLatLng destinationPoint = new PointLatLng(54.6961334816182, 25.2985095977783);
 
       // marker
       GMarkerCross gpsPos;
@@ -31,7 +32,6 @@ namespace Demo.WindowsMobile
       // layers
       GMapOverlay top;
       internal GMapOverlay objects;
-      internal GMapOverlay routes;
 
       #region -- variables --
       string LogDb;
@@ -79,8 +79,9 @@ namespace Demo.WindowsMobile
          menuItemGPSenabled.Checked = false;
          MainMap.ShowTileGridLines = true;
 #else
-            MainMap.Manager.Mode = AccessMode.CacheOnly;
-            menuItemCacheOnly.Checked = true;
+         menuItemGPSenabled.Checked = false;
+         MainMap.Manager.Mode = AccessMode.CacheOnly;
+         menuItemCacheOnly.Checked = true;
 #endif
          MainMap.MapProvider = GMapProviders.LithuaniaMap;
          MainMap.MaxZoom = 11;
@@ -90,12 +91,10 @@ namespace Demo.WindowsMobile
 
          MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
          MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
+         MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);
 
          // add custom layers  
          {
-            routes = new GMapOverlay("routes");
-            MainMap.Overlays.Add(routes);
-
             objects = new GMapOverlay("objects");
             MainMap.Overlays.Add(objects);
 
@@ -125,6 +124,14 @@ namespace Demo.WindowsMobile
             timer.Interval = 111;
             timer.Tick += new EventHandler(timer_Tick);
             timer.Enabled = true;
+         }
+      }
+
+      void MainMap_OnPositionChanged(PointLatLng point)
+      {
+         if(menuItemshowDestination.Checked && !menuItemGPSenabled.Checked)
+         {
+            UpdateDestinationRoute(true, menuItemSnapToGps.Checked ? MainMap.Position : gpsPos.Position); 
          }
       }
 
@@ -607,8 +614,8 @@ namespace Demo.WindowsMobile
                CheckLogDb(fileName);
             }
          }
-        
-         timerKeeperOfLife.Interval = ShortestTimeoutInterval() * 1000;          
+
+         timerKeeperOfLife.Interval = ShortestTimeoutInterval() * 1000;
          timerKeeperOfLife.Enabled = true;
 
          if(menuItemGPSenabled.Checked)
@@ -759,7 +766,7 @@ namespace Demo.WindowsMobile
          {
             cmd.Dispose();
             cmd = null;
-         }           
+         }
       }
 
       void SetOnGPSPower()
@@ -913,13 +920,25 @@ namespace Demo.WindowsMobile
                      {
                         if(menuItemSnapToGps.Checked && !MainMap.IsDragging)
                         {
-                           MainMap.Position = new PointLatLng(lastData.Latitude.Value, lastData.Longitude.Value);
+                           var newPos = new PointLatLng(lastData.Latitude.Value, lastData.Longitude.Value);
+                           
+                           if(menuItemshowDestination.Checked)
+                           {
+                              UpdateDestinationRoute(false, newPos);
+                           }
+
+                           MainMap.Position = newPos;
                         }
                         else
                         {
                            gpsPos.Position = new PointLatLng(lastData.Latitude.Value, lastData.Longitude.Value);
+
+                           if(menuItemshowDestination.Checked)
+                           {
+                              UpdateDestinationRoute(true, gpsPos.Position);
+                           }
                         }
-                     }
+                     }                     
                   }
                }
             }
@@ -1110,6 +1129,87 @@ namespace Demo.WindowsMobile
       private void menuItemSnapToGps_Click(object sender, EventArgs e)
       {
          menuItemSnapToGps.Checked = !menuItemSnapToGps.Checked;
+         if(!menuItemSnapToGps.Checked)
+         {
+            gpsPos.Position = MainMap.Position;
+         }
+      }
+
+      private void menuItemSetDestination_Click(object sender, EventArgs e)
+      {
+         {
+            destinationPoint = MainMap.Position;
+
+            if(menuItemshowDestination.Checked)
+            {
+               UpdateDestinationRoute(true, menuItemSnapToGps.Checked ? MainMap.Position : gpsPos.Position);
+            }
+         }           
+      }
+
+      internal GMapRoute destinationRoute;
+
+      private void menuItemshowDestination_Click(object sender, EventArgs e)
+      {
+         menuItemshowDestination.Checked = !menuItemshowDestination.Checked;
+
+         if(menuItemshowDestination.Checked)
+         {
+            if(MainMap.panel == null)
+            {
+               MainMap.panel = this;
+            }
+            UpdateDestinationRoute(true, menuItemSnapToGps.Checked ? MainMap.Position : gpsPos.Position);
+         }
+
+         if(destinationRoute != null)
+         {
+            destinationRoute.IsVisible = menuItemshowDestination.Checked;
+         }
+      }
+
+      void UpdateDestinationRoute(bool forceUpdate, PointLatLng startPoint)
+      {
+         if(destinationRoute == null)
+         {
+            destinationRoute = new GMapRoute("destination route");
+
+            destinationRoute.Stroke.Color = Color.Red;
+            destinationRoute.Stroke.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+            destinationRoute.Stroke.Width = 1.0f;
+ 
+            objects.Routes.Add(destinationRoute);
+         }
+         else
+         {
+            destinationRoute.Points.Clear();
+         }
+
+         destinationRoute.Points.Add(startPoint);
+         destinationRoute.Points.Add(destinationPoint);
+         if(forceUpdate)
+         {
+            MainMap.UpdateRouteLocalPosition(destinationRoute);
+            MainMap.Invalidate();
+         }
+      }
+   }
+
+   public class Map : GMapControl
+   {
+      readonly Brush screenBrush = new SolidBrush(Color.Navy);
+      readonly Font screenFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
+
+      public MainForm panel;
+
+      protected override void OnPaintOverlays(Graphics g)
+      {
+         base.OnPaintOverlays(g);
+
+         if(panel != null && panel.menuItemshowDestination.Checked)
+         {
+            g.DrawString(string.Format("destination: {0:0.00} km", panel.destinationRoute.Distance), screenFont, screenBrush, screenFont.Size, screenFont.Size);
+         }
       }
    }
 }

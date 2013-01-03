@@ -562,6 +562,8 @@ namespace GMap.NET.WindowsForms
          }
       }
 
+#endif
+
       void Overlays_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
       {
          if(e.NewItems != null)
@@ -580,8 +582,6 @@ namespace GMap.NET.WindowsForms
             }
          }
       }
-
-#endif
 
       void invalidatorEngage(object sender, ProgressChangedEventArgs e)
       {
@@ -1622,12 +1622,6 @@ namespace GMap.NET.WindowsForms
             g.DrawRectangle(SelectionPen, x1, y1, x2 - x1, y2 - y1);
             g.FillRectangle(SelectedAreaFill, x1, y1, x2 - x1, y2 - y1);
          }
-#endif
-         if(ShowCenter)
-         {
-            g.DrawLine(CenterPen, Width / 2 - 5, Height / 2, Width / 2 + 5, Height / 2);
-            g.DrawLine(CenterPen, Width / 2, Height / 2 - 5, Width / 2, Height / 2 + 5);
-         }
 
          if(renderHelperLine)
          {
@@ -1635,6 +1629,12 @@ namespace GMap.NET.WindowsForms
 
             g.DrawLine(HelperLinePen, p.X, 0, p.X, Height);
             g.DrawLine(HelperLinePen, 0, p.Y, Width, p.Y);
+         }
+#endif
+         if(ShowCenter)
+         {
+            g.DrawLine(CenterPen, Width / 2 - 5, Height / 2, Width / 2 + 5, Height / 2);
+            g.DrawLine(CenterPen, Width / 2, Height / 2 - 5, Width / 2, Height / 2 + 5);
          }
 
          #region -- copyright --
@@ -2228,10 +2228,12 @@ namespace GMap.NET.WindowsForms
                   }
                }
 
+#if !PocketPC
             if(renderHelperLine)
             {
                base.Invalidate();
             }
+#endif
          }
 
          base.OnMouseMove(e);
@@ -2552,6 +2554,8 @@ namespace GMap.NET.WindowsForms
       }
 #endif
 
+      public ScaleModes ScaleMode = ScaleModes.Integer;
+
       [Category("GMap.NET"), DefaultValue(0)]
       public double Zoom
       {
@@ -2578,25 +2582,25 @@ namespace GMap.NET.WindowsForms
                   zoomReal = value;
                }
 
+#if !PocketPC
                double remainder = value % 1;
-               if(remainder != 0)
+               if(ScaleMode == ScaleModes.Fractional && remainder != 0)
                {
                   float scaleValue = (float)Math.Pow(2d, remainder);
                   {
-#if !PocketPC
                      MapRenderTransform = scaleValue;
-#endif
                   }
 
                   ZoomStep = Convert.ToInt32(value - remainder);
                }
                else
+#endif
                {
 #if !PocketPC
                   MapRenderTransform = null;
 #endif
-                  ZoomStep = Convert.ToInt32(value);
-                  zoomReal = ZoomStep;
+                  ZoomStep = (int)Math.Floor(value);
+                  //zoomReal = ZoomStep;
                }
 
                if(Core.IsStarted && !IsDragging)
@@ -2681,7 +2685,7 @@ namespace GMap.NET.WindowsForms
 #if !DESIGN
             return CacheLocator.Location;
 #else
-             return string.Empty;
+            return string.Empty;
 #endif
          }
          set
@@ -3090,6 +3094,22 @@ namespace GMap.NET.WindowsForms
       DontShow = 0,
       ShowAlways = 1,
       ShowOnModifierKey = 2
+   }
+
+   public enum ScaleModes
+   {
+      /// <summary>
+      /// no scaling
+      /// </summary>
+      Integer,
+
+#if !PocketPC
+      /// <summary>
+      /// scales to fractional level, CURRENT VERSION DOESN'T HANDLE OBJECT POSITIONS CORRECLTY, 
+      /// http://greatmaps.codeplex.com/workitem/16046
+      /// </summary>
+      Fractional,
+#endif
    }
 
    public delegate void SelectionChange(RectLatLng Selection, bool ZoomToFit);
