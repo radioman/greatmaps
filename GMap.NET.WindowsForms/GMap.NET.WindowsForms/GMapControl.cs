@@ -2554,7 +2554,21 @@ namespace GMap.NET.WindowsForms
       }
 #endif
 
-      public ScaleModes ScaleMode = ScaleModes.Integer;
+      private ScaleModes scaleMode = ScaleModes.Integer;
+
+      [Category("GMap.NET")]
+      [Description("map scale type")]
+      public ScaleModes ScaleMode
+      {
+         get
+         {
+            return scaleMode;
+         }
+         set
+         {
+            scaleMode = value;
+         }
+      }
 
       [Category("GMap.NET"), DefaultValue(0)]
       public double Zoom

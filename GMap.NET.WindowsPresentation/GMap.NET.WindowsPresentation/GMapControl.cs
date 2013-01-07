@@ -154,7 +154,22 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
-      public ScaleModes ScaleMode = ScaleModes.Integer;
+      private ScaleModes scaleMode = ScaleModes.Integer;
+
+      [Category("GMap.NET")]
+      [Description("map scale type")]
+      public ScaleModes ScaleMode
+      {
+         get
+         {
+            return scaleMode;
+         }
+         set
+         {
+            scaleMode = value;
+            InvalidateVisual();
+         }
+      }
 
       private static void ZoomPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
       {
@@ -182,17 +197,15 @@ namespace GMap.NET.WindowsPresentation
                }
 
                map.Core.Zoom = Convert.ToInt32(value - remainder);
-
-               map.ForceUpdateOverlays();
-
-               map.InvalidateVisual(true);
             }
             else
             {
                map.MapScaleTransform = null;
-
                map.Core.Zoom = (int)Math.Floor(value);
+            }
 
+            if(map.IsLoaded)
+            {
                map.ForceUpdateOverlays();
                map.InvalidateVisual(true);
             }
