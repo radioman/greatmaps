@@ -663,7 +663,8 @@ namespace GMap.NET.WindowsForms
                                  if(!img.IsParent)
                                  {
 #if !PocketPC
-                                    g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRectBearing.Width, Core.tileRectBearing.Height);
+                                    var dst = new Rectangle((int)Core.tileRect.X, (int)Core.tileRect.Y, (int)Core.tileRectBearing.Width, (int)Core.tileRectBearing.Height);
+                                    g.DrawImage(img.Img, dst, 0, 0, img.Img.Width, img.Img.Height, GraphicsUnit.Pixel, TileFlipXYAttributes);
 #else
                                     g.DrawImage(img.Img, (int) Core.tileRect.X, (int) Core.tileRect.Y);
 #endif
@@ -1419,31 +1420,26 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
             if(MapRenderTransform.HasValue)
             {
-               if(!MobileMode)
-               {
-                  var pc = new GPoint(Width / 2, Height / 2);
-                  var pc2 = pc;
-                  pc.OffsetNegative(Core.renderOffset);
-                  pc2.OffsetNegative(pc);
+                if (!MobileMode)
+                {
+                    var center = new GPoint(Width / 2, Height / 2);
+                    var delta = center;
+                    delta.OffsetNegative(Core.renderOffset);
+                    var pos = center;
+                    pos.OffsetNegative(delta);
 
-                  e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value, MatrixOrder.Append);
+                    e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value, MatrixOrder.Append);
+                    e.Graphics.TranslateTransform(pos.X, pos.Y, MatrixOrder.Append);
+                    DrawMap(e.Graphics);
 
-                  e.Graphics.TranslateTransform(pc2.X, pc2.Y, MatrixOrder.Append);
-               }
-
-               {
-                  DrawMap(e.Graphics);
-
-                  e.Graphics.ResetTransform();
-                  if(!MobileMode)
-                  {
-                     var pc = Core.renderOffset;
-                     pc.OffsetNegative(new GPoint(Width / 2, Height / 2));
-                     e.Graphics.TranslateTransform(Core.renderOffset.X + -pc.X, Core.renderOffset.Y + -pc.Y);
-                  }
-
-                  OnPaintOverlays(e.Graphics);
-               }
+                    e.Graphics.ResetTransform();
+                    e.Graphics.TranslateTransform(pos.X, pos.Y, MatrixOrder.Append);
+                }
+                else
+                {
+                    DrawMap(e.Graphics);
+                }
+                OnPaintOverlays(e.Graphics);
             }
             else
 #endif
