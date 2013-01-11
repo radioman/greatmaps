@@ -663,8 +663,14 @@ namespace GMap.NET.WindowsForms
                                  if(!img.IsParent)
                                  {
 #if !PocketPC
-                                    var dst = new Rectangle((int)Core.tileRect.X, (int)Core.tileRect.Y, (int)Core.tileRectBearing.Width, (int)Core.tileRectBearing.Height);
-                                    g.DrawImage(img.Img, dst, 0, 0, img.Img.Width, img.Img.Height, GraphicsUnit.Pixel, TileFlipXYAttributes);
+                                    if(!MapRenderTransform.HasValue)
+                                    {
+                                       g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+                                    }
+                                    else
+                                    {
+                                       g.DrawImage(img.Img, new Rectangle((int)Core.tileRect.X, (int)Core.tileRect.Y, (int)Core.tileRect.Width, (int)Core.tileRect.Height), 0, 0, Core.tileRect.Width, Core.tileRect.Height, GraphicsUnit.Pixel, TileFlipXYAttributes);
+                                    }
 #else
                                     g.DrawImage(img.Img, (int) Core.tileRect.X, (int) Core.tileRect.Y);
 #endif
@@ -1388,12 +1394,28 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
                if(MapRenderTransform.HasValue)
                {
-                  gxOff.TranslateTransform(Core.renderOffset.X, Core.renderOffset.Y);
-                  gxOff.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value);
+                  if(!MobileMode)
+                  {
+                     var center = new GPoint(Width / 2, Height / 2);
+                     var delta = center;
+                     delta.OffsetNegative(Core.renderOffset);
+                     var pos = center;
+                     pos.OffsetNegative(delta);
+
+                     gxOff.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value, MatrixOrder.Append);
+                     gxOff.TranslateTransform(pos.X, pos.Y, MatrixOrder.Append);
+
+                     DrawMap(gxOff);
+                     gxOff.ResetTransform();
+
+                     gxOff.TranslateTransform(pos.X, pos.Y, MatrixOrder.Append);
+                  }
+                  else
                   {
                      DrawMap(gxOff);
-                     OnPaintOverlays(gxOff);
+                     gxOff.ResetTransform();
                   }
+                  OnPaintOverlays(gxOff);
                }
                else
 #endif
@@ -1405,9 +1427,8 @@ namespace GMap.NET.WindowsForms
                   }
 #endif
                   DrawMap(gxOff);
+                  OnPaintOverlays(gxOff);
                }
-
-               OnPaintOverlays(gxOff);
 
                e.Graphics.DrawImage(backBuffer, 0, 0);
             }
@@ -1420,26 +1441,28 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
             if(MapRenderTransform.HasValue)
             {
-                if (!MobileMode)
-                {
-                    var center = new GPoint(Width / 2, Height / 2);
-                    var delta = center;
-                    delta.OffsetNegative(Core.renderOffset);
-                    var pos = center;
-                    pos.OffsetNegative(delta);
+               if(!MobileMode)
+               {
+                  var center = new GPoint(Width / 2, Height / 2);
+                  var delta = center;
+                  delta.OffsetNegative(Core.renderOffset);
+                  var pos = center;
+                  pos.OffsetNegative(delta);
 
-                    e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value, MatrixOrder.Append);
-                    e.Graphics.TranslateTransform(pos.X, pos.Y, MatrixOrder.Append);
-                    DrawMap(e.Graphics);
+                  e.Graphics.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value, MatrixOrder.Append);
+                  e.Graphics.TranslateTransform(pos.X, pos.Y, MatrixOrder.Append);
 
-                    e.Graphics.ResetTransform();
-                    e.Graphics.TranslateTransform(pos.X, pos.Y, MatrixOrder.Append);
-                }
-                else
-                {
-                    DrawMap(e.Graphics);
-                }
-                OnPaintOverlays(e.Graphics);
+                  DrawMap(e.Graphics);
+                  e.Graphics.ResetTransform();
+
+                  e.Graphics.TranslateTransform(pos.X, pos.Y, MatrixOrder.Append);
+               }
+               else
+               {
+                  DrawMap(e.Graphics);
+                  e.Graphics.ResetTransform();
+               }
+               OnPaintOverlays(e.Graphics);
             }
             else
 #endif

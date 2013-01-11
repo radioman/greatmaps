@@ -72,6 +72,8 @@ namespace Demo.WindowsForms
             MainMap.MaxZoom = 24;
             MainMap.Zoom = 9;
 
+            //MainMap.ScaleMode = ScaleModes.Fractional;
+
             // map events
             {
                MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);
