@@ -156,6 +156,17 @@ namespace GMap.NET.WindowsPresentation
 
       private ScaleModes scaleMode = ScaleModes.Integer;
 
+      /// <summary>
+      /// Specifies, if a floating map scale is displayed using a 
+      /// stretched, or a narrowed map.
+      /// If <code>ScaleMode</code> is <code>ScaleDown</code>,
+      /// then a scale of 12.3 is displayed using a map zoom level of 13
+      /// resized to the lower level. If the parameter is <code>ScaleUp</code> ,
+      /// then the same scale is displayed using a zoom level of 12 with an
+      /// enlarged scale. If the value is <code>Dynamic</code>, then until a
+      /// remainder of 0.25 <code>ScaleUp</code> is applied, for bigger
+      /// remainders <code>ScaleDown</code>.
+      /// </summary>
       [Category("GMap.NET")]
       [Description("map scale type")]
       public ScaleModes ScaleMode
@@ -181,23 +192,26 @@ namespace GMap.NET.WindowsPresentation
             Debug.WriteLine("Zoom: " + e.OldValue + " -> " + value);
 
             double remainder = value % 1;
-            if(map.ScaleMode == ScaleModes.Fractional && remainder != 0 && map.ActualWidth > 0)
+            if(map.ScaleMode != ScaleModes.Integer && remainder != 0 && map.ActualWidth > 0)
             {
                bool scaleDown;
-               switch (GMaps.Instance.MapFloatScaleMode)
-	           {
-                  case GMaps.ScaleMapMode.ScaleDown:
-                     scaleDown = true;
-                     break;
-                  case GMaps.ScaleMapMode.Dynamic:
-                     scaleDown = remainder > 0.25;
-                     break;
-                  default:
-                     scaleDown = false;
-                     break;
-	           }
 
-               if (scaleDown)
+               switch(map.ScaleMode)
+               {
+                  case ScaleModes.ScaleDown:
+                  scaleDown = true;
+                  break;
+
+                  case ScaleModes.Dynamic:
+                  scaleDown = remainder > 0.25;
+                  break;
+
+                  default:
+                  scaleDown = false;
+                  break;
+               }
+
+               if(scaleDown)
                   remainder--;
 
                double scaleValue = Math.Pow(2d, remainder);
@@ -2243,10 +2257,22 @@ namespace GMap.NET.WindowsPresentation
       Integer,
 
       /// <summary>
-      /// scales to fractional level, CURRENT VERSION DOESN'T HANDLE OBJECT POSITIONS CORRECLTY, 
+      /// scales to fractional level using a stretched tiles, CURRENT VERSION DOESN'T HANDLE OBJECT POSITIONS CORRECLTY, 
       /// http://greatmaps.codeplex.com/workitem/16046
       /// </summary>
-      Fractional,
+      ScaleUp,
+
+      /// <summary>
+      /// scales to fractional level using a narrowed tiles, CURRENT VERSION DOESN'T HANDLE OBJECT POSITIONS CORRECLTY, 
+      /// http://greatmaps.codeplex.com/workitem/16046
+      /// </summary>
+      ScaleDown,
+
+      /// <summary>
+      /// scales to fractional level using a combination both stretched and narrowed tiles, CURRENT VERSION DOESN'T HANDLE OBJECT POSITIONS CORRECLTY,
+      /// http://greatmaps.codeplex.com/workitem/16046
+      /// </summary>
+      Dynamic
    }
 
    public delegate void SelectionChange(RectLatLng Selection, bool ZoomToFit);

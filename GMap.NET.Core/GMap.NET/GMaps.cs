@@ -103,26 +103,6 @@ namespace GMap.NET
       public bool ShuffleTilesOnLoad = false;
 
       /// <summary>
-      /// Specifies, if a floating map scale is displayed using a 
-      /// stretched, or a narrowed map.
-      /// If <code>MapFloatScaleMode</code> is <code>ScaleDown</code>,
-      /// then a scale of 12.3 is displayed using a map zoom level of 13
-      /// resized to the lower level. If the parameter is <code>ScaleUp</code> (default),
-      /// then the same scale is displayed using a zoom level of 12 with an
-      /// enlarged scale. If the value is <code>Dynamic</code>, then until a
-      /// remainder of 0.25 <code>ScaleUp</code> is applied, for bigger
-      /// remainders <code>ScaleDown</code>.
-      /// </summary>
-      public ScaleMapMode MapFloatScaleMode = ScaleMapMode.ScaleUp;
-
-      public enum ScaleMapMode
-      {
-         ScaleUp,
-         ScaleDown,
-         Dynamic
-      }
-
-      /// <summary>
       /// tile queue to cache
       /// </summary>
       readonly Queue<CacheQueueItem> tileCacheQueue = new Queue<CacheQueueItem>();

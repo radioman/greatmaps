@@ -2344,22 +2344,22 @@ namespace GMap.NET.WindowsForms
             {
                if(!InvertedMouseWheelZooming)
                {
-                  Zoom++;
+                  Zoom = ((int)Zoom) + 1;
                }
                else
                {
-                  Zoom--;
+                  Zoom = ((int)(Zoom + 0.99)) - 1;
                }
             }
             else if(e.Delta < 0)
             {
                if(!InvertedMouseWheelZooming)
                {
-                  Zoom--;
+                  Zoom = ((int)(Zoom + 0.99)) - 1;
                }
                else
                {
-                  Zoom++;
+                  Zoom = ((int)Zoom) + 1;
                }
             }
 

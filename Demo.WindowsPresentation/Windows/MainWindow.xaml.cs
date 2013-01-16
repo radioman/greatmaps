@@ -56,6 +56,8 @@ namespace Demo.WindowsPresentation
          MainMap.MapProvider = GMapProviders.OpenStreetMap;
          MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
 
+         //MainMap.ScaleMode = ScaleModes.Dynamic;
+
          // map events
          MainMap.OnPositionChanged += new PositionChanged(MainMap_OnCurrentPositionChanged);
          MainMap.OnTileLoadComplete += new TileLoadComplete(MainMap_OnTileLoadComplete);

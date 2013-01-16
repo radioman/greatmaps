@@ -68,8 +68,9 @@ namespace GMap.NET.Internals
       DateTime LastTileLoadEnd = DateTime.Now;
       internal volatile bool IsStarted = false;
       int zoom;
-      public double scaleX = 1;
-      public double scaleY = 1;
+
+      internal double scaleX = 1;
+      internal double scaleY = 1;
 
       internal int maxZoom = 2;
       internal int minZoom = 2;
