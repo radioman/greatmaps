@@ -13,6 +13,7 @@ namespace GMap.NET.MapProviders
    using System.Collections.Generic;
    using System.Globalization;
    using System.Xml;
+   using System.Text;
 
    public abstract class GoogleMapProviderBase : GMapProvider, RoutingProvider, GeocodingProvider, DirectionsProvider
    {
@@ -1039,6 +1040,16 @@ namespace GMap.NET.MapProviders
          throw new NotImplementedException();
       }
 
+      public DirectionsStatusCode GetDirections(out GDirections direction, PointLatLng start, IEnumerable<PointLatLng> wayPoints, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+      {
+         return GetDirectionsUrl(MakeDirectionsUrl(start, wayPoints, LanguageStr, avoidHighways, avoidTolls, walkingMode, sensor, metric), out direction);
+      }
+
+      public DirectionsStatusCode GetDirections(out GDirections direction, string start, IEnumerable<string> wayPoints, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+      {
+         return GetDirectionsUrl(MakeDirectionsUrl(start, wayPoints, LanguageStr, avoidHighways, avoidTolls, walkingMode, sensor, metric), out direction);
+      }
+
       #region -- internals --
 
       // The Google Directions API: http://code.google.com/apis/maps/documentation/directions/
@@ -1046,7 +1057,6 @@ namespace GMap.NET.MapProviders
       string MakeDirectionsUrl(PointLatLng start, PointLatLng end, string language, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
       {
          string av = (avoidHighways ? "&avoid=highways" : string.Empty) + (avoidTolls ? "&avoid=tolls" : string.Empty); // 6
-
          string mt = "&units=" + (metric ? "metric" : "imperial");     // 7
          string wk = "&mode=" + (walkingMode ? "walking" : "driving"); // 8
 
@@ -1060,6 +1070,38 @@ namespace GMap.NET.MapProviders
          string wk = "&mode=" + (walkingMode ? "walking" : "driving"); // 6
 
          return string.Format(DirectionUrlFormatStr, start.Replace(' ', '+'), end.Replace(' ', '+'), sensor.ToString().ToLower(), language, av, mt, wk);
+      }
+
+      string MakeDirectionsUrl(PointLatLng start, IEnumerable<PointLatLng> wayPoints, string language, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+      {
+         string av = (avoidHighways ? "&avoid=highways" : string.Empty) + (avoidTolls ? "&avoid=tolls" : string.Empty); // 6
+         string mt = "&units=" + (metric ? "metric" : "imperial"); // 7
+         string wk = "&mode=" + (walkingMode ? "walking" : "driving"); // 8
+
+         string wpLatLng = string.Empty;
+         int i = 0;
+         foreach(var wp in wayPoints)
+         {
+            wpLatLng += string.Format(CultureInfo.InvariantCulture, i++ == 0 ? "{0},{1}" : "|{0},{1}", wp.Lat, wp.Lng);
+         }
+
+         return string.Format(CultureInfo.InvariantCulture, DirectionUrlFormatWaypoint, start.Lat, start.Lng, wpLatLng, sensor.ToString().ToLower(), language, av, mt, wk);
+      }
+
+      string MakeDirectionsUrl(string start, IEnumerable<string> wayPoints, string language, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+      {
+         string av = (avoidHighways ? "&avoid=highways" : string.Empty) + (avoidTolls ? "&avoid=tolls" : string.Empty); // 6
+         string mt = "&units=" + (metric ? "metric" : "imperial"); // 7
+         string wk = "&mode=" + (walkingMode ? "walking" : "driving"); // 8
+
+         string wpLatLng = string.Empty;
+         int i = 0;
+         foreach(var wp in wayPoints)
+         {
+            wpLatLng += string.Format(CultureInfo.InvariantCulture, i++ == 0 ? "{0}" : "|{0}", wp.Replace(' ', '+'));
+         }
+
+         return string.Format(CultureInfo.InvariantCulture, DirectionUrlFormatWaypointStr, start.Replace(' ', '+'), wpLatLng, sensor.ToString().ToLower(), language, av, mt, wk);
       }
 
       DirectionsStatusCode GetDirectionsUrl(string url, out GDirections direction)
@@ -1386,22 +1428,44 @@ namespace GMap.NET.MapProviders
                      nn = doc.SelectSingleNode("/DirectionsResponse/route/leg/duration");
                      if(nn != null)
                      {
-                        nn = nn.SelectSingleNode("text");
-                        if(nn != null)
+                        var t = nn.SelectSingleNode("text");
+                        if(t != null)
                         {
-                           direction.Duration = nn.InnerText;
+                           direction.Duration = t.InnerText;
                            Debug.WriteLine("duration: " + direction.Duration);
+                        }
+
+                        t = nn.SelectSingleNode("value");
+                        if(t != null)
+                        {
+                           uint tVal = 0;
+                           if(uint.TryParse(t.InnerText, out tVal))
+                           {
+                              direction.DistanceValue = tVal;
+                              Debug.WriteLine("value: " + direction.DistanceValue);
+                           }
                         }
                      }
 
                      nn = doc.SelectSingleNode("/DirectionsResponse/route/leg/distance");
                      if(nn != null)
                      {
-                        nn = nn.SelectSingleNode("text");
-                        if(nn != null)
+                        var t = nn.SelectSingleNode("text");
+                        if(t != null)
                         {
-                           direction.Distance = nn.InnerText;
+                           direction.Distance = t.InnerText;
                            Debug.WriteLine("distance: " + direction.Distance);
+                        }
+
+                        t = nn.SelectSingleNode("value");
+                        if(t != null)
+                        {
+                           uint tVal = 0;
+                           if(uint.TryParse(t.InnerText, out tVal))
+                           {
+                              direction.DurationValue = tVal;
+                              Debug.WriteLine("value: " + direction.DurationValue);
+                           }
                         }
                      }
 
@@ -1624,6 +1688,8 @@ namespace GMap.NET.MapProviders
 
       static readonly string DirectionUrlFormatStr = "http://maps.googleapis.com/maps/api/directions/xml?origin={0}&destination={1}&sensor={2}&language={3}{4}{5}{6}";
       static readonly string DirectionUrlFormatPoint = "http://maps.googleapis.com/maps/api/directions/xml?origin={0},{1}&destination={2},{3}&sensor={4}&language={5}{6}{7}{8}";
+      static readonly string DirectionUrlFormatWaypoint = "http://maps.googleapis.com/maps/api/directions/xml?origin={0},{1}&waypoints={2}&sensor={3}&language={4}{5}{6}{7}";
+      static readonly string DirectionUrlFormatWaypointStr = "http://maps.googleapis.com/maps/api/directions/xml?origin={0}&waypoints={1}&sensor={2}&language={3}{4}{5}{6}";
 
       #endregion
 

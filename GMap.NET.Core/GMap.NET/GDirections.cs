@@ -16,11 +16,21 @@ namespace GMap.NET
       public string Duration;
 
       /// <summary>
+      /// contains a value of the duration.
+      /// </summary>
+      public uint DurationValue;
+
+      /// <summary>
       /// contains a human-readable representation of the distance, displayed in units as used at the origin
       /// (or as overridden within the units parameter in the request), in the language specified in the request.
       /// (For example, miles and feet will be used for any origin within the United States.)
       /// </summary>
       public string Distance;
+
+      /// <summary>
+      /// contains a value of the distance.
+      /// </summary>
+      public uint DistanceValue;
 
       /// <summary>
       /// contains the latitude/longitude coordinates of the origin of this leg. Because the Directions API
