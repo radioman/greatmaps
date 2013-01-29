@@ -3121,14 +3121,6 @@ namespace GMap.NET.WindowsForms
 #endif
    }
 
-#if !PocketPC
-   public enum HelperLineOptions
-   {
-      DontShow = 0,
-      ShowAlways = 1,
-      ShowOnModifierKey = 2
-   }
-
    public enum ScaleModes
    {
       /// <summary>
@@ -3143,6 +3135,14 @@ namespace GMap.NET.WindowsForms
       /// </summary>
       Fractional,
 #endif
+   }
+
+#if !PocketPC
+   public enum HelperLineOptions
+   {
+      DontShow = 0,
+      ShowAlways = 1,
+      ShowOnModifierKey = 2
    }
 
    public delegate void SelectionChange(RectLatLng Selection, bool ZoomToFit);

@@ -1438,10 +1438,9 @@ namespace GMap.NET.MapProviders
                         t = nn.SelectSingleNode("value");
                         if(t != null)
                         {
-                           uint tVal = 0;
-                           if(uint.TryParse(t.InnerText, out tVal))
+                           if(!string.IsNullOrEmpty(t.InnerText))
                            {
-                              direction.DistanceValue = tVal;
+                              direction.DistanceValue = uint.Parse(t.InnerText);
                               Debug.WriteLine("value: " + direction.DistanceValue);
                            }
                         }
@@ -1460,10 +1459,9 @@ namespace GMap.NET.MapProviders
                         t = nn.SelectSingleNode("value");
                         if(t != null)
                         {
-                           uint tVal = 0;
-                           if(uint.TryParse(t.InnerText, out tVal))
+                           if(!string.IsNullOrEmpty(t.InnerText))
                            {
-                              direction.DurationValue = tVal;
+                              direction.DurationValue = uint.Parse(t.InnerText);                              
                               Debug.WriteLine("value: " + direction.DurationValue);
                            }
                         }

@@ -1702,7 +1702,7 @@ namespace GMap.NET.WindowsPresentation
                   Core.Drag(Core.mouseCurrent);
                }
 
-               if(IsRotated)
+               if(IsRotated || scaleMode != ScaleModes.Integer)
                {
                   ForceUpdateOverlays();
                }
