@@ -38,7 +38,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\Build\Release-NET$(TargetFrameworkVersion)CF\</OutputPath>
     <DefineConstants>TRACE;PocketPC</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
@@ -50,6 +50,9 @@
   <ItemGroup>
     <Compile Include="..\Demo.WindowsForms\Source\DemoStuff.cs">
       <Link>Source\DemoStuff.cs</Link>
+    </Compile>
+    <Compile Include="..\GMap.NET.Core\Properties\VersionInfo.cs">
+      <Link>Properties\VersionInfo.cs</Link>
     </Compile>
     <Compile Include="Forms\Search.cs">
       <SubType>UserControl</SubType>

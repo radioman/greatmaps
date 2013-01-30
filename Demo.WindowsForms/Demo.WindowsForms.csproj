@@ -72,7 +72,7 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>..\Build\Release\</OutputPath>
+    <OutputPath>..\Build\Release-NET$(TargetFrameworkVersion)\</OutputPath>
     <DefineConstants>TRACE;MONO_disabled; SQLite</DefineConstants>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <Optimize>true</Optimize>
@@ -207,7 +207,6 @@
     </Compile>
     <Compile Include="Source\DemoStuff.cs" />
     <Compile Include="Source\Map.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Source\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

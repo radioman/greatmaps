@@ -7,12 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("Demo.WindowsMobile")]
 [assembly: AssemblyDescription("Demo for GMap.NET.WindowsMobile")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Universe")]
-[assembly: AssemblyProduct("Demo.WindowsMobile")]
-[assembly: AssemblyCopyright("Copyright © Universe 2010")]
-[assembly: AssemblyTrademark("email@radioman.lt")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyProduct("Demo.WindowsMobile")]   
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
@@ -29,7 +24,7 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.0.0.0")]
+//[assembly: AssemblyVersion("1.0.0.0")]
 
 // Below attribute is to suppress FxCop warning "CA2232 : Microsoft.Usage : Add STAThreadAttribute to assembly"
 // as Device app does not support STA thread.

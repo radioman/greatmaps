@@ -7,17 +7,12 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("GMap.NET.WindowsMobile")]
 [assembly: AssemblyDescription("GMap.NET - Great Maps for Windows Mobile")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Universe")]
 [assembly: AssemblyProduct("GMap.NET.WindowsMobile")]
-[assembly: AssemblyCopyright("Copyright © Universe 2010")]
-[assembly: AssemblyTrademark("GMap.NET.WindowsMobile")]
-[assembly: AssemblyCulture("")]
-
+ 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
+[assembly: ComVisible(true)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("6ee21dc0-23c4-4502-8913-87bbf98c2859")]
@@ -31,5 +26,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.4.9.3")]
+//[assembly: AssemblyVersion("1.4.9.3")]
 

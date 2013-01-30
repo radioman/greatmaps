@@ -421,6 +421,9 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET\StatusCodes.cs">
       <Link>GMap.NET\StatusCodes.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.Core\Properties\VersionInfo.cs">
+      <Link>Properties\VersionInfo.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.ObjectModel\ObservableCollection.cs">
       <Link>GMap.NET.ObjectModel\ObservableCollection.cs</Link>
     </Compile>

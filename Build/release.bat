@@ -1,5 +1,5 @@
 
-cd .\Release
+cd .\Release-NETv3.5
 
 "C:\Program Files\7-Zip\7z.exe" a ..\GMap.NET.WindowsPresentation.zip Demo.WindowsPresentation.exe
 "C:\Program Files\7-Zip\7z.exe" a ..\GMap.NET.WindowsPresentation.zip GMap.NET.Core.dll
@@ -11,6 +11,8 @@ cd .\Release
 "C:\Program Files\7-Zip\7z.exe" t ..\GMap.NET.WindowsPresentation.zip
 
 pause
+
+cd ..\Release-NETv2.0
 
 "C:\Program Files\7-Zip\7z.exe" a ..\GMap.NET.WindowsForms.zip Demo.WindowsForms.exe
 "C:\Program Files\7-Zip\7z.exe" a ..\GMap.NET.WindowsForms.zip GMap.NET.Core.dll
