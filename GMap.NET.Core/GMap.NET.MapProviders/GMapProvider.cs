@@ -28,6 +28,8 @@ namespace GMap.NET.MapProviders
 
       public static readonly OpenStreetMapProvider OpenStreetMap = OpenStreetMapProvider.Instance;
 
+      public static readonly OpenStreet4UMapProvider OpenStreet4UMap = OpenStreet4UMapProvider.Instance;
+
       public static readonly OpenCycleMapProvider OpenCycleMap = OpenCycleMapProvider.Instance;
       public static readonly OpenCycleLandscapeMapProvider OpenCycleLandscapeMap = OpenCycleLandscapeMapProvider.Instance;
       public static readonly OpenCycleTransportMapProvider OpenCycleTransportMap = OpenCycleTransportMapProvider.Instance;

@@ -268,6 +268,9 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenSeaMapHybridProvider.cs">
       <Link>GMap.NET.MapProviders\OpenStreetMap\OpenSeaMapHybridProvider.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenStreet4UMapProvider.cs">
+      <Link>GMap.NET.MapProviders\OpenStreetMap\OpenStreet4UMapProvider.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapProvider.cs">
       <Link>GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapProvider.cs</Link>
     </Compile>
