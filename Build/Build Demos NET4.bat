@@ -14,4 +14,6 @@ del /q /s .\%builddir%\*.*
 del /q /s .\%builddir%\*.application
 del /q /s .\%builddir%\*.exe.manifest
 
+if "%1"=="nopause" goto end
 pause
+:end
