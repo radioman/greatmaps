@@ -2384,7 +2384,7 @@ namespace GMap.NET.WindowsForms
       /// </summary>
       /// <param name="keys"></param>
       /// <returns>true if successfull</returns>
-      public GeoCoderStatusCode SetCurrentPositionByKeywords(string keys)
+      public GeoCoderStatusCode SetPositionByKeywords(string keys)
       {
          GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
 

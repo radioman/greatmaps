@@ -50,7 +50,7 @@ namespace TemplatedBinding
          Map = m;
          Location = location;
 
-         Map.SetCurrentPositionByKeywords(Location);
+         Map.SetPositionByKeywords(Location);
       }
    }
 
@@ -100,7 +100,7 @@ namespace TemplatedBinding
          UserMap.MinZoom = 5;
          UserMap.MaxZoom = 13;
          UserMap.Zoom = 5;
-         UserMap.SetCurrentPositionByKeywords("Leuven");
+         UserMap.SetPositionByKeywords("Leuven");
 
          // add all maps
          locations.ItemsSource = mapCtrl;

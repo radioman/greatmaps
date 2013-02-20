@@ -1902,7 +1902,7 @@ namespace GMap.NET.WindowsPresentation
       /// </summary>
       /// <param name="keys"></param>
       /// <returns></returns>
-      public GeoCoderStatusCode SetCurrentPositionByKeywords(string keys)
+      public GeoCoderStatusCode SetPositionByKeywords(string keys)
       {
          GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
 

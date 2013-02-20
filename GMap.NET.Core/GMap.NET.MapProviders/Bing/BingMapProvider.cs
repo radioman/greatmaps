@@ -23,7 +23,7 @@ namespace GMap.NET.MapProviders
          Copyright = string.Format("©{0} Microsoft Corporation, ©{0} NAVTEQ, ©{0} Image courtesy of NASA", DateTime.Today.Year);
       }
 
-      public string Version = "875";
+      public string Version = "1173";
 
       /// <summary>
       /// Bing Maps Customer Identification, more info here
@@ -105,66 +105,104 @@ namespace GMap.NET.MapProviders
       #endregion
 
       public bool TryCorrectVersion = true;
+      public bool TryGetDefaultKey = true;
       static bool init = false;
 
       public override void OnInitialized()
       {
-         if(!init && TryCorrectVersion)
+         if(!init)
          {
-            string url = @"http://www.bing.com/maps";
-
             try
             {
-               string html = GMaps.Instance.UseUrlCache ? Cache.Instance.GetContent(url, CacheType.UrlCache, TimeSpan.FromHours(8)) : string.Empty;
-
-               if(string.IsNullOrEmpty(html))
+               if(TryCorrectVersion)
                {
-                  html = GetContentUsingHttp(url);
-                  if(!string.IsNullOrEmpty(html))
+                  #region -- get the version --
+                  string url = @"http://www.bing.com/maps";
+                  string html = GMaps.Instance.UseUrlCache ? Cache.Instance.GetContent(url, CacheType.UrlCache, TimeSpan.FromHours(8)) : string.Empty;
+
+                  if(string.IsNullOrEmpty(html))
                   {
-                     if(GMaps.Instance.UseUrlCache)
+                     html = GetContentUsingHttp(url);
+                     if(!string.IsNullOrEmpty(html))
                      {
-                        Cache.Instance.SaveContent(url, CacheType.UrlCache, html);
+                        if(GMaps.Instance.UseUrlCache)
+                        {
+                           Cache.Instance.SaveContent(url, CacheType.UrlCache, html);
+                        }
                      }
                   }
-               }
 
-               if(!string.IsNullOrEmpty(html))
-               {
-                  #region -- match versions --
-                  Regex reg = new Regex("http://ecn.t(\\d*).tiles.virtualearth.net/tiles/r(\\d*)[?*]g=(\\d*)", RegexOptions.IgnoreCase);
-                  Match mat = reg.Match(html);
-                  if(mat.Success)
+                  if(!string.IsNullOrEmpty(html))
                   {
-                     GroupCollection gc = mat.Groups;
-                     int count = gc.Count;
-                     if(count > 2)
+                     #region -- match versions --                      
+
+                     Regex reg = new Regex("tilegeneration:(\\d*)", RegexOptions.IgnoreCase);
+                     Match mat = reg.Match(html);
+                     if(mat.Success)
                      {
-                        string ver = gc[3].Value;
-                        string old = GMapProviders.BingMap.Version;
-                        if(ver != old)
+                        GroupCollection gc = mat.Groups;
+                        int count = gc.Count;
+                        if(count == 2)
                         {
-                           GMapProviders.BingMap.Version = ver;
-                           GMapProviders.BingSatelliteMap.Version = ver;
-                           GMapProviders.BingHybridMap.Version = ver;
-#if DEBUG
-                           Debug.WriteLine("GMapProviders.BingMap.Version: " + ver + ", old: " + old + ", consider updating source");
-                           if(Debugger.IsAttached)
+                           string ver = gc[1].Value;
+                           string old = GMapProviders.BingMap.Version;
+                           if(ver != old)
                            {
-                              Thread.Sleep(5555);
-                           }
+                              GMapProviders.BingMap.Version = ver;
+                              GMapProviders.BingSatelliteMap.Version = ver;
+                              GMapProviders.BingHybridMap.Version = ver;
+#if DEBUG
+                              Debug.WriteLine("GMapProviders.BingMap.Version: " + ver + ", old: " + old + ", consider updating source");
+                              if(Debugger.IsAttached)
+                              {
+                                 Thread.Sleep(5555);
+                              }
 #endif
-                        }
-                        else
-                        {
-                           Debug.WriteLine("GMapProviders.BingMap.Version: " + ver + ", OK");
+                           }
+                           else
+                           {
+                              Debug.WriteLine("GMapProviders.BingMap.Version: " + ver + ", OK");
+                           }
                         }
                      }
+                     #endregion
                   }
                   #endregion
                }
 
-               init = true; // try it only once
+               init = true; // try it only once 
+
+               #region -- try get default key --
+               if(TryGetDefaultKey && string.IsNullOrEmpty(ClientKey))
+               {
+                  string keyUrl = "http://dev.virtualearth.net/webservices/v1/LoggingService/LoggingService.svc/Log?entry=0&fmt=1&type=3&group=MapControl&name=AJAX&mkt=en-us&auth=Akw4XWHH0ngzzB_4DmHOv_XByRBtX5qwLAS9RgRYDamxvLeIxRfSzmuvWFB9RF7d&jsonp=microsoftMapsNetworkCallback";
+
+                  // Bing Maps WPF Control
+                  // http://dev.virtualearth.net/webservices/v1/LoggingService/LoggingService.svc/Log?entry=0&auth=Akw4XWHH0ngzzB_4DmHOv_XByRBtX5qwLAS9RgRYDamxvLeIxRfSzmuvWFB9RF7d&fmt=1&type=3&group=MapControl&name=WPF&version=1.0.0.0&session=00000000-0000-0000-0000-000000000000&mkt=en-US
+
+                  string keyResponse = GMaps.Instance.UseUrlCache ? Cache.Instance.GetContent("BingLoggingServiceV1", CacheType.UrlCache, TimeSpan.FromHours(8)) : string.Empty;
+
+                  if(string.IsNullOrEmpty(keyResponse))
+                  {
+                     keyResponse = GetContentUsingHttp(keyUrl);
+                     if(!string.IsNullOrEmpty(keyResponse) && keyResponse.Contains("ValidCredentials"))
+                     {
+                        if(GMaps.Instance.UseUrlCache)
+                        {
+                           Cache.Instance.SaveContent("BingLoggingServiceV1", CacheType.UrlCache, keyResponse);
+                        }
+                     }
+                  }
+
+                  if(!string.IsNullOrEmpty(keyResponse) && keyResponse.Contains("sessionId") && keyResponse.Contains("ValidCredentials"))
+                  {
+                     // microsoftMapsNetworkCallback({"sessionId" : "xxx", "authenticationResultCode" : "ValidCredentials"})
+
+                     ClientKey = keyResponse.Split(',')[0].Split(':')[1].Replace("\"", string.Empty).Replace(" ", string.Empty);
+                     Debug.WriteLine("GMapProviders.BingMap.ClientKey: " + ClientKey);
+                  }
+               }
+               #endregion
             }
             catch(Exception ex)
             {
@@ -318,11 +356,11 @@ namespace GMap.NET.MapProviders
 
       // example : http://dev.virtualearth.net/REST/V1/Routes/Driving?o=xml&wp.0=44.979035,-93.26493&wp.1=44.943828508257866,-93.09332862496376&optmz=distance&rpo=Points&key=[PROVIDEYOUROWNKEY!!]
       static readonly string RouteUrlFormatPointLatLng = "http://dev.virtualearth.net/REST/V1/Routes/{0}?o=xml&wp.0={1},{2}&wp.1={3},{4}{5}&optmz=distance&rpo=Points&key={6}";
-    
+
       #endregion RoutingProvider
 
       #region GeocodingProvider
-    
+
       public GeoCoderStatusCode GetPoints(string keywords, out List<PointLatLng> pointList)
       {
          return GetLatLngFromGeocoderUrl(MakeGeocoderUrl("q=" + keywords), out pointList);
@@ -384,11 +422,13 @@ namespace GMap.NET.MapProviders
 
       public GeoCoderStatusCode GetPlacemarks(PointLatLng location, out List<Placemark> placemarkList)
       {
+         // http://msdn.microsoft.com/en-us/library/ff701713.aspx
          throw new NotImplementedException();
       }
 
       public Placemark? GetPlacemark(PointLatLng location, out GeoCoderStatusCode status)
       {
+         // http://msdn.microsoft.com/en-us/library/ff701713.aspx
          throw new NotImplementedException();
       }
 

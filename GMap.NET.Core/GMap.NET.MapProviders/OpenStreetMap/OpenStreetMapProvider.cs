@@ -19,7 +19,7 @@ namespace GMap.NET.MapProviders
       }
 
       public readonly string ServerLetters = "abc";
-      public int MinExpectedRank = 22;
+      public int MinExpectedRank = 0;
 
       #region GMapProvider Members
 

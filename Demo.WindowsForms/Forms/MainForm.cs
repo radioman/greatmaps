@@ -1757,10 +1757,10 @@ namespace Demo.WindowsForms
       {
          if((Keys) e.KeyChar == Keys.Enter)
          {
-            GeoCoderStatusCode status = MainMap.SetCurrentPositionByKeywords(textBoxGeo.Text);
+            GeoCoderStatusCode status = MainMap.SetPositionByKeywords(textBoxGeo.Text);
             if(status != GeoCoderStatusCode.G_GEO_SUCCESS)
             {
-               MessageBox.Show("Google Maps Geocoder can't find: '" + textBoxGeo.Text + "', reason: " + status.ToString(), "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+               MessageBox.Show("Geocoder can't find: '" + textBoxGeo.Text + "', reason: " + status.ToString(), "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
          }
       }
@@ -1803,7 +1803,7 @@ namespace Demo.WindowsForms
          RoutingProvider rp = MainMap.MapProvider as RoutingProvider;
          if(rp == null)
          {
-            rp = GMapProviders.GoogleMap; // use google if provider does not implement routing
+            rp = GMapProviders.OpenStreetMap; // use OpenStreetMap if provider does not implement routing
          }
 
          MapRoute route = rp.GetRoute(start, end, false, false, (int) MainMap.Zoom);
@@ -2199,10 +2199,6 @@ namespace Demo.WindowsForms
 
             if(!connectionsWorker.IsBusy)
             {
-               //if(MainMap.Provider != MapType.GoogleMap)
-               //{
-               //   MainMap.MapType = MapType.GoogleMap;
-               //}
                MainMap.Zoom = 5;
 
                connectionsWorker.RunWorkerAsync();
