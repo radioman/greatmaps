@@ -8,6 +8,7 @@ namespace GMap.NET.CacheProviders
    using System.IO;
    using GMap.NET;
    using MySql.Data.MySqlClient;
+   using GMap.NET.MapProviders;
 
    /// <summary>
    /// image cache for mysql server
@@ -164,7 +165,7 @@ namespace GMap.NET.CacheProviders
       #endregion
 
       #region PureImageCache Members
-      public bool PutImageToCache(MemoryStream tile, MapType type, GPoint pos, int zoom)
+      public bool PutImageToCache(byte[] tile, int type, GPoint pos, int zoom)
       {
          bool ret = true;
          {
@@ -181,11 +182,11 @@ namespace GMap.NET.CacheProviders
                         cnSet.Open();
                      }
 
-                     cmdInsert.Parameters["@type"].Value = (int)type;
+                     cmdInsert.Parameters["@type"].Value = type;
                      cmdInsert.Parameters["@zoom"].Value = zoom;
                      cmdInsert.Parameters["@x"].Value = pos.X;
                      cmdInsert.Parameters["@y"].Value = pos.Y;
-                     cmdInsert.Parameters["@tile"].Value = tile.GetBuffer();
+                     cmdInsert.Parameters["@tile"].Value = tile;
                      cmdInsert.ExecuteNonQuery();
                   }
                }
@@ -200,7 +201,7 @@ namespace GMap.NET.CacheProviders
          return ret;
       }
 
-      public PureImage GetImageFromCache(MapType type, GPoint pos, int zoom)
+      public PureImage GetImageFromCache(int type, GPoint pos, int zoom)
       {
          PureImage ret = null;
          {
@@ -218,7 +219,7 @@ namespace GMap.NET.CacheProviders
                         cnGet.Open();
                      }
 
-                     cmdFetch.Parameters["@type"].Value = (int)type;
+                     cmdFetch.Parameters["@type"].Value = type;
                      cmdFetch.Parameters["@zoom"].Value = zoom;
                      cmdFetch.Parameters["@x"].Value = pos.X;
                      cmdFetch.Parameters["@y"].Value = pos.Y;
