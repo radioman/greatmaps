@@ -232,70 +232,41 @@ namespace Demo.WindowsMobile
          MainMap.Zoom = (int) (MainMap.Zoom) - 1;
       }
 
+      private void menuItem14_Click(object sender, EventArgs e)
+      {
+         MainMap.MapProvider = GMapProviders.LithuaniaMap;
+         MainMap.MaxZoom = MainMap.MapProvider.MaxZoom.Value;
+      } 
+
       private void menuItem15_Click(object sender, EventArgs e)
       {
          MainMap.MapProvider = GMapProviders.LithuaniaOrtoFotoMap;
-      }
-
-      private void menuItem10_Click(object sender, EventArgs e)
-      {
-         MainMap.MapProvider = GMapProviders.GoogleHybridMap;
+         MainMap.MaxZoom = MainMap.MapProvider.MaxZoom.Value;
       }
 
       private void menuItem12_Click(object sender, EventArgs e)
       {
          MainMap.MapProvider = GMapProviders.OpenStreetMap;
+         MainMap.MaxZoom = 17;
       }
 
-      private void menuItem22_Click(object sender, EventArgs e)
+      private void menuItem4_Click_1(object sender, EventArgs e)
       {
-         //MainMap.MapProvider = GMapProviders.OpenStreetMapSurfer;
-      }
-
-      private void menuItem23_Click(object sender, EventArgs e)
-      {
-         //MainMap.MapProvider = GMapProviders.OpenStreetOsm;
+         MainMap.MapProvider = GMapProviders.OpenCycleMap;
+         MainMap.MaxZoom = 17;
       }
 
       private void menuItem9_Click(object sender, EventArgs e)
       {
          MainMap.MapProvider = GMapProviders.GoogleMap;
+         MainMap.MaxZoom = 17;
       }
 
-      private void menuItem16_Click(object sender, EventArgs e)
+      private void menuItem10_Click(object sender, EventArgs e)
       {
-         MainMap.MapProvider = GMapProviders.BingMap;
-      }
-
-      private void menuItem18_Click(object sender, EventArgs e)
-      {
-         MainMap.MapProvider = GMapProviders.BingHybridMap;
-      }
-
-      private void menuItem20_Click(object sender, EventArgs e)
-      {
-         MainMap.MapProvider = GMapProviders.YahooMap;
-      }
-
-      private void menuItem21_Click(object sender, EventArgs e)
-      {
-         MainMap.MapProvider = GMapProviders.YahooHybridMap;
-      }
-
-      private void menuItem14_Click(object sender, EventArgs e)
-      {
-         MainMap.MapProvider = GMapProviders.LithuaniaMap;
-      }
-
-      private void menuItem25_Click(object sender, EventArgs e)
-      {
-         MainMap.MapProvider = GMapProviders.ArcGIS_World_Topo_Map;
-      }
-
-      private void menuItem26_Click(object sender, EventArgs e)
-      {
-         MainMap.MapProvider = GMapProviders.ArcGIS_World_Physical_Map;
-      }
+         MainMap.MapProvider = GMapProviders.GoogleSatelliteMap;
+         MainMap.MaxZoom = 17;
+      }                     
 
       private void menuItem27_Click(object sender, EventArgs e)
       {
@@ -1192,7 +1163,7 @@ namespace Demo.WindowsMobile
             MainMap.UpdateRouteLocalPosition(destinationRoute);
             MainMap.Invalidate();
          }
-      }
+      }      
    }
 
    public class Map : GMapControl
