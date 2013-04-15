@@ -1944,9 +1944,14 @@ namespace Demo.WindowsForms
                {
                   using(TilePrefetcher obj = new TilePrefetcher())
                   {
+                     objects.Markers.Clear(); 
+                     obj.Overlay = objects;
+
+                     obj.Shuffle = MainMap.Manager.Mode != AccessMode.CacheOnly;
+
                      obj.Owner = this;
                      obj.ShowCompleteMessage = true;
-                     obj.Start(area, i, MainMap.MapProvider, 100);
+                     obj.Start(area, i, MainMap.MapProvider, MainMap.Manager.Mode == AccessMode.CacheOnly ? 0 : 100, MainMap.Manager.Mode == AccessMode.CacheOnly ? 0 : 1);
                   }
                }
                else if(res == DialogResult.No)

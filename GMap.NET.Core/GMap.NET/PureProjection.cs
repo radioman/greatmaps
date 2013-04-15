@@ -228,7 +228,6 @@ namespace GMap.NET
                }
             }
          }
-         ret.TrimExcess();
 
          return ret;
       }

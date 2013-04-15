@@ -8,6 +8,9 @@ namespace GMap.NET
    using System;
    using GMap.NET.MapProviders;
    using System.Threading;
+   using GMap.NET.WindowsForms;
+   using GMap.NET.WindowsForms.Markers;
+using System.Drawing;
 
    /// <summary>
    /// form helping to prefetch tiles on local db
@@ -23,6 +26,9 @@ namespace GMap.NET
       public bool ShowCompleteMessage = false;
       RectLatLng area;
       GMap.NET.GSize maxOfTiles;
+      public GMapOverlay Overlay;
+      int retry;
+      public bool Shuffle = true;
 
       public TilePrefetcher()
       {
@@ -81,7 +87,7 @@ namespace GMap.NET
          }
       }
 
-      public void Start(RectLatLng area, int zoom, GMapProvider provider, int sleep)
+      public void Start(RectLatLng area, int zoom, GMapProvider provider, int sleep, int retry)
       {
          if(!worker.IsBusy)
          {
@@ -92,6 +98,7 @@ namespace GMap.NET
             this.zoom = zoom;
             this.provider = provider;
             this.sleep = sleep;
+            this.retry = retry;
 
             GMaps.Instance.UseMemoryCache = false;
             GMaps.Instance.CacheOnIdleRead = false;
@@ -127,11 +134,11 @@ namespace GMap.NET
          {
             if(!e.Cancelled)
             {
-               MessageBox.Show("Prefetch Complete! => " + ((int)e.Result).ToString() + " of " + all);
+               MessageBox.Show(this, "Prefetch Complete! => " + ((int)e.Result).ToString() + " of " + all);
             }
             else
             {
-               MessageBox.Show("Prefetch Canceled! => " + ((int)e.Result).ToString() + " of " + all);
+               MessageBox.Show(this, "Prefetch Canceled! => " + ((int)e.Result).ToString() + " of " + all);
             }
          }
 
@@ -140,6 +147,8 @@ namespace GMap.NET
          GMaps.Instance.UseMemoryCache = true;
          GMaps.Instance.CacheOnIdleRead = true;
          GMaps.Instance.BoostCacheEngine = false;
+
+         worker.Dispose();
 
          this.Close();
       }
@@ -174,6 +183,8 @@ namespace GMap.NET
          return true;
       }
 
+      public readonly Queue<GPoint> CachedTiles = new Queue<GPoint>();
+
       void worker_DoWork(object sender, DoWorkEventArgs e)
       {
          if(list != null)
@@ -186,9 +197,17 @@ namespace GMap.NET
          all = list.Count;
 
          int countOk = 0;
-         int retry = 0;
+         int retryCount = 0;
 
-         Stuff.Shuffle<GPoint>(list);
+         if(Shuffle)
+         {
+            Stuff.Shuffle<GPoint>(list);
+         }
+
+         lock(this)
+         {
+            CachedTiles.Clear();
+         }
 
          for(int i = 0; i < all; i++)
          {
@@ -199,12 +218,16 @@ namespace GMap.NET
             {
                if(CacheTiles(zoom, p))
                {
+                  lock(this)
+                  {
+                     CachedTiles.Enqueue(p);
+                  }
                   countOk++;
-                  retry = 0;
+                  retryCount = 0;
                }
                else
                {
-                  if(++retry <= 1) // retry only one
+                  if(++retryCount <= retry) // retry only one
                   {
                      i--;
                      System.Threading.Thread.Sleep(1111);
@@ -212,7 +235,7 @@ namespace GMap.NET
                   }
                   else
                   {
-                     retry = 0;
+                     retryCount = 0;
                   }
                }
             }
@@ -234,6 +257,31 @@ namespace GMap.NET
       {
          this.label1.Text = "Fetching tile at zoom (" + zoom + "): " + ((int)e.UserState).ToString() + " of " + all + ", complete: " + e.ProgressPercentage.ToString() + "%";
          this.progressBarDownload.Value = e.ProgressPercentage;
+
+         GPoint ? l = null;
+
+         lock(this)
+         {
+            if(CachedTiles.Count > 0)
+            {
+               l = CachedTiles.Dequeue();                  
+            }
+         }
+
+         if(l.HasValue)
+         {
+            var px = Overlay.Control.MapProvider.Projection.FromTileXYToPixel(l.Value);
+            var p = Overlay.Control.MapProvider.Projection.FromPixelToLatLng(px, zoom);
+
+            var r1 = Overlay.Control.MapProvider.Projection.GetGroundResolution(zoom, p.Lat);
+            var r2 = Overlay.Control.MapProvider.Projection.GetGroundResolution((int)Overlay.Control.Zoom, p.Lat);
+            var sizeDiff = r2 / r1;
+
+            //var sizeDiff = Math.Pow(2, zoom - Overlay.Control.Zoom);
+
+            GMapMarkerTile m = new GMapMarkerTile(p, (int)(Overlay.Control.MapProvider.Projection.TileSize.Width / sizeDiff));
+            Overlay.Markers.Add(m);
+         }
       }
 
       private void Prefetch_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -247,6 +295,25 @@ namespace GMap.NET
       private void Prefetch_FormClosed(object sender, FormClosedEventArgs e)
       {
          this.Stop();
+      }
+   }
+
+   public class GMapMarkerTile : GMapMarker
+   {
+      static  Brush Fill = new SolidBrush(Color.FromArgb(155, Color.Blue));
+
+      public GMapMarkerTile(PointLatLng p, int size)
+         : base(p)
+      {
+         // do not forget set Size of the marker
+         // if so, you shall have no event on it ;}
+         Size = new System.Drawing.Size(size, size);
+         //Offset = new System.Drawing.Point(-Size.Width / 2, -Size.Height / 2);
+      }
+
+      public override void OnRender(Graphics g)
+      {
+         g.FillRectangle(Fill, new System.Drawing.Rectangle(LocalPosition.X, LocalPosition.Y, Size.Width, Size.Height));
       }
    }
 }
