@@ -13,7 +13,7 @@ namespace GMap.NET.CacheProviders
    /// <summary>
    /// image cache for ms sql server
    /// </summary>
-   internal class MsSQLCePureImageCache : PureImageCache, IDisposable
+   public class MsSQLCePureImageCache : PureImageCache, IDisposable
    {
       string cache;
       string gtileCache;

@@ -26,7 +26,7 @@ namespace GMap.NET.CacheProviders
    /// <summary>
    /// ultra fast cache system for tiles
    /// </summary>
-   internal class SQLitePureImageCache : PureImageCache
+   public class SQLitePureImageCache : PureImageCache
    {
 #if !PocketPC
 #if !MONO
