@@ -382,9 +382,7 @@ namespace GMap.NET.MapProviders
          zoomFactor = -1;
          try
          {
-            string urlEnd = url.Substring(url.IndexOf("&hl="));
-
-            string route = GMaps.Instance.UseRouteCache ? Cache.Instance.GetContent(urlEnd, CacheType.RouteCache) : string.Empty;
+            string route = GMaps.Instance.UseRouteCache ? Cache.Instance.GetContent(url, CacheType.RouteCache) : string.Empty;
 
             if(string.IsNullOrEmpty(route))
             {
@@ -394,7 +392,7 @@ namespace GMap.NET.MapProviders
                {
                   if(GMaps.Instance.UseRouteCache)
                   {
-                     Cache.Instance.SaveContent(urlEnd, CacheType.RouteCache, route);
+                     Cache.Instance.SaveContent(url, CacheType.RouteCache, route);
                   }
                }
             }
@@ -640,9 +638,7 @@ namespace GMap.NET.MapProviders
 
          try
          {
-            string urlEnd = url.Substring(url.IndexOf("geo?q="));
-
-            string geo = GMaps.Instance.UseGeocoderCache ? Cache.Instance.GetContent(urlEnd, CacheType.GeocoderCache) : string.Empty;
+            string geo = GMaps.Instance.UseGeocoderCache ? Cache.Instance.GetContent(url, CacheType.GeocoderCache) : string.Empty;
 
             bool cache = false;
 
@@ -670,7 +666,7 @@ namespace GMap.NET.MapProviders
                      {
                         if(cache && GMaps.Instance.UseGeocoderCache)
                         {
-                           Cache.Instance.SaveContent(urlEnd, CacheType.GeocoderCache, geo);
+                           Cache.Instance.SaveContent(url, CacheType.GeocoderCache, geo);
                         }
 
                         double lat = double.Parse(values[2], CultureInfo.InvariantCulture);
@@ -732,7 +728,7 @@ namespace GMap.NET.MapProviders
                      {
                         if(cache && GMaps.Instance.UseGeocoderCache)
                         {
-                           Cache.Instance.SaveContent(urlEnd, CacheType.GeocoderCache, geo);
+                           Cache.Instance.SaveContent(url, CacheType.GeocoderCache, geo);
                         }
 
                         pointList = new List<PointLatLng>();
@@ -777,9 +773,7 @@ namespace GMap.NET.MapProviders
 
          try
          {
-            string urlEnd = url.Substring(url.IndexOf("geo?hl="));
-
-            string reverse = GMaps.Instance.UsePlacemarkCache ? Cache.Instance.GetContent(urlEnd, CacheType.PlacemarkCache) : string.Empty;
+            string reverse = GMaps.Instance.UsePlacemarkCache ? Cache.Instance.GetContent(url, CacheType.PlacemarkCache) : string.Empty;
 
             bool cache = false;
 
@@ -799,7 +793,7 @@ namespace GMap.NET.MapProviders
                {
                   if(cache && GMaps.Instance.UsePlacemarkCache)
                   {
-                     Cache.Instance.SaveContent(urlEnd, CacheType.PlacemarkCache, reverse);
+                     Cache.Instance.SaveContent(url, CacheType.PlacemarkCache, reverse);
                   }
 
                   string acc = reverse.Substring(0, reverse.IndexOf('\"'));
@@ -886,7 +880,7 @@ namespace GMap.NET.MapProviders
                      {
                         if(cache && GMaps.Instance.UsePlacemarkCache)
                         {
-                           Cache.Instance.SaveContent(urlEnd, CacheType.PlacemarkCache, reverse);
+                           Cache.Instance.SaveContent(url, CacheType.PlacemarkCache, reverse);
                         }
 
                         placemarkList = new List<Placemark>();
@@ -1111,9 +1105,7 @@ namespace GMap.NET.MapProviders
 
          try
          {
-            string urlEnd = url.Substring(url.IndexOf("xml?"));
-
-            string kml = GMaps.Instance.UseDirectionsCache ? Cache.Instance.GetContent(urlEnd, CacheType.DirectionsCache) : string.Empty;
+            string kml = GMaps.Instance.UseDirectionsCache ? Cache.Instance.GetContent(url, CacheType.DirectionsCache) : string.Empty;
 
             bool cache = false;
 
@@ -1413,7 +1405,7 @@ namespace GMap.NET.MapProviders
                   {
                      if(cache && GMaps.Instance.UseDirectionsCache)
                      {
-                        Cache.Instance.SaveContent(urlEnd, CacheType.DirectionsCache, kml);
+                        Cache.Instance.SaveContent(url, CacheType.DirectionsCache, kml);
                      }
 
                      direction = new GDirections();

@@ -6,6 +6,7 @@ namespace GMap.NET.Internals
    using System.IO;
    using System.Text;
    using GMap.NET.CacheProviders;
+    using System.Security.Cryptography;
 
    internal class CacheLocator
    {
@@ -170,11 +171,18 @@ namespace GMap.NET.Internals
 
       #region -- etc cache --
 
-      public void SaveContent(string urlEnd, CacheType type, string content)
+      static readonly SHA1CryptoServiceProvider HashProvider = new SHA1CryptoServiceProvider();
+
+      void ConvertToHash(ref string s)
+      {
+          s = BitConverter.ToString(HashProvider.ComputeHash(Encoding.Unicode.GetBytes(s)));
+      }
+
+      public void SaveContent(string url, CacheType type, string content)
       {
          try
          {
-            Stuff.RemoveInvalidPathSymbols(ref urlEnd);
+            ConvertToHash(ref url);
 
             string dir = Path.Combine(cache, type.ToString()) + Path.DirectorySeparatorChar;
 
@@ -184,34 +192,7 @@ namespace GMap.NET.Internals
                Directory.CreateDirectory(dir);
             }
 
-            string file = dir + urlEnd;
-
-            switch(type)
-            {
-               case CacheType.GeocoderCache:
-               file += ".geo";
-               break;
-
-               case CacheType.PlacemarkCache:
-               file += ".plc";
-               break;
-
-               case CacheType.RouteCache:
-               file += ".dragdir";
-               break;
-
-               case CacheType.UrlCache:
-               file += ".url";
-               break;
-
-               case CacheType.DirectionsCache:
-               file += ".dir";
-               break;
-
-               default:
-               file += ".txt";
-               break;
-            }
+            string file = dir + url + ".txt";
 
             using(StreamWriter writer = new StreamWriter(file, false, Encoding.UTF8))
             {
@@ -224,49 +205,30 @@ namespace GMap.NET.Internals
          }
       }
 
-      public string GetContent(string urlEnd, CacheType type, TimeSpan stayInCache)
+      public string GetContent(string url, CacheType type, TimeSpan stayInCache)
       {
          string ret = null;
 
          try
          {
-            Stuff.RemoveInvalidPathSymbols(ref urlEnd);
+            ConvertToHash(ref url);
 
             string dir = Path.Combine(cache, type.ToString()) + Path.DirectorySeparatorChar;
-            string file = dir + urlEnd;
-
-            switch(type)
-            {
-               case CacheType.GeocoderCache:
-               file += ".geo";
-               break;
-
-               case CacheType.PlacemarkCache:
-               file += ".plc";
-               break;
-
-               case CacheType.RouteCache:
-               file += ".dragdir";
-               break;
-
-               case CacheType.UrlCache:
-               file += ".url";
-               break;
-
-               default:
-               file += ".txt";
-               break;
-            }
+            string file = dir + url + ".txt";
 
             if(File.Exists(file))
             {
                var writeTime = File.GetLastWriteTime(file);
-               if(DateTime.Now - writeTime < stayInCache)
+               if (DateTime.Now - writeTime < stayInCache)
                {
-                  using(StreamReader r = new StreamReader(file, Encoding.UTF8))
-                  {
-                     ret = r.ReadToEnd();
-                  }
+                   using (StreamReader r = new StreamReader(file, Encoding.UTF8))
+                   {
+                       ret = r.ReadToEnd();
+                   }
+               }
+               else
+               {
+                   File.Delete(file);
                }
             }
          }
@@ -279,9 +241,9 @@ namespace GMap.NET.Internals
          return ret;
       }
 
-      public string GetContent(string urlEnd, CacheType type)
+      public string GetContent(string url, CacheType type)
       {
-         return GetContent(urlEnd, type, TimeSpan.FromDays(88));
+         return GetContent(url, type, TimeSpan.FromDays(88));
       }
 
       #endregion

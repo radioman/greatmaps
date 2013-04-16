@@ -262,9 +262,7 @@ namespace GMap.NET.MapProviders
          zoomFactor = -1;
          try
          {
-            string urlEnd = url.Substring(url.IndexOf("Routes/"));
-
-            string route = GMaps.Instance.UseRouteCache ? Cache.Instance.GetContent(urlEnd, CacheType.RouteCache) : string.Empty;
+            string route = GMaps.Instance.UseRouteCache ? Cache.Instance.GetContent(url, CacheType.RouteCache) : string.Empty;
 
             if(string.IsNullOrEmpty(route))
             {
@@ -274,7 +272,7 @@ namespace GMap.NET.MapProviders
                {
                   if(GMaps.Instance.UseRouteCache)
                   {
-                     Cache.Instance.SaveContent(urlEnd, CacheType.RouteCache, route);
+                     Cache.Instance.SaveContent(url, CacheType.RouteCache, route);
                   }
                }
             }
@@ -444,9 +442,7 @@ namespace GMap.NET.MapProviders
 
          try
          {
-            string urlEnd = url.Substring(url.IndexOf("Locations?"));
-
-            string geo = GMaps.Instance.UseGeocoderCache ? Cache.Instance.GetContent(urlEnd, CacheType.GeocoderCache) : string.Empty;
+            string geo = GMaps.Instance.UseGeocoderCache ? Cache.Instance.GetContent(url, CacheType.GeocoderCache) : string.Empty;
 
             bool cache = false;
 
@@ -489,7 +485,7 @@ namespace GMap.NET.MapProviders
                            status = GeoCoderStatusCode.G_GEO_SUCCESS;
                            if(cache && GMaps.Instance.UseGeocoderCache)
                            {
-                              Cache.Instance.SaveContent(urlEnd, CacheType.GeocoderCache, geo);
+                              Cache.Instance.SaveContent(url, CacheType.GeocoderCache, geo);
                            }
                            break;
                         }
