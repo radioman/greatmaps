@@ -39,5 +39,9 @@ namespace GMap.NET
       /// <param name="metric"></param>
       /// <returns></returns>
       IEnumerable<GDirections> GetDirections(out DirectionsStatusCode status, PointLatLng start, PointLatLng end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric);
+
+      DirectionsStatusCode GetDirections(out GDirections direction, PointLatLng start, IEnumerable<PointLatLng> wayPoints, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric);
+
+      DirectionsStatusCode GetDirections(out GDirections direction, string start, IEnumerable<string> wayPoints, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric);
    }
 }

@@ -20,12 +20,34 @@ namespace ConsoleApplication
    {
       static void Main(string[] args)
       {
-         //if(false)
-         {
-            GeoCoderStatusCode status;
-            var pp1 = GMapProviders.YahooMap.GetPoint("Lithuania,Vilnius", out status);
+          //GMapProvider.WebProxy = new WebProxy("127.0.0.1", 1080);
+          //GMapProvider.IsSocksProxy = true;
 
-            //var pl = GMapProviders.OpenStreetMap.GetPlacemark(pp1.Value, out status);
+          //GMapProvider.WebProxy = WebRequest.DefaultWebProxy;
+
+         if(false)
+         {
+             GeoCoderStatusCode status;
+             var pp1 = GMapProviders.GoogleMap.GetPoint("Lithuania,Vilnius", out status);
+
+             return;
+         }
+
+         //if (false)
+         {
+             List<Placemark> plc = null;
+             var st = GMapProviders.GoogleMap.GetPlacemarks(new PointLatLng(54.6961334816182, 25.2985095977782), out plc);
+             if (st == GeoCoderStatusCode.G_GEO_SUCCESS && plc != null)
+             {
+                 foreach (var pl in plc)
+                 {
+                     if (!string.IsNullOrEmpty(pl.PostalCodeNumber))
+                     {
+                         Debug.WriteLine("Accuracy: " + pl.Accuracy + ", " + pl.Address + ", PostalCodeNumber: " + pl.PostalCodeNumber);
+                     }
+                 }
+             }
+             return;
          }
 
          if(false)
@@ -171,23 +193,6 @@ namespace ConsoleApplication
             }
          }
 #endif
-
-         if(false)
-         {
-            List<Placemark> plc = null;
-            var st = GMapProviders.GoogleMap.GetPlacemarks(new PointLatLng(54.6961334816182, 25.2985095977782), out plc);
-            if(st == GeoCoderStatusCode.G_GEO_SUCCESS && plc != null)
-            {
-               foreach(var pl in plc)
-               {
-                  if(!string.IsNullOrEmpty(pl.PostalCodeNumber))
-                  {
-                     Debug.WriteLine("Accuracy: " + pl.Accuracy + ", " + pl.Address + ", PostalCodeNumber: " + pl.PostalCodeNumber);
-                  }
-               }
-            }
-         }
-
          if(false)
          {
             var p1 = new PointLatLng(54.6961334816182, 25.2985095977782);

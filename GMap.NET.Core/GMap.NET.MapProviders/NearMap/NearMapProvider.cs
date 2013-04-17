@@ -10,7 +10,7 @@ namespace GMap.NET.MapProviders
       public NearMapProviderBase()
       {
          // credentials doesn't work ;/
-         Credential = new NetworkCredential("greatmaps", "greatmaps");
+         //Credential = new NetworkCredential("greatmaps", "greatmaps");
       }
 
       #region GMapProvider Members

@@ -107,8 +107,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GMap.NET.CacheProviders\MemoryCache.cs" />
+    <Compile Include="GMap.NET.Internals\SocksProxySocket\SocksHttpWebRequest.cs" />
     <Compile Include="GMap.NET.Internals\DrawTile.cs" />
     <Compile Include="GMap.NET.Internals\FastResourceLock.cs" />
+    <Compile Include="GMap.NET.Internals\SocksProxySocket\AuthMethod.cs" />
+    <Compile Include="GMap.NET.Internals\SocksProxySocket\AuthNone.cs" />
+    <Compile Include="GMap.NET.Internals\SocksProxySocket\AuthUserPass.cs" />
+    <Compile Include="GMap.NET.Internals\SocksProxySocket\IAsyncProxyResult.cs" />
+    <Compile Include="GMap.NET.Internals\SocksProxySocket\ProxyException.cs" />
+    <Compile Include="GMap.NET.Internals\SocksProxySocket\ProxySocket.cs" />
+    <Compile Include="GMap.NET.Internals\SocksProxySocket\Socks4Handler.cs" />
+    <Compile Include="GMap.NET.Internals\SocksProxySocket\Socks5Handler.cs" />
+    <Compile Include="GMap.NET.Internals\SocksProxySocket\SocksHandler.cs" />
     <Compile Include="GMap.NET.MapProviders\ArcGIS\ArcGIS_DarbAE_Q2_2011_NAVTQ_Eng_V5_MapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Bing\BingMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Bing\BingSatelliteMapProvider.cs" />

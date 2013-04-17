@@ -276,6 +276,40 @@ namespace GMap.NET.MapProviders
          throw new NotImplementedException();
       }
 
+      /// <summary>
+      /// NotImplemented
+      /// </summary>
+      /// <param name="direction"></param>
+      /// <param name="start"></param>
+      /// <param name="wayPoints"></param>
+      /// <param name="avoidHighways"></param>
+      /// <param name="avoidTolls"></param>
+      /// <param name="walkingMode"></param>
+      /// <param name="sensor"></param>
+      /// <param name="metric"></param>
+      /// <returns></returns>
+      public DirectionsStatusCode GetDirections(out GDirections direction, PointLatLng start, IEnumerable<PointLatLng> wayPoints, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+      {
+          throw new NotImplementedException();
+      }
+
+      /// <summary>
+      /// NotImplemented
+      /// </summary>
+      /// <param name="direction"></param>
+      /// <param name="start"></param>
+      /// <param name="wayPoints"></param>
+      /// <param name="avoidHighways"></param>
+      /// <param name="avoidTolls"></param>
+      /// <param name="walkingMode"></param>
+      /// <param name="sensor"></param>
+      /// <param name="metric"></param>
+      /// <returns></returns>
+      public DirectionsStatusCode GetDirections(out GDirections direction, string start, IEnumerable<string> wayPoints, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+      {
+          throw new NotImplementedException();
+      }
+
       #region -- internals --
 
       DirectionsStatusCode GetDirectionsUrl(string url, out GDirections direction)
@@ -467,7 +501,7 @@ namespace GMap.NET.MapProviders
 
       #endregion
 
-      #endregion
+      #endregion      
    }
 
    /// <summary>
