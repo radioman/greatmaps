@@ -1946,8 +1946,7 @@ namespace Demo.WindowsForms
                {
                   using(TilePrefetcher obj = new TilePrefetcher())
                   {
-                     objects.Markers.Clear(); 
-                     obj.Overlay = objects;
+                     obj.Overlay = objects; // set overlay if you want to see cache progress on the map
 
                      obj.Shuffle = MainMap.Manager.Mode != AccessMode.CacheOnly;
 

@@ -104,6 +104,11 @@ using System.Drawing;
             GMaps.Instance.CacheOnIdleRead = false;
             GMaps.Instance.BoostCacheEngine = true;
 
+            if (Overlay != null)
+            {
+                Overlay.Markers.Clear();
+            }
+
             worker.RunWorkerAsync();
 
             this.ShowDialog();
@@ -218,10 +223,13 @@ using System.Drawing;
             {
                if(CacheTiles(zoom, p))
                {
-                  lock(this)
-                  {
-                     CachedTiles.Enqueue(p);
-                  }
+                   if (Overlay != null)
+                   {
+                       lock (this)
+                       {
+                           CachedTiles.Enqueue(p);
+                       }
+                   }
                   countOk++;
                   retryCount = 0;
                }
@@ -242,7 +250,10 @@ using System.Drawing;
 
             worker.ReportProgress((int)((i + 1) * 100 / all), i + 1);
 
-            System.Threading.Thread.Sleep(sleep);
+            if (sleep > 0)
+            {
+                System.Threading.Thread.Sleep(sleep);
+            }
          }
 
          e.Result = countOk;
@@ -258,29 +269,30 @@ using System.Drawing;
          this.label1.Text = "Fetching tile at zoom (" + zoom + "): " + ((int)e.UserState).ToString() + " of " + all + ", complete: " + e.ProgressPercentage.ToString() + "%";
          this.progressBarDownload.Value = e.ProgressPercentage;
 
-         GPoint ? l = null;
-
-         lock(this)
+         if (Overlay != null)
          {
-            if(CachedTiles.Count > 0)
-            {
-               l = CachedTiles.Dequeue();                  
-            }
-         }
+             GPoint? l = null;
 
-         if(l.HasValue)
-         {
-            var px = Overlay.Control.MapProvider.Projection.FromTileXYToPixel(l.Value);
-            var p = Overlay.Control.MapProvider.Projection.FromPixelToLatLng(px, zoom);
+             lock (this)
+             {
+                 if (CachedTiles.Count > 0)
+                 {
+                     l = CachedTiles.Dequeue();
+                 }
+             }
 
-            var r1 = Overlay.Control.MapProvider.Projection.GetGroundResolution(zoom, p.Lat);
-            var r2 = Overlay.Control.MapProvider.Projection.GetGroundResolution((int)Overlay.Control.Zoom, p.Lat);
-            var sizeDiff = r2 / r1;
+             if (l.HasValue)
+             {
+                 var px = Overlay.Control.MapProvider.Projection.FromTileXYToPixel(l.Value);
+                 var p = Overlay.Control.MapProvider.Projection.FromPixelToLatLng(px, zoom);
 
-            //var sizeDiff = Math.Pow(2, zoom - Overlay.Control.Zoom);
+                 var r1 = Overlay.Control.MapProvider.Projection.GetGroundResolution(zoom, p.Lat);
+                 var r2 = Overlay.Control.MapProvider.Projection.GetGroundResolution((int)Overlay.Control.Zoom, p.Lat);
+                 var sizeDiff = r2 / r1;
 
-            GMapMarkerTile m = new GMapMarkerTile(p, (int)(Overlay.Control.MapProvider.Projection.TileSize.Width / sizeDiff));
-            Overlay.Markers.Add(m);
+                 GMapMarkerTile m = new GMapMarkerTile(p, (int)(Overlay.Control.MapProvider.Projection.TileSize.Width / sizeDiff));
+                 Overlay.Markers.Add(m);
+             }
          }
       }
 
@@ -298,17 +310,13 @@ using System.Drawing;
       }
    }
 
-   public class GMapMarkerTile : GMapMarker
+   class GMapMarkerTile : GMapMarker
    {
       static  Brush Fill = new SolidBrush(Color.FromArgb(155, Color.Blue));
 
-      public GMapMarkerTile(PointLatLng p, int size)
-         : base(p)
+      public GMapMarkerTile(PointLatLng p, int size) : base(p)
       {
-         // do not forget set Size of the marker
-         // if so, you shall have no event on it ;}
          Size = new System.Drawing.Size(size, size);
-         //Offset = new System.Drawing.Point(-Size.Width / 2, -Size.Height / 2);
       }
 
       public override void OnRender(Graphics g)
