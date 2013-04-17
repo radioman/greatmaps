@@ -28,16 +28,19 @@ namespace GMap.NET
       /// </summary>
       public int Accuracy;
 
-      // parsed values from address
-      public string HouseNo;
-      public string ThoroughfareName;
-      public string DistrictName;
+      // parsed values from address      
+      public string ThoroughfareName;      
       public string LocalityName;
       public string PostalCodeNumber;
       public string CountryName;
-      public string CountryNameCode;
       public string AdministrativeAreaName;
+      public string DistrictName;
       public string SubAdministrativeAreaName;
+      public string Neighborhood;
+      public string StreetNumber;
+
+      public string CountryNameCode;
+      public string HouseNo;
 
       internal Placemark(string address)
       {
@@ -53,6 +56,8 @@ namespace GMap.NET
          CountryNameCode = string.Empty;
          AdministrativeAreaName = string.Empty;
          SubAdministrativeAreaName = string.Empty;
+         Neighborhood = string.Empty;
+         StreetNumber = string.Empty;
       }
    }
 }

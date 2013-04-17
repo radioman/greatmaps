@@ -16,263 +16,266 @@ using GMap.NET.WindowsForms;
 
 namespace ConsoleApplication
 {
-   class Program
-   {
-      static void Main(string[] args)
-      {
-          //GMapProvider.WebProxy = new WebProxy("127.0.0.1", 1080);
-          //GMapProvider.IsSocksProxy = true;
+    class Program
+    {
+        static void Main(string [] args)
+        {
+            //GMapProvider.WebProxy = new WebProxy("127.0.0.1", 1080);
+            //GMapProvider.IsSocksProxy = true;
 
-          //GMapProvider.WebProxy = WebRequest.DefaultWebProxy;
+            //GMapProvider.WebProxy = WebRequest.DefaultWebProxy;
 
-         if(false)
-         {
-             GeoCoderStatusCode status;
-             var pp1 = GMapProviders.GoogleMap.GetPoint("Lithuania,Vilnius", out status);
-
-             return;
-         }
-
-         //if (false)
-         {
-             List<Placemark> plc = null;
-             var st = GMapProviders.GoogleMap.GetPlacemarks(new PointLatLng(54.6961334816182, 25.2985095977782), out plc);
-             if (st == GeoCoderStatusCode.G_GEO_SUCCESS && plc != null)
-             {
-                 foreach (var pl in plc)
-                 {
-                     if (!string.IsNullOrEmpty(pl.PostalCodeNumber))
-                     {
-                         Debug.WriteLine("Accuracy: " + pl.Accuracy + ", " + pl.Address + ", PostalCodeNumber: " + pl.PostalCodeNumber);
-                     }
-                 }
-             }
-             return;
-         }
-
-         if(false)
-         {
-            var p = PlateCarreeProjectionDarbAe.Instance;
-
-            var l = new PointLatLng(29.4052130085331, 41.522866508209);
-
-            Debug.WriteLine("121 * 256: " + 121 * 256 + "px : Y");
-            Debug.WriteLine("144 * 256: " + 144 * 256 + "px : X");
-
-            Debug.WriteLine("l: " + l);
-
-            var px = p.FromLatLngToPixel(l, 0);
-
-            Debug.WriteLine("FromLatLngToPixel: " + px);
-
-            var ll = p.FromPixelToLatLng(px, 0);
-            Debug.WriteLine("FromPixelToLatLng: " + ll);
-
-
-            var tl = p.FromPixelToTileXY(px);
-
-            Debug.WriteLine("FromPixelToTileXY: " + tl);
-         }
-
-         /*
-            0/1 = 2
-            1/2 = 1,5
-            2/3 = 2
-            3/4 = 2
-            4/5 = 2,5
-            5/6 = 2
-            6/7 = 2
-            7/8 = 2
-            8/9 = 2,5
-            9/10 = 2
-            10/11 = 2,5
-            11/12 = 2 
-         */
-
-         if(false)
-         {
-            GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
-
-            var p = LKS94Projection.Instance;
-            //var p = PlateCarreeProjection.Instance;
-
-            var pos = new PointLatLng(54.6961334816182, 25.2985095977783);
-
+            if (false)
             {
-               var zoom = 4;
-               var px = p.FromPixelToTileXY(p.FromLatLngToPixel(pos, zoom));
-               Exception ex = null;
-               var img = GMaps.Instance.GetImageFrom(GMapProviders.LithuaniaMap, px, zoom, out ex);
-               File.WriteAllBytes(zoom + "z-" + px + ".png", img.Data.ToArray());
+                GeoCoderStatusCode status;
+                var pp1 = GMapProviders.GoogleMap.GetPoint("Lithuania, Seda", out status);
+
+                return;
             }
 
-            for(int i = 0; i < 12; i++)
+            //if (false)
             {
-               double scale = p.GetGroundResolution(i, pos.Lat);
-               double scale2 = p.GetGroundResolution(i + 1, pos.Lat);
+                GeoCoderStatusCode status;
+                var pp1 = GMapProviders.GoogleMap.GetPoint("Lithuania, vilnius, Antakalnio g. 67-35", out status);
 
-               var s = scale / scale2;
+                List<Placemark> plc = null;
+                //var st = GMapProviders.GoogleMap.GetPlacemarks(new PointLatLng(54.6961334816182, 25.2985095977782), out plc);
+                var st = GMapProviders.GoogleMap.GetPlacemarks(pp1.Value, out plc);
 
-               Debug.WriteLine(i + "/" + (i + 1) + " = " + s);
+                if (st == GeoCoderStatusCode.G_GEO_SUCCESS && plc != null)
+                {
+                    foreach (var pl in plc)
+                    {
+                        if (!string.IsNullOrEmpty(pl.PostalCodeNumber))
+                        {
+                            Debug.WriteLine("Accuracy: " + pl.Accuracy + ", " + pl.Address + ", PostalCodeNumber: " + pl.PostalCodeNumber);
+                        }
+                    }
+                }
+                return;
             }
-         }
+
+            if (false)
+            {
+                var p1 = new PointLatLng(54.6961334816182, 25.2985095977782);
+                var p2 = new PointLatLng(54.7061334816182, 25.3085095977783);
+
+                //GMaps.Instance.ImportFromGMDB(@"C:\Users\m.dambrauskas\AppData\Local\GMap.NET\TileDBv5\en\Data - Copy.gmdb");
+
+                //var route = GMapProviders.OpenStreetMap.GetRoute(p1, p2, false, false, 10);
+                //var route = GMapProviders.CloudMadeMap.GetRoute(p1, p2, false, false, 10);
+
+                //Debug.WriteLine(GMapProviders.BingHybridMap.Name + ":" + GMapProviders.BingHybridMap.DbId);
+
+                GeoCoderStatusCode status;
+                var pp1 = GMapProviders.GoogleMap.GetPoint("Lithuania,Vilnius", out status);
+                var pp2 = GMapProviders.GoogleMap.GetPoint("Lithuania,Kaunas", out status);
+                if (pp1.HasValue && pp2.HasValue)
+                {
+                    GDirections s;
+                    //var x = GMapProviders.GoogleMap.GetDirections(out s, "Lithuania,Vilnius", "Lithuania,Kaunas", false, false, false, true);
+                    //if(x == DirectionsStatusCode.OK)
+                    var x = GMapProviders.GoogleMap.GetDirections(out s, pp1.Value, pp2.Value, false, false, false, false, true);
+                    {
+                        Debug.WriteLine(s.Summary + ", " + s.Copyrights);
+                        Debug.WriteLine(s.StartAddress + " -> " + s.EndAddress);
+                        Debug.WriteLine(s.Distance);
+                        Debug.WriteLine(s.Duration);
+                        foreach (var step in s.Steps)
+                        {
+                            Debug.WriteLine(step);
+                        }
+                    }
+                }
+            }
+
+            if (false)
+            {
+                var p = PlateCarreeProjectionDarbAe.Instance;
+
+                var l = new PointLatLng(29.4052130085331, 41.522866508209);
+
+                Debug.WriteLine("121 * 256: " + 121 * 256 + "px : Y");
+                Debug.WriteLine("144 * 256: " + 144 * 256 + "px : X");
+
+                Debug.WriteLine("l: " + l);
+
+                var px = p.FromLatLngToPixel(l, 0);
+
+                Debug.WriteLine("FromLatLngToPixel: " + px);
+
+                var ll = p.FromPixelToLatLng(px, 0);
+                Debug.WriteLine("FromPixelToLatLng: " + ll);
+
+
+                var tl = p.FromPixelToTileXY(px);
+
+                Debug.WriteLine("FromPixelToTileXY: " + tl);
+            }
+
+            /*
+               0/1 = 2
+               1/2 = 1,5
+               2/3 = 2
+               3/4 = 2
+               4/5 = 2,5
+               5/6 = 2
+               6/7 = 2
+               7/8 = 2
+               8/9 = 2,5
+               9/10 = 2
+               10/11 = 2,5
+               11/12 = 2 
+            */
+
+            if (false)
+            {
+                GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
+
+                var p = LKS94Projection.Instance;
+                //var p = PlateCarreeProjection.Instance;
+
+                var pos = new PointLatLng(54.6961334816182, 25.2985095977783);
+
+                {
+                    var zoom = 4;
+                    var px = p.FromPixelToTileXY(p.FromLatLngToPixel(pos, zoom));
+                    Exception ex = null;
+                    var img = GMaps.Instance.GetImageFrom(GMapProviders.LithuaniaMap, px, zoom, out ex);
+                    File.WriteAllBytes(zoom + "z-" + px + ".png", img.Data.ToArray());
+                }
+
+                for (int i = 0; i < 12; i++)
+                {
+                    double scale = p.GetGroundResolution(i, pos.Lat);
+                    double scale2 = p.GetGroundResolution(i + 1, pos.Lat);
+
+                    var s = scale / scale2;
+
+                    Debug.WriteLine(i + "/" + (i + 1) + " = " + s);
+                }
+            }
 
 #if DEBUG
-         if(false)
-         {
-            GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
-
-            //GMaps.Instance.PrimaryCache.DeleteOlderThan(DateTime.Now, GMapProviders.GoogleMap.DbId);
-
-            GMaps.Instance.Mode = AccessMode.CacheOnly;
-
-            using(Core c = new Core())
+            if (false)
             {
-               //c.compensationOffset = new GPoint(200, 200);
+                GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
 
-               c.minZoom = 1;
-               c.maxZoom = 25;
-               c.Zoom = 16;
-               c.Provider = GMapProviders.OpenStreetMap;
-               c.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
-               c.OnMapSizeChanged(400, 400);
+                //GMaps.Instance.PrimaryCache.DeleteOlderThan(DateTime.Now, GMapProviders.GoogleMap.DbId);
 
-               c.OnMapOpen();
+                GMaps.Instance.Mode = AccessMode.CacheOnly;
 
-               Debug.WriteLine("Position: " + c.Position);
-               Debug.WriteLine("renderOffset: " + c.renderOffset);
-               Debug.WriteLine("compensationOffset: " + c.compensationOffset);
+                using (Core c = new Core())
+                {
+                    //c.compensationOffset = new GPoint(200, 200);
 
-               var l = c.FromLatLngToLocal(c.Position);
-               Debug.WriteLine("local: " + l);
+                    c.minZoom = 1;
+                    c.maxZoom = 25;
+                    c.Zoom = 16;
+                    c.Provider = GMapProviders.OpenStreetMap;
+                    c.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
+                    c.OnMapSizeChanged(400, 400);
 
-               var g = c.FromLocalToLatLng(l.X, l.Y);
-               Debug.WriteLine("geo: " + g);
+                    c.OnMapOpen();
 
-               //c.ReloadMap();
+                    Debug.WriteLine("Position: " + c.Position);
+                    Debug.WriteLine("renderOffset: " + c.renderOffset);
+                    Debug.WriteLine("compensationOffset: " + c.compensationOffset);
 
-               Console.ReadLine();
+                    var l = c.FromLatLngToLocal(c.Position);
+                    Debug.WriteLine("local: " + l);
 
-               c.OnMapClose();
+                    var g = c.FromLocalToLatLng(l.X, l.Y);
+                    Debug.WriteLine("geo: " + g);
+
+                    //c.ReloadMap();
+
+                    Console.ReadLine();
+
+                    c.OnMapClose();
+                }
             }
-         }
 
-         if(false)
-         {
-            int i = 0;
-
-            //while(true)
+            if (false)
             {
-               Console.WriteLine(i + " start");
-               Debug.WriteLine(i + " start");
+                int i = 0;
 
-               //using(Core c = new Core())
-               Core c = new Core();
-               {
-                  var f = c.OnMapOpen();
+                //while(true)
+                {
+                    Console.WriteLine(i + " start");
+                    Debug.WriteLine(i + " start");
 
-                  Console.WriteLine("wait");
-                  Console.ReadLine();
+                    //using(Core c = new Core())
+                    Core c = new Core();
+                    {
+                        var f = c.OnMapOpen();
 
-                  //c.OnMapClose();
-               }
-               c = null;
+                        Console.WriteLine("wait");
+                        Console.ReadLine();
 
-               Debug.WriteLine("end");
-               Console.WriteLine("end");
+                        //c.OnMapClose();
+                    }
+                    c = null;
 
-               Console.ReadLine();
+                    Debug.WriteLine("end");
+                    Console.WriteLine("end");
 
-               GC.Collect();
+                    Console.ReadLine();
 
-               //if(i++ > 10)
-               //{
-               //   GC.Collect();
-               //   i = 0;
-               //}
+                    GC.Collect();
+
+                    //if(i++ > 10)
+                    //{
+                    //   GC.Collect();
+                    //   i = 0;
+                    //}
+                }
             }
-         }
 #endif
-         if(false)
-         {
-            var p1 = new PointLatLng(54.6961334816182, 25.2985095977782);
-            var p2 = new PointLatLng(54.7061334816182, 25.3085095977783);
 
-            //GMaps.Instance.ImportFromGMDB(@"C:\Users\m.dambrauskas\AppData\Local\GMap.NET\TileDBv5\en\Data - Copy.gmdb");
-
-            //var route = GMapProviders.OpenStreetMap.GetRoute(p1, p2, false, false, 10);
-            //var route = GMapProviders.CloudMadeMap.GetRoute(p1, p2, false, false, 10);
-
-            //Debug.WriteLine(GMapProviders.BingHybridMap.Name + ":" + GMapProviders.BingHybridMap.DbId);
-
-            GDirections ss;
-            var xx = GMapProviders.GoogleMap.GetDirections(out ss, p1, p2, false, false, false, false, false);
-
-            GeoCoderStatusCode status;
-            var pp1 = GMapProviders.GoogleMap.GetPoint("Lithuania,Vilnius", out status);
-            var pp2 = GMapProviders.GoogleMap.GetPoint("Lithuania,Kaunas", out status);
-            if(pp1.HasValue && pp2.HasValue)
+            if (false)
             {
-               GDirections s;
-               //var x = GMapProviders.GoogleMap.GetDirections(out s, "Lithuania,Vilnius", "Lithuania,Kaunas", false, false, false, true);
-               //if(x == DirectionsStatusCode.OK)
-               var x = GMapProviders.GoogleMap.GetDirections(out s, pp1.Value, pp2.Value, false, false, false, false, true);
-               {
-                  Debug.WriteLine(s.Summary + ", " + s.Copyrights);
-                  Debug.WriteLine(s.StartAddress + " -> " + s.EndAddress);
-                  Debug.WriteLine(s.Distance);
-                  Debug.WriteLine(s.Duration);
-                  foreach(var step in s.Steps)
-                  {
-                     Debug.WriteLine(step);
-                  }
-               }
+                //-34,8859309407532, Lng=-58,359375
+                PointLatLng p1 = new PointLatLng(-34.608, -58.348);
+                PointLatLng p2 = new PointLatLng(-34.608, -58.348);
+
+                //Sets up a array to contain the x and y coordinates
+                double [] xy = new double [4] { p1.Lng, p1.Lat, p2.Lng, p2.Lat };
+
+                //An array for the z coordinate
+                double [] z = new double [1];
+                z [0] = 1;
+
+                ProjectionInfo pStart = KnownCoordinateSystems.Geographic.World.WGS1984;
+
+                //ProjectionInfo pEnd = new ProjectionInfo("+proj=tmerc +lat_0=0 +lon_0=15 +k=0.9996 +x_0=4200000 +y_0=-1300000 +ellps=WGS84 +datum=WGS84 +to_meter=0.03125 +no_defs");
+                ProjectionInfo pEnd = new ProjectionInfo("+proj=tmerc +lat_0=-34.629269 +lon_0=-58.4633 +k=0.9999980000000001 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs");
+
+                Reproject.ReprojectPoints(xy, z, pStart, pEnd, 0, 2);
+
+                Debug.WriteLine(" true1: " + (int)xy [0] + "; " + (int)xy [1]);
+
+                //var prj = new MapyCZProjection();
+                //{
+                //   var p2 = prj.WGSToPP(y, x);
+
+                //   Debug.WriteLine("false1: " + p2[0] + "; " + p2[1]);
+
+                //   var p3 = prj.PPToWGS(p2[0], p2[1]);
+
+                //   Reproject.ReprojectPoints(xy, z, pEnd, pStart, 0, 1);
+
+                //   Debug.WriteLine("");
+                //   Debug.WriteLine(" true2: " + xy[0] + "; " + xy[1]);
+                //   Debug.WriteLine("false2: " + p3[1] + "; " + p3[0]);
+                //}
+                // 134400000],PARAMETER["false_northing",-41600000
             }
-         }
 
-         if(false)
-         {
-            //-34,8859309407532, Lng=-58,359375
-            PointLatLng p1 = new PointLatLng(-34.608, -58.348);
-            PointLatLng p2 = new PointLatLng(-34.608, -58.348);
+            // stop caching immediately
+            GMaps.Instance.CancelTileCaching();
 
-            //Sets up a array to contain the x and y coordinates
-            double[] xy = new double[4] { p1.Lng, p1.Lat, p2.Lng, p2.Lat };
-
-            //An array for the z coordinate
-            double[] z = new double[1];
-            z[0] = 1;
-
-            ProjectionInfo pStart = KnownCoordinateSystems.Geographic.World.WGS1984;
-
-            //ProjectionInfo pEnd = new ProjectionInfo("+proj=tmerc +lat_0=0 +lon_0=15 +k=0.9996 +x_0=4200000 +y_0=-1300000 +ellps=WGS84 +datum=WGS84 +to_meter=0.03125 +no_defs");
-            ProjectionInfo pEnd = new ProjectionInfo("+proj=tmerc +lat_0=-34.629269 +lon_0=-58.4633 +k=0.9999980000000001 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs");
-            
-            Reproject.ReprojectPoints(xy, z, pStart, pEnd, 0, 2);
-
-            Debug.WriteLine(" true1: " + (int)xy[0] + "; " + (int)xy[1]);
-
-            //var prj = new MapyCZProjection();
-            //{
-            //   var p2 = prj.WGSToPP(y, x);
-
-            //   Debug.WriteLine("false1: " + p2[0] + "; " + p2[1]);
-
-            //   var p3 = prj.PPToWGS(p2[0], p2[1]);
-
-            //   Reproject.ReprojectPoints(xy, z, pEnd, pStart, 0, 1);
-
-            //   Debug.WriteLine("");
-            //   Debug.WriteLine(" true2: " + xy[0] + "; " + xy[1]);
-            //   Debug.WriteLine("false2: " + p3[1] + "; " + p3[0]);
-            //}
-            // 134400000],PARAMETER["false_northing",-41600000
-         }
-
-         // stop caching immediately
-         GMaps.Instance.CancelTileCaching();
-
-         //Console.ReadLine();
-      }
-   }
+            //Console.ReadLine();
+        }
+    }
 }

@@ -63,14 +63,14 @@ namespace GMap.NET.MapProviders
             }
         }
 
-        GMapProvider[] overlays;
-        public override GMapProvider[] Overlays
+        GMapProvider [] overlays;
+        public override GMapProvider [] Overlays
         {
             get
             {
                 if (overlays == null)
                 {
-                    overlays = new GMapProvider[] { this };
+                    overlays = new GMapProvider [] { this };
                 }
                 return overlays;
             }
@@ -117,7 +117,7 @@ namespace GMap.NET.MapProviders
                             int count = gc.Count;
                             if (count > 0)
                             {
-                                string ver = string.Format("m@{0}", gc[1].Value);
+                                string ver = string.Format("m@{0}", gc [1].Value);
                                 string old = GMapProviders.GoogleMap.Version;
 
                                 GMapProviders.GoogleMap.Version = ver;
@@ -140,7 +140,7 @@ namespace GMap.NET.MapProviders
                             int count = gc.Count;
                             if (count > 0)
                             {
-                                string ver = string.Format("h@{0}", gc[1].Value);
+                                string ver = string.Format("h@{0}", gc [1].Value);
                                 string old = GMapProviders.GoogleHybridMap.Version;
 
                                 GMapProviders.GoogleHybridMap.Version = ver;
@@ -163,7 +163,7 @@ namespace GMap.NET.MapProviders
                             int count = gc.Count;
                             if (count > 0)
                             {
-                                string ver = gc[1].Value;
+                                string ver = gc [1].Value;
                                 string old = GMapProviders.GoogleSatelliteMap.Version;
 
                                 GMapProviders.GoogleSatelliteMap.Version = ver;
@@ -187,7 +187,7 @@ namespace GMap.NET.MapProviders
                             int count = gc.Count;
                             if (count > 1)
                             {
-                                string ver = string.Format("t@{0},r@{1}", gc[1].Value, gc[2].Value);
+                                string ver = string.Format("t@{0},r@{1}", gc [1].Value, gc [2].Value);
                                 string old = GMapProviders.GoogleTerrainMap.Version;
 
                                 GMapProviders.GoogleTerrainMap.Version = ver;
@@ -230,7 +230,7 @@ namespace GMap.NET.MapProviders
         #region -- encryption --
         static string EncryptString(string Message, string Passphrase)
         {
-            byte[] Results;
+            byte [] Results;
             System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
 
             // Step 1. We hash the passphrase using MD5
@@ -239,7 +239,7 @@ namespace GMap.NET.MapProviders
 
             using (MD5CryptoServiceProvider HashProvider = new MD5CryptoServiceProvider())
             {
-                byte[] TDESKey = HashProvider.ComputeHash(UTF8.GetBytes(Passphrase));
+                byte [] TDESKey = HashProvider.ComputeHash(UTF8.GetBytes(Passphrase));
 
                 // Step 2. Create a new TripleDESCryptoServiceProvider object
                 using (TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider())
@@ -250,7 +250,7 @@ namespace GMap.NET.MapProviders
                     TDESAlgorithm.Padding = PaddingMode.PKCS7;
 
                     // Step 4. Convert the input string to a byte[]
-                    byte[] DataToEncrypt = UTF8.GetBytes(Message);
+                    byte [] DataToEncrypt = UTF8.GetBytes(Message);
 
                     // Step 5. Attempt to encrypt the string
                     try
@@ -275,7 +275,7 @@ namespace GMap.NET.MapProviders
 
         static string DecryptString(string Message, string Passphrase)
         {
-            byte[] Results;
+            byte [] Results;
             System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
 
             // Step 1. We hash the passphrase using MD5
@@ -284,7 +284,7 @@ namespace GMap.NET.MapProviders
 
             using (MD5CryptoServiceProvider HashProvider = new MD5CryptoServiceProvider())
             {
-                byte[] TDESKey = HashProvider.ComputeHash(UTF8.GetBytes(Passphrase));
+                byte [] TDESKey = HashProvider.ComputeHash(UTF8.GetBytes(Passphrase));
 
                 // Step 2. Create a new TripleDESCryptoServiceProvider object
                 using (TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider())
@@ -295,7 +295,7 @@ namespace GMap.NET.MapProviders
                     TDESAlgorithm.Padding = PaddingMode.PKCS7;
 
                     // Step 4. Convert the input string to a byte[]
-                    byte[] DataToDecrypt = Convert.FromBase64String(Message);
+                    byte [] DataToDecrypt = Convert.FromBase64String(Message);
 
                     // Step 5. Attempt to decrypt the string
                     try
@@ -541,12 +541,12 @@ namespace GMap.NET.MapProviders
 
                             for (int i = 0; i < levels.Length; i++)
                             {
-                                int zi = pLevels.IndexOf(levels[i]);
+                                int zi = pLevels.IndexOf(levels [i]);
                                 if (zi > 0)
                                 {
                                     if (zi * numLevel > zoom)
                                     {
-                                        removedPoints.Add(points[i]);
+                                        removedPoints.Add(points [i]);
                                     }
                                 }
                             }
@@ -592,7 +592,7 @@ namespace GMap.NET.MapProviders
         {
             List<PointLatLng> pointList;
             status = GetPoints(keywords, out pointList);
-            return pointList != null && pointList.Count > 0 ? pointList[0] : (PointLatLng?)null;
+            return pointList != null && pointList.Count > 0 ? pointList [0] : (PointLatLng?)null;
         }
 
         /// <summary>
@@ -626,7 +626,7 @@ namespace GMap.NET.MapProviders
         {
             List<Placemark> pointList;
             status = GetPlacemarks(location, out pointList);
-            return pointList != null && pointList.Count > 0 ? pointList[0] : (Placemark?)null;
+            return pointList != null && pointList.Count > 0 ? pointList [0] : (Placemark?)null;
         }
 
         #region -- internals --
@@ -1324,6 +1324,8 @@ namespace GMap.NET.MapProviders
                             }
                             else
                             {
+                                status = GeoCoderStatusCode.G_GEO_SUCCESS;
+
                                 if (cache && GMaps.Instance.UsePlacemarkCache)
                                 {
                                     Cache.Instance.SaveContent(url, CacheType.PlacemarkCache, reverse);
@@ -1349,7 +1351,7 @@ namespace GMap.NET.MapProviders
                                             nn = n.SelectSingleNode("type");
                                             if (nn != null)
                                             {
-                                                Debug.WriteLine("type: " + nn.InnerText);                                                
+                                                Debug.WriteLine("type: " + nn.InnerText);
                                             }
 
                                             // TODO: fill Placemark details
@@ -1360,74 +1362,73 @@ namespace GMap.NET.MapProviders
                                                 nn = ac.SelectSingleNode("type");
                                                 if (nn != null)
                                                 {
-                                                    Debug.Write(" - [" + nn.InnerText + "], ");
+                                                    var type = nn.InnerText;
+                                                    Debug.Write(" - [" + type + "], ");
 
                                                     nn = ac.SelectSingleNode("long_name");
                                                     if (nn != null)
                                                     {
                                                         Debug.WriteLine("long_name: [" + nn.InnerText + "]");
+
+                                                        switch (type)
+                                                        {
+                                                            case "street_address":
+                                                            {
+                                                                ret.StreetNumber = nn.InnerText;
+                                                            }
+                                                            break;
+
+                                                            case "route":
+                                                            {
+                                                                ret.ThoroughfareName = nn.InnerText;
+                                                            }
+                                                            break;
+
+                                                            case "postal_code":
+                                                            {
+                                                                ret.PostalCodeNumber = nn.InnerText;
+                                                            }
+                                                            break;
+
+                                                            case "country":
+                                                            {
+                                                                ret.CountryName = nn.InnerText;
+                                                            }
+                                                            break;
+
+                                                            case "locality":
+                                                            {
+                                                                ret.LocalityName = nn.InnerText;
+                                                            }
+                                                            break;
+
+                                                            case "administrative_area_level_2":
+                                                            {
+                                                              ret.DistrictName = nn.InnerText;
+                                                            }
+                                                            break;
+
+                                                            case "administrative_area_level_1":
+                                                            {
+                                                                ret.AdministrativeAreaName = nn.InnerText;
+                                                            }
+                                                            break;
+
+                                                            case "administrative_area_level_3":
+                                                            {
+                                                                ret.SubAdministrativeAreaName = nn.InnerText;
+                                                            }
+                                                            break;
+
+                                                            case "neighborhood":
+                                                            {
+                                                                ret.Neighborhood = nn.InnerText;
+                                                            }
+                                                            break;
+                                                        }
                                                     }
                                                 }
                                             }                                            
-
-                                            /* 
-                                            nnd = n.SelectSingleNode("sn:AddressDetails", nsMgr);
-                                            if (nnd != null)
-                                            {
-                                                nn = nnd.SelectSingleNode("@Accuracy", nsMgr);
-                                                if (nn != null)
-                                                {
-                                                    ret.Accuracy = int.Parse(nn.InnerText);
-                                                }
-
-                                                nn = nnd.SelectSingleNode("sn:Country/sn:CountryNameCode", nsMgr);
-                                                if (nn != null)
-                                                {
-                                                    ret.CountryNameCode = nn.InnerText;
-                                                }
-
-                                                nn = nnd.SelectSingleNode("sn:Country/sn:CountryName", nsMgr);
-                                                if (nn != null)
-                                                {
-                                                    ret.CountryName = nn.InnerText;
-                                                }
-
-                                                nn = nnd.SelectSingleNode("descendant::sn:AdministrativeArea/sn:AdministrativeAreaName", nsMgr);
-                                                if (nn != null)
-                                                {
-                                                    ret.AdministrativeAreaName = nn.InnerText;
-                                                }
-
-                                                nn = nnd.SelectSingleNode("descendant::sn:SubAdministrativeArea/sn:SubAdministrativeAreaName", nsMgr);
-                                                if (nn != null)
-                                                {
-                                                    ret.SubAdministrativeAreaName = nn.InnerText;
-                                                }
-
-                                                // Locality or DependentLocality tag ?
-                                                nnl = nnd.SelectSingleNode("descendant::sn:Locality", nsMgr) ?? nnd.SelectSingleNode("descendant::sn:DependentLocality", nsMgr);
-                                                if (nnl != null)
-                                                {
-                                                    nn = nnl.SelectSingleNode(string.Format("sn:{0}Name", nnl.Name), nsMgr);
-                                                    if (nn != null)
-                                                    {
-                                                        ret.LocalityName = nn.InnerText;
-                                                    }
-
-                                                    nn = nnl.SelectSingleNode("sn:Thoroughfare/sn:ThoroughfareName", nsMgr);
-                                                    if (nn != null)
-                                                    {
-                                                        ret.ThoroughfareName = nn.InnerText;
-                                                    }
-
-                                                    nn = nnl.SelectSingleNode("sn:PostalCode/sn:PostalCodeNumber", nsMgr);
-                                                    if (nn != null)
-                                                    {
-                                                        ret.PostalCodeNumber = nn.InnerText;
-                                                    }
-                                                }
-                                            }
-                                            */
 
                                             placemarkList.Add(ret);
                                         }
@@ -1436,7 +1437,7 @@ namespace GMap.NET.MapProviders
                                 #endregion
                             }
                         }
-                        #endregion
+        #endregion
                     }
                 }
             }
@@ -2118,7 +2119,7 @@ namespace GMap.NET.MapProviders
 
                     do
                     {
-                        b = encoded[index++] - 63;
+                        b = encoded [index++] - 63;
                         result |= (b & 0x1f) << shift;
                         shift += 5;
 
@@ -2133,7 +2134,7 @@ namespace GMap.NET.MapProviders
                     {
                         do
                         {
-                            b = encoded[index++] - 63;
+                            b = encoded [index++] - 63;
                             result |= (b & 0x1f) << shift;
                             shift += 5;
                         }

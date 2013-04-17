@@ -84,7 +84,7 @@ namespace Org.Mentalis.Network.ProxySocket {
 			connect[0] = 4;
 			connect[1] = 1;
 			Array.Copy(PortToBytes(remoteEP.Port), 0, connect, 2, 2);
-			Array.Copy(AddressToBytes(remoteEP.Address.Address), 0, connect, 4, 4);
+			Array.Copy(remoteEP.Address.GetAddressBytes(), 0, connect, 4, 4);
 			Array.Copy(Encoding.ASCII.GetBytes(Username), 0, connect, 8, Username.Length);
 			connect[8 + Username.Length] = 0;
 			return connect;

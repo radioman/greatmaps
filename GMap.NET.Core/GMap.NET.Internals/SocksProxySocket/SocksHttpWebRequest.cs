@@ -207,14 +207,14 @@ namespace GMap.NET.Internals
                 // open connection
                 _socksConnection.Connect(RequestUri.Host, 80);
                 // send an HTTP request
-                _socksConnection.Send(Encoding.ASCII.GetBytes(RequestMessage));
+                _socksConnection.Send(Encoding.UTF8.GetBytes(RequestMessage));
                 // read the HTTP reply
                 var buffer = new byte[1024*4];
 
                 var bytesReceived = _socksConnection.Receive(buffer);
                 while (bytesReceived > 0)
                 {
-                    response.Append(Encoding.ASCII.GetString(buffer, 0, bytesReceived));
+                    response.Append(Encoding.UTF8.GetString(buffer, 0, bytesReceived));
                     bytesReceived = _socksConnection.Receive(buffer);
                 }
             }
