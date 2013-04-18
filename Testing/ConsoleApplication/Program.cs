@@ -20,8 +20,8 @@ namespace ConsoleApplication
     {
         static void Main(string [] args)
         {
-            //GMapProvider.WebProxy = new WebProxy("127.0.0.1", 1080);
-            //GMapProvider.IsSocksProxy = true;
+            GMapProvider.WebProxy = new WebProxy("127.0.0.1", 1080);
+            GMapProvider.IsSocksProxy = true;
 
             //GMapProvider.WebProxy = WebRequest.DefaultWebProxy;
 
@@ -33,7 +33,7 @@ namespace ConsoleApplication
                 return;
             }
 
-            //if (false)
+            if (false)
             {
                 GeoCoderStatusCode status;
                 var pp1 = GMapProviders.GoogleMap.GetPoint("Lithuania, vilnius, Antakalnio g. 67-35", out status);

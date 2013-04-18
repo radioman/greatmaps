@@ -36,7 +36,7 @@ namespace GMap.NET.Internals
 
         private SocksHttpWebRequest(Uri requestUri)
         {
-            _requestUri = requestUri;            
+            _requestUri = requestUri;
         }
 
         #endregion
@@ -65,10 +65,17 @@ namespace GMap.NET.Internals
 
         public override Uri RequestUri
         {
-            get { return _requestUri; }
+            get
+            {
+                return _requestUri;
+            }
         }
 
-        public override IWebProxy Proxy { get; set; }
+        public override IWebProxy Proxy
+        {
+            get;
+            set;
+        }
 
         public override WebHeaderCollection Headers
         {
@@ -90,7 +97,11 @@ namespace GMap.NET.Internals
             }
         }
 
-        public bool RequestSubmitted { get; private set; }
+        public bool RequestSubmitted
+        {
+            get;
+            private set;
+        }
 
         public override string Method
         {
@@ -111,9 +122,17 @@ namespace GMap.NET.Internals
             }
         }
 
-        public override long ContentLength { get; set; }
+        public override long ContentLength
+        {
+            get;
+            set;
+        }
 
-        public override string ContentType { get; set; }
+        public override string ContentType
+        {
+            get;
+            set;
+        }
 
         public override Stream GetRequestStream()
         {
@@ -196,7 +215,9 @@ namespace GMap.NET.Internals
 
         private SocksHttpWebResponse InternalGetResponse()
         {
-            var response = new StringBuilder();
+            MemoryStream data = null;
+            string header = string.Empty;
+
             using (var _socksConnection = new ProxySocket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
                 var proxyUri = Proxy.GetProxy(RequestUri);
@@ -206,19 +227,59 @@ namespace GMap.NET.Internals
 
                 // open connection
                 _socksConnection.Connect(RequestUri.Host, 80);
+
                 // send an HTTP request
                 _socksConnection.Send(Encoding.UTF8.GetBytes(RequestMessage));
-                // read the HTTP reply
-                var buffer = new byte[1024*4];
 
-                var bytesReceived = _socksConnection.Receive(buffer);
-                while (bytesReceived > 0)
+                // read the HTTP reply
+                var buffer = new byte[1024 * 4];
+                int bytesReceived = 0;
+                bool headerDone = false;
+
+                while ((bytesReceived = _socksConnection.Receive(buffer)) > 0)
                 {
-                    response.Append(Encoding.UTF8.GetString(buffer, 0, bytesReceived));
-                    bytesReceived = _socksConnection.Receive(buffer);
+                    if (!headerDone)
+                    {
+                        var headPart = Encoding.UTF8.GetString(buffer, 0, bytesReceived > 1024 ? 1024 : bytesReceived);
+                        var indexOfFirstBlankLine = headPart.IndexOf("\r\n\r\n");
+                        if (indexOfFirstBlankLine > 0)
+                        {
+                            headPart = headPart.Substring(0, indexOfFirstBlankLine);
+                            header += headPart;
+                            headerDone = true;
+
+                            var headerPartLength = Encoding.UTF8.GetByteCount(headPart) + 4;
+
+                            // 0123456789
+                            //   ----
+                            if (headerPartLength < bytesReceived)
+                            {
+                                data = new MemoryStream();
+                                data.Write(buffer, headerPartLength, bytesReceived - headerPartLength);
+                            }
+                        }
+                        else
+                        {
+                            header += headPart;
+                        }
+                    }
+                    else
+                    {
+                        if (data == null)
+                        {
+                            data = new MemoryStream();
+                        }
+                        data.Write(buffer, 0, bytesReceived);
+                    }
+                }
+
+                if (data != null)
+                {
+                    data.Position = 0;
                 }
             }
-            return new SocksHttpWebResponse(response.ToString());
+
+            return new SocksHttpWebResponse(data, header);
         }
 
         private static IPAddress GetProxyIpAddress(Uri proxyUri)
@@ -264,16 +325,25 @@ namespace GMap.NET.Internals
 
         #region Member Variables
 
-        private WebHeaderCollection _httpResponseHeaders;
-        private string _responseContent;
+        WebHeaderCollection _httpResponseHeaders;
+        MemoryStream data;
 
         #endregion
 
         #region Constructors
 
-        public SocksHttpWebResponse(string httpResponseMessage)
+        public SocksHttpWebResponse(MemoryStream data, string headers)
         {
-            SetHeadersAndResponseContent(httpResponseMessage);
+            this.data = data;
+
+            var headerValues = headers.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            // ignore the first line in the header since it is the HTTP response code
+            for (int i = 1; i < headerValues.Length; i++)
+            {
+                var headerEntry = headerValues[i].Split(new[] { ':' });
+                Headers.Add(headerEntry[0], headerEntry[1]);
+            }
         }
 
         #endregion
@@ -282,10 +352,13 @@ namespace GMap.NET.Internals
 
         public override Stream GetResponseStream()
         {
-            return ResponseContent.Length == 0 ? Stream.Null : new MemoryStream(Encoding.UTF8.GetBytes(ResponseContent));
+            return data != null ? data : Stream.Null;
         }
 
-        public override void Close() { /* the base implementation throws an exception */ }
+        public override void Close()
+        {            
+            /* the base implementation throws an exception */
+        }
 
         public override WebHeaderCollection Headers
         {
@@ -299,50 +372,19 @@ namespace GMap.NET.Internals
             }
         }
 
-        public override long ContentLength
-        {
-            get
-            {
-                return ResponseContent.Length;
-            }
-            set
-            {
-                throw new NotSupportedException();
-            }
-        }
+        // TODO: parse headers
+        //public override long ContentLength
+        //{
+        //    get
+        //    {
+        //        return 0;
+        //    }
+        //    set
+        //    {
+        //        throw new NotSupportedException();
+        //    }
+        //}
 
         #endregion
-
-        #region Methods
-
-        private void SetHeadersAndResponseContent(string responseMessage)
-        {
-            // the HTTP headers can be found before the first blank line
-            var indexOfFirstBlankLine = responseMessage.IndexOf("\r\n\r\n");
-
-            var headers = responseMessage.Substring(0, indexOfFirstBlankLine);
-            var headerValues = headers.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-            // ignore the first line in the header since it is the HTTP response code
-            for (int i = 1; i < headerValues.Length; i++)
-            {
-                var headerEntry = headerValues[i].Split(new[] { ':' });
-                Headers.Add(headerEntry[0], headerEntry[1]);
-            }
-
-            ResponseContent = responseMessage.Substring(indexOfFirstBlankLine + 4);
-        }
-
-        #endregion
-
-        #region Properties
-
-        private string ResponseContent
-        {
-            get { return _responseContent ?? string.Empty; }
-            set { _responseContent = value; }
-        }
-
-        #endregion
-
     }
 }

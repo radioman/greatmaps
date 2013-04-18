@@ -392,26 +392,29 @@ namespace GMap.NET.MapProviders
             {
                 if (response is SocksHttpWebResponse || CheckTileImageHttpResponse(response as HttpWebResponse))
                 {
-                    MemoryStream responseStream = Stuff.CopyStream(response.GetResponseStream(), false);
+                    using (Stream responseStream = response.GetResponseStream())
                     {
                         Debug.WriteLine("Response[" + responseStream.Length + " bytes]: " + url);
 
                         if (responseStream.Length > 0)
                         {
-                            ret = TileImageProxy.FromStream(responseStream);
-                        }
+                            MemoryStream data = Stuff.CopyStream(responseStream, false);
+                            {
+                                ret = TileImageProxy.FromStream(data);
 
-                        if (ret != null)
-                        {
-                            ret.Data = responseStream;
-                            ret.Data.Position = 0;
-                        }
-                        else
-                        {
-                            responseStream.Dispose();
+                                if (ret != null)
+                                {
+                                    ret.Data = data;
+                                    ret.Data.Position = 0;
+                                }
+                                else
+                                {
+                                    data.Dispose();
+                                }
+                            }
+                            data = null;
                         }
                     }
-                    responseStream = null;
                 }
                 else
                 {
