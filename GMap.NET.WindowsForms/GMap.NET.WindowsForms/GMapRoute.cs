@@ -55,6 +55,16 @@ namespace GMap.NET.WindowsForms
                         {
                             Overlay.Control.UpdateRouteLocalPosition(this);
                         }
+                        else
+                        {
+                            if (Overlay.Control.IsMouseOverRoute)
+                            {
+                                Overlay.Control.IsMouseOverRoute = false;
+#if !PocketPC
+                                Overlay.Control.RestoreCursorOnLeave();
+#endif
+                            }
+                        }
 
                         {
                             if (!Overlay.Control.HoldInvalidation)

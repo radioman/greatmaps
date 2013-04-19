@@ -39,11 +39,31 @@ namespace GMap.NET.WindowsForms
                   if(isVisibile)
                   {
                      Control.HoldInvalidation = true;
-                     ForceUpdate();
+                     {
+                        ForceUpdate();
+                     }
                      Control.Refresh();
                   }
                   else
-                  {
+                  {                   
+                      if (Control.IsMouseOverMarker)
+                      {
+                          Control.IsMouseOverMarker = false;
+                      }
+
+                      if (Control.IsMouseOverPolygon)
+                      {
+                          Control.IsMouseOverPolygon = false;
+                      }
+
+                      if (Control.IsMouseOverRoute)
+                      {
+                          Control.IsMouseOverRoute = false;
+                      }
+#if !PocketPC
+                      Control.RestoreCursorOnLeave();
+#endif
+
                      if(!Control.HoldInvalidation)
                      {
                         Control.Invalidate();

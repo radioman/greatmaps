@@ -2262,8 +2262,9 @@ namespace GMap.NET.WindowsForms
 
       internal void RestoreCursorOnLeave()
       {
-         if(overObjectCount == 0 && cursorBefore != null)
+         if(overObjectCount <= 0 && cursorBefore != null)
          {
+            overObjectCount = 0;
             this.Cursor = this.cursorBefore;
             cursorBefore = null;
          }
@@ -2271,8 +2272,9 @@ namespace GMap.NET.WindowsForms
 
       internal void SetCursorHandOnEnter()
       {
-         if(overObjectCount == 0 && Cursor != Cursors.Hand)
+         if(overObjectCount <= 0 && Cursor != Cursors.Hand)
          {
+            overObjectCount = 0;
             cursorBefore = this.Cursor;
             this.Cursor = Cursors.Hand;
          }
@@ -2780,7 +2782,7 @@ namespace GMap.NET.WindowsForms
          internal set
          {
             isMouseOverRoute = value;
-            overObjectCount += value ? 1 : -1;
+            overObjectCount += value ? 1 : -1;            
          }
       }
 

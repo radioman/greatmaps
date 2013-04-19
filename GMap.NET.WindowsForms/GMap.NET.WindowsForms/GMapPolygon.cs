@@ -42,6 +42,16 @@ namespace GMap.NET.WindowsForms
                   {
                      Overlay.Control.UpdatePolygonLocalPosition(this);
                   }
+                  else
+                  {
+                      if (Overlay.Control.IsMouseOverPolygon)
+                      {
+                          Overlay.Control.IsMouseOverPolygon = false;
+#if !PocketPC
+                          Overlay.Control.RestoreCursorOnLeave();
+#endif
+                      }
+                  }
 
                   {
                      if(!Overlay.Control.HoldInvalidation)

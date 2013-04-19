@@ -212,6 +212,16 @@ namespace GMap.NET.WindowsForms
                   {
                      Overlay.Control.UpdateMarkerLocalPosition(this);
                   }
+                  else
+                  {
+                      if (Overlay.Control.IsMouseOverMarker)
+                      {
+                          Overlay.Control.IsMouseOverMarker = false;
+#if !PocketPC
+                          Overlay.Control.RestoreCursorOnLeave();
+#endif
+                      }
+                  }
 
                   {
                      if(!Overlay.Control.HoldInvalidation)

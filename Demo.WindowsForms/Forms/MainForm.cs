@@ -1386,7 +1386,17 @@ namespace Demo.WindowsForms
                textBoxCacheSize.Text = string.Format(CultureInfo.InvariantCulture, "{0} db in {1:00} MB", db, size / (1024.0 * 1024.0));
                textBoxCacheStatus.Text = "all tiles saved!";
             };
-            Invoke(m);
+
+            if (!IsDisposed)
+            {
+               try
+               {
+                    Invoke(m);
+               }
+               catch(Exception)
+               {
+               }
+            }
          }
       }
 
@@ -2089,7 +2099,7 @@ namespace Demo.WindowsForms
             {
                objects.Markers.Remove(CurentRectMarker);
 
-               if(CurentRectMarker.InnerMarker != null)
+               if (CurentRectMarker.InnerMarker != null)
                {
                   objects.Markers.Remove(CurentRectMarker.InnerMarker);
                }
