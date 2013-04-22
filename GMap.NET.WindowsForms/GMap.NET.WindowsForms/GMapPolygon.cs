@@ -99,37 +99,65 @@ namespace GMap.NET.WindowsForms
          }
       }
 
+#if !PocketPC
+      /// <summary>
+      /// Indicates whether the specified point is contained within this System.Drawing.Drawing2D.GraphicsPath
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="y"></param>
+      /// <returns></returns>
+      internal bool IsInsideLocal(int x, int y)
+      {
+          if (graphicsPath != null)
+          {
+              return graphicsPath.IsVisible(x, y);
+          }
+
+          return false;
+      }
+
+      GraphicsPath graphicsPath;
+      internal void UpdateGraphicsPath()
+      {
+          if (graphicsPath == null)
+          {
+              graphicsPath = new GraphicsPath();
+          }
+          else
+          {
+              graphicsPath.Reset();
+          }
+
+          {
+              Point[] pnts = new Point[LocalPoints.Count];
+              for (int i = 0; i < LocalPoints.Count; i++)
+              {
+                  Point p2 = new Point((int)LocalPoints[i].X, (int)LocalPoints[i].Y);
+                  pnts[pnts.Length - 1 - i] = p2;
+              }
+
+              if (pnts.Length > 0)
+              {
+                  graphicsPath.AddPolygon(pnts);
+              }
+          }
+      }
+#endif
+
+
       public virtual void OnRender(Graphics g)
       {
 #if !PocketPC
          if(IsVisible)
          {
-            using(GraphicsPath rp = new GraphicsPath())
-            {
-               for(int i = 0; i < LocalPoints.Count; i++)
-               {
-                  GPoint p2 = LocalPoints[i];
-
-                  if(i == 0)
-                  {
-                     rp.AddLine(p2.X, p2.Y, p2.X, p2.Y);
-                  }
-                  else
-                  {
-                     System.Drawing.PointF p = rp.GetLastPoint();
-                     rp.AddLine(p.X, p.Y, p2.X, p2.Y);
-                  }
-               }
-
-               if(rp.PointCount > 0)
-               {
-                  rp.CloseFigure();
-
-                  g.FillPath(Fill, rp);
-
-                  g.DrawPath(Stroke, rp);
-               }
-            }
+             if (IsVisible)
+             {
+                 if (graphicsPath != null)
+                 {
+                     g.FillPath(Fill, graphicsPath);
+                     g.DrawPath(Stroke, graphicsPath);
+                 }
+             }            
          }
 #else
          {
@@ -150,7 +178,6 @@ namespace GMap.NET.WindowsForms
             }
          }
 #endif
-
       }
 
       //public double Area
@@ -299,6 +326,13 @@ namespace GMap.NET.WindowsForms
             Stroke.Dispose();
             LocalPoints.Clear();
 
+#if !PocketPC
+            if (graphicsPath != null)
+            {
+                graphicsPath.Dispose();
+                graphicsPath = null;
+            }
+#endif
             base.Clear();
          }
       }

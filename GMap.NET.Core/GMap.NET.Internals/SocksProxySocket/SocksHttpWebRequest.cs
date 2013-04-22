@@ -328,6 +328,18 @@ namespace GMap.NET.Internals
         WebHeaderCollection _httpResponseHeaders;
         MemoryStream data;
 
+        public override long ContentLength
+        {
+            get;
+            set;
+        }
+
+        public override string ContentType
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         #region Constructors
@@ -343,6 +355,25 @@ namespace GMap.NET.Internals
             {
                 var headerEntry = headerValues[i].Split(new[] { ':' });
                 Headers.Add(headerEntry[0], headerEntry[1]);
+
+                switch (headerEntry[0])
+                {
+                    case "Content-Type":
+                    {
+                        ContentType = headerEntry[1];
+                    }
+                    break;
+
+                    case "Content-Length":
+                    {
+                        long r = 0;
+                        if(long.TryParse(headerEntry[1], out r))
+                        {
+                          ContentLength = r;
+                        }
+                    }
+                    break;
+                }
             }
         }
 
@@ -356,7 +387,11 @@ namespace GMap.NET.Internals
         }
 
         public override void Close()
-        {            
+        {
+            if (data != null)
+            {
+                data.Close();
+            }
             /* the base implementation throws an exception */
         }
 
@@ -371,19 +406,6 @@ namespace GMap.NET.Internals
                 return _httpResponseHeaders;
             }
         }
-
-        // TODO: parse headers
-        //public override long ContentLength
-        //{
-        //    get
-        //    {
-        //        return 0;
-        //    }
-        //    set
-        //    {
-        //        throw new NotSupportedException();
-        //    }
-        //}
 
         #endregion
     }

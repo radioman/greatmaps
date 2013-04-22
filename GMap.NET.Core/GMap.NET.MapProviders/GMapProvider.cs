@@ -355,7 +355,7 @@ namespace GMap.NET.MapProviders
         static readonly string requestAccept = "*/*";
         static readonly string responseContentType = "image";
 
-        protected virtual bool CheckTileImageHttpResponse(HttpWebResponse response)
+        protected virtual bool CheckTileImageHttpResponse(WebResponse response)
         {
             //Debug.WriteLine(response.StatusCode + "/" + response.StatusDescription + "/" + response.ContentType + " -> " + response.ResponseUri);
             return response.ContentType.Contains(responseContentType);
@@ -390,7 +390,7 @@ namespace GMap.NET.MapProviders
 
             using (var response = request.GetResponse())
             {
-                if (response is SocksHttpWebResponse || CheckTileImageHttpResponse(response as HttpWebResponse))
+                if (CheckTileImageHttpResponse(response))
                 {
                     using (Stream responseStream = response.GetResponseStream())
                     {

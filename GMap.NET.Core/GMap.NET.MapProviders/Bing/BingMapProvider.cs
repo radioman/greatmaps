@@ -211,7 +211,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      protected override bool CheckTileImageHttpResponse(System.Net.HttpWebResponse response)
+      protected override bool CheckTileImageHttpResponse(WebResponse response)
       {
          var pass = base.CheckTileImageHttpResponse(response);
          if(pass)

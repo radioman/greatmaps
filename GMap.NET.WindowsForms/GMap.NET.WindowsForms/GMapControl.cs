@@ -871,6 +871,9 @@ namespace GMap.NET.WindowsForms
 
             polygon.LocalPoints.Add(p);
          }
+#if !PocketPC
+         polygon.UpdateGraphicsPath();
+#endif
       }
 
       /// <summary>
@@ -2205,7 +2208,15 @@ namespace GMap.NET.WindowsForms
                            if(m.IsVisible && m.IsHitTestVisible)
                            {
                               #region -- check --
-                              if(m.IsInside(FromLocalToLatLng(e.X, e.Y)))
+
+                               GPoint rp = new GPoint(e.X, e.Y);
+#if !PocketPC
+                               if (!MobileMode)
+                               {
+                                   rp.OffsetNegative(Core.renderOffset);
+                               }
+#endif
+                              if(m.IsInsideLocal((int)rp.X, (int)rp.Y))
                               {
                                  if(!m.IsMouseOver)
                                  {
