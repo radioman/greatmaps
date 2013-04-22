@@ -394,26 +394,25 @@ namespace GMap.NET.MapProviders
                 {
                     using (Stream responseStream = response.GetResponseStream())
                     {
-                        Debug.WriteLine("Response[" + responseStream.Length + " bytes]: " + url);
+                        MemoryStream data = Stuff.CopyStream(responseStream, false);
 
-                        if (responseStream.Length > 0)
+                        Debug.WriteLine("Response[" + data.Length + " bytes]: " + url);
+
+                        if (data.Length > 0)
                         {
-                            MemoryStream data = Stuff.CopyStream(responseStream, false);
-                            {
-                                ret = TileImageProxy.FromStream(data);
+                            ret = TileImageProxy.FromStream(data);
 
-                                if (ret != null)
-                                {
-                                    ret.Data = data;
-                                    ret.Data.Position = 0;
-                                }
-                                else
-                                {
-                                    data.Dispose();
-                                }
+                            if (ret != null)
+                            {
+                                ret.Data = data;
+                                ret.Data.Position = 0;
                             }
-                            data = null;
+                            else
+                            {
+                                data.Dispose();
+                            }
                         }
+                        data = null;
                     }
                 }
                 else
