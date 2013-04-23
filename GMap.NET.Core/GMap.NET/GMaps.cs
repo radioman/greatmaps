@@ -304,17 +304,40 @@ namespace GMap.NET
          }
       }
 
-      int readingCache = 0;
+      int readingCache = 0;      
+      volatile bool cacheOnIdleRead = true;
 
       /// <summary>
       /// delays writing tiles to cache while performing reads
       /// </summary>
-      public volatile bool CacheOnIdleRead = true;
+      public bool CacheOnIdleRead
+      {
+          get
+          {
+              return cacheOnIdleRead;
+          }
+          set
+          {
+              cacheOnIdleRead = value;
+          }
+      }
+
+      volatile bool boostCacheEngine = false;
 
       /// <summary>
       /// disables delay between saving tiles into database/cache
       /// </summary>
-      public volatile bool BoostCacheEngine = false;
+      public bool BoostCacheEngine
+      {
+          get
+          {
+              return boostCacheEngine;
+          }
+          set
+          {
+              boostCacheEngine = value;
+          }
+      }
 
       /// <summary>
       /// live for cache ;}
@@ -373,7 +396,7 @@ namespace GMap.NET
 
                      if((task.Value.CacheType & CacheUsage.First) == CacheUsage.First && PrimaryCache != null)
                      {
-                        if(CacheOnIdleRead)
+                        if(cacheOnIdleRead)
                         {
                            while(Interlocked.Decrement(ref readingCache) > 0)
                            {
@@ -385,7 +408,7 @@ namespace GMap.NET
 
                      if((task.Value.CacheType & CacheUsage.Second) == CacheUsage.Second && SecondaryCache != null)
                      {
-                        if(CacheOnIdleRead)
+                        if(cacheOnIdleRead)
                         {
                            while(Interlocked.Decrement(ref readingCache) > 0)
                            {
@@ -397,7 +420,7 @@ namespace GMap.NET
 
                      task.Value.Clear();
 
-                     if(!BoostCacheEngine)
+                     if(!boostCacheEngine)
                      {
 #if PocketPC
                         Thread.Sleep(3333);
@@ -655,7 +678,7 @@ namespace GMap.NET
                   if(PrimaryCache != null)
                   {
                      // hold writer for 5s
-                     if(CacheOnIdleRead)
+                     if(cacheOnIdleRead)
                      {
                         Interlocked.Exchange(ref readingCache, 5);
                      }
@@ -674,7 +697,7 @@ namespace GMap.NET
                   if(SecondaryCache != null)
                   {
                      // hold writer for 5s
-                     if(CacheOnIdleRead)
+                     if(cacheOnIdleRead)
                      {
                         Interlocked.Exchange(ref readingCache, 5);
                      }
