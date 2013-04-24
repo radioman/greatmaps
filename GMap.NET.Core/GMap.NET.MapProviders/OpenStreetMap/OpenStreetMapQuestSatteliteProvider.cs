@@ -67,6 +67,6 @@ namespace GMap.NET.MapProviders
          return string.Format(UrlFormat, GetServerNum(pos, 3) + 1, zoom, pos.X, pos.Y);
       }
 
-      static readonly string UrlFormat = "http://oatile{0}.mqcdn.com/naip/{1}/{2}/{3}.png";
+      static readonly string UrlFormat = "http://otile{0}.mqcdn.com/tiles/1.0.0/sat/{1}/{2}/{3}.jpg";
    }
 }
