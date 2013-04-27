@@ -70,6 +70,11 @@ namespace GMap.NET
          return Subtract(pt, sz);
       }
 
+      public static SizeLatLng operator -(PointLatLng pt1, PointLatLng pt2)
+      {
+          return new SizeLatLng(pt1.Lat - pt2.Lat, pt2.Lng - pt1.Lng);
+      }
+
       public static bool operator ==(PointLatLng left, PointLatLng right)
       {
          return ((left.Lng == right.Lng) && (left.Lat == right.Lat));

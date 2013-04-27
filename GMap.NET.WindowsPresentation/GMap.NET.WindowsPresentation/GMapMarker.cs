@@ -265,7 +265,6 @@ namespace GMap.NET.WindowsPresentation
          if(s != null)
          {
             s.Dispose();
-            s = null;
          }
          Shape = null;
 
@@ -313,17 +312,17 @@ namespace GMap.NET.WindowsPresentation
          {
             if(Route.Count > 1)
             {
-               var localPath = new List<System.Windows.Point>();
+               var localPath = new List<System.Windows.Point>(Route.Count);
                var offset = Map.FromLatLngToLocal(Route[0]);
                foreach(var i in Route)
                {
-                  var p = Map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
+                  var p = Map.FromLatLngToLocal(i);
                   localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
                }
 
                var shape = map.CreateRoutePath(localPath);
 
-               if(this.Shape != null && this.Shape is Path)
+               if(this.Shape is Path)
                {
                   (this.Shape as Path).Data = shape.Data;
                }
@@ -350,17 +349,17 @@ namespace GMap.NET.WindowsPresentation
          {
             if(Polygon.Count > 1)
             {
-               var localPath = new List<System.Windows.Point>();
+               var localPath = new List<System.Windows.Point>(Polygon.Count);
                var offset = Map.FromLatLngToLocal(Polygon[0]);
                foreach(var i in Polygon)
                {
-                  var p = Map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
+                  var p = Map.FromLatLngToLocal(i);
                   localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
                }
 
                var shape = map.CreatePolygonPath(localPath);
 
-               if(this.Shape != null && this.Shape is Path)
+               if(this.Shape is Path)
                {
                   (this.Shape as Path).Data = shape.Data;
                }
