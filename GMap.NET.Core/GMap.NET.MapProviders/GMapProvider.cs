@@ -18,6 +18,29 @@ namespace GMap.NET.MapProviders
     {
         static GMapProviders()
         {
+            list = new List<GMapProvider>();
+
+            Type type = typeof(GMapProviders);
+            foreach (var p in type.GetFields())
+            {
+                var v = p.GetValue(null) as GMapProvider; // static classes cannot be instanced, so use null...
+                if (v != null)
+                {
+                    list.Add(v);
+                }
+            }
+
+            Hash = new Dictionary<Guid, GMapProvider>();
+            foreach (var p in list)
+            {
+                Hash.Add(p.Id, p);
+            }
+
+            DbHash = new Dictionary<int, GMapProvider>();
+            foreach (var p in list)
+            {
+                DbHash.Add(p.DbId, p);
+            }
         }
 
         GMapProviders()
@@ -130,44 +153,32 @@ namespace GMap.NET.MapProviders
         {
             get
             {
-                if (list == null)
-                {
-                    list = new List<GMapProvider>();
-
-                    Type type = typeof(GMapProviders);
-                    foreach (var p in type.GetFields())
-                    {
-                        var v = p.GetValue(null) as GMapProvider; // static classes cannot be instanced, so use null...
-                        if (v != null)
-                        {
-                            list.Add(v);
-                        }
-                    }
-                }
                 return list;
             }
         }
 
-        static Dictionary<Guid, GMapProvider> hash;
+        static Dictionary<Guid, GMapProvider> Hash;
 
-        /// <summary>
-        /// get hash table of all instances of the supported providers
-        /// </summary>
-        public static Dictionary<Guid, GMapProvider> Hash
+        public static GMapProvider TryGetProvider(Guid id)
         {
-            get
+            GMapProvider ret;
+            if (Hash.TryGetValue(id, out ret))
             {
-                if (hash == null)
-                {
-                    hash = new Dictionary<Guid, GMapProvider>();
-
-                    foreach (var p in List)
-                    {
-                        hash.Add(p.Id, p);
-                    }
-                }
-                return hash;
+                return ret;
             }
+            return null;
+        }
+
+        static Dictionary<int, GMapProvider> DbHash;
+
+        public static GMapProvider TryGetProvider(int DbId)
+        {
+            GMapProvider ret;
+            if (DbHash.TryGetValue(DbId, out ret))
+            {
+                return ret;
+            }
+            return null;
         }
     }
 
@@ -489,17 +500,7 @@ namespace GMap.NET.MapProviders
                 return Id.Equals((obj as GMapProvider).Id);
             }
             return false;
-        }
-
-        public static GMapProvider TryGetProvider(Guid id)
-        {
-            GMapProvider ret;
-            if (GMapProviders.Hash.TryGetValue(id, out ret))
-            {
-                return ret;
-            }
-            return null;
-        }
+        }        
 
         public override string ToString()
         {

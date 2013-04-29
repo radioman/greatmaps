@@ -751,5 +751,32 @@ namespace GMap.NET
       }
 
       readonly Exception noDataException = new Exception("No data in local tile cache...");
+
+      TileHttpHost host;
+
+      /// <summary>
+      /// turns on tile host
+      /// </summary>
+      /// <param name="port"></param>
+      public void EnableTileHost(int port)
+      {
+         if(host == null)
+         {
+            host = new TileHttpHost();
+         }
+         host.Start(port);
+      }
+
+      /// <summary>
+      /// turns off tile host
+      /// </summary>
+      /// <param name="port"></param>
+      public void DisableTileHost()
+      {
+          if (host != null)
+          {
+              host.Stop();
+          }
+      }
    }
 }

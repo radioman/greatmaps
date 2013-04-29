@@ -25,6 +25,22 @@ namespace ConsoleApplication
 
             //GMapProvider.WebProxy = WebRequest.DefaultWebProxy;
 
+            //Debug.WriteLine("DbId: " + GMapProviders.YahooMap.DbId);
+
+            //if(false)
+            {
+                GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
+
+                GMaps.Instance.EnableTileHost(8844);
+
+                Console.ReadLine();
+
+                GMaps.Instance.DisableTileHost();
+                GMaps.Instance.CancelTileCaching();
+
+                return;
+            }
+
             if (false)
             {
                 GeoCoderStatusCode status;

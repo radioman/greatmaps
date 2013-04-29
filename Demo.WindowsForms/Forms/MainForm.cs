@@ -17,6 +17,7 @@ using GMap.NET.MapProviders;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms.ToolTips;
+using System.Reflection;
 
 namespace Demo.WindowsForms
 {
@@ -74,7 +75,7 @@ namespace Demo.WindowsForms
             MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
             MainMap.MinZoom = 0;
             MainMap.MaxZoom = 24;
-            MainMap.Zoom = 9;
+            MainMap.Zoom = 9;            
 
             //MainMap.ScaleMode = ScaleModes.Fractional;
 
@@ -1356,6 +1357,65 @@ namespace Demo.WindowsForms
          }
       }
 
+      bool TryExtractLeafletjs()
+      {
+          try
+          {
+              string launch = string.Empty;
+
+              var x = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+              foreach (var f in x)
+              {
+                  if (f.Contains("leafletjs"))
+                  {
+                      var fName = f.Replace("Demo.WindowsForms.", string.Empty);
+                      fName = fName.Replace(".", "\\");
+                      var ll = fName.LastIndexOf("\\");
+                      var name = fName.Substring(0, ll) + "." + fName.Substring(ll + 1, fName.Length - ll - 1);
+
+                      //Demo.WindowsForms.leafletjs.dist.leaflet.js
+
+                      using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(f))
+                      {
+                          string fileFullPath = MainMap.CacheLocation + name;
+
+                          if (fileFullPath.Contains("gmap.html"))
+                          {
+                              launch = fileFullPath;
+                          }
+
+                          var dir = Path.GetDirectoryName(fileFullPath);
+                          if (!Directory.Exists(dir))
+                          {
+                              Directory.CreateDirectory(dir);
+                          }
+
+                          using (FileStream fileStream = System.IO.File.Create(fileFullPath, (int)stream.Length))
+                          {
+                              // Fill the bytes[] array with the stream data
+                              byte[] bytesInStream = new byte[stream.Length];
+                              stream.Read(bytesInStream, 0, (int)bytesInStream.Length);
+
+                              // Use FileStream object to write to the specified file
+                              fileStream.Write(bytesInStream, 0, bytesInStream.Length);
+                          }
+                      }
+                  }
+              }
+
+              if (!string.IsNullOrEmpty(launch))
+              {
+                  System.Diagnostics.Process.Start(launch);
+              }
+          }
+          catch (Exception ex)
+          {
+              Debug.WriteLine("TryExtractLeafletjs: " + ex);
+              return false;
+          }
+          return true;
+      }
+
       #endregion
 
       #region -- map events --
@@ -2383,6 +2443,29 @@ namespace Demo.WindowsForms
          {
             MessageBox.Show("Failed to open: " + ex.Message, "GMap.NET", MessageBoxButtons.OK, MessageBoxIcon.Error);
          }
+      }
+
+      // http://leafletjs.com/
+      // Leaflet is a modern open-source JavaScript library for mobile-friendly interactive maps
+      // Leaflet is designed with simplicity, performance and usability in mind. It works efficiently across all major desktop and mobile platforms out of the box
+      private void checkBoxTileHost_CheckedChanged(object sender, EventArgs e)
+      {
+          if (checkBoxTileHost.Checked)
+          {
+              try
+              {
+                  MainMap.Manager.EnableTileHost(8844);
+                  TryExtractLeafletjs();
+              }
+              catch (Exception ex)
+              {
+                  MessageBox.Show("EnableTileHost: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              }
+          }
+          else
+          {
+              MainMap.Manager.DisableTileHost();
+          }
       }
 
       #endregion
