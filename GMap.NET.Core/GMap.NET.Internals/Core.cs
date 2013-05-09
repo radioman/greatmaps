@@ -197,6 +197,8 @@ namespace GMap.NET.Internals
          {
             if(provider == null || !provider.Equals(value))
             {
+               bool diffProjection = (provider == null || provider.Projection != value.Projection);
+
                provider = value;
 
                if(!provider.IsInitialized)
@@ -205,7 +207,7 @@ namespace GMap.NET.Internals
                   provider.OnInitialized();
                }
 
-               if(Provider.Projection != null)
+               if(provider.Projection != null && diffProjection)
                {
                   tileRect = new GRect(GPoint.Empty, Provider.Projection.TileSize);
                   tileRectBearing = tileRect;
@@ -222,7 +224,10 @@ namespace GMap.NET.Internals
                if(IsStarted)
                {
                   CancelAsyncTasks();
-                  OnMapSizeChanged(Width, Height);
+                  if (diffProjection)
+                  {
+                      OnMapSizeChanged(Width, Height);
+                  }
                   ReloadMap();
 
                   if(minZoom < provider.MinZoom)

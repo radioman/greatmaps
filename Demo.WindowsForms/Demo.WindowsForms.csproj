@@ -282,6 +282,15 @@
     <EmbeddedResource Include="leafletjs\dist\leaflet.js" />
     <EmbeddedResource Include="leafletjs\dist\mobile.css" />
     <EmbeddedResource Include="leafletjs\gmap.html" />
+    <EmbeddedResource Include="leafletjs\dist\images\locate.png" />
+    <EmbeddedResource Include="leafletjs\dist\images\locate.svg" />
+    <EmbeddedResource Include="leafletjs\dist\images\locate_active.png" />
+    <EmbeddedResource Include="leafletjs\dist\images\spinner.gif" />
+    <EmbeddedResource Include="leafletjs\dist\locate-ie.css" />
+    <EmbeddedResource Include="leafletjs\dist\locate.css" />
+    <EmbeddedResource Include="leafletjs\dist\locate.js" />
+    <EmbeddedResource Include="leafletjs\dist\proj4js-compressed.js" />
+    <EmbeddedResource Include="leafletjs\dist\proj4leaflet.js" />
     <Content Include="Resources\ImageReady.ico" />
   </ItemGroup>
   <ItemGroup>

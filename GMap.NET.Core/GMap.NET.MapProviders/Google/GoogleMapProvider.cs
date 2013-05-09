@@ -126,7 +126,7 @@ namespace GMap.NET.MapProviders
                                 Debug.WriteLine("GMapProviders.GoogleMap.Version: " + ver + ", " + (ver == old ? "OK" : "old: " + old + ", consider updating source"));
                                 if (Debugger.IsAttached && ver != old)
                                 {
-                                    Thread.Sleep(5555);
+                                    Thread.Sleep(1111);
                                 }
 #endif
                             }
@@ -149,7 +149,7 @@ namespace GMap.NET.MapProviders
                                 Debug.WriteLine("GMapProviders.GoogleHybridMap.Version: " + ver + ", " + (ver == old ? "OK" : "old: " + old + ", consider updating source"));
                                 if (Debugger.IsAttached && ver != old)
                                 {
-                                    Thread.Sleep(5555);
+                                    Thread.Sleep(1111);
                                 }
 #endif
                             }
@@ -173,7 +173,7 @@ namespace GMap.NET.MapProviders
                                 Debug.WriteLine("GMapProviders.GoogleSatelliteMap.Version: " + ver + ", " + (ver == old ? "OK" : "old: " + old + ", consider updating source"));
                                 if (Debugger.IsAttached && ver != old)
                                 {
-                                    Thread.Sleep(5555);
+                                    Thread.Sleep(1111);
                                 }
 #endif
                             }
@@ -196,7 +196,7 @@ namespace GMap.NET.MapProviders
                                 Debug.WriteLine("GMapProviders.GoogleTerrainMap.Version: " + ver + ", " + (ver == old ? "OK" : "old: " + old + ", consider updating source"));
                                 if (Debugger.IsAttached && ver != old)
                                 {
-                                    Thread.Sleep(5555);
+                                    Thread.Sleep(1111);
                                 }
 #endif
                             }
@@ -2174,7 +2174,7 @@ namespace GMap.NET.MapProviders
             Instance = new GoogleMapProvider();
         }
 
-        public string Version = "m@207000000";
+        public string Version = "m@216000000";
 
         #region GMapProvider Members
 

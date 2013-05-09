@@ -18,6 +18,7 @@ using Demo.WindowsPresentation.CustomMarkers;
 using GMap.NET;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsPresentation;
+using System.Net;
 
 namespace Demo.WindowsPresentation
 {
@@ -42,8 +43,12 @@ namespace Demo.WindowsPresentation
          //MainMap.Manager.SecondaryCache = ch;
 
          // set your proxy here if need
-         //GMapProvider.WebProxy = new WebProxy("10.2.0.100", 8080);
+         //GMapProvider.IsSocksProxy = true;
+         //GMapProvider.WebProxy = new WebProxy("127.0.0.1", 1080);
          //GMapProvider.WebProxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeada");
+         // or
+         //GMapProvider.WebProxy = WebRequest.DefaultWebProxy;
+         //
 
          // set cache mode only if no internet avaible
          if(!Stuff.PingNetwork("pingtest.net"))
@@ -368,12 +373,12 @@ namespace Demo.WindowsPresentation
             {
                lock(trolleybus)
                {
-                  Stuff.GetVilniusTransportData(TransportType.TrolleyBus, string.Empty, trolleybus);
+                  Stuff.GetVilniusTransportData(Demo.WindowsForms.TransportType.TrolleyBus, string.Empty, trolleybus);
                }
 
                lock(bus)
                {
-                  Stuff.GetVilniusTransportData(TransportType.Bus, string.Empty, bus);
+                  Stuff.GetVilniusTransportData(Demo.WindowsForms.TransportType.Bus, string.Empty, bus);
                }
 
                transport.ReportProgress(100);
