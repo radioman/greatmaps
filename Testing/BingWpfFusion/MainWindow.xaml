@@ -1,0 +1,12 @@
+﻿<Window x:Class="BingMapsWpfUsingCache.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:m="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF"
+        xmlns:local="clr-namespace:BingMapsWpfUsingCache"
+        Title="GMap.NET fused into Bing WPF control" Height="444" Width="555" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <m:Map x:Name="map" Center="54.6961334816182, 25.2985095977783" ZoomLevel="15" CredentialsProvider="Akw4XWHH0ngzzB_4DmHOv_XByRBtX5qwLAS9RgRYDamxvLeIxRfSzmuvWFB9RF7d">
+            <local:CustomTileLayer />
+        </m:Map>
+    </Grid>
+</Window>
