@@ -1593,7 +1593,7 @@ namespace GMap.NET.WindowsPresentation
          {
             if(isDragging)
             {
-               onMouseUpTimestamp = e.Timestamp;
+               onMouseUpTimestamp = e.Timestamp & Int32.MaxValue;
                isDragging = false;
                Debug.WriteLine("IsDragging = " + isDragging);
                Cursor = cursorBefore;
@@ -1646,9 +1646,9 @@ namespace GMap.NET.WindowsPresentation
          // wpf generates to many events if mouse is over some visual
          // and OnMouseUp is fired, wtf, anyway...
          // http://greatmaps.codeplex.com/workitem/16013
-         if(e.Timestamp - onMouseUpTimestamp < 55)
+         if ((e.Timestamp & Int32.MaxValue) - onMouseUpTimestamp < 55)
          {
-            Debug.WriteLine("OnMouseMove skipped: " + (e.Timestamp - onMouseUpTimestamp) + "ms");
+            Debug.WriteLine("OnMouseMove skipped: " + ((e.Timestamp & Int32.MaxValue) - onMouseUpTimestamp) + "ms");
             return;
          }
 
@@ -1781,7 +1781,7 @@ namespace GMap.NET.WindowsPresentation
             {
                if(isDragging)
                {
-                  onMouseUpTimestamp = e.Timestamp;
+                  onMouseUpTimestamp = e.Timestamp & Int32.MaxValue;
                   isDragging = false;
                   Debug.WriteLine("IsDragging = " + isDragging);
                   Cursor = cursorBefore;
@@ -1813,9 +1813,9 @@ namespace GMap.NET.WindowsPresentation
             // wpf generates to many events if mouse is over some visual
             // and OnMouseUp is fired, wtf, anyway...
             // http://greatmaps.codeplex.com/workitem/16013
-            if(e.Timestamp - onMouseUpTimestamp < 55)
+            if ((e.Timestamp & Int32.MaxValue) - onMouseUpTimestamp < 55)
             {
-               Debug.WriteLine("OnMouseMove skipped: " + (e.Timestamp - onMouseUpTimestamp) + "ms");
+                Debug.WriteLine("OnMouseMove skipped: " + ((e.Timestamp & Int32.MaxValue) - onMouseUpTimestamp) + "ms");
                return;
             }
 
