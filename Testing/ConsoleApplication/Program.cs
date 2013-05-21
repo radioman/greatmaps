@@ -18,8 +18,15 @@ namespace ConsoleApplication
 {
     class Program
     {
+        static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
+        {
+            Debug.WriteLine("LoadedAssembly.FullName: " + args.LoadedAssembly.FullName);
+        }
+
         static void Main(string [] args)
         {
+            AppDomain.CurrentDomain.AssemblyLoad += new AssemblyLoadEventHandler(CurrentDomain_AssemblyLoad);
+
             GMapProvider.WebProxy = new WebProxy("127.0.0.1", 1080);
             GMapProvider.IsSocksProxy = true;
 
@@ -29,8 +36,6 @@ namespace ConsoleApplication
 
             //if(false)
             {
-                GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
-
                 GMaps.Instance.EnableTileHost(8844);
 
                 Console.ReadLine();
@@ -146,8 +151,6 @@ namespace ConsoleApplication
 
             if (false)
             {
-                GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
-
                 var p = LKS94Projection.Instance;
                 //var p = PlateCarreeProjection.Instance;
 
@@ -175,8 +178,6 @@ namespace ConsoleApplication
 #if DEBUG
             if (false)
             {
-                GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
-
                 //GMaps.Instance.PrimaryCache.DeleteOlderThan(DateTime.Now, GMapProviders.GoogleMap.DbId);
 
                 GMaps.Instance.Mode = AccessMode.CacheOnly;

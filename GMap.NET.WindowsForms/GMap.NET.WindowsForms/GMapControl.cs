@@ -523,8 +523,6 @@ namespace GMap.NET.WindowsForms
 #endif
          {
 #if !PocketPC
-            Manager.SQLitePing();
-
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             this.SetStyle(ControlStyles.UserPaint, true);
@@ -537,8 +535,6 @@ namespace GMap.NET.WindowsForms
             GrayScaleMode = GrayScaleMode;
             NegativeMode = NegativeMode;
 #endif
-            GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
-
             Core.SystemType = "WindowsForms";
 
             RenderMode = RenderMode.GDI_PLUS;
@@ -563,6 +559,14 @@ namespace GMap.NET.WindowsForms
       }
 
 #endif
+
+      static GMapControl()
+      {
+          WindowsFormsImageProxy.Enable();
+#if !PocketPC
+          GMaps.Instance.SQLitePing();
+#endif          
+      }
 
       void Overlays_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
       {

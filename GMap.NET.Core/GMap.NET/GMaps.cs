@@ -14,6 +14,7 @@ namespace GMap.NET
    using GMap.NET.CacheProviders;
    using GMap.NET.Internals;
    using GMap.NET.MapProviders;
+    using System.Reflection;
 
 #if PocketPC
    using OpenNETCF.ComponentModel;
@@ -142,6 +143,70 @@ namespace GMap.NET
       Thread CacheEngine;
 
       internal readonly AutoResetEvent WaitForCache = new AutoResetEvent(false);
+
+#if !PocketPC
+      static GMaps()
+      {
+          if (GMapProvider.TileImageProxy == null)
+          {
+              try
+              {
+                  AppDomain d = AppDomain.CurrentDomain;
+                  var AssembliesLoaded = d.GetAssemblies();
+
+                  Assembly l = null;
+
+                  foreach (var a in AssembliesLoaded)
+                  {
+                      if (a.FullName.Contains("GMap.NET.WindowsForms") || a.FullName.Contains("GMap.NET.WindowsPresentation"))
+                      {
+                          l = a;
+                          break;
+                      }
+                  }
+
+                  if (l == null)
+                  {
+                      var jj = Assembly.GetEntryAssembly().Location;
+                      var hh = Path.GetDirectoryName(jj);
+                      var f1 = hh + Path.DirectorySeparatorChar + "GMap.NET.WindowsForms.dll";
+                      var f2 = hh + Path.DirectorySeparatorChar + "GMap.NET.WindowsPresentation.dll";
+                      if (File.Exists(f1))
+                      {
+                          l = Assembly.LoadFile(f1);
+                      }
+                      else if (File.Exists(f2))
+                      {
+                          l = Assembly.LoadFile(f2);
+                      }
+                  }
+
+                  if (l != null)
+                  {
+                      Type t = null;
+
+                      if (l.FullName.Contains("GMap.NET.WindowsForms"))
+                      {
+                          t = l.GetType("GMap.NET.WindowsForms.WindowsFormsImageProxy");
+                      }
+                      else if (l.FullName.Contains("GMap.NET.WindowsPresentation"))
+                      {
+                          t = l.GetType("GMap.NET.WindowsPresentation.WindowsPresentationImageProxy");
+                      }
+
+                      if (t != null)
+                      {
+                          t.InvokeMember("Enable", BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, null);
+                      }
+                  }
+              }
+              catch (Exception ex)
+              {
+                  Debug.WriteLine("GMaps, try set TileImageProxy failed: " + ex.Message);
+              }
+          }
+      }
+#endif
 
       public GMaps()
       {

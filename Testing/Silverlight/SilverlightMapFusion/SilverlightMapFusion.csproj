@@ -61,10 +61,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Maps.MapControl">
-      <HintPath>..\References\Etc\Microsoft.Maps.MapControl.dll</HintPath>
+      <HintPath>..\..\..\References\Silverlight\Microsoft.Maps.MapControl.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Maps.MapControl.Common">
-      <HintPath>..\References\Etc\Microsoft.Maps.MapControl.Common.dll</HintPath>
+      <HintPath>..\..\..\References\Silverlight\Microsoft.Maps.MapControl.Common.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System.Windows" />

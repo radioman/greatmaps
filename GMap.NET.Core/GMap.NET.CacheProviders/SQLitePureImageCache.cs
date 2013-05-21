@@ -106,8 +106,10 @@ namespace GMap.NET.CacheProviders
       /// </summary>
       public static void Ping()
       {
-         ping++;
-         Trace.WriteLine("SQLiteVersion: " + SQLiteConnection.SQLiteVersion + " | " + SQLiteConnection.SQLiteSourceId + " | " + SQLiteConnection.DefineConstants);
+          if (++ping == 1)
+          {
+              Trace.WriteLine("SQLiteVersion: " + SQLiteConnection.SQLiteVersion + " | " + SQLiteConnection.SQLiteSourceId + " | " + SQLiteConnection.DefineConstants);
+          }
       }
 #endif
 #endif

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet - GMap.NET TileHost</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<link rel="stylesheet" href="../../References/Web/LeafletJS/leaflet.css" />
+	<!--[if lte IE 8]>
+	<link rel="stylesheet" href="../../References/Web/LeafletJS/leaflet-ie.css" />
+	<link rel="stylesheet" href="../../References/Web/LeafletJS/locate-ie.css"/>
+	<![endif]-->
+	<link rel="stylesheet" href="../../References/Web/LeafletJS/mobile.css" />
+	<link rel="stylesheet" href="../../References/Web/LeafletJS/locate.css" />
+
+	<script src="../../References/Web/LeafletJS/leaflet.js"></script>
+	<script src="../../References/Web/LeafletJS/proj4js-compressed.js"></script>
+	<script src="../../References/Web/LeafletJS/proj4leaflet.js"></script>
+	<script src="../../References/Web/LeafletJS/locate.js" ></script>
+</head>
+<body>
+	<div id="map"></div>
+	<script type="text/javascript">   
+	
+		var crs = new L.Proj.CRS('EPSG:3346', '+proj=tmerc +lat_0=0 +lon_0=24 +k=0.9998 +x_0=500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
+		{
+			resolutions:
+			[
+			 1587.50317500635, 793.751587503175, 529.167725002117, 264.583862501058, 132.291931250529,
+			 52.9167725002117, 26.4583862501058, 13.2291931250529, 6.61459656252646, 2.64583862501058,
+			 1.32291931250529, 0.529167725002117, 0.264583862501058
+			],
+			origin: [-5122000, 10000100]
+		});
+
+		var url1 = 'http://localhost:8844/1529441131/{z}/{x}/{y}';
+		var glayer1 = new L.TileLayer(url1, {maxZoom: 12, minZoom: 0, continuousWorld: true, attribution: 'GreatMaps - maps.lt map'});	
+
+		var url2 = 'http://localhost:8844/2117154929/{z}/{x}/{y}';
+		var glayer2 = new L.TileLayer(url2, {maxZoom: 12, minZoom: 0, continuousWorld: true, attribution: 'GreatMaps - maps.lt ortofoto'});	
+		
+		var	latlng = new L.LatLng(54.6961334816182, 25.2985095977783);
+
+		var map = new L.Map('map', {crs: crs, center: latlng, zoom: 3, layers: [glayer1]});
+		
+		var baseLayers =
+		{
+			"Map": glayer1,
+			"OrtoFoto": glayer2,
+		};		
+		L.control.layers(baseLayers).addTo(map);
+        		
+		var marker = new L.Marker(latlng);
+		map.addLayer(marker);
+		marker.bindPopup("<p>GMap.NET fusion power! ;}</p>").openPopup();	
+		
+		L.control.locate({
+		position: 'topleft',  // set the location of the control
+		drawCircle: false,     // controls whether a circle is drawn that shows the uncertainty about the location
+		follow: false,    // follow the location if `watch` and `setView` are set to true in locateOptions
+		circleStyle: {},  // change the style of the circle around the user's location
+		markerStyle: {},
+		metric: true,     // use metric or imperial units
+		onLocationError: function(err) {alert(err.message)},  // define an error callback function
+		title: "Show me where I am",  // title of the locat control
+		popupText: ["You are within ", " from this point"],  // text to appear if user clicks on circle
+		setView: true,     // automatically sets the map view to the user's location
+		locateOptions: {}  // define location options e.g enableHighAccuracy: true
+	    }).addTo(map);
+	</script>
+</body>
+</html>

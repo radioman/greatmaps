@@ -7,6 +7,7 @@ namespace GMap.NET.WindowsForms
    using System;
    using System.Diagnostics;
    using GMap.NET.Internals;
+   using GMap.NET.MapProviders;
 
    /// <summary>
    /// image abstraction
@@ -39,6 +40,11 @@ namespace GMap.NET.WindowsForms
       WindowsFormsImageProxy()
       {
 
+      }
+
+      public static void Enable()
+      {
+          GMapProvider.TileImageProxy = Instance;
       }
 
       public static readonly WindowsFormsImageProxy Instance = new WindowsFormsImageProxy();

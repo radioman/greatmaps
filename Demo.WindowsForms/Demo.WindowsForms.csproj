@@ -264,6 +264,57 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\images\layers.png">
+      <Link>leafletjs\dist\images\layers.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\images\locate.png">
+      <Link>leafletjs\dist\images\locate.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\images\locate.svg">
+      <Link>leafletjs\dist\images\locate.svg</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\images\locate_active.png">
+      <Link>leafletjs\dist\images\locate_active.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\images\marker-icon%402x.png">
+      <Link>leafletjs\dist\images\marker-icon%402x.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\images\marker-icon.png">
+      <Link>leafletjs\dist\images\marker-icon.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\images\marker-shadow.png">
+      <Link>leafletjs\dist\images\marker-shadow.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\images\spinner.gif">
+      <Link>leafletjs\dist\images\spinner.gif</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\leaflet-ie.css">
+      <Link>leafletjs\dist\leaflet-ie.css</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\leaflet.css">
+      <Link>leafletjs\dist\leaflet.css</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\leaflet.js">
+      <Link>leafletjs\dist\leaflet.js</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\locate-ie.css">
+      <Link>leafletjs\dist\locate-ie.css</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\locate.css">
+      <Link>leafletjs\dist\locate.css</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\locate.js">
+      <Link>leafletjs\dist\locate.js</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\mobile.css">
+      <Link>leafletjs\dist\mobile.css</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\proj4js-compressed.js">
+      <Link>leafletjs\dist\proj4js-compressed.js</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\References\Web\LeafletJS\proj4leaflet.js">
+      <Link>leafletjs\dist\proj4leaflet.js</Link>
+    </EmbeddedResource>
     <Content Include="BSE.Windows.Forms\Resources\ChevronDown.png" />
     <Content Include="BSE.Windows.Forms\Resources\ChevronLeft.png" />
     <Content Include="BSE.Windows.Forms\Resources\ChevronRight.png" />
@@ -273,24 +324,7 @@
     <Content Include="BSE.Windows.Forms\Resources\Collapse_h.jpg" />
     <Content Include="BSE.Windows.Forms\Resources\Expand.jpg" />
     <Content Include="BSE.Windows.Forms\Resources\Expand_h.jpg" />
-    <EmbeddedResource Include="leafletjs\dist\images\layers.png" />
-    <EmbeddedResource Include="leafletjs\dist\images\marker-icon%402x.png" />
-    <EmbeddedResource Include="leafletjs\dist\images\marker-icon.png" />
-    <EmbeddedResource Include="leafletjs\dist\images\marker-shadow.png" />
-    <EmbeddedResource Include="leafletjs\dist\leaflet.css" />
-    <EmbeddedResource Include="leafletjs\dist\leaflet-ie.css" />
-    <EmbeddedResource Include="leafletjs\dist\leaflet.js" />
-    <EmbeddedResource Include="leafletjs\dist\mobile.css" />
     <EmbeddedResource Include="leafletjs\gmap.html" />
-    <EmbeddedResource Include="leafletjs\dist\images\locate.png" />
-    <EmbeddedResource Include="leafletjs\dist\images\locate.svg" />
-    <EmbeddedResource Include="leafletjs\dist\images\locate_active.png" />
-    <EmbeddedResource Include="leafletjs\dist\images\spinner.gif" />
-    <EmbeddedResource Include="leafletjs\dist\locate-ie.css" />
-    <EmbeddedResource Include="leafletjs\dist\locate.css" />
-    <EmbeddedResource Include="leafletjs\dist\locate.js" />
-    <EmbeddedResource Include="leafletjs\dist\proj4js-compressed.js" />
-    <EmbeddedResource Include="leafletjs\dist\proj4leaflet.js" />
     <Content Include="Resources\ImageReady.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -324,6 +358,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

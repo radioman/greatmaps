@@ -574,12 +574,8 @@ namespace GMap.NET.WindowsPresentation
             ItemContainerStyle = StyleInstance;
             #endregion
 
-            Manager.SQLitePing();
-
             ClipToBounds = true;
             SnapsToDevicePixels = true;
-
-            GMapProvider.TileImageProxy = WindowsPresentationImageProxy.Instance;
 
             Core.SystemType = "WindowsPresentation";
 
@@ -598,6 +594,14 @@ namespace GMap.NET.WindowsPresentation
 
             Core.Zoom = (int)((double)ZoomProperty.DefaultMetadata.DefaultValue);
          }
+      }
+
+      static GMapControl()
+      {
+          WindowsPresentationImageProxy.Enable();
+#if !PocketPC
+          GMaps.Instance.SQLitePing();
+#endif          
       }
 
       void invalidatorEngage(object sender, ProgressChangedEventArgs e)

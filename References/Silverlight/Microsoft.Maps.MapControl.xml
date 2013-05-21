@@ -1,0 +1,2430 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+	<assembly>
+		<name>Microsoft.Maps.MapControl</name>
+	</assembly>
+	<members>
+		<member name="N:Microsoft.Maps.MapControl">
+			<summary>The Microsoft.Maps.MapControl namespace contains the most commonly used public classes of the sl_product_name.</summary>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.AerialMode">
+			<summary>Represents the Aerial map mode.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.AerialMode.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.AerialMode"></see> class. </summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.AerialMode.#ctor(System.Boolean)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.AerialMode"></see> class.</summary>
+			<param name="labels">A bool indicating whether or not to display map labels.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.AerialMode.Activating(Microsoft.Maps.MapControl.Core.MapMode,Microsoft.Maps.MapControl.MapLayerBase,Microsoft.Maps.MapControl.MapLayerBase)">
+			<summary>Notifies a mode that it is being activated by the map.</summary>
+			<param name="modeLayer">The layer which is activating.</param>
+			<param name="modeForegroundLayer">The mode foreground layer.</param>
+			<param name="previousMode">The mode from which the map is transitioning.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.AerialMode.GetZoomRange(Microsoft.Maps.MapControl.Location)">
+			<summary>Retrieves the valid zoom range for the specified location.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Range`1"></see>.</returns>
+			<param name="center">The location for which to retrieve the zoom range.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.AerialMode.OnCultureChanged">
+			<summary>Enables the ability to provide custom handling when the culture of the mode changes.</summary>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.AerialMode.Content">
+			<summary>Gets the map as a UIElement.</summary>
+			<returns>Returns <see cref="T:System.Windows.UIElement"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.AerialMode.FadingLabels">
+			<summary>Gets or sets whether or not to fade labels when the map pans and zooms.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.AerialMode.IsDownloading">
+			<summary>Gets a bool indicating whether map data is still downloading.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.AerialMode.Labels">
+			<summary>Gets or sets whether to show map labels.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.AerialMode.RestrictMaxZoomLevel">
+			<summary>Gets or sets whether the maximum zoom level is restricted by a coverage map.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.AerialMode.UpSampleLevelDelta">
+			<summary>Gets or sets the map tile layers sample level delta.</summary>
+			<returns>Returns <see cref="T:System.Int32"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.ApplicationIdCredentialsProvider">
+			<summary>Provides credentials in the form of an application ID (a maps_ticket).</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.ApplicationIdCredentialsProvider.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.ApplicationIdCredentialsProvider"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.ApplicationIdCredentialsProvider.#ctor(System.String)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.ApplicationIdCredentialsProvider"></see> class using the specified application ID.</summary>
+			<param name="applicationId">The application ID, or Bing Maps Key, to use.</param>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.ApplicationIdCredentialsProvider.PropertyChanged">
+			<summary>Occurs when a property of this class changes.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.ApplicationIdCredentialsProvider.GetCredentials(System.Action{Microsoft.Maps.MapControl.Credentials})">
+			<summary>Retrieves the credentials for the map control. This method can be used to pass your Bing Maps Key to other Bing Maps APIs, such as the Bing Maps REST Serviceshttp://msdn.microsoft.com/en-us/library/ff701713.aspx.</summary>
+			<param name="callback">The function to call when credentials are retrieved.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.ApplicationIdCredentialsProvider.OnPropertyChanged(System.String)">
+			<summary>Enables the ability to provide custom handling when a property of this class changes.</summary>
+			<param name="propertyName">The name of the property that changed.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.ApplicationIdCredentialsProvider.ApplicationId">
+			<summary>Gets or sets the application ID. The application ID is your Bing Maps Key. Information about getting a Bing Maps Key is found in Getting a Bing Maps Keyhttp://msdn.microsoft.com/en-us/library/ff428642.aspx.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.ClientTokenCredentialsProvider">
+			<summary>Provides credentials in the form of a client token.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.ClientTokenCredentialsProvider.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.ClientTokenCredentialsProvider"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.ClientTokenCredentialsProvider.#ctor(System.String)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.ClientTokenCredentialsProvider"></see> class using the specified token.</summary>
+			<param name="token">The client token to use.</param>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.ClientTokenCredentialsProvider.PropertyChanged">
+			<summary>Occurs when a property changes.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.ClientTokenCredentialsProvider.GetCredentials(System.Action{Microsoft.Maps.MapControl.Credentials})">
+			<summary>Retrieves the credentials.</summary>
+			<param name="callback">The function to call when the credentials are retrieved.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.ClientTokenCredentialsProvider.OnPropertyChanged(System.String)">
+			<summary>Enables the ability to provide custom handling when a property of this class changes.</summary>
+			<param name="propertyName">The name of the property that changed.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.ClientTokenCredentialsProvider.Token">
+			<summary>Gets or sets the client token.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.LocationRectTileSource">
+			<summary>Represents map tiles contained with a location rectangle that are available on ve_product_name servers.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.LocationRectTileSource.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.LocationRectTileSource"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.LocationRectTileSource.#ctor(System.String,Microsoft.Maps.MapControl.LocationRect,Microsoft.Maps.MapControl.Range{System.Double})">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.LocationRectTileSource"></see> class with the specified tile source URI, the bounding rectangle within which tiles can be displayed, and the valid zoom range.</summary>
+			<param name="boundingRectangle">The area on the map within which tiles can be displayed.</param>
+			<param name="uriFormat">The URI of the tile source.</param>
+			<param name="zoomRange">The zoom range where tiles are visible.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.LocationRectTileSource.GetUri(System.Int32,System.Int32,System.Int32)">
+			<summary>Retrieves the URI of a tile at the given point and zoom level.</summary>
+			<returns>Returns <see cref="T:System.Uri"></see>.</returns>
+			<param name="zoomLevel">The zoom level of the tile.</param>
+			<param name="x">The horizontal position of the tile.</param>
+			<param name="y">The vertical position of the tile.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.LocationRectTileSource.BoundingRectangle">
+			<summary>Gets or sets the rectangle which contains the tile source.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.LocationRect"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.LocationRectTileSource.ZoomRange">
+			<summary>Gets or sets the zoom range of the tile source.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Range`1"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Map">
+			<summary>Represents the default map class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Map.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Map"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Map.Finalize">
+			<summary>Deconstructs the map.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Map.OnCredentialsProviderChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables the ability to provide custom handling when the credentials provider changes.</summary>
+			<param name="eventArgs">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Map.OnCultureChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables derived classes to provide custom handling when the culture of the map changes.</summary>
+			<param name="eventArgs">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Map.OnFirstFrame">
+			<summary>Enables derived classes to provide custom handling when the first map frame is loaded.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Map.OnOverlayVisibilityChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables the ability to provide custom handling when the visibility of an overlay changes.</summary>
+			<param name="eventArgs">The event arguments.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Map.CredentialsProvider">
+			<summary>Gets or sets the credentials provider.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.CredentialsProvider"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Map.MapForeground">
+			<summary>Gets the map foreground.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Overlays.MapForeground"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Map.Mode">
+			<summary>Gets or sets the map mode.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.MapMode"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.MapItemsControl">
+			<summary>Represents the class that uses a <see cref="T:Microsoft.Maps.MapControl.MapLayer"></see> as an ItemsPanel. This enables data binding using an ItemsSource and an ItemTemplate. This class inherits from the ItemsControl class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapItemsControl.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.MapItemsControl"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapItemsControl.ArrangeOverride(System.Windows.Size)">
+			<summary>Arranges the elements so that they fit into the control.</summary>
+			<returns>Returns <see cref="T:System.Windows.Size"></see>.</returns>
+			<param name="finalSize">The final size in which to fit the elements.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapItemsControl.MeasureOverride(System.Windows.Size)">
+			<summary>Measures the map items control to see if it will fit into the available size.</summary>
+			<returns>Returns <see cref="T:System.Windows.Size"></see> that is the size needed to fit the map items control.</returns>
+			<param name="availableSize">The available size in which the map items control needs to fit.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapItemsControl.OnApplyTemplate">
+			<summary>Executes whenever application code or internal processes (such as a rebuilding layout pass) call System.Windows.Controls.Control.ApplyTemplate(). In simplest terms, this means the method is called just before the UI element displays in an application.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapItemsControl.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapItemsControl.ProjectionUpdated(Microsoft.Maps.MapControl.Core.ProjectionUpdateLevel)">
+			<summary>Updates the elements if the projection is updated. </summary>
+			<param name="updateLevel">The new projection update level.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.MapItemsControl.ParentMap">
+			<summary>Gets the map that owns this map items control.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.MapBase"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.MapLayer">
+			<summary>Represents a map layer, which positions its child <see cref="T:System.Windows.UIElement"></see> objects using geographic coordinates.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.MapLayer"></see> class.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.MapLayer.PositionOffsetProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.MapLayer.PositionOffset"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.MapLayer.PositionOriginProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.MapLayer.PositionOrigin"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.MapLayer.PositionProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.MapLayer.Position"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.MapLayer.PositionRectangleProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.MapLayer.PositionRectangle"></see> dependency property.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.AddChild(System.Windows.UIElement,Microsoft.Maps.MapControl.Location)">
+			<summary>Adds a UIElement to the map layer at the specified location.</summary>
+			<param name="location">The location at which to add the UIElement.</param>
+			<param name="element">The UIElement to add.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.AddChild(System.Windows.UIElement,Microsoft.Maps.MapControl.LocationRect)">
+			<summary>Adds a UIElement to the map layer at the specified location rectangle.</summary>
+			<param name="locationRect">The location rectangle at which to add the UIElement.</param>
+			<param name="element">The UIElement to add.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.AddChild(System.Windows.UIElement,Microsoft.Maps.MapControl.Location,System.Windows.Point)">
+			<summary>Adds a UIElement to the map layer at the specified location using the given pixel offset.</summary>
+			<param name="offset">The pixel offset to use.</param>
+			<param name="location">The location at which to add the UIElement.</param>
+			<param name="element">The UIElement to add.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.AddChild(System.Windows.UIElement,Microsoft.Maps.MapControl.Location,Microsoft.Maps.MapControl.PositionOrigin)">
+			<summary>Adds a UIElement to the map layer at the specified location using the given position origin.</summary>
+			<param name="origin">The position origin to use.</param>
+			<param name="location">The location at which to add the UIElement.</param>
+			<param name="element">The UIElement to add.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.ArrangeOverride(System.Windows.Size)">
+			<summary>Arranges the child elements so that they fit into the map layer.</summary>
+			<returns>Returns the actual<see cref="T:System.Windows.Size"></see> used.</returns>
+			<param name="finalSize">The final size of the map layer.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.GetPosition(System.Windows.DependencyObject)">
+			<summary>Retrieves the map layer’s position.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+			<param name="dependencyObject">The dependency field.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.GetPositionOffset(System.Windows.DependencyObject)">
+			<summary>Retrieves the offset of a layer from the position calculated by the map projection, in pixels.</summary>
+			<returns>Returns <see cref="T:System.Windows.Point"></see>.</returns>
+			<param name="dependencyObject">The dependency field.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.GetPositionOrigin(System.Windows.DependencyObject)">
+			<summary>Retrieves the map layer’s position origin.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.PositionOrigin"></see>.</returns>
+			<param name="dependencyObject">The dependency field.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.GetPositionRectangle(System.Windows.DependencyObject)">
+			<summary>Retrieves a <see cref="T:Microsoft.Maps.MapControl.LocationRect"></see> that <see cref="T:System.Windows.UIElement"></see> objects of the layer are fit into (also known as “arranging”).</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.LocationRect"></see>.</returns>
+			<param name="dependencyObject">The dependency field.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.MeasureOverride(System.Windows.Size)">
+			<summary>Measures the elements that need to fit into the map layer.</summary>
+			<returns>Returns <see cref="T:System.Windows.Size"></see>.</returns>
+			<param name="availableSize">The available size of the map layer.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.OnPositionChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables the ability to provide custom handling when the <see cref="P:Microsoft.Maps.MapControl.MapLayer.Position"></see> of the layer changes.</summary>
+			<param name="dependencyObject">The dependency field.</param>
+			<param name="ea">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.OnPositionOffsetChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables the ability to provide custom handling when the <see cref="P:Microsoft.Maps.MapControl.MapLayer.PositionOffset"></see> of the layer changes.</summary>
+			<param name="dependencyObject">The dependency field.</param>
+			<param name="ea">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.OnPositionOriginChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables the ability to provide custom handling when the <see cref="P:Microsoft.Maps.MapControl.MapLayer.PositionOrigin"></see> of the layer changes.</summary>
+			<param name="dependencyObject">The dependency field.</param>
+			<param name="ea">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.OnPositionRectangleChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables the ability to provide custom handling when the <see cref="P:Microsoft.Maps.MapControl.MapLayer.PositionRectangle"></see> of the layer changes.</summary>
+			<param name="dependencyObject">The dependency field.</param>
+			<param name="ea">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.ProjectionUpdated(Microsoft.Maps.MapControl.Core.ProjectionUpdateLevel)">
+			<summary>Updates the map layer elements if the map projection is updated.</summary>
+			<param name="updateLevel">The projection level.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.SetPosition(System.Windows.DependencyObject,Microsoft.Maps.MapControl.Location)">
+			<summary>Sets the position of the map layer.</summary>
+			<param name="dependencyObject">The dependency field.</param>
+			<param name="location">The location at which to position the map layer.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.SetPositionOffset(System.Windows.DependencyObject,System.Windows.Point)">
+			<summary>Sets the position offset of the map layer.</summary>
+			<param name="dependencyObject">The dependency field.</param>
+			<param name="point">The pixel offset to use.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.SetPositionOrigin(System.Windows.DependencyObject,Microsoft.Maps.MapControl.PositionOrigin)">
+			<summary>Sets the position of the origin of the map layer.</summary>
+			<param name="origin">The position origin of the map layer.</param>
+			<param name="dependencyObject">The dependency field.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapLayer.SetPositionRectangle(System.Windows.DependencyObject,Microsoft.Maps.MapControl.LocationRect)">
+			<summary>Sets the position rectangle of the map layer.</summary>
+			<param name="dependencyObject">The dependency field.</param>
+			<param name="rect">The boundaries of the map layer.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.MapLayer.ParentMap">
+			<summary>Gets the parent map of the map layer.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.MapBase"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.MapPolygon">
+			<summary>Represents a polygon on the map.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapPolygon.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.MapPolygon"></see> class.</summary>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.MapPolygon.FillRule">
+			<summary>Gets or sets the fill rule for the polygon.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.FillRule"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.MapPolygon.ProjectedPoints">
+			<summary>Gets or sets the vertices of the polygon.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.PointCollection"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.MapPolyline">
+			<summary>Represents a polyline on the map.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapPolyline.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.MapPolyline"></see> class.</summary>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.MapPolyline.FillRule">
+			<summary>Gets or sets the fill rule for the polyline.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.FillRule"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.MapPolyline.ProjectedPoints">
+			<summary>Gets or sets the points that define the polyline.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.PointCollection"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.MapTileLayer">
+			<summary>Represents a layer of image tiles on the map.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapTileLayer.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.MapTileLayer"></see> class.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.MapTileLayer.UpSampleLevelDeltaProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.MapTileLayer.UpSampleLevelDelta"></see> dependency property.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapTileLayer.MeasureOverride(System.Windows.Size)">
+			<summary>Measures the elements that need to fit into the map tile layer.</summary>
+			<returns>Returns <see cref="T:System.Windows.Size"></see>.</returns>
+			<param name="availableSize">The size of available space for the map tile layer.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapTileLayer.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.MapTileLayer.ProjectionUpdated(Microsoft.Maps.MapControl.Core.ProjectionUpdateLevel)">
+			<summary>Enables the ability to provide custom handling when the projection of the tile layer changes.</summary>
+			<param name="updateLevel">The projection update level.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.MapTileLayer.ParentMap">
+			<summary>Gets the parent map of the map tile layer.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.MapBase"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.MapTileLayer.TileHeight">
+			<summary>Gets or sets the height, in pixels, of a tile in the map tile layer.</summary>
+			<returns>Returns <see cref="T:System.Int32"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.MapTileLayer.TileSources">
+			<summary>Gets or sets a collection of tile sources associated with the map tile layer.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.TileSourceCollection"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.MapTileLayer.TileWidth">
+			<summary>Gets or sets the width, in pixels, of a tile in the map tile layer.</summary>
+			<returns>Returns <see cref="T:System.Int32"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.MapTileLayer.UpSampleLevelDelta">
+			<summary>Gets or sets the sample level delta.</summary>
+			<returns>Returns <see cref="T:System.Int32"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Pushpin">
+			<summary>Represents a pushpin on the map.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Pushpin.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Pushpin"></see> class.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Pushpin.LocationDependencyProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Pushpin.Location"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Pushpin.PositionOriginDependencyProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Pushpin.PositionOrigin"></see> dependency property.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Pushpin.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Pushpin.Location">
+			<summary>Gets or sets the location of the pushpin on the map.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Pushpin.PositionOrigin">
+			<summary>Gets or sets the position origin of the pushpin, which defines the position on the pushpin to anchor to the map.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.PositionOrigin"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.RoadMode">
+			<summary>Represents the Road map mode.To use the new enhanced road style, be sure to load the configuration file before you call InitializeComponent as described in the Loading the Enhanced Road Map Style topic.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.RoadMode.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.RoadMode"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.RoadMode.Activating(Microsoft.Maps.MapControl.Core.MapMode,Microsoft.Maps.MapControl.MapLayerBase,Microsoft.Maps.MapControl.MapLayerBase)">
+			<summary>Notifies the mode that it is being activated by the map.</summary>
+			<param name="modeLayer">The map mode layer.</param>
+			<param name="modeForegroundLayer">The mode foreground layer.</param>
+			<param name="previousMode">The mode from which the map is transitioning.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.RoadMode.GetZoomRange(Microsoft.Maps.MapControl.Location)">
+			<summary>Retrieves the valid zoom range for the specified location in the Road map mode.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Range`1"></see>.</returns>
+			<param name="center">The location for which to retrieve a zoom range.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.RoadMode.OnCultureChanged">
+			<summary>Enables the ability to provide custom handling when the culture of the mode changes.</summary>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.RoadMode.Content">
+			<summary>Gets the map mode as a UIElement.</summary>
+			<returns>Returns <see cref="T:System.Windows.UIElement"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.RoadMode.IsDownloading">
+			<summary>Gets a bool indicating whether map data is downloading.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.RoadMode.ModeBackground">
+			<summary>Gets the background style of the mode.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.ModeBackground"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.RoadMode.RestrictMaxZoomLevel">
+			<summary>Gets or sets whether the maximum zoom level is restricted by a coverage map.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.RoadMode.UpSampleLevelDelta">
+			<summary>Gets or sets the sample level delta.</summary>
+			<returns>Returns <see cref="T:System.Int32"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.TileSource">
+			<summary>Retrieves the URI for a tile based on its zoom level and tile position.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.TileSource.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.TileSource"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.TileSource.#ctor(System.String)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.TileSource"></see> class.</summary>
+			<param name="uriFormat">The format used to create the URI.</param>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.TileSource.PropertyChanged">
+			<summary>Occurs when a property of the tile source changes.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.TileSource.QuadKeyUriFragment">
+			<summary>Specifies the piece of the URI that is the quad key.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.TileSource.SubdomainUriFragment">
+			<summary>Specifies the piece of the URI that is the sub-domain.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.TileSource.UriSchemeUriFragment">
+			<summary>Specifies the pieces of the URI that is the URI scheme.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.TileSource.GetSubdomain(Microsoft.Maps.MapControl.Core.QuadKey)">
+			<summary>Retrieves the sub-domain for the tile identified by the specified quad key.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+			<param name="quadKey">The quad key that identifies the tile.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.TileSource.GetUri(System.Int32,System.Int32,System.Int32)">
+			<summary>Retrieves the URI for the tile specified by the given x, y coordinates and zoom level.</summary>
+			<returns>Returns a <see cref="T:System.Uri"></see> for the tile.</returns>
+			<param name="zoomLevel">The zoom level of the tile.</param>
+			<param name="x">The horizontal position of the tile.</param>
+			<param name="y">The vertical position of the tile.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.TileSource.OnPropertyChanged(System.String)">
+			<summary>Enables the ability to provide custom handling when a property of the tile source changes.</summary>
+			<param name="propertyName">The name of the changed property.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.TileSource.SetSubdomains(System.String[][])">
+			<summary>Sets a matrix that represents sub-domains.</summary>
+			<param name="subdomains">A string matrix that specifies the sub-domains.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.TileSource.UriFormat">
+			<summary>Gets or sets the format used to create the URI.</summary>
+			<returns>Returns a <see cref="T:System.String"></see>.The following markers may be present in the string.{quadkey}  The string in the UriFormat that will be replaced with a quad key.{UriScheme}  The string in the UriFormat that will be replaced with a URI scheme.{subdomain}  The string in the UriFormat that will be replaced with the sub domain.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.TileSource.Visibility">
+			<summary>Gets or sets the visibility of the tile.</summary>
+			<returns>Returns <see cref="T:System.Windows.Visibility"></see>.</returns>
+		</member>
+		<member name="N:Microsoft.Maps.MapControl.AutomationPeers">
+			<summary>The Microsoft.Maps.MapControl.AutomationPeers namespace contains classes used for test automation.</summary>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.AutomationPeers.BaseAutomationPeer">
+			<summary>Represents the base automation peer class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.AutomationPeers.BaseAutomationPeer.#ctor(System.Windows.FrameworkElement,System.String)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.AutomationPeers.BaseAutomationPeer"></see> class.</summary>
+			<param name="className">The name of the class.</param>
+			<param name="element">The element for which to create the automation peer.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.AutomationPeers.BaseAutomationPeer.GetAutomationControlTypeCore">
+			<summary>Retrieves the type of the control.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationControlType"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.AutomationPeers.BaseAutomationPeer.GetClassNameCore">
+			<summary>Retrieves the name of the class.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.AutomationPeers.BaseAutomationPeer.GetNameCore">
+			<summary>Retrieves the name of the element.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.AutomationPeers.MapAutomationPeer">
+			<summary>Contains methods used to automate the testing of a <see cref="T:Microsoft.Maps.MapControl.Map"></see>.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.AutomationPeers.MapAutomationPeer.#ctor(System.Windows.FrameworkElement)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.AutomationPeers.MapAutomationPeer"></see> class for the given <see cref="T:Microsoft.Maps.MapControl.Map"></see>.</summary>
+			<param name="element">The map to test.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.AutomationPeers.MapAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface)">
+			<summary>Retrieves the value pattern that is supported.</summary>
+			<returns>Returns <see cref="T:System.Object"></see>.</returns>
+			<param name="patternInterface">The pattern interface.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.AutomationPeers.MapAutomationPeer.IsReadOnly">
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.AutomationPeers.MapAutomationPeer.Value">
+			<summary>Gets a string with map properties embedded in it.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.AutomationPeers.MapTileLayerAutomationPeer">
+			<summary>Contains methods used to automate the testing of a map tile layer.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.AutomationPeers.MapTileLayerAutomationPeer.#ctor(System.Windows.FrameworkElement)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.AutomationPeers.MapTileLayerAutomationPeer"></see> class.</summary>
+			<param name="element">The map tile layer to test.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.AutomationPeers.MapTileLayerAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface)">
+			<returns>Returns <see cref="T:System.Object"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.AutomationPeers.MapTileLayerAutomationPeer.IsReadOnly">
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.AutomationPeers.MapTileLayerAutomationPeer.Value">
+			<summary>Gets a string with map tile layer properties embedded in it.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.CollectionItemPropertyChangedEventArgs">
+			<summary>Provides data for the <see cref="E:Microsoft.Maps.MapControl.Core.TileSourceCollection.CollectionItemPropertyChanged"></see> event.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.CollectionItemPropertyChangedEventArgs.#ctor(Microsoft.Maps.MapControl.TileSource,System.String)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.CollectionItemPropertyChangedEventArgs"></see> class.</summary>
+			<param name="propertyName">The name of the property that changed.</param>
+			<param name="tileSource">The tile source whose property has changed.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.CollectionItemPropertyChangedEventArgs.PropertyName">
+			<summary>Gets the name of the property that changed.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.CollectionItemPropertyChangedEventArgs.TileSource">
+			<summary>Gets the tile source whose property has changed.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.TileSource"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.ConfigurationNotLoadedException">
+			<summary>Represents the exception that is thrown when a configuration has not loaded.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.ConfigurationNotLoadedException.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.ConfigurationNotLoadedException"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.ConfigurationNotLoadedException.#ctor(System.String)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.ConfigurationNotLoadedException"></see> class.</summary>
+			<param name="message">The error message that explains the reason for the exception.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.ConfigurationNotLoadedException.#ctor(System.String,System.Exception)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.ConfigurationNotLoadedException"></see> class.</summary>
+			<param name="innerException">The error type that is the cause of the current exception or null.</param>
+			<param name="message">The error message that explains the reason for the exception.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.CopyrightManager">
+			<summary>Manages the copyright string.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.CopyrightManager.GetInstance">
+			<summary>Returns an instance of the copyright manager.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.CopyrightManager"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.CopyrightManager.RequestCopyrightString(Microsoft.Maps.MapControl.PlatformServices.MapStyle,Microsoft.Maps.MapControl.Location,System.Double,Microsoft.Maps.MapControl.Core.CredentialsProvider,System.String,System.Action{Microsoft.Maps.MapControl.Core.CopyrightResult})">
+			<summary>Makes a request for a copyright string based on the specified map view. The map view determines the map data that is being used so that the copyright string can be constructed.</summary>
+			<param name="culture">The culture of the map.</param>
+			<param name="copyrightCallback">The name of the method to call when the request returns. The callback method must take a <see cref="T:Microsoft.Maps.MapControl.Core.CopyrightResult"></see>.</param>
+			<param name="style">The map style of the map view.</param>
+			<param name="zoomLevel">The zoom level of the map.</param>
+			<param name="location">The center location of the map view.</param>
+			<param name="credentialsProvider">A <see cref="T:Microsoft.Maps.MapControl.Core.CredentialsProvider"></see> object that contains the key or token that authenticates map control use.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.CopyrightResult">
+			<summary>Contains copyright strings returned to the callback of the <see cref="M:Microsoft.Maps.MapControl.Core.CopyrightManager.RequestCopyrightString(Microsoft.Maps.MapControl.PlatformServices.MapStyle,Microsoft.Maps.MapControl.Location,System.Double,Microsoft.Maps.MapControl.Core.CredentialsProvider,System.String,System.Action{Microsoft.Maps.MapControl.Core.CopyrightResult})"></see> method.</summary>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.CopyrightResult.CopyrightStrings">
+			<summary>Gets the copyright strings that are based on the map data represented in the map view specified in the <see cref="M:Microsoft.Maps.MapControl.Core.CopyrightManager.RequestCopyrightString(Microsoft.Maps.MapControl.PlatformServices.MapStyle,Microsoft.Maps.MapControl.Location,System.Double,Microsoft.Maps.MapControl.Core.CredentialsProvider,System.String,System.Action{Microsoft.Maps.MapControl.Core.CopyrightResult})"></see> method.</summary>
+			<returns>Returns <see cref="T:System.Collections.Generic.IList`1"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.CopyrightResult.Culture">
+			<summary>Gets the culture of the copyright result, which defines the language of the copyright strings.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.CopyrightResult.Location">
+			<summary>Gets the location of the copyright result, which defines the contents of the copyright strings.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.CopyrightResult.ZoomLevel">
+			<summary>Gets the zoom level of the copyright result, which defines the contents of the copyright strings.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.CredentialsInvalidException">
+			<summary>The exception that is thrown when the specified credentials are invalid.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.CredentialsInvalidException.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.CredentialsInvalidException"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.CredentialsInvalidException.#ctor(System.String)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.CredentialsInvalidException"></see> class.</summary>
+			<param name="message">The error message.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.CredentialsInvalidException.#ctor(System.String,System.Exception)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.CredentialsInvalidException"></see> class.</summary>
+			<param name="innerException">The inner exception.</param>
+			<param name="message">The error message.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.FlatMapMode">
+			<summary>Represents a flattened map projection of the Earth. This class must be inherited.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.#ctor(System.Windows.Size)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.FlatMapMode"></see> class.</summary>
+			<param name="logicalAreaSizeInScreenSpaceAtLevel1">The size of the available screen space at the most zoomed out level.</param>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.FlatMapMode.TargetViewChanged">
+			<summary>Occurs when the view towards which the map is animating changes.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.ConstrainView(Microsoft.Maps.MapControl.Location,System.Double@,System.Double@,System.Double@)">
+			<summary>When overridden in a derived class, limits the values to valid margins.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see> indicating whether or not any of the values were changed.</returns>
+			<param name="pitch">The pitch of the map.</param>
+			<param name="zoomLevel">The zoom level of the map.</param>
+			<param name="center">The center location.</param>
+			<param name="heading">The heading of the map.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.LocationRectToLogicalRect(Microsoft.Maps.MapControl.LocationRect)">
+			<summary>When overridden in a derived class, converts a <see cref="T:Microsoft.Maps.MapControl.LocationRect"></see> object to a <see cref="T:System.Windows.Rect"></see>.</summary>
+			<returns>Returns <see cref="T:System.Windows.Rect"></see>.</returns>
+			<param name="boundingRectangle">The rectangle to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.LocationToLogicalPoint(System.Collections.Generic.IList{Microsoft.Maps.MapControl.Location})">
+			<summary>When overridden in a derived class, converts a collection of locations to a collection of points on the map.</summary>
+			<returns>Returns <see cref="T:System.Collections.Generic.IList`1"></see>.</returns>
+			<param name="locations">The locations to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.LocationToLogicalPoint(Microsoft.Maps.MapControl.Location)">
+			<summary>When overridden in a derived class, converts a location to a point on the screen.</summary>
+			<returns>Returns <see cref="T:System.Windows.Point"></see>.</returns>
+			<param name="location">The location to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.LocationToViewportPoint(System.Collections.Generic.IList{Microsoft.Maps.MapControl.Location})">
+			<summary>Converts a collection of locations to viewport points.</summary>
+			<returns>Returns <see cref="T:System.Collections.Generic.IList`1"></see>.</returns>
+			<param name="locations">The locations to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.LocationToViewportPoint(Microsoft.Maps.MapControl.Location)">
+			<summary>Converts a location to a viewport point.</summary>
+			<returns>Returns <see cref="T:System.Windows.Point"></see>.</returns>
+			<param name="location">The location to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.LocationToViewportPoint(Microsoft.Maps.MapControl.LocationRect)">
+			<summary>Converts a location rectangle to a viewport point.</summary>
+			<returns>Returns <see cref="T:System.Windows.Rect"></see>.</returns>
+			<param name="boundingRectangle">The location rectangle to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.LogicalPointToLocation(System.Windows.Point)">
+			<summary>When overridden in a derived class, converts a logical point to a location.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+			<param name="logicalPoint">The logical point to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.LogicalPointToViewportPoint(System.Windows.Point)">
+			<summary>Converts a point on the screen to a point in the map view.</summary>
+			<returns>Returns <see cref="T:System.Windows.Point"></see>.</returns>
+			<param name="logicalPoint">The point on the screen to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.OnKeyHeld(Microsoft.Maps.MapControl.MapKeyHeldEventArgs)">
+			<summary>Raises the <see cref="E:Microsoft.Maps.MapControl.Core.MapCore.KeyHeld"></see> event.</summary>
+			<param name="e">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.OnMouseDoubleClick(Microsoft.Maps.MapControl.MapMouseEventArgs)">
+			<summary>Raises the <see cref="E:Microsoft.Maps.MapControl.Core.MapCore.MouseDoubleClick"></see> event.</summary>
+			<param name="e">The mouse event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.OnMouseDragBox(Microsoft.Maps.MapControl.MapMouseDragEventArgs)">
+			<summary>Raises the <see cref="E:Microsoft.Maps.MapControl.Core.MapCore.MouseDragBox"></see> event.</summary>
+			<param name="e">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.OnMousePan(Microsoft.Maps.MapControl.MapMouseDragEventArgs)">
+			<summary>Raises the <see cref="E:Microsoft.Maps.MapControl.Core.MapCore.MousePan"></see> event.</summary>
+			<param name="e">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.OnMouseWheel(Microsoft.Maps.MapControl.MapMouseWheelEventArgs)">
+			<summary>Raises the <see cref="E:Microsoft.Maps.MapControl.Core.MapCore.MouseWheel"></see> event.</summary>
+			<param name="e">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.SetView(Microsoft.Maps.MapControl.LocationRect,System.Boolean)">
+			<summary>Sets the map view to the specified location rectangle.</summary>
+			<param name="boundingRectangle">The bounding rectangle to use to set the map view.</param>
+			<param name="animate">A bool indicating whether to animate map navigation.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.SetView(Microsoft.Maps.MapControl.Location,System.Double,System.Double,System.Double,System.Boolean)">
+			<summary>Sets the map view.</summary>
+			<param name="animate">A bool indicating whether to animate map navigation.</param>
+			<param name="pitch">The pitch of the map view.</param>
+			<param name="zoomLevel">The zoom level of the map view.</param>
+			<param name="center">The center location of the map view.</param>
+			<param name="heading">The heading of the map view, in degrees.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.TryLocationToViewportPoint(Microsoft.Maps.MapControl.Location,System.Windows.Point@)">
+			<summary>Converts the specified location to a viewport point.</summary>
+			<returns>Returns a <see cref="T:System.Boolean"></see> indicating if the conversion was successful.</returns>
+			<param name="viewportPoint">The viewport point which represents the specified location.</param>
+			<param name="location">The location to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.TryViewportPointToLocation(System.Windows.Point,Microsoft.Maps.MapControl.Location@)">
+			<summary>Converts the specified viewport point to a location.</summary>
+			<returns>Returns a <see cref="T:System.Boolean"></see> indicating if the conversion was successful.</returns>
+			<param name="viewportPoint">The viewport point to convert.</param>
+			<param name="location">The location which represents the specified viewport point.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.ViewportPointToLocation(System.Windows.Point)">
+			<summary>Converts a viewport point to a location.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+			<param name="viewportPoint">The viewport point to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.ViewportPointToLogicalPoint(System.Windows.Point)">
+			<summary>Converts a viewport point to a point on the screen.</summary>
+			<returns>Returns <see cref="T:System.Windows.Point"></see>.</returns>
+			<param name="viewportPoint">The viewport point to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.FlatMapMode.ViewportSizeChanged(System.Windows.Size)">
+			<summary>Enables the ability to provide custom handling when the size of the viewport changes.</summary>
+			<param name="viewportSize">The new viewport size.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.FlatMapMode.Center">
+			<summary>Gets or sets the location of the center of the map view.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.FlatMapMode.TargetCenter">
+			<summary>Gets the location of the center of the map view towards which the map is animating.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.FlatMapMode.TargetZoomLevel">
+			<summary>Gets the zoom level of the map view towards which the map is animating.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.FlatMapMode.ZoomLevel">
+			<summary>Gets or sets the zoom level of the map view.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.IProjectable">
+			<summary>Defines the base interface for all <see cref="T:System.Windows.UIElement"></see> objects that use a projection to render themselves on a map.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.IProjectable.ProjectionUpdated(Microsoft.Maps.MapControl.Core.ProjectionUpdateLevel)">
+			<summary>Executes when the projection is changed and the conversion methods (ViewportPointToLocation and LocationToViewPortPoint) return different results.</summary>
+			<param name="updateLevel">The map projection update level.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.IProjectable.ParentMap">
+			<summary>Gets the parent map of this projectable.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.MapBase"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.MapBase">
+			<summary>Represents the abstract base map class. This class must be inherited.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.MapBase"></see> class.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.KeyDown">
+			<summary>When overridden in a derived class, occurs when a key is pressed down.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.KeyHeld">
+			<summary>When overridden in a derived class, occurs when the user presses and holds down a key or keys on the keyboard.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.KeyPress">
+			<summary>When overridden in a derived class, occurs when the user presses a key on the keyboard.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.KeyUp">
+			<summary>When overridden in a derived class, occurs when a key is released.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.LoadingError">
+			<summary>When overridden in a derived class, occurs when there is an error loading the map.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.ModeChanged">
+			<summary>When overridden in a derived class, occurs when the map mode changes.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.MouseClick">
+			<summary>When overridden in a derived class, occurs when the mouse is used to click the map.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.MouseDoubleClick">
+			<summary>When overridden in a derived class, occurs when the mouse is used to double click the map.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.MouseDragBox">
+			<summary>When overridden in a derived class, occurs when the mouse is used to drag a box around an area on the map.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.MouseLeftButtonDown">
+			<summary>When overridden in a derived class, occurs when the mouse left button is pressed down.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.MouseLeftButtonUp">
+			<summary>When overridden in a derived class, occurs when the mouse left button is released.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.MouseMove">
+			<summary>When overridden in a derived class, occurs when the mouse moved.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.MousePan">
+			<summary>When overridden in a derived class, occurs when the mouse is used to pan the map. The event occurs for every frame during the pan.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.MouseWheel">
+			<summary>When overridden in a derived class, occurs when the mouse wheel is used.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.TargetViewChanged">
+			<summary>When overridden in a derived class, occurs when the view towards which the map is animating changes.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.TouchComplete">
+			<summary>When overridden in a derived class, occurs when a touch of the map on the screen finishes.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.TouchPan">
+			<summary>When overridden in a derived class, occurs when the screen is touched and dragged to pan the map. This event occurs every frame.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.TouchRotate">
+			<summary>When overridden in a derived class, occurs when the map is rotated using touch. This event occurs when a touch point is dragged in a circle around a stationary touch point.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.TouchZoom">
+			<summary>When overridden in a derived class, occurs when the map is touched to zoom the map. The map can be zoomed in using touch by tapping quickly twice, or by sliding two touch points together. The map can be zoomed out using touch by holding the CTRL key down and tapping quickly twice, or by sliding two touch points apart.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.ViewChangeEnd">
+			<summary>When overridden in a derived class, occurs when the view is done changing.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.ViewChangeOnFrame">
+			<summary>When overridden in a derived class, occurs when the map view is changing.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapBase.ViewChangeStart">
+			<summary>When overridden in a derived class, occurs when the map view starts changing.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Core.MapBase.CenterProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Core.MapBase.Center"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Core.MapBase.CopyrightVisibilityProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Core.MapBase.CopyrightVisibility"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Core.MapBase.CredentialsProviderProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Core.MapBase.CredentialsProvider"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Core.MapBase.CultureProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Core.MapBase.Culture"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Core.MapBase.HeadingProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Core.MapBase.Heading"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Core.MapBase.LogoVisibilityProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Core.MapBase.LogoVisibility"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Core.MapBase.NavigationVisibilityProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Core.MapBase.NavigationVisibility"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Core.MapBase.PitchProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Core.MapBase.Pitch"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Core.MapBase.ScaleVisibilityProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Core.MapBase.ScaleVisibility"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Core.MapBase.ZoomLevelProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Core.MapBase.ZoomLevel"></see> dependency property.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.LocationToViewportPoint(Microsoft.Maps.MapControl.Location)">
+			<summary>When overridden in a derived class, converts a location to a viewport point.</summary>
+			<returns>Returns <see cref="T:System.Windows.Point"></see>.</returns>
+			<param name="location">The location to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.OnCenterChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables derived classes to provide custom handling when the location of the center of the map changes.</summary>
+			<param name="eventArgs">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.OnCredentialsProviderChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables derived classes to provide custom handling when the credentials provider changes.</summary>
+			<param name="eventArgs">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.OnCultureChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables derived classes to provide custom handling when the culture of the map changes.</summary>
+			<param name="eventArgs">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.OnHeadingChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables derived classes to provide custom handling when the heading of the map changes.</summary>
+			<param name="eventArgs">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.OnOverlayVisibilityChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables derived classes to provide custom handling when the visibility of the map overlay changes.</summary>
+			<param name="eventArgs">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.OnPitchChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables derived classes to provide custom handling when the pitch of the map changes.</summary>
+			<param name="eventArgs">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.OnZoomLevelChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables derived classes to provide custom handling when the zoom level of the map changes.</summary>
+			<param name="eventArgs">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.ProjectionUpdated(Microsoft.Maps.MapControl.Core.ProjectionUpdateLevel)">
+			<summary>When overridden in a derived class, executes when the projection of the map changes.</summary>
+			<param name="updateLevel">The new projection update level.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.SetMode(Microsoft.Maps.MapControl.Core.MapMode,System.Boolean)">
+			<summary>When overridden in a derived class, sets the map mode.</summary>
+			<param name="transferSettings">A bool indicating whether to transfer view and animation level settings from the old map mode.</param>
+			<param name="newMode">The new map mode.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.SetView(Microsoft.Maps.MapControl.LocationRect)">
+			<summary>When overridden in a derived class, sets the map view to the specified location rectangle.</summary>
+			<param name="boundingRectangle">The location rectangle which the map view encompasses.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.SetView(Microsoft.Maps.MapControl.Location,System.Double)">
+			<summary>When overridden in a derived class, sets the map view to the specified center location and zoom level.</summary>
+			<param name="zoomLevel">The zoom level of the map.</param>
+			<param name="center">The location of the center of the map view.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.SetView(Microsoft.Maps.MapControl.Location,System.Double,System.Double)">
+			<summary>When overridden in a derived class, sets the map view to the specified center location, zoom level, and heading.</summary>
+			<param name="zoomLevel">The zoom level of the map.</param>
+			<param name="center">The location of the center of the map view.</param>
+			<param name="heading">The directional heading of the map view.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.SetView(Microsoft.Maps.MapControl.Location,System.Double,System.Double,System.Double)">
+			<summary>When overridden in a derived class, sets the map view to the specified center location, zoom level, heading, and pitch.</summary>
+			<param name="pitch">The pitch of the map.</param>
+			<param name="zoomLevel">The zoom level of the map.</param>
+			<param name="center">The location of the center of the map view.</param>
+			<param name="heading">The directional heading of the map.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.TryLocationToViewportPoint(Microsoft.Maps.MapControl.Location,System.Windows.Point@)">
+			<summary>When overridden in a derived class, tries to convert a location to a viewport point.</summary>
+			<returns>Returns a <see cref="T:System.Boolean"></see> indicating if the conversion was successful.</returns>
+			<param name="viewportPoint">The viewport point that represents the specified location.</param>
+			<param name="location">The location to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.TryViewportPointToLocation(System.Windows.Point,Microsoft.Maps.MapControl.Location@)">
+			<summary>When overridden in a derived class, tries to convert a viewport point to a location.</summary>
+			<returns>Returns a <see cref="T:System.Boolean"></see> indicating if the conversion was successful.</returns>
+			<param name="viewportPoint">The viewport point to convert.</param>
+			<param name="location">The location which represents the specified viewport point.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapBase.ViewportPointToLocation(System.Windows.Point)">
+			<summary>When overridden in a derived class, converts a viewport point to a location.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+			<param name="viewportPoint">The viewport point to convert.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.AnimationLevel">
+			<summary>When overridden in a derived class, gets or sets the animation level of map navigation.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.AnimationLevel"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.BoundingRectangle">
+			<summary>When overridden in a derived class, gets the bounding rectangle that defines the boundaries of the map view.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.LocationRect"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.Center">
+			<summary>When overridden in a derived class, gets the center location of the map view.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.Children">
+			<summary>Gets the child elements of the map.</summary>
+			<returns>Returns <see cref="T:System.Windows.Controls.UIElementCollection"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.CopyrightVisibility">
+			<summary>Gets or sets the visibility of the copyright on the map.</summary>
+			<returns>Returns <see cref="T:System.Windows.Visibility"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.CredentialsProvider">
+			<summary>Gets or sets the type of credentials that are being provided.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.CredentialsProvider"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.Culture">
+			<summary>Gets or sets the culture used by the map.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.Heading">
+			<summary>When overridden in a derived class, gets or sets the directional heading of the map.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.IsDownloading">
+			<summary>When overridden in a derived class, gets a bool indicating whether map data is downloading.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.LogoVisibility">
+			<summary>Gets or sets the visibility of the logo on the map.</summary>
+			<returns>Returns <see cref="T:System.Windows.Visibility"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.Mode">
+			<summary>When overridden in a derived class, gets or sets the map mode.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.MapMode"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.NavigationVisibility">
+			<summary>Gets or sets the visibility of the navigation bar.</summary>
+			<returns>Returns <see cref="T:System.Windows.Visibility"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.Pitch">
+			<summary>Gets or sets the pitch of the map.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.RootLayer">
+			<summary>Gets the base map layer.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.MapLayer"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.ScaleVisibility">
+			<summary>Gets or sets the visibility of the scale bar.</summary>
+			<returns>Returns <see cref="T:System.Windows.Visibility"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.TargetBoundingRectangle">
+			<summary>When overridden in a derived class, gets the bounding rectangle that defines the view towards which the map is animating.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.LocationRect"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.TargetCenter">
+			<summary>When overridden in a derived class, gets the center location of the view towards which the map is animating.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.TargetHeading">
+			<summary>When overridden in a derived class, gets the heading of the view towards which the map is animating.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.TargetPitch">
+			<summary>When overridden in a derived class, gets the pitch of the view towards which the map is animating.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.TargetZoomLevel">
+			<summary>When overridden in a derived class, gets the zoom level of the view towards which the map is animating.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.ViewportSize">
+			<summary>When overridden in a derived class, gets the size of the viewport.</summary>
+			<returns>Returns <see cref="T:System.Windows.Size"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapBase.ZoomLevel">
+			<summary>When overridden in a derived class, gets or sets the zoom level of the map.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.MapConfiguration">
+			<summary>Contains asynchronous configuration settings. The configuration settings are loaded when an event handler is added to AsynchronousConfigurationLoaded.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapConfiguration.Loaded">
+			<summary>Occurs when the configuration is loaded.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapConfiguration.GetSection(System.String,System.String,System.String,Microsoft.Maps.MapControl.Core.MapConfigurationCallback)">
+			<summary>Loads the configuration. If configuration is already loaded, this method calls the callback function without trying to load the configuration.</summary>
+			<param name="version">The version string of the configuration.</param>
+			<param name="callback">The callback function to call after the configuration is loaded.</param>
+			<param name="sectionName">The name of the configuration section to load.</param>
+			<param name="culture">The culture of the configuration.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapConfiguration.GetSection(System.String,System.String,System.String,Microsoft.Maps.MapControl.Core.MapConfigurationCallback,System.Object)">
+			<summary>Loads the configuration. If configuration is already loaded, this method calls the callback function without trying to load the configuration.</summary>
+			<param name="version">The version string of the configuration.</param>
+			<param name="callback">The callback function to call after the configuration is loaded.</param>
+			<param name="sectionName">The name of the configuration section.</param>
+			<param name="userState">An object that stores user defined information. This object is returned in the callback function.</param>
+			<param name="culture">The culture of the configuration.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapConfiguration.Load(System.Uri)">
+			<summary>Loads the configuration from the configuration service.</summary>
+			<param name="address">The URI that contains the configuration.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapConfiguration.Load(System.Xml.XmlReader)">
+			<summary>Loads the configuration using the xml provided.</summary>
+			<param name="config">The configuration xml to use.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapConfiguration.SetServiceUri(System.Uri)">
+			<summary>Sets the URI of the configuration service.</summary>
+			<param name="address">The URI of the configuration service.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.MapConfigurationCallback">
+			<summary>Represents the callback function to call when the map configuration has loaded.</summary>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.MapConfigurationLoadedEventArgs">
+			<summary>Provides data for the <see cref="E:Microsoft.Maps.MapControl.Core.MapConfiguration.Loaded"></see> event.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapConfigurationLoadedEventArgs.#ctor(System.Exception)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.MapConfigurationLoadedEventArgs"></see> class.</summary>
+			<param name="error">The error that occurred when the configuration was loaded.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapConfigurationLoadedEventArgs.Error">
+			<summary>Gets the error that occurred when the configuration was loaded.</summary>
+			<returns>Returns <see cref="T:System.Exception"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.MapConfigurationSection">
+			<summary>Represents a section of the map configuration.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapConfigurationSection.Contains(System.String)">
+			<summary>Returns a bool indicating if the configuration setting identified by the specified key is in the map configuration.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+			<param name="key">The key to use.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapConfigurationSection.Item(System.String)">
+			<summary>Gets the configuration setting identified by the specified key.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+			<param name="key">The configuration setting key.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.MapCore">
+			<summary>Represents the map.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.MapCore"></see> class.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.KeyDown">
+			<summary>Occurs when a key is pressed down.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.KeyHeld">
+			<summary>Occurs when the user presses and holds down a key or keys on the keyboard.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.KeyPress">
+			<summary>Occurs when the user presses a key on the keyboard.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.KeyUp">
+			<summary>Occurs when a key is released.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.LoadingError">
+			<summary>Occurs when there is an error loading the map.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.ModeChanged">
+			<summary>Occurs when the map mode changes.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.MouseClick">
+			<summary>Occurs when the mouse is used to click the map.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.MouseDoubleClick">
+			<summary>Occurs when the mouse is used to double click the map.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.MouseDragBox">
+			<summary>Occurs when the mouse is used to drag a box around an area on the map.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.MouseLeftButtonDown">
+			<summary>Occurs when the left mouse button is pressed down.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.MouseLeftButtonUp">
+			<summary>Occurs when the left mouse button is released.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.MouseMove">
+			<summary>Occurs when the mouse moves.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.MousePan">
+			<summary>Occurs when the mouse is used to pan the map. The event occurs for every frame during the pan.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.MouseWheel">
+			<summary>Occurs when the mouse wheel is used.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.TargetViewChanged">
+			<summary>Occurs when the view towards which the map is animating changes.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.TouchComplete">
+			<summary>Occurs when a touch of the map on the screen finishes.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.TouchPan">
+			<summary>Occurs when the screen is touched and dragged to pan the map. This event occurs every frame.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.TouchRotate">
+			<summary>Occurs when the map is rotated using touch. This event occurs when a touch point is dragged in a circle around a stationary touch point.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.TouchZoom">
+			<summary>Occurs when the map is touched to zoom the map. The map can be zoomed in using touch by tapping quickly twice, or by sliding two touch points together. The map can be zoomed out using touch by holding the CTRL key down and tapping quickly twice, or by sliding two touch points apart.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.ViewChangeEnd">
+			<summary>Occurs when the view is done changing.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.ViewChangeOnFrame">
+			<summary>Occurs for every frame of a view change.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.MapCore.ViewChangeStart">
+			<summary>Occurs when the view starts changing.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.ArrangeOverride(System.Windows.Size)">
+			<summary>Arranges the elements to fit the given <see cref="T:System.Windows.Size"></see>.</summary>
+			<returns>Returns <see cref="T:System.Windows.Size"></see>.</returns>
+			<param name="finalSize">The size in which to fit the elements.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.LocationToViewportPoint(Microsoft.Maps.MapControl.Location)">
+			<summary>Converts a location to a viewport point.</summary>
+			<returns>Returns <see cref="T:System.Windows.Point"></see>.</returns>
+			<param name="location">The location to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.MeasureOverride(System.Windows.Size)">
+			<summary>Measures the map elements so that they fit within the map <see cref="T:System.Windows.Size"></see>.</summary>
+			<returns>Returns <see cref="T:System.Windows.Size"></see>.</returns>
+			<param name="availableSize">The available size for the map elements.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.OnCenterChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables the ability to provide custom handling when the location of the center of the map changes.</summary>
+			<param name="eventArgs">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.OnCredentialsProviderChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables the ability to provide custom handling when the credentials provider changes.</summary>
+			<param name="eventArgs">The event data to use.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.OnCultureChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables the ability to provide custom handling when the culture of the map changes.</summary>
+			<param name="eventArgs">The event data to use.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.OnFirstFrame">
+			<summary>Enables derived classes to provide custom handling on the first map frame.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.OnHeadingChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables the ability to provide custom handling when the directional heading of the map changes.</summary>
+			<param name="eventArgs">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.OnKeyDown(System.Windows.Input.KeyEventArgs)">
+			<summary>Raises the <see cref="E:Microsoft.Maps.MapControl.Core.MapCore.KeyDown"></see> keyboard event.</summary>
+			<param name="e">The event data for the KeyDown event.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.OnKeyUp(System.Windows.Input.KeyEventArgs)">
+			<summary>Raises the <see cref="E:Microsoft.Maps.MapControl.Core.MapCore.KeyUp"></see> keyboard event.</summary>
+			<param name="e">The event data for the KeyUp event.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs)">
+			<summary>Raises the <see cref="E:Microsoft.Maps.MapControl.Core.MapCore.MouseLeftButtonDown"></see> mouse event.</summary>
+			<param name="e">The event data for the mouse event.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs)">
+			<summary>Raises the <see cref="E:Microsoft.Maps.MapControl.Core.MapCore.MouseLeftButtonUp"></see> mouse event.</summary>
+			<param name="e">The event data for the mouse event.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.OnMouseMove(System.Windows.Input.MouseEventArgs)">
+			<summary>Raises the <see cref="E:Microsoft.Maps.MapControl.Core.MapCore.MouseMove"></see> mouse event.</summary>
+			<param name="e">The event data for the mouse event.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.OnMouseWheel(System.Windows.Input.MouseWheelEventArgs)">
+			<summary>Raises the <see cref="E:Microsoft.Maps.MapControl.Core.MapCore.MouseWheel"></see> mouse event.</summary>
+			<param name="e">The event data for the mouse event.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.OnPitchChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables the ability to provide custom handling when the pitch of the map changes.</summary>
+			<param name="eventArgs">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.OnZoomLevelChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+			<summary>Enables the ability to provide custom handling when the zoom level of the map changes.</summary>
+			<param name="eventArgs">The event arguments.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.ProjectionUpdated(Microsoft.Maps.MapControl.Core.ProjectionUpdateLevel)">
+			<summary>Enables the ability to provide custom handling when the projection of the map changes.</summary>
+			<param name="updateLevel">The new projection update level.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.SetMode(Microsoft.Maps.MapControl.Core.MapMode,System.Boolean)">
+			<summary>Sets the map mode.</summary>
+			<param name="transferSettings">A bool indicating whether to transfer view and animation level information from the original map mode.</param>
+			<param name="newMode">The new map mode.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.SetView(Microsoft.Maps.MapControl.LocationRect)">
+			<summary>Sets the map view using the specified location rectangle.</summary>
+			<param name="boundingRectangle">The rectangle that defines the boundaries of the map view.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.SetView(Microsoft.Maps.MapControl.Location,System.Double)">
+			<summary>Sets the map view to the specified center location and zoom level.</summary>
+			<param name="zoomLevel">The zoom level of the map view.</param>
+			<param name="center">The location of the center of the map view.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.SetView(Microsoft.Maps.MapControl.Location,System.Double,System.Double)">
+			<summary>Sets the map view to the specified center location, zoom level, and directional heading.</summary>
+			<param name="zoomLevel">The zoom level of the map view.</param>
+			<param name="center">The location of the center of the map view.</param>
+			<param name="heading">The directional heading of the map view.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.SetView(Microsoft.Maps.MapControl.Location,System.Double,System.Double,System.Double)">
+			<summary>Sets the map view to the specified center location, zoom level, heading, and pitch.</summary>
+			<param name="pitch">The pitch of the map view.</param>
+			<param name="zoomLevel">The zoom level of the map view.</param>
+			<param name="center">The location of the center of the map view.</param>
+			<param name="heading">The heading of the map view.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.TryLocationToViewportPoint(Microsoft.Maps.MapControl.Location,System.Windows.Point@)">
+			<summary>Tries to converts a location to a viewport point.</summary>
+			<returns>Returns a <see cref="T:System.Boolean"></see> indicating if the conversion was successful.</returns>
+			<param name="viewportPoint">The viewport point that represents the location.</param>
+			<param name="location">The location to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.TryViewportPointToLocation(System.Windows.Point,Microsoft.Maps.MapControl.Location@)">
+			<summary>Tries to convert a viewport point to a location.</summary>
+			<returns>Returns a <see cref="T:System.Boolean"></see> indicating if the conversion was successful.</returns>
+			<param name="viewportPoint">The viewport point to convert.</param>
+			<param name="location">The location that represents the viewport point.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapCore.ViewportPointToLocation(System.Windows.Point)">
+			<summary>Converts the specified viewport point to a location.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+			<param name="viewportPoint">The viewport point to convert.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapCore.AnimationLevel">
+			<summary>Gets or sets the animation level of the map.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.AnimationLevel"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapCore.BoundingRectangle">
+			<summary>Gets the rectangle that defines the boundaries of the map view.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.LocationRect"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapCore.IsDownloading">
+			<summary>Gets a bool indicating whether map data is downloading.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapCore.LoadingException">
+			<summary>Gets the exception that occurred when loading the map.</summary>
+			<returns>Returns <see cref="T:System.Exception"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapCore.Mode">
+			<summary>Gets or sets the map mode.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.MapMode"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapCore.TargetBoundingRectangle">
+			<summary>Gets the bounding rectangle that defines the boundaries of the map view towards which the map is animating.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.LocationRect"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapCore.TargetCenter">
+			<summary>Gets the center location of the map view towards which the map is animating.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapCore.TargetHeading">
+			<summary>Gets the heading of the map view towards which the map is animating.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapCore.TargetPitch">
+			<summary>Gets the pitch of the map view towards which the map is animating.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapCore.TargetZoomLevel">
+			<summary>Gets the zoom level of the map view towards which the map is animating.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapCore.UseInertia">
+			<summary>Gets or sets whether to use the inertia animation effect during map navigation.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapCore.ViewportSize">
+			<summary>Gets the size of the viewport.</summary>
+			<returns>Returns <see cref="T:System.Windows.Size"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.MapShapeBase">
+			<summary>Represents the base class for a shape on the map. This class must be inherited.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapShapeBase.#ctor(System.Windows.Shapes.Shape)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.MapShapeBase"></see> class.</summary>
+			<param name="shape">The shape to initialize on the map.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapShapeBase.ArrangeOverride(System.Windows.Size)">
+			<summary>Arranges the shape to fit on the map.</summary>
+			<returns>Returns the actual <see cref="T:System.Windows.Size"></see> used.</returns>
+			<param name="finalSize">The final size of the shape to fit.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapShapeBase.MeasureOverride(System.Windows.Size)">
+			<summary>Measures the shape to fit the available size.</summary>
+			<returns>Returns the actual <see cref="T:System.Windows.Size"></see> needed by the shape and its children.</returns>
+			<param name="availableSize">The available size of the shape.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapShapeBase.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MapShapeBase.ProjectionUpdated(Microsoft.Maps.MapControl.Core.ProjectionUpdateLevel)">
+			<summary>Enables the ability to provide custom handling when the map projection changes.</summary>
+			<param name="updateLevel">The new projection update level.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.EncapsulatedShape">
+			<summary>Gets the shape.</summary>
+			<returns>Returns <see cref="T:System.Windows.Shapes.Shape"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.Fill">
+			<summary>Gets or sets the fill of the shape.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.Brush"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.Locations">
+			<summary>Gets or sets the locations that define the vertices of the shape.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.LocationCollection"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.Opacity">
+			<summary>Gets or sets the opacity of the shape.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.OpacityMask">
+			<summary>Gets or sets the opacity mask for the shape.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.Brush"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.ParentMap">
+			<summary>Gets the parent map of the shape.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.MapBase"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.ProjectedPoints">
+			<summary>When overridden in a derived class, gets or sets the projected points of the shape. Use this property to arrange the points of derived classes.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.PointCollection"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.Stroke">
+			<summary>Gets or sets the stroke color of the shape.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.Brush"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.StrokeDashArray">
+			<summary>Gets or sets the StrokeDashArray value of the shape.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.DoubleCollection"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.StrokeDashCap">
+			<summary>Gets or sets the StrokeDashCap value for the shape.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.PenLineCap"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.StrokeDashOffset">
+			<summary>Gets or sets the StrokeDashOffset value for the shape.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.StrokeEndLineCap">
+			<summary>Gets or sets the StrokeEndLineCap value for the shape.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.PenLineCap"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.StrokeLineJoin">
+			<summary>Gets or sets the StrokeLineJoin value for the shape.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.PenLineJoin"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.StrokeMiterLimit">
+			<summary>Gets or sets the StrokeMiterLimit value for the shape.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.StrokeStartLineCap">
+			<summary>Gets or sets the StrokeStartLineCap value for the shape.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.PenLineCap"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MapShapeBase.StrokeThickness">
+			<summary>Gets or sets the StrokeThickness value for the shape.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.MercatorMode">
+			<summary>Represents a Mercator map mode.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MercatorMode.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.MercatorMode"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MercatorMode.ConstrainView(Microsoft.Maps.MapControl.Location,System.Double@,System.Double@,System.Double@)">
+			<summary>Modifies the given parameters to valid values based on the mode limitations.</summary>
+			<returns>Returns a <see cref="T:System.Boolean"></see> indicating if any of the values were changed.</returns>
+			<param name="pitch">The pitch of the view to modify.</param>
+			<param name="zoomLevel">The zoom level of the view to modify.</param>
+			<param name="center">The location of the center of the view.</param>
+			<param name="heading">The directional heading of the view to modify.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MercatorMode.GetZoomRange(Microsoft.Maps.MapControl.Location)">
+			<summary>When overridden in a derived class, gets the zoom range of the specified location in this mode.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Range`1"></see>.</returns>
+			<param name="center">The location of the center of the view.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MercatorMode.LocationRectToLogicalRect(Microsoft.Maps.MapControl.LocationRect)">
+			<summary>Converts a location rectangle to a rectangle in logical space.</summary>
+			<returns>Returns <see cref="T:System.Windows.Rect"></see>.</returns>
+			<param name="boundingRectangle">The location rectangle to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MercatorMode.LocationToLogicalPoint(System.Collections.Generic.IList{Microsoft.Maps.MapControl.Location})">
+			<summary>Converts the collection of locations to logical points.</summary>
+			<returns>Returns <see cref="T:System.Collections.Generic.IList`1"></see>.</returns>
+			<param name="locations">The locations to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MercatorMode.LocationToLogicalPoint(Microsoft.Maps.MapControl.Location)">
+			<summary>Converts the specified location to a point.</summary>
+			<returns>Returns <see cref="T:System.Windows.Point"></see>.</returns>
+			<param name="location">The location to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MercatorMode.LogicalPointToLocation(System.Windows.Point)">
+			<summary>Converts a logical point to a location in the Mercator map mode.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+			<param name="logicalPoint">The logical point to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MercatorMode.OnProjectionChanged(Microsoft.Maps.MapControl.Core.ProjectionUpdateLevel)">
+			<summary>Enables the ability to provide custom handling when the projection changes.</summary>
+			<param name="updateLevel">The new projection update level.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MercatorMode.Attributions">
+			<summary>Gets the map mode imagery attributions.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.AttributionCollection"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MercatorMode.BoundingRectangle">
+			<summary>Gets the location rectangle that defines the boundaries of the mode.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.LocationRect"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MercatorMode.Heading">
+			<summary>Gets the directional heading of the map view.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MercatorMode.HeadingRange">
+			<summary>Gets the heading range supported for the Mercator map mode.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Range`1"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MercatorMode.Pitch">
+			<summary>Gets the pitch of the current map view.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MercatorMode.PitchRange">
+			<summary>Gets the valid range of the pitch.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Range`1"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MercatorMode.Scale">
+			<summary>Gets or sets the scale of the map.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MercatorMode.TargetBoundingRectangle">
+			<summary>Gets the rectangle that defines the boundaries of the map view towards which the map is animating.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.LocationRect"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MercatorMode.TargetScale">
+			<summary>Gets the scale of the map towards which the map is animating.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MercatorMode.ZoomRange">
+			<summary>Gets the range of the valid zoom levels.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Range`1"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.MercatorUtility">
+			<summary>Contains helper methods for Mercator projection calculations.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Core.MercatorUtility.EarthCircumferenceInMeters">
+			<summary>Specifies the circumference of the Earth, in meters.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Core.MercatorUtility.EarthRadiusInMeters">
+			<summary>Specifies the radius of the Earth, in meters.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Core.MercatorUtility.MercatorLatitudeLimit">
+			<summary>Specifies the maximum allowed latitude in a Mercator projection.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MercatorUtility.DegreesToRadians(System.Double)">
+			<summary>Converts degrees to radians.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+			<param name="deg">The degrees to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MercatorUtility.LocationToLogicalPoint(Microsoft.Maps.MapControl.Location)">
+			<summary>Converts a location to a logical <see cref="T:System.Windows.Point"></see> in a Mercator projection.</summary>
+			<returns>Returns <see cref="T:System.Windows.Point"></see>.</returns>
+			<param name="location">The location to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MercatorUtility.LogicalPointToLocation(System.Windows.Point)">
+			<summary>Converts a <see cref="T:System.Windows.Point"></see> to a <see cref="T:Microsoft.Maps.MapControl.Location"></see> in a Mercator projection.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+			<param name="logicalPoint">The logical point to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MercatorUtility.ScaleToZoom(System.Windows.Size,System.Double,Microsoft.Maps.MapControl.Location)">
+			<summary>Calculates the zoom level of the specified location.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+			<param name="location">The center location to use. The scale changes depending on the latitude, so you need to specify what location the scale is in reference to.</param>
+			<param name="logicalAreaSizeInScreenSpaceAtLevel1">The available screen size. This parameter specifies the width and height (in pixels) of zoom level 1. This should be 512x512, unless you are using your own non-standard tiles.</param>
+			<param name="scale">The scale of the map, in meters per pixel.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MercatorUtility.ZoomToScale(System.Windows.Size,System.Double,Microsoft.Maps.MapControl.Location)">
+			<summary>Calculates the scale based on the specified location and zoom level.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+			<param name="logicalAreaSizeInScreenSpaceAtLevel1">The available screen size. This parameter specifies the width and height (in pixels) of zoom level 1. This should be 512x512, unless you are using your own non-standard tiles.</param>
+			<param name="zoomLevel">The zoom level to use.</param>
+			<param name="location">The center location to use.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.MultiScaleQuadTileSource">
+			<summary>Represents a tile source for a multi-scale image retrieved from a Mercator tile source.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MultiScaleQuadTileSource.#ctor(Microsoft.Maps.MapControl.TileSource,System.Int32,System.Int32)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.MultiScaleQuadTileSource"></see> class, specifying a tile source, and the dimensions of each tile.</summary>
+			<param name="tileWidth">The width of a tile.</param>
+			<param name="tileSource">The tile source to use to display the multi-scale image.</param>
+			<param name="tileHeight">The height of a tile.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MultiScaleQuadTileSource.#ctor(Microsoft.Maps.MapControl.Core.TileSourceCollection,System.Int32,System.Int32)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.MultiScaleQuadTileSource"></see> class, specifying tile sources, and the dimensions of each tile.</summary>
+			<param name="tileWidth">The width of a tile.</param>
+			<param name="tileSources">A collection of tile sources used to display the multi-scale image.</param>
+			<param name="tileHeight">The height of a tile.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.MultiScaleQuadTileSource.GetTileLayers(System.Int32,System.Int32,System.Int32,System.Collections.Generic.IList{System.Object})">
+			<summary>Retrieves the tile layers of the multi-scale image.</summary>
+			<param name="tileLevel">The tile level.</param>
+			<param name="tilePositionX">The x-axis position of the tile layer.</param>
+			<param name="tileImageLayerSources">A collection of tile layer image sources.</param>
+			<param name="tilePositionY">The y-axis position of the tile layer.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MultiScaleQuadTileSource.MinTileZoomLevel">
+			<summary>Gets or sets the minimum zoom level for which to download tiles.</summary>
+			<returns>Returns <see cref="T:System.Int32"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Core.MultiScaleQuadTileSource.TileSources">
+			<summary>Gets the collection of tile sources for the multi-scale image.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.TileSourceCollection"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.NullMode">
+			<summary>Represents the null map mode.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.NullMode.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.NullMode"></see> class.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.NullMode.TargetViewChanged">
+			<summary>Occurs when the view towards which the map is animating changes.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.NullMode.LocationToViewportPoint(Microsoft.Maps.MapControl.Location)">
+			<summary>Converts a location to a viewport point.</summary>
+			<returns>Returns <see cref="T:System.Windows.Point"></see>.</returns>
+			<param name="location">The location to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.NullMode.SetView(Microsoft.Maps.MapControl.LocationRect,System.Boolean)">
+			<summary>Sets the map view to the specified location rectangle.</summary>
+			<param name="boundingRectangle">The location rectangle that defines the boundaries of the map view.</param>
+			<param name="animate">A bool indicating whether to animate map navigation.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.NullMode.SetView(Microsoft.Maps.MapControl.Location,System.Double,System.Double,System.Double,System.Boolean)">
+			<summary>Sets the map view to the given center, zoom level, heading, and pitch.</summary>
+			<param name="animate">A bool indicating whether to animate map navigation.</param>
+			<param name="pitch">The pitch of the map view.</param>
+			<param name="zoomLevel">The zoom level of the map view.</param>
+			<param name="center">The location of the center of the map view.</param>
+			<param name="heading">The directional heading of the map view.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.NullMode.TryLocationToViewportPoint(Microsoft.Maps.MapControl.Location,System.Windows.Point@)">
+			<summary>Tries to convert the specified location to a viewport point.</summary>
+			<returns>Returns a <see cref="T:System.Boolean"></see> indicating if the conversion was successful.</returns>
+			<param name="viewportPoint">The viewport point which is the converted location.</param>
+			<param name="location">The location to convert.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.NullMode.TryViewportPointToLocation(System.Windows.Point,Microsoft.Maps.MapControl.Location@)">
+			<summary>Tries to convert the specified viewport point to a location.</summary>
+			<returns>Returns a <see cref="T:System.Boolean"></see> indicating if the conversion was successful.</returns>
+			<param name="viewportPoint">The viewport point to convert.</param>
+			<param name="location">The location which is the converted viewport point.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.NullMode.ViewportPointToLocation(System.Windows.Point)">
+			<summary>Converts the specified viewport point to a location.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Location"></see>.</returns>
+			<param name="viewportPoint">The viewport point to convert.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.TileSourceCollection">
+			<summary>Contains a collection of <see cref="T:Microsoft.Maps.MapControl.Core.TileSource"></see> objects.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.TileSourceCollection.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.TileSourceCollection"></see> class.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Core.TileSourceCollection.CollectionItemPropertyChanged">
+			<summary>Occurs when a property of one of the <see cref="T:Microsoft.Maps.MapControl.Core.TileSource"></see> objects changes.</summary>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Core.UriSchemeNotSupportedException">
+			<summary>Represents the exception that is thrown when the URI scheme used to host the map control is not supported.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.UriSchemeNotSupportedException.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.UriSchemeNotSupportedException"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.UriSchemeNotSupportedException.#ctor(System.String)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.UriSchemeNotSupportedException"></see> class.</summary>
+			<param name="message">The error message.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Core.UriSchemeNotSupportedException.#ctor(System.String,System.Exception)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Core.UriSchemeNotSupportedException"></see> class.</summary>
+			<param name="innerException">The inner exception that caused the error.</param>
+			<param name="message">The error message.</param>
+		</member>
+		<member name="N:Microsoft.Maps.MapControl.Design">
+			<summary>The Microsoft.Maps.MapControl.Design namespace contains classes used by Silverlight design tools, such as type converters.</summary>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Design.ApplicationIdCredentialsProviderConverter">
+			<summary>Contains methods that parse a string into an <see cref="T:Microsoft.Maps.MapControl.ApplicationIdCredentialsProvider"></see>.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Design.ApplicationIdCredentialsProviderConverter.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Design.ApplicationIdCredentialsProviderConverter"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Design.ApplicationIdCredentialsProviderConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+			<summary>Determines whether the given type can be converted to a <see cref="T:Microsoft.Maps.MapControl.ApplicationIdCredentialsProvider"></see>.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+			<param name="sourceType">The type of the object to convert.</param>
+			<param name="context">The context of the conversion.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Design.ApplicationIdCredentialsProviderConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)">
+			<summary>Converts the specified object to an <see cref="T:Microsoft.Maps.MapControl.ApplicationIdCredentialsProvider"></see>.</summary>
+			<returns>Returns <see cref="T:System.Object"></see>.</returns>
+			<param name="context">The context to use in the conversion.</param>
+			<param name="value">The object to convert.</param>
+			<param name="culture">The culture to use in the conversion.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Design.MapModeConverter">
+			<summary>Contains methods that parse a string into a <see cref="T:Microsoft.Maps.MapControl.Core.MapMode"></see>.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Design.MapModeConverter.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Design.MapModeConverter"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Design.MapModeConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+			<summary>Determines whether the given type can be converted to a <see cref="T:Microsoft.Maps.MapControl.Core.MapMode"></see>.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+			<param name="sourceType">The object type from which to convert.</param>
+			<param name="context">The format context provider of the type.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Design.MapModeConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)">
+			<summary>Converts the given object to a <see cref="T:Microsoft.Maps.MapControl.Core.MapMode"></see>.</summary>
+			<returns>Returns <see cref="T:System.Object"></see>.</returns>
+			<param name="context">The format context provider of the type.</param>
+			<param name="value">The object to convert.</param>
+			<param name="culture">The culture to use in the conversion.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Design.RangeConverter">
+			<summary>Contains methods that parse a string into a <see cref="T:Microsoft.Maps.MapControl.Range`1"></see>.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Design.RangeConverter.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Design.RangeConverter"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Design.RangeConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+			<summary>Determines whether or not the given type can be converted to a <see cref="T:Microsoft.Maps.MapControl.Range`1"></see>.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+			<param name="sourceType">The object type from which to convert.</param>
+			<param name="context">The format context provider of the type.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Design.RangeConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)">
+			<summary>Converts a given object to a <see cref="T:Microsoft.Maps.MapControl.Range`1"></see>.</summary>
+			<returns>Returns <see cref="T:System.Object"></see>.</returns>
+			<param name="context">The format context provider of the type.</param>
+			<param name="value">The object to convert.</param>
+			<param name="culture">The culture to use in the conversion.</param>
+		</member>
+		<member name="N:Microsoft.Maps.MapControl.Navigation">
+			<summary>The Microsoft.Maps.MapControl.Navigation namespace contains classes that represent the default map navigation controls.</summary>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.ChangeMapModeButton">
+			<summary>Represents one of the buttons to change the map mode. By default the button is a radio button.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ChangeMapModeButton.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.ChangeMapModeButton"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ChangeMapModeButton.#ctor(Microsoft.Maps.MapControl.Core.MapMode,System.Object)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.ChangeMapModeButton"></see> class.</summary>
+			<param name="content">The content of the button.</param>
+			<param name="mode">The map mode of the button.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ChangeMapModeButton.#ctor(Microsoft.Maps.MapControl.Core.MapMode,System.Object,System.String)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.ChangeMapModeButton"></see> class.</summary>
+			<param name="content">The content of the button.</param>
+			<param name="tooltip">The tooltip of the button. </param>
+			<param name="mode">The map mode of the button.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.ChangeMapModeCommand">
+			<summary>Changes the map mode of the navigation bar.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ChangeMapModeCommand.#ctor(Microsoft.Maps.MapControl.Core.MapMode)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.ChangeMapModeCommand"></see> class.</summary>
+			<param name="mode">The new map mode.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ChangeMapModeCommand.Execute(Microsoft.Maps.MapControl.Core.MapBase)">
+			<summary>Runs when a map mode change command occurs.</summary>
+			<param name="map">The map for which to change the mode.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ChangeMapModeCommand.GetStatus(Microsoft.Maps.MapControl.Core.MapBase)">
+			<summary>Retrieves the map mode status of the specified map.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandStatus"></see>.</returns>
+			<param name="map">The map for which to check status.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.CommandButton">
+			<summary>Represents a button that executes a command when clicked.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CommandButton.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.CommandButton"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CommandButton.#ctor(Microsoft.Maps.MapControl.Navigation.NavigationBarCommandBase,System.Object)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.CommandButton"></see> class.</summary>
+			<param name="content">The content of the button.</param>
+			<param name="command">The command to execute when the button is clicked.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CommandButton.#ctor(Microsoft.Maps.MapControl.Navigation.NavigationBarCommandBase,System.Object,System.String)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.CommandButton"></see> class.</summary>
+			<param name="content">The content of the button.</param>
+			<param name="command">The command to execute when the button is clicked.</param>
+			<param name="tooltip">The tooltip of the button.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CommandButton.OnApplyTemplate">
+			<summary>Enables the ability to provide custom handling when a template is applied to the button.</summary>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.CommandRadioButton">
+			<summary>Represents a radio button that executes a command when clicked.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CommandRadioButton.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.CommandRadioButton"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CommandRadioButton.#ctor(Microsoft.Maps.MapControl.Navigation.NavigationBarCommandBase,System.Object)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.CommandRadioButton"></see> class.</summary>
+			<param name="content">The content of the radio button.</param>
+			<param name="command">The command to execute when the radio button is clicked.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CommandRadioButton.#ctor(Microsoft.Maps.MapControl.Navigation.NavigationBarCommandBase,System.Object,System.String)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.CommandRadioButton"></see> class.</summary>
+			<param name="content">The content of the button.</param>
+			<param name="command">The command to execute when the radio button is clicked.</param>
+			<param name="tooltip">The tooltip of the button.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CommandRadioButton.OnApplyTemplate">
+			<summary>Enables the ability to provide custom handling when a template is applied to the radio button.</summary>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.CommandSeparator">
+			<summary>Represents the separator between commands.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CommandSeparator.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.CommandSeparator"></see> class.</summary>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.CommandToggleButton">
+			<summary>Represents a toggle button that executes a command when clicked.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CommandToggleButton.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.CommandToggleButton"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CommandToggleButton.#ctor(Microsoft.Maps.MapControl.Navigation.NavigationBarCommandBase,System.Object)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.CommandToggleButton"></see> class.</summary>
+			<param name="content">The content of the button.</param>
+			<param name="command">The command to execute when the toggle button is clicked.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CommandToggleButton.#ctor(Microsoft.Maps.MapControl.Navigation.NavigationBarCommandBase,System.Object,System.String)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.CommandToggleButton"></see> class.</summary>
+			<param name="content">The content of the button.</param>
+			<param name="command">The command to execute when the toggle button is clicked.</param>
+			<param name="tooltip">The tooltip of the toggle button.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CommandToggleButton.OnApplyTemplate">
+			<summary>Enables the ability to provide custom handling when a template is applied to the toggle button.</summary>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.Compass">
+			<summary>Represents the compass control.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.Compass.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.Compass"></see> class.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Navigation.Compass.DragCompleted">
+			<summary>Occurs when the user stops dragging the center of the compass control.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Navigation.Compass.DragDelta">
+			<summary>Occurs when the user drags the center of the compass control to pan the map.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Navigation.Compass.HeadingChangeRequested">
+			<summary>Occurs when the heading of the compass changes.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Navigation.Compass.HeadingProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Navigation.Compass.Heading"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Navigation.Compass.ShowDirectionalButtonsProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Navigation.Compass.ShowDirectionalButtons"></see> dependency property.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.Compass.OnApplyTemplate">
+			<summary>Enables the ability to provide custom handling when a template is applied to the compass control.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.Compass.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.Compass.OnHeadingChangeRequested(System.Double)">
+			<summary>Raises the <see cref="E:Microsoft.Maps.MapControl.Navigation.Compass.HeadingChangeRequested"></see> event.</summary>
+			<param name="newValue">The new heading.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.Compass.UpdateVisualState">
+			<summary>Updates the visual state of the control.</summary>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.Compass.Heading">
+			<summary>Gets or sets the directional heading of the compass.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.Compass.ShowDirectionalButtons">
+			<summary>Gets or sets whether to show directional heading buttons.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.CompassDragEventArgs">
+			<summary>Provides data for the <see cref="E:Microsoft.Maps.MapControl.Navigation.Compass.DragDelta"></see> event.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CompassDragEventArgs.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.CompassDragEventArgs"></see> class.</summary>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.CompassDragEventArgs.HorizontalChange">
+			<summary>Gets the amount of horizontal change that occurred during the pan.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.CompassDragEventArgs.VerticalChange">
+			<summary>Gets the amount of vertical change that occurred during the pan.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.CompassPanel">
+			<summary>Represents a custom panel used inside the template of a <see cref="T:Microsoft.Maps.MapControl.Navigation.Compass"></see> control.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CompassPanel.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.CompassPanel"></see> class.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Navigation.CompassPanel.ElementHeadingProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Navigation.CompassPanel.ElementHeading"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Navigation.CompassPanel.HeadingProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Navigation.CompassPanel.Heading"></see> dependency property.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CompassPanel.ArrangeOverride(System.Windows.Size)">
+			<summary>Arranges the elements of the compass panel. </summary>
+			<returns>Returns the actual <see cref="T:System.Windows.Size"></see> used by the panel.</returns>
+			<param name="finalSize">The final size available to the panel.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CompassPanel.GetElementHeading(System.Windows.DependencyObject)">
+			<summary>Retrieves the directional heading of a child element in the panel.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+			<param name="element">The element for which to retrieve the heading.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CompassPanel.MeasureOverride(System.Windows.Size)">
+			<summary>Measures the compass panel.</summary>
+			<returns>Returns the <see cref="T:System.Windows.Size"></see> required by the panel.</returns>
+			<param name="availableSize">The proposed size available for the panel.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CompassPanel.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.CompassPanel.SetElementHeading(System.Windows.DependencyObject,System.Double)">
+			<summary>Sets the directional heading of a child element in the panel to a specified value.</summary>
+			<param name="value">The directional heading value to use for the specified element.</param>
+			<param name="element">The element whose heading to set.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.CompassPanel.Heading">
+			<summary>Gets or sets the directional heading of the compass panel.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.MapControlCompass">
+			<summary>Represents a customized or localized <see cref="T:Microsoft.Maps.MapControl.Navigation.Compass"></see> control that can be added to a map.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.MapControlCompass.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.MapControlCompass"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.MapControlCompass.OnApplyTemplate">
+			<summary>Enables the ability to provide custom handling when a template is applied to the map control compass.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.MapControlCompass.OnCultureChanged">
+			<summary>Enables the ability to provide custom handling when the culture of the map changes.</summary>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.MapControlCompass.Culture">
+			<summary>Gets or sets the culture of the map control compass.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.MapControlNavigationBar">
+			<summary>Represents a customized or localized <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> control that can be added to a map.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.MapControlNavigationBar.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.MapControlNavigationBar"></see> class.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Navigation.MapControlNavigationBar.TemplateApplied">
+			<summary>Occurs when a template is applied to the map control navigation bar.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.MapControlNavigationBar.OnApplyTemplate">
+			<summary>Enables the ability to provide custom handling when a template is applied to the map control navigation bar.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.MapControlNavigationBar.OnCultureChanged">
+			<summary>Enables the ability to provide custom handling when the culture of the map changes.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.MapControlNavigationBar.OnIsExpandedChanged(System.Boolean)">
+			<summary>Enables the ability to provide custom handling when the map control navigation bar is expanded or minimized.</summary>
+			<param name="expanded">A bool indicating if the map control navigation bar is expanded.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.MapControlNavigationBar.Culture">
+			<summary>Gets or sets the culture of the map control navigation bar.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.NavigationBar">
+			<summary>Represents the abstract base control used to navigate a <see cref="T:Microsoft.Maps.MapControl.Core.MapBase"></see> object. This class must be inherited.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> class.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Navigation.NavigationBar.Collapsed">
+			<summary>Occurs when the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> is hidden.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Navigation.NavigationBar.Expanded">
+			<summary>Occurs when the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> is unhidden.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Navigation.NavigationBar.TemplateApplied">
+			<summary>When overridden in a derived class, occurs when a template is applied to the navigation bar.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Navigation.NavigationBar.CommandProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Navigation.NavigationBar.Command"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Navigation.NavigationBar.IsExpandedProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Navigation.NavigationBar.IsExpanded"></see> dependency property.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.ChangeMapHeading(System.Double)">
+			<summary>When overridden in a derived class, changes the direction of the <see cref="T:Microsoft.Maps.MapControl.Navigation.Compass"></see>.</summary>
+			<param name="heading">The new directional heading of the navigation bar’s compass.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.GetCommand(System.Windows.DependencyObject)">
+			<summary>Retrieves the command attached to the specified <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> element.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Navigation.INavigationBarCommand"></see>.</returns>
+			<param name="element">The element to which the command is attached.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.OnApplyTemplate">
+			<summary>Enables the ability to provide custom handling when a template is applied to the control using the <see cref="M:System.Control.ApplyTemplate"></see> method.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.OnIsExpandedChanged(System.Boolean)">
+			<summary>Enables derived classes to provide custom handling when the <see cref="P:Microsoft.Maps.MapControl.Navigation.NavigationBar.IsExpanded"></see> property is changed.</summary>
+			<param name="expanded">A bool indicating whether the navigation bar is expanded.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.OnMouseEnter(System.Windows.Input.MouseEventArgs)">
+			<summary>Raises the <see cref="E:System.Windows.UIElement.MouseEnter"></see> event when the mouse hovers over the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see>.</summary>
+			<param name="e">Event data for the <see cref="E:System.Windows.UIElement.MouseEnter"></see> event.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.OnMouseLeave(System.Windows.Input.MouseEventArgs)">
+			<summary>Raises the <see cref="E:System.Windows.UIElement.MouseLeave"></see> event when the mouse moves away from the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see>.</summary>
+			<param name="e">Event data for the <see cref="E:System.Windows.UIElement.MouseLeave"></see> event.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.PanMap(System.Double,System.Double)">
+			<summary>When overridden in a derived class, pans the map using the specified horizontal and vertical amounts.</summary>
+			<param name="verticalOffset">The amount of vertical movement.</param>
+			<param name="horizontalOffset">The amount of horizontal movement.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.RegisterCommandButton(System.Windows.Controls.Primitives.ButtonBase)">
+			<summary>Registers a command button that updates the status of the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> when the map changes its state.</summary>
+			<param name="button">The button to be registered.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.SetCommand(System.Windows.DependencyObject,Microsoft.Maps.MapControl.Navigation.NavigationBarCommandBase)">
+			<summary>Assigns a command to a specific navigation bar element.</summary>
+			<param name="command">The command to assign to the element.</param>
+			<param name="element">The navigation bar element.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.ShouldEnableMapRotation">
+			<summary>When overridden in a derived class, determines whether the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> compass shows directional buttons that rotate the map direction.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.SynchronizeCommandButtonStates">
+			<summary>Synchronizes the buttons state on the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> with the user controlled map.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.SynchronizeStatesOnEndViewChange">
+			<summary>When overridden in a derived class, synchronizes the state of the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> when the map raises the <see cref="E:Microsoft.Maps.MapControl.Core.MapBase.ViewChangeEnd"></see> event.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.SynchronizeStatesOnModeChange">
+			<summary>When overridden in a derived class, synchronizes the state of the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> when the map raises the <see cref="E:Microsoft.Maps.MapControl.Core.MapBase.ModeChanged"></see> event.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.SynchronizeStatesOnViewChange">
+			<summary>When overridden in a derived class, synchronizes the state of the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> when the map raises the <see cref="E:Microsoft.Maps.MapControl.Core.MapBase.ViewChangeStart"></see> event.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.UpdateVisualState">
+			<summary>When overridden in a derived class, updates the visual state of the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see>.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBar.ZoomMap(System.Double)">
+			<summary>When overridden in a derived class, zooms the user controlled map to the specified zoom level.</summary>
+			<param name="level">The target zoom level.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.NavigationBar.Compass">
+			<summary>Gets the <see cref="T:Microsoft.Maps.MapControl.Navigation.Compass"></see> object embedded in the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> control.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Navigation.Compass"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.NavigationBar.HorizontalLeftPanel">
+			<summary>When overridden in a derived class, gets or sets the horizontal left panel of the navigation bar.</summary>
+			<returns>Returns <see cref="T:System.Windows.Controls.Panel"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.NavigationBar.HorizontalPanel">
+			<summary>When overridden in a derived class, gets or sets the horizontal panel of the navigation bar.</summary>
+			<returns>Returns <see cref="T:System.Windows.Controls.Panel"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.NavigationBar.HorizontalRightPanel">
+			<summary>When overridden in a derived class, gets or sets the horizontal right panel of the navigation bar.</summary>
+			<returns>Returns <see cref="T:System.Windows.Controls.Panel"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.NavigationBar.IsExpanded">
+			<summary>Gets or sets a value determining whether the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> is shown or hidden.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.NavigationBar.IsMouseOver">
+			<summary>Gets a whether the mouse is hovering over the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see>.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.NavigationBar.TargetMap">
+			<summary>Gets or sets the <see cref="T:Microsoft.Maps.MapControl.Core.MapBase"></see> type object controlled by this <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see>.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Core.MapBase"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.NavigationBar.VerticalPanel">
+			<summary>When overridden in a derived class, gets or sets the vertical panel of the navigation bar. By default this panel contains the zoom buttons.</summary>
+			<returns>Returns <see cref="T:System.Windows.Controls.Panel"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.NavigationBar.ZoomSlider">
+			<summary>Gets the <see cref="T:Microsoft.Maps.MapControl.Navigation.ZoomSlider"></see> control in the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see>.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Navigation.ZoomSlider"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandBase">
+			<summary>Represents a command that is executed when a control on the navigation bar is invoked.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandBase.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandBase"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandBase.Execute(Microsoft.Maps.MapControl.Core.MapBase)">
+			<summary>When overridden in a derived class, executes when a button on the navigation bar is invoked.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandBase.GetStatus(Microsoft.Maps.MapControl.Core.MapBase)">
+			<summary>When overridden in a derived class, retrieves the status of a command that is associated with a navigation bar button.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandStatus"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandStatus">
+			<summary>Defines the state of a button on a <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> control.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandStatus.Checked">
+			<summary>The button is checked (enabled).</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandStatus.Disabled">
+			<summary>The button is not checked (disabled).</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandStatus.Hidden">
+			<summary>The button is hidden.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandStatus.Normal">
+			<summary>The button is in a normal state.</summary>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.RotateMapCommand">
+			<summary>Represents the command that rotates a Birdseye map.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.RotateMapCommand.#ctor(System.Boolean)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.RotateMapCommand"></see> class.</summary>
+			<param name="clockwise">A bool indicating whether to rotate the map clockwise.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.RotateMapCommand.Execute(Microsoft.Maps.MapControl.Core.MapBase)">
+			<summary>Executes when the button to rotate the map is invoked.</summary>
+			<param name="map">The map to rotate.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.RotateMapCommand.GetStatus(Microsoft.Maps.MapControl.Core.MapBase)">
+			<summary>Retrieves the status of the rotate map command invoked from the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> control.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandStatus"></see>.</returns>
+			<param name="map">The map controlled by the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see>.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.ToggleLabelsCommand">
+			<summary>Toggles map labels for modes that support them.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ToggleLabelsCommand.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.ToggleLabelsCommand"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ToggleLabelsCommand.Execute(Microsoft.Maps.MapControl.Core.MapBase)">
+			<summary>Executes when the labels button on the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> is toggled.</summary>
+			<param name="map">The map on which to turn map labels on or off.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ToggleLabelsCommand.GetStatus(Microsoft.Maps.MapControl.Core.MapBase)">
+			<summary>Retrieves the status of the labels button for the specified map.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandStatus"></see>.</returns>
+			<param name="map">The map on which to turn map labels on or off.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.TrackMark">
+			<summary>Represents the vertical markings in a <see cref="T:Microsoft.Maps.MapControl.Navigation.ZoomSlider"></see> control.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.TrackMark.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.TrackMark"></see> class.</summary>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.ZoomMapCommand">
+			<summary>Represents the command that adjusts the position of the slider on the <see cref="T:Microsoft.Maps.MapControl.Navigation.ZoomSlider"></see> control on the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see>.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ZoomMapCommand.#ctor(System.Boolean)">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.ZoomMapCommand"></see> class.</summary>
+			<param name="zoomIn">A bool indicating whether the command zooms in to the map. This value is true if the command zooms in and false if the command zooms out.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ZoomMapCommand.Execute(Microsoft.Maps.MapControl.Core.MapBase)">
+			<summary>Executes when a zoom (in our out) is invoked.</summary>
+			<param name="map">The map to zoom.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ZoomMapCommand.GetStatus(Microsoft.Maps.MapControl.Core.MapBase)">
+			<summary>Retrieves the status of the zoom command.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBarCommandStatus"></see>.</returns>
+			<param name="map">The map to zoom.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Navigation.ZoomSlider">
+			<summary>Represents the <see cref="T:Microsoft.Maps.MapControl.Navigation.ZoomSlider"></see> element of the <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see> control.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ZoomSlider.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Navigation.ZoomSlider"></see> class.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Navigation.ZoomSlider.DragCompleted">
+			<summary>Occurs when a drag of the <see cref="T:Microsoft.Maps.MapControl.Navigation.ZoomSlider"></see> is completed.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Navigation.ZoomSlider.TrackMarkStyleProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Navigation.ZoomSlider.TrackMarkStyle"></see> dependency property.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ZoomSlider.NotifyValueChange(System.Double)">
+			<summary>Raises a <see cref="E:System.Windows.Controls.Primitives.RangeBase.ValueChanged"></see> event without changing the actual value of the <see cref="T:Microsoft.Maps.MapControl.Navigation.ZoomSlider"></see>.</summary>
+			<param name="newValue">A <see cref="T:System.Double"></see> specifying the new zoom slider value.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ZoomSlider.OnApplyTemplate">
+			<summary>Enables the ability to provide custom handling when a new control template is applied to the <see cref="T:Microsoft.Maps.MapControl.Navigation.ZoomSlider"></see> control using the <see cref="M:System.Windows.Controls.Control.ApplyTemplate"></see> method.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ZoomSlider.OnMaximumChanged(System.Double,System.Double)">
+			<summary>Enables the ability to provide custom handling when the maximum value of the zoom slider is changed.</summary>
+			<param name="oldMaximum">The old maximum value.</param>
+			<param name="newMaximum">The new maximum value.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ZoomSlider.OnMinimumChanged(System.Double,System.Double)">
+			<summary>Enables the ability to provide custom handling when the minimum value of the zoom slider is changed.</summary>
+			<param name="newMinimum">The new minimum value.</param>
+			<param name="oldMinimum">The old minimum value.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ZoomSlider.OnValueChanged(System.Double,System.Double)">
+			<summary>Enables the ability to provide custom handling when the <see cref="T:System.Windows.Controls.Primitives.RangeBase.Value"></see> property of the <see cref="T:Microsoft.Maps.MapControl.Navigation.ZoomSlider"></see> control is changed.</summary>
+			<param name="oldValue">The old value of the zoom slider.</param>
+			<param name="newValue">The new value of the zoom slider.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ZoomSlider.UpdateThumbPosition">
+			<summary>When overridden in a derived class, updates the position of the slider.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Navigation.ZoomSlider.UpdateTrackMarks">
+			<summary>When overridden in a derived class, updates the track marks of the zoom slider.</summary>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.ZoomSlider.IsDraggingThumb">
+			<summary>Gets a value indicating whether the slider of the zoom slider control is being dragged.</summary>
+			<returns>Returns <see cref="T:System.Boolean"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.ZoomSlider.TrackMarkStyle">
+			<summary>Gets or sets the <see cref="T:System.Windows.Style"></see> applied to the vertical track marks on the zoom slider.</summary>
+			<returns>Returns <see cref="T:System.Windows.Style"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Navigation.ZoomSlider.TrackPanel">
+			<summary>Gets the <see cref="T:System.Windows.Controls.Panel"></see> that contains the <see cref="T:Microsoft.Maps.MapControl.Navigation.TrackMark"></see> controls.</summary>
+			<returns>Returns <see cref="T:System.Windows.Controls.Panel"></see>.</returns>
+		</member>
+		<member name="N:Microsoft.Maps.MapControl.Overlays">
+			<summary>The Microsoft.Maps.MapControl.Overlays namespace contains classes that represent default overlays, such as the map copyright overlay.</summary>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Overlays.Copyright">
+			<summary>Represents the copyright control on the map.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.Copyright.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Overlays.Copyright"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.Copyright.InitializeComponent">
+			<summary>Initializes the copyright control.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.Copyright.OnAttributionsChanged(System.Collections.IList,System.Collections.IList)">
+			<summary>Enables derived classes to provide custom handling when the <see cref="P:Microsoft.Maps.MapControl.Overlays.Copyright.Attributions"></see> property changes.</summary>
+			<param name="oldItems">The old attributions values.</param>
+			<param name="newItems">The new attributions values.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.Copyright.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Overlays.Copyright.Attributions">
+			<summary>Gets the copyright attributions.</summary>
+			<returns>Returns <see cref="T:System.Collections.ObjectModel.ObservableCollection`1"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Overlays.DistanceUnit">
+			<summary>Represents the units of distance used by the scale bar.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Overlays.DistanceUnit.Default">
+			<summary>The scale bar uses the default unit of distance of the current country or region.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Overlays.DistanceUnit.KilometersMeters">
+			<summary>The scale bar uses kilometers for long distances and meters for shorter distances.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Overlays.DistanceUnit.MilesFeet">
+			<summary>The scale bar uses miles for long distances and feet for short distances.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Overlays.DistanceUnit.MilesYards">
+			<summary>The scale bar uses miles for long distances and yards for short distances.</summary>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Overlays.LoadingErrorMessage">
+			<summary>Represents a Silverlight control that shows an error message.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.LoadingErrorMessage.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Overlays.LoadingErrorMessage"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.LoadingErrorMessage.InitializeComponent">
+			<summary>Initializes the error message control.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.LoadingErrorMessage.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.LoadingErrorMessage.SetConfigurationError(System.String)">
+			<summary>Displays a configuration loading error.</summary>
+			<param name="culture">The culture to use to localize the error message or null to use the default culture.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.LoadingErrorMessage.SetCredentialsError(System.String)">
+			<summary>Displays an error if credentials are invalid.</summary>
+			<param name="culture">The culture in which to display the error message.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.LoadingErrorMessage.SetUriSchemeError(System.String)">
+			<summary>Displays an error for a bad URL.</summary>
+			<param name="culture">The culture to use to localize the error message or null to use the default culture.</param>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Overlays.Logo">
+			<summary>Represents the sl_product_name logo.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.Logo.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Overlays.Logo"></see> class.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.Logo.InitializeComponent">
+			<summary>Initializes the logo overlay.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.Logo.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Overlays.MapForeground">
+			<summary>Represents the control that displays the scale bar, the logo, the copyright, and map navigation bar on the map.</summary>
+		</member>
+		<member name="E:Microsoft.Maps.MapControl.Overlays.MapForeground.TemplateApplied">
+			<summary>Occurs when a template is applied.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Overlays.MapForeground.CultureProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Overlays.MapForeground.Culture"></see> dependency property.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.MapForeground.OnApplyTemplate">
+			<summary>Enables the ability to provide custom handling when a new template is applied to the map foreground.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.MapForeground.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.MapForeground.OnCultureChanged(System.String,System.String)">
+			<summary>Enables derived classes to provide custom handling when the <see cref="P:Microsoft.Maps.MapControl.Overlays.MapForeground.Culture"></see> property changes.</summary>
+			<param name="oldValue">The old culture string.</param>
+			<param name="newValue">The new culture string.</param>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Overlays.MapForeground.Copyright">
+			<summary>Gets the current copyright control.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Overlays.Copyright"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Overlays.MapForeground.Culture">
+			<summary>Gets or sets the culture of the map foreground controls.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Overlays.MapForeground.Logo">
+			<summary>Gets the current logo control.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Overlays.Logo"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Overlays.MapForeground.NavigationBar">
+			<summary>Gets the current map navigation bar control.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Navigation.NavigationBar"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Overlays.MapForeground.Scale">
+			<summary>Gets the current scale bar control.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Overlays.Scale"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Overlays.Scale">
+			<summary>Represents the scale bar control on a map.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.Scale.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Overlays.Scale"></see> class.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Overlays.Scale.CultureProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Overlays.Scale.Culture"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Overlays.Scale.DistanceUnitProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Overlays.Scale.DistanceUnit"></see> dependency property.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.Scale.InitializeComponent">
+			<summary>Initializes the scale bar control.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.Scale.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.Scale.OnCultureChanged">
+			<summary>Enables derived classes to provide custom handling when the culture of the scale bar changes.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.Scale.OnPerPixelChanged">
+			<summary>Enables derived classes to provide custom handling when the <see cref="P:Microsoft.Maps.MapControl.Overlays.Scale.MetersPerPixel"></see> value of the scale bar changes.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.Scale.OnUnitChanged">
+			<summary>Enables derived classes to provide custom handling when the units used by the scale bar changes.</summary>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Overlays.Scale.Culture">
+			<summary>Gets or sets the culture of the scale bar, which determines the language and default units used by the scale bar.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Overlays.Scale.DistanceUnit">
+			<summary>Gets or sets the distance unit used by the scale bar.</summary>
+			<returns>Returns <see cref="T:Microsoft.Maps.MapControl.Overlays.DistanceUnit"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Overlays.Scale.MetersPerPixel">
+			<summary>Gets or sets the meters per pixel to display on the scale bar.</summary>
+			<returns>Returns <see cref="T:System.Double"></see>.</returns>
+		</member>
+		<member name="T:Microsoft.Maps.MapControl.Overlays.ShadowText">
+			<summary>Represents a shadowed text label that can be added to a map.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.ShadowText.#ctor">
+			<summary>Initializes a new instance of the <see cref="T:Microsoft.Maps.MapControl.Overlays.ShadowText"></see> class.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Overlays.ShadowText.ForegroundBottomProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Overlays.ShadowText.ForegroundBottom"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Overlays.ShadowText.ForegroundTopProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Overlays.ShadowText.ForegroundTop"></see> dependency property.</summary>
+		</member>
+		<member name="F:Microsoft.Maps.MapControl.Overlays.ShadowText.TextProperty">
+			<summary>Identifies the <see cref="P:Microsoft.Maps.MapControl.Overlays.ShadowText.Text"></see> dependency property.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.ShadowText.InitializeComponent">
+			<summary>Initializes the shadow text control.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.ShadowText.OnCreateAutomationPeer">
+			<summary>Enables the ability to provide custom handling when an automation peer is created.</summary>
+			<returns>Returns <see cref="T:System.Windows.Automation.Peers.AutomationPeer"></see>.</returns>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.ShadowText.SetForegroundColors(System.Windows.Media.Brush,System.Windows.Media.Brush)">
+			<summary>Sets the color of the text and its shadow.</summary>
+			<param name="top">The color of the text.</param>
+			<param name="bottom">The color of the shadow behind the text.</param>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.ShadowText.SetForegroundColorsForDarkBackground">
+			<summary>Sets colors that display best on a dark background.</summary>
+		</member>
+		<member name="M:Microsoft.Maps.MapControl.Overlays.ShadowText.SetForegroundColorsForLightBackground">
+			<summary>Sets colors that display best on a light background.</summary>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Overlays.ShadowText.ForegroundBottom">
+			<summary>Gets or sets the color of the shadow behind the text.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.Brush"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Overlays.ShadowText.ForegroundTop">
+			<summary>Gets or sets the color of the text.</summary>
+			<returns>Returns <see cref="T:System.Windows.Media.Brush"></see>.</returns>
+		</member>
+		<member name="P:Microsoft.Maps.MapControl.Overlays.ShadowText.Text">
+			<summary>Gets or sets the text of the shadow text control on the map.</summary>
+			<returns>Returns <see cref="T:System.String"></see>.</returns>
+		</member>
+	</members>
+</doc>

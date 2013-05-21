@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet - GMap.NET TileHost</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<link rel="stylesheet" href="../../References/Web/LeafletJS/leaflet.css" />
+	<!--[if lte IE 8]>
+	<link rel="stylesheet" href="../../References/Web/LeafletJS/leaflet-ie.css" />
+	<link rel="stylesheet" href="../../References/Web/LeafletJS/locate-ie.css"/>
+	<![endif]-->
+	<link rel="stylesheet" href="../../References/Web/LeafletJS/mobile.css" />
+	<link rel="stylesheet" href="../../References/Web/LeafletJS/locate.css" />
+
+	<script src="../../References/Web/LeafletJS/leaflet.js"></script>
+	<script src="../../References/Web/LeafletJS/proj4js-compressed.js"></script>
+	<script src="../../References/Web/LeafletJS/proj4leaflet.js"></script>
+	<script src="../../References/Web/LeafletJS/locate.js" ></script>
+</head>
+<body>
+	<div id="map"></div>
+	<script type="text/javascript">        
+		var url1 = 'http://localhost:8844/1492776782/{z}/{x}/{y}';
+		var glayer1 = new L.TileLayer(url1, {maxZoom: 18, attribution: 'GreatMaps - OpenStreetMap'});
+		
+		var url2 = 'http://localhost:8844/1404362775/{z}/{x}/{y}';
+		var glayer2 = new L.TileLayer(url2, {maxZoom: 18, attribution: 'GreatMaps - OpenCycleMap'});
+		
+		var url3 = 'http://localhost:8844/729174836/{z}/{x}/{y}';
+		var glayer3 = new L.TileLayer(url3, {maxZoom: 18, attribution: 'GreatMaps - YahooMap'});
+		
+		var url4 = 'http://localhost:8844/2144088369/{z}/{x}/{y}';
+		var glayer4 = new L.TileLayer(url4, {maxZoom: 18, attribution: 'GreatMaps - Bing'});
+		
+		var	latlng = new L.LatLng(54.6961334816182, 25.2985095977783);
+
+		var map = new L.Map('map', {center: latlng, zoom: 13, layers: [glayer1]});
+
+		var baseLayers =
+		{
+			"OpenStreetMap": glayer1,
+			"OpenCycleMap": glayer2,
+			"YahooMap": glayer3,
+			"Bing": glayer4
+		};
+		
+		L.control.layers(baseLayers).addTo(map);
+			
+		var marker = new L.Marker(latlng);
+		map.addLayer(marker);
+		marker.bindPopup("<p>GMap.NET fusion power! ;}</p>").openPopup();
+		
+		L.control.locate({
+		position: 'topleft',  // set the location of the control
+		drawCircle: false,     // controls whether a circle is drawn that shows the uncertainty about the location
+		follow: false,    // follow the location if `watch` and `setView` are set to true in locateOptions
+		circleStyle: {},  // change the style of the circle around the user's location
+		markerStyle: {},
+		metric: true,     // use metric or imperial units
+		onLocationError: function(err) {alert(err.message)},  // define an error callback function
+		title: "Show me where I am",  // title of the locat control
+		popupText: ["You are within ", " from this point"],  // text to appear if user clicks on circle
+		setView: true,     // automatically sets the map view to the user's location
+		locateOptions: {}  // define location options e.g enableHighAccuracy: true
+	    }).addTo(map);
+	</script>
+</body>
+</html>

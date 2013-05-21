@@ -8,6 +8,7 @@ namespace GMap.NET.WindowsPresentation
    using System.Windows.Media;
    using System.Windows.Media.Imaging;
    using GMap.NET.Internals;
+    using GMap.NET.MapProviders;
 
    internal class TileVisual : FrameworkElement
    {
@@ -163,6 +164,11 @@ namespace GMap.NET.WindowsPresentation
       WindowsPresentationImageProxy()
       {
 
+      }
+
+      public static void Enable()
+      {
+          GMapProvider.TileImageProxy = Instance;
       }
 
       public static readonly WindowsPresentationImageProxy Instance = new WindowsPresentationImageProxy();
