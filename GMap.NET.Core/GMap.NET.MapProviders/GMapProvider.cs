@@ -376,8 +376,11 @@ namespace GMap.NET.MapProviders
         {
             PureImage ret = null;
 
+#if !PocketPC
             WebRequest request = IsSocksProxy ? SocksHttpWebRequest.Create(url) : WebRequest.Create(url);
-
+#else
+            WebRequest request = WebRequest.Create(url);
+#endif
             if (WebProxy != null)
             {
                 request.Proxy = WebProxy;
@@ -442,7 +445,11 @@ namespace GMap.NET.MapProviders
         {
             string ret = string.Empty;
 
+#if !PocketPC
             WebRequest request = IsSocksProxy ? SocksHttpWebRequest.Create(url) : WebRequest.Create(url);
+#else
+            WebRequest request = WebRequest.Create(url);
+#endif
 
             if (WebProxy != null)
             {

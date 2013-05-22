@@ -817,6 +817,7 @@ namespace GMap.NET
 
       readonly Exception noDataException = new Exception("No data in local tile cache...");
 
+#if !PocketPC
       TileHttpHost host;
 
       /// <summary>
@@ -843,5 +844,6 @@ namespace GMap.NET
               host.Stop();
           }
       }
+#endif
    }
 }

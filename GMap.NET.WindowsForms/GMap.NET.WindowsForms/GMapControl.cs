@@ -2211,16 +2211,19 @@ namespace GMap.NET.WindowsForms
                         {
                            if(m.IsVisible && m.IsHitTestVisible)
                            {
-                              #region -- check --
-
-                               GPoint rp = new GPoint(e.X, e.Y);
+                              #region -- check --                               
 #if !PocketPC
+                               GPoint rp = new GPoint(e.X, e.Y);
+
                                if (!MobileMode)
                                {
                                    rp.OffsetNegative(Core.renderOffset);
                                }
-#endif
+
                               if(m.IsInsideLocal((int)rp.X, (int)rp.Y))
+#else
+                              if (m.IsInside(FromLocalToLatLng(e.X, e.Y)))
+#endif
                               {
                                  if(!m.IsMouseOver)
                                  {
