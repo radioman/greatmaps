@@ -1,0 +1,94 @@
+<html>
+<head>
+    <title>Home Page</title>
+    <link href="Content/Site.css" rel="stylesheet" type="text/css" />
+
+    <link href="Views/Shared/LeafletJS/leaflet.css" rel="stylesheet" type="text/css" />
+    <!--[if lte IE 8]>
+    <link href="Views/Shared/LeafletJS/leaflet-ie.css" rel="stylesheet" type="text/css" />
+    <link href="Views/Shared/LeafletJS/locate-ie.css" rel="stylesheet" type="text/css" />
+    <![endif]-->
+    <link href="Views/Shared/LeafletJS/mobile.css" rel="stylesheet" type="text/css" />
+    <link href="Views/Shared/LeafletJS/locate.css" rel="stylesheet" type="text/css" />
+
+    <script src="Scripts/jquery-1.5.1.min.js" type="text/javascript"></script>
+
+    <script src="Views/Shared/LeafletJS/leaflet.js" type="text/javascript"></script>
+    <script src="Views/Shared/LeafletJS/proj4js-compressed.js" type="text/javascript"></script>
+    <script src="Views/Shared/LeafletJS/proj4leaflet.js" type="text/javascript"></script>
+    <script src="Views/Shared/LeafletJS/locate.js" type="text/javascript"></script>
+</head>
+<body>
+    <div class="page">
+        <div id="header">
+            <div id="title">
+                <h1></h1>
+            </div>
+            <div id="logindisplay">
+                Welcome <strong>AD\MINDMB</strong>!
+            </div>
+            <div id="menucontainer">
+                <ul id="menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/Home/About">About</a></li>
+                </ul>
+            </div>
+        </div>
+        <div id="main">
+            
+<div id="map" style="height: 333px;"></div>
+
+<script type="text/javascript">
+
+{
+    var url1 = 'http://localhost:8844/1492776782/{z}/{x}/{y}';
+    var glayer1 = new L.TileLayer(url1, { maxZoom: 18, attribution: 'GreatMaps - OpenStreetMap' });
+
+    var url2 = 'http://localhost:8844/1404362775/{z}/{x}/{y}';
+    var glayer2 = new L.TileLayer(url2, { maxZoom: 18, attribution: 'GreatMaps - OpenCycleMap' });
+
+    var url3 = 'http://localhost:8844/729174836/{z}/{x}/{y}';
+    var glayer3 = new L.TileLayer(url3, { maxZoom: 18, attribution: 'GreatMaps - YahooMap' });
+
+    var url4 = 'http://localhost:8844/2144088369/{z}/{x}/{y}';
+    var glayer4 = new L.TileLayer(url4, { maxZoom: 18, attribution: 'GreatMaps - Bing' });
+
+    var latlng = new L.LatLng(54.6961334816182, 25.2985095977783);
+
+    var map = new L.Map('map', { center: latlng, zoom: 13, layers: [glayer1] });
+
+    var baseLayers =
+		{
+		    "OpenStreetMap": glayer1,
+		    "OpenCycleMap": glayer2,
+		    "YahooMap": glayer3,
+		    "Bing": glayer4
+		};
+
+    L.control.layers(baseLayers).addTo(map);
+
+    var marker = new L.Marker(latlng);
+    map.addLayer(marker);
+    marker.bindPopup("<p>GMap.NET fusion power! ;}</p>").openPopup();
+
+    L.control.locate({
+        position: 'topleft',  // set the location of the control
+        drawCircle: false,     // controls whether a circle is drawn that shows the uncertainty about the location
+        follow: false,    // follow the location if `watch` and `setView` are set to true in locateOptions
+        circleStyle: {},  // change the style of the circle around the user's location
+        markerStyle: {},
+        metric: true,     // use metric or imperial units
+        onLocationError: function (err) { alert(err.message) },  // define an error callback function
+        title: "Show me where I am",  // title of the locat control
+        popupText: ["You are within ", " from this point"],  // text to appear if user clicks on circle
+        setView: true,     // automatically sets the map view to the user's location
+        locateOptions: {}  // define location options e.g enableHighAccuracy: true
+    }).addTo(map);
+}
+
+</script>
+
+        </div>
+    </div>
+</body>
+</html>

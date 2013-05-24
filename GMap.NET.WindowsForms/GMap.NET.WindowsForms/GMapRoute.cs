@@ -167,7 +167,7 @@ namespace GMap.NET.WindowsForms
                     pnts[pnts.Length - 1 - i] = p2;
                 }
 
-                if (pnts.Length > 0)
+                if (pnts.Length > 1)
                 {
                     g.DrawLines(Stroke, pnts);
                 }

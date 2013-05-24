@@ -167,7 +167,7 @@ namespace GMap.NET
 
                   if (l == null)
                   {
-                      var jj = Assembly.GetEntryAssembly().Location;
+                      var jj = Assembly.GetExecutingAssembly().Location;
                       var hh = Path.GetDirectoryName(jj);
                       var f1 = hh + Path.DirectorySeparatorChar + "GMap.NET.WindowsForms.dll";
                       var f2 = hh + Path.DirectorySeparatorChar + "GMap.NET.WindowsPresentation.dll";

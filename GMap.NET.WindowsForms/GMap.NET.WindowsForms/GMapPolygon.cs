@@ -136,9 +136,13 @@ namespace GMap.NET.WindowsForms
                   pnts[pnts.Length - 1 - i] = p2;
               }
 
-              if (pnts.Length > 0)
+              if (pnts.Length > 2)
               {
                   graphicsPath.AddPolygon(pnts);
+              }
+              else if (pnts.Length == 2)
+              {
+                  graphicsPath.AddLines(pnts);
               }
           }
       }
@@ -170,7 +174,7 @@ namespace GMap.NET.WindowsForms
                   pnts[pnts.Length - 1 - i] = p2;
                }
 
-               if(pnts.Length > 0)
+               if(pnts.Length > 1)
                {
                   g.FillPolygon(Fill, pnts);
                   g.DrawPolygon(Stroke, pnts);
