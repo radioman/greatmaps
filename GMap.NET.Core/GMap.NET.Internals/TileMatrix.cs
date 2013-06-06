@@ -18,7 +18,7 @@ namespace GMap.NET.Internals
       {
          for(int i = 0; i < Levels.Capacity; i++)
          {
-            Levels.Add(new Dictionary<GPoint, Tile>(55));
+             Levels.Add(new Dictionary<GPoint, Tile>(55, new GPointComparer()));
          }
       }
 

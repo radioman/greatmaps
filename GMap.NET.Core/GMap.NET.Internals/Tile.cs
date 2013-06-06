@@ -132,12 +132,16 @@ namespace GMap.NET.Internals
 
         public override bool Equals(object obj)
         {
-            return base.Equals(obj);
+            if (!(obj is Tile))
+                return false;
+
+            Tile comp = (Tile)obj;
+            return comp.Zoom == this.Zoom && comp.Pos == this.Pos;
         }
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return zoom ^ pos.GetHashCode();
         }
     }
 }

@@ -779,7 +779,7 @@ namespace GMap.NET.Internals
       }
 
       bool RaiseEmptyTileError = false;
-      internal Dictionary<LoadTask, Exception> FailedLoads = new Dictionary<LoadTask, Exception>();
+      internal Dictionary<LoadTask, Exception> FailedLoads = new Dictionary<LoadTask, Exception>(new LoadTaskComparer());
 
       internal static readonly int WaitForTileLoadThreadTimeout = 5 * 1000 * 60; // 5 min.
 

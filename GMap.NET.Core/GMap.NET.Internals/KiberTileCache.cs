@@ -10,6 +10,10 @@ namespace GMap.NET.Internals
    /// </summary>
    internal class KiberTileCache : Dictionary<RawTile, byte[]>
    {
+       public KiberTileCache() : base(new RawTileComparer())
+       {
+       }
+
       readonly Queue<RawTile> Queue = new Queue<RawTile>();
 
       /// <summary>

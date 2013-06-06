@@ -3,6 +3,7 @@ namespace GMap.NET
 {
    using System.Globalization;
    using System;
+    using System.Collections.Generic;
 
    /// <summary>
    /// the point ;}
@@ -142,5 +143,18 @@ namespace GMap.NET
       //{
       //   return n & 0xffff;
       //}
+   }
+
+   internal class GPointComparer : IEqualityComparer<GPoint>
+   {
+       public bool Equals(GPoint x, GPoint y)
+       {
+           return x.X == y.X && x.Y == y.Y;
+       }
+
+       public int GetHashCode(GPoint obj)
+       {
+           return obj.GetHashCode();
+       }
    }
 }

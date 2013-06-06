@@ -2,6 +2,7 @@
 {
    using System.IO;
    using System;
+    using System.Collections.Generic;
 
    /// <summary>
    /// struct for raw tile
@@ -24,4 +25,18 @@
          return Type + " at zoom " + Zoom + ", pos: " + Pos;
       }
    }
+
+   internal class RawTileComparer : IEqualityComparer<RawTile>
+   {
+       public bool Equals(RawTile x, RawTile y)
+       {
+           return x.Type == y.Type && x.Zoom == y.Zoom && x.Pos == y.Pos;
+       }
+
+       public int GetHashCode(RawTile obj)
+       {
+           return obj.Type ^ obj.Zoom ^ obj.Pos.GetHashCode();
+       }
+   }
 }
+

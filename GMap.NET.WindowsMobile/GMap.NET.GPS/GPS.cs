@@ -116,9 +116,9 @@ namespace GMap.NET.GPS
          if(!Opened)
          {
             // create handles for GPS events
-            newLocationHandle = CreateEvent(IntPtr.Zero, 0, 0, null);
-            deviceStateChangedHandle = CreateEvent(IntPtr.Zero, 0, 0, null);
-            stopHandle = CreateEvent(IntPtr.Zero, 0, 0, null);
+            newLocationHandle = Win32.CreateEvent(IntPtr.Zero, false, false, null);
+            deviceStateChangedHandle = Win32.CreateEvent(IntPtr.Zero, false, false, null);
+            stopHandle = Win32.CreateEvent(IntPtr.Zero, false, false, null);
 
             gpsHandle = GPSOpenDevice(newLocationHandle, deviceStateChangedHandle, null, 0);
 
@@ -145,7 +145,7 @@ namespace GMap.NET.GPS
          // Set our native stop event so we can exit our event thread.
          if(stopHandle != IntPtr.Zero)
          {
-            EventModify(stopHandle, eventSet);
+             Win32.EventModify(stopHandle, (int)Win32.EventFlags.SET);
          }
 
          // wait exit
@@ -279,8 +279,8 @@ namespace GMap.NET.GPS
 
             while(listening)
             {
-               int obj = WaitForMultipleObjects(3, handles, 0, -1);
-               if(obj != waitFailed)
+                int obj = Win32.WaitForMultipleObjects(3, handles, 0, -1);
+                if (obj != Win32.waitFailed)
                {
                   switch(obj)
                   {
@@ -313,19 +313,19 @@ namespace GMap.NET.GPS
 
             if(newLocationHandle != IntPtr.Zero)
             {
-               CloseHandle(newLocationHandle);
+                Win32.CloseHandle(newLocationHandle);
                newLocationHandle = IntPtr.Zero;
             }
 
             if(deviceStateChangedHandle != IntPtr.Zero)
             {
-               CloseHandle(deviceStateChangedHandle);
+                Win32.CloseHandle(deviceStateChangedHandle);
                deviceStateChangedHandle = IntPtr.Zero;
             }
 
             if(stopHandle != IntPtr.Zero)
             {
-               CloseHandle(stopHandle);
+               Win32.CloseHandle(stopHandle);
                stopHandle = IntPtr.Zero;
             }
 
@@ -368,23 +368,6 @@ namespace GMap.NET.GPS
 
       [DllImport("gpsapi.dll")]
       static extern int GPSGetDeviceState(IntPtr pGPSDevice);
-      #endregion
-
-      #region PInvokes to coredll.dll
-      [DllImport("coredll.dll")]
-      static extern IntPtr CreateEvent(IntPtr lpEventAttributes, int bManualReset, int bInitialState, StringBuilder lpName);
-
-      [DllImport("coredll.dll")]
-      static extern int CloseHandle(IntPtr hObject);
-
-      const int waitFailed = -1;
-      [DllImport("coredll.dll")]
-      static extern int WaitForMultipleObjects(int nCount, IntPtr lpHandles, int fWaitAll, int dwMilliseconds);
-
-      const int eventSet = 3;
-      [DllImport("coredll.dll")]
-      static extern int EventModify(IntPtr hHandle, int dwFunc);
-
       #endregion
    }
 }
