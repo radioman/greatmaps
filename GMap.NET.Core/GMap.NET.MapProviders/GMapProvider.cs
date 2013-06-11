@@ -359,6 +359,11 @@ namespace GMap.NET.MapProviders
         }
 
         /// <summary>
+        /// to bypass the cache, set to true
+        /// </summary>
+        public bool BypassCache = false;
+
+        /// <summary>
         /// internal proxy for image managment
         /// </summary>
         internal static PureImageProxy TileImageProxy;

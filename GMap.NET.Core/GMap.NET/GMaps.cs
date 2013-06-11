@@ -738,7 +738,7 @@ namespace GMap.NET
 
             if(ret == null)
             {
-               if(Mode != AccessMode.ServerOnly)
+               if(Mode != AccessMode.ServerOnly && !provider.BypassCache)
                {
                   if(PrimaryCache != null)
                   {
@@ -792,7 +792,7 @@ namespace GMap.NET
                            MemoryCache.AddTileToMemoryCache(rtile, ret.Data.GetBuffer());
                         }
 
-                        if(Mode != AccessMode.ServerOnly)
+                        if (Mode != AccessMode.ServerOnly && !provider.BypassCache)
                         {
                            EnqueueCacheTask(new CacheQueueItem(rtile, ret.Data.GetBuffer(), CacheUsage.Both));
                         }
