@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">GreatMaps</string>
-    <string name="title_activity_main">GreatMaps - TileHost</string>
+    <string name="title_activity_main">GreatMaps</string>
     <string name="action_settings">Settings</string>
 
 </resources>

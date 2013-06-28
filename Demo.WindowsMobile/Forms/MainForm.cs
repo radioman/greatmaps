@@ -1230,113 +1230,200 @@ namespace Demo.WindowsMobile
           ThreadPool.QueueUserWorkItem(new WaitCallback(GetGpsFix));
       }
 
+      IntPtr stopHandleWaitForEvent = IntPtr.Zero;
+
       void WaitForEvent(object val)
       {
-          for (int i = 0; i < 1; i++)
+          int minutes = (int) val;
+          
+          string eventName = "GMapWakeUp";
+          string eventStr = "\\\\.\\Notifications\\NamedEvents\\" + eventName;
+
+          var evt = Win32.CreateEvent(IntPtr.Zero, false, false, eventName);
+          if(evt != IntPtr.Zero)
           {
-              try
-              {
-                  string eventName = "GMapWakeUp0";
-                  string eventStr = "\\\\.\\Notifications\\NamedEvents\\" + eventName;
+             bool listening = true;
 
-                  Win32.SYSTEMTIME time;
-                  Win32.GetLocalTime(out time);
+             // allocate 2 handles worth of memory to pass to WaitForMultipleObjects
+             IntPtr handles = Utils.LocalAlloc(2*4);
 
-                  Win32.CE_NOTIFICATION_TRIGGER t = new Win32.CE_NOTIFICATION_TRIGGER();
-                  t.Type = (uint)Win32.CNT_TYPE.CNT_TIME;
-                  t.pAppName = eventStr;
-                  t.pArgs = null;
-                  t.StartTime = Win32.SYSTEMTIME.FromDateTime(time.ToDateTime().AddSeconds(60));
-                  t.Size = (uint)Marshal.SizeOf(t);
+             stopHandleWaitForEvent = Win32.CreateEvent(IntPtr.Zero, false, false, null);
 
-                  Win32.CE_USER_NOTIFICATION n = new Win32.CE_USER_NOTIFICATION();
-                  n.DialogText = "test: " + t.StartTime.ToDateTime();
-                  n.pDialogTitle = "event";
-                  n.ActionFlags = 4;
+             // write the three handles we are listening for.
+             Marshal.WriteInt32(handles, 0, stopHandleWaitForEvent.ToInt32());
+             Marshal.WriteInt32(handles, 4, evt.ToInt32());
 
-                  Debug.WriteLine("event expected: " + t.StartTime.ToDateTime());
+             waitStopEvents.Reset();
 
-                  {
-                      var p = Win32.CreateEvent(IntPtr.Zero, false, false, eventName);
-                      if(p != IntPtr.Zero)
-                      {                         
-                          var un = Win32.CeSetUserNotificationEx(IntPtr.Zero, t, null);
-                          if (un != IntPtr.Zero)
-                          {
-                              #region -- wait --
+             while(listening)
+             {
+                try
+                {
+                   Win32.SYSTEMTIME time;
+                   Win32.GetLocalTime(out time);
 
-                              int r = Win32.WaitForSingleObject(p, 1000 * 80);
-                              if (r == Win32.WAIT_TIMEOUT)
-                              {
-                                  Debug.WriteLine("event timeout: " + r + ", " + DateTime.Now);
-                              }
-                              else if (r == Win32.WAIT_OBJECT_0)
-                              {
-                                  Debug.WriteLine("event OK: " + r + ", " + DateTime.Now);
+                   Win32.CE_NOTIFICATION_TRIGGER t = new Win32.CE_NOTIFICATION_TRIGGER();
+                   t.Type = (uint) Win32.CNT_TYPE.CNT_TIME;
+                   t.pAppName = eventStr;
+                   t.pArgs = null;
+                   t.StartTime = Win32.SYSTEMTIME.FromDateTime(time.ToDateTime().AddMinutes(minutes));
+                   t.Size = (uint) Marshal.SizeOf(t);
 
-                                  Thread.Sleep(4444);
+                   //Win32.CE_USER_NOTIFICATION n = new Win32.CE_USER_NOTIFICATION();
+                   //n.DialogText = "test: " + t.StartTime.ToDateTime();
+                   //n.pDialogTitle = "event";
+                   //n.ActionFlags = 4;
 
-                                  //if (!gps.Opened)
-                                  //{                                  
-                                  //    ResetGpsCounter();
-                                  //    gps.Open();
+                   Debug.WriteLine("event expected: " + t.StartTime.ToDateTime());
 
-                                  //    if (gps.Opened)
-                                  //    {
-                                  //        SetOnGPSPower();
+                   {
+                      {
+                         var un = Win32.CeSetUserNotificationEx(IntPtr.Zero, t, null);
+                         if(un != IntPtr.Zero)
+                         {
+                            #region -- wait --
 
-                                  //        // wait
-                                  //        if (gpsPositionWait.WaitOne(1000 * 33, false))
-                                  //        {
-                                  //            Debug.WriteLine("gpsPositionWait: OK");
-                                  //        }
-                                  //        else
-                                  //        {
-                                  //            Debug.WriteLine("gpsPositionWait: timeout");
-                                  //        }
+                            int r = Win32.WaitForMultipleObjects(2, handles, 0, (1000 * 60 * (minutes+1)));
+                            
+                            Win32.CeClearUserNotification((int) un);
+                            un = IntPtr.Zero;
 
-                                  //        gps.Close();
-                                  //        SetOffGPSPower();
-                                  //    }
-                                  //}                              
-                              }
-                              else
-                              {
-                                  Debug.WriteLine("event ?: " + r + ", " + DateTime.Now);
-                              }                              
+                            if(r == Win32.WAIT_TIMEOUT)
+                            {
+                               Debug.WriteLine("event timeout: " + r + ", " + DateTime.Now);
+                               Thread.Sleep(4444);
+                            }
+                            else if(r == 1)
+                            {
+                               Debug.WriteLine("event OK: " + r + ", " + DateTime.Now);
 
-                              #endregion
+                               //Thread.Sleep(4444);
 
-                              Win32.CeClearUserNotification((int)un);
-                              un = IntPtr.Zero;
-                          }
+                               if(!gps.Opened)
+                               {
+                                  ResetGpsCounter();
+                                  gps.Open();
 
-                          Win32.CloseHandle(p);
-                          p = IntPtr.Zero;
+                                  if(gps.Opened)
+                                  {
+                                     SetOnGPSPower();
+
+                                     // wait
+                                     if(gpsPositionWait.WaitOne(1000 * 33, false))
+                                     {
+                                        Debug.WriteLine("gpsPositionWait: OK");
+                                     }
+                                     else
+                                     {
+                                        Debug.WriteLine("gpsPositionWait: timeout");
+                                     }
+
+                                     gps.Close();
+                                     SetOffGPSPower();
+                                  }
+                               }                              
+                            }
+                            else
+                            {
+                               Debug.WriteLine("event ?: " + r + ", " + DateTime.Now);
+                               listening = false;
+                            }
+
+                            #endregion
+                         }                          
                       }
-                  }
-              }
-              catch (Exception ex)
-              {
-                  Debug.WriteLine("WaitForEvent: " + ex);
-              }
+                      t = null;
+                   }
+                }
+                catch(Exception ex)
+                {
+                   Debug.WriteLine("WaitForEvent: " + ex);
+                }
+             }              
+
+             // free the memory we allocated for the native handles
+             Utils.LocalFree(handles);
+
+             Win32.CloseHandle(stopHandleWaitForEvent);
+             stopHandleWaitForEvent = IntPtr.Zero;
+
+             Win32.CloseHandle(evt);
+             evt = IntPtr.Zero;
+
+             waitStopEvents.Set();
           }
           Debug.WriteLine("WaitForEvent: end");
-      } 
+      }
+
+      readonly ManualResetEvent waitStopEvents = new ManualResetEvent(true);
 
       private void menuItemLog10min_Click(object sender, EventArgs e)
       {
-          ThreadPool.QueueUserWorkItem(new WaitCallback(WaitForEvent));
+         menuItemLog10min.Checked = !menuItemLog10min.Checked;
+         if(menuItemLog10min.Checked)
+         {
+            menuItemLog30min.Checked = false;
+            menuItemLog1h.Checked = false;
+
+            ThreadPool.QueueUserWorkItem(new WaitCallback(WaitForEvent), 10);
+         }
+         else
+         {
+            menuItemLog30min.Checked = true;
+            menuItemLog1h.Checked = true;
+
+            if(stopHandleWaitForEvent != IntPtr.Zero)
+            {
+               Win32.EventModify(stopHandleWaitForEvent, (int) Win32.EventFlags.SET);
+               waitStopEvents.WaitOne();
+            }
+         }
       }
 
       private void menuItemLog30min_Click(object sender, EventArgs e)
       {
+         menuItemLog30min.Checked = !menuItemLog30min.Checked;
+         if(menuItemLog30min.Checked)
+         {
+            menuItemLog10min.Checked = false;
+            menuItemLog1h.Checked = false;
 
+            ThreadPool.QueueUserWorkItem(new WaitCallback(WaitForEvent), 30);
+         }
+         else
+         {
+            menuItemLog10min.Checked = true;
+            menuItemLog1h.Checked = true;
+
+            if(stopHandleWaitForEvent != IntPtr.Zero)
+            {
+               Win32.EventModify(stopHandleWaitForEvent, (int) Win32.EventFlags.SET);
+               waitStopEvents.WaitOne();
+            }
+         }
       }
 
       private void menuItemLog1h_Click(object sender, EventArgs e)
       {
+         menuItemLog1h.Checked = !menuItemLog1h.Checked;
+         if(menuItemLog1h.Checked)
+         {
+            menuItemLog10min.Checked = false;
+            menuItemLog30min.Checked = false;
 
+            ThreadPool.QueueUserWorkItem(new WaitCallback(WaitForEvent), 60);
+         }
+         else
+         {
+            menuItemLog10min.Checked = true;
+            menuItemLog30min.Checked = true;
+
+            if(stopHandleWaitForEvent != IntPtr.Zero)
+            {
+               Win32.EventModify(stopHandleWaitForEvent, (int) Win32.EventFlags.SET);
+               waitStopEvents.WaitOne();
+            }
+         }
       }      
    }
 
