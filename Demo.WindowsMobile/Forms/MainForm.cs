@@ -18,6 +18,8 @@ using GMap.NET.WindowsForms.Markers;
 using Microsoft.Win32;
 using Microsoft.WindowsCE.Forms;
 using GMap.NET.MapProviders;
+using System.Net;
+using System.Threading;
 
 namespace Demo.WindowsMobile
 {
@@ -45,14 +47,14 @@ namespace Demo.WindowsMobile
 
       int count = 0;
       int countReal = 0;
-      double Total = 0;
+      double totalDistance = 0;
 
       EventHandler updateDataHandler;
       TimeSpan delay = TimeSpan.FromSeconds(1);
-      DateTime? TimeUTC;
-      double? Lat = 0;
-      double? Lng = 0;
-      double Delta = 0;
+      DateTime? TimeUTC = null;
+      double? Lat = null;
+      double? Lng = null;
+      double lastDelta = 0;
       internal readonly List<Satellite> Satellites = new List<Satellite>();
 
       IntPtr gpsPowerHandle = IntPtr.Zero;
@@ -62,69 +64,74 @@ namespace Demo.WindowsMobile
       Search pageSearch;
 
       readonly HookKeys hook = new HookKeys();
+
+      readonly AutoResetEvent gpsPositionWait = new AutoResetEvent(false);
       #endregion
 
       public MainForm()
       {
-         InitializeComponent();
+          InitializeComponent();
 
-         pageGps = new GPS(this);
-         pageTransport = new Transport(this);
-         pageSearch = new Search(this);
+          pageGps = new GPS(this);
+          pageTransport = new Transport(this);
+          pageSearch = new Search(this);
+          menuItemGPSenabled.Checked = false;
+          gpsPos = new GMarkerCross(MainMap.Position);
 
 #if DEBUG
-         MainMap.Manager.Mode = AccessMode.ServerAndCache;
-         menuItemServerAndCache.Checked = true;
-         menuItemEnableGrid.Checked = true;
-         menuItemGPSenabled.Checked = false;
-         MainMap.ShowTileGridLines = true;
+          Debug.AutoFlush = true;
+          Debug.WriteLine("go!");
+
+          MainMap.Manager.Mode = AccessMode.ServerAndCache;
+          menuItemServerAndCache.Checked = true;
+          menuItemEnableGrid.Checked = true;
+          MainMap.ShowTileGridLines = true;
 #else
-         menuItemGPSenabled.Checked = false;
          MainMap.Manager.Mode = AccessMode.CacheOnly;
          menuItemCacheOnly.Checked = true;
 #endif
-         MainMap.MapProvider = GMapProviders.LithuaniaMap;
-         MainMap.MaxZoom = 11;
-         MainMap.MinZoom = 1;
-         MainMap.Zoom = MainMap.MinZoom + 1;
-         MainMap.Position = start;
+          MainMap.MapProvider = GMapProviders.LithuaniaMap;
+          MainMap.MaxZoom = 11;
+          MainMap.MinZoom = 1;
+          MainMap.Zoom = MainMap.MinZoom + 1;
+          MainMap.Position = start;
 
-         MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
-         MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
-         MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);
+          MainMap.OnMapTypeChanged += new MapTypeChanged(MainMap_OnMapTypeChanged);
+          MainMap.OnMapZoomChanged += new MapZoomChanged(MainMap_OnMapZoomChanged);
+          MainMap.OnPositionChanged += new PositionChanged(MainMap_OnPositionChanged);
 
-         // add custom layers  
-         {
-            objects = new GMapOverlay("objects");
-            MainMap.Overlays.Add(objects);
+          // add custom layers  
+          {
+              objects = new GMapOverlay("objects");
+              MainMap.Overlays.Add(objects);
 
-            top = new GMapOverlay("top");
-            MainMap.Overlays.Add(top);
-         }
+              top = new GMapOverlay("top");
+              MainMap.Overlays.Add(top);
+          }
 
-         // gps pos
-         gpsPos = new GMarkerCross(MainMap.Position);
-         gpsPos.IsVisible = false;
-         top.Markers.Add(gpsPos);
+          // gps pos
+          gpsPos = new GMarkerCross(MainMap.Position);
+          gpsPos.IsVisible = false;
+          top.Markers.Add(gpsPos);
 
 #if DEBUG
-         // transparent marker test
-         GMapMarkerTransparentGoogleGreen goo = new GMapMarkerTransparentGoogleGreen(MainMap.Position);
-         goo.ToolTipMode = MarkerTooltipMode.Always;
-         goo.ToolTipText = "Welcome to Lithuania! ;}";
-         objects.Markers.Add(goo);
+          // transparent marker test
+          GMapMarkerTransparentGoogleGreen goo = new GMapMarkerTransparentGoogleGreen(MainMap.Position);
+          goo.ToolTipMode = MarkerTooltipMode.Always;
+          goo.ToolTipText = "Welcome to Lithuania! ;}";
+          objects.Markers.Add(goo);
 #endif
 
-         // hook for volume up/down zooming
-         hook.HookEvent += new HookKeys.HookEventHandler(hook_HookEvent);
+          // hook for volume up/down zooming
+          hook.HookEvent += new HookKeys.HookEventHandler(hook_HookEvent);
 
-         // test performance
-         if(PerfTestEnabled)
-         {
-            timer.Interval = 111;
-            timer.Tick += new EventHandler(timer_Tick);
-            timer.Enabled = true;
-         }
+          // test performance
+          if (PerfTestEnabled)
+          {
+              timer.Interval = 111;
+              timer.Tick += new EventHandler(timer_Tick);
+              timer.Enabled = true;
+          }         
       }
 
       void MainMap_OnPositionChanged(PointLatLng point)
@@ -187,7 +194,7 @@ namespace Demo.WindowsMobile
          }
       }
 
-      Timer timer = new Timer();
+      System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
       #endregion
 
       public void ZoomToFitMarkers()
@@ -297,6 +304,26 @@ namespace Demo.WindowsMobile
          menuItemCacheOnly.Checked = false;
       }
 
+      void ResetGpsCounter()
+      {
+          count = 0;
+          countReal = 0;
+          totalDistance = 0;
+          {
+              TimeUTC = null;
+              Lat = null;
+              Lng = null;
+              lastDelta = 0;
+          }
+
+          lock (Satellites)
+          {
+              Satellites.Clear();
+              Satellites.TrimExcess();
+          }
+          gpsPositionWait.Reset();
+      }
+
       private void menuItemGPSenabled_Click(object sender, EventArgs e)
       {
          menuItemGPSenabled.Checked = !menuItemGPSenabled.Checked;
@@ -307,39 +334,29 @@ namespace Demo.WindowsMobile
             {
                gps.Close();
                SetOffGPSPower();
-            }
-
-            count = 0;
-            countReal = 0;
-            Total = 0;
-            {
-               TimeUTC = null;
-               Lat = null;
-               Lng = null;
-               Delta = 0;
-            }
-            lock(Satellites)
-            {
-               Satellites.Clear();
-               Satellites.TrimExcess();
-            }
+            }            
 
             if(Controls.Contains(pageGps))
             {
                pageGps.panelSignals.Invalidate();
             }
 
-            TryCommitData();
-
             gpsPos.Pen.Color = Color.Blue;
+            menuItemGpsFix.Enabled = true;
+
+            TryCommitData();            
          }
          else // start tracking
          {
+            menuItemGpsFix.Enabled = false;
+
             gpsPos.Pen.Color = Color.Red;
             gpsPos.IsVisible = true;
 
+            ResetGpsCounter();
+
             if(!gps.Opened)
-            {
+            {               
                gps.Open();
                SetOnGPSPower();
             }
@@ -394,7 +411,7 @@ namespace Demo.WindowsMobile
 
                cmd.Parameters["@p1"].Value = data.Time.Value;
                cmd.Parameters["@p2"].Value = countReal++;
-               cmd.Parameters["@p3"].Value = Delta;
+               cmd.Parameters["@p3"].Value = lastDelta;
                cmd.Parameters["@p4"].Value = data.Speed;
                cmd.Parameters["@p5"].Value = data.SeaLevelAltitude;
                cmd.Parameters["@p6"].Value = data.EllipsoidAltitude;
@@ -665,13 +682,18 @@ namespace Demo.WindowsMobile
 
                   if(TimeUTC.HasValue && position.Time - TimeUTC.Value >= delay)
                   {
-                     Delta = gps.GetDistance(position.Latitude.Value, position.Longitude.Value, Lat.Value, Lng.Value);
-                     Total += Delta;
+                     lastDelta = gps.GetDistance(position.Latitude.Value, position.Longitude.Value, Lat.Value, Lng.Value);
+                     totalDistance += lastDelta;
                      Lat = position.Latitude;
                      Lng = position.Longitude;
                      TimeUTC = position.Time;
 
                      AddToLogCurrentInfo(position);
+
+                     if (countReal == 4)
+                     {
+                         gpsPositionWait.Set();
+                     }
                   }
                }
                else
@@ -718,9 +740,8 @@ namespace Demo.WindowsMobile
          if(gps.Opened)
          {
             gps.Close();
-         }
-
-         SetOffGPSPower();
+            SetOffGPSPower();
+         }         
 
          if(cn != null)
          {
@@ -798,13 +819,13 @@ namespace Demo.WindowsMobile
                      int deltaClock = ((int) (DateTime.UtcNow - lastData.Time.Value).TotalSeconds);
 
                      str += "Time(UTC): " + lastData.Time.Value.ToLongTimeString() + ", delay: " + deltaClock + "s \n";
-                     str += "Delta: " + string.Format("{0:0.00}m, total: {1:0.00km}\n", Delta * 1000.0, Total);
+                     str += "Delta: " + string.Format("{0:0.00}m, total: {1:0.00km}\n", lastDelta * 1000.0, totalDistance);
                      str += "Latitude: " + lastData.Latitude.Value + "\n";
                      str += "Longitude: " + lastData.Longitude.Value + "\n\n";
 
                      if(Math.Abs(deltaClock) > 5) // 5s
                      {
-                        UpdateTime(lastData.Time.Value);
+                        Utils.UpdateTime(lastData.Time.Value);
                      }
                   }
                   else
@@ -1064,39 +1085,8 @@ namespace Demo.WindowsMobile
       private void menuItem37_Click(object sender, EventArgs e)
       {
          objects.Markers.Clear();
-      }
-
-      private struct SYSTEMTIME
-      {
-         public short Year;
-         public short Month;
-         public short DayOfWeek;
-         public short Day;
-         public short Hour;
-         public short Minute;
-         public short Second;
-         public short Milliseconds;
-      }
-
-      [DllImport("coredll.dll")]
-      private static extern bool SetSystemTime(ref SYSTEMTIME time);
-
-      private void UpdateTime(DateTime gpsTime)
-      {
-         SYSTEMTIME s = new SYSTEMTIME();
-         s.Year = (short) gpsTime.Year;
-         s.Month = (short) gpsTime.Month;
-         s.DayOfWeek = (short) gpsTime.DayOfWeek;
-         s.Day = (short) gpsTime.Day;
-         s.Hour = (short) gpsTime.Hour;
-         s.Minute = (short) gpsTime.Minute;
-         s.Second = (short) gpsTime.Second;
-         s.Milliseconds = (short) gpsTime.Millisecond;
-
-         bool t = SetSystemTime(ref s);
-         Debug.WriteLine("SetSystemTime: " + t);
-      }
-
+      }      
+     
       private void menuItemSnapToGps_Click(object sender, EventArgs e)
       {
          menuItemSnapToGps.Checked = !menuItemSnapToGps.Checked;
@@ -1163,6 +1153,184 @@ namespace Demo.WindowsMobile
             MainMap.UpdateRouteLocalPosition(destinationRoute);
             MainMap.Invalidate();
          }
+      }
+
+      void GetGpsFix(object val) 
+      {
+          bool w = false;
+          try
+          {
+              if (!gps.Opened)
+              {
+                  ResetGpsCounter();
+                  gps.Open();
+
+                  if (gps.Opened)
+                  {
+                      SetOnGPSPower();
+
+                      // wait
+                      w = gpsPositionWait.WaitOne(1000 * 33, false);
+
+                      gps.Close();
+                      SetOffGPSPower(); 
+                      
+                      if (w)
+                      {
+                          Debug.WriteLine("GetGpsFix: OK");
+                      }
+                      else
+                      {
+                          Debug.WriteLine("GetGpsFix: timeout");
+                      }
+                  }
+              }
+          }
+          catch (Exception ex)
+          {
+              Debug.WriteLine("GetGpsFix: " + ex);
+          }
+
+          try
+          {
+              Invoke(new EventHandler(GetGpsFixEnd), w);
+          }
+          catch (Exception ex2)
+          {
+              Debug.WriteLine("GetGpsFix,2: " + ex2);
+          }
+      }
+
+      void GetGpsFixEnd(object sender, EventArgs args)
+      {
+          bool result = (bool)sender;
+
+          gpsPos.Pen.Color = Color.Blue;
+          menuItemGpsFix.Enabled = true;
+          menuItemGPSenabled.Enabled = true;
+
+          if (!result && IsVisible)
+          {
+              MessageBox.Show("timeout...", "GPS fix");
+          }
+      }
+
+      private void menuItemGpsFix_Click(object sender, EventArgs e)
+      {
+          menuItemGpsFix.Enabled = false;
+          menuItemGPSenabled.Enabled = false;
+          gpsPos.Pen.Color = Color.Red;
+          gpsPos.IsVisible = true;
+          ThreadPool.QueueUserWorkItem(new WaitCallback(GetGpsFix));
+      }
+
+      void WaitForEvent(object val)
+      {
+          for (int i = 0; i < 1; i++)
+          {
+              try
+              {
+                  string eventName = "GMapWakeUp0";
+                  string eventStr = "\\\\.\\Notifications\\NamedEvents\\" + eventName;
+
+                  Win32.SYSTEMTIME time;
+                  Win32.GetLocalTime(out time);
+
+                  Win32.CE_NOTIFICATION_TRIGGER t = new Win32.CE_NOTIFICATION_TRIGGER();
+                  t.Type = (uint)Win32.CNT_TYPE.CNT_TIME;
+                  t.pAppName = eventStr;
+                  t.pArgs = null;
+                  t.StartTime = Win32.SYSTEMTIME.FromDateTime(time.ToDateTime().AddSeconds(60));
+                  t.Size = (uint)Marshal.SizeOf(t);
+
+                  Win32.CE_USER_NOTIFICATION n = new Win32.CE_USER_NOTIFICATION();
+                  n.DialogText = "test: " + t.StartTime.ToDateTime();
+                  n.pDialogTitle = "event";
+                  n.ActionFlags = 4;
+
+                  Debug.WriteLine("event expected: " + t.StartTime.ToDateTime());
+
+                  {
+                      var p = Win32.CreateEvent(IntPtr.Zero, false, false, eventName);
+                      if(p != IntPtr.Zero)
+                      {                         
+                          var un = Win32.CeSetUserNotificationEx(IntPtr.Zero, t, null);
+                          if (un != IntPtr.Zero)
+                          {
+                              #region -- wait --
+
+                              int r = Win32.WaitForSingleObject(p, 1000 * 80);
+                              if (r == Win32.WAIT_TIMEOUT)
+                              {
+                                  Debug.WriteLine("event timeout: " + r + ", " + DateTime.Now);
+                              }
+                              else if (r == Win32.WAIT_OBJECT_0)
+                              {
+                                  Debug.WriteLine("event OK: " + r + ", " + DateTime.Now);
+
+                                  Thread.Sleep(4444);
+
+                                  //if (!gps.Opened)
+                                  //{                                  
+                                  //    ResetGpsCounter();
+                                  //    gps.Open();
+
+                                  //    if (gps.Opened)
+                                  //    {
+                                  //        SetOnGPSPower();
+
+                                  //        // wait
+                                  //        if (gpsPositionWait.WaitOne(1000 * 33, false))
+                                  //        {
+                                  //            Debug.WriteLine("gpsPositionWait: OK");
+                                  //        }
+                                  //        else
+                                  //        {
+                                  //            Debug.WriteLine("gpsPositionWait: timeout");
+                                  //        }
+
+                                  //        gps.Close();
+                                  //        SetOffGPSPower();
+                                  //    }
+                                  //}                              
+                              }
+                              else
+                              {
+                                  Debug.WriteLine("event ?: " + r + ", " + DateTime.Now);
+                              }                              
+
+                              #endregion
+
+                              Win32.CeClearUserNotification((int)un);
+                              un = IntPtr.Zero;
+                          }
+
+                          Win32.CloseHandle(p);
+                          p = IntPtr.Zero;
+                      }
+                  }
+              }
+              catch (Exception ex)
+              {
+                  Debug.WriteLine("WaitForEvent: " + ex);
+              }
+          }
+          Debug.WriteLine("WaitForEvent: end");
+      } 
+
+      private void menuItemLog10min_Click(object sender, EventArgs e)
+      {
+          ThreadPool.QueueUserWorkItem(new WaitCallback(WaitForEvent));
+      }
+
+      private void menuItemLog30min_Click(object sender, EventArgs e)
+      {
+
+      }
+
+      private void menuItemLog1h_Click(object sender, EventArgs e)
+      {
+
       }      
    }
 

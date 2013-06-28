@@ -71,7 +71,7 @@ namespace GMap.NET.GPS
          }
       }
 
-      string friendlyName = "";
+      string friendlyName = string.Empty;
       /// <summary>
       /// Friendly name of the real GPS device we are currently using.
       /// </summary>

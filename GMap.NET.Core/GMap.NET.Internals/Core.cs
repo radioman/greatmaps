@@ -893,7 +893,7 @@ namespace GMap.NET.Internals
                            PureImage img = null;
                            Exception ex = null;
 
-                           if(!provider.MaxZoom.HasValue || task.Value.Zoom <= provider.MaxZoom)
+                           if (task.Value.Zoom >= provider.MinZoom && (!provider.MaxZoom.HasValue || task.Value.Zoom <= provider.MaxZoom))
                            {
                               if(skipOverZoom == 0 || task.Value.Zoom <= skipOverZoom)
                               {

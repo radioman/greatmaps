@@ -118,11 +118,11 @@ namespace Demo.WindowsForms
                               WindowsFormsImage tile;
 
                               // tile number inversion(BottomLeft -> TopLeft) for pergo maps
-                              //if(tp == MapType.PergoTurkeyMap)
-                              //{
-                              //   tile = GMaps.Instance.GetImageFrom(tp, new GPoint(p.X, maxOfTiles.Height - p.Y), info.Zoom, out ex) as WindowsFormsImage;
-                              //}
-                              //else // ok
+                              if(tp.InvertedAxisY)
+                              {
+                                 tile = GMaps.Instance.GetImageFrom(tp, new GPoint(p.X, maxOfTiles.Height - p.Y), info.Zoom, out ex) as WindowsFormsImage;
+                              }
+                              else // ok
                               {
                                  tile = GMaps.Instance.GetImageFrom(tp, p, info.Zoom, out ex) as WindowsFormsImage;
                               }

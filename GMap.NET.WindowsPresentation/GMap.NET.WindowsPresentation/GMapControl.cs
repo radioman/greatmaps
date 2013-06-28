@@ -752,6 +752,7 @@ namespace GMap.NET.WindowsPresentation
                }
             }
          }
+         InvalidateVisual();
       }
 
       /// <summary>

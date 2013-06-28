@@ -13,6 +13,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 #if PocketPC
 using OpenNETCF.ComponentModel;
@@ -60,9 +61,6 @@ namespace GMap.NET.GPS
          add
          {
             locationChanged += value;
-
-            // create our event thread only if the user decides to listen
-            CreateGpsEventThread();
          }
          remove
          {
@@ -81,9 +79,6 @@ namespace GMap.NET.GPS
          add
          {
             deviceStateChanged += value;
-
-            // create our event thread only if the user decides to listen
-            CreateGpsEventThread();
          }
          remove
          {
@@ -106,6 +101,7 @@ namespace GMap.NET.GPS
       {
          // make sure that the GPS was closed.
          Close();
+         quit.Close();
       }
 
       /// <summary>
@@ -122,8 +118,6 @@ namespace GMap.NET.GPS
 
             gpsHandle = GPSOpenDevice(newLocationHandle, deviceStateChangedHandle, null, 0);
 
-            // if events were hooked up before the device was opened, we'll need
-            // to create the gps event thread.
             if(locationChanged != null || deviceStateChanged != null)
             {
                CreateGpsEventThread();
@@ -145,13 +139,14 @@ namespace GMap.NET.GPS
          // Set our native stop event so we can exit our event thread.
          if(stopHandle != IntPtr.Zero)
          {
-             Win32.EventModify(stopHandle, (int)Win32.EventFlags.SET);
+             Win32.EventModify(stopHandle, (int)Win32.EventFlags.SET);            
          }
 
          // wait exit
-         if(gpsEventThread != null && gpsEventThread.IsAlive)
+         if (gpsEventThread != null)
          {
-            //gpsEventThread.Join(4444);
+             quit.WaitOne();
+             gpsEventThread = null;
          }
       }
 
@@ -244,6 +239,8 @@ namespace GMap.NET.GPS
          return device;
       }
 
+      readonly ManualResetEvent quit = new ManualResetEvent(true);
+
       /// <summary>
       /// Creates our event thread that will receive native events
       /// </summary>
@@ -266,74 +263,81 @@ namespace GMap.NET.GPS
       /// </summary>
       private void WaitForGpsEvents()
       {
-         //lock (this)
+         try
          {
-            bool listening = true;
-            // allocate 3 handles worth of memory to pass to WaitForMultipleObjects
-            IntPtr handles = Utils.LocalAlloc(12);
+             quit.Reset();
 
-            // write the three handles we are listening for.
-            Marshal.WriteInt32(handles, 0, stopHandle.ToInt32());
-            Marshal.WriteInt32(handles, 4, deviceStateChangedHandle.ToInt32());
-            Marshal.WriteInt32(handles, 8, newLocationHandle.ToInt32());
+             bool listening = true;
 
-            while(listening)
-            {
-                int obj = Win32.WaitForMultipleObjects(3, handles, 0, -1);
-                if (obj != Win32.waitFailed)
-               {
-                  switch(obj)
-                  {
-                     case 0:
-                     // we've been signalled to stop
-                     listening = false;
-                     break;
+             // allocate 3 handles worth of memory to pass to WaitForMultipleObjects
+             IntPtr handles = Utils.LocalAlloc(12);
 
-                     case 1:
-                     // device state has changed
-                     if(deviceStateChanged != null)
+             // write the three handles we are listening for.
+             Marshal.WriteInt32(handles, 0, stopHandle.ToInt32());
+             Marshal.WriteInt32(handles, 4, deviceStateChangedHandle.ToInt32());
+             Marshal.WriteInt32(handles, 8, newLocationHandle.ToInt32());
+
+             while (listening)
+             {
+                 int obj = Win32.WaitForMultipleObjects(3, handles, 0, -1);
+                 if (obj != Win32.waitFailed)
+                 {
+                     switch (obj)
                      {
-                        deviceStateChanged(this, GetDeviceState());
+                         case 0:
+                             // we've been signalled to stop
+                             listening = false;
+                             break;
+
+                         case 1:
+                             // device state has changed
+                             if (deviceStateChanged != null)
+                             {
+                                 deviceStateChanged(this, GetDeviceState());
+                             }
+                             break;
+
+                         case 2:
+                             // location has changed
+                             if (locationChanged != null)
+                             {
+                                 locationChanged(this, GetPosition());
+                             }
+                             break;
                      }
-                     break;
+                 }
+             }
 
-                     case 2:
-                     // location has changed
-                     if(locationChanged != null)
-                     {
-                        locationChanged(this, GetPosition());
-                     }
-                     break;
-                  }
-               }
-            }
+             // free the memory we allocated for the native handles
+             Utils.LocalFree(handles);
 
-            // free the memory we allocated for the native handles
-            Utils.LocalFree(handles);
+             if (newLocationHandle != IntPtr.Zero)
+             {
+                 Win32.CloseHandle(newLocationHandle);
+                 newLocationHandle = IntPtr.Zero;
+             }
 
-            if(newLocationHandle != IntPtr.Zero)
-            {
-                Win32.CloseHandle(newLocationHandle);
-               newLocationHandle = IntPtr.Zero;
-            }
+             if (deviceStateChangedHandle != IntPtr.Zero)
+             {
+                 Win32.CloseHandle(deviceStateChangedHandle);
+                 deviceStateChangedHandle = IntPtr.Zero;
+             }
 
-            if(deviceStateChangedHandle != IntPtr.Zero)
-            {
-                Win32.CloseHandle(deviceStateChangedHandle);
-               deviceStateChangedHandle = IntPtr.Zero;
-            }
+             if (stopHandle != IntPtr.Zero)
+             {
+                 Win32.CloseHandle(stopHandle);
+                 stopHandle = IntPtr.Zero;
+             }
 
-            if(stopHandle != IntPtr.Zero)
-            {
-               Win32.CloseHandle(stopHandle);
-               stopHandle = IntPtr.Zero;
-            }
-
-            // clear our gpsEventThread so that we can recreate this thread again
-            // if the events are hooked up again.
-            gpsEventThread = null;
-
-            Debug.WriteLine("gps device stopped...");
+             Debug.WriteLine("gps device stopped...");
+         }
+         catch (Exception ex)
+         {
+             Debug.WriteLine("WaitForGpsEvents: " + ex);           
+         }
+         finally
+         {
+             quit.Set();
          }
       }
 

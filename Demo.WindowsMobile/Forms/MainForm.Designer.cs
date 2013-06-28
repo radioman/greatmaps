@@ -29,333 +29,366 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.mainMenu1 = new System.Windows.Forms.MainMenu();
-         this.menuItem1 = new System.Windows.Forms.MenuItem();
-         this.menuItemGotoMap = new System.Windows.Forms.MenuItem();
-         this.menuItemGotoGps = new System.Windows.Forms.MenuItem();
-         this.menuItemSearch = new System.Windows.Forms.MenuItem();
-         this.menuItemGotoTransport = new System.Windows.Forms.MenuItem();
-         this.menuItem34 = new System.Windows.Forms.MenuItem();
-         this.menuItem32 = new System.Windows.Forms.MenuItem();
-         this.menuItem2 = new System.Windows.Forms.MenuItem();
-         this.menuItem29 = new System.Windows.Forms.MenuItem();
-         this.menuItemGPSenabled = new System.Windows.Forms.MenuItem();
-         this.menuItem8 = new System.Windows.Forms.MenuItem();
-         this.menuItem12 = new System.Windows.Forms.MenuItem();
-         this.menuItem13 = new System.Windows.Forms.MenuItem();
-         this.menuItem9 = new System.Windows.Forms.MenuItem();
-         this.menuItem10 = new System.Windows.Forms.MenuItem();
-         this.menuItem11 = new System.Windows.Forms.MenuItem();
-         this.menuItem14 = new System.Windows.Forms.MenuItem();
-         this.menuItem15 = new System.Windows.Forms.MenuItem();
-         this.menuItem19 = new System.Windows.Forms.MenuItem();
-         this.menuItem7 = new System.Windows.Forms.MenuItem();
-         this.menuItemCacheOnly = new System.Windows.Forms.MenuItem();
-         this.menuItemServerAndCache = new System.Windows.Forms.MenuItem();
-         this.menuItemServerOnly = new System.Windows.Forms.MenuItem();
-         this.menuItem30 = new System.Windows.Forms.MenuItem();
-         this.menuItemshowDestination = new System.Windows.Forms.MenuItem();
-         this.menuItemSnapToGps = new System.Windows.Forms.MenuItem();
-         this.menuItemDisableAutoSleep = new System.Windows.Forms.MenuItem();
-         this.menuItemEnableGrid = new System.Windows.Forms.MenuItem();
-         this.menuItem6 = new System.Windows.Forms.MenuItem();
-         this.menuItem36 = new System.Windows.Forms.MenuItem();
-         this.menuItem37 = new System.Windows.Forms.MenuItem();
-         this.menuItem35 = new System.Windows.Forms.MenuItem();
-         this.menuItemSetDestination = new System.Windows.Forms.MenuItem();
-         this.menuItem38 = new System.Windows.Forms.MenuItem();
-         this.menuItem41 = new System.Windows.Forms.MenuItem();
-         this.menuItem42 = new System.Windows.Forms.MenuItem();
-         this.menuItem43 = new System.Windows.Forms.MenuItem();
-         this.menuItem40 = new System.Windows.Forms.MenuItem();
-         this.menuItem39 = new System.Windows.Forms.MenuItem();
-         this.menuItem27 = new System.Windows.Forms.MenuItem();
-         this.menuItem28 = new System.Windows.Forms.MenuItem();
-         this.menuItem3 = new System.Windows.Forms.MenuItem();
-         this.timerKeeperOfLife = new System.Windows.Forms.Timer();
-         this.MainMap = new Demo.WindowsMobile.Map();
-         this.menuItem4 = new System.Windows.Forms.MenuItem();
-         this.SuspendLayout();
-         // 
-         // mainMenu1
-         // 
-         this.mainMenu1.MenuItems.Add(this.menuItem1);
-         this.mainMenu1.MenuItems.Add(this.menuItem2);
-         // 
-         // menuItem1
-         // 
-         this.menuItem1.MenuItems.Add(this.menuItemGotoMap);
-         this.menuItem1.MenuItems.Add(this.menuItemGotoGps);
-         this.menuItem1.MenuItems.Add(this.menuItemSearch);
-         this.menuItem1.MenuItems.Add(this.menuItemGotoTransport);
-         this.menuItem1.MenuItems.Add(this.menuItem34);
-         this.menuItem1.MenuItems.Add(this.menuItem32);
-         this.menuItem1.Text = "Page";
-         // 
-         // menuItemGotoMap
-         // 
-         this.menuItemGotoMap.Checked = true;
-         this.menuItemGotoMap.Text = "Map";
-         this.menuItemGotoMap.Click += new System.EventHandler(this.menuItemGotoMap_Click);
-         // 
-         // menuItemGotoGps
-         // 
-         this.menuItemGotoGps.Text = "GPS";
-         this.menuItemGotoGps.Click += new System.EventHandler(this.menuItemGotoGps_Click);
-         // 
-         // menuItemSearch
-         // 
-         this.menuItemSearch.Text = "Search";
-         this.menuItemSearch.Click += new System.EventHandler(this.menuItemSearch_Click);
-         // 
-         // menuItemGotoTransport
-         // 
-         this.menuItemGotoTransport.Text = "Vilnius Transport";
-         this.menuItemGotoTransport.Click += new System.EventHandler(this.menuItemGotoTransport_Click);
-         // 
-         // menuItem34
-         // 
-         this.menuItem34.Text = "-";
-         // 
-         // menuItem32
-         // 
-         this.menuItem32.Text = "Hide";
-         this.menuItem32.Click += new System.EventHandler(this.menuItem32_Click);
-         // 
-         // menuItem2
-         // 
-         this.menuItem2.MenuItems.Add(this.menuItem29);
-         this.menuItem2.MenuItems.Add(this.menuItem8);
-         this.menuItem2.MenuItems.Add(this.menuItem7);
-         this.menuItem2.MenuItems.Add(this.menuItem30);
-         this.menuItem2.MenuItems.Add(this.menuItem6);
-         this.menuItem2.MenuItems.Add(this.menuItem36);
-         this.menuItem2.MenuItems.Add(this.menuItem38);
-         this.menuItem2.MenuItems.Add(this.menuItem27);
-         this.menuItem2.MenuItems.Add(this.menuItem28);
-         this.menuItem2.MenuItems.Add(this.menuItem3);
-         this.menuItem2.Text = "Menu";
-         // 
-         // menuItem29
-         // 
-         this.menuItem29.MenuItems.Add(this.menuItemGPSenabled);
-         this.menuItem29.Text = "GPS";
-         // 
-         // menuItemGPSenabled
-         // 
-         this.menuItemGPSenabled.Checked = true;
-         this.menuItemGPSenabled.Text = "Enabled";
-         this.menuItemGPSenabled.Click += new System.EventHandler(this.menuItemGPSenabled_Click);
-         // 
-         // menuItem8
-         // 
-         this.menuItem8.MenuItems.Add(this.menuItem14);
-         this.menuItem8.MenuItems.Add(this.menuItem15);
-         this.menuItem8.MenuItems.Add(this.menuItem11);
-         this.menuItem8.MenuItems.Add(this.menuItem4);
-         this.menuItem8.MenuItems.Add(this.menuItem12);
-         this.menuItem8.MenuItems.Add(this.menuItem13);
-         this.menuItem8.MenuItems.Add(this.menuItem9);
-         this.menuItem8.MenuItems.Add(this.menuItem10);
-         this.menuItem8.MenuItems.Add(this.menuItem19);
-         this.menuItem8.Text = "Map";
-         // 
-         // menuItem12
-         // 
-         this.menuItem12.Text = "OpenStreet";
-         this.menuItem12.Click += new System.EventHandler(this.menuItem12_Click);
-         // 
-         // menuItem13
-         // 
-         this.menuItem13.Text = "-";
-         // 
-         // menuItem9
-         // 
-         this.menuItem9.Text = "Google";
-         this.menuItem9.Click += new System.EventHandler(this.menuItem9_Click);
-         // 
-         // menuItem10
-         // 
-         this.menuItem10.Text = "Google Sattelite";
-         this.menuItem10.Click += new System.EventHandler(this.menuItem10_Click);
-         // 
-         // menuItem11
-         // 
-         this.menuItem11.Text = "-";
-         // 
-         // menuItem14
-         // 
-         this.menuItem14.Text = "Lithuania";
-         this.menuItem14.Click += new System.EventHandler(this.menuItem14_Click);
-         // 
-         // menuItem15
-         // 
-         this.menuItem15.Text = "Lithuania OrtoFoto";
-         this.menuItem15.Click += new System.EventHandler(this.menuItem15_Click);
-         // 
-         // menuItem19
-         // 
-         this.menuItem19.Text = "-";
-         // 
-         // menuItem7
-         // 
-         this.menuItem7.MenuItems.Add(this.menuItemCacheOnly);
-         this.menuItem7.MenuItems.Add(this.menuItemServerAndCache);
-         this.menuItem7.MenuItems.Add(this.menuItemServerOnly);
-         this.menuItem7.Text = "Mode";
-         // 
-         // menuItemCacheOnly
-         // 
-         this.menuItemCacheOnly.Text = "CacheOnly";
-         this.menuItemCacheOnly.Click += new System.EventHandler(this.menuItemCacheOnly_Click);
-         // 
-         // menuItemServerAndCache
-         // 
-         this.menuItemServerAndCache.Text = "ServerAndCache";
-         this.menuItemServerAndCache.Click += new System.EventHandler(this.menuItemServerAndCache_Click);
-         // 
-         // menuItemServerOnly
-         // 
-         this.menuItemServerOnly.Text = "ServerOnly";
-         this.menuItemServerOnly.Click += new System.EventHandler(this.menuItemServerOnly_Click);
-         // 
-         // menuItem30
-         // 
-         this.menuItem30.MenuItems.Add(this.menuItemshowDestination);
-         this.menuItem30.MenuItems.Add(this.menuItemSnapToGps);
-         this.menuItem30.MenuItems.Add(this.menuItemDisableAutoSleep);
-         this.menuItem30.MenuItems.Add(this.menuItemEnableGrid);
-         this.menuItem30.Text = "Options";
-         // 
-         // menuItemshowDestination
-         // 
-         this.menuItemshowDestination.Text = "Show Destination";
-         this.menuItemshowDestination.Click += new System.EventHandler(this.menuItemshowDestination_Click);
-         // 
-         // menuItemSnapToGps
-         // 
-         this.menuItemSnapToGps.Checked = true;
-         this.menuItemSnapToGps.Text = "Snap To GPS";
-         this.menuItemSnapToGps.Click += new System.EventHandler(this.menuItemSnapToGps_Click);
-         // 
-         // menuItemDisableAutoSleep
-         // 
-         this.menuItemDisableAutoSleep.Checked = true;
-         this.menuItemDisableAutoSleep.Text = "Disable Auto Sleep";
-         this.menuItemDisableAutoSleep.Click += new System.EventHandler(this.menuItemDisableAutoSleep_Click);
-         // 
-         // menuItemEnableGrid
-         // 
-         this.menuItemEnableGrid.Text = "Enable Grid";
-         this.menuItemEnableGrid.Click += new System.EventHandler(this.menuItemEnableGrid_Click);
-         // 
-         // menuItem6
-         // 
-         this.menuItem6.Text = "-";
-         // 
-         // menuItem36
-         // 
-         this.menuItem36.MenuItems.Add(this.menuItem37);
-         this.menuItem36.MenuItems.Add(this.menuItem35);
-         this.menuItem36.MenuItems.Add(this.menuItemSetDestination);
-         this.menuItem36.Text = "Markers";
-         // 
-         // menuItem37
-         // 
-         this.menuItem37.Text = "Clear";
-         this.menuItem37.Click += new System.EventHandler(this.menuItem37_Click);
-         // 
-         // menuItem35
-         // 
-         this.menuItem35.Text = "Fit to All";
-         this.menuItem35.Click += new System.EventHandler(this.menuItem35_Click);
-         // 
-         // menuItemSetDestination
-         // 
-         this.menuItemSetDestination.Text = "Set Destination";
-         this.menuItemSetDestination.Click += new System.EventHandler(this.menuItemSetDestination_Click);
-         // 
-         // menuItem38
-         // 
-         this.menuItem38.MenuItems.Add(this.menuItem41);
-         this.menuItem38.MenuItems.Add(this.menuItem42);
-         this.menuItem38.MenuItems.Add(this.menuItem43);
-         this.menuItem38.MenuItems.Add(this.menuItem40);
-         this.menuItem38.MenuItems.Add(this.menuItem39);
-         this.menuItem38.Text = "Zoom";
-         // 
-         // menuItem41
-         // 
-         this.menuItem41.Text = "In";
-         this.menuItem41.Click += new System.EventHandler(this.menuItem4_Click);
-         // 
-         // menuItem42
-         // 
-         this.menuItem42.Text = "Out";
-         this.menuItem42.Click += new System.EventHandler(this.menuItem5_Click);
-         // 
-         // menuItem43
-         // 
-         this.menuItem43.Text = "-";
-         // 
-         // menuItem40
-         // 
-         this.menuItem40.Text = "Max";
-         this.menuItem40.Click += new System.EventHandler(this.menuItem33_Click);
-         // 
-         // menuItem39
-         // 
-         this.menuItem39.Text = "Min";
-         this.menuItem39.Click += new System.EventHandler(this.menuItem31_Click);
-         // 
-         // menuItem27
-         // 
-         this.menuItem27.Text = "Reload";
-         this.menuItem27.Click += new System.EventHandler(this.menuItem27_Click);
-         // 
-         // menuItem28
-         // 
-         this.menuItem28.Text = "-";
-         // 
-         // menuItem3
-         // 
-         this.menuItem3.Text = "Exit";
-         this.menuItem3.Click += new System.EventHandler(this.menuItem3_Click);
-         // 
-         // timerKeeperOfLife
-         // 
-         this.timerKeeperOfLife.Tick += new System.EventHandler(this.timerKeeperOfLife_Tick);
-         // 
-         // MainMap
-         // 
-         this.MainMap.BackColor = System.Drawing.Color.White;
-         this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.MainMap.Location = new System.Drawing.Point(0, 0);
-         this.MainMap.Name = "MainMap";
-         this.MainMap.Size = new System.Drawing.Size(480, 696);
-         this.MainMap.TabIndex = 0;
-         // 
-         // menuItem4
-         // 
-         this.menuItem4.Text = "OpenCycle";
-         this.menuItem4.Click += new System.EventHandler(this.menuItem4_Click_1);
-         // 
-         // MainForm
-         // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
-         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-         this.AutoScroll = true;
-         this.ClientSize = new System.Drawing.Size(480, 696);
-         this.Controls.Add(this.MainMap);
-         this.KeyPreview = true;
-         this.Location = new System.Drawing.Point(0, 52);
-         this.Menu = this.mainMenu1;
-         this.Name = "MainForm";
-         this.Text = "GMap.NET";
-         this.Load += new System.EventHandler(this.MainForm_Load);
-         this.Closed += new System.EventHandler(this.MainForm_Closed);
-         this.Activated += new System.EventHandler(this.MainForm_Activated);
-         this.ResumeLayout(false);
+          this.mainMenu1 = new System.Windows.Forms.MainMenu();
+          this.menuItem1 = new System.Windows.Forms.MenuItem();
+          this.menuItemGotoMap = new System.Windows.Forms.MenuItem();
+          this.menuItemGotoGps = new System.Windows.Forms.MenuItem();
+          this.menuItemSearch = new System.Windows.Forms.MenuItem();
+          this.menuItemGotoTransport = new System.Windows.Forms.MenuItem();
+          this.menuItem34 = new System.Windows.Forms.MenuItem();
+          this.menuItem32 = new System.Windows.Forms.MenuItem();
+          this.menuItem2 = new System.Windows.Forms.MenuItem();
+          this.menuItem29 = new System.Windows.Forms.MenuItem();
+          this.menuItemGpsFix = new System.Windows.Forms.MenuItem();
+          this.menuItem16 = new System.Windows.Forms.MenuItem();
+          this.menuItemGPSenabled = new System.Windows.Forms.MenuItem();
+          this.menuItemLog10min = new System.Windows.Forms.MenuItem();
+          this.menuItemLog30min = new System.Windows.Forms.MenuItem();
+          this.menuItemLog1h = new System.Windows.Forms.MenuItem();
+          this.menuItem8 = new System.Windows.Forms.MenuItem();
+          this.menuItem14 = new System.Windows.Forms.MenuItem();
+          this.menuItem15 = new System.Windows.Forms.MenuItem();
+          this.menuItem11 = new System.Windows.Forms.MenuItem();
+          this.menuItem4 = new System.Windows.Forms.MenuItem();
+          this.menuItem12 = new System.Windows.Forms.MenuItem();
+          this.menuItem13 = new System.Windows.Forms.MenuItem();
+          this.menuItem9 = new System.Windows.Forms.MenuItem();
+          this.menuItem10 = new System.Windows.Forms.MenuItem();
+          this.menuItem19 = new System.Windows.Forms.MenuItem();
+          this.menuItem7 = new System.Windows.Forms.MenuItem();
+          this.menuItemCacheOnly = new System.Windows.Forms.MenuItem();
+          this.menuItemServerAndCache = new System.Windows.Forms.MenuItem();
+          this.menuItemServerOnly = new System.Windows.Forms.MenuItem();
+          this.menuItem30 = new System.Windows.Forms.MenuItem();
+          this.menuItemshowDestination = new System.Windows.Forms.MenuItem();
+          this.menuItemSnapToGps = new System.Windows.Forms.MenuItem();
+          this.menuItemDisableAutoSleep = new System.Windows.Forms.MenuItem();
+          this.menuItemEnableGrid = new System.Windows.Forms.MenuItem();
+          this.menuItem6 = new System.Windows.Forms.MenuItem();
+          this.menuItem36 = new System.Windows.Forms.MenuItem();
+          this.menuItemSetDestination = new System.Windows.Forms.MenuItem();
+          this.menuItem35 = new System.Windows.Forms.MenuItem();
+          this.menuItem37 = new System.Windows.Forms.MenuItem();
+          this.menuItem38 = new System.Windows.Forms.MenuItem();
+          this.menuItem41 = new System.Windows.Forms.MenuItem();
+          this.menuItem42 = new System.Windows.Forms.MenuItem();
+          this.menuItem43 = new System.Windows.Forms.MenuItem();
+          this.menuItem40 = new System.Windows.Forms.MenuItem();
+          this.menuItem39 = new System.Windows.Forms.MenuItem();
+          this.menuItem27 = new System.Windows.Forms.MenuItem();
+          this.menuItem28 = new System.Windows.Forms.MenuItem();
+          this.menuItem3 = new System.Windows.Forms.MenuItem();
+          this.timerKeeperOfLife = new System.Windows.Forms.Timer();
+          this.MainMap = new Demo.WindowsMobile.Map();
+          this.SuspendLayout();
+          // 
+          // mainMenu1
+          // 
+          this.mainMenu1.MenuItems.Add(this.menuItem1);
+          this.mainMenu1.MenuItems.Add(this.menuItem2);
+          // 
+          // menuItem1
+          // 
+          this.menuItem1.MenuItems.Add(this.menuItemGotoMap);
+          this.menuItem1.MenuItems.Add(this.menuItemGotoGps);
+          this.menuItem1.MenuItems.Add(this.menuItemSearch);
+          this.menuItem1.MenuItems.Add(this.menuItemGotoTransport);
+          this.menuItem1.MenuItems.Add(this.menuItem34);
+          this.menuItem1.MenuItems.Add(this.menuItem32);
+          this.menuItem1.Text = "Page";
+          // 
+          // menuItemGotoMap
+          // 
+          this.menuItemGotoMap.Checked = true;
+          this.menuItemGotoMap.Text = "Map";
+          this.menuItemGotoMap.Click += new System.EventHandler(this.menuItemGotoMap_Click);
+          // 
+          // menuItemGotoGps
+          // 
+          this.menuItemGotoGps.Text = "GPS";
+          this.menuItemGotoGps.Click += new System.EventHandler(this.menuItemGotoGps_Click);
+          // 
+          // menuItemSearch
+          // 
+          this.menuItemSearch.Text = "Search";
+          this.menuItemSearch.Click += new System.EventHandler(this.menuItemSearch_Click);
+          // 
+          // menuItemGotoTransport
+          // 
+          this.menuItemGotoTransport.Text = "Vilnius Transport";
+          this.menuItemGotoTransport.Click += new System.EventHandler(this.menuItemGotoTransport_Click);
+          // 
+          // menuItem34
+          // 
+          this.menuItem34.Text = "-";
+          // 
+          // menuItem32
+          // 
+          this.menuItem32.Text = "Hide";
+          this.menuItem32.Click += new System.EventHandler(this.menuItem32_Click);
+          // 
+          // menuItem2
+          // 
+          this.menuItem2.MenuItems.Add(this.menuItem29);
+          this.menuItem2.MenuItems.Add(this.menuItem8);
+          this.menuItem2.MenuItems.Add(this.menuItem7);
+          this.menuItem2.MenuItems.Add(this.menuItem30);
+          this.menuItem2.MenuItems.Add(this.menuItem6);
+          this.menuItem2.MenuItems.Add(this.menuItem36);
+          this.menuItem2.MenuItems.Add(this.menuItem38);
+          this.menuItem2.MenuItems.Add(this.menuItem27);
+          this.menuItem2.MenuItems.Add(this.menuItem28);
+          this.menuItem2.MenuItems.Add(this.menuItem3);
+          this.menuItem2.Text = "Menu";
+          // 
+          // menuItem29
+          // 
+          this.menuItem29.MenuItems.Add(this.menuItemGpsFix);
+          this.menuItem29.MenuItems.Add(this.menuItem16);
+          this.menuItem29.MenuItems.Add(this.menuItemGPSenabled);
+          this.menuItem29.MenuItems.Add(this.menuItemLog10min);
+          this.menuItem29.MenuItems.Add(this.menuItemLog30min);
+          this.menuItem29.MenuItems.Add(this.menuItemLog1h);
+          this.menuItem29.Text = "GPS";
+          // 
+          // menuItemGpsFix
+          // 
+          this.menuItemGpsFix.Text = "FIX";
+          this.menuItemGpsFix.Click += new System.EventHandler(this.menuItemGpsFix_Click);
+          // 
+          // menuItem16
+          // 
+          this.menuItem16.Text = "|";
+          // 
+          // menuItemGPSenabled
+          // 
+          this.menuItemGPSenabled.Text = "Tracker";
+          this.menuItemGPSenabled.Click += new System.EventHandler(this.menuItemGPSenabled_Click);
+          // 
+          // menuItemLog10min
+          // 
+          this.menuItemLog10min.Text = "Log, 10min";
+          this.menuItemLog10min.Click += new System.EventHandler(this.menuItemLog10min_Click);
+          // 
+          // menuItemLog30min
+          // 
+          this.menuItemLog30min.Text = "Log, 30min";
+          this.menuItemLog30min.Click += new System.EventHandler(this.menuItemLog30min_Click);
+          // 
+          // menuItemLog1h
+          // 
+          this.menuItemLog1h.Text = "Log, 1h";
+          this.menuItemLog1h.Click += new System.EventHandler(this.menuItemLog1h_Click);
+          // 
+          // menuItem8
+          // 
+          this.menuItem8.MenuItems.Add(this.menuItem14);
+          this.menuItem8.MenuItems.Add(this.menuItem15);
+          this.menuItem8.MenuItems.Add(this.menuItem11);
+          this.menuItem8.MenuItems.Add(this.menuItem4);
+          this.menuItem8.MenuItems.Add(this.menuItem12);
+          this.menuItem8.MenuItems.Add(this.menuItem13);
+          this.menuItem8.MenuItems.Add(this.menuItem9);
+          this.menuItem8.MenuItems.Add(this.menuItem10);
+          this.menuItem8.MenuItems.Add(this.menuItem19);
+          this.menuItem8.Text = "Map";
+          // 
+          // menuItem14
+          // 
+          this.menuItem14.Text = "Lithuania";
+          this.menuItem14.Click += new System.EventHandler(this.menuItem14_Click);
+          // 
+          // menuItem15
+          // 
+          this.menuItem15.Text = "Lithuania OrtoFoto";
+          this.menuItem15.Click += new System.EventHandler(this.menuItem15_Click);
+          // 
+          // menuItem11
+          // 
+          this.menuItem11.Text = "-";
+          // 
+          // menuItem4
+          // 
+          this.menuItem4.Text = "OpenCycle";
+          this.menuItem4.Click += new System.EventHandler(this.menuItem4_Click_1);
+          // 
+          // menuItem12
+          // 
+          this.menuItem12.Text = "OpenStreet";
+          this.menuItem12.Click += new System.EventHandler(this.menuItem12_Click);
+          // 
+          // menuItem13
+          // 
+          this.menuItem13.Text = "-";
+          // 
+          // menuItem9
+          // 
+          this.menuItem9.Text = "Google";
+          this.menuItem9.Click += new System.EventHandler(this.menuItem9_Click);
+          // 
+          // menuItem10
+          // 
+          this.menuItem10.Text = "Google Sattelite";
+          this.menuItem10.Click += new System.EventHandler(this.menuItem10_Click);
+          // 
+          // menuItem19
+          // 
+          this.menuItem19.Text = "-";
+          // 
+          // menuItem7
+          // 
+          this.menuItem7.MenuItems.Add(this.menuItemCacheOnly);
+          this.menuItem7.MenuItems.Add(this.menuItemServerAndCache);
+          this.menuItem7.MenuItems.Add(this.menuItemServerOnly);
+          this.menuItem7.Text = "Mode";
+          // 
+          // menuItemCacheOnly
+          // 
+          this.menuItemCacheOnly.Text = "CacheOnly";
+          this.menuItemCacheOnly.Click += new System.EventHandler(this.menuItemCacheOnly_Click);
+          // 
+          // menuItemServerAndCache
+          // 
+          this.menuItemServerAndCache.Text = "ServerAndCache";
+          this.menuItemServerAndCache.Click += new System.EventHandler(this.menuItemServerAndCache_Click);
+          // 
+          // menuItemServerOnly
+          // 
+          this.menuItemServerOnly.Text = "ServerOnly";
+          this.menuItemServerOnly.Click += new System.EventHandler(this.menuItemServerOnly_Click);
+          // 
+          // menuItem30
+          // 
+          this.menuItem30.MenuItems.Add(this.menuItemshowDestination);
+          this.menuItem30.MenuItems.Add(this.menuItemSnapToGps);
+          this.menuItem30.MenuItems.Add(this.menuItemDisableAutoSleep);
+          this.menuItem30.MenuItems.Add(this.menuItemEnableGrid);
+          this.menuItem30.Text = "Options";
+          // 
+          // menuItemshowDestination
+          // 
+          this.menuItemshowDestination.Text = "Show Destination";
+          this.menuItemshowDestination.Click += new System.EventHandler(this.menuItemshowDestination_Click);
+          // 
+          // menuItemSnapToGps
+          // 
+          this.menuItemSnapToGps.Checked = true;
+          this.menuItemSnapToGps.Text = "Snap To GPS";
+          this.menuItemSnapToGps.Click += new System.EventHandler(this.menuItemSnapToGps_Click);
+          // 
+          // menuItemDisableAutoSleep
+          // 
+          this.menuItemDisableAutoSleep.Checked = true;
+          this.menuItemDisableAutoSleep.Text = "Disable Auto Sleep";
+          this.menuItemDisableAutoSleep.Click += new System.EventHandler(this.menuItemDisableAutoSleep_Click);
+          // 
+          // menuItemEnableGrid
+          // 
+          this.menuItemEnableGrid.Text = "Enable Grid";
+          this.menuItemEnableGrid.Click += new System.EventHandler(this.menuItemEnableGrid_Click);
+          // 
+          // menuItem6
+          // 
+          this.menuItem6.Text = "-";
+          // 
+          // menuItem36
+          // 
+          this.menuItem36.MenuItems.Add(this.menuItemSetDestination);
+          this.menuItem36.MenuItems.Add(this.menuItem35);
+          this.menuItem36.MenuItems.Add(this.menuItem37);
+          this.menuItem36.Text = "Markers";
+          // 
+          // menuItemSetDestination
+          // 
+          this.menuItemSetDestination.Text = "Set Destination";
+          this.menuItemSetDestination.Click += new System.EventHandler(this.menuItemSetDestination_Click);
+          // 
+          // menuItem35
+          // 
+          this.menuItem35.Text = "Fit to All";
+          this.menuItem35.Click += new System.EventHandler(this.menuItem35_Click);
+          // 
+          // menuItem37
+          // 
+          this.menuItem37.Text = "Clear";
+          this.menuItem37.Click += new System.EventHandler(this.menuItem37_Click);
+          // 
+          // menuItem38
+          // 
+          this.menuItem38.MenuItems.Add(this.menuItem41);
+          this.menuItem38.MenuItems.Add(this.menuItem42);
+          this.menuItem38.MenuItems.Add(this.menuItem43);
+          this.menuItem38.MenuItems.Add(this.menuItem40);
+          this.menuItem38.MenuItems.Add(this.menuItem39);
+          this.menuItem38.Text = "Zoom";
+          // 
+          // menuItem41
+          // 
+          this.menuItem41.Text = "In";
+          this.menuItem41.Click += new System.EventHandler(this.menuItem4_Click);
+          // 
+          // menuItem42
+          // 
+          this.menuItem42.Text = "Out";
+          this.menuItem42.Click += new System.EventHandler(this.menuItem5_Click);
+          // 
+          // menuItem43
+          // 
+          this.menuItem43.Text = "-";
+          // 
+          // menuItem40
+          // 
+          this.menuItem40.Text = "Max";
+          this.menuItem40.Click += new System.EventHandler(this.menuItem33_Click);
+          // 
+          // menuItem39
+          // 
+          this.menuItem39.Text = "Min";
+          this.menuItem39.Click += new System.EventHandler(this.menuItem31_Click);
+          // 
+          // menuItem27
+          // 
+          this.menuItem27.Text = "Reload";
+          this.menuItem27.Click += new System.EventHandler(this.menuItem27_Click);
+          // 
+          // menuItem28
+          // 
+          this.menuItem28.Text = "-";
+          // 
+          // menuItem3
+          // 
+          this.menuItem3.Text = "Exit";
+          this.menuItem3.Click += new System.EventHandler(this.menuItem3_Click);
+          // 
+          // timerKeeperOfLife
+          // 
+          this.timerKeeperOfLife.Tick += new System.EventHandler(this.timerKeeperOfLife_Tick);
+          // 
+          // MainMap
+          // 
+          this.MainMap.BackColor = System.Drawing.Color.White;
+          this.MainMap.Dock = System.Windows.Forms.DockStyle.Fill;
+          this.MainMap.Location = new System.Drawing.Point(0, 0);
+          this.MainMap.Name = "MainMap";
+          this.MainMap.Size = new System.Drawing.Size(480, 696);
+          this.MainMap.TabIndex = 0;
+          // 
+          // MainForm
+          // 
+          this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
+          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+          this.AutoScroll = true;
+          this.ClientSize = new System.Drawing.Size(480, 696);
+          this.Controls.Add(this.MainMap);
+          this.KeyPreview = true;
+          this.Location = new System.Drawing.Point(0, 52);
+          this.Menu = this.mainMenu1;
+          this.Name = "MainForm";
+          this.Text = "GMap.NET";
+          this.Load += new System.EventHandler(this.MainForm_Load);
+          this.Closed += new System.EventHandler(this.MainForm_Closed);
+          this.Activated += new System.EventHandler(this.MainForm_Activated);
+          this.ResumeLayout(false);
 
       }
 
@@ -406,6 +439,11 @@
       internal System.Windows.Forms.MenuItem menuItemshowDestination;
       private System.Windows.Forms.MenuItem menuItemSetDestination;
       private System.Windows.Forms.MenuItem menuItem4;
+      private System.Windows.Forms.MenuItem menuItemGpsFix;
+      private System.Windows.Forms.MenuItem menuItem16;
+      private System.Windows.Forms.MenuItem menuItemLog10min;
+      private System.Windows.Forms.MenuItem menuItemLog30min;
+      private System.Windows.Forms.MenuItem menuItemLog1h;
    }
 }
 

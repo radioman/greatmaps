@@ -318,7 +318,7 @@ namespace GMap.NET.GPS
       {
          get
          {
-            return ((dwValidFields & GPS_VALID_UTC_TIME) != 0) ? ((DateTime?) new DateTime(stUTCTime.year, stUTCTime.month, stUTCTime.day, stUTCTime.hour, stUTCTime.minute, stUTCTime.second, stUTCTime.millisecond)) : null;
+            return ((dwValidFields & GPS_VALID_UTC_TIME) != 0) ? ((DateTime?) new DateTime(stUTCTime.year, stUTCTime.month, stUTCTime.day, stUTCTime.hour, stUTCTime.minute, stUTCTime.second, stUTCTime.millisecond, DateTimeKind.Utc)) : null;
          }
       }
 
