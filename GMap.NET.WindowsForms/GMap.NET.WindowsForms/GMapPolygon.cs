@@ -192,37 +192,44 @@ namespace GMap.NET.WindowsForms
       //   }
       //}
 
+#if !PocketPC
+      public static readonly Pen DefaultStroke = new Pen(Color.FromArgb(155, Color.MidnightBlue));
+#else
+      public static readonly Pen DefaultStroke = new Pen(Color.MidnightBlue);
+#endif
+
       /// <summary>
       /// specifies how the outline is painted
       /// </summary>
       [NonSerialized]
+      public Pen Stroke = DefaultStroke;
+
 #if !PocketPC
-      public Pen Stroke = new Pen(Color.FromArgb(155, Color.MidnightBlue));
+      public static readonly Brush DefaultFill = new SolidBrush(Color.FromArgb(155, Color.AliceBlue));
 #else
-      public Pen Stroke = new Pen(Color.MidnightBlue);
+      public static readonly Brush DefaultFill = new System.Drawing.SolidBrush(Color.AliceBlue);
 #endif
 
       /// <summary>
       /// background color
       /// </summary>
       [NonSerialized]
-#if !PocketPC
-      public Brush Fill = new SolidBrush(Color.FromArgb(155, Color.AliceBlue));
-#else
-      public Brush Fill = new System.Drawing.SolidBrush(Color.AliceBlue);
-#endif
+      public Brush Fill = DefaultFill;
 
       public readonly List<GPoint> LocalPoints = new List<GPoint>();
+
+      static GMapPolygon()
+      {
+#if !PocketPC
+          DefaultStroke.LineJoin = LineJoin.Round;
+#endif
+          DefaultStroke.Width = 5;
+      }
 
       public GMapPolygon(List<PointLatLng> points, string name)
          : base(points, name)
       {
          LocalPoints.Capacity = Points.Count;
-
-#if !PocketPC
-         Stroke.LineJoin = LineJoin.Round;
-#endif
-         Stroke.Width = 5;
       }
 
       /// <summary>
@@ -273,8 +280,7 @@ namespace GMap.NET.WindowsForms
       public override void GetObjectData(SerializationInfo info, StreamingContext context)
       {
          base.GetObjectData(info, context);
-         //info.AddValue("Stroke", this.Stroke);
-         //info.AddValue("Fill", this.Fill);
+
          info.AddValue("LocalPoints", this.LocalPoints.ToArray());
          info.AddValue("Visible", this.IsVisible);
       }
@@ -290,8 +296,6 @@ namespace GMap.NET.WindowsForms
       protected GMapPolygon(SerializationInfo info, StreamingContext context)
          : base(info, context)
       {
-         //this.Stroke = Extensions.GetValue<Pen>(info, "Stroke", new Pen(Color.FromArgb(155, Color.MidnightBlue)));
-         //this.Fill = Extensions.GetValue<Brush>(info, "Fill", new SolidBrush(Color.FromArgb(155, Color.AliceBlue)));
          this.deserializedLocalPoints = Extensions.GetValue<GPoint[]>(info, "LocalPoints");
          this.IsVisible = Extensions.GetStruct<bool>(info, "Visible", true);
       }
@@ -326,9 +330,7 @@ namespace GMap.NET.WindowsForms
          {
             disposed = true;
 
-            Fill.Dispose();
-            Stroke.Dispose();
-            LocalPoints.Clear();
+            LocalPoints.Clear();            
 
 #if !PocketPC
             if (graphicsPath != null)

@@ -5,6 +5,8 @@ namespace GMap.NET.WindowsForms
    using System.Drawing;
    using System.Drawing.Drawing2D;
    using System.Runtime.Serialization;
+using System.Collections;
+    using System.Collections.Generic;
 
    /// <summary>
    /// GMap.NET marker
@@ -31,67 +33,82 @@ namespace GMap.NET.WindowsForms
 
       public Point Offset;
 
+      public static readonly StringFormat DefaultFormat = new StringFormat();
+
       /// <summary>
       /// string format
       /// </summary>
       [NonSerialized]
-      public readonly StringFormat Format = new StringFormat();
+      public readonly StringFormat Format = DefaultFormat;
+
+#if !PocketPC
+      public static readonly Font DefaultFont = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold, GraphicsUnit.Pixel);
+#else
+      public static readonly Font DefaultFont = new Font(FontFamily.GenericSansSerif, 6, FontStyle.Bold);
+#endif
 
       /// <summary>
       /// font
       /// </summary>
       [NonSerialized]
+      public Font Font = DefaultFont;
+
 #if !PocketPC
-      public Font Font = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold, GraphicsUnit.Pixel);
+      public static readonly Pen DefaultStroke = new Pen(Color.FromArgb(140, Color.MidnightBlue));
 #else
-      public Font Font = new Font(FontFamily.GenericSansSerif, 6, FontStyle.Bold);
+      public static readonly Pen DefaultStroke = new Pen(Color.MidnightBlue);
 #endif
 
       /// <summary>
       /// specifies how the outline is painted
       /// </summary>
       [NonSerialized]
+      public Pen Stroke = DefaultStroke;
+
 #if !PocketPC
-      public Pen Stroke = new Pen(Color.FromArgb(140, Color.MidnightBlue));
+      public static readonly Brush DefaultFill = new SolidBrush(Color.FromArgb(222, Color.AliceBlue));
 #else
-      public Pen Stroke = new Pen(Color.MidnightBlue);
+      public static readonly Brush DefaultFill = new System.Drawing.SolidBrush(Color.AliceBlue);
 #endif
 
       /// <summary>
       /// background color
       /// </summary>
       [NonSerialized]
-#if !PocketPC
-      public Brush Fill = new SolidBrush(Color.FromArgb(222, Color.AliceBlue));
-#else
-      public Brush Fill = new System.Drawing.SolidBrush(Color.AliceBlue);
-#endif
+      public Brush Fill = DefaultFill;
+
+      public static readonly Brush DefaultForeground = new SolidBrush(Color.Navy);
 
       /// <summary>
       /// text foreground
       /// </summary>
       [NonSerialized]
-      public Brush Foreground = new SolidBrush(Color.Navy);
+      public Brush Foreground = DefaultForeground;
 
       /// <summary>
       /// text padding
       /// </summary>
       public Size TextPadding = new Size(10, 10);
 
+      static GMapToolTip()
+      {
+          DefaultStroke.Width = 2;
+
+#if !PocketPC
+          DefaultStroke.LineJoin = LineJoin.Round;
+          DefaultStroke.StartCap = LineCap.RoundAnchor;
+#endif
+
+#if !PocketPC
+          DefaultFormat.LineAlignment = StringAlignment.Center;
+#endif
+          DefaultFormat.Alignment = StringAlignment.Center;
+      }   
+
       public GMapToolTip(GMapMarker marker)
       {
          this.Marker = marker;
          this.Offset = new Point(14, -44);
-
-         this.Stroke.Width = 2;
-
-#if !PocketPC
-         this.Stroke.LineJoin = LineJoin.Round;
-         this.Stroke.StartCap = LineCap.RoundAnchor;
-         this.Format.LineAlignment = StringAlignment.Center;
-#endif
-
-         this.Format.Alignment = StringAlignment.Center;
       }
 
       public virtual void OnRender(Graphics g)
@@ -122,12 +139,7 @@ namespace GMap.NET.WindowsForms
       /// <param name="context">The context.</param>
       protected GMapToolTip(SerializationInfo info, StreamingContext context)
       {
-         //this.Foreground = Extensions.GetValue(info, "Foreground", new SolidBrush(Color.Navy));
-         //this.Fill = Extensions.GetValue(info, "Fill", new SolidBrush(Color.FromArgb(222, Color.AliceBlue)));
-         //this.Font = Extensions.GetValue(info, "Font", new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold, GraphicsUnit.Pixel));
-         //this.Format = Extensions.GetValue(info, "Format", new StringFormat());
          this.Offset = Extensions.GetStruct<Point>(info, "Offset", Point.Empty);
-         //this.Stroke = Extensions.GetValue(info, "Stroke", new Pen(Color.FromArgb(140, Color.MidnightBlue)));
          this.TextPadding = Extensions.GetStruct<Size>(info, "TextPadding", new Size(10, 10));
       }
 
@@ -141,12 +153,7 @@ namespace GMap.NET.WindowsForms
       /// </exception>
       public void GetObjectData(SerializationInfo info, StreamingContext context)
       {
-         //info.AddValue("Fill", this.Fill);
-         //info.AddValue("Foreground", this.Foreground);
-         //info.AddValue("Font", this.Font);
-         //info.AddValue("Format", this.Format);
          info.AddValue("Offset", this.Offset);
-         //info.AddValue("Stroke", this.Stroke);
          info.AddValue("TextPadding", this.TextPadding);
       }
 
@@ -162,20 +169,6 @@ namespace GMap.NET.WindowsForms
          if(!disposed)
          {
             disposed = true;
-
-            Format.Dispose();
-
-            Font.Dispose();
-            Font = null;
-
-            Stroke.Dispose();
-            Stroke = null;
-
-            Fill.Dispose();
-            Fill = null;
-
-            Foreground.Dispose();
-            Foreground = null;
          }
       }
 

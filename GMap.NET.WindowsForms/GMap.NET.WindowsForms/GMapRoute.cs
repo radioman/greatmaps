@@ -175,34 +175,38 @@ namespace GMap.NET.WindowsForms
 #endif
         }
 
+#if !PocketPC
+        public static readonly Pen DefaultStroke = new Pen(Color.FromArgb(144, Color.MidnightBlue));
+#else
+        public static readonly Pen DefaultStroke = new Pen(Color.MidnightBlue);
+#endif
+
         /// <summary>
         /// specifies how the outline is painted
         /// </summary>
         [NonSerialized]
-#if !PocketPC
-      public Pen Stroke = new Pen(Color.FromArgb(144, Color.MidnightBlue));
-#else
-        public Pen Stroke = new Pen(Color.MidnightBlue);
-#endif
+        public Pen Stroke = DefaultStroke;
 
         public readonly List<GPoint> LocalPoints = new List<GPoint>();
+
+        static GMapRoute()
+        {
+#if !PocketPC
+            DefaultStroke.LineJoin = LineJoin.Round;
+#endif
+            DefaultStroke.Width = 5;
+        }
 
         public GMapRoute(string name)
             : base(name)
         {
-#if !PocketPC
-         Stroke.LineJoin = LineJoin.Round;
-#endif
-            Stroke.Width = 5;
+
         }
 
         public GMapRoute(IEnumerable<PointLatLng> points, string name)
             : base(points, name)
         {
-#if !PocketPC
-         Stroke.LineJoin = LineJoin.Round;
-#endif
-            Stroke.Width = 5;
+
         }
 
 #if !PocketPC
@@ -222,7 +226,7 @@ namespace GMap.NET.WindowsForms
       public override void GetObjectData(SerializationInfo info, StreamingContext context)
       {
          base.GetObjectData(info, context);
-         //info.AddValue("Stroke", this.Stroke);
+
          info.AddValue("Visible", this.IsVisible);
          info.AddValue("LocalPoints", this.LocalPoints.ToArray());
       }
@@ -241,7 +245,6 @@ namespace GMap.NET.WindowsForms
       }
 
         #endregion
-
 
         #region IDeserializationCallback Members
 
@@ -271,7 +274,6 @@ namespace GMap.NET.WindowsForms
             {
                 disposed = true;
 
-                Stroke.Dispose();
                 LocalPoints.Clear();
 
 #if !PocketPC

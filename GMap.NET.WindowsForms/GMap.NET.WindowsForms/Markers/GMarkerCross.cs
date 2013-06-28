@@ -12,17 +12,18 @@ namespace GMap.NET.WindowsForms.Markers
    public class GMarkerCross : GMapMarker
 #endif
    {
+#if !PocketPC
+         public static readonly Pen DefaultPen = new Pen(Brushes.Red, 1);
+#else
+         public static readonly Pen DefaultPen = new Pen(Color.Red, 1);
+#endif
+
       [NonSerialized]
-      public Pen Pen;
+      public Pen Pen = DefaultPen;
 
       public GMarkerCross(PointLatLng p)
          : base(p)
       {
-#if !PocketPC
-         Pen = new Pen(Brushes.Red, 1);
-#else
-         Pen = new Pen(Color.Red, 1);
-#endif
          IsHitTestVisible = false;
       }
 
@@ -44,11 +45,6 @@ namespace GMap.NET.WindowsForms.Markers
 
       public override void Dispose()
       {
-         if(Pen != null)
-         {
-            Pen.Dispose();
-            Pen = null;
-         }
          base.Dispose();
       }
 

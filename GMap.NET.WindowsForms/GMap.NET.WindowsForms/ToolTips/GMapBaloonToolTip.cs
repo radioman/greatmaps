@@ -15,17 +15,23 @@ namespace GMap.NET.WindowsForms.ToolTips
    {
       public float Radius = 10f;
 
+      public static readonly Pen DefaultStroke = new Pen(Color.FromArgb(140, Color.Navy));
+
+      static GMapBaloonToolTip()
+      {
+          DefaultStroke.Width = 3;
+
+#if !PocketPC
+          DefaultStroke.LineJoin = LineJoin.Round;
+          DefaultStroke.StartCap = LineCap.RoundAnchor;
+#endif
+      }
+
       public GMapBaloonToolTip(GMapMarker marker)
          : base(marker)
       {
-         Stroke = new Pen(Color.FromArgb(140, Color.Navy));
-         Stroke.Width = 3;
-#if !PocketPC
-         this.Stroke.LineJoin = LineJoin.Round;
-         this.Stroke.StartCap = LineCap.RoundAnchor;
-#endif
-
-         Fill = Brushes.Yellow;
+         Stroke = DefaultStroke;
+         Fill = Brushes.Yellow;   
       }
 
       public override void OnRender(Graphics g)

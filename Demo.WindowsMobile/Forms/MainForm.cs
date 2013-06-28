@@ -85,7 +85,7 @@ namespace Demo.WindowsMobile
           MainMap.Manager.Mode = AccessMode.ServerAndCache;
           menuItemServerAndCache.Checked = true;
           menuItemEnableGrid.Checked = true;
-          MainMap.ShowTileGridLines = true;
+          MainMap.ShowTileGridLines = true;          
 #else
          MainMap.Manager.Mode = AccessMode.CacheOnly;
          menuItemCacheOnly.Checked = true;
@@ -1129,6 +1129,8 @@ namespace Demo.WindowsMobile
          }
       }
 
+      internal string destinationRouteInfo = string.Empty;
+
       void UpdateDestinationRoute(bool forceUpdate, PointLatLng startPoint)
       {
          if(destinationRoute == null)
@@ -1148,6 +1150,10 @@ namespace Demo.WindowsMobile
 
          destinationRoute.Points.Add(startPoint);
          destinationRoute.Points.Add(destinationPoint);
+
+         var bearing = (int)GMapProviders.EmptyProvider.Projection.GetBearing(startPoint, destinationPoint);
+         destinationRouteInfo = string.Format("destination: {0:0.00} km, bearing: {1:0}°", destinationRoute.Distance, bearing);
+
          if(forceUpdate)
          {
             MainMap.UpdateRouteLocalPosition(destinationRoute);
@@ -1339,7 +1345,7 @@ namespace Demo.WindowsMobile
       readonly Brush screenBrush = new SolidBrush(Color.Navy);
       readonly Font screenFont = new Font(FontFamily.GenericSansSerif, 7, FontStyle.Regular);
 
-      public MainForm panel;
+      public MainForm panel;     
 
       protected override void OnPaintOverlays(Graphics g)
       {
@@ -1347,7 +1353,7 @@ namespace Demo.WindowsMobile
 
          if(panel != null && panel.menuItemshowDestination.Checked)
          {
-            g.DrawString(string.Format("destination: {0:0.00} km", panel.destinationRoute.Distance), screenFont, screenBrush, screenFont.Size, screenFont.Size);
+             g.DrawString(panel.destinationRouteInfo, screenFont, screenBrush, screenFont.Size, screenFont.Size);
          }
       }
    }
