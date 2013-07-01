@@ -367,7 +367,7 @@ namespace GMap.NET.WindowsForms
 
          GMapPolygon[] polygonArray = new GMapPolygon[this.Polygons.Count];
          this.Polygons.CopyTo(polygonArray, 0);
-         info.AddValue("Polygons", polygonArray);
+         info.AddValue("Polygons", polygonArray);         
       }
 
       private GMapMarker[] deserializedMarkerArray;
@@ -387,6 +387,8 @@ namespace GMap.NET.WindowsForms
          this.deserializedMarkerArray = Extensions.GetValue<GMapMarker[]>(info, "Markers", new GMapMarker[0]);
          this.deserializedRouteArray = Extensions.GetValue<GMapRoute[]>(info, "Routes", new GMapRoute[0]);
          this.deserializedPolygonArray = Extensions.GetValue<GMapPolygon[]>(info, "Polygons", new GMapPolygon[0]);
+
+         CreateEvents();
       }
 
       #endregion
