@@ -177,7 +177,7 @@ namespace GMap.NET.WindowsForms
 
          set
          {
-            if(ToolTip == null)
+            if(ToolTip == null && !string.IsNullOrEmpty(value))
             {
 #if !PocketPC
                ToolTip = new GMapRoundedToolTip(this);
@@ -314,7 +314,10 @@ namespace GMap.NET.WindowsForms
          this.Tag = Extensions.GetValue<object>(info, "Tag", null);
          this.Offset = Extensions.GetStruct<Point>(info, "Offset", Point.Empty);
          this.area = Extensions.GetStruct<Rectangle>(info, "Area", Rectangle.Empty);
+         
          this.ToolTip = Extensions.GetValue<GMapToolTip>(info, "ToolTip", null);
+         if (this.ToolTip != null) this.ToolTip.Marker = this;
+
          this.ToolTipMode = Extensions.GetStruct<MarkerTooltipMode>(info, "ToolTipMode", MarkerTooltipMode.OnMouseOver);
          this.ToolTipText = info.GetString("ToolTipText");
          this.IsVisible = info.GetBoolean("Visible");
