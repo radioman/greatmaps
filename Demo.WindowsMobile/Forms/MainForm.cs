@@ -392,8 +392,42 @@ namespace Demo.WindowsMobile
          }
       }
 
+      const int logSize = 1024 * 8;
+      readonly PointLatLng[] gpsLog = new PointLatLng[logSize];
+      int logCounter = 0;
+      bool logFull = false;
+
+      public IEnumerable<PointLatLng> GpsLog()
+      {
+          lock (gpsLog)
+          {
+              for (int i = logCounter - 1; i >= 0; i--)
+              {
+                  yield return gpsLog[i];
+              }
+
+              if (logFull)
+              {
+                  for (int i = logSize - 1, start = logCounter; i >= start; i--)
+                  {
+                      yield return gpsLog[i];
+                  }
+              }
+          }
+      }
+
       public bool AddToLogCurrentInfo(GpsPosition data)
       {
+         lock (gpsLog)
+         {
+            gpsLog[logCounter++] = new PointLatLng(data.Latitude.Value, data.Longitude.Value);
+            if (logCounter == logSize)
+            {
+                logCounter = 0;
+                logFull = true;
+            }
+         }         
+
          if(string.IsNullOrEmpty(LogDb))
          {
             return false;
@@ -1362,15 +1396,15 @@ namespace Demo.WindowsMobile
          menuItemLog10min.Checked = !menuItemLog10min.Checked;
          if(menuItemLog10min.Checked)
          {
-            menuItemLog30min.Checked = false;
-            menuItemLog1h.Checked = false;
+            menuItemLog30min.Enabled = false;
+            menuItemLog1h.Enabled = false;
 
             ThreadPool.QueueUserWorkItem(new WaitCallback(WaitForEvent), 10);
          }
          else
          {
-            menuItemLog30min.Checked = true;
-            menuItemLog1h.Checked = true;
+             menuItemLog30min.Enabled = true;
+             menuItemLog1h.Enabled = true;
 
             if(stopHandleWaitForEvent != IntPtr.Zero)
             {
@@ -1385,15 +1419,15 @@ namespace Demo.WindowsMobile
          menuItemLog30min.Checked = !menuItemLog30min.Checked;
          if(menuItemLog30min.Checked)
          {
-            menuItemLog10min.Checked = false;
-            menuItemLog1h.Checked = false;
+             menuItemLog10min.Enabled = false;
+             menuItemLog1h.Enabled = false;
 
             ThreadPool.QueueUserWorkItem(new WaitCallback(WaitForEvent), 30);
          }
          else
          {
-            menuItemLog10min.Checked = true;
-            menuItemLog1h.Checked = true;
+             menuItemLog10min.Enabled = true;
+             menuItemLog1h.Enabled = true;
 
             if(stopHandleWaitForEvent != IntPtr.Zero)
             {
@@ -1408,15 +1442,15 @@ namespace Demo.WindowsMobile
          menuItemLog1h.Checked = !menuItemLog1h.Checked;
          if(menuItemLog1h.Checked)
          {
-            menuItemLog10min.Checked = false;
-            menuItemLog30min.Checked = false;
+             menuItemLog10min.Enabled = false;
+             menuItemLog30min.Enabled = false;
 
             ThreadPool.QueueUserWorkItem(new WaitCallback(WaitForEvent), 60);
          }
          else
          {
-            menuItemLog10min.Checked = true;
-            menuItemLog30min.Checked = true;
+             menuItemLog10min.Enabled = true;
+             menuItemLog30min.Enabled = true;
 
             if(stopHandleWaitForEvent != IntPtr.Zero)
             {
