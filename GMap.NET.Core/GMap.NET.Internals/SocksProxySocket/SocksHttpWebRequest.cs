@@ -178,6 +178,7 @@ namespace GMap.NET.Internals
             }
 
             var message = new StringBuilder();
+
             message.AppendFormat("{0} {1} HTTP/1.0\r\nHost: {2}\r\n", Method, RequestUri.PathAndQuery, RequestUri.Host);
 
             // add the headers

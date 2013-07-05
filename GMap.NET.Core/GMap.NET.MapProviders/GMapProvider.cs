@@ -406,6 +406,25 @@ namespace GMap.NET.MapProviders
                 r.Referer = RefererUrl;
                 r.Timeout = TimeoutMs;
             }
+            else if (request is SocksHttpWebRequest)
+            {
+                var r = request as SocksHttpWebRequest;
+
+                if (!string.IsNullOrEmpty(UserAgent))
+                {
+                    r.Headers.Add("User-Agent", UserAgent);
+                }
+
+                if (!string.IsNullOrEmpty(requestAccept))
+                {
+                    r.Headers.Add("Accept", requestAccept);
+                }
+
+                if (!string.IsNullOrEmpty(RefererUrl))
+                {
+                    r.Headers.Add("Referer", RefererUrl);
+                }              
+            }
 
             using (var response = request.GetResponse())
             {
@@ -475,6 +494,25 @@ namespace GMap.NET.MapProviders
                 r.Accept = requestAccept;
                 r.Referer = RefererUrl;
                 r.Timeout = TimeoutMs;
+            }
+            else if (request is SocksHttpWebRequest)
+            {
+                var r = request as SocksHttpWebRequest;
+
+                if (!string.IsNullOrEmpty(UserAgent))
+                {
+                    r.Headers.Add("User-Agent", UserAgent);
+                }
+
+                if (!string.IsNullOrEmpty(requestAccept))
+                {
+                    r.Headers.Add("Accept", requestAccept);
+                }
+
+                if (!string.IsNullOrEmpty(RefererUrl))
+                {
+                    r.Headers.Add("Referer", RefererUrl);
+                }
             }
 
             using (var response = request.GetResponse())

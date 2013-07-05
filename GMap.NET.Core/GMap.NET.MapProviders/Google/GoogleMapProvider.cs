@@ -109,7 +109,7 @@ namespace GMap.NET.MapProviders
                     if (!string.IsNullOrEmpty(html))
                     {
                         #region -- match versions --
-                        Regex reg = new Regex(string.Format("\"*http://mt0.{0}/vt/lyrs=m@(\\d*)", Server), RegexOptions.IgnoreCase);
+                        Regex reg = new Regex(string.Format("\"*https?://mt\\D?\\d.{0}/vt/lyrs=m@(\\d*)", Server), RegexOptions.IgnoreCase);
                         Match mat = reg.Match(html);
                         if (mat.Success)
                         {
@@ -132,7 +132,7 @@ namespace GMap.NET.MapProviders
                             }
                         }
 
-                        reg = new Regex(string.Format("\"*http://mt0.{0}/vt/lyrs=h@(\\d*)", Server), RegexOptions.IgnoreCase);
+                        reg = new Regex(string.Format("\"*https?://mt\\D?\\d.{0}/vt/lyrs=h@(\\d*)", Server), RegexOptions.IgnoreCase);
                         mat = reg.Match(html);
                         if (mat.Success)
                         {
@@ -155,7 +155,7 @@ namespace GMap.NET.MapProviders
                             }
                         }
 
-                        reg = new Regex(string.Format("\"*http://khm0.{0}/kh/v=(\\d*)", Server), RegexOptions.IgnoreCase);
+                        reg = new Regex(string.Format("\"*https?://khm\\D?\\d.{0}/kh/v=(\\d*)", Server), RegexOptions.IgnoreCase);
                         mat = reg.Match(html);
                         if (mat.Success)
                         {
@@ -179,7 +179,7 @@ namespace GMap.NET.MapProviders
                             }
                         }
 
-                        reg = new Regex(string.Format("\"*http://mt0.{0}/vt/lyrs=t@(\\d*),r@(\\d*)", Server), RegexOptions.IgnoreCase);
+                        reg = new Regex(string.Format("\"*https?://mt\\D?\\d.{0}/vt/lyrs=t@(\\d*),r@(\\d*)", Server), RegexOptions.IgnoreCase);
                         mat = reg.Match(html);
                         if (mat.Success)
                         {
@@ -2174,7 +2174,7 @@ namespace GMap.NET.MapProviders
             Instance = new GoogleMapProvider();
         }
 
-        public string Version = "m@218000000";
+        public string Version = "m@221000000";
 
         #region GMapProvider Members
 
