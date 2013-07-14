@@ -406,6 +406,7 @@ namespace GMap.NET.MapProviders
                 r.Referer = RefererUrl;
                 r.Timeout = TimeoutMs;
             }
+#if !PocketPC
             else if (request is SocksHttpWebRequest)
             {
                 var r = request as SocksHttpWebRequest;
@@ -425,7 +426,7 @@ namespace GMap.NET.MapProviders
                     r.Headers.Add("Referer", RefererUrl);
                 }              
             }
-
+#endif       
             using (var response = request.GetResponse())
             {
                 if (CheckTileImageHttpResponse(response))
@@ -495,6 +496,7 @@ namespace GMap.NET.MapProviders
                 r.Referer = RefererUrl;
                 r.Timeout = TimeoutMs;
             }
+#if !PocketPC
             else if (request is SocksHttpWebRequest)
             {
                 var r = request as SocksHttpWebRequest;
@@ -514,7 +516,7 @@ namespace GMap.NET.MapProviders
                     r.Headers.Add("Referer", RefererUrl);
                 }
             }
-
+#endif
             using (var response = request.GetResponse())
             {
                 using (Stream responseStream = response.GetResponseStream())

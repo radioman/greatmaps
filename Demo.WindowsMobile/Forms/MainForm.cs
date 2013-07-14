@@ -1210,7 +1210,7 @@ namespace Demo.WindowsMobile
                       SetOnGPSPower();
 
                       // wait
-                      w = gpsPositionWait.WaitOne(1000 * 33, false);
+                      w = gpsPositionWait.WaitOne(1000 * 44, false);
 
                       gps.Close();
                       SetOffGPSPower(); 
@@ -1343,7 +1343,7 @@ namespace Demo.WindowsMobile
                                      SetOnGPSPower();
 
                                      // wait
-                                     if(gpsPositionWait.WaitOne(1000 * 33, false))
+                                     if(gpsPositionWait.WaitOne(1000 * 44, false))
                                      {
                                         Debug.WriteLine("gpsPositionWait: OK");
                                      }
