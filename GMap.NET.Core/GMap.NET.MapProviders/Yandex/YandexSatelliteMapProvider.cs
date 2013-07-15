@@ -19,7 +19,7 @@ namespace GMap.NET.MapProviders
          Instance = new YandexSatelliteMapProvider();
       }
 
-      public new string Version = "1.33.0";
+      public new string Version = "3.107.0";
 
       #region GMapProvider Members
 
@@ -55,11 +55,12 @@ namespace GMap.NET.MapProviders
          // http://sat04.maps.yandex.ru/tiles?l=sat&v=1.18.0&x=149511&y=83513&z=18&g=Gagari
          // http://sat01.maps.yandex.net/tiles?l=sat&v=1.23.0&x=584&y=324&z=10&g=Gaga
          // http://sat03.maps.yandex.net/tiles?l=sat&v=1.33.0&x=583&y=328&z=10&lang=ru-RU
+         // http://sat04.maps.yandex.net/tiles?l=sat&v=3.107.0&x=581&y=327&z=10&lang=en_US
 
-         return string.Format(UrlFormat, UrlServer, GetServerNum(pos, 4) + 1, Version, pos.X, pos.Y, zoom);
+         return string.Format(UrlFormat, UrlServer, GetServerNum(pos, 4) + 1, Version, pos.X, pos.Y, zoom, language);
       }
 
       static readonly string UrlServer = "sat";
-      static readonly string UrlFormat = "http://{0}0{1}.maps.yandex.ru/tiles?l=sat&v={2}&x={3}&y={4}&z={5}";
+      static readonly string UrlFormat = "http://{0}0{1}.maps.yandex.net/tiles?l=sat&v={2}&x={3}&y={4}&z={5}&lang={6}";
    }
 }

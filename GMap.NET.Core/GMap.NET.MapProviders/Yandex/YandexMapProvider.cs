@@ -50,7 +50,7 @@ namespace GMap.NET.MapProviders
       }
       #endregion
 
-      protected string Version = "2.26.0";
+      protected string Version = "2.44.0";
    }
 
    /// <summary>
@@ -104,11 +104,12 @@ namespace GMap.NET.MapProviders
          // http://vec01.maps.yandex.ru/tiles?l=map&v=2.10.2&x=1494&y=650&z=11
          // http://vec03.maps.yandex.net/tiles?l=map&v=2.19.5&x=579&y=326&z=10&g=Gagarin
          // http://vec02.maps.yandex.net/tiles?l=map&v=2.26.0&x=586&y=327&z=10&lang=ru-RU
+         //http://vec03.maps.yandex.net/tiles?l=map&v=2.44.0&x=289&y=164&z=9&lang=en_US
 
-         return string.Format(UrlFormat, UrlServer, GetServerNum(pos, 4) + 1, Version, pos.X, pos.Y, zoom);
+         return string.Format(UrlFormat, UrlServer, GetServerNum(pos, 4) + 1, Version, pos.X, pos.Y, zoom, language);
       }
 
       static readonly string UrlServer = "vec";
-      static readonly string UrlFormat = "http://{0}0{1}.maps.yandex.ru/tiles?l=map&v={2}&x={3}&y={4}&z={5}";
+      static readonly string UrlFormat = "http://{0}0{1}.maps.yandex.net/tiles?l=map&v={2}&x={3}&y={4}&z={5}&lang={6}";                                
    }
 }
