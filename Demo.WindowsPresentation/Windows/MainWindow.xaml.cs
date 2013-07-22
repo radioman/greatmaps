@@ -43,8 +43,8 @@ namespace Demo.WindowsPresentation
          //MainMap.Manager.SecondaryCache = ch;
 
          // set your proxy here if need
-         GMapProvider.IsSocksProxy = true;
-         GMapProvider.WebProxy = new WebProxy("127.0.0.1", 1080);
+         //GMapProvider.IsSocksProxy = true;
+         //GMapProvider.WebProxy = new WebProxy("127.0.0.1", 1080);
          //GMapProvider.WebProxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeada");
          // or
          //GMapProvider.WebProxy = WebRequest.DefaultWebProxy;
