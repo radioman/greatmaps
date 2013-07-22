@@ -17,8 +17,6 @@ namespace BigMapMaker
          GMaps.Instance.UseMemoryCache = false;
          GMaps.Instance.Mode = AccessMode.ServerAndCache;
 
-         GMapProvider.TileImageProxy = WindowsFormsImageProxy.Instance;
-
          GMapProvider provider = GMapProviders.BingMap;
          provider.OnInitialized();
 

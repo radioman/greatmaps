@@ -11,54 +11,6 @@ namespace GMap.NET.WindowsPresentation
    using System.Windows.Shapes;
    using System;
 
-   //public interface IGMapMarker : INotifyPropertyChanged
-   //{
-   //   UIElement Shape
-   //   {
-   //      get;
-   //      set;
-   //   }
-
-   //   int LocalPositionX
-   //   {
-   //      get;
-   //      set;
-   //   }
-
-   //   int LocalPositionY
-   //   {
-   //      get;
-   //      set;
-   //   }
-
-   //   PointLatLng Position
-   //   {
-   //      get;
-   //      set;
-   //   }
-
-   //   System.Windows.Point Offset
-   //   {
-   //      get;
-   //      set;
-   //   }
-
-   //   int ZIndex
-   //   {
-   //      get;
-   //      set;
-   //   }
-
-   //   List<PointLatLng> Route
-   //   {
-   //      get;
-   //   }
-   //   List<PointLatLng> Polygon
-   //   {
-   //      get;
-   //   }
-   //}
-
    /// <summary>
    /// GMap.NET marker
    /// </summary>
@@ -148,6 +100,10 @@ namespace GMap.NET.WindowsPresentation
 
             return map;
          }
+          internal set
+          {
+              map = value;
+          }
       }
 
       /// <summary>
@@ -241,19 +197,13 @@ namespace GMap.NET.WindowsPresentation
          }
       }
 
-      /// <summary>
-      /// if marker is a route that is a path of it's coordinates
-      /// </summary>
-      public readonly List<PointLatLng> Route = new List<PointLatLng>();
-
-      /// <summary>
-      /// if marker is a polygon that is a path of it's coordinates
-      /// </summary>
-      public readonly List<PointLatLng> Polygon = new List<PointLatLng>();
-
       public GMapMarker(PointLatLng pos)
       {
          Position = pos;
+      }
+
+      internal GMapMarker()
+      {
       }
 
       /// <summary>
@@ -268,15 +218,12 @@ namespace GMap.NET.WindowsPresentation
             s = null;
          }
          Shape = null;
-
-         Route.Clear();
-         Polygon.Clear();
       }
 
       /// <summary>
       /// updates marker position, internal access usualy
       /// </summary>
-      internal void UpdateLocalPosition()
+      void UpdateLocalPosition()
       {
          if(Map != null)
          {
@@ -300,80 +247,6 @@ namespace GMap.NET.WindowsPresentation
             map = m;
          }
          UpdateLocalPosition();
-      }
-
-      /// <summary>
-      /// regenerates shape of route
-      /// </summary>
-      public virtual void RegenerateRouteShape(GMapControl map)
-      {
-         this.map = map;
-
-         if(map != null)
-         {
-            if(Route.Count > 1)
-            {
-               var localPath = new List<System.Windows.Point>();
-               var offset = Map.FromLatLngToLocal(Route[0]);
-               foreach(var i in Route)
-               {
-                  var p = Map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
-                  localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
-               }
-
-               var shape = map.CreateRoutePath(localPath);
-
-               if(this.Shape != null && this.Shape is Path)
-               {
-                  (this.Shape as Path).Data = shape.Data;
-               }
-               else
-               {
-                  this.Shape = shape;
-               }
-            }
-            else
-            {
-               this.Shape = null;
-            }
-         }
-      }
-
-      /// <summary>
-      /// regenerates shape of polygon
-      /// </summary>
-      public virtual void RegeneratePolygonShape(GMapControl map)
-      {
-         this.map = map;
-
-         if(map != null)
-         {
-            if(Polygon.Count > 1)
-            {
-               var localPath = new List<System.Windows.Point>();
-               var offset = Map.FromLatLngToLocal(Polygon[0]);
-               foreach(var i in Polygon)
-               {
-                  var p = Map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
-                  localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
-               }
-
-               var shape = map.CreatePolygonPath(localPath);
-
-               if(this.Shape != null && this.Shape is Path)
-               {
-                  (this.Shape as Path).Data = shape.Data;
-               }
-               else
-               {
-                  this.Shape = shape;
-               }
-            }
-            else
-            {
-               this.Shape = null;
-            }
-         }
       }
    }
 }

@@ -94,8 +94,6 @@ namespace MvcMapFusion
                 //GMapProvider.WebProxy = new WebProxy("127.0.0.1", 1080);
                 //GMapProvider.IsSocksProxy = true;
 
-                WindowsPresentationImageProxy.Enable();
-
                 GMaps.Instance.EnableTileHost(8844);
 
                 BackgroundWorker w = sender as BackgroundWorker;

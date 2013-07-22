@@ -16,6 +16,78 @@ using GMap.NET.WindowsForms;
 
 namespace ConsoleApplication
 {
+    class test
+    {
+        const int batchSize = 3;
+        const int logSize = 8;//1024 * 8;
+        readonly PointLatLng[] gpsLog = new PointLatLng[logSize];
+        int logCounter = 0;
+        bool logFull = false;
+
+        public IEnumerable<PointLatLng> GpsLogView()
+        {
+            int i = 0;
+            int skip = 0;
+
+            foreach (var l in GpsLog())
+            {
+                if (i++ < 10)
+                {
+                    yield return l;
+                }
+                else
+                {
+                    if (skip++ % 2 == 0)
+                    {
+                        yield return l;
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<PointLatLng> GpsLog()
+        {
+            for (int i = logCounter - 1; i >= 0; i--)
+            {
+                yield return gpsLog[i];
+            }
+
+            if (logFull)
+            {
+                for (int i = logSize - 1, start = logCounter; i >= start; i--)
+                {
+                    yield return gpsLog[i];
+                }
+            }
+        }
+
+        public void AddToLogCurrentInfo(PointLatLng data)
+        {
+            gpsLog[logCounter++] = data;
+            if (logCounter == logSize)
+            {
+                logCounter = 0;
+                logFull = true;
+            }
+        }
+
+        public void Go()
+        {
+            for(int i = 0; i < 16; i++)
+            {
+                AddToLogCurrentInfo(new PointLatLng(i, 0));
+
+                Debug.WriteLine("i: " + i);
+                foreach(var l in GpsLog())
+                {
+                    Debug.Write(l.Lat + " ");
+                }
+                Debug.WriteLine("");
+                Debug.WriteLine("-----------");
+            }
+        }
+    }
+
     class Program
     {
         static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
@@ -25,6 +97,11 @@ namespace ConsoleApplication
 
         static void Main(string [] args)
         {
+            var t = new test();
+            t.Go();
+
+            return;
+
             AppDomain.CurrentDomain.AssemblyLoad += new AssemblyLoadEventHandler(CurrentDomain_AssemblyLoad);
 
             GMapProvider.WebProxy = new WebProxy("127.0.0.1", 1080);

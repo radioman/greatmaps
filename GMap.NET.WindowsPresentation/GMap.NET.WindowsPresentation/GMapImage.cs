@@ -8,136 +8,12 @@ namespace GMap.NET.WindowsPresentation
    using System.Windows.Media;
    using System.Windows.Media.Imaging;
    using GMap.NET.Internals;
-    using GMap.NET.MapProviders;
-
-   internal class TileVisual : FrameworkElement
-   {
-      public readonly ObservableCollection<ImageSource> Source;
-      public readonly RawTile Tile;
-
-      public TileVisual(IEnumerable<ImageSource> src, RawTile tile)
-      {
-         Opacity = 0;
-         Tile = tile;
-
-         Source = new ObservableCollection<ImageSource>(src);
-         Source.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Source_CollectionChanged);
-
-         this.Loaded += new RoutedEventHandler(ImageVisual_Loaded);
-         this.Unloaded += new RoutedEventHandler(ImageVisual_Unloaded);
-      }
-
-      void Source_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-      {
-         if(IsLoaded)
-         {
-            switch(e.Action)
-            {
-               case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
-               case System.Collections.Specialized.NotifyCollectionChangedAction.Move:
-               case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
-               case System.Collections.Specialized.NotifyCollectionChangedAction.Replace:
-               {
-                  UpdateVisual();
-               }
-               break;
-
-               case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
-               {
-                  Child = null;
-               }
-               break;
-            }
-         }
-      }
-
-      void ImageVisual_Unloaded(object sender, RoutedEventArgs e)
-      {
-         Child = null;
-      }
-
-      void ImageVisual_Loaded(object sender, RoutedEventArgs e)
-      {
-         UpdateVisual();
-      }
-
-      Visual _child;
-      public virtual Visual Child
-      {
-         get
-         {
-            return _child;
-         }
-         set
-         {
-            if(_child != value)
-            {
-               if(_child != null)
-               {
-                  RemoveLogicalChild(_child);
-                  RemoveVisualChild(_child);
-               }
-
-               if(value != null)
-               {
-                  AddVisualChild(value);
-                  AddLogicalChild(value);
-               }
-
-               // cache the new child
-               _child = value;
-
-               InvalidateVisual();
-            }
-         }
-      }
-
-      public void UpdateVisual()
-      {
-         Child = Create();
-      }
-
-      static readonly Pen gridPen = new Pen(Brushes.White, 2.0);
-
-      private DrawingVisual Create()
-      {
-         var dv = new DrawingVisual();
-
-         using(DrawingContext dc = dv.RenderOpen())
-         {
-            foreach(var img in Source)
-            {
-               var rect = new Rect(0, 0, img.Width + 0.6, img.Height + 0.6);
-
-               dc.DrawImage(img, rect);
-               dc.DrawRectangle(null, gridPen, rect);
-            }
-         }
-
-         return dv;
-      }
-
-      #region Necessary Overrides -- Needed by WPF to maintain bookkeeping of our hosted visuals
-      protected override int VisualChildrenCount
-      {
-         get
-         {
-            return (Child == null ? 0 : 1);
-         }
-      }
-
-      protected override Visual GetVisualChild(int index)
-      {
-         Debug.Assert(index == 0);
-         return Child;
-      }
-      #endregion
-   }
+   using GMap.NET.MapProviders;
 
    /// <summary>
    /// image abstraction
    /// </summary>
-   public class WindowsPresentationImage : PureImage
+   public class GMapImage : PureImage
    {
       public ImageSource Img;
 
@@ -159,9 +35,9 @@ namespace GMap.NET.WindowsPresentation
    /// <summary>
    /// image abstraction proxy
    /// </summary>
-   public class WindowsPresentationImageProxy : PureImageProxy
+   public class GMapImageProxy : PureImageProxy
    {
-      WindowsPresentationImageProxy()
+      GMapImageProxy()
       {
 
       }
@@ -171,7 +47,7 @@ namespace GMap.NET.WindowsPresentation
           GMapProvider.TileImageProxy = Instance;
       }
 
-      public static readonly WindowsPresentationImageProxy Instance = new WindowsPresentationImageProxy();
+      public static readonly GMapImageProxy Instance = new GMapImageProxy();
 
       //static readonly byte[] pngHeader = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
       //static readonly byte[] jpgHeader = { 0xFF, 0xD8, 0xFF };
@@ -180,7 +56,7 @@ namespace GMap.NET.WindowsPresentation
 
       public override PureImage FromStream(System.IO.Stream stream)
       {
-         WindowsPresentationImage ret = null;
+         GMapImage ret = null;
          if(stream != null)
          {
             var type = stream.ReadByte();
@@ -245,7 +121,7 @@ namespace GMap.NET.WindowsPresentation
 
             if(m != null)
             {
-               ret = new WindowsPresentationImage();
+               ret = new GMapImage();
                ret.Img = m;
                if(ret.Img.CanFreeze)
                {
@@ -258,7 +134,7 @@ namespace GMap.NET.WindowsPresentation
 
       public override bool Save(System.IO.Stream stream, PureImage image)
       {
-         WindowsPresentationImage ret = (WindowsPresentationImage)image;
+         GMapImage ret = (GMapImage)image;
          if(ret.Img != null)
          {
             try
@@ -281,4 +157,128 @@ namespace GMap.NET.WindowsPresentation
          return true;
       }
    }
+
+   //internal class TileVisual : FrameworkElement
+   //{
+   //    public readonly ObservableCollection<ImageSource> Source;
+   //    public readonly RawTile Tile;
+
+   //    public TileVisual(IEnumerable<ImageSource> src, RawTile tile)
+   //    {
+   //        Opacity = 0;
+   //        Tile = tile;
+
+   //        Source = new ObservableCollection<ImageSource>(src);
+   //        Source.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Source_CollectionChanged);
+
+   //        this.Loaded += new RoutedEventHandler(ImageVisual_Loaded);
+   //        this.Unloaded += new RoutedEventHandler(ImageVisual_Unloaded);
+   //    }
+
+   //    void Source_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+   //    {
+   //        if (IsLoaded)
+   //        {
+   //            switch (e.Action)
+   //            {
+   //                case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
+   //                case System.Collections.Specialized.NotifyCollectionChangedAction.Move:
+   //                case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
+   //                case System.Collections.Specialized.NotifyCollectionChangedAction.Replace:
+   //                {
+   //                    UpdateVisual();
+   //                }
+   //                break;
+
+   //                case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
+   //                {
+   //                    Child = null;
+   //                }
+   //                break;
+   //            }
+   //        }
+   //    }
+
+   //    void ImageVisual_Unloaded(object sender, RoutedEventArgs e)
+   //    {
+   //        Child = null;
+   //    }
+
+   //    void ImageVisual_Loaded(object sender, RoutedEventArgs e)
+   //    {
+   //        UpdateVisual();
+   //    }
+
+   //    Visual _child;
+   //    public virtual Visual Child
+   //    {
+   //        get
+   //        {
+   //            return _child;
+   //        }
+   //        set
+   //        {
+   //            if (_child != value)
+   //            {
+   //                if (_child != null)
+   //                {
+   //                    RemoveLogicalChild(_child);
+   //                    RemoveVisualChild(_child);
+   //                }
+
+   //                if (value != null)
+   //                {
+   //                    AddVisualChild(value);
+   //                    AddLogicalChild(value);
+   //                }
+
+   //                // cache the new child
+   //                _child = value;
+
+   //                InvalidateVisual();
+   //            }
+   //        }
+   //    }
+
+   //    public void UpdateVisual()
+   //    {
+   //        Child = Create();
+   //    }
+
+   //    static readonly Pen gridPen = new Pen(Brushes.White, 2.0);
+
+   //    private DrawingVisual Create()
+   //    {
+   //        var dv = new DrawingVisual();
+
+   //        using (DrawingContext dc = dv.RenderOpen())
+   //        {
+   //            foreach (var img in Source)
+   //            {
+   //                var rect = new Rect(0, 0, img.Width + 0.6, img.Height + 0.6);
+
+   //                dc.DrawImage(img, rect);
+   //                dc.DrawRectangle(null, gridPen, rect);
+   //            }
+   //        }
+
+   //        return dv;
+   //    }
+
+   //    #region Necessary Overrides -- Needed by WPF to maintain bookkeeping of our hosted visuals
+   //    protected override int VisualChildrenCount
+   //    {
+   //        get
+   //        {
+   //            return (Child == null ? 0 : 1);
+   //        }
+   //    }
+
+   //    protected override Visual GetVisualChild(int index)
+   //    {
+   //        Debug.Assert(index == 0);
+   //        return Child;
+   //    }
+   //    #endregion
+   //}
 }

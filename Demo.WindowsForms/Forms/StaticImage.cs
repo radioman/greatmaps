@@ -115,16 +115,16 @@ namespace Demo.WindowsForms
                            foreach(var tp in info.Type.Overlays)
                            {
                               Exception ex;
-                              WindowsFormsImage tile;
+                              GMapImage tile;
 
                               // tile number inversion(BottomLeft -> TopLeft) for pergo maps
                               if(tp.InvertedAxisY)
                               {
-                                 tile = GMaps.Instance.GetImageFrom(tp, new GPoint(p.X, maxOfTiles.Height - p.Y), info.Zoom, out ex) as WindowsFormsImage;
+                                 tile = GMaps.Instance.GetImageFrom(tp, new GPoint(p.X, maxOfTiles.Height - p.Y), info.Zoom, out ex) as GMapImage;
                               }
                               else // ok
                               {
-                                 tile = GMaps.Instance.GetImageFrom(tp, p, info.Zoom, out ex) as WindowsFormsImage;
+                                 tile = GMaps.Instance.GetImageFrom(tp, p, info.Zoom, out ex) as GMapImage;
                               }
 
                               if(tile != null)

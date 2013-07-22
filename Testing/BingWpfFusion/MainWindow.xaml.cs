@@ -24,8 +24,6 @@ namespace BingMapsWpfUsingCache
             //GMapProvider.WebProxy = new WebProxy("127.0.0.1", 1080);
             //GMapProvider.IsSocksProxy = true;
 
-            GMapProvider.TileImageProxy = WindowsPresentationImageProxy.Instance;
-
             GMaps.Instance.EnableTileHost(8844);
 
             Closing += new CancelEventHandler(MainWindow_Closing);

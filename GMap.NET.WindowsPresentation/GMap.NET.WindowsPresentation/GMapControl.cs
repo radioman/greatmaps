@@ -598,7 +598,7 @@ namespace GMap.NET.WindowsPresentation
 
       static GMapControl()
       {
-          WindowsPresentationImageProxy.Enable();
+          GMapImageProxy.Enable();
 #if !PocketPC
           GMaps.Instance.SQLitePing();
 #endif          
@@ -738,17 +738,12 @@ namespace GMap.NET.WindowsPresentation
             {
                if(i != null)
                {
-                  i.ForceUpdateLocalPosition(this);
+                   i.ForceUpdateLocalPosition(this);
 
-                  if(i.Route.Count > 0)
-                  {
-                     i.RegenerateRouteShape(this);
-                  }
-
-                  if(i.Polygon.Count > 0)
-                  {
-                     i.RegeneratePolygonShape(this);
-                  }
+                   if (i is IShapable)
+                   {
+                       (i as IShapable).RegenerateShape(this);                       
+                   }
                }
             }
          }
@@ -812,7 +807,7 @@ namespace GMap.NET.WindowsPresentation
                   Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tilePoint.PosXY);
                   if(t.NotEmpty)
                   {
-                     foreach(WindowsPresentationImage img in t.Overlays)
+                     foreach(GMapImage img in t.Overlays)
                      {
                         if(img != null && img.Img != null)
                         {
@@ -861,7 +856,7 @@ namespace GMap.NET.WindowsPresentation
 
                         // render tile 
                         {
-                           foreach(WindowsPresentationImage img in parentTile.Overlays)
+                           foreach(GMapImage img in parentTile.Overlays)
                            {
                               if(img != null && img.Img != null && !img.IsParent)
                               {

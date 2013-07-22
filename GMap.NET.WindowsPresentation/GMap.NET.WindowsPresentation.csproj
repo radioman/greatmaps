@@ -74,11 +74,13 @@
     <Compile Include="..\GMap.NET.Core\Properties\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="GMap.NET.WindowsPresentation\CompositionTargetEx.cs" />
+    <Compile Include="GMap.NET.WindowsPresentation\etc\CompositionTargetEx.cs" />
     <Compile Include="GMap.NET.WindowsPresentation\GMapMarker.cs" />
-    <Compile Include="GMap.NET.WindowsPresentation\PerfTimer.cs" />
-    <Compile Include="GMap.NET.WindowsPresentation\QuadTree.cs" />
-    <Compile Include="GMap.NET.WindowsPresentation\WindowsPresentationImage.cs" />
+    <Compile Include="GMap.NET.WindowsPresentation\GMapPolygon.cs" />
+    <Compile Include="GMap.NET.WindowsPresentation\GMapRoute.cs" />
+    <Compile Include="GMap.NET.WindowsPresentation\etc\PerfTimer.cs" />
+    <Compile Include="GMap.NET.WindowsPresentation\etc\QuadTree.cs" />
+    <Compile Include="GMap.NET.WindowsPresentation\GMapImage.cs" />
     <Compile Include="GMap.NET.WindowsPresentation\GMapControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

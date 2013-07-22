@@ -74,7 +74,7 @@
     <Compile Include="GMap.NET.WindowsForms\GMapMarker.cs" />
     <Compile Include="GMap.NET.WindowsForms\Markers\GMarkerCross.cs" />
     <Compile Include="GMap.NET.WindowsForms\GMapOverlay.cs" />
-    <Compile Include="GMap.NET.WindowsForms\WindowsFormsImage.cs" />
+    <Compile Include="GMap.NET.WindowsForms\GMapImage.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

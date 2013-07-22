@@ -187,11 +187,11 @@ namespace GMap.NET
 
                       if (l.FullName.Contains("GMap.NET.WindowsForms"))
                       {
-                          t = l.GetType("GMap.NET.WindowsForms.WindowsFormsImageProxy");
+                          t = l.GetType("GMap.NET.WindowsForms.GMapImageProxy");
                       }
                       else if (l.FullName.Contains("GMap.NET.WindowsPresentation"))
                       {
-                          t = l.GetType("GMap.NET.WindowsPresentation.WindowsPresentationImageProxy");
+                          t = l.GetType("GMap.NET.WindowsPresentation.GMapImageProxy");
                       }
 
                       if (t != null)

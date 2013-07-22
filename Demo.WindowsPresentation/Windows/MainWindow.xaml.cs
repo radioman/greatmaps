@@ -43,8 +43,8 @@ namespace Demo.WindowsPresentation
          //MainMap.Manager.SecondaryCache = ch;
 
          // set your proxy here if need
-         //GMapProvider.IsSocksProxy = true;
-         //GMapProvider.WebProxy = new WebProxy("127.0.0.1", 1080);
+         GMapProvider.IsSocksProxy = true;
+         GMapProvider.WebProxy = new WebProxy("127.0.0.1", 1080);
          //GMapProvider.WebProxy.Credentials = new NetworkCredential("ogrenci@bilgeadam.com", "bilgeada");
          // or
          //GMapProvider.WebProxy = WebRequest.DefaultWebProxy;
@@ -839,11 +839,8 @@ namespace Demo.WindowsPresentation
             GMapMarker m2 = new GMapMarker(end);
             m2.Shape = new CustomMarkerDemo(this, m2, "End: " + start.ToString());
 
-            GMapMarker mRoute = new GMapMarker(start);
+            GMapRoute mRoute = new GMapRoute(route.Points);
             {
-               mRoute.Route.AddRange(route.Points);
-               mRoute.RegenerateRouteShape(MainMap);
-
                mRoute.ZIndex = -1;
             }
 

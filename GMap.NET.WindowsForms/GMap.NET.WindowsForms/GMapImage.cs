@@ -12,7 +12,7 @@ namespace GMap.NET.WindowsForms
    /// <summary>
    /// image abstraction
    /// </summary>
-   public class WindowsFormsImage : PureImage
+   public class GMapImage : PureImage
    {
       public System.Drawing.Image Img;
 
@@ -35,9 +35,9 @@ namespace GMap.NET.WindowsForms
    /// <summary>
    /// image abstraction proxy
    /// </summary>
-   public class WindowsFormsImageProxy : PureImageProxy
+   public class GMapImageProxy : PureImageProxy
    {
-      WindowsFormsImageProxy()
+      GMapImageProxy()
       {
 
       }
@@ -47,7 +47,7 @@ namespace GMap.NET.WindowsForms
           GMapProvider.TileImageProxy = Instance;
       }
 
-      public static readonly WindowsFormsImageProxy Instance = new WindowsFormsImageProxy();
+      public static readonly GMapImageProxy Instance = new GMapImageProxy();
 
 #if !PocketPC
       internal ColorMatrix ColorMatrix;
@@ -57,7 +57,7 @@ namespace GMap.NET.WindowsForms
 
       public override PureImage FromStream(Stream stream)
       {
-         WindowsFormsImage ret = null;
+         GMapImage ret = null;
          try
          {
 #if !PocketPC
@@ -67,7 +67,7 @@ namespace GMap.NET.WindowsForms
 #endif
             if(m != null)
             {
-               ret = new WindowsFormsImage();
+               ret = new GMapImage();
 #if !PocketPC
                ret.Img = ColorMatrix != null ? ApplyColorMatrix(m, ColorMatrix) : m;
 #else
@@ -87,7 +87,7 @@ namespace GMap.NET.WindowsForms
 
       public override bool Save(Stream stream, GMap.NET.PureImage image)
       {
-         WindowsFormsImage ret = image as WindowsFormsImage;
+         GMapImage ret = image as GMapImage;
          bool ok = true;
 
          if(ret.Img != null)

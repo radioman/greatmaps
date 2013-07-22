@@ -481,9 +481,9 @@ namespace GMap.NET.WindowsForms
          set
          {
             colorMatrix = value;
-            if(GMapProvider.TileImageProxy != null && GMapProvider.TileImageProxy is WindowsFormsImageProxy)
+            if(GMapProvider.TileImageProxy != null && GMapProvider.TileImageProxy is GMapImageProxy)
             {
-               (GMapProvider.TileImageProxy as WindowsFormsImageProxy).ColorMatrix = value;
+               (GMapProvider.TileImageProxy as GMapImageProxy).ColorMatrix = value;
                if(Core.IsStarted)
                {
                   ReloadMap();
@@ -562,7 +562,7 @@ namespace GMap.NET.WindowsForms
 
       static GMapControl()
       {
-          WindowsFormsImageProxy.Enable();
+          GMapImageProxy.Enable();
 #if !PocketPC
           GMaps.Instance.SQLitePing();
 #endif          
@@ -657,7 +657,7 @@ namespace GMap.NET.WindowsForms
                      {
                         // render tile
                         {
-                           foreach(WindowsFormsImage img in t.Overlays)
+                           foreach(GMapImage img in t.Overlays)
                            {
                               if(img != null && img.Img != null)
                               {
@@ -714,7 +714,7 @@ namespace GMap.NET.WindowsForms
 
                            // render tile 
                            {
-                              foreach(WindowsFormsImage img in parentTile.Overlays)
+                              foreach(GMapImage img in parentTile.Overlays)
                               {
                                  if(img != null && img.Img != null && !img.IsParent)
                                  {
