@@ -36,7 +36,7 @@ namespace GMap.NET.MapProviders
         /// API generated using http://greatmaps.codeplex.com/
         /// from http://tinyurl.com/3q6zhcw
         /// </summary>
-        public string APIKey = @"ABQIAAAAWaQgWiEBF3lW97ifKnAczhRAzBk5Igf8Z5n2W3hNnMT0j2TikxTLtVIGU7hCLLHMAuAMt-BO5UrEWA";
+        //public string APIKey = @"ABQIAAAAWaQgWiEBF3lW97ifKnAczhRAzBk5Igf8Z5n2W3hNnMT0j2TikxTLtVIGU7hCLLHMAuAMt-BO5UrEWA";
 
         #region GMapProvider Members
         public override Guid Id

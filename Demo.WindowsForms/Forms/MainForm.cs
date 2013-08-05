@@ -1261,6 +1261,8 @@ namespace Demo.WindowsForms
       {
          try
          {
+            MainMap.HoldInvalidation = true;
+
             DateTime? date = null;
             DateTime? dateEnd = null;
 
@@ -1294,6 +1296,7 @@ namespace Demo.WindowsForms
                      track.Add(session[0].Position);
 
                      GMapRoute grl = new GMapRoute(track, "");
+                     grl.Stroke = new Pen(GMapRoute.DefaultStroke.Brush);
                      grl.Stroke.Color = Color.Red;
                      grl.Stroke.Width = 2.0f;
                      routes.Routes.Add(grl);
@@ -1325,6 +1328,8 @@ namespace Demo.WindowsForms
                track.Clear();
                track = null;
             }
+
+            MainMap.Refresh();
          }
          catch(Exception ex)
          {
