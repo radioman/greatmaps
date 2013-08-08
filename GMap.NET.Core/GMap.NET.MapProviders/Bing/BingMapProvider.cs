@@ -60,6 +60,44 @@ namespace GMap.NET.MapProviders
          return quadKey.ToString();
       }
 
+      /// <summary>
+      /// Converts a QuadKey into tile XY coordinates.
+      /// </summary>
+      /// <param name="quadKey">QuadKey of the tile.</param>
+      /// <param name="tileX">Output parameter receiving the tile X coordinate.</param>
+      /// <param name="tileY">Output parameter receiving the tile Y coordinate.</param>
+      /// <param name="levelOfDetail">Output parameter receiving the level of detail.</param>
+      internal void QuadKeyToTileXY(string quadKey, out int tileX, out int tileY, out int levelOfDetail)
+      {
+          tileX = tileY = 0;
+          levelOfDetail = quadKey.Length;
+          for (int i = levelOfDetail; i > 0; i--)
+          {
+              int mask = 1 << (i - 1);
+              switch (quadKey[levelOfDetail - i])
+              {
+                  case '0':
+                  break;
+
+                  case '1':
+                  tileX |= mask;
+                  break;
+
+                  case '2':
+                  tileY |= mask;
+                  break;
+
+                  case '3':
+                  tileX |= mask;
+                  tileY |= mask;
+                  break;
+
+                  default:
+                  throw new ArgumentException("Invalid QuadKey digit sequence.");
+              }
+          }
+      }
+
       #region GMapProvider Members
       public override Guid Id
       {

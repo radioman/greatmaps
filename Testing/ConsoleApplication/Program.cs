@@ -13,6 +13,7 @@ using GMap.NET.MapProviders;
 using GMap.NET.Projections;
 using System.Threading;
 using GMap.NET.WindowsForms;
+using GMap.NET.CacheProviders;
 
 namespace ConsoleApplication
 {
@@ -73,12 +74,12 @@ namespace ConsoleApplication
 
         public void Go()
         {
-            for(int i = 0; i < 16; i++)
+            for (int i = 0; i < 16; i++)
             {
                 AddToLogCurrentInfo(new PointLatLng(i, 0));
 
                 Debug.WriteLine("i: " + i);
-                foreach(var l in GpsLog())
+                foreach (var l in GpsLog())
                 {
                     Debug.Write(l.Lat + " ");
                 }
@@ -95,10 +96,41 @@ namespace ConsoleApplication
             Debug.WriteLine("LoadedAssembly.FullName: " + args.LoadedAssembly.FullName);
         }
 
-        static void Main(string [] args)
+        static void Main(string[] args)
         {
-            var t = new test();
-            t.Go();
+            //var t = new test();
+            //t.Go();
+
+            try
+            {
+                int c = 0;
+
+                int type = GMapProviders.LithuaniaTOP50Map.DbId;
+
+                GMaps.Instance.PrimaryCache.DeleteOlderThan(DateTime.MaxValue, type); 
+
+                var import = Directory.GetFiles(@"D:\Temp\tmap\Vilnius\2007-05-27 (6)\Layer_NewLayer", "*.jpg", SearchOption.TopDirectoryOnly);
+                foreach (var i in import)
+                {
+                    var qk = Path.GetFileNameWithoutExtension(i);
+
+                    int x = 0;
+                    int y = 0;
+                    int z = 0;
+                    GMapProviders.BingMap.QuadKeyToTileXY(qk, out x, out y, out z);
+
+                    Debug.WriteLine(c++ + ", x: " + x + ", y: " + y + ", z: " + z);
+
+                    if (!GMaps.Instance.PrimaryCache.PutImageToCache(File.ReadAllBytes(i), type, new GPoint(x, y), z))
+                    {
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("import: " + ex);
+            }
 
             return;
 
@@ -111,7 +143,7 @@ namespace ConsoleApplication
 
             //Debug.WriteLine("DbId: " + GMapProviders.YahooMap.DbId);
 
-            //if(false)
+            if (false)
             {
                 GMaps.Instance.EnableTileHost(8844);
 
@@ -334,11 +366,11 @@ namespace ConsoleApplication
                 PointLatLng p2 = new PointLatLng(-34.608, -58.348);
 
                 //Sets up a array to contain the x and y coordinates
-                double [] xy = new double [4] { p1.Lng, p1.Lat, p2.Lng, p2.Lat };
+                double[] xy = new double[4] { p1.Lng, p1.Lat, p2.Lng, p2.Lat };
 
                 //An array for the z coordinate
-                double [] z = new double [1];
-                z [0] = 1;
+                double[] z = new double[1];
+                z[0] = 1;
 
                 ProjectionInfo pStart = KnownCoordinateSystems.Geographic.World.WGS1984;
 
@@ -347,7 +379,7 @@ namespace ConsoleApplication
 
                 Reproject.ReprojectPoints(xy, z, pStart, pEnd, 0, 2);
 
-                Debug.WriteLine(" true1: " + (int)xy [0] + "; " + (int)xy [1]);
+                Debug.WriteLine(" true1: " + (int)xy[0] + "; " + (int)xy[1]);
 
                 //var prj = new MapyCZProjection();
                 //{

@@ -114,6 +114,7 @@ namespace GMap.NET.MapProviders
         public static readonly LithuaniaOrtoFotoOldMapProvider LithuaniaOrtoFotoOldMap = LithuaniaOrtoFotoOldMapProvider.Instance;
         public static readonly LithuaniaHybridMapProvider LithuaniaHybridMap = LithuaniaHybridMapProvider.Instance;
         public static readonly LithuaniaHybridOldMapProvider LithuaniaHybridOldMap = LithuaniaHybridOldMapProvider.Instance;
+        public static readonly LithuaniaTOP50 LithuaniaTOP50Map = LithuaniaTOP50.Instance;
 
         public static readonly LatviaMapProvider LatviaMap = LatviaMapProvider.Instance;
 

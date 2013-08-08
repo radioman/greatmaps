@@ -51,6 +51,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilverlightMapFusion.Web", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcMapFusion", "Testing\MvcMapFusion\MvcMapFusion.csproj", "{D9756CE8-3C3B-46A6-916F-CB40E4E35978}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{E51E18A0-B3C2-49AF-9307-E2451D8DA843}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapCruncher", "Tools\MapCruncher\MapCruncher.csproj", "{052662DD-CAA7-4E24-98DE-16E51EFE0053}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +105,8 @@ Global
 		{127D3FB1-5E4A-41F3-9B19-6FA67A3DDCA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9756CE8-3C3B-46A6-916F-CB40E4E35978}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D9756CE8-3C3B-46A6-916F-CB40E4E35978}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{052662DD-CAA7-4E24-98DE-16E51EFE0053}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{052662DD-CAA7-4E24-98DE-16E51EFE0053}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,5 +130,6 @@ Global
 		{C5E9D4B5-F9A8-4414-9B17-5A70DC2705C0} = {BA76BAF9-B8BB-46B3-89D2-3087524D80B0}
 		{9407D648-C4FC-4A84-821A-F5275E10FA1E} = {37520277-6F32-4663-A126-9E185F23C8E1}
 		{127D3FB1-5E4A-41F3-9B19-6FA67A3DDCA3} = {37520277-6F32-4663-A126-9E185F23C8E1}
+		{052662DD-CAA7-4E24-98DE-16E51EFE0053} = {E51E18A0-B3C2-49AF-9307-E2451D8DA843}
 	EndGlobalSection
 EndGlobal

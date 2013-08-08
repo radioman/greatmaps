@@ -1,0 +1,539 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{052662DD-CAA7-4E24-98DE-16E51EFE0053}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>MapCruncher</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="System.Web.Services" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BackMaker\Program.cs" />
+    <Compile Include="BackMaker\ProgramInstance.cs" />
+    <Compile Include="BackMaker\UsageException.cs" />
+    <None Include="Info.pdf" />
+    <None Include="Jama\Jama.examples\MagicSquareExample.cs" />
+    <None Include="Jama\Jama.test\TestMatrix.cs" />
+    <Compile Include="Jama\Jama.util\Maths.cs" />
+    <Compile Include="Jama\Jama.util\SupportClass.cs" />
+    <Compile Include="Jama\Jama\CholeskyDecomposition.cs" />
+    <Compile Include="Jama\Jama\CorrespondencesAreSingularException.cs" />
+    <Compile Include="Jama\Jama\EigenvalueDecomposition.cs" />
+    <Compile Include="Jama\Jama\JamaMatrix.cs" />
+    <Compile Include="Jama\Jama\LUDecomposition.cs" />
+    <Compile Include="Jama\Jama\QRDecomposition.cs" />
+    <Compile Include="Jama\Jama\SingularValueDecomposition.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline.AsynchronizerPrivate\AsynchronizerFuture.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\AccessMethod.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\Affine2DPointTransformer.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\AlwaysReturnFailureFuture.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ApplyFuture.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ApplyPrototype.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ApplyVerbPresent.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\Asynchronizer.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\AsyncRecord.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\AsyncRecordCache.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\AsyncRef.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\AsyncScheduler.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\AsyncState.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\BeyondImageBounds.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\BoolParameter.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\BoundsPresent.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\CacheBase.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\CachePackage.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\CacheRecord.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ClockCacheRecord.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\CompositeBoundsVerb.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\CompositeImageVerb.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\CompositeTileSource.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ConstantFuture.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ConstantVerb.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ContinuousCoordinateSystem.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\CoordinateSystemIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\CoordinateSystemUtilities.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\DebugHash.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\DiskCache.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\DiskCacheFuture.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\DiskCachePrototype.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\DisplayableSourceCache.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\DummyTerm.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\EncodableHash.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ExactColors.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\FadeVerb.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\FakeOpenDocumentFuture.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\FastPoly1PointTransformer.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\FastPoly2PointTransformer.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\FetchDocumentFuture.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\FlatAddressLayout.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\FoxitOpenDocument.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\FoxitOpenVerb.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\FutureBase.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\FutureDocumentFromFilesystem.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\FutureDocumentFromUri.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\FutureFeatures.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\GDIOpenDocument.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\GDIOpenVerb.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\GeneralDocumentFuture.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\HashableImmutableParameter.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\HomographicImageTransformer.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\IBoundsProvider.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\IDisplayableSource.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\IDocumentFuture.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\IDocumentSource.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\IEvictable.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\IFuture.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\IFuturePrototype.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\IImageTransformer.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ImageParameterFromRawBounds.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ImageParameterFromTileAddress.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ImageParameterTypeIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ImageRef.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ImageRefCounted.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ImmutableParameter.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\InjectedTileFailure.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\InsufficientCorrespondencesException.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\InterestList.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\IntParameter.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\IPolyPointTransformer.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\IRenderableSource.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\IRobustHash.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\IRobustlyHashable.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ISourceMapRendererVerbs.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ITileAddressLayout.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\LatLonToSourceTransform.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\MapRectangleParameter.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\MemCacheFuture.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\MemCachePrototype.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\MemoryCache.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\MercatorCoordinateSystem.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\OpenDocumentSensitivePrioritizedFuture.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\OpenDocumentSensitivePrioritizedPrototype.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\OpenDocumentSensitivePrioritizer.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\OpenDocumentStateObserverIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ParamDict.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\Parameter.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\PersistentInterest.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\PolynomialImageTransformer.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\Present.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\PresentDiskDispatcher.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\PresentFailureCode.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\RenderBoundsPresent.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\RenderedTileFetch.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\RenderedTileSource.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\RequestCanceledPresent.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\RetryableFailure.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\RobustHashTools.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\ScaleAndTranslate.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\SizedCacheRecord.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\SizedObject.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\SizeParameter.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\SizeSensitiveCache.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\SlowGeneralPolyPointTransformer.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\SourceDocument.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\SourceImageDownsamplerVerb.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\SourceMapRendererTools.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\SourceToLatLonTransform.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\StringParameter.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\StrongHash.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\SynchronizingFuture.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\TemporaryFailureException.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\TermName.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\TileAddressEnumerator.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\TileAddressToImageRegion.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\TileDisplayDescriptor.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\TileDisplayDescriptorArray.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\TransparencyFuture.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\TransparencyPrototype.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\UnevaluatedTerm.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\UnretryableFailure.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\UnseekableStream.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\UnwarpedMapTileSource.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\UserBoundsRefVerb.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\UserClipperVerb.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\VEAddressLayout.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\Verb.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\VerbPresent.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\VETileFetch.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\VETileSource.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\VETileUpsamplerVerb.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\WarpBoundsVerb.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\WarpedMapTileSource.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\WarpImageVerb.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\WebTileFetch.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\WPFOpenDocument.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\WPFOpenVerb.cs" />
+    <Compile Include="MSR.CVE.BackMaker.ImagePipeline\WriteObjectFailedException.cs" />
+    <Compile Include="MSR.CVE.BackMaker.MCDebug\BigDebugKnob.cs" />
+    <Compile Include="MSR.CVE.BackMaker.MCDebug\Clocker.cs" />
+    <Compile Include="MSR.CVE.BackMaker.MCDebug\CountedEventWaitHandle.cs" />
+    <Compile Include="MSR.CVE.BackMaker.MCDebug\DiagnosticUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker.MCDebug\MakeObjectID.cs" />
+    <Compile Include="MSR.CVE.BackMaker.MCDebug\ResourceCounter.cs" />
+    <Compile Include="MSR.CVE.BackMaker.MCDebug\WeakHashableObject.cs" />
+    <Compile Include="MSR.CVE.BackMaker.Properties\Resources.cs" />
+    <Compile Include="MSR.CVE.BackMaker.Properties\Settings.cs" />
+    <Compile Include="MSR.CVE.BackMaker.Resources\Version.cs" />
+    <Compile Include="MSR.CVE.BackMaker\AboutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\AckRecord.cs" />
+    <Compile Include="MSR.CVE.BackMaker\AffineTransformationStyle.cs" />
+    <Compile Include="MSR.CVE.BackMaker\AssociationIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\AutomaticTransformationStyle.cs" />
+    <Compile Include="MSR.CVE.BackMaker\BackMakerRegistry.cs" />
+    <Compile Include="MSR.CVE.BackMaker\BiSortedDictionary.cs" />
+    <Compile Include="MSR.CVE.BackMaker\BuildConfig.cs" />
+    <Compile Include="MSR.CVE.BackMaker\Cfg.cs" />
+    <Compile Include="MSR.CVE.BackMaker\CfgBool.cs" />
+    <Compile Include="MSR.CVE.BackMaker\CfgInt.cs" />
+    <Compile Include="MSR.CVE.BackMaker\CfgString.cs" />
+    <Compile Include="MSR.CVE.BackMaker\CompositeTileUnit.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ConfigurationException.cs" />
+    <Compile Include="MSR.CVE.BackMaker\CrunchedFile.cs" />
+    <Compile Include="MSR.CVE.BackMaker\CrunchedLayer.cs" />
+    <Compile Include="MSR.CVE.BackMaker\CurrentSchema.cs" />
+    <Compile Include="MSR.CVE.BackMaker\D.cs" />
+    <Compile Include="MSR.CVE.BackMaker\DebugComparer.cs" />
+    <Compile Include="MSR.CVE.BackMaker\DebugThreadInterrupter.cs" />
+    <Compile Include="MSR.CVE.BackMaker\DefaultReferenceView.cs" />
+    <Compile Include="MSR.CVE.BackMaker\DegreesMinutesSeconds.cs" />
+    <Compile Include="MSR.CVE.BackMaker\DirtyEvent.cs" />
+    <Compile Include="MSR.CVE.BackMaker\DirtyListener.cs" />
+    <Compile Include="MSR.CVE.BackMaker\DirtyString.cs" />
+    <Compile Include="MSR.CVE.BackMaker\DisplayablePosition.cs" />
+    <Compile Include="MSR.CVE.BackMaker\DocumentMutabilityControlIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\DownhillInverterPointTransformer.cs" />
+    <Compile Include="MSR.CVE.BackMaker\DuplicatePushpinException.cs" />
+    <Compile Include="MSR.CVE.BackMaker\DynamicallyCompositingLayerViewManager.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ElementwiseMath.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ErrorPosition.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ExceptionMessageRecord.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ExpandedMemoryIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\FadeOptions.cs" />
+    <Compile Include="MSR.CVE.BackMaker\FastImageWarper.cs" />
+    <Compile Include="MSR.CVE.BackMaker\FIBR.cs" />
+    <Compile Include="MSR.CVE.BackMaker\FileIdentification.cs" />
+    <Compile Include="MSR.CVE.BackMaker\FileOutputMethod.cs" />
+    <Compile Include="MSR.CVE.BackMaker\FileUtilities.cs" />
+    <Compile Include="MSR.CVE.BackMaker\FodderSupport.cs" />
+    <Compile Include="MSR.CVE.BackMaker\FoxitLibManager.cs" />
+    <Compile Include="MSR.CVE.BackMaker\FoxitLibWorker.cs" />
+    <Compile Include="MSR.CVE.BackMaker\FoxitViewer.cs" />
+    <Compile Include="MSR.CVE.BackMaker\FPDFBitmapCache.cs" />
+    <Compile Include="MSR.CVE.BackMaker\GDIBigLockedImage.cs" />
+    <Compile Include="MSR.CVE.BackMaker\GhostscriptConfiguration.cs" />
+    <Compile Include="MSR.CVE.BackMaker\HasDisplayNameIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\HeaderList.cs" />
+    <Compile Include="MSR.CVE.BackMaker\HeapBool.cs" />
+    <Compile Include="MSR.CVE.BackMaker\HomographicTransformationStyle.cs" />
+    <Compile Include="MSR.CVE.BackMaker\HomographyPointTransformer.cs" />
+    <Compile Include="MSR.CVE.BackMaker\HTMLMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\ICurrentView.cs" />
+    <Compile Include="MSR.CVE.BackMaker\IFoxitViewer.cs" />
+    <Compile Include="MSR.CVE.BackMaker\IgnoredTags.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ImageTypeMapper.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ImageTypeMapping.cs" />
+    <Compile Include="MSR.CVE.BackMaker\IMapView.cs" />
+    <Compile Include="MSR.CVE.BackMaker\InlineSourceMapInfoSchema.cs" />
+    <Compile Include="MSR.CVE.BackMaker\InsaneSourceMapRemover.cs" />
+    <Compile Include="MSR.CVE.BackMaker\IntPixel.cs" />
+    <Compile Include="MSR.CVE.BackMaker\InvalidatableViewIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\InvalidFileContentsException.cs" />
+    <Compile Include="MSR.CVE.BackMaker\InvalidLLZ.cs" />
+    <Compile Include="MSR.CVE.BackMaker\InvalidMashupFile.cs" />
+    <Compile Include="MSR.CVE.BackMaker\IPointTransformer.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ITileWorkFeedback.cs" />
+    <Compile Include="MSR.CVE.BackMaker\IViewManager.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LastViewIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LatentRegionHolder.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LatLon.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LatLonEditIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LatLonZoom.cs" />
+    <Compile Include="MSR.CVE.BackMaker\Layer.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LayerControlIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LayerControls.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\LayerList.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LayerMetadataFile.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LayerView.cs" />
+    <Compile Include="MSR.CVE.BackMaker\Legend.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LegendDisplayableSourceWrapper.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LegendList.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LegendOptionsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\LegendRecord.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LegendView.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LegendViewManager.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LengthRecord.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ListUIIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\LLZBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\LocalDocumentDescriptor.cs" />
+    <Compile Include="MSR.CVE.BackMaker\MainAppForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\Manifest.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ManifestOutputMethod.cs" />
+    <Compile Include="MSR.CVE.BackMaker\MapDrawingOption.cs" />
+    <Compile Include="MSR.CVE.BackMaker\MapPosition.cs" />
+    <Compile Include="MSR.CVE.BackMaker\MapPositionDelegate.cs" />
+    <Compile Include="MSR.CVE.BackMaker\MapRectangle.cs" />
+    <Compile Include="MSR.CVE.BackMaker\MapTileSourceFactory.cs" />
+    <Compile Include="MSR.CVE.BackMaker\Mashup.cs" />
+    <Compile Include="MSR.CVE.BackMaker\MashupFileWarning.cs" />
+    <Compile Include="MSR.CVE.BackMaker\MashupFileWarningList.cs" />
+    <Compile Include="MSR.CVE.BackMaker\MashupParseContext.cs" />
+    <Compile Include="MSR.CVE.BackMaker\MashupWriteContext.cs" />
+    <Compile Include="MSR.CVE.BackMaker\MashupXMLSchemaVersion.cs" />
+    <Compile Include="MSR.CVE.BackMaker\MC1NamingScheme.cs" />
+    <Compile Include="MSR.CVE.BackMaker\MonolithicMapPositionsSchema.cs" />
+    <Compile Include="MSR.CVE.BackMaker\NamedPipeBase.cs" />
+    <Compile Include="MSR.CVE.BackMaker\NamedPipeClient.cs" />
+    <Compile Include="MSR.CVE.BackMaker\NamedPipeServer.cs" />
+    <Compile Include="MSR.CVE.BackMaker\NameWatchingTreeNode.cs" />
+    <Compile Include="MSR.CVE.BackMaker\NoMapPosition.cs" />
+    <Compile Include="MSR.CVE.BackMaker\NonredundantRenderComplaint.cs" />
+    <Compile Include="MSR.CVE.BackMaker\NoTagIdentities.cs" />
+    <Compile Include="MSR.CVE.BackMaker\NothingLayerViewManager.cs" />
+    <Compile Include="MSR.CVE.BackMaker\NoView.cs" />
+    <Compile Include="MSR.CVE.BackMaker\OneLayerBoundApplier.cs" />
+    <Compile Include="MSR.CVE.BackMaker\OpenRequest.cs" />
+    <Compile Include="MSR.CVE.BackMaker\OptionsPanelVisibility.cs" />
+    <Compile Include="MSR.CVE.BackMaker\OutputTileType.cs" />
+    <Compile Include="MSR.CVE.BackMaker\PaintPrompter.cs" />
+    <Compile Include="MSR.CVE.BackMaker\PaintSpecification.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ParametricLine.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ParseableCfg.cs" />
+    <Compile Include="MSR.CVE.BackMaker\PinDisplayIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\Pixel.cs" />
+    <Compile Include="MSR.CVE.BackMaker\PixelStruct.cs" />
+    <Compile Include="MSR.CVE.BackMaker\Point64.cs" />
+    <Compile Include="MSR.CVE.BackMaker\PointD.cs" />
+    <Compile Include="MSR.CVE.BackMaker\PositionAssociation.cs" />
+    <Compile Include="MSR.CVE.BackMaker\PositionAssociationView.cs" />
+    <Compile Include="MSR.CVE.BackMaker\PositionMemoryIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\PositionUpdateIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\QueuedTileProvider.cs" />
+    <Compile Include="MSR.CVE.BackMaker\QueueRequestIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\QueueSuicideRequest.cs" />
+    <Compile Include="MSR.CVE.BackMaker\QuitRequest.cs" />
+    <Compile Include="MSR.CVE.BackMaker\Range.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RangeDescriptor.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RangeDouble.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RangeInt.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RangeQueryData.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RBTreeNode.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ReadyToLockIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RecoverAutoSavedFileDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\RectangleD.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RectangleFRecord.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RedBlackTree.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RefSnapView.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RegistrationControlRecord.cs" />
+    <Compile Include="MSR.CVE.BackMaker\registrationControls.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\RegistrationDefinition.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RemoteFoxitServer.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RemoteFoxitStub.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderBounds.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderClip.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderComplaintBox.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderDebug.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderedLayerDisplayInfo.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderedLayerSelector.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderedMashupViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\RenderedTileNamingScheme.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderOptions.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderOptionsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\RenderOutputMethod.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderOutputUtil.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderProgressPanel2.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\RenderQualityStyle.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderRegion.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderReply.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderRequest.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderState.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderToFileControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\RenderToFileOptions.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderToOptions.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderToS3Control.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\RenderToS3Options.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderUIIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\RenderWorkUnit.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RenderWorkUnitComparinator.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RequestInterestIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\RobustPointTransformer.cs" />
+    <Compile Include="MSR.CVE.BackMaker\S3Adaptor.cs" />
+    <Compile Include="MSR.CVE.BackMaker\S3Content.cs" />
+    <Compile Include="MSR.CVE.BackMaker\S3Credentials.cs" />
+    <Compile Include="MSR.CVE.BackMaker\S3CredentialsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\S3OutputMethod.cs" />
+    <Compile Include="MSR.CVE.BackMaker\S3Response.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SampleHTMLWriter.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SampleHTMLWriterConstants.cs" />
+    <Compile Include="MSR.CVE.BackMaker\Set.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SingleMaxZoomForEntireMashupCompatibilityBlob.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SingleMaxZoomForEntireMashupSchema.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SingleSourceUnit.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SnapViewDisplayIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SnapViewStoreIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SourceMap.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SourceMapInfo.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SourceMapInfoAsCharDataSchema.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SourceMapInfoPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\SourceMapLegendFrame.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SourceMapOverviewWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\SourceMapRecord.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SourceMapRegistrationView.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SourceMapRenderOptions.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SourceMapViewManager.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SourceSnapView.cs" />
+    <Compile Include="MSR.CVE.BackMaker\StreamFilter.cs" />
+    <Compile Include="MSR.CVE.BackMaker\StreamTee.cs" />
+    <Compile Include="MSR.CVE.BackMaker\StringUtils.cs" />
+    <Compile Include="MSR.CVE.BackMaker\SVDisplayParams.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ThumbnailCollection.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ThumbnailRecord.cs" />
+    <Compile Include="MSR.CVE.BackMaker\TileAddress.cs" />
+    <Compile Include="MSR.CVE.BackMaker\TileRectangle.cs" />
+    <Compile Include="MSR.CVE.BackMaker\TracedScreenPoint.cs" />
+    <Compile Include="MSR.CVE.BackMaker\TracedVertex.cs" />
+    <Compile Include="MSR.CVE.BackMaker\TransformationStyle.cs" />
+    <Compile Include="MSR.CVE.BackMaker\TransformationStyleFactory.cs" />
+    <Compile Include="MSR.CVE.BackMaker\TransformFailedException.cs" />
+    <Compile Include="MSR.CVE.BackMaker\TransparencyColor.cs" />
+    <Compile Include="MSR.CVE.BackMaker\TransparencyIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\TransparencyOptions.cs" />
+    <Compile Include="MSR.CVE.BackMaker\TransparencyOptionsChangedDelegate.cs" />
+    <Compile Include="MSR.CVE.BackMaker\TransparencyPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\TRecord.cs" />
+    <Compile Include="MSR.CVE.BackMaker\UIPositionManager.cs" />
+    <Compile Include="MSR.CVE.BackMaker\UndefinedPixel.cs" />
+    <Compile Include="MSR.CVE.BackMaker\UnknownImageTypeException.cs" />
+    <Compile Include="MSR.CVE.BackMaker\UserRegionViewController.cs" />
+    <Compile Include="MSR.CVE.BackMaker\VENamingScheme.cs" />
+    <Compile Include="MSR.CVE.BackMaker\VEUrlFormat.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ViewControlIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ViewerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MSR.CVE.BackMaker\ViewerControlIfc.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ViewsNotAsWellPreservedSchema.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ViewState.cs" />
+    <Compile Include="MSR.CVE.BackMaker\ViewState_XML.cs" />
+    <Compile Include="MSR.CVE.BackMaker\VirtualEarthWebDownloader.cs" />
+    <Compile Include="MSR.CVE.BackMaker\XMLTagReader.cs" />
+    <Compile Include="MSR.CVE.BackMaker\XMLUtils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MSR.CVE.BackMaker.MCDebug\DiagnosticUI.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker.Properties\Resources.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker.Resources\Version.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\AboutForm.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\HTMLMessageBox.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\LayerControls.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\LegendOptionsPanel.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\LLZBox.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\ViewerControl.resx">
+      <DependentUpon>ViewerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="MSR.CVE.BackMaker\MainAppForm.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\MainAppForm.resx">
+      <DependentUpon>MainAppForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MSR.CVE.BackMaker\RecoverAutoSavedFileDialog.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\registrationControls.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\RenderedMashupViewer.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\RenderOptionsPanel.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\RenderProgressPanel2.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\RenderToFileControl.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\RenderToS3Control.resources" />
+    <None Include="MSR.CVE.BackMaker\RenderWindow.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\RenderWindow.resx">
+      <DependentUpon>RenderWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MSR.CVE.BackMaker\S3CredentialsForm.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\SourceMapInfoPanel.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\SourceMapOverviewWindow.resources" />
+    <EmbeddedResource Include="MSR.CVE.BackMaker\TransparencyPanel.resources" />
+    <None Include="MSR.CVE.BackMaker\ViewerControl.resources" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="MapCruncher.chm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fpdfview.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="MapCruncherAppConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
