@@ -14,6 +14,7 @@ using GMap.NET.Projections;
 using System.Threading;
 using GMap.NET.WindowsForms;
 using GMap.NET.CacheProviders;
+using System.Drawing;
 
 namespace ConsoleApplication
 {
@@ -107,11 +108,25 @@ namespace ConsoleApplication
 
                 int type = GMapProviders.LithuaniaTOP50Map.DbId;
 
-                GMaps.Instance.PrimaryCache.DeleteOlderThan(DateTime.MaxValue, type); 
+                GMaps.Instance.PrimaryCache.DeleteOlderThan(DateTime.MaxValue, type);
 
-                var import = Directory.GetFiles(@"D:\Temp\tmap\Vilnius\2007-05-27 (6)\Layer_NewLayer", "*.jpg", SearchOption.TopDirectoryOnly);
+                var import = Directory.GetFiles(@"D:\Temp\tmap\TOP50LKS\Vilnius\", "*.jpg", SearchOption.AllDirectories).Where(p => p.Contains("Layer_NewLayer") && !p.Contains("black")).ToList();
                 foreach (var i in import)
                 {
+                    //using (Bitmap pic = new Bitmap(i))
+                    //{
+                    //    for (int ii = 0; ii < pic.Width; ii++)
+                    //    {
+                    //        for (int j = 0; j < pic.Height; j++)
+                    //        {
+                    //            if (pic.GetPixel(ii, j) == Color.Black)
+                    //            {
+
+                    //            }
+                    //        }
+                    //    }
+                    //}                 
+
                     var qk = Path.GetFileNameWithoutExtension(i);
 
                     int x = 0;
@@ -130,6 +145,37 @@ namespace ConsoleApplication
             catch (Exception ex)
             {
                 Debug.WriteLine("import: " + ex);
+            }
+
+            if(false)
+            {
+                var dirs = Directory.GetDirectories(@"D:\Temp\tmap\TOP50LKS");
+                foreach (var dir in dirs)
+                {
+                    var jpg = Directory.GetFiles(dir, "*.jpg");
+
+                    string files = Path.GetFileName(dir).Replace(" ", string.Empty) + " ";
+
+                    if (File.Exists(@"D:\Temp\tmap\tmp\" + files.Replace(" ", string.Empty) + ".png"))
+                    {
+                        Debug.WriteLine("SKIP: " + dir);
+                        continue;
+                    }
+
+                    foreach (var j in jpg)
+                    {
+                        files += "\"" + j + "\" ";
+                    }
+
+                    string ice = @"D:\Projektai\Test\ice\ice2\ICE\bin\x64\Debug\ICE.exe";
+                    //string ice = @"C:\Program Files\Microsoft Research\Image Composite Editor\ICE.exe";
+
+                    Debug.WriteLine("process: " + dir);
+
+                    Process.Start(ice, files).WaitForExit();
+
+                    //break;
+                }
             }
 
             return;
