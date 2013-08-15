@@ -47,6 +47,7 @@
           this.menuItemLog1h = new System.Windows.Forms.MenuItem();
           this.menuItem8 = new System.Windows.Forms.MenuItem();
           this.menuItem14 = new System.Windows.Forms.MenuItem();
+          this.menuItem5 = new System.Windows.Forms.MenuItem();
           this.menuItem15 = new System.Windows.Forms.MenuItem();
           this.menuItem11 = new System.Windows.Forms.MenuItem();
           this.menuItem4 = new System.Windows.Forms.MenuItem();
@@ -80,6 +81,7 @@
           this.menuItem3 = new System.Windows.Forms.MenuItem();
           this.timerKeeperOfLife = new System.Windows.Forms.Timer();
           this.MainMap = new Demo.WindowsMobile.Map();
+          this.menuItemShowTrack = new System.Windows.Forms.MenuItem();
           this.SuspendLayout();
           // 
           // mainMenu1
@@ -183,6 +185,7 @@
           // menuItem8
           // 
           this.menuItem8.MenuItems.Add(this.menuItem14);
+          this.menuItem8.MenuItems.Add(this.menuItem5);
           this.menuItem8.MenuItems.Add(this.menuItem15);
           this.menuItem8.MenuItems.Add(this.menuItem11);
           this.menuItem8.MenuItems.Add(this.menuItem4);
@@ -197,6 +200,11 @@
           // 
           this.menuItem14.Text = "Lithuania";
           this.menuItem14.Click += new System.EventHandler(this.menuItem14_Click);
+          // 
+          // menuItem5
+          // 
+          this.menuItem5.Text = "LithuaniaTop50";
+          this.menuItem5.Click += new System.EventHandler(this.menuItem5_Click_1);
           // 
           // menuItem15
           // 
@@ -263,6 +271,7 @@
           this.menuItem30.MenuItems.Add(this.menuItemSnapToGps);
           this.menuItem30.MenuItems.Add(this.menuItemDisableAutoSleep);
           this.menuItem30.MenuItems.Add(this.menuItemEnableGrid);
+          this.menuItem30.MenuItems.Add(this.menuItemShowTrack);
           this.menuItem30.Text = "Options";
           // 
           // menuItemshowDestination
@@ -373,6 +382,11 @@
           this.MainMap.Size = new System.Drawing.Size(480, 696);
           this.MainMap.TabIndex = 0;
           // 
+          // menuItemShowTrack
+          // 
+          this.menuItemShowTrack.Text = "Show Track";
+          this.menuItemShowTrack.Click += new System.EventHandler(this.menuItemShowTrack_Click);
+          // 
           // MainForm
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
@@ -444,6 +458,8 @@
       private System.Windows.Forms.MenuItem menuItemLog10min;
       private System.Windows.Forms.MenuItem menuItemLog30min;
       private System.Windows.Forms.MenuItem menuItemLog1h;
+      private System.Windows.Forms.MenuItem menuItem5;
+      private System.Windows.Forms.MenuItem menuItemShowTrack;
    }
 }
 

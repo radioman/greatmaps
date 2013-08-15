@@ -247,6 +247,9 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\Lithuania\LithuaniaOrtoFotoOldMapProvider.cs">
       <Link>GMap.NET.MapProviders\Lithuania\LithuaniaOrtoFotoOldMapProvider.cs</Link>
     </Compile>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\Lithuania\LithuaniaTOP50.cs">
+      <Link>GMap.NET.MapProviders\Lithuania\LithuaniaTOP50.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\NearMap\NearHybridMapProvider.cs">
       <Link>GMap.NET.MapProviders\NearMap\NearHybridMapProvider.cs</Link>
     </Compile>
@@ -437,6 +440,9 @@
       <Link>GMap.NET.WindowsForms\GMapControl.cs</Link>
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\GMapImage.cs">
+      <Link>GMap.NET.WindowsForms\GMapImage.cs</Link>
+    </Compile>
     <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\GMapMarker.cs">
       <Link>GMap.NET.WindowsForms\GMapMarker.cs</Link>
     </Compile>
@@ -460,9 +466,6 @@
     </Compile>
     <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\ToolTips\GMapRoundedToolTip.cs">
       <Link>GMap.NET.WindowsForms\ToolTips\GMapRoundedToolTip.cs</Link>
-    </Compile>
-    <Compile Include="..\GMap.NET.WindowsForms\GMap.NET.WindowsForms\WindowsFormsImage.cs">
-      <Link>GMap.NET.WindowsForms\WindowsFormsImage.cs</Link>
     </Compile>
     <Compile Include="GMap.NET.GPS\DegreesMinutesSeconds.cs" />
     <Compile Include="GMap.NET.GPS\GPS.cs" />

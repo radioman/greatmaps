@@ -243,7 +243,13 @@ namespace Demo.WindowsMobile
       {
          MainMap.MapProvider = GMapProviders.LithuaniaMap;
          MainMap.MaxZoom = MainMap.MapProvider.MaxZoom.Value;
-      } 
+      }
+
+      private void menuItem5_Click_1(object sender, EventArgs e)
+      {
+          MainMap.MapProvider = GMapProviders.LithuaniaTOP50Map;
+          MainMap.MaxZoom = 15;
+      }
 
       private void menuItem15_Click(object sender, EventArgs e)
       {
@@ -392,10 +398,11 @@ namespace Demo.WindowsMobile
          }
       }
 
-      const int logSize = 1024 * 8;
+      const int logSize = 1024 * 1;
       readonly PointLatLng[] gpsLog = new PointLatLng[logSize];
       int logCounter = 0;
       bool logFull = false;
+      PointLatLng last = PointLatLng.Empty;
 
       public IEnumerable<PointLatLng> GpsLog()
       {
@@ -418,15 +425,19 @@ namespace Demo.WindowsMobile
 
       public bool AddToLogCurrentInfo(GpsPosition data)
       {
-         lock (gpsLog)
-         {
-            gpsLog[logCounter++] = new PointLatLng(data.Latitude.Value, data.Longitude.Value);
-            if (logCounter == logSize)
-            {
-                logCounter = 0;
-                logFull = true;
-            }
-         }         
+          if (gps.GetDistance(data.Latitude.Value, data.Longitude.Value, last.Lat, last.Lng) > 0.1)
+          {
+              lock (gpsLog)
+              {
+                  gpsLog[logCounter++] = new PointLatLng(data.Latitude.Value, data.Longitude.Value);
+                  if (logCounter == logSize)
+                  {
+                      logCounter = 0;
+                      logFull = true;
+                  }
+              }
+              last = gpsLog[logCounter];
+          }
 
          if(string.IsNullOrEmpty(LogDb))
          {
@@ -621,6 +632,114 @@ namespace Demo.WindowsMobile
          return ret;
       }
 
+      public static IEnumerable<List<GpsLog>> GetRoutesFromMobileLog(string gpsdLogFile, DateTime? start, DateTime? end, double? maxPositionDilutionOfPrecision)
+      {
+         using(SQLiteConnection cn = new SQLiteConnection())
+         {
+            cn.ConnectionString = string.Format("Data Source=\"{0}\";FailIfMissing=True;", gpsdLogFile);
+
+            cn.Open();
+            {
+               using(DbCommand cmd = cn.CreateCommand())
+               {
+                  cmd.CommandText = "SELECT * FROM GPS ";
+                  int initLenght = cmd.CommandText.Length;
+
+                  if(start.HasValue)
+                  {
+                     cmd.CommandText += "WHERE TimeUTC >= @t1 ";
+                     SQLiteParameter lookupValue = new SQLiteParameter("@t1", start);
+                     cmd.Parameters.Add(lookupValue);
+                  }
+
+                  if(end.HasValue)
+                  {
+                     if(cmd.CommandText.Length <= initLenght)
+                     {
+                        cmd.CommandText += "WHERE ";
+                     }
+                     else
+                     {
+                        cmd.CommandText += "AND ";
+                     }
+
+                     cmd.CommandText += "TimeUTC <= @t2 ";
+                     SQLiteParameter lookupValue = new SQLiteParameter("@t2", end);
+                     cmd.Parameters.Add(lookupValue);
+                  }
+
+                  if(maxPositionDilutionOfPrecision.HasValue)
+                  {
+                     if(cmd.CommandText.Length <= initLenght)
+                     {
+                        cmd.CommandText += "WHERE ";
+                     }
+                     else
+                     {
+                        cmd.CommandText += "AND ";
+                     }
+
+                     cmd.CommandText += "PositionDilutionOfPrecision <= @p3 ";
+                     SQLiteParameter lookupValue = new SQLiteParameter("@p3", maxPositionDilutionOfPrecision);
+                     cmd.Parameters.Add(lookupValue);
+                  }
+
+                  using(DbDataReader rd = cmd.ExecuteReader())
+                  {
+                     List<GpsLog> points = new List<GpsLog>();
+                     while(rd.Read())
+                     {
+                        GpsLog log = new GpsLog();
+                        {
+                           log.TimeUTC = (DateTime)rd["TimeUTC"];
+                           log.SessionCounter = (long)rd["SessionCounter"];
+                           log.Delta = rd["Delta"] as double?;
+                           log.Speed = rd["Speed"] as double?;
+                           log.SeaLevelAltitude = rd["SeaLevelAltitude"] as double?;
+                           log.EllipsoidAltitude = rd["EllipsoidAltitude"] as double?;
+                           log.SatellitesInView = rd["SatellitesInView"] as System.Byte?;
+                           log.SatelliteCount = rd["SatelliteCount"] as System.Byte?;
+                           log.Position = new PointLatLng((double)rd["Lat"], (double)rd["Lng"]);
+                           log.PositionDilutionOfPrecision = rd["PositionDilutionOfPrecision"] as double?;
+                           log.HorizontalDilutionOfPrecision = rd["HorizontalDilutionOfPrecision"] as double?;
+                           log.VerticalDilutionOfPrecision = rd["VerticalDilutionOfPrecision"] as double?;
+                           log.FixQuality = (GMap.NET.FixQuality)((byte)rd["FixQuality"]);
+                           log.FixType = (GMap.NET.FixType)((byte)rd["FixType"]);
+                           log.FixSelection = (GMap.NET.FixSelection)((byte)rd["FixSelection"]);
+                        }
+
+                        if(log.SessionCounter == 0 && points.Count > 0)
+                        {
+                           List<GpsLog> ret = new List<GpsLog>(points);
+                           points.Clear();
+                           {
+                              yield return ret;
+                           }
+                        }
+
+                        points.Add(log);
+                     }
+
+                     if(points.Count > 0)
+                     {
+                        List<GpsLog> ret = new List<GpsLog>(points);
+                        points.Clear();
+                        {
+                           yield return ret;
+                        }
+                     }
+
+                     points.Clear();
+                     points = null;
+
+                     rd.Close();
+                  }
+               }
+            }
+            cn.Close();
+         }
+      }
+
       private void MainForm_Load(object sender, EventArgs e)
       {
          updateDataHandler = new EventHandler(UpdateData);
@@ -634,6 +753,31 @@ namespace Demo.WindowsMobile
             var fileName = sd + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar + "log.gpsd";
             {
                CheckLogDb(fileName);
+
+               if (!string.IsNullOrEmpty(LogDb))
+               {
+                   var logs = GetRoutesFromMobileLog(LogDb, DateTime.Today, DateTime.Now, null);
+
+                   foreach (var l in logs)
+                   {
+                       foreach (var ll in l)
+                       {
+                           if (gps.GetDistance(ll.Position.Lat, ll.Position.Lng, last.Lat, last.Lng) > 0.1)
+                           {
+                               lock (gpsLog)
+                               {
+                                   gpsLog[logCounter++] = ll.Position;
+                                   if (logCounter == logSize)
+                                   {
+                                       logCounter = 0;
+                                       logFull = true;
+                                   }
+                               }
+                               last = gpsLog[logCounter];
+                           }
+                       }
+                   }
+               }
             }
          }
 
@@ -941,6 +1085,11 @@ namespace Demo.WindowsMobile
                {
                   if(lastData.Time.HasValue && lastData.Longitude.HasValue && lastData.Longitude.HasValue)
                   {
+                      if (menuItemShowTrack.Checked && trackRoute != null)
+                      {
+                          
+                      }
+
                      // center map
                      if(menuItemGPSenabled.Checked)
                      {
@@ -1130,6 +1279,39 @@ namespace Demo.WindowsMobile
          }
       }
 
+      internal GMapRoute trackRoute;
+
+      private void menuItemShowTrack_Click(object sender, EventArgs e)
+      {
+          menuItemShowTrack.Checked = !menuItemShowTrack.Checked;
+          if (menuItemShowTrack.Checked)
+          {
+              if (trackRoute == null)
+              {
+                  trackRoute = new GMapRoute("track route");
+
+                  trackRoute.Stroke = new Pen(Color.Red, 1.0f);
+                  trackRoute.Stroke.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+
+                  trackRoute.Points.AddRange(GpsLog());
+
+                  objects.Routes.Add(trackRoute);
+              }
+              else
+              {
+                  trackRoute.Points.Clear();
+                  trackRoute.Points.AddRange(GpsLog());
+
+                  MainMap.UpdateRouteLocalPosition(trackRoute);
+                  MainMap.Invalidate();
+              }
+          }
+          if (trackRoute != null)
+          {
+              trackRoute.IsVisible = menuItemShowTrack.Checked;
+          }
+      }
+
       private void menuItemSetDestination_Click(object sender, EventArgs e)
       {
          {
@@ -1171,9 +1353,8 @@ namespace Demo.WindowsMobile
          {
             destinationRoute = new GMapRoute("destination route");
 
-            destinationRoute.Stroke.Color = Color.Red;
+            destinationRoute.Stroke = new Pen(Color.Red, 1.0f);
             destinationRoute.Stroke.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-            destinationRoute.Stroke.Width = 1.0f;
  
             objects.Routes.Add(destinationRoute);
          }
@@ -1458,7 +1639,7 @@ namespace Demo.WindowsMobile
                waitStopEvents.WaitOne();
             }
          }
-      }      
+      }           
    }
 
    public class Map : GMapControl
