@@ -21,6 +21,7 @@ namespace GMap.NET
          this.lat = lat;
          this.widthLng = widthLng;
          this.heightLat = heightLat;
+         NotEmpty = true;
       }
 
       public RectLatLng(PointLatLng location, SizeLatLng size)
@@ -29,6 +30,7 @@ namespace GMap.NET
          this.lat = location.Lat;
          this.widthLng = size.WidthLng;
          this.heightLat = size.HeightLat;
+         NotEmpty = true;
       }
 
       public static RectLatLng FromLTRB(double leftLng, double topLat, double rightLng, double bottomLat)
@@ -162,16 +164,17 @@ namespace GMap.NET
          }
       }
 
+      bool NotEmpty;
+
+      /// <summary>
+      /// returns true if coordinates wasn't assigned
+      /// </summary>
       public bool IsEmpty
       {
-         get
-         {
-            if(this.WidthLng > 0d)
-            {
-               return (this.HeightLat <= 0d);
-            }
-            return true;
-         }
+          get
+          {
+              return !NotEmpty;
+          }
       }
 
       public override bool Equals(object obj)
