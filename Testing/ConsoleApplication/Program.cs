@@ -20,7 +20,7 @@ namespace ConsoleApplication
 {
     class test
     {
-        const int batchSize = 3;
+        //const int batchSize = 3;
         const int logSize = 8;//1024 * 8;
         readonly PointLatLng[] gpsLog = new PointLatLng[logSize];
         int logCounter = 0;
@@ -31,16 +31,20 @@ namespace ConsoleApplication
             int i = 0;
             int skip = 0;
 
+            PointLatLng last = PointLatLng.Empty;
+
             foreach (var l in GpsLog())
             {
-                if (i++ < 10)
+                if (i++ <= 4)
                 {
+                    last = l;
                     yield return l;
                 }
                 else
-                {
-                    if (skip++ % 2 == 0)
+                {                    
+                    if(MercatorProjection.Instance.GetDistance(l, last) > 0.1)
                     {
+                        last = l;
                         yield return l;
                     }
                 }
@@ -75,7 +79,7 @@ namespace ConsoleApplication
 
         public void Go()
         {
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < 160; i++)
             {
                 AddToLogCurrentInfo(new PointLatLng(i, 0));
 
@@ -102,15 +106,20 @@ namespace ConsoleApplication
             //var t = new test();
             //t.Go();
 
+            //return;
+
             try
             {
                 int c = 0;
 
                 int type = GMapProviders.LithuaniaTOP50Map.DbId;
 
-                GMaps.Instance.PrimaryCache.DeleteOlderThan(DateTime.MaxValue, type);
+                //GMaps.Instance.PrimaryCache.DeleteOlderThan(DateTime.MaxValue, type);
 
-                var import = Directory.GetFiles(@"D:\Temp\tmap\TOP50LKS\Vilnius\", "*.jpg", SearchOption.AllDirectories).Where(p => p.Contains("Layer_NewLayer") && !p.Contains("black")).ToList();
+                var import = Directory.GetFiles(@"T:\tiles\Layer_NewLayer\", "*.jpg", SearchOption.AllDirectories).Where(p => p.Contains("Layer_") && !p.Contains("black")).ToList();
+
+                int total = import.Count;
+                
                 foreach (var i in import)
                 {
                     //using (Bitmap pic = new Bitmap(i))
@@ -134,7 +143,7 @@ namespace ConsoleApplication
                     int z = 0;
                     GMapProviders.BingMap.QuadKeyToTileXY(qk, out x, out y, out z);
 
-                    Debug.WriteLine(c++ + ", x: " + x + ", y: " + y + ", z: " + z);
+                    Debug.WriteLine(c++ + " of " + total + ", x: " + x + ", y: " + y + ", z: " + z);
 
                     if (!GMaps.Instance.PrimaryCache.PutImageToCache(File.ReadAllBytes(i), type, new GPoint(x, y), z))
                     {

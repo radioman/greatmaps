@@ -920,7 +920,7 @@ namespace GMap.NET.Internals
                            }
                            else if(ex != null)
                            {
-                              if(skipOverZoom != okZoom)
+                              if ((skipOverZoom != okZoom) && (task.Value.Zoom > okZoom))
                               {
                                  if(ex.Message.Contains("(404) Not Found"))
                                  {
