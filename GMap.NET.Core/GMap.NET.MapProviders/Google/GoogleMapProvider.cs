@@ -1904,8 +1904,8 @@ namespace GMap.NET.MapProviders
                                 {
                                     if (!string.IsNullOrEmpty(t.InnerText))
                                     {
-                                        direction.DistanceValue = uint.Parse(t.InnerText);
-                                        Debug.WriteLine("value: " + direction.DistanceValue);
+                                        direction.DurationValue = uint.Parse(t.InnerText);
+                                        Debug.WriteLine("value: " + direction.DurationValue);
                                     }
                                 }
                             }
@@ -1925,8 +1925,8 @@ namespace GMap.NET.MapProviders
                                 {
                                     if (!string.IsNullOrEmpty(t.InnerText))
                                     {
-                                        direction.DurationValue = uint.Parse(t.InnerText);
-                                        Debug.WriteLine("value: " + direction.DurationValue);
+                                        direction.DistanceValue = uint.Parse(t.InnerText);
+                                        Debug.WriteLine("value: " + direction.DistanceValue);
                                     }
                                 }
                             }
