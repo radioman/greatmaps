@@ -70,12 +70,12 @@ namespace GMap.NET.WindowsForms.Markers
       static Bitmap shadow_small;
       static Bitmap pushpin_shadow;
 
-      GMarkerGoogleType type;
+      public readonly GMarkerGoogleType Type;
 
       public GMarkerGoogle(PointLatLng p, GMarkerGoogleType type)
          : base(p)
       {
-         this.type = type;
+         this.Type = type;
 
          if(type != GMarkerGoogleType.none)
          {
@@ -85,10 +85,10 @@ namespace GMap.NET.WindowsForms.Markers
 
       void LoadBitmap()
       {
-         Bitmap = GetIcon(type.ToString());
+         Bitmap = GetIcon(Type.ToString());
          Size = new System.Drawing.Size(Bitmap.Width, Bitmap.Height);
 
-         switch(type)
+         switch(Type)
          {
             case GMarkerGoogleType.arrow:
             {
@@ -261,7 +261,7 @@ namespace GMap.NET.WindowsForms.Markers
 
       void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
       {
-         info.AddValue("type", this.type);
+         info.AddValue("type", this.Type);
          info.AddValue("Bearing", this.Bearing);
 
          base.GetObjectData(info, context);
@@ -270,7 +270,7 @@ namespace GMap.NET.WindowsForms.Markers
       protected GMarkerGoogle(SerializationInfo info, StreamingContext context)
          : base(info, context)
       {
-         this.type = Extensions.GetStruct<GMarkerGoogleType>(info, "type", GMarkerGoogleType.none);
+         this.Type = Extensions.GetStruct<GMarkerGoogleType>(info, "type", GMarkerGoogleType.none);
          this.Bearing = Extensions.GetStruct<float>(info, "Bearing", null);
       }
 
@@ -280,7 +280,7 @@ namespace GMap.NET.WindowsForms.Markers
 
       public void OnDeserialization(object sender)
       {
-         if(type != GMarkerGoogleType.none)
+         if(Type != GMarkerGoogleType.none)
          {
             LoadBitmap();
          }
