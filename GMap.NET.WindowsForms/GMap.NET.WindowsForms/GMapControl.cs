@@ -565,7 +565,7 @@ namespace GMap.NET.WindowsForms
           GMapImageProxy.Enable();
 #if !PocketPC
           GMaps.Instance.SQLitePing();
-#endif          
+#endif            
       }
 
       void Overlays_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -2311,6 +2311,15 @@ namespace GMap.NET.WindowsForms
          {
             Focus();
          }
+         mouseIn = true;
+      }
+
+      bool mouseIn = false;
+
+      protected override void OnMouseLeave(EventArgs e)
+      {
+          base.OnMouseLeave(e);
+          mouseIn = false;
       }
 
       /// <summary>
@@ -2325,9 +2334,9 @@ namespace GMap.NET.WindowsForms
 
       protected override void OnMouseWheel(MouseEventArgs e)
       {
-         base.OnMouseWheel(e);
+         base.OnMouseWheel(e);         
 
-         if((!IsMouseOverMarker || IgnoreMarkerOnMouseWheel) && !Core.IsDragging)
+         if(mouseIn && (!IsMouseOverMarker || IgnoreMarkerOnMouseWheel) && !Core.IsDragging)
          {
             if(Core.mouseLastZoom.X != e.X && Core.mouseLastZoom.Y != e.Y)
             {
