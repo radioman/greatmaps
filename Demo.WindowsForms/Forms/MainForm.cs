@@ -48,7 +48,7 @@ namespace Demo.WindowsForms
       {
          InitializeComponent();
 
-         if(!DesignMode)
+         if (!GMapControl.IsDesignerHosted)
          {
             // add your custom map db provider
             //GMap.NET.CacheProviders.MySQLPureImageCache ch = new GMap.NET.CacheProviders.MySQLPureImageCache();

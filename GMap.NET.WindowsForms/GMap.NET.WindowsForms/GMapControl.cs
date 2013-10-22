@@ -519,53 +519,58 @@ namespace GMap.NET.WindowsForms
       public GMapControl()
       {
 #if !PocketPC
-         if(!DesignModeInConstruct && !IsDesignerHosted)
+          if (!IsDesignerHosted)
 #endif
-         {
+          {
 #if !PocketPC
-            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            this.SetStyle(ControlStyles.UserPaint, true);
-            this.SetStyle(ControlStyles.Opaque, true);
-            ResizeRedraw = true;
+              this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+              this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+              this.SetStyle(ControlStyles.UserPaint, true);
+              this.SetStyle(ControlStyles.Opaque, true);
+              ResizeRedraw = true;
 
-            TileFlipXYAttributes.SetWrapMode(WrapMode.TileFlipXY);
+              TileFlipXYAttributes.SetWrapMode(WrapMode.TileFlipXY);
 
-            // only one mode will be active, to get mixed mode create new ColorMatrix
-            GrayScaleMode = GrayScaleMode;
-            NegativeMode = NegativeMode;
+              // only one mode will be active, to get mixed mode create new ColorMatrix
+              GrayScaleMode = GrayScaleMode;
+              NegativeMode = NegativeMode;
 #endif
-            Core.SystemType = "WindowsForms";
+              Core.SystemType = "WindowsForms";
 
-            RenderMode = RenderMode.GDI_PLUS;
+              RenderMode = RenderMode.GDI_PLUS;
 
-            CenterFormat.Alignment = StringAlignment.Center;
-            CenterFormat.LineAlignment = StringAlignment.Center;
+              CenterFormat.Alignment = StringAlignment.Center;
+              CenterFormat.LineAlignment = StringAlignment.Center;
 
-            BottomFormat.Alignment = StringAlignment.Center;
+              BottomFormat.Alignment = StringAlignment.Center;
 
 #if !PocketPC
-            BottomFormat.LineAlignment = StringAlignment.Far;
+              BottomFormat.LineAlignment = StringAlignment.Far;
 #endif
 
-            if(GMaps.Instance.IsRunningOnMono)
-            {
-               // no imports to move pointer
-               MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionWithoutCenter;
-            }
+              if (GMaps.Instance.IsRunningOnMono)
+              {
+                  // no imports to move pointer
+                  MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionWithoutCenter;
+              }
 
-            Overlays.CollectionChanged += new NotifyCollectionChangedEventHandler(Overlays_CollectionChanged);
-         }
+              Overlays.CollectionChanged += new NotifyCollectionChangedEventHandler(Overlays_CollectionChanged);
+          }
       }
 
 #endif
 
       static GMapControl()
-      {
-          GMapImageProxy.Enable();
+      {       
 #if !PocketPC
-          GMaps.Instance.SQLitePing();
-#endif            
+          if (!IsDesignerHosted)
+#endif
+          {
+              GMapImageProxy.Enable();
+#if !PocketPC
+              GMaps.Instance.SQLitePing();
+#endif
+          }
       }
 
       void Overlays_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -1203,81 +1208,34 @@ namespace GMap.NET.WindowsForms
       #region UserControl Events
 
 #if !PocketPC
-      protected bool DesignModeInConstruct
-      {
-         get
-         {
-            return (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
-         }
-      }
-
-      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-      [Browsable(false)]
-      public bool IsDesignerHosted
-      {
-         get
-         {
-            return IsControlDesignerHosted(this);
-         }
-      }
-
-      public bool IsControlDesignerHosted(Control ctrl)
-      {
-         if(ctrl != null)
-         {
-            if(ctrl.Site != null)
-            {
-
-               if(ctrl.Site.DesignMode == true)
-                  return true;
-
-               else
-               {
-                  if(IsControlDesignerHosted(ctrl.Parent))
-                     return true;
-
-                  else
-                     return false;
-               }
-            }
-            else
-            {
-               if(IsControlDesignerHosted(ctrl.Parent))
-                  return true;
-               else
-                  return false;
-            }
-         }
-         else
-            return false;
-      }
+      public readonly static bool IsDesignerHosted = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
       protected override void OnLoad(EventArgs e)
       {
          base.OnLoad(e);
 
-         if(!IsDesignerHosted)
+         if (!IsDesignerHosted)
          {
-            //MethodInvoker m = delegate
-            //{
-            //   Thread.Sleep(444);
+             //MethodInvoker m = delegate
+             //{
+             //   Thread.Sleep(444);
 
-            //OnSizeChanged(null);
+             //OnSizeChanged(null);
 
-            if(lazyEvents)
-            {
-               lazyEvents = false;
+             if (lazyEvents)
+             {
+                 lazyEvents = false;
 
-               if(lazySetZoomToFitRect.HasValue)
-               {
-                  SetZoomToFitRect(lazySetZoomToFitRect.Value);
-                  lazySetZoomToFitRect = null;
-               }
-            }
-            Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
-            ForceUpdateOverlays();
-            //};
-            //this.BeginInvoke(m);
+                 if (lazySetZoomToFitRect.HasValue)
+                 {
+                     SetZoomToFitRect(lazySetZoomToFitRect.Value);
+                     lazySetZoomToFitRect = null;
+                 }
+             }
+             Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
+             ForceUpdateOverlays();
+             //};
+             //this.BeginInvoke(m);
          }
       }
 #else
@@ -1312,18 +1270,21 @@ namespace GMap.NET.WindowsForms
       {
          base.OnCreateControl();
 
-         var f = ParentForm;
-         if(f != null)
+         if (!IsDesignerHosted)
          {
-            while(f.ParentForm != null)
-            {
-               f = f.ParentForm;
-            }
+             var f = ParentForm;
+             if (f != null)
+             {
+                 while (f.ParentForm != null)
+                 {
+                     f = f.ParentForm;
+                 }
 
-            if(f != null)
-            {
-               f.FormClosing += new FormClosingEventHandler(ParentForm_FormClosing);
-            }
+                 if (f != null)
+                 {
+                     f.FormClosing += new FormClosingEventHandler(ParentForm_FormClosing);
+                 }
+             }
          }
       }
 
@@ -1755,7 +1716,7 @@ namespace GMap.NET.WindowsForms
          }
 
 #if !PocketPC
-         if(!IsDesignerHosted && !DesignModeInConstruct)
+         if(!IsDesignerHosted)
 #endif
          {
             if(ForceDoubleBuffer)

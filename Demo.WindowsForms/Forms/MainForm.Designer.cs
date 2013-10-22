@@ -1061,7 +1061,7 @@
             this.checkBoxTileHost.Location = new System.Drawing.Point(24, 490);
             this.checkBoxTileHost.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxTileHost.Name = "checkBoxTileHost";
-            this.checkBoxTileHost.Size = new System.Drawing.Size(82, 21);
+            this.checkBoxTileHost.Size = new System.Drawing.Size(222, 21);
             this.checkBoxTileHost.TabIndex = 51;
             this.checkBoxTileHost.Text = "TileHost - LeafletJS web demo";
             this.checkBoxTileHost.UseVisualStyleBackColor = true;
