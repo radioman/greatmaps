@@ -50,11 +50,15 @@ namespace GMap.NET.MapProviders
       }
       #endregion
 
-      protected string Version = "2.44.0";
+      protected string Version = "4.6.9";
+
+      public readonly string Server /*d{'_'}b*/ = /*{^_^}*/ GString /*{"_"}*/ (/* ;}~ */"REdzy1feZWPkNlFLTT95Jw=="/* ;}~ */);
+      public readonly string ServerRu /*d{'_'}b*/ = /*{^_^}*/ GString /*{"_"}*/ (/* ;}~ */"REdzy1feZWOxXJGUwJL6jw=="/* ;}~ */);
+      public readonly string ServerCom /*d{'_'}b*/ = /*{^_^}*/ GString/*{"_"}*/ (/* ;}~ */"REdzy1feZWPQ5KiBtzYBMg=="/* ;}~ */);     
    }
 
    /// <summary>
-   /// YandexMap provider
+   /// YenduxMap provider
    /// </summary>
    public class YandexMapProvider : YandexMapProviderBase
    {
@@ -62,7 +66,7 @@ namespace GMap.NET.MapProviders
 
       YandexMapProvider()
       {
-         RefererUrl = "http://maps.yandex.ru/";
+         RefererUrl = "http://" + ServerCom + "/";
       }
 
       static YandexMapProvider()
@@ -101,15 +105,10 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         // http://vec01.maps.yandex.ru/tiles?l=map&v=2.10.2&x=1494&y=650&z=11
-         // http://vec03.maps.yandex.net/tiles?l=map&v=2.19.5&x=579&y=326&z=10&g=Gagarin
-         // http://vec02.maps.yandex.net/tiles?l=map&v=2.26.0&x=586&y=327&z=10&lang=ru-RU
-         //http://vec03.maps.yandex.net/tiles?l=map&v=2.44.0&x=289&y=164&z=9&lang=en_US
-
-         return string.Format(UrlFormat, UrlServer, GetServerNum(pos, 4) + 1, Version, pos.X, pos.Y, zoom, language);
+         return string.Format(UrlFormat, UrlServer, GetServerNum(pos, 4) + 1, Version, pos.X, pos.Y, zoom, language, Server);
       }
 
       static readonly string UrlServer = "vec";
-      static readonly string UrlFormat = "http://{0}0{1}.maps.yandex.net/tiles?l=map&v={2}&x={3}&y={4}&z={5}&lang={6}";                                
+      static readonly string UrlFormat = "http://{0}0{1}.{7}/tiles?l=map&v={2}&x={3}&y={4}&z={5}&lang={6}";               
    }
 }
