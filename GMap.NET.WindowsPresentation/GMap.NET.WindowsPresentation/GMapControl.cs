@@ -438,7 +438,7 @@ namespace GMap.NET.WindowsPresentation
       /// <summary>
       /// is touch control enabled
       /// </summary>
-      bool TouchEnabled = true;
+      public bool TouchEnabled = true;
 
       /// <summary>
       /// map boundaries

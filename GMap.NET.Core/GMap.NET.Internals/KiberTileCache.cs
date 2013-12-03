@@ -4,6 +4,7 @@ namespace GMap.NET.Internals
    using System.Collections.Generic;
    using System.IO;
    using System;
+   using System.Diagnostics;
 
    /// <summary>
    /// kiber speed memory cache for tiles with history support ;}
@@ -56,6 +57,7 @@ namespace GMap.NET.Internals
       {
          Queue.Clear();
          base.Clear();
+         memoryCacheSize = 0;
       }
 
       internal void RemoveMemoryOverload()
@@ -74,8 +76,9 @@ namespace GMap.NET.Internals
                   }
                   m = null;
                }
-               catch
+               catch(Exception ex)
                {
+                   Debug.WriteLine("RemoveMemoryOverload: " + ex);
                }
             }
             else
