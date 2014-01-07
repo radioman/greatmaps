@@ -24,11 +24,11 @@ namespace GMap.NET.MapProviders
             Copyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
         }
 
-        public readonly string ServerAPIs /* ;}~~ */ = GString(/*{^_^}*/"VamtGR84dMfTG1RzaMHyeQ=="/*d{'_'}b*/);
-        public readonly string Server /* ;}~~~~ */ = GString(/*{^_^}*/"zOl/KnHzebJUqs6JWROaCQ=="/*d{'_'}b*/);
-        public readonly string ServerChina /* ;}~ */ = GString(/*{^_^}*/"zOl/KnHzebLqgdc2FRlQHg=="/*d{'_'}b*/);
-        public readonly string ServerKorea /* ;}~~ */ = GString(/*{^_^}*/"ecw6OdJzJ/zgnFTB90qgtw=="/*d{'_'}b*/);
-        public readonly string ServerKoreaKr /* ;}~ */ = GString(/*{^_^}*/"zOl/KnHzebIhmuu+tK5lbw=="/*d{'_'}b*/);
+        public readonly string ServerAPIs /* ;}~~ */ = Stuff.GString(/*{^_^}*/"9gERyvblybF8iMuCt/LD6w=="/*d{'_'}b*/);
+        public readonly string Server /* ;}~~~~ */ = Stuff.GString(/*{^_^}*/"gosr2U13BoS+bXaIxt6XWg=="/*d{'_'}b*/);
+        public readonly string ServerChina /* ;}~ */ = Stuff.GString(/*{^_^}*/"gosr2U13BoTEJoJJuO25gQ=="/*d{'_'}b*/);
+        public readonly string ServerKorea /* ;}~~ */ = Stuff.GString(/*{^_^}*/"8ZVBOEsBinzi+zmP7y7pPA=="/*d{'_'}b*/);
+        public readonly string ServerKoreaKr /* ;}~ */ = Stuff.GString(/*{^_^}*/"gosr2U13BoQyz1gkC4QLfg=="/*d{'_'}b*/);
 
         public string SecureWord = "Galileo";
 

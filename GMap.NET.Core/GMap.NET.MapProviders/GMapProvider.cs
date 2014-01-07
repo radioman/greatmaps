@@ -5,11 +5,11 @@ namespace GMap.NET.MapProviders
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
-    using System.Net;
-    using System.Security.Cryptography;
+    using System.Net;    
     using GMap.NET.Internals;
     using GMap.NET.Projections;
     using System.Text;
+    using System.Security.Cryptography;
 
     /// <summary>
     /// providers that are already build in
@@ -229,11 +229,13 @@ namespace GMap.NET.MapProviders
         public abstract PureImage GetTileImage(GPoint pos, int zoom);
 
         static readonly List<GMapProvider> MapProviders = new List<GMapProvider>();
-        static readonly SHA1CryptoServiceProvider HashProvider = new SHA1CryptoServiceProvider();
 
         protected GMapProvider()
         {
-            DbId = Math.Abs(BitConverter.ToInt32(HashProvider.ComputeHash(Id.ToByteArray()), 0));
+            using (var HashProvider = new SHA1CryptoServiceProvider())
+            {
+                DbId = Math.Abs(BitConverter.ToInt32(HashProvider.ComputeHash(Id.ToByteArray()), 0));
+            }
 
             if (MapProviders.Exists(p => p.Id == Id || p.DbId == DbId))
             {
@@ -558,111 +560,7 @@ namespace GMap.NET.MapProviders
         public override string ToString()
         {
             return Name;
-        }
-
-        #region -- encryption --
-        static string EncryptString(string Message, string Passphrase)
-        {
-            byte[] Results;
-            System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
-
-            // Step 1. We hash the passphrase using MD5
-            // We use the MD5 hash generator as the result is a 128 bit byte array
-            // which is a valid length for the TripleDES encoder we use below
-
-            using (MD5CryptoServiceProvider HashProvider = new MD5CryptoServiceProvider())
-            {
-                byte[] TDESKey = HashProvider.ComputeHash(UTF8.GetBytes(Passphrase));
-
-                // Step 2. Create a new TripleDESCryptoServiceProvider object
-                using (TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider())
-                {
-                    // Step 3. Setup the encoder
-                    TDESAlgorithm.Key = TDESKey;
-                    TDESAlgorithm.Mode = CipherMode.ECB;
-                    TDESAlgorithm.Padding = PaddingMode.PKCS7;
-
-                    // Step 4. Convert the input string to a byte[]
-                    byte[] DataToEncrypt = UTF8.GetBytes(Message);
-
-                    // Step 5. Attempt to encrypt the string
-                    try
-                    {
-                        using (ICryptoTransform Encryptor = TDESAlgorithm.CreateEncryptor())
-                        {
-                            Results = Encryptor.TransformFinalBlock(DataToEncrypt, 0, DataToEncrypt.Length);
-                        }
-                    }
-                    finally
-                    {
-                        // Clear the TripleDes and Hashprovider services of any sensitive information
-                        TDESAlgorithm.Clear();
-                        HashProvider.Clear();
-                    }
-                }
-            }
-
-            // Step 6. Return the encrypted string as a base64 encoded string
-            return Convert.ToBase64String(Results);
-        }
-
-        static string DecryptString(string Message, string Passphrase)
-        {
-            byte[] Results;
-            System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
-
-            // Step 1. We hash the passphrase using MD5
-            // We use the MD5 hash generator as the result is a 128 bit byte array
-            // which is a valid length for the TripleDES encoder we use below
-
-            using (MD5CryptoServiceProvider HashProvider = new MD5CryptoServiceProvider())
-            {
-                byte[] TDESKey = HashProvider.ComputeHash(UTF8.GetBytes(Passphrase));
-
-                // Step 2. Create a new TripleDESCryptoServiceProvider object
-                using (TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider())
-                {
-                    // Step 3. Setup the decoder
-                    TDESAlgorithm.Key = TDESKey;
-                    TDESAlgorithm.Mode = CipherMode.ECB;
-                    TDESAlgorithm.Padding = PaddingMode.PKCS7;
-
-                    // Step 4. Convert the input string to a byte[]
-                    byte[] DataToDecrypt = Convert.FromBase64String(Message);
-
-                    // Step 5. Attempt to decrypt the string
-                    try
-                    {
-                        using (ICryptoTransform Decryptor = TDESAlgorithm.CreateDecryptor())
-                        {
-                            Results = Decryptor.TransformFinalBlock(DataToDecrypt, 0, DataToDecrypt.Length);
-                        }
-                    }
-                    finally
-                    {
-                        // Clear the TripleDes and Hashprovider services of any sensitive information
-                        TDESAlgorithm.Clear();
-                        HashProvider.Clear();
-                    }
-                }
-            }
-
-            // Step 6. Return the decrypted string in UTF8 format
-            return UTF8.GetString(Results, 0, Results.Length);
-        }
-
-        public static string EncryptString(string Message)
-        {
-            return EncryptString(Message, manifesto);
-        }
-
-        public static string GString(string Message)
-        {
-            return DecryptString(Message, manifesto);
-        }
-
-        static readonly string manifesto = "GMap.NET is great and Powerful, Free, cross platform, open source .NET control.";
-        #endregion
+        }        
     }
 
     /// <summary>

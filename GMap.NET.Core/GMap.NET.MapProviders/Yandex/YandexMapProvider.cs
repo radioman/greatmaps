@@ -3,6 +3,7 @@ namespace GMap.NET.MapProviders
 {
    using System;
    using GMap.NET.Projections;
+   using GMap.NET.Internals;
 
    public abstract class YandexMapProviderBase : GMapProvider
    {
@@ -52,9 +53,9 @@ namespace GMap.NET.MapProviders
 
       protected string Version = "4.6.9";
 
-      public readonly string Server /*d{'_'}b*/ = /*{^_^}*/ GString /*{"_"}*/ (/* ;}~ */"REdzy1feZWPkNlFLTT95Jw=="/* ;}~ */);
-      public readonly string ServerRu /*d{'_'}b*/ = /*{^_^}*/ GString /*{"_"}*/ (/* ;}~ */"REdzy1feZWOxXJGUwJL6jw=="/* ;}~ */);
-      public readonly string ServerCom /*d{'_'}b*/ = /*{^_^}*/ GString/*{"_"}*/ (/* ;}~ */"REdzy1feZWPQ5KiBtzYBMg=="/* ;}~ */);     
+      public readonly string Server /*d{'_'}b*/ = /*{^_^}*/ Stuff.GString /*{"_"}*/ (/* ;}~ */"MECxW6okUK3Ir7a9ue/vIA=="/* ;}~ */);
+      public readonly string ServerRu /*d{'_'}b*/ = /*{^_^}*/ Stuff.GString /*{"_"}*/ (/* ;}~ */"MECxW6okUK0FRlRPbF0BQg=="/* ;}~ */);
+      public readonly string ServerCom /*d{'_'}b*/ = /*{^_^}*/ Stuff.GString/*{"_"}*/ (/* ;}~ */"MECxW6okUK2JNHOW5AuimA=="/* ;}~ */);     
    }
 
    /// <summary>

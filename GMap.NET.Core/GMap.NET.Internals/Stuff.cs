@@ -6,6 +6,8 @@ namespace GMap.NET.Internals
    using System.ComponentModel;
    using System.IO;
    using System.Reflection;
+   using System.Security.Cryptography;
+    using System.Text;
 
    /// <summary>
    /// etc functions...
@@ -120,6 +122,101 @@ namespace GMap.NET.Internals
             url = url.Replace(c, '_');
          }
       }
+
+      #region -- encryption --
+      static string EncryptString(string Message, string Passphrase)
+      {
+          byte[] Results;
+
+          using (var HashProvider = new SHA1CryptoServiceProvider())
+          {
+              byte[] TDESKey = HashProvider.ComputeHash(Encoding.UTF8.GetBytes(Passphrase));
+              Array.Resize(ref TDESKey, 16);
+
+              using (TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider())
+              {
+                  TDESAlgorithm.Key = TDESKey;
+                  TDESAlgorithm.Mode = CipherMode.ECB;
+                  TDESAlgorithm.Padding = PaddingMode.PKCS7;
+
+                  byte[] DataToEncrypt = Encoding.UTF8.GetBytes(Message);
+
+                  // Step 5. Attempt to encrypt the string
+                  try
+                  {
+                      using (ICryptoTransform Encryptor = TDESAlgorithm.CreateEncryptor())
+                      {
+                          Results = Encryptor.TransformFinalBlock(DataToEncrypt, 0, DataToEncrypt.Length);
+                      }
+                  }
+                  finally
+                  {
+                      // Clear the TripleDes and Hashprovider services of any sensitive information
+                      TDESAlgorithm.Clear();
+                      HashProvider.Clear();
+                  }
+              }
+          }
+
+          // Step 6. Return the encrypted string as a base64 encoded string
+          return Convert.ToBase64String(Results);
+      }
+
+      static string DecryptString(string Message, string Passphrase)
+      {
+          byte[] Results;
+
+          using (var HashProvider = new SHA1CryptoServiceProvider())
+          {
+              byte[] TDESKey = HashProvider.ComputeHash(Encoding.UTF8.GetBytes(Passphrase));
+              Array.Resize(ref TDESKey, 16);
+
+              // Step 2. Create a new TripleDESCryptoServiceProvider object
+              using (TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider())
+              {
+                  // Step 3. Setup the decoder
+                  TDESAlgorithm.Key = TDESKey;
+                  TDESAlgorithm.Mode = CipherMode.ECB;
+                  TDESAlgorithm.Padding = PaddingMode.PKCS7;
+
+                  // Step 4. Convert the input string to a byte[]
+                  byte[] DataToDecrypt = Convert.FromBase64String(Message);
+
+                  // Step 5. Attempt to decrypt the string
+                  try
+                  {
+                      using (ICryptoTransform Decryptor = TDESAlgorithm.CreateDecryptor())
+                      {
+                          Results = Decryptor.TransformFinalBlock(DataToDecrypt, 0, DataToDecrypt.Length);
+                      }
+                  }
+                  finally
+                  {
+                      // Clear the TripleDes and Hashprovider services of any sensitive information
+                      TDESAlgorithm.Clear();
+                      HashProvider.Clear();
+                  }
+              }
+          }
+
+          // Step 6. Return the decrypted string in UTF8 format
+          return Encoding.UTF8.GetString(Results, 0, Results.Length);
+      }
+
+      public static string EncryptString(string Message)
+      {
+          return EncryptString(Message, manifesto);
+      }
+
+      public static string GString(string Message)
+      {
+          var ret = DecryptString(Message, manifesto);
+
+          return ret;
+      }
+
+      static readonly string manifesto = "GMap.NET is great and Powerful, Free, cross platform, open source .NET control.";
+      #endregion
    }
 
 #if PocketPC
