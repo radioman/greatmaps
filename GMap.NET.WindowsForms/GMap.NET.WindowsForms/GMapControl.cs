@@ -138,6 +138,23 @@ namespace GMap.NET.WindowsForms
       }
 
       /// <summary>
+      /// enable map zoom on mouse wheel
+      /// </summary>
+      [Category("GMap.NET")]
+      [Description("enable map zoom on mouse wheel")]
+      public bool MouseWheelZoomEnabled
+      {
+          get
+          {
+              return Core.MouseWheelZoomEnabled;
+          }
+          set
+          {
+              Core.MouseWheelZoomEnabled = value;
+          }
+      }
+
+      /// <summary>
       /// text on empty tiles
       /// </summary>
       public string EmptyTileText = "We are sorry, but we don't\nhave imagery at this zoom\nlevel for this region.";
@@ -2295,65 +2312,68 @@ namespace GMap.NET.WindowsForms
 
       protected override void OnMouseWheel(MouseEventArgs e)
       {
-         base.OnMouseWheel(e);         
+         base.OnMouseWheel(e);
 
-         if(mouseIn && (!IsMouseOverMarker || IgnoreMarkerOnMouseWheel) && !Core.IsDragging)
+         if (MouseWheelZoomEnabled)
          {
-            if(Core.mouseLastZoom.X != e.X && Core.mouseLastZoom.Y != e.Y)
-            {
-               if(MouseWheelZoomType == MouseWheelZoomType.MousePositionAndCenter)
-               {
-                  Core.position = FromLocalToLatLng(e.X, e.Y);
-               }
-               else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
-               {
-                  Core.position = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
-               }
-               else if(MouseWheelZoomType == MouseWheelZoomType.MousePositionWithoutCenter)
-               {
-                  Core.position = FromLocalToLatLng(e.X, e.Y);
-               }
+             if (mouseIn && (!IsMouseOverMarker || IgnoreMarkerOnMouseWheel) && !Core.IsDragging)
+             {
+                 if (Core.mouseLastZoom.X != e.X && Core.mouseLastZoom.Y != e.Y)
+                 {
+                     if (MouseWheelZoomType == MouseWheelZoomType.MousePositionAndCenter)
+                     {
+                         Core.position = FromLocalToLatLng(e.X, e.Y);
+                     }
+                     else if (MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
+                     {
+                         Core.position = FromLocalToLatLng((int)Width / 2, (int)Height / 2);
+                     }
+                     else if (MouseWheelZoomType == MouseWheelZoomType.MousePositionWithoutCenter)
+                     {
+                         Core.position = FromLocalToLatLng(e.X, e.Y);
+                     }
 
-               Core.mouseLastZoom.X = e.X;
-               Core.mouseLastZoom.Y = e.Y;
-            }
+                     Core.mouseLastZoom.X = e.X;
+                     Core.mouseLastZoom.Y = e.Y;
+                 }
 
-            // set mouse position to map center
-            if(MouseWheelZoomType != MouseWheelZoomType.MousePositionWithoutCenter)
-            {
-               if(!GMaps.Instance.IsRunningOnMono)
-               {
-                  System.Drawing.Point p = PointToScreen(new System.Drawing.Point(Width / 2, Height / 2));
-                  Stuff.SetCursorPos((int)p.X, (int)p.Y);
-               }
-            }
+                 // set mouse position to map center
+                 if (MouseWheelZoomType != MouseWheelZoomType.MousePositionWithoutCenter)
+                 {
+                     if (!GMaps.Instance.IsRunningOnMono)
+                     {
+                         System.Drawing.Point p = PointToScreen(new System.Drawing.Point(Width / 2, Height / 2));
+                         Stuff.SetCursorPos((int)p.X, (int)p.Y);
+                     }
+                 }
 
-            Core.MouseWheelZooming = true;
+                 Core.MouseWheelZooming = true;
 
-            if(e.Delta > 0)
-            {
-               if(!InvertedMouseWheelZooming)
-               {
-                  Zoom = ((int)Zoom) + 1;
-               }
-               else
-               {
-                  Zoom = ((int)(Zoom + 0.99)) - 1;
-               }
-            }
-            else if(e.Delta < 0)
-            {
-               if(!InvertedMouseWheelZooming)
-               {
-                  Zoom = ((int)(Zoom + 0.99)) - 1;
-               }
-               else
-               {
-                  Zoom = ((int)Zoom) + 1;
-               }
-            }
+                 if (e.Delta > 0)
+                 {
+                     if (!InvertedMouseWheelZooming)
+                     {
+                         Zoom = ((int)Zoom) + 1;
+                     }
+                     else
+                     {
+                         Zoom = ((int)(Zoom + 0.99)) - 1;
+                     }
+                 }
+                 else if (e.Delta < 0)
+                 {
+                     if (!InvertedMouseWheelZooming)
+                     {
+                         Zoom = ((int)(Zoom + 0.99)) - 1;
+                     }
+                     else
+                     {
+                         Zoom = ((int)Zoom) + 1;
+                     }
+                 }
 
-            Core.MouseWheelZooming = false;
+                 Core.MouseWheelZooming = false;
+             }
          }
       }
 #endif
