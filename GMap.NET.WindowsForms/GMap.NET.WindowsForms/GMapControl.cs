@@ -632,8 +632,14 @@ namespace GMap.NET.WindowsForms
                 return;
             }
 
+
+
             Core.tileDrawingListLock.AcquireReaderLock();
             Core.Matrix.EnterReadLock();
+          //  g.TextRenderingHint = TextRenderingHint.AntiAlias;
+            //           g.SmoothingMode = SmoothingMode.AntiAlias;
+            //            g.CompositingQuality = CompositingQuality.HighQuality;
+            //            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             try
             {
                 foreach (var tilePoint in Core.tileDrawingList)
@@ -672,9 +678,11 @@ namespace GMap.NET.WindowsForms
                                             if (!img.IsParent)
                                             {
 #if !PocketPC
-                                                if (!MapRenderTransform.HasValue)
+                                                if (!MapRenderTransform.HasValue && !IsRotated)
                                                 {
                                                     g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
+
+
                                                 }
                                                 else
                                                 {
@@ -1448,9 +1456,12 @@ namespace GMap.NET.WindowsForms
                     {
                         #region -- rotation --
 
+                        
+
                         e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
                         e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
+                      
                         e.Graphics.TranslateTransform((float)(Core.Width / 2.0), (float)(Core.Height / 2.0));
                         e.Graphics.RotateTransform(-Bearing);
                         e.Graphics.TranslateTransform((float)(-Core.Width / 2.0), (float)(-Core.Height / 2.0));
@@ -1460,6 +1471,7 @@ namespace GMap.NET.WindowsForms
                         DrawMap(e.Graphics);
                         e.Graphics.ResetTransform();
                         e.Graphics.TranslateTransform(Core.renderOffset.X, Core.renderOffset.Y);
+                       
                         OnPaintOverlays(e.Graphics);
 
                         #endregion
