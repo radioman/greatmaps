@@ -48,14 +48,23 @@ namespace GMap.NET.MapProviders
 
       #endregion
 
-      string MakeTileImageUrl(GPoint pos, int zoom, string language)
+      public override void OnInitialized()
       {
-         string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-         return string.Format(UrlFormat, GetServerNum(pos, 4), key, Version, language, (!string.IsNullOrEmpty(ClientKey) ? "&key=" + ClientKey : string.Empty));
+          base.OnInitialized();
+          GetTileUrl("Aerial");
       }
 
-      // http://ecn.t1.tiles.virtualearth.net/tiles/a12030003131321231.jpeg?g=875&mkt=en-us&n=z
+      string MakeTileImageUrl(GPoint pos, int zoom, string language)
+      {
+          if (string.IsNullOrEmpty(UrlFormat))
+          {
+              throw new Exception("No Bing Maps key specified as ClientKey. Create a Bing Maps key at http://bingmapsportal.com");
+          }
 
-      static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}&n=z{4}";
+         string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
+         int subDomain = (int)(pos.X % 4);
+
+         return string.Format(UrlFormat, subDomain, key, language);
+      }
    }
 }

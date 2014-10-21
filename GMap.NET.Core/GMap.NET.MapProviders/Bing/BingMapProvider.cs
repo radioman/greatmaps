@@ -1,18 +1,15 @@
 ﻿
 namespace GMap.NET.MapProviders
 {
-   using System;
-   using System.Text;
-   using GMap.NET.Projections;
-   using System.Diagnostics;
-   using System.Net;
-   using System.IO;
-   using System.Text.RegularExpressions;
-   using System.Threading;
-   using GMap.NET.Internals;
-   using System.Collections.Generic;
-   using System.Globalization;
-   using System.Xml;
+    using GMap.NET.Internals;
+    using GMap.NET.Projections;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.Net;
+    using System.Text;
+    using System.Xml;
 
    public abstract class BingMapProviderBase : GMapProvider, RoutingProvider, GeocodingProvider
    {
@@ -22,12 +19,11 @@ namespace GMap.NET.MapProviders
          RefererUrl = "http://www.bing.com/maps/";
          Copyright = string.Format("©{0} Microsoft Corporation, ©{0} NAVTEQ, ©{0} Image courtesy of NASA", DateTime.Today.Year);
       }
-
-      public string Version = "1173";
-
+       
       /// <summary>
-      /// Bing Maps Customer Identification, more info here
-      /// http://msdn.microsoft.com/en-us/library/bb924353.aspx
+      /// Bing Maps Customer Identification.
+      /// Specify a Bing Maps key here. This will be updated with a Bing Maps session key.
+      /// For more information: http://msdn.microsoft.com/en-us/library/ff428642.aspx
       /// </summary>
       public string ClientKey = null;
 
@@ -142,8 +138,6 @@ namespace GMap.NET.MapProviders
       }
       #endregion
 
-      public bool TryCorrectVersion = true;
-      public bool TryGetDefaultKey = true;
       static bool init = false;
 
       public override void OnInitialized()
@@ -152,85 +146,19 @@ namespace GMap.NET.MapProviders
          {
             try
             {
-               if(TryCorrectVersion)
+                //This code generates a session key for Bing Maps, which combines all the map requests into a single billable transaction per user session.
+               if(!string.IsNullOrEmpty(ClientKey))
                {
-                  #region -- get the version --
-                  string url = @"http://www.bing.com/maps";
-                  string html = GMaps.Instance.UseUrlCache ? Cache.Instance.GetContent(url, CacheType.UrlCache, TimeSpan.FromHours(8)) : string.Empty;
-
-                  if(string.IsNullOrEmpty(html))
-                  {
-                     html = GetContentUsingHttp(url);
-                     if(!string.IsNullOrEmpty(html))
-                     {
-                        if(GMaps.Instance.UseUrlCache)
-                        {
-                           Cache.Instance.SaveContent(url, CacheType.UrlCache, html);
-                        }
-                     }
-                  }
-
-                  if(!string.IsNullOrEmpty(html))
-                  {
-                     #region -- match versions --                      
-
-                     Regex reg = new Regex("tilegeneration:(\\d*)", RegexOptions.IgnoreCase);
-                     Match mat = reg.Match(html);
-                     if(mat.Success)
-                     {
-                        GroupCollection gc = mat.Groups;
-                        int count = gc.Count;
-                        if(count == 2)
-                        {
-                           string ver = gc[1].Value;
-                           string old = GMapProviders.BingMap.Version;
-                           if(ver != old)
-                           {
-                              GMapProviders.BingMap.Version = ver;
-                              GMapProviders.BingSatelliteMap.Version = ver;
-                              GMapProviders.BingHybridMap.Version = ver;
-#if DEBUG
-                              Debug.WriteLine("GMapProviders.BingMap.Version: " + ver + ", old: " + old + ", consider updating source");
-                              if(Debugger.IsAttached)
-                              {
-                                 Thread.Sleep(5555);
-                              }
-#endif
-                           }
-                           else
-                           {
-                              Debug.WriteLine("GMapProviders.BingMap.Version: " + ver + ", OK");
-                           }
-                        }
-                     }
-                     #endregion
-                  }
-                  #endregion
-               }
-
-               init = true; // try it only once 
-
-               #region -- try get default key --
-               if(TryGetDefaultKey && string.IsNullOrEmpty(ClientKey))
-               {
-                  string keyUrl = "http://dev.virtualearth.net/webservices/v1/LoggingService/LoggingService.svc/Log?entry=0&fmt=1&type=3&group=MapControl&name=AJAX&mkt=en-us&auth=Akw4XWHH0ngzzB_4DmHOv_XByRBtX5qwLAS9RgRYDamxvLeIxRfSzmuvWFB9RF7d&jsonp=microsoftMapsNetworkCallback";
+                   string keyUrl = string.Format("http://dev.virtualearth.net/webservices/v1/LoggingService/LoggingService.svc/Log?entry=0&fmt=1&type=3&group=MapControl&name=WPF&mkt=en-us&auth={0}&jsonp=microsoftMapsNetworkCallback&version=1.0.0.99", ClientKey);
 
                   // Bing Maps WPF Control
-                  // http://dev.virtualearth.net/webservices/v1/LoggingService/LoggingService.svc/Log?entry=0&auth=Akw4XWHH0ngzzB_4DmHOv_XByRBtX5qwLAS9RgRYDamxvLeIxRfSzmuvWFB9RF7d&fmt=1&type=3&group=MapControl&name=WPF&version=1.0.0.0&session=00000000-0000-0000-0000-000000000000&mkt=en-US
+                  // http://dev.virtualearth.net/webservices/v1/LoggingService/LoggingService.svc/Log?entry=0&auth=YOUR_BING_MAPS_KEY&fmt=1&type=3&group=MapControl&name=WPF&version=1.0.0.0&session=00000000-0000-0000-0000-000000000000&mkt=en-US
 
-                  string keyResponse = GMaps.Instance.UseUrlCache ? Cache.Instance.GetContent("BingLoggingServiceV1", CacheType.UrlCache, TimeSpan.FromHours(8)) : string.Empty;
-
-                  if(string.IsNullOrEmpty(keyResponse))
-                  {
-                     keyResponse = GetContentUsingHttp(keyUrl);
-                     if(!string.IsNullOrEmpty(keyResponse) && keyResponse.Contains("ValidCredentials"))
-                     {
-                        if(GMaps.Instance.UseUrlCache)
-                        {
-                           Cache.Instance.SaveContent("BingLoggingServiceV1", CacheType.UrlCache, keyResponse);
-                        }
-                     }
-                  }
+                   string keyResponse = GetContentUsingHttp(keyUrl);
+                   if (!string.IsNullOrEmpty(keyResponse) && keyResponse.Contains("ValidCredentials"))
+                   {
+                       //Do not cache this request.
+                   }
 
                   if(!string.IsNullOrEmpty(keyResponse) && keyResponse.Contains("sessionId") && keyResponse.Contains("ValidCredentials"))
                   {
@@ -240,11 +168,14 @@ namespace GMap.NET.MapProviders
                      Debug.WriteLine("GMapProviders.BingMap.ClientKey: " + ClientKey);
                   }
                }
-               #endregion
+               else
+               {
+                   throw new Exception("No Bing Maps key specified as ClientKey. Create a Bing Maps key at http://bingmapsportal.com");
+               }
             }
             catch(Exception ex)
             {
-               Debug.WriteLine("TryCorrectBingVersions failed: " + ex.ToString());
+               Debug.WriteLine(ex.ToString());
             }
          }
       }
@@ -261,6 +192,59 @@ namespace GMap.NET.MapProviders
             }
          }
          return pass;
+      }
+
+      internal static string UrlFormat = string.Empty;
+
+      internal void GetTileUrl(string imageryType)
+      {
+          //Retrieve map tile URL from the Imagery Metadata service: http://msdn.microsoft.com/en-us/library/ff701716.aspx
+          //This ensures that the current tile URL is always used. 
+          //This will prevent the app from breaking when the map tiles change.
+          //List of Cultures: http://msdn.microsoft.com/en-us/library/hh441729.aspx
+          try
+          {
+              var r = GetContentUsingHttp("http://dev.virtualearth.net/REST/V1/Imagery/Metadata/" + imageryType + "?output=xml&key=" + ClientKey);
+
+              if (!string.IsNullOrEmpty(r))
+              {
+                  XmlDocument doc = new XmlDocument();
+                  doc.LoadXml(r);
+
+                  XmlNode xn = doc["Response"];
+                  string statuscode = xn["StatusCode"].InnerText;
+                  if (string.Compare(statuscode, "200", true) == 0)
+                  {
+                      xn = xn["ResourceSets"]["ResourceSet"]["Resources"];
+                      XmlNodeList xnl = xn.ChildNodes;
+                      foreach (XmlNode xno in xnl)
+                      {
+                          XmlNode imageUrl = xno["ImageUrl"];
+
+                          if (imageUrl != null && !string.IsNullOrEmpty(imageUrl.InnerText))
+                          {
+                              var baseTileUrl = imageUrl.InnerText;
+
+                              if (baseTileUrl.Contains("{key}") || baseTileUrl.Contains("{token}"))
+                              {
+                                  baseTileUrl.Replace("{key}", ClientKey).Replace("{token}", ClientKey);
+                              }
+                              else
+                              {
+                                  baseTileUrl += "&key=" + ClientKey;
+                              }
+
+                              UrlFormat = baseTileUrl.Replace("{subdomain}", "t{0}").Replace("{quadkey}", "{1}").Replace("{culture}", "{2}");
+                              break;
+                          }
+                      }
+                  }
+              }
+          }
+          catch (Exception ex)
+          {
+              Debug.WriteLine("Error getting Bing Maps tile URL - " + ex.Message);
+          }
       }
 
       #region RoutingProvider
@@ -281,7 +265,16 @@ namespace GMap.NET.MapProviders
 
       public MapRoute GetRoute(string start, string end, bool avoidHighways, bool walkingMode, int Zoom)
       {
-         throw new NotImplementedException("check GetRoute(PointLatLng start...");
+          string tooltip;
+          int numLevels;
+          int zoomFactor;
+          MapRoute ret = null;
+          List<PointLatLng> points = GetRoutePoints(MakeRouteUrl(start, end, LanguageStr, avoidHighways, walkingMode), Zoom, out tooltip, out numLevels, out zoomFactor);
+          if (points != null)
+          {
+              ret = new MapRoute(points, tooltip);
+          }
+          return ret;
       }
 
       string MakeRouteUrl(PointLatLng start, PointLatLng end, string language, bool avoidHighways, bool walkingMode)
@@ -290,6 +283,14 @@ namespace GMap.NET.MapProviders
          string mode = walkingMode ? "Walking" : "Driving";
 
          return string.Format(CultureInfo.InvariantCulture, RouteUrlFormatPointLatLng, mode, start.Lat, start.Lng, end.Lat, end.Lng, addition, ClientKey);
+      }
+
+      string MakeRouteUrl(string start, string end, string language, bool avoidHighways, bool walkingMode)
+      {
+          string addition = avoidHighways ? "&avoid=highways" : string.Empty;
+          string mode = walkingMode ? "Walking" : "Driving";
+
+          return string.Format(CultureInfo.InvariantCulture, RouteUrlFormatPointQueries, mode, start, end, addition, ClientKey);
       }
 
       List<PointLatLng> GetRoutePoints(string url, int zoom, out string tooltipHtml, out int numLevel, out int zoomFactor)
@@ -392,6 +393,7 @@ namespace GMap.NET.MapProviders
 
       // example : http://dev.virtualearth.net/REST/V1/Routes/Driving?o=xml&wp.0=44.979035,-93.26493&wp.1=44.943828508257866,-93.09332862496376&optmz=distance&rpo=Points&key=[PROVIDEYOUROWNKEY!!]
       static readonly string RouteUrlFormatPointLatLng = "http://dev.virtualearth.net/REST/V1/Routes/{0}?o=xml&wp.0={1},{2}&wp.1={3},{4}{5}&optmz=distance&rpo=Points&key={6}";
+      static readonly string RouteUrlFormatPointQueries = "http://dev.virtualearth.net/REST/V1/Routes/{0}?o=xml&wp.0={1}&wp.1={2}{3}&optmz=distance&rpo=Points&key={4}";
 
       #endregion RoutingProvider
 
@@ -399,7 +401,8 @@ namespace GMap.NET.MapProviders
 
       public GeoCoderStatusCode GetPoints(string keywords, out List<PointLatLng> pointList)
       {
-         return GetLatLngFromGeocoderUrl(MakeGeocoderUrl("q=" + keywords), out pointList);
+          //Escape keywords to better handle special characters.
+         return GetLatLngFromGeocoderUrl(MakeGeocoderUrl("q=" + Uri.EscapeDataString(keywords)), out pointList);
       }
 
       public PointLatLng? GetPoint(string keywords, out GeoCoderStatusCode status)
@@ -615,16 +618,25 @@ namespace GMap.NET.MapProviders
          return GetTileImageUsingHttp(url);
       }
 
+      public override void OnInitialized()
+      {
+          base.OnInitialized();
+          GetTileUrl("Road");
+      }
+
       #endregion
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
+          if (string.IsNullOrEmpty(UrlFormat))
+          {
+              throw new Exception("No Bing Maps key specified as ClientKey. Create a Bing Maps key at http://bingmapsportal.com");
+          }
+
          string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-         return string.Format(UrlFormat, GetServerNum(pos, 4), key, Version, language, (!string.IsNullOrEmpty(ClientKey) ? "&key=" + ClientKey : string.Empty));
+         int subDomain = (int)(pos.X % 4);
+
+         return string.Format(UrlFormat, subDomain, key, language, ClientKey);
       }
-
-      // http://ecn.t0.tiles.virtualearth.net/tiles/r120030?g=875&mkt=en-us&lbl=l1&stl=h&shading=hill&n=z
-
-      static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}?g={2}&mkt={3}&lbl=l1&stl=h&shading=hill&n=z{4}";
    }
 }

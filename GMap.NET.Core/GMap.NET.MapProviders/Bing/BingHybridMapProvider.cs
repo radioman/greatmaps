@@ -46,16 +46,25 @@ namespace GMap.NET.MapProviders
          return GetTileImageUsingHttp(url);
       }
 
+      public override void OnInitialized()
+      {
+          base.OnInitialized();
+          GetTileUrl("AerialWithLabels");
+      }
+
       #endregion
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-         return string.Format(UrlFormat, GetServerNum(pos, 4), key, Version, language, (!string.IsNullOrEmpty(ClientKey) ? "&key=" + ClientKey : string.Empty));
+          if (string.IsNullOrEmpty(UrlFormat))
+          {
+              throw new Exception("No Bing Maps key specified as ClientKey. Create a Bing Maps key at http://bingmapsportal.com");
+          }
+
+          string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
+          int subDomain = (int)(pos.X % 4);
+
+          return string.Format(UrlFormat, subDomain, key, language);
       }
-
-      // http://ecn.dynamic.t3.tiles.virtualearth.net/comp/CompositionHandler/12030012020203?mkt=en-us&it=A,G,L&n=z
-
-      static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}&n=z{4}";
    }
 }
