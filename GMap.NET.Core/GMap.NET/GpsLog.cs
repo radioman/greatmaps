@@ -20,6 +20,11 @@ namespace GMap.NET
       public FixQuality FixQuality;
       public FixType FixType;
       public FixSelection FixSelection;
+
+      public override string ToString()
+      {
+         return string.Format("{0}: {1}", SessionCounter, TimeUTC);
+      }
    }
 
    public enum FixQuality : int

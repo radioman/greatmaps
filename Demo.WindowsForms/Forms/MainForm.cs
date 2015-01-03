@@ -1276,7 +1276,7 @@ namespace Demo.WindowsForms
                dateEnd = MobileLogTo.Value.ToUniversalTime();
             }
 
-            var log = Stuff.GetRoutesFromMobileLog(file, date, dateEnd, 3.3);
+            var log = Stuff.GetRoutesFromMobileLog(file, date, dateEnd, 10);
 
             if(routes != null)
             {
@@ -1306,20 +1306,20 @@ namespace Demo.WindowsForms
 
                   foreach(var point in session)
                   {
-                     track.Add(point.Position);
+                     track.Add(point.Position);                      
                   }
 
                   if(track.Count > 0)
                   {
-                     lastPoint = track[track.Count - 1];
+                     lastPoint = track[track.Count - 1]; 
+
+                     GMapRoute gr = new GMapRoute(track, "");
+                     routes.Routes.Add(gr);
                   }
                   else
                   {
                      lastPoint = PointLatLng.Empty;
-                  }
-
-                  GMapRoute gr = new GMapRoute(track, "");
-                  routes.Routes.Add(gr);
+                  }  
                }
 
                sessions.Clear();

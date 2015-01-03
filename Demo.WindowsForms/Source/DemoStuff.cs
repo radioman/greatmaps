@@ -110,7 +110,6 @@ namespace Demo.WindowsForms
                using(DbCommand cmd = cn.CreateCommand())
                {
                   cmd.CommandText = "SELECT * FROM GPS ";
-                  int initLenght = cmd.CommandText.Length;
 
                   if(start.HasValue)
                   {
@@ -121,7 +120,7 @@ namespace Demo.WindowsForms
 
                   if(end.HasValue)
                   {
-                     if(cmd.CommandText.Length <= initLenght)
+                     if(!start.HasValue)
                      {
                         cmd.CommandText += "WHERE ";
                      }
@@ -137,7 +136,7 @@ namespace Demo.WindowsForms
 
                   if(maxPositionDilutionOfPrecision.HasValue)
                   {
-                     if(cmd.CommandText.Length <= initLenght)
+                     if(!start.HasValue && !end.HasValue)
                      {
                         cmd.CommandText += "WHERE ";
                      }
@@ -146,7 +145,7 @@ namespace Demo.WindowsForms
                         cmd.CommandText += "AND ";
                      }
 
-                     cmd.CommandText += "PositionDilutionOfPrecision <= @p3 ";
+                     cmd.CommandText += "(PositionDilutionOfPrecision <= @p3)";
                      SQLiteParameter lookupValue = new SQLiteParameter("@p3", maxPositionDilutionOfPrecision);
                      cmd.Parameters.Add(lookupValue);
                   }
@@ -154,6 +153,9 @@ namespace Demo.WindowsForms
                   using(DbDataReader rd = cmd.ExecuteReader())
                   {
                      List<GpsLog> points = new List<GpsLog>();
+
+                     long lastSessionCounter = -1;
+
                      while(rd.Read())
                      {
                         GpsLog log = new GpsLog();
@@ -175,7 +177,7 @@ namespace Demo.WindowsForms
                            log.FixSelection = (FixSelection)((byte)rd["FixSelection"]);
                         }
 
-                        if(log.SessionCounter == 0 && points.Count > 0)
+                        if(log.SessionCounter - lastSessionCounter != 1 && points.Count > 0)
                         {
                            List<GpsLog> ret = new List<GpsLog>(points);
                            points.Clear();
@@ -185,6 +187,7 @@ namespace Demo.WindowsForms
                         }
 
                         points.Add(log);
+                        lastSessionCounter = log.SessionCounter;
                      }
 
                      if(points.Count > 0)
