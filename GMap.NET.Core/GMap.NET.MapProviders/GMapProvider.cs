@@ -18,18 +18,6 @@ namespace GMap.NET.MapProviders
     {
         static GMapProviders()
         {
-            //Specify your Bing Maps key for authenicating the Bing Maps layers.
-            //Get a Bing Maps key at http://bingmapsportal.com
-            BingMap.ClientKey = "YOUR_BING_MAPS_KEY";
-            
-            //Initialize BingMaps provider to generate session key. This will allow all Bing Map tile 
-            //layers to use a non-billable session key to prevent generating multiple bilable transactions.
-            BingMap.OnInitialized();
-
-            //Assign the session key to the Bing Maps satellite and hybrid map layers.
-            BingSatelliteMap.ClientKey = BingMap.ClientKey;
-            BingHybridMap.ClientKey = BingMap.ClientKey;
-
             list = new List<GMapProvider>();
 
             Type type = typeof(GMapProviders);
@@ -86,7 +74,6 @@ namespace GMap.NET.MapProviders
         public static readonly WikiMapiaMapProvider WikiMapiaMap = WikiMapiaMapProvider.Instance;
 
         public static readonly BingMapProvider BingMap = BingMapProvider.Instance;
-        
         public static readonly BingSatelliteMapProvider BingSatelliteMap = BingSatelliteMapProvider.Instance;
         public static readonly BingHybridMapProvider BingHybridMap = BingHybridMapProvider.Instance;
 

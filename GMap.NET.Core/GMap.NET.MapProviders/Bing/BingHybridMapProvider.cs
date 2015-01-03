@@ -11,7 +11,7 @@ namespace GMap.NET.MapProviders
       public static readonly BingHybridMapProvider Instance;
 
       BingHybridMapProvider()
-      { 
+      {
       }
 
       static BingHybridMapProvider()
@@ -48,23 +48,38 @@ namespace GMap.NET.MapProviders
 
       public override void OnInitialized()
       {
-          base.OnInitialized();
-          GetTileUrl("AerialWithLabels");
+         base.OnInitialized();
+
+         if(!DisableDynamicTileUrlFormat)
+         {
+            //UrlFormat[AerialWithLabels]: http://ecn.{subdomain}.tiles.virtualearth.net/tiles/h{quadkey}.jpeg?g=3179&mkt={culture}
+
+            UrlDynamicFormat = GetTileUrl("AerialWithLabels");
+            if(!string.IsNullOrEmpty(UrlDynamicFormat))
+            {
+               UrlDynamicFormat = UrlDynamicFormat.Replace("{subdomain}", "t{0}").Replace("{quadkey}", "{1}").Replace("{culture}", "{2}");
+            }
+         }
       }
 
       #endregion
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-          if (string.IsNullOrEmpty(UrlFormat))
-          {
-              throw new Exception("No Bing Maps key specified as ClientKey. Create a Bing Maps key at http://bingmapsportal.com");
-          }
+         string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
 
-          string key = TileXYToQuadKey(pos.X, pos.Y, zoom);
-          int subDomain = (int)(pos.X % 4);
+         if(!DisableDynamicTileUrlFormat && !string.IsNullOrEmpty(UrlDynamicFormat))
+         {
+            return string.Format(UrlDynamicFormat, GetServerNum(pos, 4), key, language);
+         }
 
-          return string.Format(UrlFormat, subDomain, key, language);
+         return string.Format(UrlFormat, GetServerNum(pos, 4), key, Version, language, (!string.IsNullOrEmpty(SessionId) ? "&key=" + SessionId : string.Empty));
       }
+
+      string UrlDynamicFormat = string.Empty;
+
+      // http://ecn.dynamic.t3.tiles.virtualearth.net/comp/CompositionHandler/12030012020203?mkt=en-us&it=A,G,L&n=z
+
+      static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/h{1}.jpeg?g={2}&mkt={3}&n=z{4}";
    }
 }
