@@ -73,13 +73,13 @@ namespace GMap.NET.MapProviders
             return string.Format(UrlDynamicFormat, GetServerNum(pos, 4), key);
          }
 
-         return string.Format(UrlFormat, GetServerNum(pos, 4), key, Version, language);
+         return string.Format(UrlFormat, GetServerNum(pos, 4), key, Version, language, ForceSessionIdOnTileAccess ? "&key=" + SessionId : string.Empty);
       }
 
       string UrlDynamicFormat = string.Empty;
 
       // http://ecn.t1.tiles.virtualearth.net/tiles/a12030003131321231.jpeg?g=875&mkt=en-us&n=z
 
-      static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}&n=z";
+      static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/a{1}.jpeg?g={2}&mkt={3}&n=z{4}";
    }
 }

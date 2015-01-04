@@ -36,6 +36,11 @@ namespace GMap.NET.MapProviders
       internal string SessionId = string.Empty;
 
       /// <summary>
+      /// set true to append SessionId on requesting tiles
+      /// </summary>
+      public bool ForceSessionIdOnTileAccess = false;
+
+      /// <summary>
       /// set true to avoid using dynamic tile url format
       /// </summary>
       public bool DisableDynamicTileUrlFormat = false;
@@ -152,6 +157,12 @@ namespace GMap.NET.MapProviders
       #endregion
 
       public bool TryCorrectVersion = true;
+
+      /// <summary>
+      /// set false to use your own key. 
+      /// FOR LEGAL AND COMMERCIAL USAGE SET YOUR OWN REGISTERED KEY
+      /// http://msdn.microsoft.com/en-us/library/ff428642.aspx
+      /// </summary>
       public bool TryGetDefaultKey = true;
       static bool init = false;
 
@@ -335,10 +346,10 @@ namespace GMap.NET.MapProviders
                            {
                               baseTileUrl.Replace("{key}", SessionId).Replace("{token}", SessionId);
                            }
-                           else
+                           else if(ForceSessionIdOnTileAccess)
                            {
                               // haven't seen anyone doing that, yet? ;/                            
-                              //baseTileUrl += "&key=" + AuthenticationCode;
+                              baseTileUrl += "&key=" + SessionId;
                            }
 
                            Debug.WriteLine("GetTileUrl, UrlFormat[" + imageryType + "]: " + baseTileUrl);
@@ -756,13 +767,13 @@ namespace GMap.NET.MapProviders
             return string.Format(UrlDynamicFormat, GetServerNum(pos, 4), key, language);
          }
 
-         return string.Format(UrlFormat, GetServerNum(pos, 4), key, Version, language);
+         return string.Format(UrlFormat, GetServerNum(pos, 4), key, Version, language, ForceSessionIdOnTileAccess ? "&key=" + SessionId : string.Empty);
       }
 
       string UrlDynamicFormat = string.Empty;
 
       // http://ecn.t0.tiles.virtualearth.net/tiles/r120030?g=875&mkt=en-us&lbl=l1&stl=h&shading=hill&n=z
 
-      static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}?g={2}&mkt={3}&lbl=l1&stl=h&shading=hill&n=z";
+      static readonly string UrlFormat = "http://ecn.t{0}.tiles.virtualearth.net/tiles/r{1}?g={2}&mkt={3}&lbl=l1&stl=h&shading=hill&n=z{4}";
    }
 }

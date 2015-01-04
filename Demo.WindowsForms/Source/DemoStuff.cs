@@ -395,7 +395,7 @@ namespace Demo.WindowsForms
          #endregion
       }
 
-      public static string sessionId = string.Empty;
+      static string sessionId = string.Empty;
 
       public static void GetFlightRadarData(List<FlightRadarData> ret, PointLatLng location, int zoom, bool resetSession)
       {
