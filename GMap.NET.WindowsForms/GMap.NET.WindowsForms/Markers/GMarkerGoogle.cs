@@ -61,7 +61,6 @@ namespace GMap.NET.WindowsForms.Markers
    public class GMarkerGoogle : GMapMarker
 #endif
    {
-      public float? Bearing;
       Bitmap Bitmap;
       Bitmap BitmapShadow;
 
@@ -209,29 +208,17 @@ namespace GMap.NET.WindowsForms.Markers
          return ret;
       }
 
-      static readonly Point[] Arrow = new Point[] { new Point(-7, 7), new Point(0, -22), new Point(7, 7), new Point(0, 2) };
 
       public override void OnRender(Graphics g)
       {
 #if !PocketPC
-         //if(!Bearing.HasValue)
-         {
             if(BitmapShadow != null)
             {
                g.DrawImage(BitmapShadow, LocalPosition.X, LocalPosition.Y, BitmapShadow.Width, BitmapShadow.Height);
-            }
-         }
-
-         //if(Bearing.HasValue)
-         //{
-         //   g.RotateTransform(Bearing.Value - Overlay.Control.Bearing);
-         //   g.FillPolygon(Brushes.Red, Arrow);
-         //}
-
-         //if(!Bearing.HasValue)
-         {
+            }                
             g.DrawImage(Bitmap, LocalPosition.X, LocalPosition.Y, Size.Width, Size.Height);
-         }
+
+            //g.DrawString(LocalPosition.ToString(), SystemFonts.DefaultFont, Brushes.Red, LocalPosition);
 #else
          if(BitmapShadow != null)
          {
@@ -262,7 +249,7 @@ namespace GMap.NET.WindowsForms.Markers
       void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
       {
          info.AddValue("type", this.Type);
-         info.AddValue("Bearing", this.Bearing);
+         //info.AddValue("Bearing", this.Bearing);
 
          base.GetObjectData(info, context);
       }
@@ -271,7 +258,7 @@ namespace GMap.NET.WindowsForms.Markers
          : base(info, context)
       {
          this.Type = Extensions.GetStruct<GMarkerGoogleType>(info, "type", GMarkerGoogleType.none);
-         this.Bearing = Extensions.GetStruct<float>(info, "Bearing", null);
+         //this.Bearing = Extensions.GetStruct<float>(info, "Bearing", null);
       }
 
       #endregion

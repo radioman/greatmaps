@@ -47,7 +47,7 @@ namespace Demo.WindowsForms.CustomMarkers
       public GMapMarkerCircle(PointLatLng p)
          : base(p)
       {
-         Radius = 100; // 100m
+         Radius = 888; // 888m
          IsHitTestVisible = false;
       }
 

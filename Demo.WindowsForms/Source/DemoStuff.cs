@@ -51,7 +51,6 @@ namespace Demo.WindowsForms
    public struct FlightRadarData
    {
       public string name;
-      public string hex;
       public PointLatLng point;
       public int bearing;
       public string altitude;
@@ -397,40 +396,42 @@ namespace Demo.WindowsForms
 
       static string sessionId = string.Empty;
 
-      public static void GetFlightRadarData(List<FlightRadarData> ret, PointLatLng location, int zoom, bool resetSession)
+      public static void GetFlightRadarData(List<FlightRadarData> ret, RectLatLng bounds)
       {
          ret.Clear();
 
-         if(resetSession || string.IsNullOrEmpty(sessionId))
-         {
-            sessionId = GetFlightRadarContentUsingHttp("http://www.flightradar24.com/", location, zoom, string.Empty);
-         }
+         //if(resetSession || string.IsNullOrEmpty(sessionId))
+         //{
+         //   sessionId = GetFlightRadarContentUsingHttp("http://www.flightradar24.com/", location, zoom, string.Empty);
+         //}
 
          // get track for one object
          //var tm = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalMilliseconds;
          //var r = GetContentUsingHttp("http://www.flightradar24.com/FlightDataService.php?callsign=WZZ1MF&hex=47340F&date=" + tm, p1, 6, id);
          //Debug.WriteLine(r);
 
-         if(!string.IsNullOrEmpty(sessionId))
+         //if(!string.IsNullOrEmpty(sessionId))
          {
-            var response = GetFlightRadarContentUsingHttp("http://www.flightradar24.com/PlaneFeed.json", location, zoom, sessionId);
+            //var response = GetFlightRadarContentUsingHttp("http://arn.data.fr24.com/zones/fcgi/feed.js?bounds=63.056845879294244,55.95299968262111,5.99853515625,28.54248046875&faa=1&mlat=1&flarm=1&adsb=1&gnd=1&air=1&vehicles=1&estimated=1&maxage=900&gliders=1&stats=1&", location, zoom, sessionId);
+            var response = GetFlightRadarContentUsingHttp(string.Format(CultureInfo.InvariantCulture, "http://arn.data.fr24.com/zones/fcgi/feed.js?bounds={0},{1},{2},{3}&faa=1&mlat=1&flarm=1&adsb=1&gnd=1&air=1&vehicles=1&estimated=1&maxage=900&gliders=1&stats=1&", bounds.Top, bounds.Bottom, bounds.Left, bounds.Right));
 
-            var items = response.Split(']');
+            var items = response.Split(new string[] { "\n," }, StringSplitOptions.RemoveEmptyEntries);
+                        
             //int i = 0;
             foreach(var it in items)
             {
-               if(it.Length > 11)
+               if(it.Length > 11 && !it.Contains("full_count") && !it.Contains("stats"))
                {
-                  var d = it.Substring(2).Replace(":", ",").Replace("\"", string.Empty).Replace("[", string.Empty);
+                  var d = it.TrimEnd(']').Replace(":[", ",").Replace("\"", string.Empty);
 
                   //Debug.WriteLine(++i + " -> " + d);
 
                   // BAW576":["400803",48.9923,1.8083,"144","36950","462","0512","LFPO","A319","G-EUPC"
                   var par = d.Split(',');
-                  if(par.Length >= 12)
+                  if(par.Length >= 9)
                   {
-                     var name = par[0];
-                     var hex = par[1];
+                     var id = Convert.ToInt32(par[0], 16);
+                     var name = par[8] + "|" + par[9] + "|" + par[10];
                      var lat = par[2];
                      var lng = par[3];
                      var bearing = par[4];
@@ -439,12 +440,12 @@ namespace Demo.WindowsForms
 
                      FlightRadarData fd = new FlightRadarData();
                      fd.name = name;
-                     fd.hex = hex;
                      fd.bearing = int.Parse(bearing);
                      fd.altitude = altitude;
                      fd.speed = speed;
                      fd.point = new PointLatLng(double.Parse(lat, CultureInfo.InvariantCulture), double.Parse(lng, CultureInfo.InvariantCulture));
-                     fd.Id = Convert.ToInt32(hex, 16);
+                     fd.Id = id;
+
                      ret.Add(fd);
 
                      //Debug.WriteLine("name: " + name);
@@ -469,7 +470,7 @@ namespace Demo.WindowsForms
          }
       }
 
-      static string GetFlightRadarContentUsingHttp(string url, PointLatLng p, int zoom, string sid)
+      static string GetFlightRadarContentUsingHttp(string url)
       {
          string ret = string.Empty;
 
@@ -481,27 +482,27 @@ namespace Demo.WindowsForms
          request.Accept = "*/*";
          request.Referer = "http://www.flightradar24.com/";
          request.KeepAlive = true;
-         request.Headers.Add("Cookie", string.Format(System.Globalization.CultureInfo.InvariantCulture, "map_lat={0}; map_lon={1}; map_zoom={2}; " + (!string.IsNullOrEmpty(sid) ? "PHPSESSID=" + sid + ";" : string.Empty) + "__utma=109878426.303091014.1316587318.1316587318.1316587318.1; __utmb=109878426.2.10.1316587318; __utmz=109878426.1316587318.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)", p.Lat, p.Lng, zoom));
+         //request.Headers.Add("Cookie", string.Format(System.Globalization.CultureInfo.InvariantCulture, "map_lat={0}; map_lon={1}; map_zoom={2}; " + (!string.IsNullOrEmpty(sid) ? "PHPSESSID=" + sid + ";" : string.Empty) + "__utma=109878426.303091014.1316587318.1316587318.1316587318.1; __utmb=109878426.2.10.1316587318; __utmz=109878426.1316587318.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)", p.Lat, p.Lng, zoom));
 
          using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
          {
-            if(string.IsNullOrEmpty(sid))
-            {
-               var c = response.Headers["Set-Cookie"];
-               //Debug.WriteLine(c);
-               if(c.Contains("PHPSESSID"))
-               {
-                  c = c.Split('=')[1].Split(';')[0];
-                  ret = c;
-               }
-            }
+            //if(string.IsNullOrEmpty(sid))
+            //{
+            //   var c = response.Headers["Set-Cookie"];
+            //   //Debug.WriteLine(c);
+            //   if(c.Contains("PHPSESSID"))
+            //   {
+            //      c = c.Split('=')[1].Split(';')[0];
+            //      ret = c;
+            //   }
+            //}
 
             using(Stream responseStream = response.GetResponseStream())
             {
                using(StreamReader read = new StreamReader(responseStream, Encoding.UTF8))
                {
                   var tmp = read.ReadToEnd();
-                  if(!string.IsNullOrEmpty(sid))
+                  //if(!string.IsNullOrEmpty(sid))
                   {
                      ret = tmp;
                   }

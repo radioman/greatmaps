@@ -30,7 +30,7 @@ namespace Demo.WindowsForms
       internal readonly GMapOverlay polygons = new GMapOverlay("polygons");
 
       // marker
-      GMarkerGoogle currentMarker;
+      GMapMarker currentMarker;
 
       // polygons
       GMapPolygon polygon;
@@ -191,8 +191,8 @@ namespace Demo.WindowsForms
             }
 
             // set current marker
-            currentMarker = new GMarkerGoogle(MainMap.Position, GMarkerGoogleType.arrow);
-            currentMarker.IsHitTestVisible = false;
+            currentMarker = new GMarkerGoogle(MainMap.Position, GMarkerGoogleType.arrow);          
+            currentMarker.IsHitTestVisible = false; 
             top.Markers.Add(currentMarker);
 
             //MainMap.VirtualSizeEnabled = true;
@@ -313,6 +313,7 @@ namespace Demo.WindowsForms
 
       bool firstLoadFlight = true;
       GMapMarker currentFlight;
+      RectLatLng flightBounds = new RectLatLng(54.4955675218741, -0.966796875, 28.916015625, 13.3830987326932);
 
       void flight_ProgressChanged(object sender, ProgressChangedEventArgs e)
       {
@@ -321,17 +322,33 @@ namespace Demo.WindowsForms
          MainMap.HoldInvalidation = true;
 
          lock(flights)
-         {
+         {       
+            if(flightBounds != MainMap.ViewArea)
+            {
+               flightBounds = MainMap.ViewArea;
+               foreach(var m in objects.Markers)
+               {
+                  if(!flightBounds.Contains(m.Position))
+                  {
+                     m.IsVisible = false;
+                  }
+                  else
+                  {
+                     m.IsVisible = true;
+                  }
+               }
+            }
+
             foreach(FlightRadarData d in flights)
             {
                GMapMarker marker;
 
                if(!flightMarkers.TryGetValue(d.Id, out marker))
                {
-                  marker = new GMarkerGoogle(d.point, GMarkerGoogleType.blue_small);
+                  marker = new GMarkerArrow(d.point);
                   marker.Tag = d.Id;
                   marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
-                  //(marker as GMapMarkerGoogleGreen).Bearing = (float?)d.bearing;
+                  (marker as GMarkerArrow).Bearing = d.bearing;
 
                   flightMarkers[d.Id] = marker;
                   objects.Markers.Add(marker);
@@ -339,14 +356,14 @@ namespace Demo.WindowsForms
                else
                {
                   marker.Position = d.point;
-                  //(marker as GMapMarkerGoogleGreen).Bearing = (float?)d.bearing;
+                  (marker as GMarkerArrow).Bearing = d.bearing;
                }
                marker.ToolTipText = d.name + ", " + d.altitude + ", " + d.speed;
 
                if(currentFlight != null && currentFlight == marker)
                {
                   MainMap.Position = marker.Position;
-                  //MainMap.Bearing = (float)d.bearing;
+                  MainMap.Bearing = (float)d.bearing;
                }
             }
          }
@@ -362,7 +379,7 @@ namespace Demo.WindowsForms
 
       void flight_DoWork(object sender, DoWorkEventArgs e)
       {
-         bool restartSesion = true;
+         //bool restartSesion = true;
 
          while(!flightWorker.CancellationPending)
          {
@@ -370,12 +387,14 @@ namespace Demo.WindowsForms
             {
                lock(flights)
                {
-                  Stuff.GetFlightRadarData(flights, lastPosition, lastZoom, restartSesion);
+                  //Stuff.GetFlightRadarData(flights, lastPosition, lastZoom, restartSesion);
 
-                  if(flights.Count > 0 && restartSesion)
-                  {
-                     restartSesion = false;
-                  }
+                  Stuff.GetFlightRadarData(flights, flightBounds);
+
+                  //if(flights.Count > 0 && restartSesion)
+                  //{
+                  //   restartSesion = false;
+                  //}
                }
 
                flightWorker.ReportProgress(100);
@@ -431,7 +450,7 @@ namespace Demo.WindowsForms
                else
                {
                   marker.Position = new PointLatLng(d.Lat, d.Lng);
-                  (marker as GMarkerGoogle).Bearing = (float?) d.Bearing;
+                  //(marker as GMarkerGoogle).Bearing = (float?) d.Bearing;
                }
                marker.ToolTipText = "Trolley " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
 
@@ -464,7 +483,7 @@ namespace Demo.WindowsForms
                else
                {
                   marker.Position = new PointLatLng(d.Lat, d.Lng);
-                  (marker as GMarkerGoogle).Bearing = (float?) d.Bearing;
+                  //(marker as GMarkerGoogle).Bearing = (float?) d.Bearing;
                }
                marker.ToolTipText = "Bus " + d.Line + (d.Bearing.HasValue ? ", bearing: " + d.Bearing.Value.ToString() : string.Empty) + ", " + d.Time;
 
@@ -1512,9 +1531,8 @@ namespace Demo.WindowsForms
             rc.Pen.Color = Color.Red;
 
             CurentRectMarker = rc;
-
-            Debug.WriteLine("OnMarkerEnter: " + item.Position);
-         }
+         }         
+         Debug.WriteLine("OnMarkerEnter: " + item.Position); 
       }
 
       GMapPolygon currentPolygon = null;

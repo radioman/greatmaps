@@ -1911,7 +1911,14 @@ namespace GMap.NET.WindowsForms
                      {
                         #region -- check --
 
-                        if((MobileMode && m.LocalArea.Contains(e.X, e.Y)) || (!MobileMode && m.LocalAreaInControlSpace.Contains(e.X, e.Y)))
+                        GPoint rp = new GPoint(e.X, e.Y);
+#if !PocketPC
+                        if(!MobileMode)
+                        {
+                           rp.OffsetNegative(Core.renderOffset);
+                        }
+#endif
+                        if(m.LocalArea.Contains((int)rp.X, (int)rp.Y))
                         {
                            if(OnMarkerClick != null)
                            {
@@ -2115,11 +2122,15 @@ namespace GMap.NET.WindowsForms
                            if(m.IsVisible && m.IsHitTestVisible)
                            {
                               #region -- check --
+
+                              GPoint rp = new GPoint(e.X, e.Y);
 #if !PocketPC
-                              if((MobileMode && m.LocalArea.Contains(e.X, e.Y)) || (!MobileMode && m.LocalAreaInControlSpace.Contains(e.X, e.Y)))
-#else
-                           if(m.LocalArea.Contains(e.X, e.Y))
-#endif
+                              if(!MobileMode)
+                              {
+                                 rp.OffsetNegative(Core.renderOffset);
+                              }
+#endif                         
+                              if(m.LocalArea.Contains((int)rp.X, (int)rp.Y))
                               {
                                  if(!m.IsMouseOver)
                                  {
