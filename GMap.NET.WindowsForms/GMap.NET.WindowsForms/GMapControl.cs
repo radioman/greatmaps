@@ -822,10 +822,11 @@ namespace GMap.NET.WindowsForms
       public void UpdateRouteLocalPosition(GMapRoute route)
       {
          route.LocalPoints.Clear();
-
-         foreach(GMap.NET.PointLatLng pg in route.Points)
-         {
-            GPoint p = FromLatLngToLocal(pg);
+          
+          for (int i = 0; i < route.Points.Count; i++)
+          {
+                PointLatLng pg= route.Points[i];
+                GPoint p = FromLatLngToLocal(pg);
 
 #if !PocketPC
             if(!MobileMode)
