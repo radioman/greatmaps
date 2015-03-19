@@ -538,6 +538,21 @@ namespace GMap.NET.MapProviders
             return ret;
         }
 
+        /// <summary>
+        /// use at your own risk, storing tiles in files is slow and hard on the file system
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        protected virtual PureImage GetTileImageFromFile(string fileName)
+        {
+            return GetTileImageFromArray(File.ReadAllBytes(fileName));
+        }
+        
+        protected virtual PureImage GetTileImageFromArray(byte [] data)
+        {
+            return TileImageProxy.FromArray(data);
+        }
+        
         protected static int GetServerNum(GPoint pos, int max)
         {
             return (int)(pos.X + 2 * pos.Y) % max;
