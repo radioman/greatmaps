@@ -2128,7 +2128,18 @@ namespace GMap.NET.WindowsPresentation
       {
          get
          {
-            return Core.ViewArea;
+             if(!IsRotated)
+             {
+                 return Core.ViewArea;
+             }
+             else if(Core.Provider.Projection != null)
+             {
+                 var p = FromLocalToLatLng(0, 0);
+                 var p2 = FromLocalToLatLng((int)Width, (int)Height);
+    
+                 return RectLatLng.FromLTRB(p.Lng, p.Lat, p2.Lng, p2.Lat);
+             }
+             return RectLatLng.Empty;
          }
       }
 
