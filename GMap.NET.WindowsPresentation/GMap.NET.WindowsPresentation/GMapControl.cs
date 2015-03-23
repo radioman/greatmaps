@@ -967,11 +967,11 @@ namespace GMap.NET.WindowsPresentation
       }
 
       /// <summary>
-      /// creates path from list of points
+      /// creates path from list of points, for performance set addBlurEffect to false
       /// </summary>
       /// <param name="pl"></param>
       /// <returns></returns>
-      public virtual Path CreateRoutePath(List<Point> localPath)
+      public virtual Path CreateRoutePath(List<Point> localPath, bool addBlurEffect = true)
       {
          // Create a StreamGeometry to use to specify myPath.
          StreamGeometry geometry = new StreamGeometry();
@@ -994,14 +994,17 @@ namespace GMap.NET.WindowsPresentation
             // Specify the shape of the Path using the StreamGeometry.
             myPath.Data = geometry;
 
-            BlurEffect ef = new BlurEffect();
+            if (addBlurEffect)
             {
-               ef.KernelType = KernelType.Gaussian;
-               ef.Radius = 3.0;
-               ef.RenderingBias = RenderingBias.Quality;
-            }
+                BlurEffect ef = new BlurEffect();
+                {
+                    ef.KernelType = KernelType.Gaussian;
+                    ef.Radius = 3.0;
+                    ef.RenderingBias = RenderingBias.Performance;
+                }
 
-            myPath.Effect = ef;
+                myPath.Effect = ef;
+            }
 
             myPath.Stroke = Brushes.Navy;
             myPath.StrokeThickness = 5;
@@ -1016,11 +1019,11 @@ namespace GMap.NET.WindowsPresentation
       }
 
       /// <summary>
-      /// creates path from list of points
+      /// creates path from list of points, for performance set addBlurEffect to false
       /// </summary>
       /// <param name="pl"></param>
       /// <returns></returns>
-      public virtual Path CreatePolygonPath(List<Point> localPath)
+      public virtual Path CreatePolygonPath(List<Point> localPath, bool addBlurEffect = false)
       {
          // Create a StreamGeometry to use to specify myPath.
          StreamGeometry geometry = new StreamGeometry();
@@ -1043,14 +1046,17 @@ namespace GMap.NET.WindowsPresentation
             // Specify the shape of the Path using the StreamGeometry.
             myPath.Data = geometry;
 
-            BlurEffect ef = new BlurEffect();
+            if (addBlurEffect)
             {
-               ef.KernelType = KernelType.Gaussian;
-               ef.Radius = 3.0;
-               ef.RenderingBias = RenderingBias.Quality;
-            }
+                BlurEffect ef = new BlurEffect();
+                {
+                    ef.KernelType = KernelType.Gaussian;
+                    ef.Radius = 3.0;
+                    ef.RenderingBias = RenderingBias.Performance;
+                }
 
-            myPath.Effect = ef;
+                myPath.Effect = ef;
+            }
 
             myPath.Stroke = Brushes.MidnightBlue;
             myPath.StrokeThickness = 5;
