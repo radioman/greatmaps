@@ -6,7 +6,7 @@ namespace GMap.NET.Internals
    using System.IO;
    using System.Text;
    using GMap.NET.CacheProviders;
-    using System.Security.Cryptography;
+   using System.Security.Cryptography;
 
    internal class CacheLocator
    {
@@ -43,10 +43,37 @@ namespace GMap.NET.Internals
       static void Reset()
       {
 #if !PocketPC
-         location = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+         string GetFolderPath = string.Empty;
+        
+         bool isSystem = false;
+         try
+         {
+             using (var identity = System.Security.Principal.WindowsIdentity.GetCurrent())
+             {
+                 if(identity != null)
+                 {
+                    isSystem = identity.IsSystem;
+                 }
+             }
+         }
+         catch(Exception ex)
+         {
+             Trace.WriteLine("SQLitePureImageCache, WindowsIdentity.GetCurrent: " + ex);
+         }
+         
+         // https://greatmaps.codeplex.com/workitem/16112
+         if (isSystem)
+         {
+             GetFolderPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.CommonApplicationData);
+         }
+         else
+         {
+             GetFolderPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+         }
 
          // http://greatmaps.codeplex.com/discussions/403151
-         if(string.IsNullOrEmpty(location)) 
+         // by default Network Service don't have disk write access
+         if(string.IsNullOrEmpty(GetFolderPath)) 
          {
             GMaps.Instance.Mode = AccessMode.ServerOnly;
             GMaps.Instance.UseDirectionsCache = false;
@@ -54,6 +81,10 @@ namespace GMap.NET.Internals
             GMaps.Instance.UsePlacemarkCache = false;
             GMaps.Instance.UseRouteCache = false;
             GMaps.Instance.UseUrlCache = false;
+         }
+         else
+         {
+             Location = GetFolderPath + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
          }
 #else
          location = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
