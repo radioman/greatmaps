@@ -255,6 +255,7 @@ namespace Demo.WindowsForms
                      }
 
                      // draw info
+                     if (!info.MakeWorldFile)
                      {
                         System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
                         {
