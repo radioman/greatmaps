@@ -33,10 +33,11 @@ namespace GMap.NET.MapProviders
         public string SecureWord = "Galileo";
 
         /// <summary>
-        /// API generated using http://greatmaps.codeplex.com/
-        /// from http://tinyurl.com/3q6zhcw
+        /// Your application's API key, obtained from the Google Developers Console.
+        /// This key identifies your application for purposes of quota management. 
+        /// Must provide either API key or Maps for Work credentials.
         /// </summary>
-        //public string APIKey = @"ABQIAAAAWaQgWiEBF3lW97ifKnAczhRAzBk5Igf8Z5n2W3hNnMT0j2TikxTLtVIGU7hCLLHMAuAMt-BO5UrEWA";
+        public string ApiKey = string.Empty;
 
         #region GMapProvider Members
         public override Guid Id
@@ -531,7 +532,7 @@ namespace GMap.NET.MapProviders
 
         string MakeGeocoderUrl(string keywords, string language)
         {
-            return string.Format(CultureInfo.InvariantCulture, GeocoderUrlFormat, ServerAPIs, keywords.Replace(' ', '+'), language);
+            return string.Format(CultureInfo.InvariantCulture, GeocoderUrlFormat, ServerAPIs, Uri.EscapeDataString(keywords).Replace(' ', '+'), language);
         }
 
         string MakeReverseGeocoderUrl(PointLatLng pt, string language)
@@ -552,7 +553,19 @@ namespace GMap.NET.MapProviders
 
                 if (string.IsNullOrEmpty(geo))
                 {
-                    geo = GetContentUsingHttp(url);
+                    string urls = url;
+
+                    // Must provide either API key or Maps for Work credentials.
+                    if (!string.IsNullOrEmpty(ClientId))
+                    {
+                        urls = GetSignedUri(url);
+                    }
+                    else if (!string.IsNullOrEmpty(ApiKey))
+                    {
+                        urls += "&key=" + ApiKey;
+                    }
+
+                    geo = GetContentUsingHttp(urls);
 
                     if (!string.IsNullOrEmpty(geo))
                     {
@@ -762,7 +775,19 @@ namespace GMap.NET.MapProviders
 
                 if (string.IsNullOrEmpty(reverse))
                 {
-                    reverse = GetContentUsingHttp(url);
+                    string urls = url;
+
+                    // Must provide either API key or Maps for Work credentials.
+                    if (!string.IsNullOrEmpty(ClientId))
+                    {
+                        urls = GetSignedUri(url);
+                    }
+                    else if (!string.IsNullOrEmpty(ApiKey))
+                    {
+                        urls += "&key=" + ApiKey;
+                    }
+
+                    reverse = GetContentUsingHttp(urls);
 
                     if (!string.IsNullOrEmpty(reverse))
                     {
@@ -1479,7 +1504,20 @@ namespace GMap.NET.MapProviders
 
                 if (string.IsNullOrEmpty(kml))
                 {
-                    kml = GetContentUsingHttp(url);
+                    string urls = url;
+
+                    // Must provide either API key or Maps for Work credentials.
+                    if (!string.IsNullOrEmpty(ClientId))
+                    {
+                        urls = GetSignedUri(url);
+                    }
+                    else if (!string.IsNullOrEmpty(ApiKey))
+                    {
+                        urls += "&key=" + ApiKey;
+                    }
+
+                    kml = GetContentUsingHttp(urls);
+
                     if (!string.IsNullOrEmpty(kml))
                     {
                         cache = true;
@@ -1995,52 +2033,41 @@ namespace GMap.NET.MapProviders
             return ret;
         }
 
-        static void DecodePointsInto(List<PointLatLng> list, string encodedPoints)
+        static void DecodePointsInto(List<PointLatLng> path, string encodedPath)
         {
-            // http://tinyurl.com/3ds3scr
-            // http://code.server.com/apis/maps/documentation/polylinealgorithm.html
-            //
-            string encoded = encodedPoints.Replace("\\\\", "\\");
+            // https://github.com/googlemaps/google-maps-services-java/blob/master/src/main/java/com/google/maps/internal/PolylineEncoding.java
+            int len = encodedPath.Length;
+            int index = 0;
+            int lat = 0;
+            int lng = 0;
+            while (index < len)
             {
-                int len = encoded.Length;
-                int index = 0;
-                double dlat = 0;
-                double dlng = 0;
-
-                while (index < len)
+                int result = 1;
+                int shift = 0;
+                int b;
+                do
                 {
-                    int b;
-                    int shift = 0;
-                    int result = 0;
+                    b = encodedPath[index++] - 63 - 1;
+                    result += b << shift;
+                    shift += 5;
+                } while (b >= 0x1f && index < len);
+                lat += (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
 
+                result = 1;
+                shift = 0;
+
+                if (index < len)
+                {
                     do
                     {
-                        b = encoded [index++] - 63;
-                        result |= (b & 0x1f) << shift;
+                        b = encodedPath[index++] - 63 - 1;
+                        result += b << shift;
                         shift += 5;
-
-                    } while (b >= 0x20 && index < len);
-
-                    dlat += ((result & 1) == 1 ? ~(result >> 1) : (result >> 1));
-
-                    shift = 0;
-                    result = 0;
-
-                    if (index < len)
-                    {
-                        do
-                        {
-                            b = encoded [index++] - 63;
-                            result |= (b & 0x1f) << shift;
-                            shift += 5;
-                        }
-                        while (b >= 0x20 && index < len);
-
-                        dlng += ((result & 1) == 1 ? ~(result >> 1) : (result >> 1));
-
-                        list.Add(new PointLatLng(dlat * 1e-5, dlng * 1e-5));
-                    }
+                    } while (b >= 0x1f && index < len);
+                    lng += (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
                 }
+
+                path.Add(new PointLatLng(lat * 1e-5, lng * 1e-5));
             }
         }
 
@@ -2051,6 +2078,65 @@ namespace GMap.NET.MapProviders
 
         #endregion
 
+        #endregion
+
+        #region -- Maps API for Work --
+        /// <summary>
+        /// https://developers.google.com/maps/documentation/business/webservices/auth#how_do_i_get_my_signing_key
+        /// To access the special features of the Google Maps API for Work you must provide a client ID
+        /// when accessing any of the API libraries or services.
+        /// When registering for Google Google Maps API for Work you will receive this client ID from Enterprise Support.
+        /// All client IDs begin with a gme- prefix. Your client ID is passed as the value of the client parameter.
+        /// Generally, you should store your private key someplace safe and read them into your code
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="privateKey"></param>
+        public void SetEnterpriseCredentials(string clientId, string privateKey)
+        {
+            privateKey = privateKey.Replace("-", "+").Replace("_", "/");
+            _privateKeyBytes = Convert.FromBase64String(privateKey);
+            _clientId = clientId;
+        }
+        private byte[] _privateKeyBytes;
+
+        private string _clientId = string.Empty;
+
+        /// <summary>
+        /// Your client ID. To access the special features of the Google Maps API for Work
+        /// you must provide a client ID when accessing any of the API libraries or services.
+        /// When registering for Google Google Maps API for Work you will receive this client ID
+        /// from Enterprise Support. All client IDs begin with a gme- prefix.
+        /// </summary>
+        public string ClientId
+        {
+            get
+            {
+                return _clientId;
+            }
+        }
+
+        string GetSignedUri(Uri uri)
+        {
+            var builder = new UriBuilder(uri);
+            builder.Query = builder.Query.Substring(1) + "&client=" + _clientId;
+            uri = builder.Uri;
+            string signature = GetSignature(uri);
+
+            return uri.Scheme + "://" + uri.Host + uri.LocalPath + uri.Query + "&signature=" + signature;
+        }
+
+        string GetSignedUri(string url)
+        {
+            return GetSignedUri(new Uri(url));
+        }
+
+        string GetSignature(Uri uri)
+        {
+            byte[] encodedPathQuery = Encoding.ASCII.GetBytes(uri.LocalPath + uri.Query);
+            var hashAlgorithm = new HMACSHA1(_privateKeyBytes);
+            byte[] hashed = hashAlgorithm.ComputeHash(encodedPathQuery);
+            return Convert.ToBase64String(hashed).Replace("+", "-").Replace("/", "_");
+        } 
         #endregion
     }
 
