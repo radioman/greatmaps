@@ -998,7 +998,10 @@ namespace GMap.NET.WindowsForms
 
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    (backBuffer.Clone() as Bitmap).Save(ms, ImageFormat.Png);
+                    using (var frame = (backBuffer.Clone() as Bitmap))
+                    {
+                        frame.Save(ms, ImageFormat.Png);
+                    }
                     ret = Image.FromStream(ms);
                 }
             }
