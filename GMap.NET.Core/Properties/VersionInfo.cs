@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyCompany("Universe")]
-[assembly: AssemblyCopyright("Copyright © Universe 2013")]
+[assembly: AssemblyCopyright("Copyright © Universe 2015")]
 [assembly: AssemblyTrademark("email@radioman.lt")]
 
 #if DEBUG
@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.7")]   
-[assembly: AssemblyInformationalVersion("1.7 beta")]
+[assembly: AssemblyInformationalVersion("1.7")]
 
 #if !PocketPC
 [assembly: AssemblyFileVersion("1.7")]
