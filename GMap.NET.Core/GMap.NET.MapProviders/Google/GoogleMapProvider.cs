@@ -14,6 +14,9 @@ namespace GMap.NET.MapProviders
     using System.Globalization;
     using System.Xml;
     using System.Text;
+#if PocketPC
+    using OpenNETCF.Security.Cryptography;
+#endif
 
     public abstract class GoogleMapProviderBase : GMapProvider, RoutingProvider, GeocodingProvider, DirectionsProvider
     {

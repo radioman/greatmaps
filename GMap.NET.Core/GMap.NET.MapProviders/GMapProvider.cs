@@ -538,6 +538,7 @@ namespace GMap.NET.MapProviders
             return ret;
         }
 
+#if !PocketPC
         /// <summary>
         /// use at your own risk, storing tiles in files is slow and hard on the file system
         /// </summary>
@@ -547,7 +548,7 @@ namespace GMap.NET.MapProviders
         {
             return GetTileImageFromArray(File.ReadAllBytes(fileName));
         }
-        
+#endif
         protected virtual PureImage GetTileImageFromArray(byte [] data)
         {
             return TileImageProxy.FromArray(data);

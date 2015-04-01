@@ -990,7 +990,9 @@ namespace GMap.NET.WindowsForms
 
                 if (!r)
                 {
+#if !PocketPC
                     ForceDoubleBuffer = true;
+#endif
                 }
 
                 Refresh();                
@@ -1002,7 +1004,11 @@ namespace GMap.NET.WindowsForms
                     {
                         frame.Save(ms, ImageFormat.Png);
                     }
+#if !PocketPC
                     ret = Image.FromStream(ms);
+#else
+                    ret = new Bitmap(ms);
+#endif
                 }
             }
             catch (Exception)
@@ -1013,7 +1019,9 @@ namespace GMap.NET.WindowsForms
             {
                 if (!r)
                 {
+#if !PocketPC
                     ForceDoubleBuffer = false;
+#endif
                     ClearBackBuffer();
                 }
             }
@@ -1029,6 +1037,7 @@ namespace GMap.NET.WindowsForms
         {
             if (IsHandleCreated)
             {
+#if !PocketPC
                 if (IsRotated)
                 {
                     System.Drawing.Point[] p = new System.Drawing.Point[] { new System.Drawing.Point(x, y) };
@@ -1036,6 +1045,7 @@ namespace GMap.NET.WindowsForms
                     x = (int)p[0].X;
                     y = (int)p[0].Y;
                 }
+#endif
                 Core.DragOffset(new GPoint(x, y));
 
                 ForceUpdateOverlays();
@@ -2790,7 +2800,8 @@ namespace GMap.NET.WindowsForms
         {
             get
             {
-                if (!IsRotated)
+#if !PocketPC
+                if (!IsRotated) 
                 {
                     return Core.ViewArea;
                 }
@@ -2802,6 +2813,9 @@ namespace GMap.NET.WindowsForms
                     return RectLatLng.FromLTRB(p.Lng, p.Lat, p2.Lng, p2.Lat);
                 }
                 return RectLatLng.Empty;
+#else
+                return Core.ViewArea;
+#endif               
             }
         }
 

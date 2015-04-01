@@ -1,7 +1,7 @@
 
 set msbuildexe=%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild.exe
 
-set builddir=Release-NET%TargetFrameworkVersion4%
+set builddir=Release-NETv4.0
 mkdir .\%builddir% 
 del /q /s .\%builddir%\*.*
 

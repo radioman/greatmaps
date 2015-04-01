@@ -396,6 +396,7 @@ namespace Demo.WindowsForms
 
       static string sessionId = string.Empty;
 
+#if !PocketPC
       public static void GetFlightRadarData(List<FlightRadarData> ret, RectLatLng bounds)
       {
          ret.Clear();
@@ -517,5 +518,6 @@ namespace Demo.WindowsForms
 
          return ret;
       }
+#endif
    }
 }

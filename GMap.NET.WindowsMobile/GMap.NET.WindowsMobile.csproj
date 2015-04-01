@@ -474,6 +474,7 @@
     <Compile Include="GMap.NET.GPS\Utils.cs" />
     <Compile Include="GMap.NET.Internals\FastReaderWriterLock.cs" />
     <Compile Include="GMap.NET.Internals\Native.cs" />
+    <Compile Include="GMap.NET.MapProviders\Google\UriBuilder.cs" />
     <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerGoogleGreen.cs" />
     <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerGoogleRed.cs" />
     <Compile Include="GMap.NET.WindowsForms\Markers\GMapMarkerTransparent.cs" />

@@ -971,7 +971,17 @@ namespace GMap.NET.WindowsPresentation
       /// </summary>
       /// <param name="pl"></param>
       /// <returns></returns>
-      public virtual Path CreateRoutePath(List<Point> localPath, bool addBlurEffect = true)
+      public virtual Path CreateRoutePath(List<Point> localPath)
+      {
+         return CreateRoutePath(localPath, true);
+      }
+
+      /// <summary>
+      /// creates path from list of points, for performance set addBlurEffect to false
+      /// </summary>
+      /// <param name="pl"></param>
+      /// <returns></returns>
+      public virtual Path CreateRoutePath(List<Point> localPath, bool addBlurEffect)
       {
          // Create a StreamGeometry to use to specify myPath.
          StreamGeometry geometry = new StreamGeometry();
@@ -1023,7 +1033,17 @@ namespace GMap.NET.WindowsPresentation
       /// </summary>
       /// <param name="pl"></param>
       /// <returns></returns>
-      public virtual Path CreatePolygonPath(List<Point> localPath, bool addBlurEffect = false)
+      public virtual Path CreatePolygonPath(List<Point> localPath)
+      {
+         return CreatePolygonPath(localPath, false);
+      }
+
+      /// <summary>
+      /// creates path from list of points, for performance set addBlurEffect to false
+      /// </summary>
+      /// <param name="pl"></param>
+      /// <returns></returns>
+      public virtual Path CreatePolygonPath(List<Point> localPath, bool addBlurEffect)
       {
          // Create a StreamGeometry to use to specify myPath.
          StreamGeometry geometry = new StreamGeometry();
