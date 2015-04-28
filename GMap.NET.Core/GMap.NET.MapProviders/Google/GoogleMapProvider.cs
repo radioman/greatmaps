@@ -92,8 +92,8 @@ namespace GMap.NET.MapProviders
         public override void OnInitialized()
         {
             if (!init && TryCorrectVersion)
-            {
-                string url = string.Format("http://maps.{0}", Server);
+            {               
+                string url = string.Format("https://maps.{0}/maps/api/js?client=google-maps-lite&amp;libraries=search&amp;language=en&amp;region=", ServerAPIs);
                 try
                 {
                     string html = GMaps.Instance.UseUrlCache ? Cache.Instance.GetContent(url, CacheType.UrlCache, TimeSpan.FromHours(8)) : string.Empty;
@@ -113,7 +113,7 @@ namespace GMap.NET.MapProviders
                     if (!string.IsNullOrEmpty(html))
                     {
                         #region -- match versions --
-                        Regex reg = new Regex(string.Format("\"*https?://mt\\D?\\d.{0}/vt/lyrs=m@(\\d*)", Server), RegexOptions.IgnoreCase);
+                        Regex reg = new Regex(string.Format(@"https?://mts?\d.{0}/vt\?lyrs=m@(\d*)", Server), RegexOptions.IgnoreCase);
                         Match mat = reg.Match(html);
                         if (mat.Success)
                         {
@@ -136,7 +136,7 @@ namespace GMap.NET.MapProviders
                             }
                         }
 
-                        reg = new Regex(string.Format("\"*https?://mt\\D?\\d.{0}/vt/lyrs=h@(\\d*)", Server), RegexOptions.IgnoreCase);
+                        reg = new Regex(string.Format(@"https?://mts?\d.{0}/vt\?lyrs=h@(\d*)", Server), RegexOptions.IgnoreCase);
                         mat = reg.Match(html);
                         if (mat.Success)
                         {
@@ -159,7 +159,7 @@ namespace GMap.NET.MapProviders
                             }
                         }
 
-                        reg = new Regex(string.Format("\"*https?://khm\\D?\\d.{0}/kh/v=(\\d*)", Server), RegexOptions.IgnoreCase);
+                        reg = new Regex(string.Format(@"https?://khms?\d.{0}/kh\?v=(\d*)", Server), RegexOptions.IgnoreCase);
                         mat = reg.Match(html);
                         if (mat.Success)
                         {
@@ -183,7 +183,7 @@ namespace GMap.NET.MapProviders
                             }
                         }
 
-                        reg = new Regex(string.Format("\"*https?://mt\\D?\\d.{0}/vt/lyrs=t@(\\d*),r@(\\d*)", Server), RegexOptions.IgnoreCase);
+                        reg = new Regex(string.Format(@"https?://mts?\d.{0}/vt\?lyrs=t@(\d*),r@(\d*)", Server), RegexOptions.IgnoreCase);
                         mat = reg.Match(html);
                         if (mat.Success)
                         {
@@ -2159,7 +2159,7 @@ namespace GMap.NET.MapProviders
             Instance = new GoogleMapProvider();
         }
 
-        public string Version = "m@249000000";
+        public string Version = "m@298000000";
 
         #region GMapProvider Members
 
