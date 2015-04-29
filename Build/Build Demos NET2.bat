@@ -21,6 +21,9 @@ del /q /s .\%builddir2%\*.exe.manifest
 del /q /s .\%builddir3%\*.application
 del /q /s .\%builddir3%\*.exe.manifest
 
+copy /b ..\Info\License.txt .\%builddir2%\License.txt
+copy /b ..\Info\License.txt .\%builddir3%\License.txt
+
 if "%1"=="nopause" goto end
 pause
 :end
