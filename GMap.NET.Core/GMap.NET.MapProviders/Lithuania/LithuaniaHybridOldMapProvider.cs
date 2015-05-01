@@ -4,7 +4,7 @@ namespace GMap.NET.MapProviders
    using System;
 
    /// <summary>
-   /// LithuaniaHybridNewMap, from 2005 data, provider
+   /// LithuaniaHybridOldMap, from 2010 data, provider
    /// </summary>
    public class LithuaniaHybridOldMapProvider : LithuaniaMapProviderBase
    {

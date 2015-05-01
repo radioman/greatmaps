@@ -2,6 +2,7 @@
 namespace GMap.NET.Projections
 {
    using System;
+   using System.Collections.Generic;
 
    /// <summary>
    /// GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]
@@ -12,11 +13,11 @@ namespace GMap.NET.Projections
       public static readonly LKS92Projection Instance = new LKS92Projection();
 
       static readonly double MinLatitude = 55.55;
-      static readonly double MaxLatitude = 58.58;
+      static readonly double MaxLatitude = 58.22;
       static readonly double MinLongitude = 20.22;
       static readonly double MaxLongitude = 28.28;
 
-      static readonly double orignX = 5120900;
+      static readonly double orignX = -5120900;
       static readonly double orignY = 3998100;
 
       static readonly double scaleFactor = 0.9996;	                // scale factor				
@@ -66,8 +67,6 @@ namespace GMap.NET.Projections
 
       public override GPoint FromLatLngToPixel(double lat, double lng, int zoom)
       {
-         GPoint ret = GPoint.Empty;
-
          lat = Clip(lat, MinLatitude, MaxLatitude);
          lng = Clip(lng, MinLongitude, MaxLongitude);
 
@@ -77,11 +76,12 @@ namespace GMap.NET.Projections
          lks = DTM00(lks);
 
          double res = GetTileMatrixResolution(zoom);
+         return LksToPixel(lks, res);
+      }
 
-         ret.X = (long)Math.Floor((lks[0] + orignX) / res);
-         ret.Y = (long)Math.Floor((orignY - lks[1]) / res);
-
-         return ret;
+      static GPoint LksToPixel(double[] lks, double res)
+      {
+         return new GPoint((long)Math.Floor((lks[0] - orignX) / res), (long)Math.Floor((orignY - lks[1]) / res));
       }
 
       public override PointLatLng FromPixelToLatLng(long x, long y, int zoom)
@@ -90,7 +90,7 @@ namespace GMap.NET.Projections
 
          double res = GetTileMatrixResolution(zoom);
 
-         double[] lks = new double[] { (x * res) - orignX, -(y * res) + orignY };
+         double[] lks = new double[] { (x * res) + orignX, orignY - (y * res) };
          lks = MTD11(lks);
          lks = DTM10(lks);
          lks = MTD10(lks);
@@ -444,27 +444,40 @@ namespace GMap.NET.Projections
       }
 
       #region -- levels info --
-      //"spatialReference":{"wkid":3059},"singleFusedMapCache":true,"tileInfo":{"rows":256,"cols":256,"dpi":96,"format":"PNG8","compressionQuality":0,
-      //"origin":{"x":-5120900,"y":3998100},"spatialReference":{"wkid":3059},
+       /*
+       "spatialReference":{"wkid":3059,"latestWkid":3059},"singleFusedMapCache":true,
+       * "tileInfo":{"rows":256,"cols":256,"dpi":96,"format":"PNG8","compressionQuality":0,
+       * "origin":{"x":-5120900,"y":3998100},
+       * "spatialReference":{"wkid":3059,"latestWkid":3059},
+       * 
+       * "lods":[
+       * {"level":0,"resolution":1587.5031750063501,"scale":6000000},
+       * {"level":1,"resolution":793.7515875031751,"scale":3000000},
+       * {"level":2,"resolution":529.1677250021168,"scale":2000000},
+       * {"level":3,"resolution":264.5838625010584,"scale":1000000},
+       * {"level":4,"resolution":132.2919312505292,"scale":500000},
+       * {"level":5,"resolution":52.91677250021167,"scale":200000},
+       * {"level":6,"resolution":26.458386250105836,"scale":100000},
+       * {"level":7,"resolution":13.229193125052918,"scale":50000},
+       * {"level":8,"resolution":6.614596562526459,"scale":25000},
+       * {"level":9,"resolution":2.6458386250105836,"scale":10000},
+       * {"level":10,"resolution":1.3229193125052918,"scale":5000},
+       * {"level":11,"resolution":0.5291677250021167,"scale":2000}]},
+       * 
+       * "initialExtent":
+       * {"xmin":352544.7096929534,"ymin":240883.24768736016,
+       * "xmax":722784.980307047,"ymax":539178.473189597,
+       * "spatialReference":{"wkid":3059,"latestWkid":3059}},
+       * 
+       * "fullExtent":
+       * {"xmin":312773.6900000004,"ymin":172941,
+       * "xmax":762556,"ymax":438880,
+       * "spatialReference":{"wkid":3059,"latestWkid":3059}},
+       * 
+       * "minScale":6000000,"maxScale":2000,"units":"esriMeters","supportedImageFormatTypes":"PNG32,PNG24,PNG,JPG,DIB,TIFF,EMF,PS,PDF,GIF,SVG,SVGZ,BMP",
+       * "documentInfo":{"Title":"ikartelv","Author":"gstanevicius","Comments":"","Subject":"","Category":"","AntialiasingMode":"None","TextAntialiasingMode":"Force","Keywords":""},"capabilities":"Map,Query,Data","supportedQueryFormats":"JSON, AMF","exportTilesAllowed":false,"maxRecordCount":500,"maxImageHeight":4096,"maxImageWidth":4096,"supportedExtensions":"KmlServer, WMSServer"});
+      */    
 
-      //"lods":[{
-      //"level":0,"resolution":1587.50317500635,"scale":6000000},
-      //{"level":1,"resolution":793.751587503175,"scale":3000000},
-      //{"level":2,"resolution":529.167725002117,"scale":2000000},
-      //{"level":3,"resolution":264.583862501058,"scale":1000000},
-      //{"level":4,"resolution":132.291931250529,"scale":500000},
-      //{"level":5,"resolution":52.9167725002117,"scale":200000},
-      //{"level":6,"resolution":26.4583862501058,"scale":100000},
-      //{"level":7,"resolution":13.2291931250529,"scale":50000},
-      //{"level":8,"resolution":6.61459656252646,"scale":25000},
-      //{"level":9,"resolution":2.64583862501058,"scale":10000},
-      //{"level":10,"resolution":1.32291931250529,"scale":5000},
-      //{"level":11,"resolution":0.529167725002117,"scale":2000}]},
-
-      //"initialExtent":{"xmin":290284.5745,"ymin":159644.05,"xmax":785045.1155,"ymax":452176.95,"spatialReference":{"wkid":3059}},
-      //"fullExtent":{"xmin":290284.5745,"ymin":159644.05,"xmax":785045.1155,"ymax":452176.95,"spatialReference":{"wkid":3059}},
-
-      //"units":"esriMeters","supportedImageFormatTypes":"PNG24,PNG,JPG,DIB,TIFF,EMF,PS,PDF,GIF,SVG,SVGZ,AI,BMP","documentInfo":{"Title":"ikartelv","Author":"gstanevicius","Comments":"","Subject":"","Category":"","Keywords":"","Credits":""},"capabilities":"Map,Query,Data"}); 
       #endregion
 
       public static double GetTileMatrixResolution(int zoom)
@@ -476,73 +489,73 @@ namespace GMap.NET.Projections
             #region -- sizes --
             case 0:
             {
-               ret = 1587.50317500635;
+               ret = 1587.5031750063501;
             }
             break;
 
             case 1:
             {
-               ret = 793.751587503175;
+               ret = 793.7515875031751;
             }
             break;
 
             case 2:
             {
-               ret = 529.167725002117;
+               ret = 529.1677250021168;
             }
             break;
 
             case 3:
             {
-               ret = 264.583862501058;
+               ret = 264.5838625010584;
             }
             break;
 
             case 4:
             {
-               ret = 132.291931250529;
+               ret = 132.2919312505292;
             }
             break;
 
             case 5:
             {
-               ret = 52.9167725002117;
+               ret = 52.91677250021167;
             }
             break;
 
             case 6:
             {
-               ret = 26.4583862501058;
+               ret = 26.458386250105836;
             }
             break;
 
             case 7:
             {
-               ret = 13.2291931250529;
+               ret = 13.229193125052918;
             }
             break;
 
             case 8:
             {
-               ret = 6.61459656252646;
+               ret = 6.614596562526459;
             }
             break;
 
             case 9:
             {
-               ret = 2.64583862501058;
+               ret = 2.6458386250105836;
             }
             break;
 
             case 10:
             {
-               ret = 1.32291931250529;
+               ret = 1.3229193125052918;
             }
             break;
 
             case 11:
             {
-               ret = 0.529167725002117;
+               ret = 0.5291677250021167;
             }
             break;
             #endregion
@@ -556,172 +569,42 @@ namespace GMap.NET.Projections
          return GetTileMatrixResolution(zoom);
       }
 
+      Dictionary<int, GSize> extentMatrixMin;
+      Dictionary<int, GSize> extentMatrixMax;
+
       public override GSize GetTileMatrixMinXY(int zoom)
       {
-         GSize ret = GSize.Empty;
-
-         switch(zoom)
+         if(extentMatrixMin == null)
          {
-            #region -- sizes --
-            case 0:
-            {
-               ret = new GSize(13, 8);
-            }
-            break;
-
-            case 1:
-            {
-               ret = new GSize(26, 17);
-            }
-            break;
-
-            case 2:
-            {
-               ret = new GSize(39, 26);
-            }
-            break;
-
-            case 3:
-            {
-               ret = new GSize(79, 52);
-            }
-            break;
-
-            case 4:
-            {
-               ret = new GSize(159, 105);
-            }
-            break;
-
-            case 5:
-            {
-               ret = new GSize(399, 262);
-            }
-            break;
-
-            case 6:
-            {
-               ret = new GSize(798, 525);
-            }
-            break;
-
-            case 7:
-            {
-               ret = new GSize(1597, 1050);
-            }
-            break;
-
-            case 8:
-            {
-               ret = new GSize(3195, 2101);
-            }
-            break;
-
-            case 9:
-            {
-               ret = new GSize(7989, 5254);
-            }
-            break;
-
-            case 10:
-            {
-               ret = new GSize(15978, 10509);
-            }
-            break;
-
-            case 11:
-            {
-               ret = new GSize(39945, 26273);
-            }
-            break;
-            #endregion
+            GenerateExtents();
          }
-
-         return ret;
+         return extentMatrixMin[zoom];
       }
 
       public override GSize GetTileMatrixMaxXY(int zoom)
       {
-         GSize ret = GSize.Empty;
-
-         switch(zoom)
+         if(extentMatrixMax == null)
          {
-            #region -- sizes --
-            case 0:
-            {
-               ret = new GSize(14, 9);
-            }
-            break;
-
-            case 1:
-            {
-               ret = new GSize(28, 18);
-            }
-            break;
-
-            case 2:
-            {
-               ret = new GSize(43, 28);
-            }
-            break;
-
-            case 3:
-            {
-               ret = new GSize(86, 56);
-            }
-            break;
-
-            case 4:
-            {
-               ret = new GSize(173, 112);
-            }
-            break;
-
-            case 5:
-            {
-               ret = new GSize(434, 282);
-            }
-            break;
-
-            case 6:
-            {
-               ret = new GSize(868, 564);
-            }
-            break;
-
-            case 7:
-            {
-               ret = new GSize(1737, 1129);
-            }
-            break;
-
-            case 8:
-            {
-               ret = new GSize(3474, 2258);
-            }
-            break;
-
-            case 9:
-            {
-               ret = new GSize(8686, 5647);
-            }
-            break;
-
-            case 10:
-            {
-               ret = new GSize(17372, 11294);
-            }
-            break;
-
-            case 11:
-            {
-               ret = new GSize(43430, 28236);
-            }
-            break;
-            #endregion
+            GenerateExtents();
          }
+         return extentMatrixMax[zoom];
+      }
 
-         return ret;
+      void GenerateExtents()
+      {
+         extentMatrixMin = new Dictionary<int, GSize>();
+         extentMatrixMax = new Dictionary<int, GSize>();
+         //RectLatLng Extent = RectLatLng.FromLTRB(219818.60040028347, 6407318.126743601, 747927.9899523959, 5826291.964691277);
+
+         for(int i = 0; i <= 11; i++)
+         {
+            double res = GetTileMatrixResolution(i);
+            //extentMatrixMin.Add(i, new GSize(FromPixelToTileXY(LksToPixel(new double[]{ Extent.Left, Extent.Top }, res))));
+            //extentMatrixMax.Add(i, new GSize(FromPixelToTileXY(LksToPixel(new double[] { Extent.Right, Extent.Bottom }, res))));
+
+            extentMatrixMin.Add(i, new GSize(FromPixelToTileXY(FromLatLngToPixel(Bounds.LocationTopLeft, i))));
+            extentMatrixMax.Add(i, new GSize(FromPixelToTileXY(FromLatLngToPixel(Bounds.LocationRightBottom, i))));
+         }
       }
    }
 }

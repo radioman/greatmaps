@@ -202,6 +202,7 @@
     <Compile Include="GMap.NET.MapProviders\Etc\MapBenderWMSProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\SpainMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\LatviaMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\Lithuania\LithuaniaReliefMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Lithuania\LithuaniaHybridOldMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Lithuania\LithuaniaHybridMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Lithuania\LithuaniaOrtoFotoOldMapProvider.cs" />
@@ -246,6 +247,7 @@
     <Compile Include="GMap.NET.MapProviders\OpenStreetMap\OpenStreetOsmProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\GMapProvider.cs" />
+    <Compile Include="GMap.NET.Projections\MapsLTReliefProjection.cs" />
     <Compile Include="GMap.NET.Projections\PlateCarreeProjectionDarbAe.cs" />
     <Compile Include="GMap.NET\GDirections.cs" />
     <Compile Include="GMap.NET\DirectionsProvider.cs" />

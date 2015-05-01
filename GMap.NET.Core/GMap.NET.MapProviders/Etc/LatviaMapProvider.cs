@@ -8,7 +8,7 @@ namespace GMap.NET.MapProviders
    {
       public LatviaMapProviderBase()
       {
-         RefererUrl = "http://www.ikarte.lv/map/default.aspx?lang=en";
+         RefererUrl = "http://www.ikarte.lv/default.aspx?lang=en";
          Copyright = string.Format("©{0} Hnit-Baltic - Map data ©{0} LR Valsts zemes dieniests, SIA Envirotech", DateTime.Today.Year);
          MaxZoom = 11;
          Area = new RectLatLng(58.0794870805093, 20.3286067123543, 7.90883164336887, 2.506129113082);
@@ -106,12 +106,14 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         //       http://www.maps.lt/cache/ikartelv/map/_alllayers/L03/R00000037/C00000053.png
+         // http://www.maps.lt/cache/ikartelv/map/_alllayers/L03/R00000037/C00000053.png
          // http://www.maps.lt/arcgiscache/ikartelv/map/_alllayers/L02/R0000001c/C0000002a.png
+         // http://services.maps.lt/mapsk_services/rest/services/ikartelv/MapServer/tile/5/271/416.png?cl=ikrlv
 
          return string.Format(UrlFormat, zoom, pos.Y, pos.X);
       }
 
-      static readonly string UrlFormat = "http://www.maps.lt/arcgiscache/ikartelv/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png";
+      static readonly string UrlFormat = "http://services.maps.lt/mapsk_services/rest/services/ikartelv/MapServer/tile/{0}/{1}/{2}.png?cl=ikrlv";
+      //static readonly string UrlFormat = "http://www.maps.lt/arcgiscache/ikartelv/map/_alllayers/L{0:00}/R{1:x8}/C{2:x8}.png";
    }
 }

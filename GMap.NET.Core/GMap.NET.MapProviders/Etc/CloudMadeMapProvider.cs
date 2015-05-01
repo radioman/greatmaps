@@ -288,7 +288,7 @@ namespace GMap.NET.MapProviders
       /// <param name="sensor"></param>
       /// <param name="metric"></param>
       /// <returns></returns>
-      public DirectionsStatusCode GetDirections(out GDirections direction, PointLatLng start, IEnumerable<PointLatLng> wayPoints, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+      public DirectionsStatusCode GetDirections(out GDirections direction, PointLatLng start, IEnumerable<PointLatLng> wayPoints, PointLatLng end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
       {
           throw new NotImplementedException();
       }
@@ -305,7 +305,7 @@ namespace GMap.NET.MapProviders
       /// <param name="sensor"></param>
       /// <param name="metric"></param>
       /// <returns></returns>
-      public DirectionsStatusCode GetDirections(out GDirections direction, string start, IEnumerable<string> wayPoints, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+      public DirectionsStatusCode GetDirections(out GDirections direction, string start, IEnumerable<string> wayPoints, string end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
       {
           throw new NotImplementedException();
       }

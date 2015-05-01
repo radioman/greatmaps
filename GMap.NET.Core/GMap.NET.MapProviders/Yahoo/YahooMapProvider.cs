@@ -377,7 +377,7 @@ namespace GMap.NET.MapProviders
          Instance = new YahooMapProvider();
       }
 
-      public string Version = "4.3";
+      public string Version = "2.1";
 
       #region GMapProvider Members
 
@@ -411,10 +411,17 @@ namespace GMap.NET.MapProviders
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
          // http://maps1.yimg.com/hx/tl?b=1&v=4.3&.intl=en&x=12&y=7&z=7&r=1
+         // http://2.base.maps.api.here.com/maptile/2.1/maptile/newest/normal.day/11/1169/652/256/png8?lg=EN&token=TrLJuXVK62IQk0vuXFzaig%3D%3D&app_id=eAdkWGYRoc4RfxVo0Z4B
+         // https://4.aerial.maps.api.here.com/maptile/2.1/maptile/newest/hybrid.day/11/1167/652/256/jpg?lg=ENG&token=TrLJuXVK62IQk0vuXFzaig%3D%3D&requestid=yahoo.prod&app_id=eAdkWGYRoc4RfxVo0Z4B
+         // https://4.aerial.maps.api.here.com/maptile/2.1/maptile/newest/satellite.day/13/4671/2604/256/jpg?lg=ENG&token=TrLJuXVK62IQk0vuXFzaig%3D%3D&requestid=yahoo.prod&app_id=eAdkWGYRoc4RfxVo0Z4B
 
-         return string.Format(UrlFormat, ((GetServerNum(pos, 2)) + 1), Version, language, pos.X, (((1 << zoom) >> 1) - 1 - pos.Y), (zoom + 1));
+         return string.Format(UrlFormat, ((GetServerNum(pos, 2)) + 1), Version, zoom, pos.X, pos.Y, language, rnd1, rnd2);
       }
 
-      static readonly string UrlFormat = "http://maps{0}.yimg.com/hx/tl?v={1}&.intl={2}&x={3}&y={4}&z={5}&r=1";
+      string rnd1 = Guid.NewGuid().ToString("N").Substring(0, 28);
+      string rnd2 = Guid.NewGuid().ToString("N").Substring(0, 20);
+
+      //static readonly string UrlFormat = "http://maps{0}.yimg.com/hx/tl?v={1}&.intl={2}&x={3}&y={4}&z={5}&r=1";
+      static readonly string UrlFormat = "http://{0}.base.maps.api.here.com/maptile/{1}/maptile/newest/normal.day/{2}/{3}/{4}/256/png8?lg={5}&token={6}&requestid=yahoo.prod&app_id={7}";
    }
 }

@@ -2,15 +2,15 @@
 namespace GMap.NET.Projections
 {
    using System;
-   using System.Collections.Generic;
+using System.Collections.Generic;
 
    /// <summary>
    /// GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]
    /// PROJCS["LKS94 / Lithuania TM",GEOGCS["LKS94",DATUM["Lithuania_1994_ETRS89",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6126"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4669"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",24],PARAMETER["scale_factor",0.9998],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],AUTHORITY["EPSG","3346"],AXIS["Y",EAST],AXIS["X",NORTH]]
    /// </summary>
-   public class LKS94Projection : PureProjection
+   public class LKS94rProjection : PureProjection
    {
-      public static readonly LKS94Projection Instance = new LKS94Projection();
+      public static readonly LKS94rProjection Instance = new LKS94rProjection();
 
       static readonly double MinLatitude = 53.33;
       static readonly double MaxLatitude = 56.55;
@@ -18,7 +18,7 @@ namespace GMap.NET.Projections
       static readonly double MaxLongitude = 27.11;
 
       static readonly double orignX = -5122000;
-      static readonly double orignY = 10000100;
+      static readonly double orignY = 10325013.240285;
 
       static readonly double scaleFactor = 0.9998;	                // scale factor				
       static readonly double centralMeridian = 0.41887902047863912;// Center longitude (projection center) 
@@ -67,8 +67,6 @@ namespace GMap.NET.Projections
 
       public override GPoint FromLatLngToPixel(double lat, double lng, int zoom)
       {
-         GPoint ret = GPoint.Empty;
-
          lat = Clip(lat, MinLatitude, MaxLatitude);
          lng = Clip(lng, MinLongitude, MaxLongitude);
 
@@ -446,44 +444,45 @@ namespace GMap.NET.Projections
       }
 
       #region -- levels info --
-      //  layers":[{"id":0,"name":"Lietuva","parentLayerId":-1, "defaultVisibility":true,
-      // "subLayerIds":null,
-      //
-      //  "minScale":10000000,"maxScale":900}],
-      //   "tables":[],"spatialReference":{"wkid":2600,"latestWkid":3346},
-      //   "singleFusedMapCache":true,"tileInfo":{"rows":256,"cols":256,"dpi":96,"format":"PNG8","compressionQuality":0,
-      //
-      //   "origin":{"x":-5122000,"y":10000100},
-      //   "spatialReference":{"wkid":2600,"latestWkid":3346},
-      //
-      //   "lods":[
-      //{"level":0,"resolution":1587.5031750063501,"scale":6000000},
-      //{"level":1,"resolution":793.7515875031751,"scale":3000000},
-      //{"level":2,"resolution":529.1677250021168,"scale":2000000},
-      //{"level":3,"resolution":264.5838625010584,"scale":1000000},
-      //{"level":4,"resolution":132.2919312505292,"scale":500000},
-      //{"level":5,"resolution":52.91677250021167,"scale":200000},
-      //{"level":6,"resolution":26.458386250105836,"scale":100000},
-      //{"level":7,"resolution":13.229193125052918,"scale":50000},
-      //{"level":8,"resolution":6.614596562526459,"scale":25000},
-      //{"level":9,"resolution":2.6458386250105836,"scale":10000},
-      //{"level":10,"resolution":1.3229193125052918,"scale":5000},
-      //{"level":11,"resolution":0.5291677250021167,"scale":2000},
-      //{"level":12,"resolution":0.26458386250105836,"scale":1000}]},
-
-      //"initialExtent":
-      //{"xmin":95993.35274978809,"ymin":5830525.306491293,
-      //"xmax":852703.1995028148,"ymax":6400968.114043575,
-      //"spatialReference":{"wkid":2600,"latestWkid":3346}},
-
-      //"fullExtent":{"xmin":38843.23844955949,"ymin":5663308.305390623,
-      //"xmax":907736.6429030352,"ymax":6555485.089744193,
-      //"spatialReference":{"wkid":2600,"latestWkid":3346}},
-
-      //"minScale":6000000,"maxScale":1000,"units":"esriMeters",
-      //"supportedImageFormatTypes":"PNG32,PNG24,PNG,JPG,DIB,TIFF,EMF,PS,PDF,GIF,SVG,SVGZ,BMP",
-      //"documentInfo":{"Title":"Lietuvos topografinis žemėlapis"
-      //"xmax":1050000,"ymax":6500000, units":"esriMeters"
+            /*
+         * "layers":[
+         * {"id":0,"name":"Lietuva","parentLayerId":-1,"defaultVisibility":true,
+         * "subLayerIds":null,
+         * 
+         * "minScale":10000000,"maxScale":900}],
+         * "tables":[],"spatialReference":{"wkid":2600,"latestWkid":3346},
+         * "singleFusedMapCache":true,"tileInfo":{"rows":256,"cols":256,"dpi":96,"format":"MIXED","compressionQuality":90,
+         *
+         * "origin":{"x":-5122000,"y":1.0325013240285E7},
+         * "spatialReference":{"wkid":2600,"latestWkid":3346},
+         * 
+         * "lods":[
+         * {"level":0,"resolution":1587.5031750063501,"scale":6000000},
+         * {"level":1,"resolution":793.7515875031751,"scale":3000000},
+         * {"level":2,"resolution":529.1677250021168,"scale":2000000},
+         * {"level":3,"resolution":264.5838625010584,"scale":1000000},
+         * {"level":4,"resolution":132.2919312505292,"scale":500000},
+         * {"level":5,"resolution":52.91677250021167,"scale":200000},
+         * {"level":6,"resolution":26.458386250105836,"scale":100000},
+         * {"level":7,"resolution":13.229193125052918,"scale":50000},
+         * {"level":8,"resolution":6.614596562526459,"scale":25000},
+         * {"level":9,"resolution":2.6458386250105836,"scale":10000},
+         * {"level":10,"resolution":1.3229193125052918,"scale":5000},
+         * {"level":11,"resolution":0.5291677250021167,"scale":2000},
+         * {"level":12,"resolution":0.26458386250105836,"scale":1000}]},
+         * 
+         * "initialExtent":
+         * {"xmin":219818.60040028347,"ymin":5826291.964691277,
+         * "xmax":747927.9899523959,"ymax":6407318.126743601,
+         * "spatialReference":{"wkid":2600,"latestWkid":3346}},
+         *
+         * * "fullExtent":
+         * {"xmin":38843.23844955949,"ymin":5663308.305390623,
+         * "xmax":907736.6429030352,"ymax":6555485.089744193,
+         * 
+         * "spatialReference":{"wkid":2600,"latestWkid":3346}},
+         * "minScale":6000000,"maxScale":5000,"units":"esriMeters","supportedImageFormatTypes":"PNG32,PNG24,PNG,JPG,DIB,TIFF,EMF,PS,PDF,GIF,SVG,SVGZ,BMP",
+         * "documentInfo":{"Title":"Lietuvos reljefinis žemėlapis","Author":"","Comments":"","Subject":"","Category":"","AntialiasingMode":"None","TextAntialiasingMode":"Force","Keywords":""},"capabilities":"Map","supportedQueryFormats":"JSON, AMF","exportTilesAllowed":false,"maxRecordCount":1000,"maxImageHeight":4096,"maxImageWidth":4096,"supportedExtensions":""});*/
       #endregion
 
       public static double GetTileMatrixResolution(int zoom)
@@ -582,14 +581,14 @@ namespace GMap.NET.Projections
       }
 
       Dictionary<int, GSize> extentMatrixMin;
-      Dictionary<int, GSize> extentMatrixMax;
+      Dictionary<int, GSize> extentMatrixMax;                                  
 
       public override GSize GetTileMatrixMinXY(int zoom)
       {
          if(extentMatrixMin == null)
          {
             GenerateExtents();
-         }
+         }  
          return extentMatrixMin[zoom];
       }
 

@@ -109,6 +109,7 @@ namespace GMap.NET.MapProviders
         public static readonly YandexHybridMapProvider YandexHybridMap = YandexHybridMapProvider.Instance;
 
         public static readonly LithuaniaMapProvider LithuaniaMap = LithuaniaMapProvider.Instance;
+        public static readonly LithuaniaReliefMapProvider LithuaniaReliefMap = LithuaniaReliefMapProvider.Instance;
         public static readonly Lithuania3dMapProvider Lithuania3dMap = Lithuania3dMapProvider.Instance;
         public static readonly LithuaniaOrtoFotoMapProvider LithuaniaOrtoFotoMap = LithuaniaOrtoFotoMapProvider.Instance;
         public static readonly LithuaniaOrtoFotoOldMapProvider LithuaniaOrtoFotoOldMap = LithuaniaOrtoFotoOldMapProvider.Instance;

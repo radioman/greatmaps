@@ -1430,14 +1430,14 @@ namespace GMap.NET.MapProviders
             throw new NotImplementedException();
         }
 
-        public DirectionsStatusCode GetDirections(out GDirections direction, PointLatLng start, IEnumerable<PointLatLng> wayPoints, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+        public DirectionsStatusCode GetDirections(out GDirections direction, PointLatLng start, IEnumerable<PointLatLng> wayPoints, PointLatLng end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
         {
-            return GetDirectionsUrl(MakeDirectionsUrl(start, wayPoints, LanguageStr, avoidHighways, avoidTolls, walkingMode, sensor, metric), out direction);
+            return GetDirectionsUrl(MakeDirectionsUrl(start, wayPoints, end, LanguageStr, avoidHighways, avoidTolls, walkingMode, sensor, metric), out direction);
         }
 
-        public DirectionsStatusCode GetDirections(out GDirections direction, string start, IEnumerable<string> wayPoints, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+        public DirectionsStatusCode GetDirections(out GDirections direction, string start, IEnumerable<string> wayPoints, string end, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
         {
-            return GetDirectionsUrl(MakeDirectionsUrl(start, wayPoints, LanguageStr, avoidHighways, avoidTolls, walkingMode, sensor, metric), out direction);
+            return GetDirectionsUrl(MakeDirectionsUrl(start, wayPoints, end, LanguageStr, avoidHighways, avoidTolls, walkingMode, sensor, metric), out direction);
         }
 
         #region -- internals --
@@ -1462,7 +1462,7 @@ namespace GMap.NET.MapProviders
             return string.Format(DirectionUrlFormatStr, start.Replace(' ', '+'), end.Replace(' ', '+'), sensor.ToString().ToLower(), language, av, mt, wk, ServerAPIs);
         }
 
-        string MakeDirectionsUrl(PointLatLng start, IEnumerable<PointLatLng> wayPoints, string language, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+        string MakeDirectionsUrl(PointLatLng start, IEnumerable<PointLatLng> wayPoints, PointLatLng end, string language, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
         {
             string av = (avoidHighways ? "&avoid=highways" : string.Empty) + (avoidTolls ? "&avoid=tolls" : string.Empty); // 6
             string mt = "&units=" + (metric ? "metric" : "imperial"); // 7
@@ -1475,10 +1475,10 @@ namespace GMap.NET.MapProviders
                 wpLatLng += string.Format(CultureInfo.InvariantCulture, i++ == 0 ? "{0},{1}" : "|{0},{1}", wp.Lat, wp.Lng);
             }
 
-            return string.Format(CultureInfo.InvariantCulture, DirectionUrlFormatWaypoint, start.Lat, start.Lng, wpLatLng, sensor.ToString().ToLower(), language, av, mt, wk, ServerAPIs);
+            return string.Format(CultureInfo.InvariantCulture, DirectionUrlFormatWaypoint, start.Lat, start.Lng, wpLatLng, sensor.ToString().ToLower(), language, av, mt, wk, ServerAPIs, end.Lat, end.Lng);
         }
 
-        string MakeDirectionsUrl(string start, IEnumerable<string> wayPoints, string language, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
+        string MakeDirectionsUrl(string start, IEnumerable<string> wayPoints, string end, string language, bool avoidHighways, bool avoidTolls, bool walkingMode, bool sensor, bool metric)
         {
             string av = (avoidHighways ? "&avoid=highways" : string.Empty) + (avoidTolls ? "&avoid=tolls" : string.Empty); // 6
             string mt = "&units=" + (metric ? "metric" : "imperial"); // 7
@@ -1491,7 +1491,7 @@ namespace GMap.NET.MapProviders
                 wpLatLng += string.Format(CultureInfo.InvariantCulture, i++ == 0 ? "{0}" : "|{0}", wp.Replace(' ', '+'));
             }
 
-            return string.Format(CultureInfo.InvariantCulture, DirectionUrlFormatWaypointStr, start.Replace(' ', '+'), wpLatLng, sensor.ToString().ToLower(), language, av, mt, wk, ServerAPIs);
+            return string.Format(CultureInfo.InvariantCulture, DirectionUrlFormatWaypointStr, start.Replace(' ', '+'), wpLatLng, sensor.ToString().ToLower(), language, av, mt, wk, ServerAPIs, end.Replace(' ', '+'));
         }
 
         DirectionsStatusCode GetDirectionsUrl(string url, out GDirections direction)
@@ -2076,8 +2076,8 @@ namespace GMap.NET.MapProviders
 
         static readonly string DirectionUrlFormatStr = "http://maps.{7}/maps/api/directions/xml?origin={0}&destination={1}&sensor={2}&language={3}{4}{5}{6}";
         static readonly string DirectionUrlFormatPoint = "http://maps.{9}/maps/api/directions/xml?origin={0},{1}&destination={2},{3}&sensor={4}&language={5}{6}{7}{8}";
-        static readonly string DirectionUrlFormatWaypoint = "http://maps.{8}/maps/api/directions/xml?origin={0},{1}&waypoints={2}&sensor={3}&language={4}{5}{6}{7}";
-        static readonly string DirectionUrlFormatWaypointStr = "http://maps.{7}/maps/api/directions/xml?origin={0}&waypoints={1}&sensor={2}&language={3}{4}{5}{6}";
+        static readonly string DirectionUrlFormatWaypoint = "http://maps.{8}/maps/api/directions/xml?origin={0},{1}&waypoints={2}&destination={9},{10}&sensor={3}&language={4}{5}{6}{7}";
+        static readonly string DirectionUrlFormatWaypointStr = "http://maps.{7}/maps/api/directions/xml?origin={0}&waypoints={1}&destination={8}&sensor={2}&language={3}{4}{5}{6}";
 
         #endregion
 
