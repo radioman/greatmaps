@@ -60,7 +60,8 @@ namespace Demo.WindowsForms
          this.Text = "Static Map maker";
          progressBar1.Value = 0;
          button1.Enabled = true;
-         numericUpDown1.Enabled = true;
+         numericUpDown1.Enabled = true;        
+         Main.MainMap.Refresh();
       }
 
       void bg_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -234,10 +235,12 @@ namespace Demo.WindowsForms
                               px.Offset(padding, padding);
                               px.Offset(-topLeftPx.X, -topLeftPx.Y);
                               px.Offset(r.Offset.X, r.Offset.Y);
-
-                              r.LocalPosition = new System.Drawing.Point((int)px.X, (int)px.Y);
-
-                              r.OnRender(gfx);
+                             
+                              gfx.ResetTransform();
+                              gfx.TranslateTransform(-r.LocalPosition.X, -r.LocalPosition.Y);
+                              gfx.TranslateTransform((int)px.X, (int)px.Y);
+                              
+                              r.OnRender(gfx);                            
                            }
                         }
 
@@ -248,10 +251,22 @@ namespace Demo.WindowsForms
                            {
                               if(!string.IsNullOrEmpty(m.ToolTipText))
                               {
-                                 m.ToolTip.OnRender(gfx);
+                                  var pr = m.Position;
+                                  GPoint px = info.Type.Projection.FromLatLngToPixel(pr.Lat, pr.Lng, info.Zoom);
+                              
+                                  px.Offset(padding, padding);
+                                  px.Offset(-topLeftPx.X, -topLeftPx.Y);
+                                  px.Offset(m.Offset.X, m.Offset.Y);
+                                                               
+                                  gfx.ResetTransform();
+                                  gfx.TranslateTransform(-m.LocalPosition.X, -m.LocalPosition.Y);
+                                  gfx.TranslateTransform((int)px.X, (int)px.Y);
+                              
+                                  m.ToolTip.OnRender(gfx);
                               }
                            }
                         }
+                        gfx.ResetTransform();
                      }
 
                      // draw info
@@ -370,7 +385,8 @@ namespace Demo.WindowsForms
             numericUpDown1.Enabled = false;
             progressBar1.Value = 0;
             button1.Enabled = false;
-
+            Main.MainMap.HoldInvalidation = true;            
+            
             bg.RunWorkerAsync(new MapInfo(area.Value, (int)numericUpDown1.Value, Main.MainMap.MapProvider, checkBoxWorldFile.Checked));
          }
       }
