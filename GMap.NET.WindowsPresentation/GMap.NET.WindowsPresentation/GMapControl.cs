@@ -653,6 +653,8 @@ namespace GMap.NET.WindowsPresentation
          }
 
          base.OnItemsChanged(e);
+
+         Position = Position;    // force refresh to repaint map
       }
 
       /// <summary>
