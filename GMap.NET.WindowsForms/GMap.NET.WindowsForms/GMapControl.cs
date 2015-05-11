@@ -138,6 +138,23 @@ namespace GMap.NET.WindowsForms
         }
 
         /// <summary>
+      /// enable map zoom on mouse wheel
+      /// </summary>
+      [Category("GMap.NET")]
+      [Description("enable map zoom on mouse wheel")]
+      public bool MouseWheelZoomEnabled
+      {
+          get
+          {
+              return Core.MouseWheelZoomEnabled;
+          }
+          set
+          {
+              Core.MouseWheelZoomEnabled = value;
+          }
+      }
+
+      /// <summary>
         /// text on empty tiles
         /// </summary>
         public string EmptyTileText = "We are sorry, but we don't\nhave imagery at this zoom\nlevel for this region.";
@@ -2266,6 +2283,8 @@ namespace GMap.NET.WindowsForms
         {
             base.OnMouseWheel(e);
 
+         if (MouseWheelZoomEnabled)
+         {
             if (mouseIn && (!IsMouseOverMarker || IgnoreMarkerOnMouseWheel) && !Core.IsDragging)
             {
                 if (Core.mouseLastZoom.X != e.X && Core.mouseLastZoom.Y != e.Y)
@@ -2323,6 +2342,7 @@ namespace GMap.NET.WindowsForms
                 }
 
                 Core.MouseWheelZooming = false;
+             }
             }
         }
 #endif

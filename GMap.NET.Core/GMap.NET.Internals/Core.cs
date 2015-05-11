@@ -35,6 +35,7 @@ namespace GMap.NET.Internals
       public GPoint mouseLastZoom;
 
       public MouseWheelZoomType MouseWheelZoomType = MouseWheelZoomType.MousePositionAndCenter;
+      public bool MouseWheelZoomEnabled = true;
 
       public PointLatLng? LastLocationInBounds = null;
       public bool VirtualSizeEnabled = false;
