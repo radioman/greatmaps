@@ -634,9 +634,7 @@ namespace GMap.NET.WindowsForms
                     p.OffsetNegative(Core.renderOffset);
                 }
 #endif
-
-                var f = new System.Drawing.Point((int)(p.X + marker.Offset.X), (int)(p.Y + marker.Offset.Y));
-                marker.LocalPosition = f;
+                marker.LocalPosition = new System.Drawing.Point((int)(p.X + marker.Offset.X), (int)(p.Y + marker.Offset.Y));
             }
         }
 
@@ -646,12 +644,11 @@ namespace GMap.NET.WindowsForms
         /// <param name="route"></param>
         public void UpdateRouteLocalPosition(GMapRoute route)
         {
-            route.LocalPoints.Clear();
+          route.LocalPoints.Clear();
           
           for (int i = 0; i < route.Points.Count; i++)
           {
-                PointLatLng pg= route.Points[i];
-                GPoint p = FromLatLngToLocal(pg);
+                GPoint p = FromLatLngToLocal(route.Points[i]);
 
 #if !PocketPC
                 if (!MobileMode)
@@ -659,19 +656,6 @@ namespace GMap.NET.WindowsForms
                     p.OffsetNegative(Core.renderOffset);
                 }
 #endif
-
-                //            if(IsRotated)
-                //            {
-                //#if !PocketPC
-                //               System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(p.X, p.Y) };
-                //               rotationMatrix.TransformPoints(tt);
-                //               var f = tt[0];
-
-                //               p.X = f.X;
-                //               p.Y = f.Y;
-                //#endif
-                //            }
-
                 route.LocalPoints.Add(p);
             }
 #if !PocketPC
@@ -685,31 +669,17 @@ namespace GMap.NET.WindowsForms
         /// <param name="polygon"></param>
         public void UpdatePolygonLocalPosition(GMapPolygon polygon)
         {
-            polygon.LocalPoints.Clear();
+          polygon.LocalPoints.Clear();
 
-            foreach (GMap.NET.PointLatLng pg in polygon.Points)
-            {
-                GPoint p = FromLatLngToLocal(pg);
-
+          for (int i = 0; i < polygon.Points.Count; i++)
+          {
+                GPoint p = FromLatLngToLocal(polygon.Points[i]);
 #if !PocketPC
                 if (!MobileMode)
                 {
                     p.OffsetNegative(Core.renderOffset);
                 }
 #endif
-
-                //            if(IsRotated)
-                //            {
-                //#if !PocketPC
-                //               System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(p.X, p.Y) };
-                //               rotationMatrix.TransformPoints(tt);
-                //               var f = tt[0];
-
-                //               p.X = f.X;
-                //               p.Y = f.Y;
-                //#endif
-                //            }
-
                 polygon.LocalPoints.Add(p);
             }
 #if !PocketPC

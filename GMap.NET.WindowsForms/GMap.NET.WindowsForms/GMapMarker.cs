@@ -216,7 +216,7 @@ namespace GMap.NET.WindowsForms
                   {
                      if(!Overlay.Control.HoldInvalidation)
                      {
-                        Overlay.Control.Core.Refresh.Set();
+                         Overlay.Control.Invalidate();
                      }
                   }
                }
