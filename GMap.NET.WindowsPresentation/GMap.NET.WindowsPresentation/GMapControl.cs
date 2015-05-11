@@ -76,7 +76,7 @@ namespace GMap.NET.WindowsPresentation
       private static void MapProviderPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
       {
          GMapControl map = (GMapControl)d;
-         if(map != null)
+         if(map != null && e.NewValue != null)
          {
             Debug.WriteLine("MapType: " + e.OldValue + " -> " + e.NewValue);
 
