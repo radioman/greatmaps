@@ -138,23 +138,23 @@ namespace GMap.NET.WindowsForms
         }
 
         /// <summary>
-      /// enable map zoom on mouse wheel
-      /// </summary>
-      [Category("GMap.NET")]
-      [Description("enable map zoom on mouse wheel")]
-      public bool MouseWheelZoomEnabled
-      {
-          get
-          {
-              return Core.MouseWheelZoomEnabled;
-          }
-          set
-          {
-              Core.MouseWheelZoomEnabled = value;
-          }
-      }
+        /// enable map zoom on mouse wheel
+        /// </summary>
+        [Category("GMap.NET")]
+        [Description("enable map zoom on mouse wheel")]
+        public bool MouseWheelZoomEnabled
+        {
+            get
+            {
+                return Core.MouseWheelZoomEnabled;
+            }
+            set
+            {
+                Core.MouseWheelZoomEnabled = value;
+            }
+        }
 
-      /// <summary>
+        /// <summary>
         /// text on empty tiles
         /// </summary>
         public string EmptyTileText = "We are sorry, but we don't\nhave imagery at this zoom\nlevel for this region.";
@@ -245,6 +245,8 @@ namespace GMap.NET.WindowsForms
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
+            base.OnKeyDown(e);
+            
             if (HelperLineOption == HelperLineOptions.ShowOnModifierKey)
             {
                 renderHelperLine = (e.Modifiers == Keys.Shift || e.Modifiers == Keys.Alt);
@@ -252,12 +254,13 @@ namespace GMap.NET.WindowsForms
                 {
                     Invalidate();
                 }
-            }
-            base.OnKeyDown(e);
+            }            
         }
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
+            base.OnKeyUp(e);
+            
             if (HelperLineOption == HelperLineOptions.ShowOnModifierKey)
             {
                 renderHelperLine = (e.Modifiers == Keys.Shift || e.Modifiers == Keys.Alt);
@@ -265,8 +268,7 @@ namespace GMap.NET.WindowsForms
                 {
                     Invalidate();
                 }
-            }
-            base.OnKeyUp(e);
+            }            
         }
 #endif
 
@@ -1742,6 +1744,8 @@ namespace GMap.NET.WindowsForms
         bool isSelected = false;
         protected override void OnMouseDown(MouseEventArgs e)
         {
+            base.OnMouseDown(e);
+            
             if (!IsMouseOverMarker)
             {
 #if !PocketPC
@@ -1765,8 +1769,6 @@ namespace GMap.NET.WindowsForms
                     selectionStart = FromLocalToLatLng(e.X, e.Y);
                 }
             }
-
-            base.OnMouseDown(e);
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
@@ -1832,6 +1834,8 @@ namespace GMap.NET.WindowsForms
 #if !PocketPC
         protected override void OnMouseClick(MouseEventArgs e)
         {
+            base.OnMouseClick(e);
+            
             if (!Core.IsDragging)
             {
                 for (int i = Overlays.Count - 1; i >= 0; i--)
@@ -1914,9 +1918,7 @@ namespace GMap.NET.WindowsForms
             //if(HelperLineOption == HelperLineOptions.ShowAlways)
             //{
             //   base.Invalidate();
-            //}
-
-            base.OnMouseClick(e);
+            //}            
         }
 #endif
 #if !PocketPC
@@ -1975,6 +1977,8 @@ namespace GMap.NET.WindowsForms
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
+            base.OnMouseMove(e);
+            
             if (!Core.IsDragging && !Core.mouseDown.IsEmpty)
             {
 #if PocketPC
@@ -2219,8 +2223,6 @@ namespace GMap.NET.WindowsForms
                 }
 #endif
             }
-
-            base.OnMouseMove(e);
         }
 
 #if !PocketPC
@@ -2283,9 +2285,7 @@ namespace GMap.NET.WindowsForms
         {
             base.OnMouseWheel(e);
 
-         if (MouseWheelZoomEnabled)
-         {
-            if (mouseIn && (!IsMouseOverMarker || IgnoreMarkerOnMouseWheel) && !Core.IsDragging)
+            if (MouseWheelZoomEnabled && mouseIn && (!IsMouseOverMarker || IgnoreMarkerOnMouseWheel) && !Core.IsDragging)
             {
                 if (Core.mouseLastZoom.X != e.X && Core.mouseLastZoom.Y != e.Y)
                 {
@@ -2343,7 +2343,6 @@ namespace GMap.NET.WindowsForms
 
                 Core.MouseWheelZooming = false;
              }
-            }
         }
 #endif
         #endregion

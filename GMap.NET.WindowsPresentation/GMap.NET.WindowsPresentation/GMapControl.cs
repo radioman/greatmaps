@@ -354,6 +354,23 @@ namespace GMap.NET.WindowsPresentation
             Core.MouseWheelZoomType = value;
          }
       }
+      
+              /// <summary>
+        /// enable map zoom on mouse wheel
+        /// </summary>
+        [Category("GMap.NET")]
+        [Description("enable map zoom on mouse wheel")]
+        public bool MouseWheelZoomEnabled
+        {
+            get
+            {
+                return Core.MouseWheelZoomEnabled;
+            }
+            set
+            {
+                Core.MouseWheelZoomEnabled = value;
+            }
+        }
 
       /// <summary>
       /// map dragg button
@@ -1499,6 +1516,8 @@ namespace GMap.NET.WindowsPresentation
 
       protected override void OnKeyUp(KeyEventArgs e)
       {
+         base.OnKeyUp(e);
+         
          if(HelperLineOption == HelperLineOptions.ShowOnModifierKey)
          {
             renderHelperLine = !(e.IsUp && (e.Key == Key.LeftShift || e.SystemKey == Key.LeftAlt));
@@ -1506,12 +1525,13 @@ namespace GMap.NET.WindowsPresentation
             {
                InvalidateVisual();
             }
-         }
-         base.OnKeyUp(e);
+         }         
       }
 
       protected override void OnKeyDown(KeyEventArgs e)
       {
+         base.OnKeyDown(e);
+         
          if(HelperLineOption == HelperLineOptions.ShowOnModifierKey)
          {
             renderHelperLine = e.IsDown && (e.Key == Key.LeftShift || e.SystemKey == Key.LeftAlt);
@@ -1519,8 +1539,7 @@ namespace GMap.NET.WindowsPresentation
             {
                InvalidateVisual();
             }
-         }
-         base.OnKeyDown(e);
+         }         
       }
 
       /// <summary>
@@ -1537,7 +1556,7 @@ namespace GMap.NET.WindowsPresentation
       {
          base.OnMouseWheel(e);
 
-         if((IsMouseDirectlyOver || IgnoreMarkerOnMouseWheel) && !Core.IsDragging)
+         if(MouseWheelZoomEnabled && (IsMouseDirectlyOver || IgnoreMarkerOnMouseWheel) && !Core.IsDragging)
          {
             System.Windows.Point p = e.GetPosition(this);
 
@@ -1601,14 +1620,14 @@ namespace GMap.NET.WindowsPresentation
 
             Core.MouseWheelZooming = false;
          }
-
-         base.OnMouseWheel(e);
       }
 
       bool isSelected = false;
 
       protected override void OnMouseDown(MouseButtonEventArgs e)
       {
+         base.OnMouseDown(e);
+          
          if(CanDragMap && e.ChangedButton == DragButton)
          {
             Point p = e.GetPosition(this);
@@ -1635,14 +1654,15 @@ namespace GMap.NET.WindowsPresentation
                selectionEnd = PointLatLng.Empty;
                selectionStart = FromLocalToLatLng((int)p.X, (int)p.Y);
             }
-         }
-         base.OnMouseDown(e);
+         }         
       }
 
       int onMouseUpTimestamp = 0;
 
       protected override void OnMouseUp(MouseButtonEventArgs e)
       {
+         base.OnMouseUp(e);
+          
          if(isSelected)
          {
             isSelected = false;
@@ -1694,14 +1714,14 @@ namespace GMap.NET.WindowsPresentation
                InvalidateVisual();
             }
          }
-
-         base.OnMouseUp(e);
       }
 
       Cursor cursorBefore = Cursors.Arrow;
 
       protected override void OnMouseMove(MouseEventArgs e)
       {
+         base.OnMouseMove(e);
+          
          // wpf generates to many events if mouse is over some visual
          // and OnMouseUp is fired, wtf, anyway...
          // http://greatmaps.codeplex.com/workitem/16013
@@ -1795,9 +1815,7 @@ namespace GMap.NET.WindowsPresentation
             {
                InvalidateVisual(true);
             }
-         }
-
-         base.OnMouseMove(e);
+         }         
       }
 
       /// <summary>
@@ -1807,6 +1825,8 @@ namespace GMap.NET.WindowsPresentation
 
       protected override void OnStylusDown(StylusDownEventArgs e)
       {
+         base.OnStylusDown(e);
+         
          if(TouchEnabled && CanDragMap && !e.InAir)
          {
             Point p = e.GetPosition(this);
@@ -1822,13 +1842,13 @@ namespace GMap.NET.WindowsPresentation
             Core.mouseDown.Y = (int)p.Y;
 
             InvalidateVisual();
-         }
-
-         base.OnStylusDown(e);
+         }         
       }
 
       protected override void OnStylusUp(StylusEventArgs e)
       {
+         base.OnStylusUp(e);
+          
          if(TouchEnabled)
          {
             if(isSelected)
@@ -1862,11 +1882,12 @@ namespace GMap.NET.WindowsPresentation
                InvalidateVisual();
             }
          }
-         base.OnStylusUp(e);
       }
 
       protected override void OnStylusMove(StylusEventArgs e)
       {
+         base.OnStylusMove(e);
+          
          if(TouchEnabled)
          {
             // wpf generates to many events if mouse is over some visual
@@ -1939,9 +1960,7 @@ namespace GMap.NET.WindowsPresentation
                }
                InvalidateVisual();
             }
-         }
-
-         base.OnStylusMove(e);
+         }         
       }
 
       #endregion
