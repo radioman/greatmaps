@@ -644,17 +644,16 @@ namespace GMap.NET.WindowsPresentation
 
       protected override void OnItemsChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
       {
+         base.OnItemsChanged(e);
+         
          if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
          {
-            foreach(GMapMarker marker in e.NewItems)
-            {
-               marker.ForceUpdateLocalPosition(this);
-            }
+             ForceUpdateOverlays(e.NewItems);
          }
-
-         base.OnItemsChanged(e);
-
-         Position = Position;    // force refresh to repaint map
+         else
+         {
+             InvalidateVisual();
+         }
       }
 
       /// <summary>
@@ -729,14 +728,19 @@ namespace GMap.NET.WindowsPresentation
             ForceUpdateOverlays();
          }
       }
-
+      
       void ForceUpdateOverlays()
+      {
+          ForceUpdateOverlays(ItemsSource);          
+      }
+
+      void ForceUpdateOverlays(System.Collections.IEnumerable items)
       {
          using(Dispatcher.DisableProcessing())
          {
             UpdateMarkersOffset();
 
-            foreach(GMapMarker i in ItemsSource)
+            foreach(GMapMarker i in items)
             {
                if(i != null)
                {
