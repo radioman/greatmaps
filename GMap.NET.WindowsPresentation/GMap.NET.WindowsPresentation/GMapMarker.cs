@@ -209,7 +209,7 @@ namespace GMap.NET.WindowsPresentation
       /// <summary>
       /// calls Dispose on shape if it implements IDisposable, sets shape to null and clears route
       /// </summary>
-      public void Clear()
+      public virtual void Clear()
       {
          var s = (Shape as IDisposable);
          if(s != null)

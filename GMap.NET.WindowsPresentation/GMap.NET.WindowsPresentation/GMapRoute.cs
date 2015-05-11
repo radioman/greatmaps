@@ -22,6 +22,12 @@ namespace GMap.NET.WindowsPresentation
                 RegenerateShape(null);
             }
         }
+        
+        public override void Clear()
+        {
+            base.Clear();
+            Points.Clear();
+        }
 
         /// <summary>
         /// regenerates shape of route
@@ -30,34 +36,32 @@ namespace GMap.NET.WindowsPresentation
         {
             if (map != null)
             {
-                Map = map;
+                this.Map = map;
 
-                if (Points.Count > 1)
+                if(Points.Count > 1)
                 {
-                    Position = Points[0];
-
-                    var localPath = new List<System.Windows.Point>();
-                    var offset = Map.FromLatLngToLocal(Points[0]);
-                    foreach (var i in Points)
-                    {
-                        var p = Map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
-                        localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
-                    }
-
-                    var shape = map.CreateRoutePath(localPath);
-
-                    if (this.Shape != null && this.Shape is Path)
-                    {
-                        (this.Shape as Path).Data = shape.Data;
-                    }
-                    else
-                    {
-                        this.Shape = shape;
-                    }
+                   var localPath = new List<System.Windows.Point>(Points.Count);
+                   var offset = Map.FromLatLngToLocal(Points[0]);
+                   foreach(var i in Points)
+                   {
+                      var p = Map.FromLatLngToLocal(i);
+                      localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
+                   }
+    
+                   var shape = map.CreateRoutePath(localPath);
+    
+                   if(this.Shape is Path)
+                   {
+                      (this.Shape as Path).Data = shape.Data;
+                   }
+                   else
+                   {
+                      this.Shape = shape;
+                   }
                 }
                 else
                 {
-                    this.Shape = null;
+                   this.Shape = null;
                 }
             }
         }
