@@ -380,6 +380,18 @@ namespace GMap.NET.MapProviders
             //Debug.WriteLine(response.StatusCode + "/" + response.StatusDescription + "/" + response.ContentType + " -> " + response.ResponseUri);
             return response.ContentType.Contains(responseContentType);
         }
+        
+        string Authorization = string.Empty;
+        
+        /// <summary>
+        /// http://blog.kowalczyk.info/article/at3/Forcing-basic-http-authentication-for-HttpWebReq.html
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="userPassword"></param>
+        public void ForceBasicHttpAuthentication(string userName, string userPassword)
+        {
+            Authorization = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(userName + ":" + userPassword));
+        }
 
         protected PureImage GetTileImageUsingHttp(string url)
         {
@@ -400,7 +412,12 @@ namespace GMap.NET.MapProviders
                 request.PreAuthenticate = true;
                 request.Credentials = Credential;
             }
-
+            
+            if(!string.IsNullOrEmpty(Authorization))
+            {
+                request.Headers.Set("Authorization", Authorization);
+            }
+            
             if (request is HttpWebRequest)
             {
                 var r = request as HttpWebRequest;
@@ -489,6 +506,11 @@ namespace GMap.NET.MapProviders
             {
                 request.PreAuthenticate = true;
                 request.Credentials = Credential;
+            }
+            
+            if(!string.IsNullOrEmpty(Authorization))
+            {
+                request.Headers.Set("Authorization", Authorization);
             }
 
             if (request is HttpWebRequest)
