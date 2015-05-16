@@ -15,6 +15,7 @@ namespace GMap.NET.CacheProviders
 
 #if !MONO
    using System.Data.SQLite;
+   using GMap.NET.Internals;
 #else
    using SQLiteConnection = Mono.Data.Sqlite.SqliteConnection;
    using SQLiteTransaction = Mono.Data.Sqlite.SqliteTransaction;
@@ -39,9 +40,14 @@ namespace GMap.NET.CacheProviders
       {
          if(args.Name.StartsWith("System.Data.SQLite", StringComparison.OrdinalIgnoreCase))
          {
-            string rootDir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
-            string dllDir = rootDir + "DllCache" + Path.DirectorySeparatorChar;
-            string dll = dllDir + "SQLite_v84_NET" + Environment.Version.Major + "_" + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar + "System.Data.SQLite.DLL";
+            string appDataDir = CacheLocator.GetApplicationDataFolderPath();
+            if(string.IsNullOrEmpty(appDataDir))
+            {
+               return null;
+            }    
+
+            string dllDir = appDataDir + "DllCache" + Path.DirectorySeparatorChar;
+            string dll = dllDir + "SQLite_v96_NET" + Environment.Version.Major + "_" + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar + "System.Data.SQLite.DLL";
             if(!File.Exists(dll))
             {
                string dir = Path.GetDirectoryName(dll);

@@ -20,7 +20,7 @@
  * along with Process Hacker.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define DEFER_EVENT_CREATION
+//#define DEFER_EVENT_CREATION
 //#define ENABLE_STATISTICS
 //#define RIGOROUS_CHECKS
 

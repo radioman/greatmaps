@@ -41,39 +41,13 @@ namespace GMap.NET.Internals
       }
 
       static void Reset()
-      {
-#if !PocketPC
-         string GetFolderPath = string.Empty;
-        
-         bool isSystem = false;
-         try
-         {
-             using (var identity = System.Security.Principal.WindowsIdentity.GetCurrent())
-             {
-                 if(identity != null)
-                 {
-                    isSystem = identity.IsSystem;
-                 }
-             }
-         }
-         catch(Exception ex)
-         {
-             Trace.WriteLine("SQLitePureImageCache, WindowsIdentity.GetCurrent: " + ex);
-         }
-         
-         // https://greatmaps.codeplex.com/workitem/16112
-         if (isSystem)
-         {
-             GetFolderPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.CommonApplicationData);
-         }
-         else
-         {
-             GetFolderPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
-         }
+      {    
+         string appDataLocation = GetApplicationDataFolderPath();
 
+#if !PocketPC
          // http://greatmaps.codeplex.com/discussions/403151
          // by default Network Service don't have disk write access
-         if(string.IsNullOrEmpty(GetFolderPath)) 
+         if(string.IsNullOrEmpty(appDataLocation)) 
          {
             GMaps.Instance.Mode = AccessMode.ServerOnly;
             GMaps.Instance.UseDirectionsCache = false;
@@ -83,12 +57,52 @@ namespace GMap.NET.Internals
             GMaps.Instance.UseUrlCache = false;
          }
          else
+#endif
          {
-             Location = GetFolderPath + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+            Location = appDataLocation;
+         }
+      }
+
+      public static string GetApplicationDataFolderPath()
+      {
+#if !PocketPC
+         bool isSystem = false;
+         try
+         {
+            using(var identity = System.Security.Principal.WindowsIdentity.GetCurrent())
+            {
+               if(identity != null)
+               {
+                  isSystem = identity.IsSystem;
+               }
+            }
+         }
+         catch(Exception ex)
+         {
+            Trace.WriteLine("SQLitePureImageCache, WindowsIdentity.GetCurrent: " + ex);
+         }
+
+         string path = string.Empty;
+
+         // https://greatmaps.codeplex.com/workitem/16112
+         if(isSystem)
+         {
+            path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.CommonApplicationData);
+         }
+         else
+         {
+            path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
          }
 #else
-         location = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+         path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
 #endif
+
+         if(!string.IsNullOrEmpty(path))
+         {
+            path += Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+         }
+
+         return path;
       }
 
       public static bool Delay = false;

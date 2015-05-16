@@ -56,7 +56,7 @@ namespace BigMapMaker
                            foreach(var tp in provider.Overlays)
                            {
                               Exception ex;
-                              WindowsFormsImage tile = GMaps.Instance.GetImageFrom(tp, p, zoom, out ex) as WindowsFormsImage;
+                              var tile = GMaps.Instance.GetImageFrom(tp, p, zoom, out ex) as GMapImage;
                               if(tile != null)
                               {
                                  using(tile)
