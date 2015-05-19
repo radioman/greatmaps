@@ -11,11 +11,7 @@ namespace GMap.NET.WindowsPresentation
         public GMapPolygon(IEnumerable<PointLatLng> points)
         {
             Points.AddRange(points);
-            if (Points.Count > 0)
-            {
-                Position = Points[0];
-                RegenerateShape(null);
-            }
+            RegenerateShape(null);
         }
         
         public override void Clear()
@@ -35,6 +31,8 @@ namespace GMap.NET.WindowsPresentation
                  
                 if(Points.Count > 1)
                 {
+                   Position = Points[0];
+                   
                    var localPath = new List<System.Windows.Point>(Points.Count);
                    var offset = Map.FromLatLngToLocal(Points[0]);
                    foreach(var i in Points)

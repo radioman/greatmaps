@@ -109,10 +109,7 @@ namespace GMap.NET.WindowsForms
                   {
                      if(!Overlay.Control.HoldInvalidation)
                      {
-                         if (Overlay.Control.Core.Refresh!=null)
-                         {
-                             Overlay.Control.Core.Refresh.Set();
-                         }
+                         Overlay.Control.Invalidate();
                      }
                   }
                }
