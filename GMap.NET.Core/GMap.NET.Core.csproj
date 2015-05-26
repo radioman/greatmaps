@@ -119,6 +119,19 @@
           <SpecificVersion>False</SpecificVersion>
           <Private>False</Private>
         </Reference>
+        <Reference Include="Npgsql">
+          <HintPath>..\References\Windows\NET4\Npgsql.dll</HintPath>
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Mono.Security">
+          <HintPath>..\References\Windows\NET4\Mono.Security.dll</HintPath>
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="MySql.Data">
+          <HintPath>..\References\Windows\NET4\MySql.Data.dll</HintPath>
+          <SpecificVersion>False</SpecificVersion>
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </When>
     <Otherwise>
@@ -132,25 +145,23 @@
           <SpecificVersion>False</SpecificVersion>
           <Private>False</Private>
         </Reference>
+        <Reference Include="Npgsql">
+          <HintPath>..\References\Windows\Npgsql.dll</HintPath>
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Mono.Security">
+          <HintPath>..\References\Windows\Mono.Security.dll</HintPath>
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="MySql.Data">
+          <HintPath>..\References\Windows\MySql.Data.dll</HintPath>
+          <SpecificVersion>False</SpecificVersion>
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Reference Include="Mono.Security">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Windows\Npgsql\Mono.Security.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MySql.Data">
-      <HintPath>..\References\Windows\MySql.Data.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Npgsql">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Windows\Npgsql\Npgsql.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data">
       <Private>False</Private>
