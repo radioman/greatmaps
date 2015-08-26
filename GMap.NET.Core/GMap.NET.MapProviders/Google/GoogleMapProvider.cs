@@ -2159,7 +2159,7 @@ namespace GMap.NET.MapProviders
             Instance = new GoogleMapProvider();
         }
 
-        public string Version = "m@298000000";
+        public string Version = "m@318000000";
 
         #region GMapProvider Members
 
