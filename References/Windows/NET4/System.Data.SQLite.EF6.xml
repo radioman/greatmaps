@@ -47,7 +47,47 @@
             Class generating SQL for a DML command tree.
             </summary>
         </member>
-        <member name="M:System.Data.SQLite.EF6.DmlSqlGenerator.GenerateReturningSql(System.Text.StringBuilder,System.Data.Entity.Core.Common.CommandTrees.DbModificationCommandTree,System.Data.SQLite.EF6.DmlSqlGenerator.ExpressionTranslator,System.Data.Entity.Core.Common.CommandTrees.DbExpression)">
+        <member name="M:System.Data.SQLite.EF6.DmlSqlGenerator.IsIntegerPrimaryKey(System.Data.Entity.Core.Metadata.Edm.EntitySetBase,System.Data.Entity.Core.Metadata.Edm.ReadOnlyMetadataCollection{System.Data.Entity.Core.Metadata.Edm.EdmMember}@,System.Data.Entity.Core.Metadata.Edm.EdmMember@)">
+            <summary>
+            This method attempts to determine if the specified table has an integer
+            primary key (i.e. "rowid").  If so, it sets the
+            <paramref name="primaryKeyMember"/> parameter to the right
+            <see cref="T:System.Data.Entity.Core.Metadata.Edm.EdmMember"/>; otherwise, the
+            <paramref name="primaryKeyMember"/> parameter is set to null.
+            </summary>
+            <param name="table">The table to check.</param>
+            <param name="keyMembers">
+            The collection of key members.  An attempt is always made to set this
+            parameter to a valid value.
+            </param>
+            <param name="primaryKeyMember">
+            The <see cref="T:System.Data.Entity.Core.Metadata.Edm.EdmMember"/> that represents the integer primary key
+            -OR- null if no such <see cref="T:System.Data.Entity.Core.Metadata.Edm.EdmMember"/> exists.
+            </param>
+            <returns>
+            Non-zero if the specified table has an integer primary key.
+            </returns>
+        </member>
+        <member name="M:System.Data.SQLite.EF6.DmlSqlGenerator.DoAllKeyMembersHaveValues(System.Data.SQLite.EF6.DmlSqlGenerator.ExpressionTranslator,System.Data.Entity.Core.Metadata.Edm.ReadOnlyMetadataCollection{System.Data.Entity.Core.Metadata.Edm.EdmMember},System.Data.Entity.Core.Metadata.Edm.EdmMember@)">
+            <summary>
+            This method attempts to determine if all the specified key members have
+            values available.
+            </summary>
+            <param name="translator">
+            The <see cref="T:System.Data.SQLite.EF6.DmlSqlGenerator.ExpressionTranslator"/> to use.
+            </param>
+            <param name="keyMembers">
+            The collection of key members to check.
+            </param>
+            <param name="missingKeyMember">
+            The first missing key member that is found.  This is only set to a valid
+            value if the method is returning false.
+            </param>
+            <returns>
+            Non-zero if all key members have values; otherwise, zero.
+            </returns>
+        </member>
+        <member name="M:System.Data.SQLite.EF6.DmlSqlGenerator.GenerateReturningSql(System.Text.StringBuilder,System.Data.Entity.Core.Common.CommandTrees.DbModificationCommandTree,System.Data.SQLite.EF6.DmlSqlGenerator.ExpressionTranslator,System.Data.Entity.Core.Common.CommandTrees.DbExpression,System.Boolean)">
             <summary>
             Generates SQL fragment returning server-generated values.
             Requires: translator knows about member values so that we can figure out
@@ -74,6 +114,10 @@
             for the tree</param>
             <param name="returning">Returning expression. If null, the method returns
             immediately without producing a SELECT statement.</param>
+            <param name="wasInsert">
+            Non-zero if this method is being called as part of processing an INSERT;
+            otherwise (e.g. UPDATE), zero.
+            </param>
         </member>
         <member name="T:System.Data.SQLite.EF6.DmlSqlGenerator.ExpressionTranslator">
             <summary>
@@ -1368,6 +1412,7 @@
         <member name="M:System.Data.SQLite.EF6.SqlGenerator.HandleCanonicalFunctionRound(System.Data.SQLite.EF6.SqlGenerator,System.Data.Entity.Core.Common.CommandTrees.DbFunctionExpression)">
             <summary>
             Round(numericExpression) -> Round(numericExpression, 0);
+            Round(numericExpression, N) -> Round(numericExpression, N);
             </summary>
             <param name="sqlgen"></param>
             <param name="e"></param>
@@ -1392,6 +1437,15 @@
         <member name="M:System.Data.SQLite.EF6.SqlGenerator.HandleCanonicalFunctionRight(System.Data.SQLite.EF6.SqlGenerator,System.Data.Entity.Core.Common.CommandTrees.DbFunctionExpression)">
             <summary>
             RIGHT(string, length) -> SUBSTR(string, -(length), length)
+            </summary>
+            <param name="sqlgen"></param>
+            <param name="e"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Data.SQLite.EF6.SqlGenerator.HandleCanonicalFunctionSubstring(System.Data.SQLite.EF6.SqlGenerator,System.Data.Entity.Core.Common.CommandTrees.DbFunctionExpression)">
+            <summary>
+            SUBSTRING(string, start) -> SUBSTR(string, start)
+            SUBSTRING(string, start, length) -> SUBSTR(string, start, length)
             </summary>
             <param name="sqlgen"></param>
             <param name="e"></param>
@@ -2074,7 +2128,7 @@
             <param name="edmType">A TypeUsage encapsulating an EDM type and a set of facets</param>
             <returns>A TypeUsage encapsulating a store type and a set of facets</returns>
         </member>
-        <member name="M:System.Data.SQLite.EF6.SQLiteProviderServices.CreateSqlParameter(System.String,System.Data.Entity.Core.Metadata.Edm.TypeUsage,System.Data.Entity.Core.Metadata.Edm.ParameterMode,System.Object)">
+        <member name="M:System.Data.SQLite.EF6.SQLiteProviderServices.CreateSqlParameter(System.Data.SQLite.EF6.SQLiteProviderManifest,System.String,System.Data.Entity.Core.Metadata.Edm.TypeUsage,System.Data.Entity.Core.Metadata.Edm.ParameterMode,System.Object)">
             <summary>
             Creates a SQLiteParameter given a name, type, and direction
             </summary>
