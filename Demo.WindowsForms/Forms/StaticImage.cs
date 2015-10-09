@@ -10,6 +10,9 @@ using GMap.NET.WindowsForms;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using GMap.NET.MapProviders;
+using System.IO.Compression;
+using System.Text;
+using System.Globalization;
 
 namespace Demo.WindowsForms
 {
@@ -60,7 +63,7 @@ namespace Demo.WindowsForms
          this.Text = "Static Map maker";
          progressBar1.Value = 0;
          button1.Enabled = true;
-         numericUpDown1.Enabled = true;        
+         numericUpDown1.Enabled = true;
          Main.MainMap.Refresh();
       }
 
@@ -77,9 +80,7 @@ namespace Demo.WindowsForms
          MapInfo info = (MapInfo)e.Argument;
          if(!info.Area.IsEmpty)
          {
-            //var types = GMaps.Instance.GetAllLayersOfType(info.Type);
-
-            string bigImage = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + Path.DirectorySeparatorChar + "GMap at zoom " + info.Zoom + " - " + info.Type + "-" + DateTime.Now.Ticks + ".png";
+            string bigImage = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + Path.DirectorySeparatorChar + "GMap at zoom " + info.Zoom + " - " + info.Type + "-" + DateTime.Now.Ticks + ".jpg";
             e.Result = bigImage;
 
             // current area
@@ -88,7 +89,7 @@ namespace Demo.WindowsForms
             GPoint pxDelta = new GPoint(rightButtomPx.X - topLeftPx.X, rightButtomPx.Y - topLeftPx.Y);
             GMap.NET.GSize maxOfTiles = info.Type.Projection.GetTileMatrixMaxXY(info.Zoom);
 
-            int padding = info.MakeWorldFile ? 0 : 22;
+            int padding = info.MakeWorldFile || info.MakeKmz ? 0 : 22;
             {
                using(Bitmap bmpDestination = new Bitmap((int)(pxDelta.X + padding * 2), (int)(pxDelta.Y + padding * 2)))
                {
@@ -235,12 +236,12 @@ namespace Demo.WindowsForms
                               px.Offset(padding, padding);
                               px.Offset(-topLeftPx.X, -topLeftPx.Y);
                               px.Offset(r.Offset.X, r.Offset.Y);
-                             
+
                               gfx.ResetTransform();
                               gfx.TranslateTransform(-r.LocalPosition.X, -r.LocalPosition.Y);
                               gfx.TranslateTransform((int)px.X, (int)px.Y);
-                              
-                              r.OnRender(gfx);                            
+
+                              r.OnRender(gfx);
                            }
                         }
 
@@ -251,18 +252,18 @@ namespace Demo.WindowsForms
                            {
                               if(!string.IsNullOrEmpty(m.ToolTipText))
                               {
-                                  var pr = m.Position;
-                                  GPoint px = info.Type.Projection.FromLatLngToPixel(pr.Lat, pr.Lng, info.Zoom);
-                              
-                                  px.Offset(padding, padding);
-                                  px.Offset(-topLeftPx.X, -topLeftPx.Y);
-                                  px.Offset(m.Offset.X, m.Offset.Y);
-                                                               
-                                  gfx.ResetTransform();
-                                  gfx.TranslateTransform(-m.LocalPosition.X, -m.LocalPosition.Y);
-                                  gfx.TranslateTransform((int)px.X, (int)px.Y);
-                              
-                                  m.ToolTip.OnRender(gfx);
+                                 var pr = m.Position;
+                                 GPoint px = info.Type.Projection.FromLatLngToPixel(pr.Lat, pr.Lng, info.Zoom);
+
+                                 px.Offset(padding, padding);
+                                 px.Offset(-topLeftPx.X, -topLeftPx.Y);
+                                 px.Offset(m.Offset.X, m.Offset.Y);
+
+                                 gfx.ResetTransform();
+                                 gfx.TranslateTransform(-m.LocalPosition.X, -m.LocalPosition.Y);
+                                 gfx.TranslateTransform((int)px.X, (int)px.Y);
+
+                                 m.ToolTip.OnRender(gfx);
                               }
                            }
                         }
@@ -270,7 +271,7 @@ namespace Demo.WindowsForms
                      }
 
                      // draw info
-                     if (!info.MakeWorldFile)
+                     if(!info.MakeWorldFile)
                      {
                         System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
                         {
@@ -316,7 +317,7 @@ namespace Demo.WindowsForms
                      }
                   }
 
-                  bmpDestination.Save(bigImage, ImageFormat.Png);
+                  bmpDestination.Save(bigImage, ImageFormat.Jpeg);
                }
             }
 
@@ -342,6 +343,52 @@ namespace Demo.WindowsForms
                   world.WriteLine("{0:0.000000000000}", info.Area.Left);
                   world.WriteLine("{0:0.000000000000}", info.Area.Top);
                   world.Close();
+               }
+            }
+
+            if(info.MakeKmz)
+            {
+               var kmzFile = Path.GetDirectoryName(bigImage) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(bigImage) + ".kmz";
+               e.Result = kmzFile;
+
+               using(ZipStorer zip = ZipStorer.Create(kmzFile, "GMap.NET"))
+               {
+                  zip.AddFile(ZipStorer.Compression.Store, bigImage, "files/map.jpg", "map");
+
+                  using(var readme = new MemoryStream(
+                    Encoding.UTF8.GetBytes(
+                     string.Format(CultureInfo.InvariantCulture, @"<?xml version=""1.0"" encoding=""UTF-8""?> 
+<kml xmlns=""http://www.opengis.net/kml/2.2"" xmlns:gx=""http://www.google.com/kml/ext/2.2"" xmlns:kml=""http://www.opengis.net/kml/2.2"" xmlns:atom=""http://www.w3.org/2005/Atom"">
+<GroundOverlay>
+	<name>{8}</name>
+	<LookAt>
+		<longitude>{6}</longitude>
+		<latitude>{7}</latitude>
+		<altitude>0</altitude>
+		<heading>0</heading>
+		<tilt>0</tilt>
+		<range>69327.55500845652</range>
+	</LookAt>
+	<color>91ffffff</color>
+	<Icon>
+		<href>files/map.jpg</href>
+	</Icon>
+	<gx:LatLonQuad>
+		<coordinates>
+			{0},{1},0 {2},{3},0 {4},{5},0 {6},{7},0 
+		</coordinates>
+	</gx:LatLonQuad>
+</GroundOverlay>
+</kml>", info.Area.Left, info.Area.Bottom,
+         info.Area.Right, info.Area.Bottom,
+         info.Area.Right, info.Area.Top,
+         info.Area.Left, info.Area.Top,
+         kmzFile))))
+                  {
+
+                     zip.AddStream(ZipStorer.Compression.Store, "doc.kml", readme, DateTime.Now, "kml");
+                     zip.Close();
+                  }
                }
             }
          }
@@ -385,9 +432,9 @@ namespace Demo.WindowsForms
             numericUpDown1.Enabled = false;
             progressBar1.Value = 0;
             button1.Enabled = false;
-            Main.MainMap.HoldInvalidation = true;            
-            
-            bg.RunWorkerAsync(new MapInfo(area.Value, (int)numericUpDown1.Value, Main.MainMap.MapProvider, checkBoxWorldFile.Checked));
+            Main.MainMap.HoldInvalidation = true;
+
+            bg.RunWorkerAsync(new MapInfo(area.Value, (int)numericUpDown1.Value, Main.MainMap.MapProvider, checkBoxWorldFile.Checked, checkBoxKMZ.Checked));
          }
       }
 
@@ -406,13 +453,15 @@ namespace Demo.WindowsForms
       public int Zoom;
       public GMapProvider Type;
       public bool MakeWorldFile;
+      public bool MakeKmz;
 
-      public MapInfo(RectLatLng Area, int Zoom, GMapProvider Type, bool makeWorldFile)
+      public MapInfo(RectLatLng Area, int Zoom, GMapProvider Type, bool makeWorldFile, bool MakeKmz)
       {
          this.Area = Area;
          this.Zoom = Zoom;
          this.Type = Type;
          this.MakeWorldFile = makeWorldFile;
+         this.MakeKmz = MakeKmz;
       }
    }
 }

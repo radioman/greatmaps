@@ -35,13 +35,14 @@
          this.label1 = new System.Windows.Forms.Label();
          this.checkBoxWorldFile = new System.Windows.Forms.CheckBox();
          this.checkBoxRoutes = new System.Windows.Forms.CheckBox();
-         ((System.ComponentModel.ISupportInitialize) (this.numericUpDown1)).BeginInit();
+         this.checkBoxKMZ = new System.Windows.Forms.CheckBox();
+         ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
          this.SuspendLayout();
          // 
          // button1
          // 
-         this.button1.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button1.Location = new System.Drawing.Point(497, 29);
+         this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+         this.button1.Location = new System.Drawing.Point(366, 29);
          this.button1.Margin = new System.Windows.Forms.Padding(2);
          this.button1.Name = "button1";
          this.button1.Size = new System.Drawing.Size(84, 32);
@@ -52,19 +53,19 @@
          // 
          // progressBar1
          // 
-         this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+         this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
          this.progressBar1.Location = new System.Drawing.Point(6, 6);
          this.progressBar1.Margin = new System.Windows.Forms.Padding(2);
          this.progressBar1.Name = "progressBar1";
-         this.progressBar1.Size = new System.Drawing.Size(484, 93);
+         this.progressBar1.Size = new System.Drawing.Size(353, 93);
          this.progressBar1.TabIndex = 2;
          // 
          // numericUpDown1
          // 
-         this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.numericUpDown1.Location = new System.Drawing.Point(535, 6);
+         this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+         this.numericUpDown1.Location = new System.Drawing.Point(404, 6);
          this.numericUpDown1.Margin = new System.Windows.Forms.Padding(2);
          this.numericUpDown1.Name = "numericUpDown1";
          this.numericUpDown1.Size = new System.Drawing.Size(47, 20);
@@ -72,8 +73,8 @@
          // 
          // button2
          // 
-         this.button2.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.button2.Location = new System.Drawing.Point(497, 67);
+         this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+         this.button2.Location = new System.Drawing.Point(366, 67);
          this.button2.Margin = new System.Windows.Forms.Padding(2);
          this.button2.Name = "button2";
          this.button2.Size = new System.Drawing.Size(84, 32);
@@ -84,9 +85,9 @@
          // 
          // label1
          // 
-         this.label1.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+         this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
          this.label1.AutoSize = true;
-         this.label1.Location = new System.Drawing.Point(494, 8);
+         this.label1.Location = new System.Drawing.Point(363, 8);
          this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
          this.label1.Name = "label1";
          this.label1.Size = new System.Drawing.Size(37, 13);
@@ -95,31 +96,43 @@
          // 
          // checkBoxWorldFile
          // 
-         this.checkBoxWorldFile.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+         this.checkBoxWorldFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
          this.checkBoxWorldFile.AutoSize = true;
-         this.checkBoxWorldFile.Location = new System.Drawing.Point(497, 106);
+         this.checkBoxWorldFile.Location = new System.Drawing.Point(179, 116);
          this.checkBoxWorldFile.Name = "checkBoxWorldFile";
-         this.checkBoxWorldFile.Size = new System.Drawing.Size(96, 17);
+         this.checkBoxWorldFile.Size = new System.Drawing.Size(67, 17);
          this.checkBoxWorldFile.TabIndex = 6;
-         this.checkBoxWorldFile.Text = "make Worldfile";
+         this.checkBoxWorldFile.Text = "Worldfile";
          this.checkBoxWorldFile.UseVisualStyleBackColor = true;
          // 
          // checkBoxRoutes
          // 
-         this.checkBoxRoutes.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+         this.checkBoxRoutes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
          this.checkBoxRoutes.AutoSize = true;
-         this.checkBoxRoutes.Location = new System.Drawing.Point(7, 106);
+         this.checkBoxRoutes.Location = new System.Drawing.Point(7, 116);
          this.checkBoxRoutes.Name = "checkBoxRoutes";
          this.checkBoxRoutes.Size = new System.Drawing.Size(147, 17);
          this.checkBoxRoutes.TabIndex = 7;
          this.checkBoxRoutes.Text = "Use area of routes in map";
          this.checkBoxRoutes.UseVisualStyleBackColor = true;
          // 
+         // checkBoxKMZ
+         // 
+         this.checkBoxKMZ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+         this.checkBoxKMZ.AutoSize = true;
+         this.checkBoxKMZ.Location = new System.Drawing.Point(300, 116);
+         this.checkBoxKMZ.Name = "checkBoxKMZ";
+         this.checkBoxKMZ.Size = new System.Drawing.Size(49, 17);
+         this.checkBoxKMZ.TabIndex = 8;
+         this.checkBoxKMZ.Text = "KMZ";
+         this.checkBoxKMZ.UseVisualStyleBackColor = true;
+         // 
          // StaticImage
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.ClientSize = new System.Drawing.Size(588, 130);
+         this.ClientSize = new System.Drawing.Size(457, 140);
+         this.Controls.Add(this.checkBoxKMZ);
          this.Controls.Add(this.checkBoxRoutes);
          this.Controls.Add(this.checkBoxWorldFile);
          this.Controls.Add(this.label1);
@@ -132,9 +145,9 @@
          this.MinimumSize = new System.Drawing.Size(16, 164);
          this.Name = "StaticImage";
          this.Padding = new System.Windows.Forms.Padding(4);
-         this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+         this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
          this.Text = "Static Map maker";
-         ((System.ComponentModel.ISupportInitialize) (this.numericUpDown1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
          this.ResumeLayout(false);
          this.PerformLayout();
 
@@ -149,5 +162,6 @@
       private System.Windows.Forms.Label label1;
       private System.Windows.Forms.CheckBox checkBoxWorldFile;
       private System.Windows.Forms.CheckBox checkBoxRoutes;
+      private System.Windows.Forms.CheckBox checkBoxKMZ;
    }
 }
