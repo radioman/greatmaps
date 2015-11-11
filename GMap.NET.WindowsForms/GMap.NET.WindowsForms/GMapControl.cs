@@ -31,6 +31,11 @@ namespace GMap.NET.WindowsForms
     {
 #if !PocketPC
         /// <summary>
+        /// occurs when double clicked on marker
+        /// </summary>
+        public event MarkerDoubleClick OnMarkerDoubleClick;
+
+        /// <summary>
         /// occurs when clicked on marker
         /// </summary>
         public event MarkerClick OnMarkerClick;
@@ -1832,6 +1837,43 @@ namespace GMap.NET.WindowsForms
         }
 
 #if !PocketPC
+        protected override void OnMouseDoubleClick(MouseEventArgs e)
+        {
+            base.OnMouseDoubleClick(e);
+
+            if (!Core.IsDragging)
+            {
+                for (int i = Overlays.Count - 1; i >= 0; i--)
+                {
+                    GMapOverlay o = Overlays[i];
+                    if (o != null && o.IsVisibile)
+                    {
+                        foreach (var m in o.Markers)
+                        {
+                            if (m.IsVisible && m.IsHitTestVisible)
+                            {
+                                GPoint rp = new GPoint(e.X, e.Y);
+#if !PocketPC
+                                if (!MobileMode)
+                                {
+                                    rp.OffsetNegative(Core.renderOffset);
+                                }
+#endif
+                                if (m.LocalArea.Contains((int)rp.X, (int)rp.Y))
+                                {
+                                    if (OnMarkerDoubleClick != null)
+                                    {
+                                        OnMarkerDoubleClick(m, e);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         protected override void OnMouseClick(MouseEventArgs e)
         {
             base.OnMouseClick(e);
