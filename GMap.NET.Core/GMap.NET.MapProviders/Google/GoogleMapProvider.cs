@@ -113,7 +113,7 @@ namespace GMap.NET.MapProviders
                     if (!string.IsNullOrEmpty(html))
                     {
                         #region -- match versions --
-                        Regex reg = new Regex(string.Format(@"https?://mts?\d.{0}/vt\?lyrs=m@(\d*)", Server), RegexOptions.IgnoreCase);
+                        Regex reg = new Regex(string.Format(@"https?://mts?\d.{0}/maps/vt\?lyrs=m@(\d*)", Server), RegexOptions.IgnoreCase);
                         Match mat = reg.Match(html);
                         if (mat.Success)
                         {
@@ -126,31 +126,16 @@ namespace GMap.NET.MapProviders
 
                                 GMapProviders.GoogleMap.Version = ver;
                                 GMapProviders.GoogleChinaMap.Version = ver;
+                                
+                                string verh = string.Format("h@{0}", gc [1].Value);
+                                string oldh = GMapProviders.GoogleHybridMap.Version;
+
+                                GMapProviders.GoogleHybridMap.Version = verh;
+                                GMapProviders.GoogleChinaHybridMap.Version = verh;
 #if DEBUG
                                 Debug.WriteLine("GMapProviders.GoogleMap.Version: " + ver + ", " + (ver == old ? "OK" : "old: " + old + ", consider updating source"));
-                                if (Debugger.IsAttached && ver != old)
-                                {
-                                    Thread.Sleep(1111);
-                                }
-#endif
-                            }
-                        }
+                                Debug.WriteLine("GMapProviders.GoogleHybridMap.Version: " + verh + ", " + (verh == oldh ? "OK" : "old: " + oldh + ", consider updating source"));
 
-                        reg = new Regex(string.Format(@"https?://mts?\d.{0}/vt\?lyrs=h@(\d*)", Server), RegexOptions.IgnoreCase);
-                        mat = reg.Match(html);
-                        if (mat.Success)
-                        {
-                            GroupCollection gc = mat.Groups;
-                            int count = gc.Count;
-                            if (count > 0)
-                            {
-                                string ver = string.Format("h@{0}", gc [1].Value);
-                                string old = GMapProviders.GoogleHybridMap.Version;
-
-                                GMapProviders.GoogleHybridMap.Version = ver;
-                                GMapProviders.GoogleChinaHybridMap.Version = ver;
-#if DEBUG
-                                Debug.WriteLine("GMapProviders.GoogleHybridMap.Version: " + ver + ", " + (ver == old ? "OK" : "old: " + old + ", consider updating source"));
                                 if (Debugger.IsAttached && ver != old)
                                 {
                                     Thread.Sleep(1111);
@@ -183,7 +168,7 @@ namespace GMap.NET.MapProviders
                             }
                         }
 
-                        reg = new Regex(string.Format(@"https?://mts?\d.{0}/vt\?lyrs=t@(\d*),r@(\d*)", Server), RegexOptions.IgnoreCase);
+                        reg = new Regex(string.Format(@"https?://mts?\d.{0}/maps/vt\?lyrs=t@(\d*),r@(\d*)", Server), RegexOptions.IgnoreCase);
                         mat = reg.Match(html);
                         if (mat.Success)
                         {
@@ -2159,7 +2144,7 @@ namespace GMap.NET.MapProviders
             Instance = new GoogleMapProvider();
         }
 
-        public string Version = "m@318000000";
+        public string Version = "m@333000000";
 
         #region GMapProvider Members
 
@@ -2201,6 +2186,6 @@ namespace GMap.NET.MapProviders
 
         static readonly string UrlFormatServer = "mt";
         static readonly string UrlFormatRequest = "vt";
-        static readonly string UrlFormat = "http://{0}{1}.{10}/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}";
+        static readonly string UrlFormat = "http://{0}{1}.{10}/maps/{2}/lyrs={3}&hl={4}&x={5}{6}&y={7}&z={8}&s={9}";
     }
 }
