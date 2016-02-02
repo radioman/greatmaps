@@ -1,47 +1,45 @@
-﻿
+﻿using System.Windows.Media;
+using GMap.NET.WindowsPresentation;
+using System.Globalization;
+using System.Windows;
+using System.Diagnostics;
+
 namespace Demo.WindowsPresentation
 {
-   using System.Windows.Controls;
-   using System.Windows.Media;
-   using GMap.NET.WindowsPresentation;
-   using System.Globalization;
-   using System.Windows.Forms;
-   using System.Windows;
-   using System;
-
-   /// <summary>
-   /// the custom map f GMapControl 
-   /// </summary>
-   public class Map : GMapControl
-   {
-      public long ElapsedMilliseconds;
+    /// <summary>
+    /// The custom map of GMapControl 
+    /// </summary>
+    public class Map : GMapControl
+    {
+        public long ElapsedMilliseconds;
 
 #if DEBUG
-      DateTime start;
-      DateTime end;
-      int delta;
 
-      private int counter;
-      readonly Typeface tf = new Typeface("GenericSansSerif");
-      readonly System.Windows.FlowDirection fd = new System.Windows.FlowDirection();
+        private int counter;
+        readonly Typeface tf = new Typeface("GenericSansSerif");
+        readonly System.Windows.FlowDirection fd = new System.Windows.FlowDirection();
+        private readonly Stopwatch stopwatch = new Stopwatch();
 
-      /// <summary>
-      /// any custom drawing here
-      /// </summary>
-      /// <param name="drawingContext"></param>
-      protected override void OnRender(DrawingContext drawingContext)
-      {
-         start = DateTime.Now;
+        /// <summary>
+        /// any custom drawing here
+        /// </summary>
+        /// <param name="drawingContext"></param>
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            stopwatch.Reset();
+            stopwatch.Start();
 
-         base.OnRender(drawingContext);
+            base.OnRender(drawingContext);
+            stopwatch.Stop();
 
-         end = DateTime.Now;
-         delta = (int)(end - start).TotalMilliseconds;
-
-         FormattedText text = new FormattedText(string.Format(CultureInfo.InvariantCulture, "{0:0.0}", Zoom) + "z, " + MapProvider + ", refresh: " + counter++ + ", load: " + ElapsedMilliseconds + "ms, render: " + delta + "ms", CultureInfo.InvariantCulture, fd, tf, 20, Brushes.Blue);
-         drawingContext.DrawText(text, new Point(text.Height, text.Height));
-         text = null;
-      }
+            FormattedText text =
+                new FormattedText(
+                    string.Format(CultureInfo.InvariantCulture, "{0:0.0}", Zoom) + "z, " + MapProvider + ", refresh: " +
+                    counter++ + ", load: " + ElapsedMilliseconds + "ms, render: " + stopwatch.ElapsedMilliseconds + "ms",
+                    CultureInfo.InvariantCulture, fd, tf, 20, Brushes.Blue);
+            drawingContext.DrawText(text, new Point(text.Height, text.Height));
+            text = null;
+        }
 #endif
-   }
+    }
 }
