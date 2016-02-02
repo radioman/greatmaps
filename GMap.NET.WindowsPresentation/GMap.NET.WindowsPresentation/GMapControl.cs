@@ -467,15 +467,39 @@ namespace GMap.NET.WindowsPresentation
       /// </summary>        
       public event SelectionChange OnSelectionChange;
 
-      /// <summary>
-      /// list of markers
-      /// </summary>
-      public readonly ObservableCollection<GMapMarker> Markers = new ObservableCollection<GMapMarker>();
+       private static readonly DependencyPropertyKey MarkersKey
+           = DependencyProperty.RegisterReadOnly("Markers", typeof (ObservableCollection<GMapMarker>),
+               typeof (GMapControl),
+               new FrameworkPropertyMetadata(null,
+                   FrameworkPropertyMetadataOptions.None,
+                   OnMarkersPropChanged));
 
-      /// <summary>
-      /// current markers overlay offset
-      /// </summary>
-      internal readonly TranslateTransform MapTranslateTransform = new TranslateTransform();
+        public static readonly DependencyProperty MarkersProperty
+            = MarkersKey.DependencyProperty;
+
+        /// <summary>
+        /// List of markers
+        /// </summary>
+        public ObservableCollection<GMapMarker> Markers
+        {
+            get { return (ObservableCollection<GMapMarker>)GetValue(MarkersProperty); }
+            private set { SetValue(MarkersKey, value); }
+        }
+
+        private static void OnMarkersPropChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((GMapControl)d).OnMarkersPropChanged(e);
+        }
+
+        private void OnMarkersPropChanged(DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// current markers overlay offset
+        /// </summary>
+        internal readonly TranslateTransform MapTranslateTransform = new TranslateTransform();
       internal readonly TranslateTransform MapOverlayTranslateTransform = new TranslateTransform();
 
       internal ScaleTransform MapScaleTransform = new ScaleTransform();
@@ -590,6 +614,8 @@ namespace GMap.NET.WindowsPresentation
             }
             ItemContainerStyle = StyleInstance;
             #endregion
+
+                Markers = new ObservableCollection<GMapMarker>();
 
             ClipToBounds = true;
             SnapsToDevicePixels = true;
