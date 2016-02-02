@@ -474,29 +474,29 @@ namespace GMap.NET.WindowsPresentation
                    FrameworkPropertyMetadataOptions.None,
                    OnMarkersPropChanged));
 
-        public static readonly DependencyProperty MarkersProperty
-            = MarkersKey.DependencyProperty;
+       public static readonly DependencyProperty MarkersProperty
+           = MarkersKey.DependencyProperty;
 
-        /// <summary>
-        /// List of markers
-        /// </summary>
-        public ObservableCollection<GMapMarker> Markers
-        {
-            get { return (ObservableCollection<GMapMarker>)GetValue(MarkersProperty); }
-            private set { SetValue(MarkersKey, value); }
-        }
+       /// <summary>
+       /// List of markers
+       /// </summary>
+       public ObservableCollection<GMapMarker> Markers
+       {
+           get { return (ObservableCollection<GMapMarker>) GetValue(MarkersProperty); }
+           private set { SetValue(MarkersKey, value); }
+       }
 
-        private static void OnMarkersPropChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((GMapControl)d).OnMarkersPropChanged(e);
-        }
+       private static void OnMarkersPropChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+       {
+           ((GMapControl) d).OnMarkersPropChanged(e);
+       }
 
-        private void OnMarkersPropChanged(DependencyPropertyChangedEventArgs e)
-        {
+       private void OnMarkersPropChanged(DependencyPropertyChangedEventArgs e)
+       {
 
-        }
+       }
 
-        /// <summary>
+       /// <summary>
         /// current markers overlay offset
         /// </summary>
         internal readonly TranslateTransform MapTranslateTransform = new TranslateTransform();
