@@ -349,4 +349,5 @@ namespace GMap.NET.WindowsForms
    public delegate void PolygonClick(GMapPolygon item, MouseEventArgs e);
    public delegate void PolygonEnter(GMapPolygon item);
    public delegate void PolygonLeave(GMapPolygon item);
+   public delegate void PolygonDoubleClick(GMapPolygon item, MouseEventArgs e);
 }

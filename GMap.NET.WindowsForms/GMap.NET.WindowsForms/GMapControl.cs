@@ -36,14 +36,29 @@ namespace GMap.NET.WindowsForms
         public event MarkerClick OnMarkerClick;
 
         /// <summary>
+        /// occurs when double clicked on marker
+        /// </summary>
+        public event MarkerDoubleClick OnMarkerDoubleClick;
+
+        /// <summary>
         /// occurs when clicked on polygon
         /// </summary>
         public event PolygonClick OnPolygonClick;
 
         /// <summary>
+        /// occurs when double clicked on polygon
+        /// </summary>
+        public event PolygonDoubleClick OnPolygonDoubleClick;
+
+        /// <summary>
         /// occurs when clicked on route
         /// </summary>
         public event RouteClick OnRouteClick;
+
+        /// <summary>
+        /// occurs when double clicked on route
+        /// </summary>
+        public event RouteDoubleClick OnRouteDoubleClick;
 
         /// <summary>
         /// occurs on mouse enters route area
@@ -1920,7 +1935,92 @@ namespace GMap.NET.WindowsForms
             //   base.Invalidate();
             //}            
         }
+
+        protected override void OnMouseDoubleClick(MouseEventArgs e)
+        {
+            base.OnMouseClick(e);
+
+            if (!Core.IsDragging)
+            {
+                for (int i = Overlays.Count - 1; i >= 0; i--)
+                {
+                    GMapOverlay o = Overlays[i];
+                    if (o != null && o.IsVisibile)
+                    {
+                        foreach (GMapMarker m in o.Markers)
+                        {
+                            if (m.IsVisible && m.IsHitTestVisible)
+                            {
+                                #region -- check --
+
+                                GPoint rp = new GPoint(e.X, e.Y);
+#if !PocketPC
+                                if (!MobileMode)
+                                {
+                                    rp.OffsetNegative(Core.renderOffset);
+                                }
 #endif
+                                if (m.LocalArea.Contains((int)rp.X, (int)rp.Y))
+                                {
+                                    if (OnMarkerDoubleClick != null)
+                                    {
+                                        OnMarkerDoubleClick(m, e);
+                                    }
+                                    break;
+                                }
+
+                                #endregion
+                            }
+                        }
+
+                        foreach (GMapRoute m in o.Routes)
+                        {
+                            if (m.IsVisible && m.IsHitTestVisible)
+                            {
+                                #region -- check --
+
+                                GPoint rp = new GPoint(e.X, e.Y);
+#if !PocketPC
+                                if (!MobileMode)
+                                {
+                                    rp.OffsetNegative(Core.renderOffset);
+                                }
+#endif
+                                if (m.IsInside((int)rp.X, (int)rp.Y))
+                                {
+                                    if (OnRouteDoubleClick != null)
+                                    {
+                                        OnRouteDoubleClick(m, e);
+                                    }
+                                    break;
+                                }
+                                #endregion
+                            }
+                        }
+
+                        foreach (GMapPolygon m in o.Polygons)
+                        {
+                            if (m.IsVisible && m.IsHitTestVisible)
+                            {
+                                #region -- check --
+                                if (m.IsInside(FromLocalToLatLng(e.X, e.Y)))
+                                {
+                                    if (OnPolygonDoubleClick != null)
+                                    {
+                                        OnPolygonDoubleClick(m, e);
+                                    }
+                                    break;
+                                }
+                                #endregion
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+#endif
+
 #if !PocketPC
         /// <summary>
         /// apply transformation if in rotation mode
