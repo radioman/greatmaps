@@ -203,6 +203,7 @@
     <Compile Include="GMap.NET.MapProviders\ArcGIS\ArcGIS_World_Terrain_Base_MapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\ArcGIS\ArcGIS_World_Topo_MapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\CloudMadeMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\Etc\SwedenMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\WikiMapiaMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Czech\CzechHistoryMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Czech\CzechHybridMapProvider.cs" />
@@ -258,6 +259,7 @@
     <Compile Include="GMap.NET.MapProviders\OpenStreetMap\OpenStreetOsmProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\GMapProvider.cs" />
+    <Compile Include="GMap.NET.Projections\SWEREF99_TMProjection.cs" />
     <Compile Include="GMap.NET.Projections\MapsLTReliefProjection.cs" />
     <Compile Include="GMap.NET.Projections\PlateCarreeProjectionDarbAe.cs" />
     <Compile Include="GMap.NET\GDirections.cs" />

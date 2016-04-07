@@ -146,6 +146,8 @@ namespace GMap.NET.MapProviders
 
         public static readonly ArcGIS_DarbAE_Q2_2011_NAVTQ_Eng_V5_MapProvider ArcGIS_DarbAE_Q2_2011_NAVTQ_Eng_V5_Map = ArcGIS_DarbAE_Q2_2011_NAVTQ_Eng_V5_MapProvider.Instance;
 
+        public static readonly SwedenMapProvider SwedenMap = SwedenMapProvider.Instance;
+
         static List<GMapProvider> list;
 
         /// <summary>
