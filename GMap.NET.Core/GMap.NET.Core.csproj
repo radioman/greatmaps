@@ -202,6 +202,8 @@
     <Compile Include="GMap.NET.MapProviders\ArcGIS\ArcGIS_World_Street_MapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\ArcGIS\ArcGIS_World_Terrain_Base_MapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\ArcGIS\ArcGIS_World_Topo_MapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\Czech\CzechGeographicMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\Czech\CzechTuristWinterMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\CloudMadeMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\SwedenMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\WikiMapiaMapProvider.cs" />

@@ -9,7 +9,7 @@ namespace GMap.NET.MapProviders
       public CzechMapProviderBase()
       {
          RefererUrl = "http://www.mapy.cz/";
-         Area = new RectLatLng(51.2024819920053, 11.8401353319027, 7.22833716731277, 2.78312271922872);
+         //Area = new RectLatLng(51.2024819920053, 11.8401353319027, 7.22833716731277, 2.78312271922872);
       }
 
       #region GMapProvider Members
@@ -33,7 +33,7 @@ namespace GMap.NET.MapProviders
       {
          get
          {
-            return MapyCZProjection.Instance;
+            return MercatorProjection.Instance;
          }
       }
 
@@ -104,15 +104,12 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         // ['base','ophoto','turist','army2']  
-         // http://m1.mapserver.mapy.cz/base-n/3_8000000_8000000
+         // ['base-m','ophoto-m','turist-m','army2-m']
+         // http://m3.mapserver.mapy.cz/base-m/14-8802-5528
 
-         long xx = pos.X << (28 - zoom);
-         long yy = ((((long)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
-
-         return string.Format(UrlFormat, GetServerNum(pos, 3) + 1, zoom, xx, yy);
+         return string.Format(UrlFormat, GetServerNum(pos, 3) + 1, zoom, pos.X, pos.Y);
       }
 
-      static readonly string UrlFormat = "http://m{0}.mapserver.mapy.cz/base-n/{1}_{2:x7}_{3:x7}";
+      static readonly string UrlFormat = "http://m{0}.mapserver.mapy.cz/base-m/{1}-{2}-{3}";
    }
 }
