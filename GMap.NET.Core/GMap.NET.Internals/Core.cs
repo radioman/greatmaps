@@ -779,14 +779,13 @@ namespace GMap.NET.Internals
 
         internal static readonly int WaitForTileLoadThreadTimeout = 5 * 1000 * 60; // 5 min.
 
-        byte loadWaitCount = 0;
         volatile int okZoom = 0;
         volatile int skipOverZoom = 0;
 
 #if NET40
         static readonly BlockingCollection<LoadTask> tileLoadQueue4 = new BlockingCollection<LoadTask>(new ConcurrentStack<LoadTask>());
         static List<Task> tileLoadQueue4Tasks;
-
+        static int loadWaitCount = 0;
         void AddLoadTask(LoadTask t)
         {
             if (tileLoadQueue4Tasks == null)
@@ -807,11 +806,21 @@ namespace GMap.NET.Internals
                                 Thread.CurrentThread.Name = ctid;
 
                                 Debug.WriteLine(ctid + ": started");
-
-                                foreach (var it in tileLoadQueue4.GetConsumingEnumerable())
+                                do
                                 {
-                                    ProcessLoadTask(it, ctid);
+                                    if (tileLoadQueue4.Count == 0)
+                                    {
+                                        Debug.WriteLine(ctid + ": ready");
+
+                                        if (Interlocked.Increment(ref loadWaitCount) >= GThreadPoolSize)
+                                        {
+                                            Interlocked.Exchange(ref loadWaitCount, 0);
+                                            OnLoadComplete(ctid);
+                                        }
+                                    }
+                                    ProcessLoadTask(tileLoadQueue4.Take(), ctid);
                                 }
+                                while (!tileLoadQueue4.IsAddingCompleted);
 
                                 Debug.WriteLine(ctid + ": exit");
 
@@ -823,10 +832,11 @@ namespace GMap.NET.Internals
             tileLoadQueue4.Add(t);
         }
 #else
-        void tileConsumerThread()
+        byte loadWaitCount = 0;
+
+        void tileLoadThread()
         {
             LoadTask? task = null;
-            long lastTileLoadTimeMs;
             bool stop = false;
 
 #if !PocketPC
@@ -849,45 +859,7 @@ namespace GMap.NET.Internals
                         if (++loadWaitCount >= GThreadPoolSize)
                         {
                             loadWaitCount = 0;
-
-                            #region -- last thread takes action --
-
-                            {
-                                LastTileLoadEnd = DateTime.Now;
-                                lastTileLoadTimeMs = (long)(LastTileLoadEnd - LastTileLoadStart).TotalMilliseconds;
-                            }
-
-                            #region -- clear stuff--
-                            if (IsStarted)
-                            {
-                                GMaps.Instance.MemoryCache.RemoveOverload();
-
-                                tileDrawingListLock.AcquireReaderLock();
-                                try
-                                {
-                                    Matrix.ClearLevelAndPointsNotIn(Zoom, tileDrawingList);
-                                }
-                                finally
-                                {
-                                    tileDrawingListLock.ReleaseReaderLock();
-                                }
-                            }
-                            #endregion
-
-                            UpdateGroundResolution();
-#if UseGC
-                     GC.Collect();
-                     GC.WaitForPendingFinalizers();
-                     GC.Collect();
-#endif
-
-                            Debug.WriteLine(ctid + " - OnTileLoadComplete: " + lastTileLoadTimeMs + "ms, MemoryCacheSize: " + GMaps.Instance.MemoryCache.Size + "MB");
-
-                            if (OnTileLoadComplete != null)
-                            {
-                                OnTileLoadComplete(lastTileLoadTimeMs);
-                            }
-                            #endregion
+                            OnLoadComplete(ctid);
                         }
 
                         if (!IsStarted || false == Monitor.Wait(tileLoadQueue, WaitForTileLoadThreadTimeout, false) || !IsStarted)
@@ -1091,6 +1063,42 @@ namespace GMap.NET.Internals
             }
         }
 
+        void OnLoadComplete(string ctid)
+        {
+            LastTileLoadEnd = DateTime.Now;
+            long lastTileLoadTimeMs = (long)(LastTileLoadEnd - LastTileLoadStart).TotalMilliseconds;
+
+            #region -- clear stuff--
+            if (IsStarted)
+            {
+                GMaps.Instance.MemoryCache.RemoveOverload();
+
+                tileDrawingListLock.AcquireReaderLock();
+                try
+                {
+                    Matrix.ClearLevelAndPointsNotIn(Zoom, tileDrawingList);
+                }
+                finally
+                {
+                    tileDrawingListLock.ReleaseReaderLock();
+                }
+            }
+            #endregion
+
+            UpdateGroundResolution();
+#if UseGC
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+#endif
+            Debug.WriteLine(ctid + " - OnTileLoadComplete: " + lastTileLoadTimeMs + "ms, MemoryCacheSize: " + GMaps.Instance.MemoryCache.Size + "MB");
+
+            if (OnTileLoadComplete != null)
+            {
+                OnTileLoadComplete(lastTileLoadTimeMs);
+            }
+        }
+
         public AutoResetEvent Refresh = new AutoResetEvent(false);
 
         public bool updatingBounds = false;
@@ -1167,17 +1175,19 @@ namespace GMap.NET.Internals
                 tileDrawingListLock.ReleaseWriterLock();
             }
 
-#if !NET40
+#if NET40
+            Interlocked.Exchange(ref loadWaitCount, 0);
+#else
             Monitor.Enter(tileLoadQueue);
             try
             {
 #endif
-                tileDrawingListLock.AcquireReaderLock();
-                try
+            tileDrawingListLock.AcquireReaderLock();
+            try
+            {
+                foreach (DrawTile p in tileDrawingList)
                 {
-                    foreach (DrawTile p in tileDrawingList)
-                    {
-                        LoadTask task = new LoadTask(p.PosXY, Zoom, this);
+                    LoadTask task = new LoadTask(p.PosXY, Zoom, this);
 #if NET40
                     AddLoadTask(task);
 #else
@@ -1188,21 +1198,21 @@ namespace GMap.NET.Internals
                             }
                         }
 #endif
-                    }
                 }
-                finally
-                {
-                    tileDrawingListLock.ReleaseReaderLock();
-                }
+            }
+            finally
+            {
+                tileDrawingListLock.ReleaseReaderLock();
+            }
 
 #if !NET40
-                #region -- starts loader threads if needed --
+            #region -- starts loader threads if needed --
 
                 lock (GThreadPool)
                 {
                     while (GThreadPool.Count < GThreadPoolSize)
                     {
-                        Thread t = new Thread(new ThreadStart(tileConsumerThread));
+                        Thread t = new Thread(new ThreadStart(tileLoadThread));
                         {
                             t.Name = "TileLoader: " + GThreadPool.Count;
                             t.IsBackground = true;
@@ -1215,12 +1225,12 @@ namespace GMap.NET.Internals
                         t.Start();
                     }
                 }
-                #endregion
+            #endregion
 #endif
-                {
-                    LastTileLoadStart = DateTime.Now;
-                    Debug.WriteLine("OnTileLoadStart - at zoom " + Zoom + ", time: " + LastTileLoadStart.TimeOfDay);
-                }
+            {
+                LastTileLoadStart = DateTime.Now;
+                Debug.WriteLine("OnTileLoadStart - at zoom " + Zoom + ", time: " + LastTileLoadStart.TimeOfDay);
+            }
 #if !NET40
                 loadWaitCount = 0;
                 Monitor.PulseAll(tileLoadQueue);
