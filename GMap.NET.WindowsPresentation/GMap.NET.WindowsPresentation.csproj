@@ -9,8 +9,7 @@
     <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GMap.NET.WindowsPresentation</RootNamespace>
-    <AssemblyName>GMap.NET.WindowsPresentation</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <AssemblyName>GMap.NET.WindowsPresentation</AssemblyName>    
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -22,6 +21,7 @@
     <UpgradeBackupLocation />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
@@ -39,6 +39,7 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <DocumentationFile>bin\x86\Release\GMap.NET.WindowsPresentation.XML</DocumentationFile>
@@ -51,6 +52,26 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'v4.0-Debug|AnyCPU'">
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\v4.0-Debug\</OutputPath>
+    <DefineConstants>NET40;TRACE;DEBUG</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'v4.0-Release|AnyCPU'">
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <OutputPath>bin\v4.0-Release\</OutputPath>
+    <DefineConstants>NET40;TRACE</DefineConstants>
+    <DocumentationFile>$(OutputPath)GMap.NET.WindowsPresentation.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

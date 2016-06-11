@@ -10,7 +10,6 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Demo.WindowsForms</RootNamespace>
     <AssemblyName>Demo.WindowsForms</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>Resources\ImageReady.ico</ApplicationIcon>
     <TargetFrameworkSubset>
@@ -64,6 +63,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;MONO_disabled; SQLite</DefineConstants>
@@ -81,6 +81,7 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <OutputPath>..\Build\Release-NET$(TargetFrameworkVersion)\</OutputPath>
     <DefineConstants>TRACE;MONO_disabled; SQLite</DefineConstants>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
@@ -109,6 +110,31 @@
     <RegisterForComInterop>False</RegisterForComInterop>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'v4.0-Debug|AnyCPU'">
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\v4.0-Debug\</OutputPath>
+    <DefineConstants>NET40;TRACE;DEBUG;MONO_disabled; SQLite</DefineConstants>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DebugType>Full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'v4.0-Release|AnyCPU'">
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <OutputPath>bin\v4.0-Release\</OutputPath>
+    <DefineConstants>NET40;TRACE;MONO_disabled; SQLite</DefineConstants>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <Optimize>true</Optimize>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFrameworkVersion)' == 'v2.0' ">
     <TargetFrameworkVersionNumber>2.0</TargetFrameworkVersionNumber>
   </PropertyGroup>
@@ -124,8 +150,8 @@
   <PropertyGroup Condition=" '$(TargetFrameworkVersion)' == 'v4.5' ">
     <TargetFrameworkVersionNumber>4.5</TargetFrameworkVersionNumber>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFrameworkVersion)' == 'v4.5.1' ">
-    <TargetFrameworkVersionNumber>4.51</TargetFrameworkVersionNumber>
+  <PropertyGroup Condition=" '$(TargetFrameworkVersion)' == 'v4.6' ">
+    <TargetFrameworkVersionNumber>4.6</TargetFrameworkVersionNumber>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFrameworkVersion)' == 'v5.0' ">
     <TargetFrameworkVersionNumber>5.0</TargetFrameworkVersionNumber>
@@ -379,6 +405,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Properties\app.manifest" />
     <None Include="sn.snk" />
   </ItemGroup>
