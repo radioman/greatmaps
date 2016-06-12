@@ -807,7 +807,7 @@ namespace GMap.NET.Internals
 
                                 Debug.WriteLine(ctid + ": started");
                                 do
-                                {
+                                { 
                                     if (tileLoadQueue4.Count == 0)
                                     {
                                         Debug.WriteLine(ctid + ": ready");

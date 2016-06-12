@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GMap.NET</RootNamespace>
-    <AssemblyName>GMap.NET.Core</AssemblyName>    
+    <AssemblyName>GMap.NET.Core</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
@@ -110,7 +110,7 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
-    <PropertyGroup Condition=" '$(TargetFrameworkVersion)' == 'v2.0' ">
+  <PropertyGroup Condition=" '$(TargetFrameworkVersion)' == 'v2.0' ">
     <TargetFrameworkVersionNumber>2.0</TargetFrameworkVersionNumber>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFrameworkVersion)' == 'v3.0' ">
@@ -229,11 +229,11 @@
     <Compile Include="GMap.NET.MapProviders\Etc\CloudMadeMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\SwedenMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\WikiMapiaMapProvider.cs" />
-    <Compile Include="GMap.NET.MapProviders\Czech\CzechHistoryMapProvider.cs" />
-    <Compile Include="GMap.NET.MapProviders\Czech\CzechHybridMapProvider.cs" />
-    <Compile Include="GMap.NET.MapProviders\Czech\CzechSatelliteMapProvider.cs" />
-    <Compile Include="GMap.NET.MapProviders\Czech\CzechTuristMapProvider.cs" />
-    <Compile Include="GMap.NET.MapProviders\Czech\CzechMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\CzechOld\CzechHistoryMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\CzechOld\CzechHybridMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\CzechOld\CzechSatelliteMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\CzechOld\CzechTuristMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\CzechOld\CzechMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\TurkeyMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\MapBenderWMSProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\SpainMapProvider.cs" />
