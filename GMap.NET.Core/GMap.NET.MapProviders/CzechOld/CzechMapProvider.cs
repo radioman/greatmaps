@@ -84,7 +84,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly string name = "CzechMap";
+      readonly string name = "CzechOldMap";
       public override string Name
       {
          get

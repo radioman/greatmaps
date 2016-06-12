@@ -30,7 +30,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly string name = "CzechHybridMap";
+      readonly string name = "CzechHybridOldMap";
       public override string Name
       {
          get

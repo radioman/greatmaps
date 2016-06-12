@@ -30,7 +30,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly string name = "CzechSatelliteMap";
+      readonly string name = "CzechSatelliteOldMap";
       public override string Name
       {
          get

@@ -12,6 +12,7 @@ namespace GMap.NET.MapProviders
 
       CzechHistoryMapProvider()
       {
+         MaxZoom = 15;
       }
 
       static CzechHistoryMapProvider()
@@ -21,7 +22,7 @@ namespace GMap.NET.MapProviders
 
       #region GMapProvider Members
 
-      readonly Guid id = new Guid("C666AAF4-9D27-418F-97CB-7F0D8CC44544");
+      readonly Guid id = new Guid("CD44C19D-5EED-4623-B367-FB39FDC55B8F");
       public override Guid Id
       {
          get
@@ -63,14 +64,11 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         // http://m4.mapserver.mapy.cz/army2/9_7d00000_8080000
+         // http://m3.mapserver.mapy.cz/army2-m/14-8802-5528
 
-         long xx = pos.X << (28 - zoom);
-         long yy = ((((long)Math.Pow(2.0, (double)zoom)) - 1) - pos.Y) << (28 - zoom);
-
-         return string.Format(UrlFormat, GetServerNum(pos, 3) + 1, zoom, xx, yy);
+         return string.Format(UrlFormat, GetServerNum(pos, 3) + 1, zoom, pos.X, pos.Y);
       }
 
-      static readonly string UrlFormat = "http://m{0}.mapserver.mapy.cz/army2/{1}_{2:x7}_{3:x7}";
+      static readonly string UrlFormat = "http://m{0}.mapserver.mapy.cz/army2-m/{1}-{2}-{3}";
    }
 }
