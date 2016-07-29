@@ -215,6 +215,7 @@
     <Compile Include="GMap.NET.Internals\TileHttpHost.cs" />
     <Compile Include="GMap.NET.MapProviders\ArcGIS\ArcGIS_DarbAE_Q2_2011_NAVTQ_Eng_V5_MapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Bing\BingMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\Bing\BingOSMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Bing\BingSatelliteMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Bing\BingHybridMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\ArcGIS\ArcGIS_StreetMap_World_2D_MapProvider.cs" />
