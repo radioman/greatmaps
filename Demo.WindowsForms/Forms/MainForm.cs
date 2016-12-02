@@ -1789,18 +1789,17 @@ namespace Demo.WindowsForms
          {
             if(File.Exists(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "License.txt"))
             {
-               string ctn = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "License.txt");
-               int li = ctn.IndexOf("License");
-               string txt = ctn.Substring(li);
+               string txt = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "License.txt");
+                {
+                    var d = new Demo.WindowsForms.Forms.Message();
+                    d.richTextBox1.Text = txt;
 
-               var d = new Demo.WindowsForms.Forms.Message();
-               d.richTextBox1.Text = txt;
-
-               if(DialogResult.Yes == d.ShowDialog())
-               {
-                  UserAcceptedLicenseOnce = true;
-                  this.Text += " - license accepted by " + Environment.UserName + " at " + DateTime.Now;
-               }
+                    if (DialogResult.Yes == d.ShowDialog())
+                    {
+                        UserAcceptedLicenseOnce = true;
+                        this.Text += " - license accepted by " + Environment.UserName + " at " + DateTime.Now;
+                    }
+                }
             }
             else
             {
