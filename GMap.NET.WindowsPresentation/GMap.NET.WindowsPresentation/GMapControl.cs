@@ -1,10 +1,14 @@
-﻿
-namespace GMap.NET.WindowsPresentation
+﻿namespace GMap.NET.WindowsPresentation
 {
+    using GMap.NET;
+    using GMap.NET.Internals;
+    using GMap.NET.MapProviders;
+    using GMap.NET.Projections;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
     using System.Windows;
@@ -16,12 +20,6 @@ namespace GMap.NET.WindowsPresentation
     using System.Windows.Media.Imaging;
     using System.Windows.Shapes;
     using System.Windows.Threading;
-    using GMap.NET;
-    using GMap.NET.Internals;
-    using System.Diagnostics;
-    using GMap.NET.MapProviders;
-    using System.Windows.Media.Animation;
-    using GMap.NET.Projections;
 
     /// <summary>
     /// GMap.NET control for Windows Presentation
@@ -113,10 +111,23 @@ namespace GMap.NET.WindowsPresentation
             }
         }
 
+        /// <summary>
+        /// The zoom property
+        /// </summary>
         public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register("Zoom", typeof(double), typeof(GMapControl), new UIPropertyMetadata(0.0, new PropertyChangedCallback(ZoomPropertyChanged), new CoerceValueCallback(OnCoerceZoom)));
 
         /// <summary>
-        /// map zoom
+        /// The zoom x property
+        /// </summary>
+        public static readonly DependencyProperty ZoomXProperty = DependencyProperty.Register("ZoomX", typeof(double), typeof(GMapControl), new UIPropertyMetadata(0.0, new PropertyChangedCallback(ZoomXPropertyChanged), new CoerceValueCallback(OnCoerceZoom)));
+
+        /// <summary>
+        /// The zoom y property
+        /// </summary>
+        public static readonly DependencyProperty ZoomYProperty = DependencyProperty.Register("ZoomY", typeof(double), typeof(GMapControl), new UIPropertyMetadata(0.0, new PropertyChangedCallback(ZoomYPropertyChanged), new CoerceValueCallback(OnCoerceZoom)));
+
+        /// <summary>
+        /// Map Zoom at a constant scale XY
         /// </summary>
         [Category("GMap.NET")]
         public double Zoom
@@ -130,6 +141,40 @@ namespace GMap.NET.WindowsPresentation
                 SetValue(ZoomProperty, value);
             }
         }
+
+        /// <summary>
+        /// Map Zoom X
+        /// </summary>
+        [Category("GMap.NET")]
+        public double ZoomX
+        {
+            get
+            {
+                return (double)(GetValue(ZoomXProperty));
+            }
+            set
+            {
+                SetValue(ZoomXProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Map Zoom Y
+        /// </summary>
+        [Category("GMap.NET")]
+        public double ZoomY
+        {
+            get
+            {
+                return (double)(GetValue(ZoomYProperty));
+            }
+            set
+            {
+                SetValue(ZoomYProperty, value);
+            }
+        }
+
+
 
         private static object OnCoerceZoom(DependencyObject o, object value)
         {
@@ -182,21 +227,18 @@ namespace GMap.NET.WindowsPresentation
             }
         }
 
-        private static void ZoomPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void ZoomPropertyChanged(GMapControl mapControl, double value, double oldValue, ZoomMode zoomMode)
         {
-            GMapControl map = (GMapControl)d;
-            if (map != null && map.MapProvider.Projection != null)
+            if (mapControl != null && mapControl.MapProvider.Projection != null)
             {
-                double value = (double)e.NewValue;
-
-                Debug.WriteLine("Zoom: " + e.OldValue + " -> " + value);
+                Debug.WriteLine("Zoom: " + oldValue + " -> " + value);
 
                 double remainder = value % 1;
-                if (map.ScaleMode != ScaleModes.Integer && remainder != 0 && map.ActualWidth > 0)
+                if (mapControl.ScaleMode != ScaleModes.Integer && remainder != 0 && mapControl.ActualWidth > 0)
                 {
                     bool scaleDown;
 
-                    switch (map.ScaleMode)
+                    switch (mapControl.ScaleMode)
                     {
                         case ScaleModes.ScaleDown:
                             scaleDown = true;
@@ -216,36 +258,77 @@ namespace GMap.NET.WindowsPresentation
 
                     double scaleValue = Math.Pow(2d, remainder);
                     {
-                        if (map.MapScaleTransform == null)
+                        if (mapControl.MapScaleTransform == null)
                         {
-                            map.MapScaleTransform = map.lastScaleTransform;
+                            mapControl.MapScaleTransform = mapControl.lastScaleTransform;
                         }
-                        map.MapScaleTransform.ScaleX = scaleValue;
-                        map.MapScaleTransform.ScaleY = scaleValue;
 
-                        map.Core.scaleX = 1 / scaleValue;
-                        map.Core.scaleY = 1 / scaleValue;
+                        if (zoomMode == ZoomMode.XY || zoomMode == ZoomMode.X)
+                        {
+                            mapControl.MapScaleTransform.ScaleX = scaleValue;
+                            mapControl.Core.scaleX = 1 / scaleValue;
+                            mapControl.MapScaleTransform.CenterX = mapControl.ActualWidth / 2;
+                        }
 
-                        map.MapScaleTransform.CenterX = map.ActualWidth / 2;
-                        map.MapScaleTransform.CenterY = map.ActualHeight / 2;
+                        if (zoomMode == ZoomMode.XY || zoomMode == ZoomMode.Y)
+                        {
+                            mapControl.MapScaleTransform.ScaleY = scaleValue;
+                            mapControl.Core.scaleY = 1 / scaleValue;
+                            mapControl.MapScaleTransform.CenterY = mapControl.ActualHeight / 2;
+                        }
                     }
 
-                    map.Core.Zoom = Convert.ToInt32(scaleDown ? Math.Ceiling(value) : value - remainder);
+                    mapControl.Core.Zoom = Convert.ToInt32(scaleDown ? Math.Ceiling(value) : value - remainder);
                 }
                 else
                 {
-                    map.MapScaleTransform = null;
-                    map.Core.scaleX = 1;
-                    map.Core.scaleY = 1;
-                    map.Core.Zoom = (int)Math.Floor(value);
+                    mapControl.MapScaleTransform = null;
+
+                    if (zoomMode == ZoomMode.XY || zoomMode == ZoomMode.X)
+                        mapControl.Core.scaleX = 1;
+
+                    if (zoomMode == ZoomMode.XY || zoomMode == ZoomMode.Y)
+                        mapControl.Core.scaleY = 1;
+
+                    mapControl.Core.Zoom = (int)Math.Floor(value);
                 }
 
-                if (map.IsLoaded)
+                if (mapControl.IsLoaded)
                 {
-                    map.ForceUpdateOverlays();
-                    map.InvalidateVisual(true);
+                    mapControl.ForceUpdateOverlays();
+                    mapControl.InvalidateVisual(true);
                 }
             }
+        }
+
+        /// <summary>
+        /// Zooms the property changed.
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void ZoomPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ZoomPropertyChanged((GMapControl)d, (double)e.NewValue, (double)e.OldValue, ZoomMode.XY);
+        }
+
+        /// <summary>
+        /// Zooms the x property changed.
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void ZoomXPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ZoomPropertyChanged((GMapControl)d, (double)e.NewValue, (double)e.OldValue, ZoomMode.X);
+        }
+
+        /// <summary>
+        /// Zooms the y property changed.
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void ZoomYPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ZoomPropertyChanged((GMapControl)d, (double)e.NewValue, (double)e.OldValue, ZoomMode.Y);
         }
 
         readonly ScaleTransform lastScaleTransform = new ScaleTransform();
@@ -373,6 +456,41 @@ namespace GMap.NET.WindowsPresentation
         }
 
         /// <summary>
+        /// The multi touch enabled property
+        /// </summary>
+        public static readonly DependencyProperty MultiTouchEnabledProperty = DependencyProperty.Register("MultiTouchEnabled", typeof(bool), typeof(GMapControl), new PropertyMetadata(false, OnMultiTouchEnabledChanged));
+
+        /// <summary>
+        /// Handles the <see cref="E:MultiTouchEnabledChanged" /> event.
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void OnMultiTouchEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var mapControl = (GMapControl)d;
+            mapControl.MultiTouchEnabled = (bool)e.NewValue;
+            mapControl.IsManipulationEnabled = (bool)e.NewValue;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [multi touch enabled].
+        /// </summary>
+        /// <value><c>true</c> if [multi touch enabled]; otherwise, <c>false</c>.</value>
+        [Category("GMap.NET")]
+        [Description("Enable pinch map zoom")]
+        public bool MultiTouchEnabled
+        {
+            get
+            {
+                return (bool)(GetValue(MultiTouchEnabledProperty));
+            }
+            set
+            {
+                SetValue(MultiTouchEnabledProperty, value);
+            }
+        }
+
+        /// <summary>
         /// map dragg button
         /// </summary>
         [Category("GMap.NET")]
@@ -455,9 +573,26 @@ namespace GMap.NET.WindowsPresentation
         }
 
         /// <summary>
+        /// The touch enabled property
+        /// </summary>
+        public static readonly DependencyProperty TouchEnabledProperty = DependencyProperty.Register("TouchEnabled", typeof(bool), typeof(GMapControl), new PropertyMetadata(false));
+
+        /// <summary>
         /// is touch control enabled
         /// </summary>
-        public bool TouchEnabled = true;
+        /// <value><c>true</c> if [touch enabled]; otherwise, <c>false</c>.</value>
+        [Obsolete("Touch Enabled is deprecated, please use MultiTouchEnabled")]
+        public bool TouchEnabled
+        {
+            get
+            {
+                return (bool)(GetValue(TouchEnabledProperty));
+            }
+            set
+            {
+                SetValue(TouchEnabledProperty, value);
+            }
+        }
 
         /// <summary>
         /// map boundaries
@@ -1971,6 +2106,144 @@ namespace GMap.NET.WindowsPresentation
             }
         }
 
+        /// <summary>
+        /// Called when the <see cref="E:System.Windows.UIElement.ManipulationDelta" /> event occurs.
+        /// </summary>
+        /// <param name="e">The data for the event.</param>
+        protected override void OnManipulationDelta(ManipulationDeltaEventArgs e)
+        {
+            base.OnManipulationDelta(e);
+
+            if (MultiTouchEnabled && !TouchEnabled)
+            {
+                var touchPoints = e.Manipulators.ToArray();
+                var element = e.Source as FrameworkElement;
+
+                if (element != null)
+                {
+                    var delta = e.DeltaManipulation;
+
+                    if (touchPoints.Length == 1)
+                    {
+                        SingleTouchPanMap(new Point(delta.Translation.X, delta.Translation.Y));
+                    }
+                    else if (touchPoints.Length >= 2)
+                    {
+                        Point centerOfTouchPoints = e.ManipulationOrigin;
+                        ZoomX *= delta.Scale.X;
+                        ZoomY *= delta.Scale.Y;
+                    }
+
+                    e.Handled = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Singles the touch pan map.
+        /// </summary>
+        /// <param name="deltaPoint">The delta point.</param>
+        protected virtual void SingleTouchPanMap(Point deltaPoint)
+        {
+            if (MultiTouchEnabled && !TouchEnabled) // redundent check in case this is invoked outside of the manipulation events
+            {
+                if (!Core.IsDragging)
+                {
+                    deltaPoint = ApplyRotationInversion(deltaPoint.X, deltaPoint.Y);
+
+                    // cursor has moved beyond drag tolerance
+                    if (Math.Abs(deltaPoint.X - Core.mouseDown.X) * 2 >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(deltaPoint.Y - Core.mouseDown.Y) * 2 >= SystemParameters.MinimumVerticalDragDistance)
+                    {
+                        Core.BeginDrag(Core.mouseDown);
+                    }
+                }
+
+                if (Core.IsDragging)
+                {
+                    if (!isDragging)
+                    {
+                        isDragging = true;
+                        Debug.WriteLine("IsDragging = " + isDragging);
+                        cursorBefore = Cursor;
+                        Cursor = Cursors.SizeAll;
+                        Mouse.Capture(this);
+                    }
+
+                    if (BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
+                    {
+                        // ...
+                    }
+                    else
+                    {
+                        deltaPoint = ApplyRotationInversion(deltaPoint.X, deltaPoint.Y);
+
+                        Core.mouseCurrent.X += (int)deltaPoint.X;
+                        Core.mouseCurrent.Y += (int)deltaPoint.Y;
+                        {
+                            Core.Drag(Core.mouseCurrent);
+                        }
+
+                        if (IsRotated)
+                        {
+                            ForceUpdateOverlays();
+                        }
+                        else
+                        {
+                            UpdateMarkersOffset();
+                        }
+                    }
+                    InvalidateVisual();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Called when the <see cref="E:System.Windows.UIElement.ManipulationCompleted" /> event occurs.
+        /// </summary>
+        /// <param name="e">The data for the event.</param>
+        protected override void OnManipulationCompleted(ManipulationCompletedEventArgs e)
+        {
+            base.OnManipulationCompleted(e);
+
+            if (MultiTouchEnabled && !TouchEnabled)
+            {
+                var touchPoints = e.Manipulators.ToArray();
+                if (true)
+                { // add bool to starting for single touch vs multi touch
+                    if (isSelected)
+                    {
+                        isSelected = false;
+                    }
+
+                    if (Core.IsDragging)
+                    {
+                        if (isDragging)
+                        {
+                            onMouseUpTimestamp = e.Timestamp & Int32.MaxValue;
+                            isDragging = false;
+                            Debug.WriteLine("IsDragging = " + isDragging);
+                            Cursor = cursorBefore;
+                            Mouse.Capture(null);
+                        }
+                        Core.EndDrag();
+
+                        if (BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
+                        {
+                            if (Core.LastLocationInBounds.HasValue)
+                            {
+                                Position = Core.LastLocationInBounds.Value;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Core.mouseDown = GPoint.Empty;
+                        InvalidateVisual();
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region IGControl Members
@@ -2367,6 +2640,27 @@ namespace GMap.NET.WindowsPresentation
         /// scales to fractional level using a combination both stretched and narrowed tiles, any issues -> http://greatmaps.codeplex.com/workitem/16046
         /// </summary>
         Dynamic
+    }
+
+    /// <summary>
+    /// Enum ZoomMode
+    /// </summary>
+    public enum ZoomMode
+    {
+        /// <summary>
+        /// Only update X coordinates
+        /// </summary>
+        X,
+
+        /// <summary>
+        /// Only update Y coordinates
+        /// </summary>
+        Y,
+
+        /// <summary>
+        /// Updates both the X and Y coordinates
+        /// </summary>
+        XY
     }
 
     public delegate void SelectionChange(RectLatLng Selection, bool ZoomToFit);
