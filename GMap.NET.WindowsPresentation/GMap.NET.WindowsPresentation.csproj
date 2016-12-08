@@ -45,7 +45,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <DocumentationFile>bin\x86\Release\GMap.NET.WindowsPresentation.XML</DocumentationFile>
@@ -72,7 +72,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'v4.0-Release|AnyCPU'">
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <OutputPath>bin\v4.0-Release\</OutputPath>
     <DefineConstants>NET40;TRACE</DefineConstants>
     <DocumentationFile>$(OutputPath)GMap.NET.WindowsPresentation.XML</DocumentationFile>
@@ -87,9 +87,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="ReachFramework" />
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
