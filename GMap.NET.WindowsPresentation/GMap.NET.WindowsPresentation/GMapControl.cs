@@ -112,6 +112,37 @@
         }
 
         /// <summary>
+        /// Gets or sets the center position.
+        /// </summary>
+        /// <value>The center position.</value>
+        [Category("GMap.NET")]
+        public PointLatLng CenterPosition
+        {
+            get { return (PointLatLng)GetValue(CenterPositionProperty); }
+            set { SetValue(CenterPositionProperty, value); }
+        }
+
+        /// <summary>
+        /// The center position property
+        /// </summary>
+        public static readonly DependencyProperty CenterPositionProperty = DependencyProperty.Register("CenterPosition", typeof(PointLatLng), typeof(GMapControl), new UIPropertyMetadata(new PointLatLng(), new PropertyChangedCallback(CenterPositionPropertyChanged)));
+
+        /// <summary>
+        /// Centers the position property changed.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void CenterPositionPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            var gmapControl = obj as GMapControl;
+
+            if (gmapControl != null && e.NewValue is PointLatLng)
+            {
+                gmapControl.CenterPosition = gmapControl.Position = (PointLatLng)e.NewValue;
+            }
+        }
+
+        /// <summary>
         /// The zoom property
         /// </summary>
         public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register("Zoom", typeof(double), typeof(GMapControl), new UIPropertyMetadata(0.0, new PropertyChangedCallback(ZoomPropertyChanged), new CoerceValueCallback(OnCoerceZoom)));
