@@ -47,7 +47,7 @@ namespace GMap.NET.CacheProviders
             }    
 
             string dllDir = appDataDir + "DllCache" + Path.DirectorySeparatorChar;
-            string dll = dllDir + "SQLite_v98_NET" + Environment.Version.Major + "_" + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar + "System.Data.SQLite.DLL";
+            string dll = dllDir + "SQLite_v103_NET" + Environment.Version.Major + "_" + (IntPtr.Size == 8 ? "x64" : "x86") + Path.DirectorySeparatorChar + "System.Data.SQLite.DLL";
             if(!File.Exists(dll))
             {
                string dir = Path.GetDirectoryName(dll);
