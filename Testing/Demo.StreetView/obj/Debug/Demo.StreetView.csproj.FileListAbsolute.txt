@@ -1,0 +1,16 @@
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\bin\Debug\Demo.StreetView.exe
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\bin\Debug\Demo.StreetView.pdb
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\bin\Debug\GMap.NET.Core.dll
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\bin\Debug\GMap.NET.Core.pdb
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\obj\Debug\Demo.StreetView.csprojResolveAssemblyReference.cache
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\obj\Debug\Window1.g.cs
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\obj\Debug\App.g.cs
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\obj\Debug\Demo.StreetView_MarkupCompile.cache
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\obj\Debug\Demo.StreetView_MarkupCompile.lref
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\obj\Debug\Window1.baml
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\obj\Debug\Demo.StreetView.g.resources
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\obj\Debug\Demo.StreetView.Properties.Resources.resources
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\obj\Debug\Demo.StreetView.csproj.GenerateResource.Cache
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\obj\Debug\Demo.StreetView.exe
+D:\Proyectos\Proyectos 2015\GMap.NET\Testing\Demo.StreetView\obj\Debug\Demo.StreetView.pdb
