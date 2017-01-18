@@ -1042,6 +1042,43 @@ namespace GMap.NET.WindowsForms
             }
         }
 
+        /// <summary>
+        /// Obtains the orientation between two points expressed in degrees
+        /// </summary>
+        /// <param name="StartPoint"></param>
+        /// <param name="EndPoint"></param>
+        /// <returns></returns>
+        public double getBearing(PointLatLng StartPoint, PointLatLng EndPoint)
+        {
+            //double startLat, double startLong, double endLat, double endLong
+            double startLat = radians(StartPoint.Lat);
+            double startLong = radians(StartPoint.Lng);
+            double endLat = radians(EndPoint.Lat);
+            double endLong = radians(EndPoint.Lng);
+
+            var dLong = endLong - startLong;
+
+            var dPhi = Math.Log(Math.Tan(endLat / 2.0 + Math.PI / 4.0) / Math.Tan(startLat / 2.0 + Math.PI / 4.0));
+            if (Math.Abs(dLong) > Math.PI)
+            {
+                if (dLong > 0.0)
+                    dLong = -(2.0 * Math.PI - dLong);
+                else
+                    dLong = (2.0 * Math.PI + dLong);
+            }
+
+            return Math.Round((degrees(Math.Atan2(dLong, dPhi)) + 360.0) % 360.0, 2);
+        }
+
+        double radians(double n)
+        {
+            return n * (Math.PI / 180);
+        }
+        double degrees(double n)
+        {
+            return n * (180 / Math.PI);
+        }
+
         #region UserControl Events
 
 #if !PocketPC
@@ -2364,6 +2401,8 @@ namespace GMap.NET.WindowsForms
         /// <returns>true if successfull</returns>
         public GeoCoderStatusCode SetPositionByKeywords(string keys)
         {
+            keys = keys.Replace("#", "%23");
+
             GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
 
             GeocodingProvider gp = MapProvider as GeocodingProvider;
@@ -2375,9 +2414,40 @@ namespace GMap.NET.WindowsForms
             if (gp != null)
             {
                 var pt = gp.GetPoint(keys, out status);
+
                 if (status == GeoCoderStatusCode.G_GEO_SUCCESS && pt.HasValue)
                 {
                     Position = pt.Value;
+                }
+            }
+
+            return status;
+        }
+
+        public GeoCoderStatusCode GetPositionByKeywords(string keys, out PointLatLng Punto)
+        {
+            //keys = keys.Replace("#", "%23");
+
+            GeoCoderStatusCode status = GeoCoderStatusCode.Unknow;
+            Punto = new PointLatLng();
+
+            GeocodingProvider gp = MapProvider as GeocodingProvider;
+
+            if (gp == null)
+            {
+                gp = GMapProviders.OpenStreetMap as GeocodingProvider;
+            }
+
+            if (gp != null)
+            {
+                var pt = gp.GetPoint(keys, out status);
+
+                if (status == GeoCoderStatusCode.G_GEO_SUCCESS && pt.HasValue)
+                {
+                    Punto = pt.Value;
+
+                    //Position = pt.Value;
+                    //return pt.Value;
                 }
             }
 
