@@ -134,49 +134,57 @@ namespace GMap.NET.Internals
 
         public void AcquireWriterLock()
         {
-#if !MONO && !PocketPC
-            if (UseNativeSRWLock)
+            try
             {
-                NativeMethods.AcquireSRWLockExclusive(ref LockSRW);
-            }
-            else
-#endif
-            {
-#if UseFastResourceLock
-                pLock.AcquireExclusive();
-#else
-            Thread.BeginCriticalRegion();
+                #if !MONO && !PocketPC
+                if (UseNativeSRWLock)
+                {
+                    NativeMethods.AcquireSRWLockExclusive(ref LockSRW);
+                }
+                else
+                #endif
+                {
+                #if UseFastResourceLock
+                    pLock.AcquireExclusive();
+                #else
+                    Thread.BeginCriticalRegion();
 
-            while(Interlocked.CompareExchange(ref busy, 1, 0) != 0)
-            {
-               Thread.Sleep(1);
-            }
+                    while(Interlocked.CompareExchange(ref busy, 1, 0) != 0)
+                    {
+                       Thread.Sleep(1);
+                    }
 
-            while(Interlocked.CompareExchange(ref readCount, 0, 0) != 0)
-            {
-               Thread.Sleep(1);
+                    while(Interlocked.CompareExchange(ref readCount, 0, 0) != 0)
+                    {
+                       Thread.Sleep(1);
+                    }
+                #endif
+                }
             }
-#endif
-            }
+            catch (Exception ex) { }
         }
 
         public void ReleaseWriterLock()
         {
-#if !MONO && !PocketPC
-            if (UseNativeSRWLock)
+            try
             {
-                NativeMethods.ReleaseSRWLockExclusive(ref LockSRW);
+                #if !MONO && !PocketPC
+                if (UseNativeSRWLock)
+                {
+                    NativeMethods.ReleaseSRWLockExclusive(ref LockSRW);
+                }
+                else
+                #endif
+                {
+                #if UseFastResourceLock
+                    pLock.ReleaseExclusive();
+                #else
+                    Interlocked.Exchange(ref busy, 0);
+                    Thread.EndCriticalRegion();
+                #endif
+                }
             }
-            else
-#endif
-            {
-#if UseFastResourceLock
-                pLock.ReleaseExclusive();
-#else
-            Interlocked.Exchange(ref busy, 0);
-            Thread.EndCriticalRegion();
-#endif
-            }
+            catch (Exception ex) { }
         }
 
         #region IDisposable Members
