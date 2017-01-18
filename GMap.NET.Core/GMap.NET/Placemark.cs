@@ -38,6 +38,7 @@ namespace GMap.NET
       public string SubAdministrativeAreaName;
       public string Neighborhood;
       public string StreetNumber;
+      public string StreetAddress;
 
       public string CountryNameCode;
       public string HouseNo;
@@ -58,6 +59,7 @@ namespace GMap.NET
          SubAdministrativeAreaName = string.Empty;
          Neighborhood = string.Empty;
          StreetNumber = string.Empty;
-      }
+            StreetAddress = string.Empty;
+        }
    }
 }
