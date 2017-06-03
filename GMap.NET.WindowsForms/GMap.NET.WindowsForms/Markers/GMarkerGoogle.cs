@@ -61,7 +61,16 @@ namespace GMap.NET.WindowsForms.Markers
    public class GMarkerGoogle : GMapMarker
 #endif
    {
-      Bitmap Bitmap;
+      private Bitmap _bitmap;
+      public Bitmap Bitmap
+      {
+            get { return _bitmap; }
+            set
+            {
+                _bitmap = value;
+
+            }
+      }
       Bitmap BitmapShadow;
 
       static Bitmap arrowshadow;
@@ -208,15 +217,18 @@ namespace GMap.NET.WindowsForms.Markers
          return ret;
       }
 
-
+        
       public override void OnRender(Graphics g)
       {
-#if !PocketPC
-            if(BitmapShadow != null)
+#if !PocketPC            
+            lock (Bitmap)
             {
-               g.DrawImage(BitmapShadow, LocalPosition.X, LocalPosition.Y, BitmapShadow.Width, BitmapShadow.Height);
-            }                
-            g.DrawImage(Bitmap, LocalPosition.X, LocalPosition.Y, Size.Width, Size.Height);
+                if (BitmapShadow != null)
+                {
+                    g.DrawImage(BitmapShadow, LocalPosition.X, LocalPosition.Y, BitmapShadow.Width, BitmapShadow.Height);
+                }
+                g.DrawImage(Bitmap, LocalPosition.X, LocalPosition.Y, Size.Width, Size.Height);
+            }           
 
             //g.DrawString(LocalPosition.ToString(), SystemFonts.DefaultFont, Brushes.Red, LocalPosition);
 #else

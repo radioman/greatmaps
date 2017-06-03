@@ -1,0 +1,11 @@
+D:\Proyectos\Proyectos 2015\GMap.NET\GMap.NET.WindowsPresentation\bin\Debug\GMap.NET.WindowsPresentation.dll
+D:\Proyectos\Proyectos 2015\GMap.NET\GMap.NET.WindowsPresentation\bin\Debug\GMap.NET.WindowsPresentation.pdb
+D:\Proyectos\Proyectos 2015\GMap.NET\GMap.NET.WindowsPresentation\bin\Debug\GMap.NET.Core.dll
+D:\Proyectos\Proyectos 2015\GMap.NET\GMap.NET.WindowsPresentation\bin\Debug\GMap.NET.Core.pdb
+D:\Proyectos\Proyectos 2015\GMap.NET\GMap.NET.WindowsPresentation\obj\Debug\GMap.NET.WindowsPresentation.csprojResolveAssemblyReference.cache
+D:\Proyectos\Proyectos 2015\GMap.NET\GMap.NET.WindowsPresentation\obj\Debug\GMap.NET.WindowsPresentation\TilePrefetcher.baml
+D:\Proyectos\Proyectos 2015\GMap.NET\GMap.NET.WindowsPresentation\obj\Debug\GMap.NET.WindowsPresentation\TilePrefetcher.g.cs
+D:\Proyectos\Proyectos 2015\GMap.NET\GMap.NET.WindowsPresentation\obj\Debug\GMap.NET.WindowsPresentation_MarkupCompile.cache
+D:\Proyectos\Proyectos 2015\GMap.NET\GMap.NET.WindowsPresentation\obj\Debug\GMap.NET.WindowsPresentation.g.resources
+D:\Proyectos\Proyectos 2015\GMap.NET\GMap.NET.WindowsPresentation\obj\Debug\GMap.NET.WindowsPresentation.dll
+D:\Proyectos\Proyectos 2015\GMap.NET\GMap.NET.WindowsPresentation\obj\Debug\GMap.NET.WindowsPresentation.pdb

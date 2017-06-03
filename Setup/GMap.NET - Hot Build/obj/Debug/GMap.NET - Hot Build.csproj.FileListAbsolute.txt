@@ -1,0 +1,4 @@
+D:\Proyectos\Proyectos 2015\GMap.NET\Setup\GMap.NET - Hot Build\obj\Debug\GMap.NET - Hot Build.csprojResolveAssemblyReference.cache
+D:\Proyectos\Proyectos 2015\GMap.NET\Setup\GMap.NET - Hot Build\obj\Debug\GMap.NET___Hot_Build.MainForm.resources
+D:\Proyectos\Proyectos 2015\GMap.NET\Setup\GMap.NET - Hot Build\obj\Debug\GMap.NET___Hot_Build.Properties.Resources.resources
+D:\Proyectos\Proyectos 2015\GMap.NET\Setup\GMap.NET - Hot Build\obj\Debug\GMap.NET - Hot Build.csproj.GenerateResource.Cache

@@ -126,4 +126,5 @@ namespace GMap.NET
          return string.Format(CultureInfo.CurrentCulture, "{{Lat={0}, Lng={1}}}", this.Lat, this.Lng);
       }
    }
+
 }
