@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://download-codeplex.sec.s-msft.com/Download?ProjectName=greatmaps&DownloadId=80111&Build=21050" />
+  <img src="../blob/master/Img/logo99.png" />
 </p>
 
 ***
@@ -12,6 +12,10 @@ SigPac, Yendux, Mapy.cz, Maps.lt, iKarte.lv, NearMap, OviMap,
 CloudMade, WikiMapia, MapQuest in Windows Forms & Presentation,
 supports caching and runs on windows mobile!
 
-![](http://i3.codeplex.com/Download?ProjectName=greatmaps&DownloadId=121499)
+![](../blob/master/Img/demo.png)
+
+<p align="center">
+<a href="https://thepiratebay.se/" target="_blank"><img title="Sail ;}" src="../blob/master/Img/tpb-logo.gif" /></a>
+</p>
 
 
