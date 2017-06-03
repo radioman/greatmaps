@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../blob/master/Img/logo99.png" />
+  <img src="../master/Img/logo99.png" />
 </p>
 
 ***
@@ -12,10 +12,9 @@ SigPac, Yendux, Mapy.cz, Maps.lt, iKarte.lv, NearMap, OviMap,
 CloudMade, WikiMapia, MapQuest in Windows Forms & Presentation,
 supports caching and runs on windows mobile!
 
-![](../blob/master/Img/demo.png)
+![](../master/Img/demo.png)
+![](../master/Img/yahoomap_f_small.png) ![](../master/Img/openstreetmaps_small.png) ![](../master/Img/gmap_mobile_small.png)
 
 <p align="center">
-<a href="https://thepiratebay.se/" target="_blank"><img title="Sail ;}" src="../blob/master/Img/tpb-logo.gif" /></a>
+<a href="https://thepiratebay.se/" target="_blank"><img title="Sail ;}" src="../master/Img/tpb-logo.gif" /></a>
 </p>
-
-
