@@ -184,7 +184,7 @@ namespace GMap.NET.MapProviders
                #region -- try get sesion key --
                if(!string.IsNullOrEmpty(key))
                {
-                  string keyResponse = GMaps.Instance.UseUrlCache ? Cache.Instance.GetContent("BingLoggingServiceV1" + key, CacheType.UrlCache, TimeSpan.FromHours(8)) : string.Empty;
+                  string keyResponse = GMaps.Instance.UseUrlCache ? Cache.Instance.GetContent("BingLoggingServiceV1" + key, CacheType.UrlCache, TimeSpan.FromHours(GMapProvider.TTLCache)) : string.Empty;
 
                   if(string.IsNullOrEmpty(keyResponse))
                   {
