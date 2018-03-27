@@ -293,4 +293,5 @@ namespace GMap.NET.WindowsForms
     public delegate void RouteClick(GMapRoute item, MouseEventArgs e);
     public delegate void RouteEnter(GMapRoute item);
     public delegate void RouteLeave(GMapRoute item);
+    public delegate void RouteDoubleClick(GMapRoute item, MouseEventArgs e);
 }
