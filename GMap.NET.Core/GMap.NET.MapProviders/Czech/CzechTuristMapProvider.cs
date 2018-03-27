@@ -50,11 +50,13 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         // http://m3.mapserver.mapy.cz/wtourist-m/14-8802-5528
+            // http://m3.mapserver.mapy.cz/wtourist-m/14-8802-5528
+            // https://mapserver.mapy.cz/turist-m/11-1101-692
 
-         return string.Format(UrlFormat, GetServerNum(pos, 3) + 1, zoom, pos.X, pos.Y);
+            return string.Format(UrlFormat, GetServerNum(pos, 3) + 1, zoom, pos.X, pos.Y);
       }
 
-      static readonly string UrlFormat = "http://m{0}.mapserver.mapy.cz/wturist-m/{1}-{2}-{3}";
+        //"http://m{0}.mapserver.mapy.cz/wturist-m/{1}-{2}-{3}";
+        static readonly string UrlFormat = "https://mapserver.mapy.cz/turist-m/{1}-{2}-{3}";
    }
 }
