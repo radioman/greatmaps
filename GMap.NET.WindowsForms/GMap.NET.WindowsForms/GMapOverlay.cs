@@ -74,9 +74,29 @@ namespace GMap.NET.WindowsForms
          }
       }
 
-      /// <summary>
-      /// overlay Id
-      /// </summary>
+        bool isHitTestVisible = true;
+        /// <summary>
+        /// HitTest visibility for entire overlay
+        /// </summary>
+        public bool IsHitTestVisible
+        {
+            get { return isHitTestVisible; }
+            set { isHitTestVisible = value; }
+        }
+
+        bool isZoomSignificant = true;
+        /// <summary>
+        /// if false don't consider contained objects when box zooming
+        /// </summary>
+        public bool IsZoomSignificant
+        {
+            get { return isZoomSignificant; }
+            set { isZoomSignificant = value; }
+        }
+
+        /// <summary>
+        /// overlay Id
+        /// </summary>
       public string Id;
 
       /// <summary>
