@@ -811,7 +811,7 @@ namespace GMap.NET.WindowsForms
         /// <summary>
         /// gets rectangle with all objects inside
         /// </summary>
-        /// <param name="overlayId">overlay id or null to check all</param>
+        /// <param name="overlayId">overlay id or null to check all except zoomInsignificant</param>
         /// <returns></returns>
         public RectLatLng? GetRectOfAllMarkers(string overlayId)
         {
@@ -824,7 +824,7 @@ namespace GMap.NET.WindowsForms
 
             foreach (GMapOverlay o in Overlays)
             {
-                if (overlayId == null || o.Id == overlayId)
+                if ((overlayId == null && o.IsZoomSignificant) || o.Id == overlayId)
                 {
                     if (o.IsVisibile && o.Markers.Count > 0)
                     {
@@ -872,7 +872,7 @@ namespace GMap.NET.WindowsForms
         /// <summary>
         /// gets rectangle with all objects inside
         /// </summary>
-        /// <param name="overlayId">overlay id or null to check all</param>
+        /// <param name="overlayId">overlay id or null to check all except zoomInsignificant</param>
         /// <returns></returns>
         public RectLatLng? GetRectOfAllRoutes(string overlayId)
         {
@@ -885,7 +885,7 @@ namespace GMap.NET.WindowsForms
 
             foreach (GMapOverlay o in Overlays)
             {
-                if (overlayId == null || o.Id == overlayId)
+                if ((overlayId == null && o.IsZoomSignificant) || o.Id == overlayId)
                 {
                     if (o.IsVisibile && o.Routes.Count > 0)
                     {
@@ -1856,7 +1856,7 @@ namespace GMap.NET.WindowsForms
                 for (int i = Overlays.Count - 1; i >= 0; i--)
                 {
                     GMapOverlay o = Overlays[i];
-                    if (o != null && o.IsVisibile)
+                    if (o != null && o.IsVisibile && o.IsHitTestVisible)
                     {
                         foreach (GMapMarker m in o.Markers)
                         {
@@ -1945,7 +1945,7 @@ namespace GMap.NET.WindowsForms
                 for (int i = Overlays.Count - 1; i >= 0; i--)
                 {
                     GMapOverlay o = Overlays[i];
-                    if (o != null && o.IsVisibile)
+                    if (o != null && o.IsVisibile && o.IsHitTestVisible)
                     {
                         foreach (GMapMarker m in o.Markers)
                         {
@@ -2153,7 +2153,7 @@ namespace GMap.NET.WindowsForms
                         for (int i = Overlays.Count - 1; i >= 0; i--)
                         {
                             GMapOverlay o = Overlays[i];
-                            if (o != null && o.IsVisibile)
+                            if (o != null && o.IsVisibile && o.IsHitTestVisible)
                             {
                                 foreach (GMapMarker m in o.Markers)
                                 {
