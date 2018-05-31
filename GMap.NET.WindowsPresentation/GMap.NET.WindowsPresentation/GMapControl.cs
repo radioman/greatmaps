@@ -799,7 +799,7 @@
 
                   if(i is IShapable)
                   {
-                     (i as IShapable).RegenerateShape(this);
+                     (i as IShapable).RegenerateShape();
                   }
                }
             }
@@ -1021,132 +1021,6 @@
          obj.Margin = margin;
 
          return bmp;
-      }
-
-      /// <summary>
-      /// creates path from list of points, for performance set addBlurEffect to false
-      /// </summary>
-      /// <param name="pl"></param>
-      /// <returns></returns>
-      public virtual Path CreateRoutePath(List<Point> localPath)
-      {
-         return CreateRoutePath(localPath, true);
-      }
-
-      /// <summary>
-      /// creates path from list of points, for performance set addBlurEffect to false
-      /// </summary>
-      /// <param name="pl"></param>
-      /// <returns></returns>
-      public virtual Path CreateRoutePath(List<Point> localPath, bool addBlurEffect)
-      {
-         // Create a StreamGeometry to use to specify myPath.
-         StreamGeometry geometry = new StreamGeometry();
-
-         using(StreamGeometryContext ctx = geometry.Open())
-         {
-            ctx.BeginFigure(localPath[0], false, false);
-
-            // Draw a line to the next specified point.
-            ctx.PolyLineTo(localPath, true, true);
-         }
-
-         // Freeze the geometry (make it unmodifiable)
-         // for additional performance benefits.
-         geometry.Freeze();
-
-         // Create a path to draw a geometry with.
-         Path myPath = new Path();
-         {
-            // Specify the shape of the Path using the StreamGeometry.
-            myPath.Data = geometry;
-
-            if(addBlurEffect)
-            {
-               BlurEffect ef = new BlurEffect();
-               {
-                  ef.KernelType = KernelType.Gaussian;
-                  ef.Radius = 3.0;
-                  ef.RenderingBias = RenderingBias.Performance;
-               }
-
-               myPath.Effect = ef;
-            }
-
-            myPath.Stroke = Brushes.Navy;
-            myPath.StrokeThickness = 5;
-            myPath.StrokeLineJoin = PenLineJoin.Round;
-            myPath.StrokeStartLineCap = PenLineCap.Triangle;
-            myPath.StrokeEndLineCap = PenLineCap.Square;
-
-            myPath.Opacity = 0.6;
-            myPath.IsHitTestVisible = false;
-         }
-         return myPath;
-      }
-
-      /// <summary>
-      /// creates path from list of points, for performance set addBlurEffect to false
-      /// </summary>
-      /// <param name="pl"></param>
-      /// <returns></returns>
-      public virtual Path CreatePolygonPath(List<Point> localPath)
-      {
-         return CreatePolygonPath(localPath, false);
-      }
-
-      /// <summary>
-      /// creates path from list of points, for performance set addBlurEffect to false
-      /// </summary>
-      /// <param name="pl"></param>
-      /// <returns></returns>
-      public virtual Path CreatePolygonPath(List<Point> localPath, bool addBlurEffect)
-      {
-         // Create a StreamGeometry to use to specify myPath.
-         StreamGeometry geometry = new StreamGeometry();
-
-         using(StreamGeometryContext ctx = geometry.Open())
-         {
-            ctx.BeginFigure(localPath[0], true, true);
-
-            // Draw a line to the next specified point.
-            ctx.PolyLineTo(localPath, true, true);
-         }
-
-         // Freeze the geometry (make it unmodifiable)
-         // for additional performance benefits.
-         geometry.Freeze();
-
-         // Create a path to draw a geometry with.
-         Path myPath = new Path();
-         {
-            // Specify the shape of the Path using the StreamGeometry.
-            myPath.Data = geometry;
-
-            if(addBlurEffect)
-            {
-               BlurEffect ef = new BlurEffect();
-               {
-                  ef.KernelType = KernelType.Gaussian;
-                  ef.Radius = 3.0;
-                  ef.RenderingBias = RenderingBias.Performance;
-               }
-
-               myPath.Effect = ef;
-            }
-
-            myPath.Stroke = Brushes.MidnightBlue;
-            myPath.StrokeThickness = 5;
-            myPath.StrokeLineJoin = PenLineJoin.Round;
-            myPath.StrokeStartLineCap = PenLineCap.Triangle;
-            myPath.StrokeEndLineCap = PenLineCap.Square;
-
-            myPath.Fill = Brushes.AliceBlue;
-
-            myPath.Opacity = 0.6;
-            myPath.IsHitTestVisible = false;
-         }
-         return myPath;
       }
 
       /// <summary>
