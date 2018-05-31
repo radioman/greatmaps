@@ -64,10 +64,55 @@ namespace GMap.NET.MapProviders
 
       #region GMapRoutingProvider Members
 
-      public virtual MapRoute GetRoute(PointLatLng start, PointLatLng end, bool avoidHighways, bool walkingMode, int zoom)
+      public virtual MapRoute GetRoute(PointLatLng start, PointLatLng end, bool avoidHighways, bool walkingMode, int Zoom, bool getInstructions = false)
       {
-         List<PointLatLng> points = GetRoutePoints(MakeRoutingUrl(start, end, walkingMode ? TravelTypeFoot : TravelTypeMotorCar));
-         MapRoute route = points != null ? new MapRoute(points, walkingMode ? WalkingStr : DrivingStr) : null;
+         var url = MakeRoutingUrl(start, end, walkingMode ? TravelTypeFoot : TravelTypeMotorCar, getInstructions);
+
+         string routeXml = GMaps.Instance.UseRouteCache ? Cache.Instance.GetContent(url, CacheType.RouteCache) : string.Empty;
+         if (string.IsNullOrEmpty(routeXml))
+         {
+            routeXml = GetContentUsingHttp(url);
+            if (!string.IsNullOrEmpty(routeXml))
+            {
+               if (GMaps.Instance.UseRouteCache)
+               {
+                  Cache.Instance.SaveContent(url, CacheType.RouteCache, routeXml);
+               }
+            }
+         }
+
+         MapRoute route = null;
+         try
+         {
+            if (!string.IsNullOrEmpty(routeXml))
+            {
+               XmlDocument xmldoc = new XmlDocument();
+               xmldoc.LoadXml(routeXml);
+               XmlNamespaceManager xmlnsManager = new XmlNamespaceManager(xmldoc.NameTable);
+               xmlnsManager.AddNamespace("sm", "http://earth.google.com/kml/2.0");
+
+               if (!string.IsNullOrEmpty(routeXml))
+               {
+                  var points = GetRoutePoints(xmldoc, xmlnsManager);
+
+                  if (points != null)
+                  {
+                     route = new MapRoute(points, walkingMode ? WalkingStr : DrivingStr)
+                     {
+                        TravelTime = GetTravelTime(xmldoc, xmlnsManager)
+                     };
+
+                     if (getInstructions)
+                        route.Instructions.AddRange(GetInstructions(xmldoc, xmlnsManager));
+                  }
+               }
+            }
+         }
+         catch (Exception ex)
+         {
+            Debug.WriteLine("GetRoute: " + ex);
+         }
+
          return route;
       }
 
@@ -86,70 +131,73 @@ namespace GMap.NET.MapProviders
       }
 
       #region -- internals --
-      string MakeRoutingUrl(PointLatLng start, PointLatLng end, string travelType)
+      string MakeRoutingUrl(PointLatLng start, PointLatLng end, string travelType, bool withInstructions = false)
       {
-         return string.Format(CultureInfo.InvariantCulture, RoutingUrlFormat, start.Lat, start.Lng, end.Lat, end.Lng, travelType);
+         return string.Format(CultureInfo.InvariantCulture, RoutingUrlFormat, start.Lat, start.Lng, end.Lat, end.Lng, travelType, withInstructions ? "1" : "0", LanguageStr);
       }
 
-      List<PointLatLng> GetRoutePoints(string url)
+      int GetTravelTime(XmlDocument xmldoc, XmlNamespaceManager xmlnsManager)
+      {
+         ///traveltime
+         var travelTimeNode = xmldoc.SelectSingleNode("/sm:kml/sm:Document/sm:traveltime", xmlnsManager);
+
+         if (travelTimeNode.InnerText.Length > 0)
+         {
+            return Convert.ToInt32(travelTimeNode.InnerText);
+         }
+         return 0;
+      }
+
+      IEnumerable<string> GetInstructions(XmlDocument xmldoc, XmlNamespaceManager xmlnsManager)
+      {
+         ///description
+         var instructionsNode = xmldoc.SelectSingleNode("/sm:kml/sm:Document/sm:description", xmlnsManager);
+
+         if (instructionsNode.InnerText.Length > 0)
+         {
+            var instructions = instructionsNode.InnerText.Split(new string[1] { "<br>" }, StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < instructions.Length; i++)
+            {
+               instructions[i] = instructions[i].Trim();
+            }
+
+            return instructions;
+         }
+
+         return null;
+      }
+
+      List<PointLatLng> GetRoutePoints(XmlDocument xmldoc, XmlNamespaceManager xmlnsManager)
       {
          List<PointLatLng> points = null;
-         try
+         ///Folder/Placemark/LineString/coordinates
+         var coordNode = xmldoc.SelectSingleNode("/sm:kml/sm:Document/sm:Folder/sm:Placemark/sm:LineString/sm:coordinates", xmlnsManager);
+
+         string[] coordinates = coordNode.InnerText.Split('\n');
+
+         if (coordinates.Length > 0)
          {
-            string route = GMaps.Instance.UseRouteCache ? Cache.Instance.GetContent(url, CacheType.RouteCache) : string.Empty;
-            if(string.IsNullOrEmpty(route))
+            points = new List<PointLatLng>();
+
+            foreach (string coordinate in coordinates)
             {
-               route = GetContentUsingHttp(url);
-               if(!string.IsNullOrEmpty(route))
+               if (coordinate != string.Empty)
                {
-                  if(GMaps.Instance.UseRouteCache)
+                  string[] XY = coordinate.Split(',');
+                  if (XY.Length == 2)
                   {
-                     Cache.Instance.SaveContent(url, CacheType.RouteCache, route);
-                  }
-               }
-            }
-
-            if(!string.IsNullOrEmpty(route))
-            {
-               XmlDocument xmldoc = new XmlDocument();
-               xmldoc.LoadXml(route);
-               System.Xml.XmlNamespaceManager xmlnsManager = new System.Xml.XmlNamespaceManager(xmldoc.NameTable);
-               xmlnsManager.AddNamespace("sm", "http://earth.google.com/kml/2.0");
-
-               ///Folder/Placemark/LineString/coordinates
-               var coordNode = xmldoc.SelectSingleNode("/sm:kml/sm:Document/sm:Folder/sm:Placemark/sm:LineString/sm:coordinates", xmlnsManager);
-
-               string[] coordinates = coordNode.InnerText.Split('\n');
-
-               if(coordinates.Length > 0)
-               {
-                  points = new List<PointLatLng>();
-
-                  foreach(string coordinate in coordinates)
-                  {
-                     if(coordinate != string.Empty)
-                     {
-                        string[] XY = coordinate.Split(',');
-                        if(XY.Length == 2)
-                        {
-                           double lat = double.Parse(XY[1], CultureInfo.InvariantCulture);
-                           double lng = double.Parse(XY[0], CultureInfo.InvariantCulture);
-                           points.Add(new PointLatLng(lat, lng));
-                        }
-                     }
+                     double lat = double.Parse(XY[1], CultureInfo.InvariantCulture);
+                     double lng = double.Parse(XY[0], CultureInfo.InvariantCulture);
+                     points.Add(new PointLatLng(lat, lng));
                   }
                }
             }
          }
-         catch(Exception ex)
-         {
-            Debug.WriteLine("GetRoutePoints: " + ex);
-         }
-
          return points;
       }
 
-      static readonly string RoutingUrlFormat = "http://www.yournavigation.org/api/1.0/gosmore.php?format=kml&flat={0}&flon={1}&tlat={2}&tlon={3}&v={4}&fast=1&layer=mapnik";
+      static readonly string RoutingUrlFormat = "http://www.yournavigation.org/api/1.0/gosmore.php?format=kml&flat={0}&flon={1}&tlat={2}&tlon={3}&v={4}&fast=1&layer=mapnik&instructions={5}&lang={6}";
       static readonly string TravelTypeFoot = "foot";
       static readonly string TravelTypeMotorCar = "motorcar";
 

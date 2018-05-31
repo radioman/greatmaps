@@ -372,7 +372,7 @@ namespace GMap.NET.MapProviders
 
       #region RoutingProvider
 
-      public MapRoute GetRoute(PointLatLng start, PointLatLng end, bool avoidHighways, bool walkingMode, int zoom)
+      public MapRoute GetRoute(PointLatLng start, PointLatLng end, bool avoidHighways, bool walkingMode, int zoom, bool getInstructions = false)
       {
          string tooltip;
          int numLevels;
