@@ -76,6 +76,7 @@ namespace GMap.NET.MapProviders
         public static readonly BingMapProvider BingMap = BingMapProvider.Instance;
         public static readonly BingSatelliteMapProvider BingSatelliteMap = BingSatelliteMapProvider.Instance;
         public static readonly BingHybridMapProvider BingHybridMap = BingHybridMapProvider.Instance;
+        public static readonly BingOSMapProvider BingOSMap = BingOSMapProvider.Instance;
 
         public static readonly YahooMapProvider YahooMap = YahooMapProvider.Instance;
         public static readonly YahooSatelliteMapProvider YahooSatelliteMap = YahooSatelliteMapProvider.Instance;
