@@ -1,24 +1,34 @@
 ﻿
 namespace GMap.NET.WindowsPresentation
 {
+   using System;
    using System.Collections.Generic;
+   using System.Windows;
    using System.Windows.Media;
    using System.Windows.Media.Effects;
    using System.Windows.Shapes;
 
    public interface IShapable
    {
-      void RegenerateShape();
+      List<PointLatLng> Points
+      {
+         get; set;
+      }
+
+      Path CreatePath(List<System.Windows.Point> localPath, bool addBlurEffect);
    }
 
    public class GMapRoute : GMapMarker, IShapable
    {
-      public readonly List<PointLatLng> Points = new List<PointLatLng>();
-
       public GMapRoute(IEnumerable<PointLatLng> points)
       {
-         Points.AddRange(points);
-         RegenerateShape();
+         Points = new List<PointLatLng>(points);
+      }
+
+      public List<PointLatLng> Points
+      {
+         get;
+         set;
       }
 
       public override void Clear()
@@ -28,45 +38,11 @@ namespace GMap.NET.WindowsPresentation
       }
 
       /// <summary>
-      /// regenerates shape of route
-      /// </summary>
-      public virtual void RegenerateShape()
-      {
-         if(Points.Count > 1)
-         {
-            Position = Points[0];
-
-            var localPath = new List<System.Windows.Point>(Points.Count);
-            var offset = Map.FromLatLngToLocal(Points[0]);
-            foreach(var i in Points)
-            {
-               var p = Map.FromLatLngToLocal(i);
-               localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
-            }
-
-            var shape = CreateRoutePath(localPath, true);
-
-            if(this.Shape is Path)
-            {
-               (this.Shape as Path).Data = shape.Data;
-            }
-            else
-            {
-               this.Shape = shape;
-            }
-         }
-         else
-         {
-            this.Shape = null;
-         }
-      }
-
-      /// <summary>
       /// creates path from list of points, for performance set addBlurEffect to false
       /// </summary>
       /// <param name="pl"></param>
       /// <returns></returns>
-      public virtual Path CreateRoutePath(List<System.Windows.Point> localPath, bool addBlurEffect)
+      public virtual Path CreatePath(List<System.Windows.Point> localPath, bool addBlurEffect)
       {
          // Create a StreamGeometry to use to specify myPath.
          StreamGeometry geometry = new StreamGeometry();

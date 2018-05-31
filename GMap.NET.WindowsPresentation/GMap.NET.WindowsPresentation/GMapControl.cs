@@ -785,6 +785,42 @@
          ForceUpdateOverlays(ItemsSource);
       }
 
+      /// <summary>
+      /// regenerates shape of route
+      /// </summary>
+      public virtual void RegenerateShape(IShapable s)
+      {
+         var marker = s as GMapMarker;
+
+         if(s.Points != null && s.Points.Count > 1)
+         {
+            marker.Position = s.Points[0];
+
+            var localPath = new List<System.Windows.Point>(s.Points.Count);
+            var offset = FromLatLngToLocal(s.Points[0]);
+            foreach(var i in s.Points)
+            {
+               var p = FromLatLngToLocal(i);
+               localPath.Add(new System.Windows.Point(p.X - offset.X, p.Y - offset.Y));
+            }
+
+            var shape = s.CreatePath(localPath, true);
+
+            if(marker.Shape is Path)
+            {
+               (marker.Shape as Path).Data = shape.Data;
+            }
+            else
+            {
+               marker.Shape = shape;
+            }
+         }
+         else
+         {
+            marker.Shape = null;
+         }
+      }
+
       void ForceUpdateOverlays(System.Collections.IEnumerable items)
       {
          using(Dispatcher.DisableProcessing())
@@ -799,7 +835,7 @@
 
                   if(i is IShapable)
                   {
-                     (i as IShapable).RegenerateShape();
+                     RegenerateShape(i as IShapable);
                   }
                }
             }
