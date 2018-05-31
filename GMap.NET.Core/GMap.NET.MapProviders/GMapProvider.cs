@@ -200,6 +200,11 @@ namespace GMap.NET.MapProviders
     public abstract class GMapProvider
     {
         /// <summary>
+        /// Time to live of cache, in hours. Default: 240 (10 days).
+        /// </summary>
+        public static int TTLCache = 240;
+
+        /// <summary>
         /// unique provider id
         /// </summary>
         public abstract Guid Id

@@ -47,6 +47,72 @@ namespace GMap.NET
          }
       }
 
+
+      /// <summary>
+      /// Gets the minimum distance (in mts) from the route to a point. Gets null if total points of route are less than 2.
+      /// </summary>
+      /// <param name="point">Point to calculate distance.</param>
+      /// <returns>Distance in meters.</returns>
+      public double? DistanceTo(PointLatLng point)
+      {
+          // Minimun of two elements required to compare.
+          if (Points.Count >= 2)
+          {
+              // First element as the min.
+              double min = DistanceToLinealRoute(Points[0], Points[1], point);
+
+              // From 2.
+              for (int i = 2; i < Points.Count; i++)
+              {
+                  double distance = DistanceToLinealRoute(Points[i - 1], Points[i], point);
+
+                  if (distance < min)
+                      min = distance;
+              }
+
+              return min;
+          }
+
+          return null;
+      }
+
+
+      /// <summary>
+      /// Gets the distance (in mts) between the nearest point of a lineal route (of two points), and a point.
+      /// </summary>
+      /// <param name="start">Start point of lineal route.</param>
+      /// <param name="to">End point of lineal route.</param>
+      /// <param name="point">Point to calculate distance.</param>
+      /// <returns>Distance in meters.</returns>
+      public static double DistanceToLinealRoute(PointLatLng start, PointLatLng to, PointLatLng point)
+      {
+          // Lineal function formula => y = mx+b (y is lat, x is lng).
+          // Member m.
+          double m = (start.Lat - to.Lat) / (start.Lng - to.Lng);
+
+          // Obtain of b => b = y-mx
+          double b = -(m * start.Lng - start.Lat);
+
+          // Possible points of Lat and Lng based on formula replacement (formulaLat and formulaLng).
+          // Lat = m*Lng+b
+          double formulaLat = m*point.Lng + b;
+
+          // Lat = m*Lng+b => (Lat-b)/m=Lng 
+          double formulaLng = (point.Lat-b)/m;
+
+          // Possibles distances: One from the given point.Lat, and other from the point.Lng.
+          double distance1 = GMapProviders.EmptyProvider.Projection.
+                             GetDistance(new PointLatLng(point.Lat, formulaLng), point);
+          double distance2 = GMapProviders.EmptyProvider.Projection.
+                             GetDistance(new PointLatLng(formulaLat, point.Lng), point);
+
+          // Min of the distances.
+          double distance = distance1 <= distance2 ? distance1 : distance2;
+
+          // To mts.
+          return distance*1000;
+      }
+
       /// <summary>
       /// route end point
       /// </summary>

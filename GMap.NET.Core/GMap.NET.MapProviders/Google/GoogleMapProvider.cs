@@ -96,7 +96,7 @@ namespace GMap.NET.MapProviders
                 string url = string.Format("https://maps.{0}/maps/api/js?client=google-maps-lite&amp;libraries=search&amp;language=en&amp;region=", ServerAPIs);
                 try
                 {
-                    string html = GMaps.Instance.UseUrlCache ? Cache.Instance.GetContent(url, CacheType.UrlCache, TimeSpan.FromHours(8)) : string.Empty;
+                    string html = GMaps.Instance.UseUrlCache ? Cache.Instance.GetContent(url, CacheType.UrlCache, TimeSpan.FromHours(GMapProvider.TTLCache)) : string.Empty;
 
                     if (string.IsNullOrEmpty(html))
                     {
@@ -1360,8 +1360,9 @@ namespace GMap.NET.MapProviders
             return status;
         }
 
-        static readonly string ReverseGeocoderUrlFormat = "http://maps.{0}/maps/api/geocode/xml?latlng={1},{2}&language={3}&sensor=false";
-        static readonly string GeocoderUrlFormat = "http://maps.{0}/maps/api/geocode/xml?address={1}&language={2}&sensor=false";
+        // Note: Use of API Key requires https's queries.
+        static readonly string ReverseGeocoderUrlFormat = "https://maps.{0}/maps/api/geocode/xml?latlng={1},{2}&language={3}&sensor=false";
+        static readonly string GeocoderUrlFormat = "https://maps.{0}/maps/api/geocode/xml?address={1}&language={2}&sensor=false";
 
         #endregion
 
