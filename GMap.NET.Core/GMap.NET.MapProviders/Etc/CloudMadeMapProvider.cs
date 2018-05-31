@@ -71,7 +71,7 @@ namespace GMap.NET.MapProviders
 
       #region RoutingProvider Members
 
-      public MapRoute GetRoute(PointLatLng start, PointLatLng end, bool avoidHighways, bool walkingMode, int Zoom)
+      public MapRoute GetRoute(PointLatLng start, PointLatLng end, bool avoidHighways, bool walkingMode, int zoom)
       {
          List<PointLatLng> points = GetRoutePoints(MakeRoutingUrl(start, end, walkingMode ? TravelTypeFoot : TravelTypeMotorCar, LanguageStr, "km"));
          MapRoute route = points != null ? new MapRoute(points, walkingMode ? WalkingStr : DrivingStr) : null;
@@ -85,9 +85,9 @@ namespace GMap.NET.MapProviders
       /// <param name="end"></param>
       /// <param name="avoidHighways"></param>
       /// <param name="walkingMode"></param>
-      /// <param name="Zoom"></param>
+      /// <param name="zoom"></param>
       /// <returns></returns>
-      public MapRoute GetRoute(string start, string end, bool avoidHighways, bool walkingMode, int Zoom)
+      public MapRoute GetRoute(string start, string end, bool avoidHighways, bool walkingMode, int zoom)
       {
          throw new NotImplementedException();
       }

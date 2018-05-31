@@ -9,11 +9,11 @@ namespace GMap.NET
       /// <summary>
       /// get route between two points
       /// </summary>
-      MapRoute GetRoute(PointLatLng start, PointLatLng end, bool avoidHighways, bool walkingMode, int Zoom);
+      MapRoute GetRoute(PointLatLng start, PointLatLng end, bool avoidHighways, bool walkingMode, int zoom);
 
       /// <summary>
       /// get route between two points
       /// </summary>
-      MapRoute GetRoute(string start, string end, bool avoidHighways, bool walkingMode, int Zoom);
+      MapRoute GetRoute(string start, string end, bool avoidHighways, bool walkingMode, int zoom);
    }
 }
