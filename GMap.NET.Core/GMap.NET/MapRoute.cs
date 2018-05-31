@@ -162,6 +162,16 @@ namespace GMap.NET
       }    
 
       /// <summary>
+      /// Travel time (in sec)
+      /// </summary>
+      public int TravelTime { get; set; }
+
+      /// <summary>
+      /// Routing instructions
+      /// </summary>
+      public readonly List<string> Instructions = new List<string>();
+
+      /// <summary>
       /// clears points and sets tag and name to null
       /// </summary>
       public void Clear()
