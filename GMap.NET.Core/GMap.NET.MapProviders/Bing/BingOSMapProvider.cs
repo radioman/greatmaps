@@ -21,7 +21,7 @@ namespace GMap.NET.MapProviders
 
         #region GMapProvider Members
 
-        readonly Guid id = Guid.NewGuid();
+        readonly Guid id = new Guid("3C12C212-A79F-42D0-9A1B-22740E1103E8");
         public override Guid Id
       {
          get
