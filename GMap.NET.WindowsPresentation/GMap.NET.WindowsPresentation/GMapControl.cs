@@ -1913,6 +1913,219 @@
          }
       }
 
+        private Dictionary<int, Point> movingPoints = new Dictionary<int, Point>();
+        protected override void OnTouchDown(TouchEventArgs e)
+        {
+            base.OnTouchDown(e);
+            if (MultiTouchEnabled)
+            {
+                TouchPoint touchpoint = e.GetTouchPoint(this);
+                Point point = new Point();
+                point.X = touchpoint.Position.X;
+                point.Y = touchpoint.Position.Y;
+                movingPoints[e.TouchDevice.Id] = point;
+                if (movingPoints.Count == 0)
+                {
+                    if (MapScaleTransform != null)
+                    {
+                        point = MapScaleTransform.Inverse.Transform(point);
+                    }
+
+                    point = ApplyRotationInversion(point.X, point.Y);
+
+                    Core.mouseDown.X = (int)point.X;
+                    Core.mouseDown.Y = (int)point.Y;
+
+                    InvalidateVisual();
+                }
+            }
+        }
+
+        private double calcdist(double x1, double y1, double x2, double y2)
+        {
+            return Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
+        }
+        int change = 0;
+        protected override void OnTouchMove(TouchEventArgs e)
+        {
+            base.OnTouchMove(e);
+            if (MultiTouchEnabled)
+            {
+                if (movingPoints.Count == 1)
+                {
+                    if (movingPoints.Keys.Contains(e.TouchDevice.Id))
+                    {
+                        if ((e.Timestamp & Int32.MaxValue) - onMouseUpTimestamp < 55)
+                        {
+                            Debug.WriteLine("OnMouseMove skipped: " + ((e.Timestamp & Int32.MaxValue) - onMouseUpTimestamp) + "ms");
+                            return;
+                        }
+
+                        if (!Core.IsDragging)
+                        {
+                            TouchPoint touchpoint = e.GetTouchPoint(this);
+                            Point p = new Point();
+                            p.X = touchpoint.Position.X;
+                            p.Y = touchpoint.Position.Y;
+
+                            if (MapScaleTransform != null)
+                            {
+                                p = MapScaleTransform.Inverse.Transform(p);
+                            }
+
+                            p = ApplyRotationInversion(p.X, p.Y);
+
+                            // cursor has moved beyond drag tolerance
+                            if (Math.Abs(p.X - movingPoints[e.TouchDevice.Id].X) * 2 >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(p.Y - movingPoints[e.TouchDevice.Id].Y) * 2 >= SystemParameters.MinimumVerticalDragDistance)
+                            {
+                                GPoint gp = new GPoint();
+                                gp.X = (int)movingPoints[e.TouchDevice.Id].X;
+                                gp.Y = (int)movingPoints[e.TouchDevice.Id].Y;
+                                Core.BeginDrag(gp);
+                            }
+                        }
+
+                        if (Core.IsDragging)
+                        {
+                            if (!isDragging)
+                            {
+                                isDragging = true;
+                                Debug.WriteLine("IsDragging = " + isDragging);
+                                cursorBefore = Cursor;
+                                Cursor = Cursors.SizeAll;
+                                Mouse.Capture(this);
+                            }
+
+                            if (BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
+                            {
+                                // ...
+                            }
+                            else
+                            {
+                                TouchPoint touchpoint = e.GetTouchPoint(this);
+                                Point p = new Point();
+                                p.X = touchpoint.Position.X;
+                                p.Y = touchpoint.Position.Y;
+
+                                if (MapScaleTransform != null)
+                                {
+                                    p = MapScaleTransform.Inverse.Transform(p);
+                                }
+
+                                p = ApplyRotationInversion(p.X, p.Y);
+
+                                Core.mouseCurrent.X = (int)p.X;
+                                Core.mouseCurrent.Y = (int)p.Y;
+                                {
+                                    Core.Drag(Core.mouseCurrent);
+                                }
+
+                                if (IsRotated)
+                                {
+                                    ForceUpdateOverlays();
+                                }
+                                else
+                                {
+                                    UpdateMarkersOffset();
+                                }
+                            }
+                            InvalidateVisual();
+                        }
+                    }
+                }
+                else if (movingPoints.Count == 2)
+                {
+                    if (movingPoints.Keys.Contains(e.TouchDevice.Id))
+                    {
+                        Point point1 = new Point();
+                        Point point2 = new Point();
+                        double nowdistance = 0;
+                        double predistance = 0;
+                        int count = 0;
+                        foreach (var item in movingPoints)
+                        {
+                            if (count == 0)
+                                point1 = item.Value;
+                            else
+                                point2 = item.Value;
+                            count++;
+                        }
+                        predistance = calcdist(point1.X, point1.Y, point2.X, point2.Y);
+                        TouchPoint touchpoint = e.GetTouchPoint(this);
+                        Point npoint = new Point();
+                        npoint.X = touchpoint.Position.X;
+                        npoint.Y = touchpoint.Position.Y;
+                        if (movingPoints[e.TouchDevice.Id] == point1)
+                        {
+                            nowdistance = calcdist(npoint.X, npoint.Y, point2.X, point2.Y);
+                        }
+                        else
+                        {
+                            nowdistance = calcdist(npoint.X, npoint.Y, point1.X, point1.Y);
+                        }
+                        //movingPoints[e.TouchDevice.Id] = npoint;
+                        if (change <= 2)
+                        {
+                            if (nowdistance - predistance > 10)
+                            {
+                                Zoom += 0.5;
+                                change++;
+                            }
+                            else if (nowdistance - predistance < -10)
+                            {
+                                Zoom -= 0.5;
+                                change++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        protected override void OnTouchUp(TouchEventArgs e)
+        {
+            base.OnTouchUp(e);
+            if (MultiTouchEnabled && !TouchEnabled)
+            {
+                change = 0;
+                movingPoints.Remove(e.TouchDevice.Id);
+                if (true) // add bool to starting for single touch vs multi touch
+                {
+                    if (isSelected)
+                    {
+                        isSelected = false;
+                    }
+
+                    if (Core.IsDragging)
+                    {
+                        if (isDragging)
+                        {
+                            onMouseUpTimestamp = e.Timestamp & Int32.MaxValue;
+                            isDragging = false;
+                            Debug.WriteLine("IsDragging = " + isDragging);
+                            Cursor = cursorBefore;
+                            Mouse.Capture(null);
+                        }
+                        Core.EndDrag();
+
+                        if (BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))
+                        {
+                            if (Core.LastLocationInBounds.HasValue)
+                            {
+                                Position = Core.LastLocationInBounds.Value;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Core.mouseDown = GPoint.Empty;
+                        InvalidateVisual();
+                    }
+                }
+            }
+        }
+
+        /*
       /// <summary>
       /// Called when the <see cref="E:System.Windows.UIElement.ManipulationDelta" /> event occurs.
       /// </summary>
@@ -2049,15 +2262,16 @@
             }
          }
       }
+      */
+        #endregion
 
-      #endregion
 
-      #region IGControl Members
+        #region IGControl Members
 
-      /// <summary>
-      /// Call it to empty tile cache & reload tiles
-      /// </summary>
-      public void ReloadMap()
+        /// <summary>
+        /// Call it to empty tile cache & reload tiles
+        /// </summary>
+        public void ReloadMap()
       {
          Core.ReloadMap();
       }
