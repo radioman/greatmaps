@@ -47,7 +47,7 @@ namespace GMap.NET.MapProviders
          {
             if(overlays == null)
             {
-               overlays = new GMapProvider[] { OpenStreetMapQuestSatteliteProvider.Instance, this };
+               overlays = new GMapProvider[] { OpenStreetMapQuestSatelliteProvider.Instance, this };
             }
             return overlays;
          }

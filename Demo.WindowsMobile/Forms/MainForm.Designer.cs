@@ -236,7 +236,7 @@
           // 
           // menuItem10
           // 
-          this.menuItem10.Text = "Google Sattelite";
+          this.menuItem10.Text = "Google Satellite";
           this.menuItem10.Click += new System.EventHandler(this.menuItem10_Click);
           // 
           // menuItem19
