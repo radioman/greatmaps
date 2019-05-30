@@ -35,7 +35,7 @@ namespace Sample3
          MapLtHybrid.MapProvider = GMapProviders.LithuaniaOrtoFotoMap;
 
          MapOpenStreet.MapProvider = GMapProviders.OpenStreetMap;
-         MapOpenStreetOsm.MapProvider = GMapProviders.OpenCycleMap;
+         MapOpenCycle.MapProvider = GMapProviders.OpenCycleMap;
          MapOpenStreetSurfer.MapProvider = GMapProviders.OpenStreetMapQuest;
 
          this.WindowState = System.Windows.WindowState.Minimized;
