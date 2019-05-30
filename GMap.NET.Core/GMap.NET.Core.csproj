@@ -290,6 +290,7 @@
     <Compile Include="GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapSurferProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OpenStreetMap\OpenStreetOsmProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapCustomProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\GMapProvider.cs" />
     <Compile Include="GMap.NET.Projections\SWEREF99_TMProjection.cs" />
     <Compile Include="GMap.NET.Projections\MapsLTReliefProjection.cs" />

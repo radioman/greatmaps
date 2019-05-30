@@ -58,8 +58,11 @@ namespace Demo.WindowsPresentation
          }
 
          // config map
-         MainMap.MapProvider = GMapProviders.OpenStreetMap;
-         MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
+         MainMap.MapProvider = GMapProviders.AddProvider(new OpenStreetMapCustomProvider("http://192.168.247.3/osm_tiles/"));
+         MainMap.Position = new PointLatLng(45.4993649904318, -122.797703146935);
+         MainMap.MinZoom = 0;
+         MainMap.MaxZoom = 20;
+         MainMap.Zoom = 12;
 
          //MainMap.ScaleMode = ScaleModes.Dynamic;
 
