@@ -47,6 +47,17 @@ namespace GMap.NET.MapProviders
         {
         }
 
+        /// <summary>
+        /// add a new provider to the list
+        /// </summary>
+        public static GMapProvider AddProvider( GMapProvider p )
+        {
+           list.Add(p);
+           Hash.Add(p.Id, p);
+           DbHash.Add(p.DbId, p);
+           return p;
+        }
+
         public static readonly EmptyProvider EmptyProvider = EmptyProvider.Instance;
 
         public static readonly OpenStreetMapProvider OpenStreetMap = OpenStreetMapProvider.Instance;
