@@ -14,7 +14,9 @@ namespace GMap.NET.MapProviders
       public OpenStreetMapProviderBase()
       {
          MaxZoom = null;
-         RefererUrl = "http://www.openstreetmap.org/";
+         //Tile usage policy of openstreetmap (https://operations.osmfoundation.org/policies/tiles/) define as optional and providing referer 
+         //only if one valid available. by providing http://www.openstreetmap.org/ a 418 error is given by the server.
+         //RefererUrl = "http://www.openstreetmap.org/";
          Copyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
       }
 
