@@ -5,43 +5,48 @@ using System.Text;
 
 namespace GMap.NET.MapProviders
 {
-   using System;
-
    /// <summary>
    /// OpenStreetMapPrivate provider
    /// http://www.openstreetmap.org/
    ///
-   /// OpenStreetMapProvider with a customized URL
+   /// OpenStreetMapProvider with a customized name and URL per instance
    /// </summary>
    public class OpenStreetMapPrivateProvider : OpenStreetMapProviderBase
    {
-      public OpenStreetMapPrivateProvider( string providerName, string url )
+      public OpenStreetMapPrivateProvider(
+                  string providerName,
+                  string mapUrlFormat = null,
+                  string routingUrlFormat = null,
+                  string reverseGeocoderUrlFormat = null,
+                  string geocoderUrlFormat = null,
+                  string geocoderDetailedUrlFormat = null )
       {
-	      name = providerName;
-	      urlFormat = url;
-	      id = Guid.NewGuid();
+         name = providerName;
+         _mapUrlFormat = mapUrlFormat;
+         _routingUrlFormat = routingUrlFormat;
+         _reverseGeocoderUrlFormat = reverseGeocoderUrlFormat;
+         _geocoderUrlFormat = geocoderUrlFormat;
+         _geocoderDetailedUrlFormat = geocoderDetailedUrlFormat;
       }
 
       #region GMapProvider Members
 
-      string name;
+      Guid id = Guid.NewGuid();
+      public override Guid Id
+      {
+         get
+         {
+            return id;
+         }
+      }
 
+      string name;
       public override string Name
       {
          get
          {
             return name;
          }
-      }
-
-      Guid id;
-
-      public override Guid Id
-      {
-	       get
-	       {
-	          return id;
-	       }
       }
 
       GMapProvider[] overlays;
@@ -76,7 +81,7 @@ namespace GMap.NET.MapProviders
 
       #endregion DefaultUrl
 
-      #region CustomUrl
+      #region PrivateUrl
 
       string _mapUrlFormat = null;
       string _routingUrlFormat = null;
@@ -184,26 +189,52 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      #endregion CustomUrl
+      #endregion PrivateUrl
 
       #region MapProvider
 
-      string urlFormat;
-
-      public string UrlFormat
-      {
-         get
-         {
-            return urlFormat;
-         }
-      }
-
-
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-         return string.Format(urlFormat, zoom, pos.X, pos.Y);
+         char letter = ServerLetters[GetServerNum(pos, 3)];
+         return string.Format(MapUrlFormat, zoom, pos.X, pos.Y, letter);
       }
 
       #endregion MapProvider
+
+      #region RoutingProvider
+
+      protected override string MakeRoutingUrl(PointLatLng start, PointLatLng end, string travelType, bool withInstructions = false)
+      {
+         return string.Format(CultureInfo.InvariantCulture, RoutingUrlFormat, start.Lat, start.Lng, end.Lat, end.Lng, travelType, withInstructions ? "1" : "0", LanguageStr);
+      }
+
+      #endregion RoutingProvider
+
+      #region GeocodingProvider
+
+      protected override string MakeGeocoderUrl(string keywords)
+      {
+         return string.Format(GeocoderUrlFormat, keywords.Replace(' ', '+'));
+      }
+
+      protected override string MakeDetailedGeocoderUrl(Placemark placemark)
+      {
+         var street = String.Join(" ", new[] { placemark.HouseNo, placemark.ThoroughfareName }).Trim();
+         return string.Format(GeocoderDetailedUrlFormat,
+                              street.Replace(' ', '+'),
+                              placemark.LocalityName.Replace(' ', '+'),
+                              placemark.SubAdministrativeAreaName.Replace(' ', '+'),
+                              placemark.AdministrativeAreaName.Replace(' ', '+'),
+                              placemark.CountryName.Replace(' ', '+'),
+                              placemark.PostalCodeNumber.Replace(' ', '+'));
+      }
+
+      protected override string MakeReverseGeocoderUrl(PointLatLng pt)
+      {
+         return string.Format(CultureInfo.InvariantCulture, ReverseGeocoderUrlFormat, pt.Lat, pt.Lng);
+      }
+
+      #endregion GeocodingProvider
+
    }
 }

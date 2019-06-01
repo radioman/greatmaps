@@ -59,7 +59,7 @@ namespace Demo.WindowsPresentation
 
          // config map
 	 MainMap.MapProvider = GMapProviders.AddProvider(
-	   new OpenStreetMapPrivateProvider("tileserver", "http://192.168.247.3/osm_tiles/{0}{1}{2}.png")
+	   new OpenStreetMapPrivateProvider("tileserver", "http://192.168.247.3/osm_tiles/{0}/{1}/{2}.png")
 	 );
          MainMap.Position = new PointLatLng(45.4993649904318, -122.797703146935);
          MainMap.MinZoom = 0;
