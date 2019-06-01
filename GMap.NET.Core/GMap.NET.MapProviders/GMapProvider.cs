@@ -341,9 +341,8 @@ namespace GMap.NET.MapProviders
 
         /// <summary>
         /// Gets or sets the value of the User-agent HTTP header.
-        /// It's pseudo-randomized to avoid blockages...
         /// </summary>                                
-        public static string UserAgent = string.Format("Gmap.NET");
+        public static string UserAgent = BuildInfo.DisplayText;
 
         /// <summary>
         /// timeout for provider connections

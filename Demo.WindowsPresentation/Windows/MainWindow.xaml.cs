@@ -58,13 +58,9 @@ namespace Demo.WindowsPresentation
          }
 
          // config map
-	 MainMap.MapProvider = GMapProviders.AddProvider(
-	   new OpenStreetMapPrivateProvider("tileserver", "http://192.168.247.3/osm_tiles/{0}/{1}/{2}.png")
-	 );
-         MainMap.Position = new PointLatLng(45.4993649904318, -122.797703146935);
-         MainMap.MinZoom = 0;
-         MainMap.MaxZoom = 20;
-         MainMap.Zoom = 12;
+	 GMapProviders.AddProvider( new OpenStreetMapPrivateProvider("tileserver", "http://tileserver/osm_tiles/{0}/{1}/{2}.png") );
+         MainMap.MapProvider = GMapProviders.OpenStreetMap;
+         MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
 
          //MainMap.ScaleMode = ScaleModes.Dynamic;
 

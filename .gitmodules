@@ -1,0 +1,4 @@
+[submodule "GMap.NET.Core/BuildInfo"]
+	path = GMap.NET.Core/BuildInfo
+	url = https://github.com/dwcullop/BuildInfo
+	branch = feature/githash
