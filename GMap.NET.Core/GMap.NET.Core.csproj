@@ -255,6 +255,7 @@
     <Compile Include="GMap.NET.MapProviders\Lithuania\LithuaniaMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Lithuania\LithuaniaTOP50.cs" />
     <Compile Include="GMap.NET.MapProviders\OpenStreetMap\OpenStreet4UMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapCustomProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestSatteliteProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestHybridProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestProvider.cs" />
