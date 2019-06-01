@@ -31,8 +31,8 @@
                         <ad:DocumentContent Title="   OpenStreetMap   ">
                             <map:GMapControl x:Name="MapOpenStreet" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                         </ad:DocumentContent>
-                        <ad:DocumentContent Title="   OpenStreetOsm   ">
-                            <map:GMapControl x:Name="MapOpenStreetOsm" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
+                        <ad:DocumentContent Title="   OpenCycleMap    ">
+                            <map:GMapControl x:Name="MapOpenCycle" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
                         </ad:DocumentContent>
                         <ad:DocumentContent Title="   OpenStreetMapSurfer   ">
                             <map:GMapControl x:Name="MapOpenStreetSurfer" Loaded="GMapControl_Loaded" MinZoom="1" MaxZoom="17" Zoom="3" OnMapDrag="OnMapDrag" OnMapZoomChanged="OnMapZoomChanged"/>
