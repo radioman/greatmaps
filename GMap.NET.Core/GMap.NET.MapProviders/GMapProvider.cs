@@ -60,6 +60,8 @@ namespace GMap.NET.MapProviders
 
         public static readonly EmptyProvider EmptyProvider = EmptyProvider.Instance;
 
+	public static readonly OpenStreetMapCustomProvider OpenStreetMapCustom = OpenStreetMapCustomProvider.Instance;
+
         public static readonly OpenStreetMapProvider OpenStreetMap = OpenStreetMapProvider.Instance;
 
         public static readonly OpenStreet4UMapProvider OpenStreet4UMap = OpenStreet4UMapProvider.Instance;
