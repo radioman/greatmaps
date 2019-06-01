@@ -131,7 +131,7 @@ namespace GMap.NET.MapProviders
       }
 
       #region -- internals --
-      string MakeRoutingUrl(PointLatLng start, PointLatLng end, string travelType, bool withInstructions = false)
+      protected virtual string MakeRoutingUrl(PointLatLng start, PointLatLng end, string travelType, bool withInstructions = false)
       {
          return string.Format(CultureInfo.InvariantCulture, RoutingUrlFormat, start.Lat, start.Lng, end.Lat, end.Lng, travelType, withInstructions ? "1" : "0", LanguageStr);
       }
@@ -229,7 +229,7 @@ namespace GMap.NET.MapProviders
       {
          List<PointLatLng> pointList;
          status = GetPoints(keywords, out pointList);
-         return pointList != null && pointList.Count > 0 ? pointList[0] : (PointLatLng?) null;
+         return pointList != null && pointList.Count > 0 ? pointList[0] : (PointLatLng?)null;
       }
 
       public GeoCoderStatusCode GetPoints(Placemark placemark, out List<PointLatLng> pointList)
@@ -249,7 +249,7 @@ namespace GMap.NET.MapProviders
       {
          List<PointLatLng> pointList;
          status = GetPoints(placemark, out pointList);
-         return pointList != null && pointList.Count > 0 ? pointList[0] : (PointLatLng?) null;
+         return pointList != null && pointList.Count > 0 ? pointList[0] : (PointLatLng?)null;
       }
 
       public GeoCoderStatusCode GetPlacemarks(PointLatLng location, out List<Placemark> placemarkList)
@@ -309,12 +309,12 @@ namespace GMap.NET.MapProviders
 
       #region -- internals --
 
-      string MakeGeocoderUrl(string keywords)
+      protected virtual string MakeGeocoderUrl(string keywords)
       {
          return string.Format(GeocoderUrlFormat, keywords.Replace(' ', '+'));
       }
 
-      string MakeDetailedGeocoderUrl(Placemark placemark)
+      protected virtual string MakeDetailedGeocoderUrl(Placemark placemark)
       {
          var street = String.Join(" ", new[] { placemark.HouseNo, placemark.ThoroughfareName }).Trim();
          return string.Format(GeocoderDetailedUrlFormat,
@@ -326,7 +326,7 @@ namespace GMap.NET.MapProviders
                               placemark.PostalCodeNumber.Replace(' ', '+'));
       }
 
-      string MakeReverseGeocoderUrl(PointLatLng pt)
+      protected virtual string MakeReverseGeocoderUrl(PointLatLng pt)
       {
          return string.Format(CultureInfo.InvariantCulture, ReverseGeocoderUrlFormat, pt.Lat, pt.Lng);
       }
@@ -342,21 +342,21 @@ namespace GMap.NET.MapProviders
 
             bool cache = false;
 
-            if(string.IsNullOrEmpty(geo))
+            if (string.IsNullOrEmpty(geo))
             {
                geo = GetContentUsingHttp(url);
 
-               if(!string.IsNullOrEmpty(geo))
+               if (!string.IsNullOrEmpty(geo))
                {
                   cache = true;
                }
             }
 
-            if(!string.IsNullOrEmpty(geo))
+            if (!string.IsNullOrEmpty(geo))
             {
-               if(geo.StartsWith("<?xml") && geo.Contains("<place"))
+               if (geo.StartsWith("<?xml") && geo.Contains("<place"))
                {
-                  if(cache && GMaps.Instance.UseGeocoderCache)
+                  if (cache && GMaps.Instance.UseGeocoderCache)
                   {
                      Cache.Instance.SaveContent(url, CacheType.GeocoderCache, geo);
                   }
@@ -365,11 +365,11 @@ namespace GMap.NET.MapProviders
                   doc.LoadXml(geo);
                   {
                      XmlNodeList l = doc.SelectNodes("/searchresults/place");
-                     if(l != null)
+                     if (l != null)
                      {
                         pointList = new List<PointLatLng>();
 
-                        foreach(XmlNode n in l)
+                        foreach (XmlNode n in l)
                         {
                            var nn = n.Attributes["place_rank"];
 
@@ -382,17 +382,17 @@ namespace GMap.NET.MapProviders
                            {
                               rank = int.Parse(nn.Value, NumberStyles.Integer, CultureInfo.InvariantCulture);
 #endif
-                              if(rank < MinExpectedRank)
+                              if (rank < MinExpectedRank)
                                  continue;
                            }
 
                            nn = n.Attributes["lat"];
-                           if(nn != null)
+                           if (nn != null)
                            {
                               double lat = double.Parse(nn.Value, CultureInfo.InvariantCulture);
 
                               nn = n.Attributes["lon"];
-                              if(nn != null)
+                              if (nn != null)
                               {
                                  double lng = double.Parse(nn.Value, CultureInfo.InvariantCulture);
                                  pointList.Add(new PointLatLng(lat, lng));
@@ -406,7 +406,7 @@ namespace GMap.NET.MapProviders
                }
             }
          }
-         catch(Exception ex)
+         catch (Exception ex)
          {
             status = GeoCoderStatusCode.ExceptionInCode;
             Debug.WriteLine("GetLatLngFromGeocoderUrl: " + ex);
@@ -426,21 +426,21 @@ namespace GMap.NET.MapProviders
 
             bool cache = false;
 
-            if(string.IsNullOrEmpty(geo))
+            if (string.IsNullOrEmpty(geo))
             {
                geo = GetContentUsingHttp(url);
 
-               if(!string.IsNullOrEmpty(geo))
+               if (!string.IsNullOrEmpty(geo))
                {
                   cache = true;
                }
             }
 
-            if(!string.IsNullOrEmpty(geo))
+            if (!string.IsNullOrEmpty(geo))
             {
-               if(geo.StartsWith("<?xml") && geo.Contains("<result"))
+               if (geo.StartsWith("<?xml") && geo.Contains("<result"))
                {
-                  if(cache && GMaps.Instance.UsePlacemarkCache)
+                  if (cache && GMaps.Instance.UsePlacemarkCache)
                   {
                      Cache.Instance.SaveContent(url, CacheType.PlacemarkCache, geo);
                   }
@@ -449,51 +449,51 @@ namespace GMap.NET.MapProviders
                   doc.LoadXml(geo);
                   {
                      XmlNode r = doc.SelectSingleNode("/reversegeocode/result");
-                     if(r != null)
+                     if (r != null)
                      {
                         var p = new Placemark(r.InnerText);
 
                         XmlNode ad = doc.SelectSingleNode("/reversegeocode/addressparts");
-                        if(ad != null)
+                        if (ad != null)
                         {
                            var vl = ad.SelectSingleNode("country");
-                           if(vl != null)
+                           if (vl != null)
                            {
                               p.CountryName = vl.InnerText;
                            }
 
                            vl = ad.SelectSingleNode("country_code");
-                           if(vl != null)
+                           if (vl != null)
                            {
                               p.CountryNameCode = vl.InnerText;
                            }
 
                            vl = ad.SelectSingleNode("postcode");
-                           if(vl != null)
+                           if (vl != null)
                            {
                               p.PostalCodeNumber = vl.InnerText;
                            }
 
                            vl = ad.SelectSingleNode("state");
-                           if(vl != null)
+                           if (vl != null)
                            {
                               p.AdministrativeAreaName = vl.InnerText;
                            }
 
                            vl = ad.SelectSingleNode("region");
-                           if(vl != null)
+                           if (vl != null)
                            {
                               p.SubAdministrativeAreaName = vl.InnerText;
                            }
 
                            vl = ad.SelectSingleNode("suburb");
-                           if(vl != null)
+                           if (vl != null)
                            {
                               p.LocalityName = vl.InnerText;
                            }
 
                            vl = ad.SelectSingleNode("road");
-                           if(vl != null)
+                           if (vl != null)
                            {
                               p.ThoroughfareName = vl.InnerText;
                            }
@@ -507,7 +507,7 @@ namespace GMap.NET.MapProviders
                }
             }
          }
-         catch(Exception ex)
+         catch (Exception ex)
          {
             ret = null;
             status = GeoCoderStatusCode.ExceptionInCode;
@@ -567,7 +567,7 @@ namespace GMap.NET.MapProviders
       {
          get
          {
-            if(overlays == null)
+            if (overlays == null)
             {
                overlays = new GMapProvider[] { this };
             }

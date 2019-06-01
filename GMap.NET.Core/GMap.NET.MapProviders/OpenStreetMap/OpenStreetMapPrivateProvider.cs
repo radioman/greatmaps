@@ -5,12 +5,30 @@ using System.Text;
 
 namespace GMap.NET.MapProviders
 {
+<<<<<<< Updated upstream:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapCustomProvider.cs
    public class OpenStreetMapCustomProvider : OpenStreetMapProviderBase
    {
       public static readonly OpenStreetMapCustomProvider Instance;
 
       OpenStreetMapCustomProvider()
       {
+=======
+   using System;
+
+   /// <summary>
+   /// OpenStreetMapPrivate provider
+   /// http://www.openstreetmap.org/
+   ///
+   /// OpenStreetMapProvider with a customized URL
+   /// </summary>
+   public class OpenStreetMapPrivateProvider : OpenStreetMapProviderBase
+   {
+      public OpenStreetMapPrivateProvider( string providerName, string url )
+      {
+	      name = providerName;
+	      urlFormat = url;
+	      id = Guid.newGuid();
+>>>>>>> Stashed changes:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapPrivateProvider.cs
       }
 
       static OpenStreetMapCustomProvider()
@@ -18,24 +36,46 @@ namespace GMap.NET.MapProviders
          Instance = new OpenStreetMapCustomProvider();
       }
 
+<<<<<<< Updated upstream:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapCustomProvider.cs
       #region GMapProvider Members
 
       readonly Guid id = new Guid("0AD1D969-AFEB-491B-A9A6-9D2DB0BA1BAE");
       public override Guid Id
-      {
-         get
-         {
-            return id;
-         }
-      }
+=======
+      string name;
 
-      readonly string name = "OpenStreetMapCustom";
       public override string Name
+>>>>>>> Stashed changes:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapPrivateProvider.cs
       {
          get
          {
             return name;
          }
+      }
+
+<<<<<<< Updated upstream:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapCustomProvider.cs
+      readonly string name = "OpenStreetMapCustom";
+      public override string Name
+=======
+      string urlFormat;
+
+      public override string UrlFormat
+>>>>>>> Stashed changes:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapPrivateProvider.cs
+      {
+	 get
+	 {
+	    return urlFormat;
+	 }
+      }
+
+      Guid id;
+
+      public override Guid Id;
+      {
+	 get
+	 {
+	    return id;
+	 }
       }
 
       GMapProvider[] overlays;
@@ -184,6 +224,7 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
+<<<<<<< Updated upstream:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapCustomProvider.cs
          char letter = ServerLetters[GetServerNum(pos, 3)];
          return string.Format(MapUrlFormat, zoom, pos.X, pos.Y, letter);
       }
@@ -225,5 +266,9 @@ namespace GMap.NET.MapProviders
 
       #endregion GeocodingProvider
 
+=======
+         return string.Format(urlFormat, zoom, pos.X, pos.Y);
+      }
+>>>>>>> Stashed changes:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapPrivateProvider.cs
    }
 }
