@@ -5,14 +5,6 @@ using System.Text;
 
 namespace GMap.NET.MapProviders
 {
-<<<<<<< Updated upstream:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapCustomProvider.cs
-   public class OpenStreetMapCustomProvider : OpenStreetMapProviderBase
-   {
-      public static readonly OpenStreetMapCustomProvider Instance;
-
-      OpenStreetMapCustomProvider()
-      {
-=======
    using System;
 
    /// <summary>
@@ -27,25 +19,14 @@ namespace GMap.NET.MapProviders
       {
 	      name = providerName;
 	      urlFormat = url;
-	      id = Guid.newGuid();
->>>>>>> Stashed changes:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapPrivateProvider.cs
+	      id = Guid.NewGuid();
       }
 
-      static OpenStreetMapCustomProvider()
-      {
-         Instance = new OpenStreetMapCustomProvider();
-      }
-
-<<<<<<< Updated upstream:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapCustomProvider.cs
       #region GMapProvider Members
 
-      readonly Guid id = new Guid("0AD1D969-AFEB-491B-A9A6-9D2DB0BA1BAE");
-      public override Guid Id
-=======
       string name;
 
       public override string Name
->>>>>>> Stashed changes:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapPrivateProvider.cs
       {
          get
          {
@@ -53,29 +34,14 @@ namespace GMap.NET.MapProviders
          }
       }
 
-<<<<<<< Updated upstream:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapCustomProvider.cs
-      readonly string name = "OpenStreetMapCustom";
-      public override string Name
-=======
-      string urlFormat;
-
-      public override string UrlFormat
->>>>>>> Stashed changes:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapPrivateProvider.cs
-      {
-	 get
-	 {
-	    return urlFormat;
-	 }
-      }
-
       Guid id;
 
-      public override Guid Id;
+      public override Guid Id
       {
-	 get
-	 {
-	    return id;
-	 }
+	       get
+	       {
+	          return id;
+	       }
       }
 
       GMapProvider[] overlays;
@@ -222,53 +188,22 @@ namespace GMap.NET.MapProviders
 
       #region MapProvider
 
+      string urlFormat;
+
+      public string UrlFormat
+      {
+         get
+         {
+            return urlFormat;
+         }
+      }
+
+
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-<<<<<<< Updated upstream:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapCustomProvider.cs
-         char letter = ServerLetters[GetServerNum(pos, 3)];
-         return string.Format(MapUrlFormat, zoom, pos.X, pos.Y, letter);
+         return string.Format(urlFormat, zoom, pos.X, pos.Y);
       }
 
       #endregion MapProvider
-
-      #region RoutingProvider
-
-      protected override string MakeRoutingUrl(PointLatLng start, PointLatLng end, string travelType, bool withInstructions = false)
-      {
-         return string.Format(CultureInfo.InvariantCulture, RoutingUrlFormat, start.Lat, start.Lng, end.Lat, end.Lng, travelType, withInstructions ? "1" : "0", LanguageStr);
-      }
-
-      #endregion RoutingProvider
-
-      #region GeocodingProvider
-
-      protected override string MakeGeocoderUrl(string keywords)
-      {
-         return string.Format(GeocoderUrlFormat, keywords.Replace(' ', '+'));
-      }
-
-      protected override string MakeDetailedGeocoderUrl(Placemark placemark)
-      {
-         var street = String.Join(" ", new[] { placemark.HouseNo, placemark.ThoroughfareName }).Trim();
-         return string.Format(GeocoderDetailedUrlFormat,
-                              street.Replace(' ', '+'),
-                              placemark.LocalityName.Replace(' ', '+'),
-                              placemark.SubAdministrativeAreaName.Replace(' ', '+'),
-                              placemark.AdministrativeAreaName.Replace(' ', '+'),
-                              placemark.CountryName.Replace(' ', '+'),
-                              placemark.PostalCodeNumber.Replace(' ', '+'));
-      }
-
-      protected override string MakeReverseGeocoderUrl(PointLatLng pt)
-      {
-         return string.Format(CultureInfo.InvariantCulture, ReverseGeocoderUrlFormat, pt.Lat, pt.Lng);
-      }
-
-      #endregion GeocodingProvider
-
-=======
-         return string.Format(urlFormat, zoom, pos.X, pos.Y);
-      }
->>>>>>> Stashed changes:GMap.NET.Core/GMap.NET.MapProviders/OpenStreetMap/OpenStreetMapPrivateProvider.cs
    }
 }
