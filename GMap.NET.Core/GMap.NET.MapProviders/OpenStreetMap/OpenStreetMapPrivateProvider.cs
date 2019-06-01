@@ -7,7 +7,7 @@ namespace GMap.NET.MapProviders
 {
    /// <summary>
    /// OpenStreetMapPrivate provider
-   /// http://www.openstreetmap.org/
+   /// https://www.openstreetmap.org/
    ///
    /// OpenStreetMapProvider with a customized name and URL per instance
    /// </summary>
@@ -73,11 +73,11 @@ namespace GMap.NET.MapProviders
 
       #region DefaultUrl
 
-      static readonly string defaultMapUrlFormat = "http://{3}.tile.openstreetmap.org/{0}/{1}/{2}.png";
-      static readonly string defaultRoutingUrlFormat = "http://www.yournavigation.org/api/1.0/gosmore.php?format=kml&flat={0}&flon={1}&tlat={2}&tlon={3}&v={4}&fast=1&layer=mapnik&instructions={5}&lang={6}";
-      static readonly string defaultReverseGeocoderUrlFormat = "http://nominatim.openstreetmap.org/reverse?format=xml&lat={0}&lon={1}&zoom=18&addressdetails=1";
-      static readonly string defaultGeocoderUrlFormat = "http://nominatim.openstreetmap.org/search?q={0}&format=xml";
-      static readonly string defaultGeocoderDetailedUrlFormat = "http://nominatim.openstreetmap.org/search?street={0}&city={1}&county={2}&state={3}&country={4}&postalcode={5}&format=xml";
+      static readonly string defaultMapUrlFormat = "https://{3}.tile.openstreetmap.org/{0}/{1}/{2}.png";
+      static readonly string defaultRoutingUrlFormat = "https://www.yournavigation.org/api/1.0/gosmore.php?format=kml&flat={0}&flon={1}&tlat={2}&tlon={3}&v={4}&fast=1&layer=mapnik&instructions={5}&lang={6}";
+      static readonly string defaultReverseGeocoderUrlFormat = "https://nominatim.openstreetmap.org/reverse?format=xml&lat={0}&lon={1}&zoom=18&addressdetails=1";
+      static readonly string defaultGeocoderUrlFormat = "https://nominatim.openstreetmap.org/search?q={0}&format=xml";
+      static readonly string defaultGeocoderDetailedUrlFormat = "https://nominatim.openstreetmap.org/search?street={0}&city={1}&county={2}&state={3}&country={4}&postalcode={5}&format=xml";
 
       #endregion DefaultUrl
 

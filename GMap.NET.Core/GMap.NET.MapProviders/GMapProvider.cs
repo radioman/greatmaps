@@ -343,10 +343,7 @@ namespace GMap.NET.MapProviders
         /// Gets or sets the value of the User-agent HTTP header.
         /// It's pseudo-randomized to avoid blockages...
         /// </summary>                                
-        public static string UserAgent = string.Format("Mozilla/5.0 (Windows NT {1}.0; {2}rv:{0}.0) Gecko/20100101 Firefox/{0}.0",
-            Stuff.random.Next(DateTime.Today.Year - 1969 - 5, DateTime.Today.Year - 1969),
-            Stuff.random.Next(0, 10) % 2 == 0 ? 10 : 6,
-            Stuff.random.Next(0, 10) % 2 == 1 ? string.Empty : "WOW64; ");         
+        public static string UserAgent = string.Format("Gmap.NET");
 
         /// <summary>
         /// timeout for provider connections
@@ -354,7 +351,7 @@ namespace GMap.NET.MapProviders
 #if !PocketPC
         public static int TimeoutMs = 5 * 1000;
 #else
-      public static int TimeoutMs = 44 * 1000; 
+	public static int TimeoutMs = 44 * 1000; 
 #endif
         /// <summary>
         /// Gets or sets the value of the Referer HTTP header.
