@@ -14,7 +14,9 @@ namespace GMap.NET.MapProviders
       public OpenStreetMapProviderBase()
       {
          MaxZoom = null;
-         RefererUrl = "http://www.openstreetmap.org/";
+         //Tile usage policy of openstreetmap (https://operations.osmfoundation.org/policies/tiles/) define as optional and providing referer 
+         //only if one valid available. by providing http://www.openstreetmap.org/ a 418 error is given by the server.
+         //RefererUrl = "http://www.openstreetmap.org/";
          Copyright = string.Format("© OpenStreetMap - Map data ©{0} OpenStreetMap", DateTime.Today.Year);
       }
 
@@ -517,9 +519,9 @@ namespace GMap.NET.MapProviders
          return ret;
       }
 
-      static readonly string ReverseGeocoderUrlFormat = "http://nominatim.openstreetmap.org/reverse?format=xml&lat={0}&lon={1}&zoom=18&addressdetails=1";
-      static readonly string GeocoderUrlFormat = "http://nominatim.openstreetmap.org/search?q={0}&format=xml";
-      static readonly string GeocoderDetailedUrlFormat = "http://nominatim.openstreetmap.org/search?street={0}&city={1}&county={2}&state={3}&country={4}&postalcode={5}&format=xml";
+      static readonly string ReverseGeocoderUrlFormat = "https://nominatim.openstreetmap.org/reverse?format=xml&lat={0}&lon={1}&zoom=18&addressdetails=1";
+      static readonly string GeocoderUrlFormat = "https://nominatim.openstreetmap.org/search?q={0}&format=xml";
+      static readonly string GeocoderDetailedUrlFormat = "https://nominatim.openstreetmap.org/search?street={0}&city={1}&county={2}&state={3}&country={4}&postalcode={5}&format=xml";
 
       #endregion
 
@@ -590,6 +592,6 @@ namespace GMap.NET.MapProviders
          return string.Format(UrlFormat, letter, zoom, pos.X, pos.Y);
       }
 
-      static readonly string UrlFormat = "http://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png";
+      static readonly string UrlFormat = "https://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png";
    }
 }
