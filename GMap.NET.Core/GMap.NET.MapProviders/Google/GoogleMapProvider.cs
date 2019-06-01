@@ -23,7 +23,7 @@ namespace GMap.NET.MapProviders
         public GoogleMapProviderBase()
         {
             MaxZoom = null;
-            RefererUrl = string.Format("http://maps.{0}/", Server);
+            RefererUrl = string.Format("https://maps.{0}/", Server);
             Copyright = string.Format("©{0} Google - Map data ©{0} Tele Atlas, Imagery ©{0} TerraMetrics", DateTime.Today.Year);
         }
 
@@ -455,8 +455,8 @@ namespace GMap.NET.MapProviders
             return points;
         }
 
-        static readonly string RouteUrlFormatPointLatLng = "http://maps.{6}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}";
-        static readonly string RouteUrlFormatStr = "http://maps.{4}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}";
+        static readonly string RouteUrlFormatPointLatLng = "https://maps.{6}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2},{3}&daddr=@{4},{5}";
+        static readonly string RouteUrlFormatStr = "https://maps.{4}/maps?f=q&output=dragdir&doflg=p&hl={0}{1}&q=&saddr=@{2}&daddr=@{3}";
 
         static readonly string WalkingStr = "&mra=ls&dirflg=w";
         static readonly string RouteWithoutHighwaysStr = "&mra=ls&dirflg=dh";
@@ -2060,10 +2060,10 @@ namespace GMap.NET.MapProviders
             }
         }
 
-        static readonly string DirectionUrlFormatStr = "http://maps.{7}/maps/api/directions/xml?origin={0}&destination={1}&sensor={2}&language={3}{4}{5}{6}";
-        static readonly string DirectionUrlFormatPoint = "http://maps.{9}/maps/api/directions/xml?origin={0},{1}&destination={2},{3}&sensor={4}&language={5}{6}{7}{8}";
-        static readonly string DirectionUrlFormatWaypoint = "http://maps.{8}/maps/api/directions/xml?origin={0},{1}&waypoints={2}&destination={9},{10}&sensor={3}&language={4}{5}{6}{7}";
-        static readonly string DirectionUrlFormatWaypointStr = "http://maps.{7}/maps/api/directions/xml?origin={0}&waypoints={1}&destination={8}&sensor={2}&language={3}{4}{5}{6}";
+        static readonly string DirectionUrlFormatStr = "https://maps.{7}/maps/api/directions/xml?origin={0}&destination={1}&sensor={2}&language={3}{4}{5}{6}";
+        static readonly string DirectionUrlFormatPoint = "https://maps.{9}/maps/api/directions/xml?origin={0},{1}&destination={2},{3}&sensor={4}&language={5}{6}{7}{8}";
+        static readonly string DirectionUrlFormatWaypoint = "https://maps.{8}/maps/api/directions/xml?origin={0},{1}&waypoints={2}&destination={9},{10}&sensor={3}&language={4}{5}{6}{7}";
+        static readonly string DirectionUrlFormatWaypointStr = "https://maps.{7}/maps/api/directions/xml?origin={0}&waypoints={1}&destination={8}&sensor={2}&language={3}{4}{5}{6}";
 
         #endregion
 
