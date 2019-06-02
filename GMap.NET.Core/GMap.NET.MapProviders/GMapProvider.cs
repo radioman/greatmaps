@@ -47,7 +47,20 @@ namespace GMap.NET.MapProviders
         {
         }
 
+        /// <summary>
+        /// add a new provider to the list
+        /// </summary>
+        public static GMapProvider AddProvider( GMapProvider p )
+        {
+           list.Add(p);
+           Hash.Add(p.Id, p);
+           DbHash.Add(p.DbId, p);
+           return p;
+        }
+
         public static readonly EmptyProvider EmptyProvider = EmptyProvider.Instance;
+
+	public static readonly OpenStreetMapCustomProvider OpenStreetMapCustom = OpenStreetMapCustomProvider.Instance;
 
         public static readonly OpenStreetMapProvider OpenStreetMap = OpenStreetMapProvider.Instance;
 
@@ -58,7 +71,7 @@ namespace GMap.NET.MapProviders
         public static readonly OpenCycleTransportMapProvider OpenCycleTransportMap = OpenCycleTransportMapProvider.Instance;
 
         public static readonly OpenStreetMapQuestProvider OpenStreetMapQuest = OpenStreetMapQuestProvider.Instance;
-        public static readonly OpenStreetMapQuestSatteliteProvider OpenStreetMapQuestSattelite = OpenStreetMapQuestSatteliteProvider.Instance;
+        public static readonly OpenStreetMapQuestSatelliteProvider OpenStreetMapQuestSatellite = OpenStreetMapQuestSatelliteProvider.Instance;
         public static readonly OpenStreetMapQuestHybridProvider OpenStreetMapQuestHybrid = OpenStreetMapQuestHybridProvider.Instance;
 
         public static readonly OpenSeaMapHybridProvider OpenSeaMapHybrid = OpenSeaMapHybridProvider.Instance;
@@ -328,12 +341,8 @@ namespace GMap.NET.MapProviders
 
         /// <summary>
         /// Gets or sets the value of the User-agent HTTP header.
-        /// It's pseudo-randomized to avoid blockages...
         /// </summary>                                
-        public static string UserAgent = string.Format("Mozilla/5.0 (Windows NT {1}.0; {2}rv:{0}.0) Gecko/20100101 Firefox/{0}.0",
-            Stuff.random.Next(DateTime.Today.Year - 1969 - 5, DateTime.Today.Year - 1969),
-            Stuff.random.Next(0, 10) % 2 == 0 ? 10 : 6,
-            Stuff.random.Next(0, 10) % 2 == 1 ? string.Empty : "WOW64; ");         
+        public static string UserAgent = BuildInfo.DisplayText;
 
         /// <summary>
         /// timeout for provider connections
@@ -341,7 +350,7 @@ namespace GMap.NET.MapProviders
 #if !PocketPC
         public static int TimeoutMs = 5 * 1000;
 #else
-      public static int TimeoutMs = 44 * 1000; 
+	public static int TimeoutMs = 44 * 1000; 
 #endif
         /// <summary>
         /// Gets or sets the value of the Referer HTTP header.

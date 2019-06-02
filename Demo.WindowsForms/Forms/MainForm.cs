@@ -71,6 +71,7 @@ namespace Demo.WindowsForms
             }
 
             // config map         
+            GMapProviders.AddProvider( new OpenStreetMapPrivateProvider("tileserver", "http://tileserver/osm_tiles/{0}/{1}/{2}.png") );
             MainMap.MapProvider = GMapProviders.OpenStreetMap;
             MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
             MainMap.MinZoom = 0;
