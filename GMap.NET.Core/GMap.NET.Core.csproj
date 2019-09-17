@@ -136,15 +136,6 @@
   <Choose>
     <When Condition=" '$(TargetFrameworkVersionNumber)' &gt;= '4.0' ">
       <ItemGroup>
-        <Reference Include="Mono.Data.Sqlite">
-          <HintPath>..\References\Windows\NET4\Mono.Data.Sqlite.dll</HintPath>
-          <Private>False</Private>
-        </Reference>
-        <Reference Include="System.Data.SQLite">
-          <HintPath>..\References\Windows\NET4\System.Data.SQLite.DLL</HintPath>
-          <SpecificVersion>False</SpecificVersion>
-          <Private>False</Private>
-        </Reference>
         <Reference Include="Npgsql">
           <HintPath>..\References\Windows\NET4\Npgsql.dll</HintPath>
           <Private>False</Private>
@@ -162,10 +153,6 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Mono.Data.Sqlite">
-          <HintPath>..\References\Windows\Mono.Data.Sqlite.dll</HintPath>
-          <Private>False</Private>
-        </Reference>
         <Reference Include="Npgsql">
           <HintPath>..\References\Windows\Npgsql.dll</HintPath>
           <Private>False</Private>
@@ -189,13 +176,6 @@
     </Reference>
     <Reference Include="System.Data.SQLite, Version=1.0.111.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.Core.1.0.111.0\lib\net20\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.111.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.111.0\lib\net20\System.Data.SQLite.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SqlServerCe">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web.Services" />
