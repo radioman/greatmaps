@@ -1143,29 +1143,47 @@
             {
                if(m.Shape != null && m.Shape.Visibility == System.Windows.Visibility.Visible)
                {
-                  // left
-                  if(m.Position.Lng < left)
-                  {
-                     left = m.Position.Lng;
-                  }
+                 double leftPosition, topPosition, rightPosition, bottomPosition;
+                 if (m is GMapRoute)
+                 {
+                    GMapRoute routeMarker = m as GMapRoute;
 
-                  // top
-                  if(m.Position.Lat > top)
-                  {
-                     top = m.Position.Lat;
-                  }
+                    leftPosition = routeMarker.Points.Min(p => p.Lng);
+                    topPosition = routeMarker.Points.Max(p => p.Lat);
+                    rightPosition = routeMarker.Points.Max(p => p.Lng);
+                    bottomPosition = routeMarker.Points.Min(p => p.Lat);
+                 }
+                 else
+                 {
+                    leftPosition = m.Position.Lng;
+                    topPosition = m.Position.Lat;
+                    rightPosition = m.Position.Lng;
+                    bottomPosition = m.Position.Lat;
+                 }
 
-                  // right
-                  if(m.Position.Lng > right)
-                  {
-                     right = m.Position.Lng;
-                  }
+                 // left
+                 if (leftPosition < left)
+                 {
+                    left = leftPosition;
+                 }
 
-                  // bottom
-                  if(m.Position.Lat < bottom)
-                  {
-                     bottom = m.Position.Lat;
-                  }
+                 // top
+                 if (topPosition > top)
+                 {
+                    top = topPosition;
+                 }
+
+                 // right
+                 if (rightPosition > right)
+                 {
+                    right = rightPosition;
+                 }
+
+                 // bottom
+                 if (bottomPosition < bottom)
+                 {
+                    bottom = bottomPosition;
+                 }
                }
             }
          }
