@@ -44,7 +44,7 @@ namespace GMap.NET.MapProviders
       {
          get
          {
-            if(overlays == null)
+            if (overlays == null)
             {
                overlays = new GMapProvider[] { this };
             }
@@ -59,11 +59,11 @@ namespace GMap.NET.MapProviders
       #endregion
    }
 
-    /// <summary>
-    /// SwedenMap provider, https://kso.etjanster.lantmateriet.se/?lang=en#
-    /// </summary>
-    public class SwedenMapProvider : SwedenMapProviderBase
-    {
+   /// <summary>
+   /// SwedenMap provider, https://kso.etjanster.lantmateriet.se/?lang=en#
+   /// </summary>
+   public class SwedenMapProvider : SwedenMapProviderBase
+   {
       public static readonly SwedenMapProvider Instance;
 
       SwedenMapProvider()
@@ -106,12 +106,12 @@ namespace GMap.NET.MapProviders
 
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
-            // https://kso.etjanster.lantmateriet.se/karta/topowebb/v1/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=topowebb&STYLE=default&TILEMATRIXSET=3006&TILEMATRIX=2&TILEROW=6&TILECOL=7&FORMAT=image%2Fpng
+         // https://kso.etjanster.lantmateriet.se/karta/topowebb/v1/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=topowebb&STYLE=default&TILEMATRIXSET=3006&TILEMATRIX=2&TILEROW=6&TILECOL=7&FORMAT=image%2Fpng
 
-            return string.Format(UrlFormat, zoom, pos.Y, pos.X);
+         return string.Format(UrlFormat, zoom, pos.Y, pos.X);
       }
 
-      static readonly string UrlFormat = "http://kso.etjanster.lantmateriet.se/karta/topowebb/v1/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=topowebb&STYLE=default&TILEMATRIXSET=3006&TILEMATRIX={0}&TILEROW={1}&TILECOL={2}&FORMAT=image%2Fpng";
+      private static readonly string UrlFormat = "https://kso.etjanster.lantmateriet.se/karta/topowebb/v1.1/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=topowebb&STYLE=default&TILEMATRIXSET=3006&TILEMATRIX={0}&TILEROW={1}&TILECOL={2}&FORMAT=image%2Fpng";
    }
 }
 
@@ -135,7 +135,9 @@ https://kso.etjanster.lantmateriet.se/?lang=en#
 	"flygbildServiceUrl" : "https://services-ver.lantmateriet.se/distribution/produkter/metabild/v1/flygbild"
 }
 
-PROJCS["SWEREF99 TM",
+   well known text string:
+   https://developers.arcgis.com/rest/services-reference/projected-coordinate-systems.htm
+PROJCS["SWEREF99_TM",
     GEOGCS["SWEREF99",
         DATUM["SWEREF99",
             SPHEROID["GRS 1980",6378137,298.257222101,
