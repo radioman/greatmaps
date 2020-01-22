@@ -135,6 +135,11 @@ using System.Drawing;
 
       void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
       {
+         if (IsDisposed)
+         {
+            ((BackgroundWorker)sender).CancelAsync();            
+            return;
+         }
          if(ShowCompleteMessage)
          {
             if(!e.Cancelled)
