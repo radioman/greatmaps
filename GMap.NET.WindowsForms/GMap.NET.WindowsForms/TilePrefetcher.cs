@@ -135,27 +135,29 @@ using System.Drawing;
 
       void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
       {
-         if(ShowCompleteMessage)
+         if(!IsDisposed)
          {
-            if(!e.Cancelled)
+            if(ShowCompleteMessage)
             {
-               MessageBox.Show(this, "Prefetch Complete! => " + ((int)e.Result).ToString() + " of " + all);
+               if(!e.Cancelled)
+               {
+                  MessageBox.Show(this, "Prefetch Complete! => " + ((int)e.Result).ToString() + " of " + all);
+               }
+               else
+               {
+                  MessageBox.Show(this, "Prefetch Canceled! => " + ((int)e.Result).ToString() + " of " + all);
+               }
             }
-            else
-            {
-               MessageBox.Show(this, "Prefetch Canceled! => " + ((int)e.Result).ToString() + " of " + all);
-            }
-         }
 
-         list.Clear();
+            list.Clear();
+            this.Close();
+         }
 
          GMaps.Instance.UseMemoryCache = true;
          GMaps.Instance.CacheOnIdleRead = true;
          GMaps.Instance.BoostCacheEngine = false;
 
-         worker.Dispose();
-
-         this.Close();
+         worker.Dispose();         
       }
 
       bool CacheTiles(int zoom, GPoint p)
