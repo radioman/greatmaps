@@ -126,6 +126,11 @@ namespace GMap.NET.CacheProviders
       string db;
       bool Created = false;
 
+      /// <summary>
+      /// set file name GMap cashe
+      /// </summary>
+      public string CacheFileName { get; set; } = "Data.gmdb";
+
       public string GtileCache
       {
          get
@@ -162,8 +167,7 @@ namespace GMap.NET.CacheProviders
 #endif
             // make empty db
             {
-               db = dir + "Data.gmdb";
-
+               db = Path.Combine(dir, CacheFileName);
                if(!File.Exists(db))
                {
                   Created = CreateEmptyDB(db);
