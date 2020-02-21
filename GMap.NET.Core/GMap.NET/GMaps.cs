@@ -99,6 +99,11 @@ namespace GMap.NET
       public readonly MemoryCache MemoryCache = new MemoryCache();
 
       /// <summary>
+      /// set file name GMap cashe
+      /// </summary>
+      public string CacheFileName { get; set; } = "Data.gmdb";
+
+      /// <summary>
       /// load tiles in random sequence
       /// </summary>
       public bool ShuffleTilesOnLoad = false;
@@ -252,8 +257,8 @@ namespace GMap.NET
          if(PrimaryCache is SQLitePureImageCache)
          {
             StringBuilder db = new StringBuilder((PrimaryCache as SQLitePureImageCache).GtileCache);
-            db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMapProvider.LanguageStr, Path.DirectorySeparatorChar);
-
+            db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}{2}", GMapProvider.LanguageStr, Path.DirectorySeparatorChar, this.CacheFileName);
+2
             return SQLitePureImageCache.ExportMapDataToDB(db.ToString(), file);
          }
 #endif
@@ -272,7 +277,7 @@ namespace GMap.NET
          if(PrimaryCache is GMap.NET.CacheProviders.SQLitePureImageCache)
          {
             StringBuilder db = new StringBuilder((PrimaryCache as SQLitePureImageCache).GtileCache);
-            db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMapProvider.LanguageStr, Path.DirectorySeparatorChar);
+            db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}{2}", GMapProvider.LanguageStr, Path.DirectorySeparatorChar, this.CacheFileName);
 
             return SQLitePureImageCache.ExportMapDataToDB(file, db.ToString());
          }
@@ -294,7 +299,7 @@ namespace GMap.NET
             if(string.IsNullOrEmpty(file))
             {
                StringBuilder db = new StringBuilder((PrimaryCache as SQLitePureImageCache).GtileCache);
-               db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}Data.gmdb", GMapProvider.LanguageStr, Path.DirectorySeparatorChar);
+               db.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}{2}", GMapProvider.LanguageStr, Path.DirectorySeparatorChar, this.CacheFileName);
 
                return SQLitePureImageCache.VacuumDb(db.ToString());
             }
