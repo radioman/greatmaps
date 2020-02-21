@@ -101,7 +101,20 @@ namespace GMap.NET
       /// <summary>
       /// set file name GMap cashe
       /// </summary>
-      public string CacheFileName { get; set; } = "Data.gmdb";
+      private string cacheFileName = "Data.gmdb";
+      public string CacheFileName
+      {
+         get => cacheFileName;
+
+         set
+         {
+            cacheFileName = value;
+            if(PrimaryCache is SQLitePureImageCache)
+            {
+               ((SQLitePureImageCache)PrimaryCache).CacheFileName = cacheFileName;
+            }
+         }
+      }
 
       /// <summary>
       /// load tiles in random sequence
