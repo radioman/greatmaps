@@ -157,7 +157,10 @@ namespace GMap.NET.MapProviders
 
         public static readonly SwedenMapProvider SwedenMap = SwedenMapProvider.Instance;
 
-        static List<GMapProvider> list;
+      // 20200313 (jokubokla): The Alternative Mercator (EPSG:3857) instead of SWEREF99 (EPSG:3006)
+      public static readonly SwedenMapProviderAlt SwedenMapAlternative = SwedenMapProviderAlt.Instance;
+
+      static List<GMapProvider> list;
 
         /// <summary>
         /// get all instances of the supported providers

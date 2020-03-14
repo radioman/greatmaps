@@ -75,7 +75,18 @@ namespace Demo.WindowsForms
             MainMap.Position = new PointLatLng(54.6961334816182, 25.2985095977783);
             MainMap.MinZoom = 0;
             MainMap.MaxZoom = 24;
-            MainMap.Zoom = 9;            
+            MainMap.Zoom = 9;
+
+            // 20200313 (jokubokla): Demo of the new Sweden Map with Mercator instead of SWEREF99
+            MainMap.MapProvider = GMapProviders.SwedenMapAlternative;
+            MainMap.Position = new PointLatLng(58.406298501604, 15.5825614929199); // Linköping
+            MainMap.MinZoom = 1;
+            MainMap.MaxZoom = 15;
+            MainMap.Zoom = 11;
+            textBoxLat.Text = MainMap.Position.Lat.ToString(CultureInfo.InvariantCulture);
+            textBoxLng.Text = MainMap.Position.Lng.ToString(CultureInfo.InvariantCulture);
+            textBoxGeo.Text = "Linköping";
+
 
             //MainMap.ScaleMode = ScaleModes.Fractional;
 
