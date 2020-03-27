@@ -1931,6 +1931,19 @@
          }
       }
 
+      protected override void OnManipulationStarted(ManipulationStartedEventArgs e)
+      {
+         base.OnManipulationStarted(e);
+
+         if (MultiTouchEnabled && !TouchEnabled)
+         {
+            Core.mouseDown.X = 0;
+            Core.mouseDown.Y = 0;
+            Core.touchCurrent.X = 0;
+            Core.touchCurrent.Y = 0;
+         }
+      }
+
       /// <summary>
       /// Called when the <see cref="E:System.Windows.UIElement.ManipulationDelta" /> event occurs.
       /// </summary>
@@ -1971,12 +1984,15 @@
       {
          if(MultiTouchEnabled && !TouchEnabled) // redundent check in case this is invoked outside of the manipulation events
          {
-            if(!Core.IsDragging)
-            {
-               deltaPoint = ApplyRotationInversion(deltaPoint.X, deltaPoint.Y);
+            deltaPoint = ApplyRotationInversion(deltaPoint.X, deltaPoint.Y);
 
+            Core.touchCurrent.X += (int)deltaPoint.X;
+            Core.touchCurrent.Y += (int)deltaPoint.Y;
+
+            if (!Core.IsDragging)
+            {
                // cursor has moved beyond drag tolerance
-               if(Math.Abs(deltaPoint.X - Core.mouseDown.X) * 2 >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(deltaPoint.Y - Core.mouseDown.Y) * 2 >= SystemParameters.MinimumVerticalDragDistance)
+               if(Math.Abs(Core.touchCurrent.X - Core.mouseDown.X) * 2 >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(Core.touchCurrent.Y - Core.mouseDown.Y) * 2 >= SystemParameters.MinimumVerticalDragDistance)
                {
                   Core.BeginDrag(Core.mouseDown);
                }
@@ -1999,13 +2015,7 @@
                }
                else
                {
-                  deltaPoint = ApplyRotationInversion(deltaPoint.X, deltaPoint.Y);
-
-                  Core.mouseCurrent.X += (int)deltaPoint.X;
-                  Core.mouseCurrent.Y += (int)deltaPoint.Y;
-                  {
-                     Core.Drag(Core.mouseCurrent);
-                  }
+                  Core.Drag(Core.touchCurrent);
 
                   if(IsRotated)
                   {
