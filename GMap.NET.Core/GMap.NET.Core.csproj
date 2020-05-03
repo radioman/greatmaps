@@ -236,6 +236,7 @@
     <Compile Include="GMap.NET.MapProviders\Czech\CzechTuristWinterMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\CloudMadeMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\SwedenMapProvider.cs" />
+    <Compile Include="GMap.NET.MapProviders\Etc\SwissTopoProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\Etc\WikiMapiaMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\CzechOld\CzechHistoryMapProvider.cs" />
     <Compile Include="GMap.NET.MapProviders\CzechOld\CzechHybridMapProvider.cs" />
@@ -294,6 +295,7 @@
     <Compile Include="GMap.NET.Projections\SWEREF99_TMProjection.cs" />
     <Compile Include="GMap.NET.Projections\MapsLTReliefProjection.cs" />
     <Compile Include="GMap.NET.Projections\PlateCarreeProjectionDarbAe.cs" />
+    <Compile Include="GMap.NET.Projections\SwissTopoProjection.cs" />
     <Compile Include="GMap.NET\GDirections.cs" />
     <Compile Include="GMap.NET\DirectionsProvider.cs" />
     <Compile Include="GMap.NET\GeocodingProvider.cs" />
