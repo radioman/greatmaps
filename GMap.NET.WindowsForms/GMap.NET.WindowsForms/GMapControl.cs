@@ -1938,7 +1938,7 @@ namespace GMap.NET.WindowsForms
 
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
-            base.OnMouseClick(e);
+            base.OnMouseDoubleClick(e);
 
             if (!Core.IsDragging)
             {
