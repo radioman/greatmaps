@@ -58,7 +58,7 @@ namespace GMap.NET.MapProviders
         public static readonly OpenCycleTransportMapProvider OpenCycleTransportMap = OpenCycleTransportMapProvider.Instance;
 
         public static readonly OpenStreetMapQuestProvider OpenStreetMapQuest = OpenStreetMapQuestProvider.Instance;
-        public static readonly OpenStreetMapQuestSatteliteProvider OpenStreetMapQuestSattelite = OpenStreetMapQuestSatteliteProvider.Instance;
+        public static readonly OpenStreetMapQuestSatelliteProvider OpenStreetMapQuestSatellite = OpenStreetMapQuestSatelliteProvider.Instance;
         public static readonly OpenStreetMapQuestHybridProvider OpenStreetMapQuestHybrid = OpenStreetMapQuestHybridProvider.Instance;
 
         public static readonly OpenSeaMapHybridProvider OpenSeaMapHybrid = OpenSeaMapHybridProvider.Instance;

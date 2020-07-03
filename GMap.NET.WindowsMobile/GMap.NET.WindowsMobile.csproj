@@ -283,8 +283,8 @@
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestProvider.cs">
       <Link>GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestProvider.cs</Link>
     </Compile>
-    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestSatteliteProvider.cs">
-      <Link>GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestSatteliteProvider.cs</Link>
+    <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestSatelliteProvider.cs">
+      <Link>GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapQuestSatelliteProvider.cs</Link>
     </Compile>
     <Compile Include="..\GMap.NET.Core\GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapSurferProvider.cs">
       <Link>GMap.NET.MapProviders\OpenStreetMap\OpenStreetMapSurferProvider.cs</Link>

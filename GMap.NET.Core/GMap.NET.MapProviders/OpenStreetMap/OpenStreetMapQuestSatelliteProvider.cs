@@ -4,20 +4,20 @@ namespace GMap.NET.MapProviders
    using System;
 
    /// <summary>
-   /// OpenStreetMapQuestSattelite provider - http://wiki.openstreetmap.org/wiki/MapQuest
+   /// OpenStreetMapQuestSatellite provider - http://wiki.openstreetmap.org/wiki/MapQuest
    /// </summary>
-   public class OpenStreetMapQuestSatteliteProvider : OpenStreetMapProviderBase
+   public class OpenStreetMapQuestSatelliteProvider : OpenStreetMapProviderBase
    {
-      public static readonly OpenStreetMapQuestSatteliteProvider Instance;
+      public static readonly OpenStreetMapQuestSatelliteProvider Instance;
 
-      OpenStreetMapQuestSatteliteProvider()
+      OpenStreetMapQuestSatelliteProvider()
       {
          Copyright = string.Format("© MapQuest - Map data ©{0} MapQuest, OpenStreetMap", DateTime.Today.Year);
       }
 
-      static OpenStreetMapQuestSatteliteProvider()
+      static OpenStreetMapQuestSatelliteProvider()
       {
-         Instance = new OpenStreetMapQuestSatteliteProvider();
+         Instance = new OpenStreetMapQuestSatelliteProvider();
       }
 
       #region GMapProvider Members
@@ -31,7 +31,7 @@ namespace GMap.NET.MapProviders
          }
       }
 
-      readonly string name = "OpenStreetMapQuestSattelite";
+      readonly string name = "OpenStreetMapQuestSatellite";
       public override string Name
       {
          get
