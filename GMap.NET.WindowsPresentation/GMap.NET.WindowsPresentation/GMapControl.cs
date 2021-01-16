@@ -1533,15 +1533,15 @@
             {
                if(MouseWheelZoomType == MouseWheelZoomType.MousePositionAndCenter)
                {
-                  Core.position = FromLocalToLatLng((int)p.X, (int)p.Y);
+                  Position = FromLocalToLatLng((int)p.X, (int)p.Y);
                }
                else if(MouseWheelZoomType == MouseWheelZoomType.ViewCenter)
                {
-                  Core.position = FromLocalToLatLng((int)ActualWidth / 2, (int)ActualHeight / 2);
+                  Position = FromLocalToLatLng((int)ActualWidth / 2, (int)ActualHeight / 2);
                }
                else if(MouseWheelZoomType == MouseWheelZoomType.MousePositionWithoutCenter)
                {
-                  Core.position = FromLocalToLatLng((int)p.X, (int)p.Y);
+                  Position = FromLocalToLatLng((int)p.X, (int)p.Y);
                }
 
                Core.mouseLastZoom.X = (int)p.X;
